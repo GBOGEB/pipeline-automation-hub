@@ -1,0 +1,1667 @@
+{
+ "_note": "Recorded 2026-10-24T16:53Z via gh api by scale_dock_series.py --record; public default-head routes of GBOGEB/CODEX and pipeline-automation-hub only, trimmed to the fields the adapter reads (steps kept on failed jobs only).",
+ "routes": {
+  "/repos/GBOGEB/CODEX": {
+   "created_at": "2025-09-10T12:35:27Z",
+   "default_branch": "main",
+   "html_url": "https://github.com/GBOGEB/CODEX",
+   "id": 1054146783,
+   "name": "CODEX"
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366280/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:36:59Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366280/job/120926571528",
+     "id": 120926571528,
+     "name": "parity",
+     "run_attempt": 1,
+     "run_id": 40112366280,
+     "status": "completed",
+     "workflow_name": "Render Parity Synchronization"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366286/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:38:35Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366286/job/120926571370",
+     "id": 120926571370,
+     "name": "bandit",
+     "run_attempt": 1,
+     "run_id": 40112366286,
+     "status": "completed",
+     "workflow_name": "Bandit"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366288/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:37:23Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366288/job/120926571749",
+     "id": 120926571749,
+     "name": "Scan",
+     "run_attempt": 1,
+     "run_id": 40112366288,
+     "status": "completed",
+     "workflow_name": "Semgrep"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366291/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:39:24Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366291/job/120926571607",
+     "id": 120926571607,
+     "name": "semantic-validation",
+     "run_attempt": 1,
+     "run_id": 40112366291,
+     "status": "completed",
+     "workflow_name": "CODEX Semantic Runtime CI"
+    },
+    {
+     "completed_at": "2026-10-24T16:36:58Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366291/job/120926571744",
+     "id": 120926571744,
+     "name": "renderer-governance",
+     "run_attempt": 1,
+     "run_id": 40112366291,
+     "status": "completed",
+     "workflow_name": "CODEX Semantic Runtime CI"
+    }
+   ],
+   "total_count": 2
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366295/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:37:01Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366295/job/120926571669",
+     "id": 120926571669,
+     "name": "governance-validation",
+     "run_attempt": 1,
+     "run_id": 40112366295,
+     "status": "completed",
+     "workflow_name": "render-governance-ci"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366297/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:37:07Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366297/job/120926571537",
+     "id": 120926571537,
+     "name": "validate",
+     "run_attempt": 1,
+     "run_id": 40112366297,
+     "status": "completed",
+     "workflow_name": "qps-canonicalization"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366303/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:37:02Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366303/job/120926571601",
+     "id": 120926571601,
+     "name": "lint",
+     "run_attempt": 1,
+     "run_id": 40112366303,
+     "status": "completed",
+     "workflow_name": "Renderer Lint Guard"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366305/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:37:33Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366305/job/120926571550",
+     "id": 120926571550,
+     "name": "independent-consumer",
+     "run_attempt": 1,
+     "run_id": 40112366305,
+     "status": "completed",
+     "workflow_name": "QPS M03 Official MCP Independent Consumer"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366325/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:37:01Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366325/job/120926571771",
+     "id": 120926571771,
+     "name": "validate-and-publish",
+     "run_attempt": 1,
+     "run_id": 40112366325,
+     "status": "completed",
+     "workflow_name": "HBHS-EP TupleBridge Pages"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366328/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:37:16Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366328/job/120926571635",
+     "id": 120926571635,
+     "name": "render-regression",
+     "run_attempt": 1,
+     "run_id": 40112366328,
+     "status": "completed",
+     "workflow_name": "render-regression"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366330/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:37:00Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366330/job/120926571643",
+     "id": 120926571643,
+     "name": "governance-validation",
+     "run_attempt": 1,
+     "run_id": 40112366330,
+     "status": "completed",
+     "workflow_name": "DELTA_1 Governance Validation"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366338/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:36:59Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366338/job/120926571993",
+     "id": 120926571993,
+     "name": "wcag-gate",
+     "run_attempt": 1,
+     "run_id": 40112366338,
+     "status": "completed",
+     "workflow_name": "WCAG Contrast Invariant Gatekeeper"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366341/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:39:36Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366341/job/120926571788",
+     "id": 120926571788,
+     "name": "test",
+     "run_attempt": 1,
+     "run_id": 40112366341,
+     "status": "completed",
+     "workflow_name": "CI"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366343/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:38:41Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366343/job/120926571753",
+     "id": 120926571753,
+     "name": "Analyze (actions)",
+     "run_attempt": 1,
+     "run_id": 40112366343,
+     "status": "completed",
+     "workflow_name": "CodeQL Advanced"
+    },
+    {
+     "completed_at": "2026-10-24T16:39:14Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366343/job/120926571875",
+     "id": 120926571875,
+     "name": "Analyze (javascript-typescript)",
+     "run_attempt": 1,
+     "run_id": 40112366343,
+     "status": "completed",
+     "workflow_name": "CodeQL Advanced"
+    },
+    {
+     "completed_at": "2026-10-24T16:39:20Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366343/job/120926571946",
+     "id": 120926571946,
+     "name": "Analyze (python)",
+     "run_attempt": 1,
+     "run_id": 40112366343,
+     "status": "completed",
+     "workflow_name": "CodeQL Advanced"
+    }
+   ],
+   "total_count": 3
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366346/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:37:12Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366346/job/120926572013",
+     "id": 120926572013,
+     "name": "Run federation validation",
+     "run_attempt": 1,
+     "run_id": 40112366346,
+     "status": "completed",
+     "workflow_name": "Validate Federation"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366360/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:37:11Z",
+     "conclusion": "failure",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366360/job/120926571815",
+     "id": 120926571815,
+     "name": "Collect Repository Metrics",
+     "run_attempt": 1,
+     "run_id": 40112366360,
+     "status": "completed",
+     "steps": [
+      {
+       "completed_at": "2026-10-24T16:36:54Z",
+       "conclusion": "success",
+       "name": "Set up job",
+       "number": 1,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:36:56Z",
+       "conclusion": "success",
+       "name": "Run actions/checkout@v7",
+       "number": 2,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:36:57Z",
+       "conclusion": "success",
+       "name": "Run actions/setup-python@v7.0.0",
+       "number": 3,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:37:08Z",
+       "conclusion": "success",
+       "name": "Install analysis dependencies",
+       "number": 4,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:37:08Z",
+       "conclusion": "success",
+       "name": "Collect metrics",
+       "number": 5,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:37:08Z",
+       "conclusion": "success",
+       "name": "Generate Plotly metrics chart",
+       "number": 6,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:37:09Z",
+       "conclusion": "failure",
+       "name": "Commit metrics artefacts",
+       "number": 7,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:37:09Z",
+       "conclusion": "skipped",
+       "name": "Post Run actions/setup-python@v7.0.0",
+       "number": 13,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:37:10Z",
+       "conclusion": "success",
+       "name": "Post Run actions/checkout@v7",
+       "number": 14,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:37:10Z",
+       "conclusion": "success",
+       "name": "Complete job",
+       "number": 15,
+       "status": "completed"
+      }
+     ],
+     "workflow_name": "CODEX Metrics \u2014 Per-Commit Tracking & Feedback Loop"
+    },
+    {
+     "completed_at": "2026-10-24T16:37:12Z",
+     "conclusion": "skipped",
+     "created_at": "2026-10-24T16:37:12Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366360/job/120926654173",
+     "id": 120926654173,
+     "name": "Escalate on Quality Regression",
+     "run_attempt": 1,
+     "run_id": 40112366360,
+     "status": "completed",
+     "workflow_name": "CODEX Metrics \u2014 Per-Commit Tracking & Feedback Loop"
+    }
+   ],
+   "total_count": 2
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366361/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:37:26Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366361/job/120926571748",
+     "id": 120926571748,
+     "name": "validate",
+     "run_attempt": 1,
+     "run_id": 40112366361,
+     "status": "completed",
+     "workflow_name": "MissionControl Mycelium CI"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366365/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:37:13Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366365/job/120926571766",
+     "id": 120926571766,
+     "name": "lineage-governance (codex)",
+     "run_attempt": 1,
+     "run_id": 40112366365,
+     "status": "completed",
+     "workflow_name": "Full Stack Governance CI"
+    },
+    {
+     "completed_at": "2026-10-24T16:37:12Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366365/job/120926571888",
+     "id": 120926571888,
+     "name": "lineage-governance (abacus)",
+     "run_attempt": 1,
+     "run_id": 40112366365,
+     "status": "completed",
+     "workflow_name": "Full Stack Governance CI"
+    },
+    {
+     "completed_at": "2026-10-24T16:37:08Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366365/job/120926571910",
+     "id": 120926571910,
+     "name": "lineage-governance (mcp-bridge)",
+     "run_attempt": 1,
+     "run_id": 40112366365,
+     "status": "completed",
+     "workflow_name": "Full Stack Governance CI"
+    },
+    {
+     "completed_at": "2026-10-24T16:37:21Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:37:13Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366365/job/120926659894",
+     "id": 120926659894,
+     "name": "bridge-audit",
+     "run_attempt": 1,
+     "run_id": 40112366365,
+     "status": "completed",
+     "workflow_name": "Full Stack Governance CI"
+    },
+    {
+     "completed_at": "2026-10-24T16:37:27Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:37:13Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366365/job/120926659912",
+     "id": 120926659912,
+     "name": "federation-bridge-build",
+     "run_attempt": 1,
+     "run_id": 40112366365,
+     "status": "completed",
+     "workflow_name": "Full Stack Governance CI"
+    },
+    {
+     "completed_at": "2026-10-24T16:37:38Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:37:27Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366365/job/120926712915",
+     "id": 120926712915,
+     "name": "release-readiness",
+     "run_attempt": 1,
+     "run_id": 40112366365,
+     "status": "completed",
+     "workflow_name": "Full Stack Governance CI"
+    }
+   ],
+   "total_count": 6
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366366/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:36:57Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366366/job/120926571858",
+     "id": 120926571858,
+     "name": "Validate HTML / CSS / JS",
+     "run_attempt": 1,
+     "run_id": 40112366366,
+     "status": "completed",
+     "workflow_name": "Validate Documentation"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366374/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:38:48Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366374/job/120926571890",
+     "id": 120926571890,
+     "name": "security-scan (macos-latest / py3.10)",
+     "run_attempt": 1,
+     "run_id": 40112366374,
+     "status": "completed",
+     "workflow_name": "Security Scan"
+    },
+    {
+     "completed_at": "2026-10-24T16:39:01Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366374/job/120926572026",
+     "id": 120926572026,
+     "name": "security-scan (windows-latest / py3.10)",
+     "run_attempt": 1,
+     "run_id": 40112366374,
+     "status": "completed",
+     "workflow_name": "Security Scan"
+    },
+    {
+     "completed_at": "2026-10-24T16:38:54Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366374/job/120926572056",
+     "id": 120926572056,
+     "name": "security-scan (macos-latest / py3.9)",
+     "run_attempt": 1,
+     "run_id": 40112366374,
+     "status": "completed",
+     "workflow_name": "Security Scan"
+    },
+    {
+     "completed_at": "2026-10-24T16:37:46Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366374/job/120926572064",
+     "id": 120926572064,
+     "name": "security-scan (macos-latest / py3.11)",
+     "run_attempt": 1,
+     "run_id": 40112366374,
+     "status": "completed",
+     "workflow_name": "Security Scan"
+    },
+    {
+     "completed_at": "2026-10-24T16:37:21Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366374/job/120926572069",
+     "id": 120926572069,
+     "name": "security-scan (ubuntu-latest / py3.11)",
+     "run_attempt": 1,
+     "run_id": 40112366374,
+     "status": "completed",
+     "workflow_name": "Security Scan"
+    },
+    {
+     "completed_at": "2026-10-24T16:39:04Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366374/job/120926572072",
+     "id": 120926572072,
+     "name": "security-scan (windows-latest / py3.9)",
+     "run_attempt": 1,
+     "run_id": 40112366374,
+     "status": "completed",
+     "workflow_name": "Security Scan"
+    },
+    {
+     "completed_at": "2026-10-24T16:37:23Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366374/job/120926572125",
+     "id": 120926572125,
+     "name": "security-scan (macos-latest / py3.12)",
+     "run_attempt": 1,
+     "run_id": 40112366374,
+     "status": "completed",
+     "workflow_name": "Security Scan"
+    },
+    {
+     "completed_at": "2026-10-24T16:38:35Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366374/job/120926572129",
+     "id": 120926572129,
+     "name": "security-scan (ubuntu-latest / py3.9)",
+     "run_attempt": 1,
+     "run_id": 40112366374,
+     "status": "completed",
+     "workflow_name": "Security Scan"
+    },
+    {
+     "completed_at": "2026-10-24T16:38:43Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366374/job/120926572153",
+     "id": 120926572153,
+     "name": "security-scan (windows-latest / py3.11)",
+     "run_attempt": 1,
+     "run_id": 40112366374,
+     "status": "completed",
+     "workflow_name": "Security Scan"
+    },
+    {
+     "completed_at": "2026-10-24T16:37:49Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366374/job/120926572161",
+     "id": 120926572161,
+     "name": "security-scan (ubuntu-latest / py3.10)",
+     "run_attempt": 1,
+     "run_id": 40112366374,
+     "status": "completed",
+     "workflow_name": "Security Scan"
+    },
+    {
+     "completed_at": "2026-10-24T16:37:49Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366374/job/120926572170",
+     "id": 120926572170,
+     "name": "security-scan (windows-latest / py3.12)",
+     "run_attempt": 1,
+     "run_id": 40112366374,
+     "status": "completed",
+     "workflow_name": "Security Scan"
+    },
+    {
+     "completed_at": "2026-10-24T16:38:32Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366374/job/120926572176",
+     "id": 120926572176,
+     "name": "security-scan (ubuntu-latest / py3.12)",
+     "run_attempt": 1,
+     "run_id": 40112366374,
+     "status": "completed",
+     "workflow_name": "Security Scan"
+    }
+   ],
+   "total_count": 12
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366389/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:37:04Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366389/job/120926572109",
+     "id": 120926572109,
+     "name": "reconcile",
+     "run_attempt": 1,
+     "run_id": 40112366389,
+     "status": "completed",
+     "workflow_name": "MissionControl Inventory Reconcile"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112366649/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:38:30Z",
+     "conclusion": "failure",
+     "created_at": "2026-10-24T16:36:50Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366649/job/120926572758",
+     "id": 120926572758,
+     "name": "scan-scheduled / osv-scan",
+     "run_attempt": 1,
+     "run_id": 40112366649,
+     "status": "completed",
+     "steps": [
+      {
+       "completed_at": "2026-10-24T16:36:58Z",
+       "conclusion": "success",
+       "name": "Set up job",
+       "number": 1,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:37:05Z",
+       "conclusion": "success",
+       "name": "Pull ghcr.io/google/osv-scanner-action:v2.7.0",
+       "number": 2,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:37:06Z",
+       "conclusion": "success",
+       "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+       "number": 3,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:37:06Z",
+       "conclusion": "skipped",
+       "name": "Download custom artifact if specified",
+       "number": 4,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:37:10Z",
+       "conclusion": "success",
+       "name": "Run scanner",
+       "number": 5,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:37:10Z",
+       "conclusion": "success",
+       "name": "Check that the scan completed",
+       "number": 6,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:37:10Z",
+       "conclusion": "failure",
+       "name": "Run osv-scanner-reporter",
+       "number": 7,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:37:10Z",
+       "conclusion": "skipped",
+       "name": "Export results",
+       "number": 8,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:37:11Z",
+       "conclusion": "success",
+       "name": "Upload artifact",
+       "number": 9,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:38:28Z",
+       "conclusion": "success",
+       "name": "Upload to code-scanning",
+       "number": 10,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:38:28Z",
+       "conclusion": "success",
+       "name": "Print Code Scanning URL",
+       "number": 11,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:38:28Z",
+       "conclusion": "skipped",
+       "name": "Error troubleshooter",
+       "number": 12,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:38:28Z",
+       "conclusion": "success",
+       "name": "Post Upload to code-scanning",
+       "number": 23,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:38:28Z",
+       "conclusion": "success",
+       "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+       "number": 24,
+       "status": "completed"
+      },
+      {
+       "completed_at": "2026-10-24T16:38:28Z",
+       "conclusion": "success",
+       "name": "Complete job",
+       "number": 25,
+       "status": "completed"
+      }
+     ],
+     "workflow_name": "OSV-Scanner"
+    },
+    {
+     "completed_at": "2026-10-24T16:36:50Z",
+     "conclusion": "skipped",
+     "created_at": "2026-10-24T16:36:51Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366649/job/120926573674",
+     "id": 120926573674,
+     "name": "scan-pr",
+     "run_attempt": 1,
+     "run_id": 40112366649,
+     "status": "completed",
+     "workflow_name": "OSV-Scanner"
+    },
+    {
+     "completed_at": "2026-10-24T16:38:50Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:38:30Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366649/job/120926954261",
+     "id": 120926954261,
+     "name": "scan-findings",
+     "run_attempt": 1,
+     "run_id": 40112366649,
+     "status": "completed",
+     "workflow_name": "OSV-Scanner"
+    }
+   ],
+   "total_count": 3
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112371969/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:36:55Z",
+     "conclusion": "skipped",
+     "created_at": "2026-10-24T16:36:55Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112371969/job/120926590381",
+     "id": 120926590381,
+     "name": "authenticated-owner-comment-stage-only",
+     "run_attempt": 1,
+     "run_id": 40112371969,
+     "status": "completed",
+     "workflow_name": "MissionControl Owner Comment Transport"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/CODEX/actions/runs/40112372050/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:36:55Z",
+     "conclusion": "skipped",
+     "created_at": "2026-10-24T16:36:55Z",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112372050/job/120926591472",
+     "id": 120926591472,
+     "name": "scan",
+     "run_attempt": 1,
+     "run_id": 40112372050,
+     "status": "completed",
+     "workflow_name": "Agentic PR Discrepancy Scan"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/CODEX/actions/runs?head_sha=4f1a0025181eab8b4fca219b7647f38abb12959a&per_page=100&page=1": {
+   "total_count": 24,
+   "workflow_runs": [
+    {
+     "conclusion": "skipped",
+     "created_at": "2026-10-24T16:36:54Z",
+     "event": "issue_comment",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112371969",
+     "id": 40112371969,
+     "name": "MissionControl Owner Comment Transport",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "skipped",
+     "created_at": "2026-10-24T16:36:54Z",
+     "event": "issue_comment",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112372050",
+     "id": 40112372050,
+     "name": "Agentic PR Discrepancy Scan",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366286",
+     "id": 40112366286,
+     "name": "Bandit",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "failure",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366649",
+     "id": 40112366649,
+     "name": "OSV-Scanner",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366374",
+     "id": 40112366374,
+     "name": "Security Scan",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366343",
+     "id": 40112366343,
+     "name": "CodeQL Advanced",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366291",
+     "id": 40112366291,
+     "name": "CODEX Semantic Runtime CI",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366305",
+     "id": 40112366305,
+     "name": "QPS M03 Official MCP Independent Consumer",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366365",
+     "id": 40112366365,
+     "name": "Full Stack Governance CI",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366361",
+     "id": 40112366361,
+     "name": "MissionControl Mycelium CI",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366341",
+     "id": 40112366341,
+     "name": "CI",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366297",
+     "id": 40112366297,
+     "name": "qps-canonicalization",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366325",
+     "id": 40112366325,
+     "name": "HBHS-EP TupleBridge Pages",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366389",
+     "id": 40112366389,
+     "name": "MissionControl Inventory Reconcile",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366280",
+     "id": 40112366280,
+     "name": "Render Parity Synchronization",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366366",
+     "id": 40112366366,
+     "name": "Validate Documentation",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366295",
+     "id": 40112366295,
+     "name": "render-governance-ci",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366303",
+     "id": 40112366303,
+     "name": "Renderer Lint Guard",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366330",
+     "id": 40112366330,
+     "name": "DELTA_1 Governance Validation",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366338",
+     "id": 40112366338,
+     "name": "WCAG Contrast Invariant Gatekeeper",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366328",
+     "id": 40112366328,
+     "name": "render-regression",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "failure",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366360",
+     "id": 40112366360,
+     "name": "CODEX Metrics \u2014 Per-Commit Tracking & Feedback Loop",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366346",
+     "id": 40112366346,
+     "name": "Validate Federation",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:36:50Z",
+     "event": "push",
+     "head_sha": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/40112366288",
+     "id": 40112366288,
+     "name": "Semgrep",
+     "run_attempt": 1,
+     "status": "completed"
+    }
+   ]
+  },
+  "/repos/GBOGEB/CODEX/actions/runs?status=queued&per_page=100&page=1": {
+   "total_count": 4,
+   "workflow_runs": [
+    {
+     "conclusion": null,
+     "created_at": "2026-09-30T12:59:36Z",
+     "event": "pull_request",
+     "head_sha": "6c733d3587975af58feb87b33ea774b4a1c680be",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/36718452326",
+     "id": 36718452326,
+     "name": "Full Stack Governance CI",
+     "run_attempt": 1,
+     "status": "queued"
+    },
+    {
+     "conclusion": null,
+     "created_at": "2026-09-30T12:59:36Z",
+     "event": "pull_request",
+     "head_sha": "6c733d3587975af58feb87b33ea774b4a1c680be",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/36718452692",
+     "id": 36718452692,
+     "name": "W003 Governance Gate",
+     "run_attempt": 1,
+     "status": "queued"
+    },
+    {
+     "conclusion": null,
+     "created_at": "2026-09-30T12:53:34Z",
+     "event": "pull_request",
+     "head_sha": "a3e505789e21d44b4d195d422dfe96494443bd4d",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/36717755415",
+     "id": 36717755415,
+     "name": "CODEX Cross-Version Self Smoke",
+     "run_attempt": 1,
+     "status": "queued"
+    },
+    {
+     "conclusion": null,
+     "created_at": "2026-09-30T12:53:34Z",
+     "event": "pull_request",
+     "head_sha": "a3e505789e21d44b4d195d422dfe96494443bd4d",
+     "html_url": "https://github.com/GBOGEB/CODEX/actions/runs/36717755372",
+     "id": 36717755372,
+     "name": "W70 Dynamic CODEX Publish Burndown",
+     "run_attempt": 1,
+     "status": "queued"
+    }
+   ]
+  },
+  "/repos/GBOGEB/CODEX/commits/main": {
+   "html_url": "https://github.com/GBOGEB/CODEX/commit/4f1a0025181eab8b4fca219b7647f38abb12959a",
+   "sha": "4f1a0025181eab8b4fca219b7647f38abb12959a"
+  },
+  "/repos/GBOGEB/pipeline-automation-hub": {
+   "created_at": "2025-09-11T01:59:16Z",
+   "default_branch": "master",
+   "html_url": "https://github.com/GBOGEB/pipeline-automation-hub",
+   "id": 1054543021,
+   "name": "pipeline-automation-hub"
+  },
+  "/repos/GBOGEB/pipeline-automation-hub/actions/runs/40112239987/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:35:24Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112239987/job/120926198201",
+     "id": 120926198201,
+     "name": "f01-pilot",
+     "run_attempt": 1,
+     "run_id": 40112239987,
+     "status": "completed",
+     "workflow_name": "GM-FLEET-03 F01 Pilot"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/pipeline-automation-hub/actions/runs/40112240009/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:35:24Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240009/job/120926198644",
+     "id": 120926198644,
+     "name": "consume",
+     "run_attempt": 1,
+     "run_id": 40112240009,
+     "status": "completed",
+     "workflow_name": "W3-11 Non-Origin Math Consumer"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/pipeline-automation-hub/actions/runs/40112240018/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:35:22Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240018/job/120926198417",
+     "id": 120926198417,
+     "name": "validate-ultra-control",
+     "run_attempt": 1,
+     "run_id": 40112240018,
+     "status": "completed",
+     "workflow_name": "QPS TRIAGE ULTRA Federation Control"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/pipeline-automation-hub/actions/runs/40112240026/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:35:23Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240026/job/120926198237",
+     "id": 120926198237,
+     "name": "prove",
+     "run_attempt": 1,
+     "run_id": 40112240026,
+     "status": "completed",
+     "workflow_name": "GM-FLEET-02B Closeout"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/pipeline-automation-hub/actions/runs/40112240038/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:35:23Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240038/job/120926198361",
+     "id": 120926198361,
+     "name": "measured-floor",
+     "run_attempt": 1,
+     "run_id": 40112240038,
+     "status": "completed",
+     "workflow_name": "W3-13 Measured Fleet Telemetry"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/pipeline-automation-hub/actions/runs/40112240048/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:35:53Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240048/job/120926198205",
+     "id": 120926198205,
+     "name": "ring2-recon",
+     "run_attempt": 1,
+     "run_id": 40112240048,
+     "status": "completed",
+     "workflow_name": "GM-FLEET-03 Ring2 Recon"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/pipeline-automation-hub/actions/runs/40112240055/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:35:46Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240055/job/120926198151",
+     "id": 120926198151,
+     "name": "f03-pilot",
+     "run_attempt": 1,
+     "run_id": 40112240055,
+     "status": "completed",
+     "workflow_name": "GM-FLEET-03 F03 Pilot"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/pipeline-automation-hub/actions/runs/40112240057/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:35:22Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240057/job/120926198346",
+     "id": 120926198346,
+     "name": "ring1-recon",
+     "run_attempt": 1,
+     "run_id": 40112240057,
+     "status": "completed",
+     "workflow_name": "GM-FLEET-03 Ring1 Recon"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/pipeline-automation-hub/actions/runs/40112240072/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:42:20Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240072/job/120926198519",
+     "id": 120926198519,
+     "name": "Master red/green transition ledger",
+     "run_attempt": 1,
+     "run_id": 40112240072,
+     "status": "completed",
+     "workflow_name": "GOGREEN Red-Trace Ledger (read-only)"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/pipeline-automation-hub/actions/runs/40112240100/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:35:21Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240100/job/120926198641",
+     "id": 120926198641,
+     "name": "capacity-gate",
+     "run_attempt": 1,
+     "run_id": 40112240100,
+     "status": "completed",
+     "workflow_name": "GM-FLEET-03 Capacity Gate"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/pipeline-automation-hub/actions/runs/40112240103/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:35:30Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240103/job/120926198625",
+     "id": 120926198625,
+     "name": "frozen-head-census",
+     "run_attempt": 1,
+     "run_id": 40112240103,
+     "status": "completed",
+     "workflow_name": "W3-16 M03 W0 Recon"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/pipeline-automation-hub/actions/runs/40112240104/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:36:03Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:12Z",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240104/job/120926202110",
+     "id": 120926202110,
+     "name": "Analyze (ruby)",
+     "run_attempt": 1,
+     "run_id": 40112240104,
+     "status": "completed",
+     "workflow_name": "Push on master"
+    },
+    {
+     "completed_at": "2026-10-24T16:37:35Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:12Z",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240104/job/120926202264",
+     "id": 120926202264,
+     "name": "Analyze (python)",
+     "run_attempt": 1,
+     "run_id": 40112240104,
+     "status": "completed",
+     "workflow_name": "Push on master"
+    },
+    {
+     "completed_at": "2026-10-24T16:36:05Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:12Z",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240104/job/120926202291",
+     "id": 120926202291,
+     "name": "Analyze (actions)",
+     "run_attempt": 1,
+     "run_id": 40112240104,
+     "status": "completed",
+     "workflow_name": "Push on master"
+    },
+    {
+     "completed_at": "2026-10-24T16:36:54Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:12Z",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240104/job/120926202296",
+     "id": 120926202296,
+     "name": "Analyze (javascript-typescript)",
+     "run_attempt": 1,
+     "run_id": 40112240104,
+     "status": "completed",
+     "workflow_name": "Push on master"
+    }
+   ],
+   "total_count": 4
+  },
+  "/repos/GBOGEB/pipeline-automation-hub/actions/runs/40112240155/jobs?per_page=100&page=1": {
+   "jobs": [
+    {
+     "completed_at": "2026-10-24T16:35:26Z",
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240155/job/120926198835",
+     "id": 120926198835,
+     "name": "measured-pca",
+     "run_attempt": 1,
+     "run_id": 40112240155,
+     "status": "completed",
+     "workflow_name": "W3-14 Measured PCA"
+    }
+   ],
+   "total_count": 1
+  },
+  "/repos/GBOGEB/pipeline-automation-hub/actions/runs?head_sha=c7e2fb38e5c3471263ac1da578439d2bfb6427ae&per_page=100&page=1": {
+   "total_count": 13,
+   "workflow_runs": [
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "event": "push",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240057",
+     "id": 40112240057,
+     "name": "GM-FLEET-03 Ring1 Recon",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "event": "push",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240018",
+     "id": 40112240018,
+     "name": "QPS TRIAGE ULTRA Federation Control",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "event": "push",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240100",
+     "id": 40112240100,
+     "name": "GM-FLEET-03 Capacity Gate",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "event": "push",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240155",
+     "id": 40112240155,
+     "name": "W3-14 Measured PCA",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "event": "push",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240038",
+     "id": 40112240038,
+     "name": "W3-13 Measured Fleet Telemetry",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "event": "push",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240026",
+     "id": 40112240026,
+     "name": "GM-FLEET-02B Closeout",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "event": "push",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112239987",
+     "id": 40112239987,
+     "name": "GM-FLEET-03 F01 Pilot",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "event": "push",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240009",
+     "id": 40112240009,
+     "name": "W3-11 Non-Origin Math Consumer",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "event": "push",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240055",
+     "id": 40112240055,
+     "name": "GM-FLEET-03 F03 Pilot",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "event": "push",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240048",
+     "id": 40112240048,
+     "name": "GM-FLEET-03 Ring2 Recon",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "event": "push",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240103",
+     "id": 40112240103,
+     "name": "W3-16 M03 W0 Recon",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "event": "dynamic",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240104",
+     "id": 40112240104,
+     "name": "Push on master",
+     "run_attempt": 1,
+     "status": "completed"
+    },
+    {
+     "conclusion": "success",
+     "created_at": "2026-10-24T16:35:11Z",
+     "event": "push",
+     "head_sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+     "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40112240072",
+     "id": 40112240072,
+     "name": "GOGREEN Red-Trace Ledger (read-only)",
+     "run_attempt": 1,
+     "status": "completed"
+    }
+   ]
+  },
+  "/repos/GBOGEB/pipeline-automation-hub/actions/runs?status=queued&per_page=100&page=1": {
+   "total_count": 0,
+   "workflow_runs": []
+  },
+  "/repos/GBOGEB/pipeline-automation-hub/commits/master": {
+   "html_url": "https://github.com/GBOGEB/pipeline-automation-hub/commit/c7e2fb38e5c3471263ac1da578439d2bfb6427ae",
+   "sha": "c7e2fb38e5c3471263ac1da578439d2bfb6427ae"
+  }
+ }
+}

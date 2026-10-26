@@ -1,0 +1,702 @@
+{
+  "schema": "missioncontrol.orchestration.profile.v1",
+  "repository": "GBOGEB/pipeline-automation-hub",
+  "title": "Method Atlas · execution, evidence and rebuilds",
+  "profile_id": "GBOGEB.MISSION_CONTROL",
+  "role": "SOURCE_OWNED_IO_OVERLAY",
+  "authority_transfer": false,
+  "remote_dispatch": false,
+  "publisher": ".github/workflows/code-purple-method-atlas.yml",
+  "inherits": {
+    "methods": "mission-control/v2/MC_METHOD_PROFILE_REGISTRY_v1.json",
+    "glossary": "mission-control/v2/MC_GLOSSARY_TAXONOMY_v2.json",
+    "kpis": "mission-control/federation-atlas/PHASE02_KPI_TAXONOMY_v1.json",
+    "programmes": "mission-control/federation-atlas/superstitch/SUPERSTITCH_TAXONOMY_v1.json",
+    "views": "mission-control/federation-atlas/superstitch/SUPERSTITCH_GLOSSARY_v1.json"
+  },
+  "hierarchy": [
+    "MISSION",
+    "SPRINT",
+    "WAVE",
+    "PULSE",
+    "RUN",
+    "JOB",
+    "STEP",
+    "ARTIFACT_MEMBER"
+  ],
+  "sources": {
+    "methods": "mission-control/federation-atlas/METHOD_OBSERVABILITY_v1.json",
+    "lanes": "mission-control/federation-atlas/PROCESS_LANES_v1.json",
+    "federation": "mission-control/federation-atlas/ATLAS_GRAPH_v1.yaml",
+    "beams": "mission-control/federation-atlas/CODE_PURPLE_BEAMS_DAG_v1.json",
+    "queue": "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
+    "series": "mission-control/federation-atlas/CODE_PURPLE_ITERATION_SERIES_v1.json",
+    "superstitch": "mission-control/federation-atlas/superstitch/SUPERSTITCH_SOURCE_v1.json",
+    "groups": "mission-control/federation-atlas/superstitch/SUPERSTITCH_GROUPS_W35.json",
+    "jade": "mission-control/jade_temple/site/burndown.json",
+    "coverage": "mission-control/federation-atlas/orchestration/COVERAGE_OBSERVATIONS_v1.json"
+  },
+  "blocks": [
+    {
+      "id": "source-contracts",
+      "label": "Validate source and I/O",
+      "purpose": "Pin checkout and source bytes; reject unknown ports, incompatible handoffs and missing required input before a generator runs.",
+      "source_path": "mission-control/federation-atlas/orchestration/main.py",
+      "entrypoint": "validate_profile",
+      "role": "verifier",
+      "programmes": [
+        "CODE_PURPLE"
+      ],
+      "needs": [],
+      "inputs": [
+        {
+          "id": "profile",
+          "path": "mission-control/federation-atlas/orchestration/PIPELINE_CONTRACTS_v1.json",
+          "kind": "json",
+          "schema": "missioncontrol.orchestration.profile.v1",
+          "required": true,
+          "source_scope": "REPOSITORY"
+        }
+      ],
+      "outputs": [
+        {
+          "id": "check",
+          "path": "source-check.json",
+          "kind": "json",
+          "schema": "missioncontrol.orchestration.source_check.v1",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "repo-inventory",
+      "label": "Map Python and workflow sequence",
+      "purpose": "Parse all local Python ASTs and GitHub YAML without importing or executing inspected source. Record static calls, job needs, ordered steps, matrices and unresolved expressions.",
+      "source_path": "mission-control/federation-atlas/orchestration/main.py",
+      "entrypoint": "inventory",
+      "role": "producer",
+      "programmes": [
+        "CODE_PURPLE"
+      ],
+      "needs": [
+        "source-contracts"
+      ],
+      "inputs": [
+        {
+          "id": "check",
+          "path": "source-check.json",
+          "kind": "json",
+          "schema": "missioncontrol.orchestration.source_check.v1",
+          "required": true,
+          "source_scope": "GENERATED"
+        }
+      ],
+      "outputs": [
+        {
+          "id": "inventory",
+          "path": "inventory.json",
+          "kind": "json",
+          "schema": "missioncontrol.orchestration.inventory.v1",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "coverage-observations",
+      "label": "Coverage identity and assurance",
+      "role": "producer",
+      "theme": "Portfolio and coverage",
+      "source_path": "mission-control/federation-atlas/orchestration/coverage_contract.py",
+      "entrypoint": "build_model",
+      "needs": [
+        "source-contracts"
+      ],
+      "inputs": [
+        {
+          "id": "observations",
+          "path": "mission-control/federation-atlas/orchestration/COVERAGE_OBSERVATIONS_v1.json",
+          "kind": "json",
+          "schema": "missioncontrol.coverage.observations.v1",
+          "required": true,
+          "source_scope": "REPOSITORY"
+        }
+      ],
+      "outputs": [
+        {
+          "id": "metrics",
+          "path": "metric_observations.json",
+          "kind": "json",
+          "schema": "missioncontrol.coverage.observation_atlas.v1",
+          "required": true
+        },
+        {
+          "id": "ledger",
+          "path": "coverage_burndown.jsonl",
+          "kind": "text",
+          "required": true
+        }
+      ],
+      "check": "Validate immutable event identities, count arithmetic, population boundaries and available native proof bytes; regenerate the derived ledger.",
+      "authority": "Read-only evidence consumer; owner acceptance and native qualification remain separate.",
+      "purpose": "Normalize separately identified coverage populations, preserve historical evidence status and reject invalid comparisons.",
+      "programmes": [
+        "CODE_PURPLE"
+      ]
+    },
+    {
+      "id": "source-model",
+      "label": "Join source model and cohorts",
+      "purpose": "Join validated source ports, static code/workflow inventory, independent ledger cohorts and the broker plan into one render model. Ports are in-memory structures serialized by the main wrapper.",
+      "source_path": "mission-control/federation-atlas/orchestration/main.py",
+      "entrypoint": "source_model",
+      "role": "producer",
+      "programmes": [
+        "CODE_PURPLE"
+      ],
+      "needs": [
+        "repo-inventory",
+        "broker-plan",
+        "coverage-observations"
+      ],
+      "inputs": [
+        {
+          "id": "inventory",
+          "path": "inventory.json",
+          "kind": "json",
+          "schema": "missioncontrol.orchestration.inventory.v1",
+          "required": true,
+          "source_scope": "GENERATED"
+        },
+        {
+          "id": "coverage",
+          "path": "metric_observations.json",
+          "kind": "json",
+          "schema": "missioncontrol.coverage.observation_atlas.v1",
+          "required": true,
+          "source_scope": "GENERATED"
+        },
+        {
+          "id": "plan",
+          "path": "broker-plan.json",
+          "kind": "json",
+          "schema": "atlas.local-broker.plan.v1",
+          "required": true,
+          "source_scope": "GENERATED"
+        }
+      ],
+      "outputs": [
+        {
+          "id": "model",
+          "path": "atlas.json",
+          "kind": "json",
+          "schema": "missioncontrol.orchestration.atlas.v1",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "broker-plan",
+      "label": "Reconcile demand and plan capacity",
+      "purpose": "Classify ready, blocked and deferred work; apply local worker and write-set bounds. Missing provider capacity stays unknown.",
+      "source_path": "mission-control/federation-atlas/orchestration/broker.py",
+      "entrypoint": "plan",
+      "role": "planner",
+      "programmes": [
+        "CODE_PURPLE",
+        "GOGREEN"
+      ],
+      "needs": [
+        "source-contracts"
+      ],
+      "inputs": [
+        {
+          "id": "policy",
+          "path": "mission-control/federation-atlas/orchestration/BROKER_POLICY_v1.json",
+          "kind": "json",
+          "required": true,
+          "source_scope": "REPOSITORY"
+        }
+      ],
+      "outputs": [
+        {
+          "id": "plan",
+          "path": "broker-plan.json",
+          "kind": "json",
+          "required": true,
+          "schema": "atlas.local-broker.plan.v1"
+        }
+      ]
+    },
+    {
+      "id": "local-executor",
+      "label": "Bounded local worker adapter",
+      "purpose": "Run registered local generators with bounded pending work, disjoint path leases and per-task input/output checks; join by identity rather than completion order.",
+      "source_path": "mission-control/federation-atlas/orchestration/broker.py",
+      "entrypoint": "run_local",
+      "role": "executor",
+      "programmes": [
+        "CODE_PURPLE"
+      ],
+      "needs": [
+        "broker-plan"
+      ],
+      "inputs": [
+        {
+          "id": "plan",
+          "path": "broker-plan.json",
+          "kind": "json",
+          "required": true,
+          "source_scope": "GENERATED",
+          "schema": "atlas.local-broker.plan.v1"
+        }
+      ],
+      "outputs": [
+        {
+          "id": "receipt",
+          "path": "local-run.json",
+          "kind": "json",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "method-atlas",
+      "label": "Method Atlas renderer",
+      "purpose": "Generate the existing method cards, source-bound metrics and federation view, including phase-02, lane and side-load companions.",
+      "source_path": "mission-control/federation-atlas/build_atlas.py",
+      "entrypoint": "build",
+      "role": "viewer",
+      "programmes": [
+        "CODE_PURPLE"
+      ],
+      "needs": [
+        "source-contracts"
+      ],
+      "inputs": [
+        {
+          "id": "methods",
+          "path": "mission-control/federation-atlas/METHOD_OBSERVABILITY_v1.json",
+          "kind": "json",
+          "schema": "missioncontrol.federation_atlas.method_events.v1",
+          "required": true,
+          "source_scope": "REPOSITORY"
+        }
+      ],
+      "outputs": [
+        {
+          "id": "html",
+          "path": "index.html",
+          "kind": "html",
+          "required": true
+        },
+        {
+          "id": "metrics",
+          "path": "metrics.json",
+          "kind": "json",
+          "schema": "missioncontrol.federation_atlas.metrics.v1",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "process-lanes",
+      "label": "Granular SIPOC and method lanes",
+      "purpose": "Render each canonical method and its descriptive supplier/input/process/output/customer rows without replacing method authority.",
+      "source_path": "mission-control/federation-atlas/lane_process.py",
+      "entrypoint": "build",
+      "role": "viewer",
+      "programmes": [
+        "CODE_PURPLE"
+      ],
+      "needs": [
+        "source-contracts"
+      ],
+      "inputs": [
+        {
+          "id": "lanes",
+          "path": "mission-control/federation-atlas/PROCESS_LANES_v1.json",
+          "kind": "json",
+          "schema": "missioncontrol.federation_atlas.process_lanes.v1",
+          "required": true,
+          "source_scope": "REPOSITORY"
+        }
+      ],
+      "outputs": [
+        {
+          "id": "html",
+          "path": "lane-process.html",
+          "kind": "html",
+          "required": true
+        },
+        {
+          "id": "metrics",
+          "path": "lane-process.json",
+          "kind": "json",
+          "schema": "missioncontrol.federation_atlas.process_lane_metrics.v1",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "burndown",
+      "label": "CODE PURPLE burndown ledger",
+      "purpose": "Project the canonical CPQ lifecycle/history and beam dispositions; keep terminal ledger rows distinct from accepted causal-root closures.",
+      "source_path": "mission-control/federation-atlas/build_code_purple.py",
+      "entrypoint": "build_payload",
+      "role": "viewer",
+      "programmes": [
+        "CODE_PURPLE",
+        "EVERRED"
+      ],
+      "needs": [
+        "source-contracts"
+      ],
+      "inputs": [
+        {
+          "id": "queue",
+          "path": "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
+          "kind": "json",
+          "schema": "missioncontrol.code_purple.bd_queue.v1",
+          "required": true,
+          "source_scope": "REPOSITORY"
+        }
+      ],
+      "outputs": [
+        {
+          "id": "ledger",
+          "path": "code-purple.json",
+          "kind": "json",
+          "schema": "missioncontrol.code_purple.page.v1",
+          "required": true
+        },
+        {
+          "id": "html",
+          "path": "code-purple.html",
+          "kind": "html",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "superstitch",
+      "label": "Hierarchical DAG, SPINE and SPLINE",
+      "purpose": "Rebuild bounded owner groups, aliases, typed edges, historical trends and SIPOC from the existing Superstitch source and glossary.",
+      "source_path": "mission-control/federation-atlas/superstitch/build.py",
+      "entrypoint": "do_build",
+      "role": "viewer",
+      "programmes": [
+        "CODE_PURPLE"
+      ],
+      "needs": [
+        "source-contracts"
+      ],
+      "inputs": [
+        {
+          "id": "graph",
+          "path": "mission-control/federation-atlas/superstitch/SUPERSTITCH_SOURCE_v1.json",
+          "kind": "json",
+          "schema": "missioncontrol.superstitch.source.v1",
+          "required": true,
+          "source_scope": "REPOSITORY"
+        }
+      ],
+      "outputs": [
+        {
+          "id": "html",
+          "path": "index.html",
+          "kind": "html",
+          "required": true
+        },
+        {
+          "id": "graph",
+          "path": "graph.json",
+          "kind": "json",
+          "required": true
+        },
+        {
+          "id": "manifest",
+          "path": "manifest.json",
+          "kind": "json",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "convergence",
+      "label": "Global convergence hub",
+      "purpose": "Assemble source-owned observation cohorts, source links and next execution priorities with their original denominators.",
+      "source_path": "mission-control/federation-atlas/convergence_hub.py",
+      "entrypoint": "build",
+      "role": "viewer",
+      "programmes": [
+        "CODE_PURPLE",
+        "GOGREEN"
+      ],
+      "needs": [
+        "source-contracts"
+      ],
+      "inputs": [
+        {
+          "id": "source",
+          "path": "mission-control/federation-atlas/CONVERGENCE_HUB_SOURCES_W32.json",
+          "kind": "json",
+          "required": true,
+          "source_scope": "REPOSITORY"
+        }
+      ],
+      "outputs": [
+        {
+          "id": "html",
+          "path": "index.html",
+          "kind": "html",
+          "required": true
+        },
+        {
+          "id": "ledger",
+          "path": "ledger.json",
+          "kind": "json",
+          "required": true
+        },
+        {
+          "id": "manifest",
+          "path": "manifest.json",
+          "kind": "json",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "jade-burndown",
+      "label": "JADE preparation and owner actions",
+      "purpose": "Rebuild the existing JADE preparation ledger from its own frozen cohorts and native links; preserve owner acceptance and release gates.",
+      "source_path": "mission-control/jade_temple/site/build_burndown.py",
+      "entrypoint": "builds",
+      "role": "viewer",
+      "programmes": [
+        "JADE_TEMPLE",
+        "JADE_CASTE"
+      ],
+      "needs": [
+        "source-contracts"
+      ],
+      "inputs": [
+        {
+          "id": "source",
+          "path": "mission-control/jade_temple/data/JADE_STATE.json",
+          "kind": "json",
+          "required": true,
+          "source_scope": "REPOSITORY"
+        }
+      ],
+      "outputs": [
+        {
+          "id": "html",
+          "path": "burndown.html",
+          "kind": "html",
+          "required": true
+        },
+        {
+          "id": "ledger",
+          "path": "burndown.json",
+          "kind": "json",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "regime-controller",
+      "label": "GoGREEN queue regime evidence",
+      "purpose": "Reconcile two comparable source-bound queue observations. A decreasing queue does not close roots or establish spare workers.",
+      "source_path": "mission-control/gogreen/regime_controller.py",
+      "entrypoint": "wave",
+      "role": "evidence",
+      "programmes": [
+        "GOGREEN",
+        "EVERRED"
+      ],
+      "needs": [],
+      "inputs": [
+        {
+          "id": "previous",
+          "path": "previous.json",
+          "kind": "json",
+          "schema": "gogreen.queue-wave.v1",
+          "required": true,
+          "source_scope": "EXTERNAL_OBSERVATION"
+        },
+        {
+          "id": "current",
+          "path": "current.json",
+          "kind": "json",
+          "schema": "gogreen.queue-wave.v1",
+          "required": true,
+          "source_scope": "EXTERNAL_OBSERVATION"
+        }
+      ],
+      "outputs": [
+        {
+          "id": "receipt",
+          "path": "regime_receipt.json",
+          "kind": "json",
+          "schema": "gogreen.queue-wave.receipt.v1",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "orchestration-view",
+      "label": "Execution Atlas and source inspector",
+      "purpose": "Render this joined functional view, source inventory, graph catalogue, broker plan and cohort-preserving burndown from one model.",
+      "source_path": "mission-control/federation-atlas/orchestration/render.py",
+      "entrypoint": "render",
+      "role": "viewer",
+      "programmes": [
+        "CODE_PURPLE",
+        "GOGREEN",
+        "CODE_MAROON",
+        "JADE_TEMPLE",
+        "EVERRED"
+      ],
+      "needs": [
+        "source-model"
+      ],
+      "inputs": [
+        {
+          "id": "model",
+          "path": "atlas.json",
+          "kind": "json",
+          "schema": "missioncontrol.orchestration.atlas.v1",
+          "required": true,
+          "source_scope": "GENERATED"
+        }
+      ],
+      "outputs": [
+        {
+          "id": "html",
+          "path": "index.html",
+          "kind": "html",
+          "required": true
+        },
+        {
+          "id": "css",
+          "path": "style.css",
+          "kind": "text",
+          "required": true
+        },
+        {
+          "id": "js",
+          "path": "app.js",
+          "kind": "text",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "pages-portal",
+      "label": "Existing Pages packager",
+      "purpose": "Verify allowed artifact members and source identity, then package all supplied views under the single existing publisher.",
+      "source_path": "mission-control/federation-atlas/pages_portal.py",
+      "entrypoint": "build",
+      "role": "packager",
+      "programmes": [
+        "CODE_PURPLE"
+      ],
+      "needs": [
+        "method-atlas",
+        "burndown",
+        "superstitch",
+        "convergence",
+        "orchestration-view"
+      ],
+      "inputs": [
+        {
+          "id": "method-html",
+          "path": "index.html",
+          "kind": "html",
+          "required": true,
+          "source_scope": "GENERATED"
+        },
+        {
+          "id": "execution-html",
+          "path": "orchestration/index.html",
+          "kind": "html",
+          "required": true,
+          "source_scope": "GENERATED"
+        }
+      ],
+      "outputs": [
+        {
+          "id": "html",
+          "path": "index.html",
+          "kind": "html",
+          "required": true
+        },
+        {
+          "id": "manifest",
+          "path": "site-manifest.json",
+          "kind": "json",
+          "schema": "codepurple.pages.readonly/v1",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "joins": [
+    {
+      "from": "source-contracts:check",
+      "to": "repo-inventory:check",
+      "kind": "ARTIFACT_HANDOFF",
+      "join": "ALL",
+      "binding": "LOCAL_CONTRACT"
+    },
+    {
+      "from": "repo-inventory:inventory",
+      "to": "source-model:inventory",
+      "kind": "ARTIFACT_HANDOFF",
+      "join": "ALL",
+      "binding": "LOCAL_CONTRACT"
+    },
+    {
+      "from": "source-model:model",
+      "to": "orchestration-view:model",
+      "kind": "ARTIFACT_HANDOFF",
+      "join": "ALL",
+      "binding": "LOCAL_CONTRACT"
+    },
+    {
+      "from": "method-atlas:html",
+      "to": "pages-portal:method-html",
+      "kind": "ARTIFACT_HANDOFF",
+      "join": "ALL",
+      "binding": "LOCAL_CONTRACT"
+    },
+    {
+      "from": "orchestration-view:html",
+      "to": "pages-portal:execution-html",
+      "kind": "ARTIFACT_HANDOFF",
+      "join": "ALL",
+      "binding": "LOCAL_CONTRACT"
+    },
+    {
+      "from": "coverage-observations:metrics",
+      "to": "source-model:coverage",
+      "join": "ALL",
+      "kind": "ARTIFACT_HANDOFF"
+    },
+    {
+      "from": "broker-plan:plan",
+      "to": "source-model:plan",
+      "join": "ALL",
+      "kind": "ARTIFACT_HANDOFF"
+    }
+  ],
+  "io_rules": {
+    "actor_continuity": "Customer may become the next supplier; actor continuity alone does not validate an artifact handoff.",
+    "artifact_continuity": "Every O-to-I handoff checks port kind and schema where specified, required cardinality, source identity and output bytes.",
+    "joins": "ALL requires every predecessor output. ANY is permitted only if the consumer explicitly declares equivalent alternatives.",
+    "feedback": "Feedback is next-pulse evidence, excluded from same-pulse executable needs.",
+    "failure": "Missing or malformed required output blocks descendants even when the process exit status is zero.",
+    "scope": "Profile dependencies describe data/build relationships. Actual local scheduling uses registered task adapters; a diagram does not dispatch remote work.",
+    "ports": "Function results are typed in-memory ports; main.py serializes them at the declared artifact paths. Adapters invoke existing generators with their real CLI parameters."
+  }
+}

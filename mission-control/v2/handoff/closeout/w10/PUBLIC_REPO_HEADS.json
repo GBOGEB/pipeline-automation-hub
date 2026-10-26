@@ -1,0 +1,62 @@
+{
+  "schema": "code_purple.w10.public_safe_source_heads.v1",
+  "captured_date_utc": "2026-10-18",
+  "snapshot_atomic": false,
+  "repo_heads": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "branch": "main",
+      "observed_sha": "9e0200190555736c74295ee74881e3c003e8a35c",
+      "visibility": "PUBLIC",
+      "protection_observed": true,
+      "effective_required_rules_verified": false
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "branch": "main",
+      "observed_sha": "0b313c2ec3fc48f1c6cf6920e7a5636c161746c3",
+      "visibility": "PUBLIC",
+      "protection_observed": false,
+      "effective_required_rules_verified": false
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "branch": "master",
+      "observed_sha": "2cc9b4d433c404b50d7afc661f863b96d42e97cc",
+      "visibility": "PUBLIC",
+      "protection_observed": false,
+      "effective_required_rules_verified": false
+    },
+    {
+      "repo": "GBOGEB/gg_MATH",
+      "branch": "main",
+      "observed_sha": "7ce2e3832357c0b87ab17ff439f4d6e84c0292a4",
+      "visibility": "PUBLIC",
+      "protection_observed": false,
+      "effective_required_rules_verified": false
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "branch": "main",
+      "observed_sha": null,
+      "visibility": "RESTRICTED_OWNER_RETURN",
+      "protection_observed": null,
+      "effective_required_rules_verified": false
+    }
+  ],
+  "source_owner_routes": {
+    "ABACUS": "GBOGEB/ABACUS:tools/handover_v2/process_spec.json",
+    "CODEX": "GBOGEB/CODEX:MYCELIUM semantic graph and native CI",
+    "MISSION_CONTROL": "GBOGEB/pipeline-automation-hub:mission-control/v2/handoff/closeout/cp_close.py",
+    "GG_MATH": "GBOGEB/gg_MATH:domain owner MIP/Math native receipt",
+    "QPS": "RESTRICTED_ONLY_AUTHORIZED_QPS_C2_ACCEPTANCE"
+  },
+  "records": [
+    "OBSERVED_NOT_CURRENT_AT_RESTART",
+    "PRIVATE_QPS_SHA_REDACTED_FROM_PUBLIC"
+  ],
+  "transcript_verbatim_available": false,
+  "admission": "HOLD",
+  "security_waiver": false,
+  "authority_transfer": false
+}

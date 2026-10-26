@@ -1,0 +1,248 @@
+name: CODE PURPLE Mycelium History Testflight
+
+on:
+  pull_request:
+    paths:
+      - "mission-control/gogreen/mycelium_history/**"
+      - ".github/workflows/code-purple-mycelium-history.yml"
+  push:
+    branches: [master]
+    paths:
+      - "mission-control/gogreen/mycelium_history/**"
+      - ".github/workflows/code-purple-mycelium-history.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  checks: read
+  pull-requests: read
+
+concurrency:
+  group: mycelium-history-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  native:
+    name: Python ${{ matrix.python-version }} history contracts
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Test native lineage and coverage
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          SRC=mission-control/gogreen/mycelium_history
+          PYTHONPATH="$SRC" python -m coverage run --branch --source=collect,history \
+            -m unittest discover -s "$SRC/tests" -p 'test_history.py' -v \
+            2>&1 | tee w6-history-tests.log
+          grep -Eq '^Ran (5[0-9]|[6-9][0-9]|[1-9][0-9][0-9]+) tests?' w6-history-tests.log
+          python -m coverage json -o w6-history-coverage.json
+          python -m coverage report --show-missing --fail-under=80
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path("w6-history-coverage.json").read_text())["totals"]
+          if data["num_statements"] == 0 or data["num_branches"] == 0:
+              raise SystemExit("MYCELIUM_HOLD: zero statement/branch denominator")
+          if (100 * data["covered_lines"] < 80 * data["num_statements"] or
+              100 * data["covered_branches"] < 80 * data["num_branches"]):
+              raise SystemExit("MYCELIUM_HOLD: statement or branch coverage below 80%")
+          print("STATEMENTS",data["covered_lines"],"/",data["num_statements"])
+          print("BRANCHES",data["covered_branches"],"/",data["num_branches"])
+          PY
+      - if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: mycelium-history-testflight-${{ matrix.python-version }}-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            w6-history-tests.log
+            w6-history-coverage.json
+          if-no-files-found: warn
+
+  history-census:
+    name: CODEX 660-run GET-only history and deterministic preview
+    needs: native
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Collect and project bounded native source
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          SRC=mission-control/gogreen/mycelium_history
+          python "$SRC/collect.py" --output dist/history/native.json \
+            --max-runs 1000 --job-detail-limit 160 --failure-log-limit 18
+          python "$SRC/history.py" --input dist/history/native.json \
+            --source-sha "$SOURCE_SHA" --out dist/preview
+          python "$SRC/history.py" --input dist/history/native.json \
+            --source-sha "$SOURCE_SHA" --out dist/preview --check
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          p=Path("dist/preview")
+          manifest=json.loads((p/"manifest.json").read_text())
+          for name,digest in manifest["file_sha256"].items():
+              if hashlib.sha256((p/name).read_bytes()).hexdigest()!=digest:
+                  raise SystemExit("MYCELIUM_HOLD: byte manifest mismatch")
+          metrics=json.loads((p/"metrics.json").read_text())
+          scope=metrics["run_population"]
+          receipt={
+            "schema":"mycelium.history.native_ci.v1",
+            "hub_source_sha":os.environ["SOURCE_SHA"],
+            "run_id":int(os.environ["GITHUB_RUN_ID"]),
+            "run_attempt":int(os.environ["GITHUB_RUN_ATTEMPT"]),
+            "job_id":None,
+            "run_population":[scope["observed"],scope["eligible_api_reported"]],
+            "run_population_complete":scope["complete"],
+            "sampled_job_count":metrics["job_detail"]["observed_run_records"],
+            "symptom_occurrences":metrics["first_red"]["sampled_occurrences"],
+            "distinct_fingerprints":metrics["first_red"]["sampled_distinct_fingerprints"],
+            "accepted_roots":0,
+            "artifact_zip_and_member_bytes_independently_verified":False,
+            "public_pages_deployed":False,"admission":"HOLD"
+          }
+          (p/"native_ci.json").write_text(json.dumps(receipt,indent=2,sort_keys=True)+"\n")
+          with open(os.environ["GITHUB_STEP_SUMMARY"],"a") as f:
+              f.write("### CODE PURPLE Mycelium historical census\n")
+              f.write(f"- Workflow runs {scope['observed']}/{scope['eligible_api_reported']}")
+              f.write(" COMPLETE_AT_CAPTURE\n" if scope["complete"] else " PARTIAL_OR_NONATOMIC\n")
+              f.write(f"- Failed {scope['failed']}, sampled first-red occurrences "
+                      f"{receipt['symptom_occurrences']}, fingerprints "
+                      f"{receipt['distinct_fingerprints']}\n")
+              f.write("- Formal root closure 0. No Pages deployment or merge authorization.\n")
+          PY
+      - if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: code-purple-mycelium-history-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/history/native.json
+            dist/preview/
+          if-no-files-found: warn
+
+  annotated-green-w10:
+    name: W10 CODEX annotated-GREEN Python ${{ matrix.python }}
+    # W10 uses independent exact-head GET-only evidence; do not block its
+    # deterministic tests behind the separate historical producer queue.
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact additive W10 head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Native W10 adversarial metadata and permission-denial contracts
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          SRC=mission-control/gogreen/mycelium_history
+          PYTHONPATH="$SRC" python -m coverage run --branch --source=annotated_green \
+            -m unittest discover -s "$SRC/tests" -p "test_annotated_green.py" -v \
+            2>&1 | tee w10-checks-tests.log
+          grep -Eq '^Ran (3[0-9]|[4-9][0-9]|[1-9][0-9][0-9]+) tests?' w10-checks-tests.log
+          python -m coverage json -o w10-checks-coverage.json
+          python -m coverage report --show-missing
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          c=json.loads(Path("w10-checks-coverage.json").read_text())["totals"]
+          if not c["num_statements"] or not c["num_branches"]:
+              raise SystemExit("W10_HOLD: missing native scope denominators")
+          print("W10_NATIVE_STATEMENTS",c["covered_lines"],"/",c["num_statements"])
+          print("W10_NATIVE_BRANCHES",c["covered_branches"],"/",c["num_branches"])
+          if (100 * c["covered_lines"] < 80 * c["num_statements"] or
+              100 * c["covered_branches"] < 80 * c["num_branches"]):
+              raise SystemExit("W10_HOLD: annotated_green.py scoped statements or branches below 80%")
+          PY
+      - name: Read native check runs and annotation severity or explicit UNKNOWN
+        if: matrix.python == '3.12'
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          SRC=mission-control/gogreen/mycelium_history
+          python "$SRC/annotated_green.py" --output dist/w10/annotated_green.json \
+            --source-sha "$SOURCE_SHA"
+          python "$SRC/annotated_green.py" --output dist/w10/annotated_green.json \
+            --source-sha "$SOURCE_SHA" --validate
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          file=Path("dist/w10/annotated_green.json")
+          d=json.loads(file.read_text())
+          manifest={
+              "schema":"missioncontrol.mycelium.w10.native_append_artifact.v1",
+              "hub_head":os.environ["SOURCE_SHA"],
+              "run_id":int(os.environ["GITHUB_RUN_ID"]),
+              "run_attempt":int(os.environ["GITHUB_RUN_ATTEMPT"]),
+              "job_id":None,
+              "member":"annotated_green.json",
+              "member_size":len(file.read_bytes()),
+              "member_sha256":hashlib.sha256(file.read_bytes()).hexdigest(),
+              "zip_and_member_bytes_independently_verified":False,
+              "cross_repo_coverage":None,
+              "merge_admission":"HOLD",
+              "root_closures":0
+          }
+          Path("dist/w10/manifest.json").write_text(
+              json.dumps(manifest,sort_keys=True,indent=2)+"\n")
+          with open(os.environ["GITHUB_STEP_SUMMARY"],"a") as out:
+              out.write("### CODE PURPLE W10: annotated-GREEN read-only return\n")
+              for item in d["source_bound_cohorts"]:
+                  m=item["metrics"]
+                  title=(str(item["pr"]) if item["pr"] else "current CODEX main")
+                  if m is None:
+                      out.write(f"- {title}: {item['availability']}; counts UNKNOWN\n")
+                  else:
+                      out.write(f"- {title}: {m['successful_annotated_checks_observed']}/"
+                                f"{m['successful_checks']} successful check runs with "
+                                ">=1 annotation (any level); error severity "
+                                +("sample-observed" if
+                                  m["detail_severity_verified_check_count"]
+                                  else "UNKNOWN")+"\n")
+              out.write("- Merge admission HOLD; no change to W9 accepted facts.\n")
+          PY
+      - name: Stage W10 native read-only appendix (no Pages)
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: mycelium-annotated-green-w10-py${{ matrix.python }}-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/w10/
+            w10-checks-tests.log
+            w10-checks-coverage.json
+          if-no-files-found: warn

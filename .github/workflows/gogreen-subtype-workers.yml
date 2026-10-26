@@ -16,6 +16,11 @@ on:
       - "mission-control/gogreen/bd_queue_wave.py"
       - "mission-control/gogreen/tests/test_bd_queue_wave.py"
       - "mission-control/gogreen/BD_QUEUE_WAVE.md"
+      - "mission-control/gogreen/qbd_contract.py"
+      - "mission-control/gogreen/tests/test_qbd_contract.py"
+      - "mission-control/gogreen/QBD_W49_PUBLIC_DISJOINT_COHORT_20261019.json"
+      - "mission-control/gogreen/QBD_W49_PUBLIC_83_ISSUE_REVIEW_20261019.json"
+      - "mission-control/gogreen/QBD_W49_PUBLIC_EXECUTION_SPINE.mmd"
       - "mission-control/golden-thread/dependency_recompute.py"
       - "mission-control/golden-thread/fixtures/GT_BD_002_REAL_CONE_BATCH001_v1.json"
       - "mission-control/golden-thread/fixtures/GT_BD_011_BOOTSTRAP_BATCH001_20260917.json"
@@ -29,7 +34,7 @@ jobs:
   subtype-plan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
@@ -125,6 +130,14 @@ jobs:
           print(json.dumps({'status':'ACTUAL_EXECUTION_PASS','files':sorted(files),
            'observed_occurrences':receipt['occurrences'],'exact_sha':receipt['source_sha']},sort_keys=True))
           PY
+      - name: QBD public-safe structural and negative TestFlight
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/gogreen/tests -p 'test_qbd_contract.py' -v
+          python mission-control/gogreen/qbd_contract.py \
+            --input mission-control/gogreen/QBD_W49_PUBLIC_DISJOINT_COHORT_20261019.json \
+            --issue-review mission-control/gogreen/QBD_W49_PUBLIC_83_ISSUE_REVIEW_20261019.json
       - name: Branch-aware BD census regression coverage
         shell: bash
         run: |
@@ -201,27 +214,27 @@ jobs:
           assert d["kpi"]["proof_pending"] == 8
           assert d["schedule"]["waves_planned"] == 3
           PY
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: cbd-subtype-receipt-${{ github.event.pull_request.head.sha || github.sha }}
           path: ${{ runner.temp }}/cbd-subtype/
           if-no-files-found: error
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: cbd-rerun-triage-${{ github.event.pull_request.head.sha || github.sha }}
           path: ${{ runner.temp }}/cbd-rerun/
           if-no-files-found: error
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: cbd-sipoc-instance-dag-${{ github.event.pull_request.head.sha || github.sha }}
           path: ${{ runner.temp }}/cbd-sipoc/
           if-no-files-found: error
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: cbd-real-cone-execution-${{ github.event.pull_request.head.sha || github.sha }}
           path: ${{ runner.temp }}/cbd-realcone/
           if-no-files-found: error
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: code-purple-bd-live-${{ github.event.pull_request.head.sha || github.sha }}
           path: ${{ runner.temp }}/cbd-live-bd/

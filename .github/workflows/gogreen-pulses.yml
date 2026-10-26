@@ -8,7 +8,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: gogreen-g4-${{ github.ref }}
+  group: gogreen-wave-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -18,12 +18,12 @@ jobs:
     timeout-minutes: 7
     steps:
       - name: Checkout immutable exact head
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Python 3.12
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
         with:
           python-version: '3.12'
       - name: Install pinned GoGREEN receipt-signature dependency
@@ -71,6 +71,50 @@ jobs:
             --input mission-control/gogreen/samples/wave_timeline.json \
             --out "$RUNNER_TEMP/gogreen-pulses" \
             --source-sha "$EXPECTED_SHA"
+      - name: W32 canonical six-repo bounded pull and empty-push packet QA
+        shell: bash
+        run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="W32 canonical six-repo bounded pull and empty-push packet QA" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
+          set -euo pipefail
+          EXPECTED_SHA="$(git rev-parse HEAD)"
+          export EXPECTED_SHA
+          OUT="$RUNNER_TEMP/gogreen-pulses"
+          mkdir -p "$OUT/census-packets"
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          COVERAGE_FILE="$OUT/.w32" python -m coverage run --branch \
+            --include='*/mission-control/gogreen/census_packets.py' \
+            -m unittest discover -s mission-control/gogreen/tests \
+            -p test_census_packets.py -v > "$OUT/w32_packet_tests.log" 2>&1
+          cat "$OUT/w32_packet_tests.log"
+          COVERAGE_FILE="$OUT/.w32" python -m coverage json -q -o "$OUT/w32_packet_coverage.json"
+          python mission-control/gogreen/census_packets.py \
+            --rollup "$OUT/pulse_rollup.json" --out "$OUT/census-packets" --head "$EXPECTED_SHA"
+          python mission-control/gogreen/census_packets.py \
+            --rollup "$OUT/pulse_rollup.json" --out "$OUT/census-packets" \
+            --head "$EXPECTED_SHA" --verify-only
+          python - <<'PY'
+          import json,os,re
+          from pathlib import Path
+          out=Path(os.environ["RUNNER_TEMP"])/"gogreen-pulses"
+          log=(out/"w32_packet_tests.log").read_text()
+          n=re.findall(r"Ran (\d+) tests? in",log)
+          assert len(n)==1 and int(n[0])>=16 and "\nOK" in log
+          p=json.loads((out/"census-packets"/"pull-plan.json").read_text())
+          e=json.loads((out/"census-packets"/"empty-push.json").read_text())
+          cov=json.loads((out/"w32_packet_coverage.json").read_text())["totals"]
+          assert p["producer_head"]==os.environ["EXPECTED_SHA"]
+          assert p["packet_count"]==6 and p["conservative_new_lane_cap"]==1
+          assert len({r["repo"] for r in p["packets"]})==6
+          assert e["emissions"]==[] and e["packets_executed"]==0
+          assert p["actual_worker_capacity"] is None
+          assert p["cross_repo_coverage_gain"] is None
+          assert cov["num_statements"]>0 and cov["num_branches"]>0
+          print(json.dumps({"tests_executed":int(n[0]),
+             "scoped_statements":[cov["covered_lines"],cov["num_statements"]],
+             "scoped_branches":[cov["covered_branches"],cov["num_branches"]],
+             "packets_planned":6,"packets_dispatched":0,
+             "formal_acceptance":"HOLD"},sort_keys=True))
+          PY
       - name: G4 comparable focused module coverage
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -194,7 +238,7 @@ jobs:
           PY
       - name: Upload evidence without mutation
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: gogreen-g4-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
           path: ${{ runner.temp }}/gogreen-pulses/

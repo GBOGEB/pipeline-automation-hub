@@ -1,0 +1,1768 @@
+{
+  "schema": "code-purple.issue-expedition.delta.v1",
+  "as_of_utc": "2026-10-17T18:58:12.551Z",
+  "baseline": {
+    "snapshot_ref": "mission-control/issue-expedition/evidence/GBOGEB_ISSUE_PULSE_20261017.json",
+    "readback_at": "2026-10-17T18:11:56.309Z",
+    "issue_count": 152
+  },
+  "current": {
+    "open_count": 142,
+    "per_repo": {
+      "GBOGEB/ABACUS": 38,
+      "GBOGEB/CODEX": 10,
+      "GBOGEB/cryoplant-project": 56,
+      "GBOGEB/document-organization-system": 1,
+      "GBOGEB/DOCX_RTM_Automation": 1,
+      "GBOGEB/GEMINI": 2,
+      "GBOGEB/gg_MATH": 1,
+      "GBOGEB/pipeline-automation-hub": 32,
+      "GBOGEB/Q_engineering_tools": 1
+    },
+    "age_distribution": {
+      "within7d": 35,
+      "d7to13": 1,
+      "d14to29": 37,
+      "d30plus": 69
+    },
+    "search_pages": [
+      1,
+      2
+    ],
+    "search_endpoint": "GitHub REST search/issues",
+    "partial": false,
+    "incomplete_results": false
+  },
+  "delta": {
+    "new_issues": 0,
+    "closed_issues": 10,
+    "net_open_change": -10,
+    "verified_close_reasons": {
+      "duplicate": 9,
+      "completed": 1
+    },
+    "causal_engineering_roots_closed": 0,
+    "issue_closures_executed_by_this_assistant": 0,
+    "unattributed_prior_153_to_152_transition": "ABACUS#1864 completed at 2026-10-17T18:06:47Z before base snapshot"
+  },
+  "closed_receipts": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1447,
+      "title": "🚨 Dashboard health check failure — 2026-09-28",
+      "reason": "duplicate",
+      "closed_at": "2026-10-17T18:12:52Z",
+      "created_at": "2026-09-28T06:44:02Z",
+      "state": "closed"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1469,
+      "title": "🚨 Dashboard health check failure — 2026-09-29",
+      "reason": "duplicate",
+      "closed_at": "2026-10-17T18:12:59Z",
+      "created_at": "2026-09-29T06:32:33Z",
+      "state": "closed"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1481,
+      "title": "🚨 Dashboard health check failure — 2026-09-30",
+      "reason": "duplicate",
+      "closed_at": "2026-10-17T18:13:06Z",
+      "created_at": "2026-09-30T06:32:48Z",
+      "state": "closed"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1543,
+      "title": "🚨 Dashboard health check failure — 2026-10-01",
+      "reason": "duplicate",
+      "closed_at": "2026-10-17T18:13:20Z",
+      "created_at": "2026-10-01T06:33:29Z",
+      "state": "closed"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1641,
+      "title": "🚨 Dashboard health check failure — 2026-10-02",
+      "reason": "duplicate",
+      "closed_at": "2026-10-17T18:13:27Z",
+      "created_at": "2026-10-02T06:31:55Z",
+      "state": "closed"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1707,
+      "title": "🚨 Dashboard health check failure — 2026-10-03",
+      "reason": "duplicate",
+      "closed_at": "2026-10-17T18:13:33Z",
+      "created_at": "2026-10-03T06:31:06Z",
+      "state": "closed"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1763,
+      "title": "🚨 Dashboard health check failure — 2026-10-04",
+      "reason": "duplicate",
+      "closed_at": "2026-10-17T18:13:47Z",
+      "created_at": "2026-10-04T08:10:02Z",
+      "state": "closed"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1803,
+      "title": "🚨 Dashboard health check failure — 2026-10-05",
+      "reason": "duplicate",
+      "closed_at": "2026-10-17T18:13:54Z",
+      "created_at": "2026-10-05T06:46:42Z",
+      "state": "closed"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1845,
+      "title": "🚨 Dashboard health check failure — 2026-10-06",
+      "reason": "duplicate",
+      "closed_at": "2026-10-17T18:14:00Z",
+      "created_at": "2026-10-06T06:33:33Z",
+      "state": "closed"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1865,
+      "title": "[DAB T2] Unit-test matrix signature census",
+      "reason": "completed",
+      "closed_at": "2026-10-17T18:14:25Z",
+      "created_at": "2026-10-11T22:10:09Z",
+      "state": "closed"
+    }
+  ],
+  "live_issues": [
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 633,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/633",
+      "title": "GOV-001: QPS cost roundtrip implementation waves W002-W005",
+      "created_at": "2026-08-27T19:39:41Z",
+      "updated_at": "2026-09-21T12:38:16Z",
+      "labels": [],
+      "comments": 7,
+      "age_hours": 1223
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 635,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/635",
+      "title": "[GOV-001][Phase 2] Reproducible clean-clone build and evidence binding",
+      "created_at": "2026-08-27T19:50:06Z",
+      "updated_at": "2026-08-31T04:23:26Z",
+      "labels": [],
+      "comments": 11,
+      "age_hours": 1223
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 636,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/636",
+      "title": "[GOV-001][Phase 3] Immutable OneDrive publication and Office review copy",
+      "created_at": "2026-08-27T19:50:18Z",
+      "updated_at": "2026-08-28T21:09:59Z",
+      "labels": [],
+      "comments": 5,
+      "age_hours": 1223
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 637,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/637",
+      "title": "[GOV-001][Phase 4] Office review assimilation and controlled rebuild",
+      "created_at": "2026-08-27T19:50:27Z",
+      "updated_at": "2026-08-27T20:12:30Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 1223
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 644,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/644",
+      "title": "QPS OCD/ADR bridge: binary parsing feedback and federated roll-up contract",
+      "created_at": "2026-08-28T11:33:02Z",
+      "updated_at": "2026-09-26T06:37:08Z",
+      "labels": [],
+      "comments": 5,
+      "age_hours": 1207
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 667,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/667",
+      "title": "Mature DOW into typed bidirectional engineering feedback service",
+      "created_at": "2026-08-29T11:30:07Z",
+      "updated_at": "2026-09-22T17:03:40Z",
+      "labels": [],
+      "comments": 5,
+      "age_hours": 1183
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 785,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/785",
+      "title": "QPS program focus: DOW coverage across engineering domains",
+      "created_at": "2026-08-31T05:49:09Z",
+      "updated_at": "2026-09-15T14:59:32Z",
+      "labels": [],
+      "comments": 12,
+      "age_hours": 1141
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 981,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/981",
+      "title": "ABACUS 1000+ commit maturity milestone: convert repository volume into controlled release readiness",
+      "created_at": "2026-09-08T01:41:36Z",
+      "updated_at": "2026-09-24T13:53:56Z",
+      "labels": [
+        "milestone",
+        "control",
+        "release-readiness",
+        "qps-parent"
+      ],
+      "comments": 1,
+      "age_hours": 953
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1164,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1164",
+      "title": "MC-2 DOW worker: measured semantic/runtime federation telemetry → PCA/BT allocation input",
+      "created_at": "2026-09-13T13:34:36Z",
+      "updated_at": "2026-10-13T13:53:02Z",
+      "labels": [],
+      "comments": 29,
+      "age_hours": 821
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1278,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1278",
+      "title": "REX-CM-005 / HIST-BD-018: bind CI governance red to merge admission",
+      "created_at": "2026-09-18T13:33:17Z",
+      "updated_at": "2026-10-17T18:08:10Z",
+      "labels": [],
+      "comments": 28,
+      "age_hours": 701
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1313,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1313",
+      "title": "QPS Line-S closure: reconcile RTM traceability and Appendix 8.4 valve-state evidence",
+      "created_at": "2026-09-21T11:04:20Z",
+      "updated_at": "2026-09-28T16:45:33Z",
+      "labels": [],
+      "comments": 5,
+      "age_hours": 631
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1369,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1369",
+      "title": "PROVE: synchronized exact-head TRIAGE cluster receipt for W62/W64/W7x/W8x",
+      "created_at": "2026-09-26T06:36:51Z",
+      "updated_at": "2026-09-26T16:45:13Z",
+      "labels": [],
+      "comments": 18,
+      "age_hours": 516
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1488,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1488",
+      "title": "GM14 DAB-HARD: classify and burn down semantic Flake8 debt",
+      "created_at": "2026-09-30T08:13:46Z",
+      "updated_at": "2026-10-13T15:13:03Z",
+      "labels": [],
+      "comments": 40,
+      "age_hours": 418
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1566,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1566",
+      "title": "GM14 B1: measured false-green workflow governance burn-down",
+      "created_at": "2026-10-01T11:30:34Z",
+      "updated_at": "2026-10-16T06:33:38Z",
+      "labels": [],
+      "comments": 4,
+      "age_hours": 391
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1609,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1609",
+      "title": "DAB-BD8K: Wave 2-4 scaled burn-down and semantic hardening plan",
+      "created_at": "2026-10-01T19:21:36Z",
+      "updated_at": "2026-10-02T07:23:29Z",
+      "labels": [],
+      "comments": 15,
+      "age_hours": 383
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1660,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1660",
+      "title": "INFRA/CHECK: lossless W70 retention batching to stop Actions fan-out backlog",
+      "created_at": "2026-10-02T09:12:51Z",
+      "updated_at": "2026-10-17T18:42:35Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 369
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1736,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1736",
+      "title": "CI: close dependency-review snapshot gap on PR heads",
+      "created_at": "2026-10-03T14:28:35Z",
+      "updated_at": "2026-10-17T13:14:02Z",
+      "labels": [
+        "ci",
+        "governance"
+      ],
+      "comments": 1,
+      "age_hours": 340
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1738,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1738",
+      "title": "CI: classify and close baseline Bandit/Safety full-red security findings",
+      "created_at": "2026-10-03T14:46:47Z",
+      "updated_at": "2026-10-17T13:14:30Z",
+      "labels": [],
+      "comments": 20,
+      "age_hours": 340
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1846,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1846",
+      "title": "SECURITY-DEFER: Codex review backlog control",
+      "created_at": "2026-10-06T08:00:40Z",
+      "updated_at": "2026-10-06T08:00:40Z",
+      "labels": [],
+      "comments": 0,
+      "age_hours": 274
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1860,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1860",
+      "title": "ABACUS merge-admission HOLD: exact-head findings, manual review and resume queue",
+      "created_at": "2026-10-11T21:27:12Z",
+      "updated_at": "2026-10-17T18:56:53Z",
+      "labels": [],
+      "comments": 365,
+      "age_hours": 141
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1863,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1863",
+      "title": "P2 #1855: re-run live reciprocal federation probe before accepting activation",
+      "created_at": "2026-10-11T21:36:07Z",
+      "updated_at": "2026-10-11T23:36:26Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 141
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1866,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1866",
+      "title": "[DAB T3] Canonical coverage evidence",
+      "created_at": "2026-10-11T22:10:11Z",
+      "updated_at": "2026-10-17T18:17:12Z",
+      "labels": [],
+      "comments": 3,
+      "age_hours": 140
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1867,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1867",
+      "title": "[DAB T4] Proof role propagation and compatibility",
+      "created_at": "2026-10-11T22:10:13Z",
+      "updated_at": "2026-10-15T06:14:46Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 140
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1868,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1868",
+      "title": "[DAB R1] Codex ratchet false-green and rename baseline",
+      "created_at": "2026-10-11T22:10:15Z",
+      "updated_at": "2026-10-17T18:14:23Z",
+      "labels": [],
+      "comments": 2,
+      "age_hours": 140
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1874,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1874",
+      "title": "ci(py-runtime): reconcile Python support matrix and pin modern dependency/toolchain canaries",
+      "created_at": "2026-10-12T10:53:56Z",
+      "updated_at": "2026-10-17T18:56:55Z",
+      "labels": [],
+      "comments": 6,
+      "age_hours": 128
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1877,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1877",
+      "title": "CODE PURPLE: incremental CI evidence reuse, deferred proof ledger and first-red scheduling",
+      "created_at": "2026-10-12T13:33:34Z",
+      "updated_at": "2026-10-16T16:42:23Z",
+      "labels": [],
+      "comments": 39,
+      "age_hours": 125
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1885,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1885",
+      "title": "🚨 Dashboard health check failure — 2026-10-13",
+      "created_at": "2026-10-13T06:35:38Z",
+      "updated_at": "2026-10-17T18:56:57Z",
+      "labels": [
+        "bug",
+        "dashboard"
+      ],
+      "comments": 17,
+      "age_hours": 108
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1929,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1929",
+      "title": "BD–LDAB joined root-cause census: exact-SHA evidence, debugger lineage and comparable burndown",
+      "created_at": "2026-10-14T08:13:14Z",
+      "updated_at": "2026-10-17T18:54:50Z",
+      "labels": [],
+      "comments": 121,
+      "age_hours": 82
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1944,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1944",
+      "title": "CODE PURPLE / GHAS–Semgrep review debt ledger: verified fixes, deferred P2 roots and recertification",
+      "created_at": "2026-10-14T12:00:47Z",
+      "updated_at": "2026-10-14T12:00:47Z",
+      "labels": [],
+      "comments": 0,
+      "age_hours": 78
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1978,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1978",
+      "title": "P0 Mission Control Lite — governed security hardening and 14-package burndown",
+      "created_at": "2026-10-14T18:43:06Z",
+      "updated_at": "2026-10-17T16:45:18Z",
+      "labels": [],
+      "comments": 17,
+      "age_hours": 72
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1991,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1991",
+      "title": "MIP COVERAGE SCALE — disjoint C0-C5 native test waves and scope-matched telemetry",
+      "created_at": "2026-10-15T06:06:26Z",
+      "updated_at": "2026-10-17T18:12:11Z",
+      "labels": [],
+      "comments": 29,
+      "age_hours": 60
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 1996,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1996",
+      "title": "P0 A10 confidentiality disposition for CI policy and generated workflow inventory (#1995)",
+      "created_at": "2026-10-15T08:03:38Z",
+      "updated_at": "2026-10-17T18:12:16Z",
+      "labels": [],
+      "comments": 4,
+      "age_hours": 58
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 2049,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/2049",
+      "title": "EVERRED: close formatter baseline/CI contract root without masking CENSUS evidence",
+      "created_at": "2026-10-16T08:06:59Z",
+      "updated_at": "2026-10-17T18:43:16Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 34
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 2079,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/2079",
+      "title": "GoGREEN: classify shared required-check roots and unblock core-intent PR merges",
+      "created_at": "2026-10-16T19:27:56Z",
+      "updated_at": "2026-10-17T16:02:25Z",
+      "labels": [],
+      "comments": 3,
+      "age_hours": 23
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 2087,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/2087",
+      "title": "Governance first-red: classify 3 workflows and regenerate canonical rationalization",
+      "created_at": "2026-10-16T20:33:37Z",
+      "updated_at": "2026-10-17T18:08:26Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 22
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 2088,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/2088",
+      "title": "MIP #2033 formatting root: seven Black findings plus isort ratchet",
+      "created_at": "2026-10-16T20:37:09Z",
+      "updated_at": "2026-10-16T20:37:09Z",
+      "labels": [],
+      "comments": 0,
+      "age_hours": 22
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 2110,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/2110",
+      "title": "CBD Golden Graph PULSE-01–03: Python integrity, SVG QA and Mission Control bridge",
+      "created_at": "2026-10-17T10:36:30Z",
+      "updated_at": "2026-10-17T13:47:30Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 8
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "issue_number": 2136,
+      "url": "https://github.com/GBOGEB/ABACUS/issues/2136",
+      "title": "CBD/EVERRED HTML QA adoption — browser interactions, directed graph links and pixel regression",
+      "created_at": "2026-10-17T14:54:12Z",
+      "updated_at": "2026-10-17T14:54:12Z",
+      "labels": [],
+      "comments": 0,
+      "age_hours": 4
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "issue_number": 319,
+      "url": "https://github.com/GBOGEB/CODEX/issues/319",
+      "title": "DMAIC wave control: PR-to-PR progress, queue recovery and governance repairs",
+      "created_at": "2026-08-31T05:35:50Z",
+      "updated_at": "2026-10-13T14:09:35Z",
+      "labels": [],
+      "comments": 29,
+      "age_hours": 1141
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "issue_number": 324,
+      "url": "https://github.com/GBOGEB/CODEX/issues/324",
+      "title": "QPS program focus: KEB semantic/evidence coverage across engineering domains",
+      "created_at": "2026-08-31T05:49:16Z",
+      "updated_at": "2026-10-15T10:43:32Z",
+      "labels": [],
+      "comments": 15,
+      "age_hours": 1141
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "issue_number": 500,
+      "url": "https://github.com/GBOGEB/CODEX/issues/500",
+      "title": "TRIAGE conversion gate: governance green + production zero-delta",
+      "created_at": "2026-09-08T03:09:15Z",
+      "updated_at": "2026-09-24T13:25:35Z",
+      "labels": [],
+      "comments": 5,
+      "age_hours": 951
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "issue_number": 753,
+      "url": "https://github.com/GBOGEB/CODEX/issues/753",
+      "title": "QPS v6 publication lane: consolidate Pages and release provenance",
+      "created_at": "2026-09-16T21:19:41Z",
+      "updated_at": "2026-10-12T00:14:45Z",
+      "labels": [],
+      "comments": 13,
+      "age_hours": 741
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "issue_number": 879,
+      "url": "https://github.com/GBOGEB/CODEX/issues/879",
+      "title": "MissionControl owner dispatch control",
+      "created_at": "2026-09-30T16:52:46Z",
+      "updated_at": "2026-10-05T10:26:14Z",
+      "labels": [],
+      "comments": 11,
+      "age_hours": 410
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "issue_number": 977,
+      "url": "https://github.com/GBOGEB/CODEX/issues/977",
+      "title": "MissionControl execution promotion: authenticated crew dispatch for ABACUS first merge",
+      "created_at": "2026-10-11T22:17:39Z",
+      "updated_at": "2026-10-17T18:48:24Z",
+      "labels": [],
+      "comments": 63,
+      "age_hours": 140
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "issue_number": 989,
+      "url": "https://github.com/GBOGEB/CODEX/issues/989",
+      "title": "CODE PURPLE Control telemetry: verified Pages feed, LDAB/BD counts and QPS REX intake",
+      "created_at": "2026-10-12T14:09:31Z",
+      "updated_at": "2026-10-17T16:27:30Z",
+      "labels": [],
+      "comments": 120,
+      "age_hours": 124
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "issue_number": 991,
+      "url": "https://github.com/GBOGEB/CODEX/issues/991",
+      "title": "CODE PURPLE #990 admission HOLD: independent security reviewer needed (Codex quota)",
+      "created_at": "2026-10-12T16:23:32Z",
+      "updated_at": "2026-10-13T11:59:52Z",
+      "labels": [],
+      "comments": 5,
+      "age_hours": 122
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "issue_number": 1037,
+      "url": "https://github.com/GBOGEB/CODEX/issues/1037",
+      "title": "P0 post-merge CODE PURPLE reader: repair first-reds, recensus and restore protected admission",
+      "created_at": "2026-10-14T12:33:57Z",
+      "updated_at": "2026-10-17T18:08:52Z",
+      "labels": [],
+      "comments": 33,
+      "age_hours": 78
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "issue_number": 1067,
+      "url": "https://github.com/GBOGEB/CODEX/issues/1067",
+      "title": "KEB/Zod HTML QA bridge — schema-aligned review views and safe federation links",
+      "created_at": "2026-10-17T14:54:14Z",
+      "updated_at": "2026-10-17T14:54:14Z",
+      "labels": [],
+      "comments": 0,
+      "age_hours": 4
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 6,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/6",
+      "title": "Security maintenance: purge archived ABACUS binaries from historical refs",
+      "created_at": "2026-08-27T20:16:13Z",
+      "updated_at": "2026-08-27T20:52:50Z",
+      "labels": [],
+      "comments": 2,
+      "age_hours": 1222
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 72,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/72",
+      "title": "RFI-QPS-WSH-01: Bind governed QPS and LINAC_30 helium inventory values",
+      "created_at": "2026-08-29T09:20:20Z",
+      "updated_at": "2026-09-06T20:24:26Z",
+      "labels": [],
+      "comments": 2,
+      "age_hours": 1185
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 75,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/75",
+      "title": "RFI-QPS-CC-01: Bind cold-compressor common-cause and shared-dependency evidence",
+      "created_at": "2026-08-29T09:30:43Z",
+      "updated_at": "2026-09-23T16:13:48Z",
+      "labels": [],
+      "comments": 10,
+      "age_hours": 1185
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 79,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/79",
+      "title": "RFI-QPS-HP-01: Close bidder HP N-1 service-state and common-cause evidence",
+      "created_at": "2026-08-29T09:39:34Z",
+      "updated_at": "2026-10-04T07:30:53Z",
+      "labels": [],
+      "comments": 6,
+      "age_hours": 1185
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 82,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/82",
+      "title": "RFI-QPS-PVPS-01: Close bidder PVPS N+1 capacity and service-state evidence",
+      "created_at": "2026-08-29T09:46:00Z",
+      "updated_at": "2026-09-14T14:53:33Z",
+      "labels": [],
+      "comments": 8,
+      "age_hours": 1185
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 85,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/85",
+      "title": "RFI-QPS-TURB-01: Close turbine position, trip-consequence and recovery evidence",
+      "created_at": "2026-08-29T09:51:40Z",
+      "updated_at": "2026-09-21T12:29:54Z",
+      "labels": [],
+      "comments": 4,
+      "age_hours": 1185
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 87,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/87",
+      "title": "RFI-QPS-RECOVERY-01: Close LOOP / Line-S / shared-recovery contributor evidence",
+      "created_at": "2026-08-29T10:56:27Z",
+      "updated_at": "2026-09-21T18:03:30Z",
+      "labels": [],
+      "comments": 4,
+      "age_hours": 1184
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 207,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/207",
+      "title": "Negotiation gate: current-state gap matrix, RFIs and SSOT vs inferred evidence",
+      "created_at": "2026-08-31T09:42:59Z",
+      "updated_at": "2026-09-21T14:42:43Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 1137
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 208,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/208",
+      "title": "RFI-QPS-3D-01: Clarify bidder 3D model, spatial integration and maintenance-access evidence",
+      "created_at": "2026-08-31T09:43:15Z",
+      "updated_at": "2026-09-21T09:46:14Z",
+      "labels": [
+        "BD"
+      ],
+      "comments": 2,
+      "age_hours": 1137
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 210,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/210",
+      "title": "RFI-QPS-QRB-TS-01: Clarify QRB thermodynamic boundary levels and TS interface basis",
+      "created_at": "2026-08-31T09:43:27Z",
+      "updated_at": "2026-09-24T07:37:48Z",
+      "labels": [],
+      "comments": 8,
+      "age_hours": 1137
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 211,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/211",
+      "title": "RFI-QPS-WCS-BL-01: Clarify granular WCS battery limits, utilities and interface ownership",
+      "created_at": "2026-08-31T09:43:38Z",
+      "updated_at": "2026-09-24T07:37:50Z",
+      "labels": [],
+      "comments": 4,
+      "age_hours": 1137
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 235,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/235",
+      "title": "LKT W12 negotiation capture: OFFER-49 first closure candidate; RTM-514 post-award split",
+      "created_at": "2026-09-01T18:44:34Z",
+      "updated_at": "2026-09-03T16:33:08Z",
+      "labels": [
+        "negotiation",
+        "LKT",
+        "W12",
+        "QPS"
+      ],
+      "comments": 3,
+      "age_hours": 1104
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 242,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/242",
+      "title": "LKT L1: propagate configuration, utilities/lifecycle and spares/RCM closure",
+      "created_at": "2026-09-01T18:58:08Z",
+      "updated_at": "2026-09-15T14:58:35Z",
+      "labels": [],
+      "comments": 3,
+      "age_hours": 1104
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 248,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/248",
+      "title": "Review status + LKT/both-bidder negotiation agenda tracker",
+      "created_at": "2026-09-01T22:24:35Z",
+      "updated_at": "2026-10-11T22:57:55Z",
+      "labels": [
+        "negotiation",
+        "control",
+        "review"
+      ],
+      "comments": 23,
+      "age_hours": 1100
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 480,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/480",
+      "title": "QPS user-demand cost optimisation: 5% margin reduction vs heat loads, QRB flows, WCS/PVPS and c24/c30",
+      "created_at": "2026-09-05T13:01:23Z",
+      "updated_at": "2026-09-15T14:58:45Z",
+      "labels": [
+        "BD"
+      ],
+      "comments": 18,
+      "age_hours": 1013
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 481,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/481",
+      "title": "program(qps): tri-repo issue index + PCA/BT burn-down control",
+      "created_at": "2026-09-05T13:09:59Z",
+      "updated_at": "2026-10-17T16:25:32Z",
+      "labels": [
+        "control",
+        "BD"
+      ],
+      "comments": 124,
+      "age_hours": 1013
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 519,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/519",
+      "title": "QPS commercial closure: Stage III MTO, Stage II package prices, c24/c30 thermo and lifecycle pricing",
+      "created_at": "2026-09-05T16:55:55Z",
+      "updated_at": "2026-09-22T17:05:58Z",
+      "labels": [],
+      "comments": 3,
+      "age_hours": 1010
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 540,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/540",
+      "title": "RFI-QPS-LINEB-01: bind Line-B geometry for strict state closure",
+      "created_at": "2026-09-06T08:23:44Z",
+      "updated_at": "2026-09-06T08:54:49Z",
+      "labels": [],
+      "comments": 2,
+      "age_hours": 994
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 547,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/547",
+      "title": "RFI: ALAT PVPS 2K-OP electrical / cooling-water / HVAC boundary and Leybold performance receipt",
+      "created_at": "2026-09-06T08:56:55Z",
+      "updated_at": "2026-09-06T09:02:32Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 994
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 553,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/553",
+      "title": "RFI: LKT PVPS 2K-OP running count, VFD load and 83 kWe / 75 kWth boundary closure",
+      "created_at": "2026-09-06T09:13:21Z",
+      "updated_at": "2026-09-23T16:13:59Z",
+      "labels": [],
+      "comments": 7,
+      "age_hours": 993
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 643,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/643",
+      "title": "RFI: recover original Table 19/20 CC electrical cells and current per-CC cooling-water duty",
+      "created_at": "2026-09-07T18:02:14Z",
+      "updated_at": "2026-09-07T18:07:37Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 960
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 663,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/663",
+      "title": "W57 source-return packet required: HEPAK / Line-B / B-flow / thermal / PLOC / CC common-cause",
+      "created_at": "2026-09-07T23:30:25Z",
+      "updated_at": "2026-10-13T10:28:42Z",
+      "labels": [
+        "W57",
+        "source-return",
+        "blocked",
+        "fail-closed"
+      ],
+      "comments": 13,
+      "age_hours": 955
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 704,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/704",
+      "title": "Offer-eval register: separate and combined LKT / ALAT RFI, clarification and negotiation views",
+      "created_at": "2026-09-08T04:51:07Z",
+      "updated_at": "2026-10-11T23:17:51Z",
+      "labels": [],
+      "comments": 18,
+      "age_hours": 950
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 943,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/943",
+      "title": "HV06-DEC-001: disposition ALAT RTM-422 bypass-control deviation",
+      "created_at": "2026-09-11T15:59:33Z",
+      "updated_at": "2026-10-04T07:30:21Z",
+      "labels": [
+        "control",
+        "BD",
+        "DoV-withheld"
+      ],
+      "comments": 11,
+      "age_hours": 866
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 974,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/974",
+      "title": "RFI-ALAT-S03: bind critical-spares stock, cost and total MDT by failure family",
+      "created_at": "2026-09-12T09:15:46Z",
+      "updated_at": "2026-09-12T09:17:54Z",
+      "labels": [
+        "control",
+        "BD",
+        "DoV-withheld"
+      ],
+      "comments": 1,
+      "age_hours": 849
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 978,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/978",
+      "title": "RFI: ALAT RTM-435 reconcile 55.2 / 79.3 kW HVAC heat boundary",
+      "created_at": "2026-09-12T09:22:13Z",
+      "updated_at": "2026-09-12T09:22:13Z",
+      "labels": [],
+      "comments": 0,
+      "age_hours": 849
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 981,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/981",
+      "title": "RFI: ALAT-S01 five-year operational spares and M&O basket",
+      "created_at": "2026-09-12T09:23:45Z",
+      "updated_at": "2026-09-12T11:02:04Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 849
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 996,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/996",
+      "title": "QPS reliability COST integration: close G2-G7 after PR #994",
+      "created_at": "2026-09-12T11:08:13Z",
+      "updated_at": "2026-09-14T15:30:29Z",
+      "labels": [],
+      "comments": 16,
+      "age_hours": 847
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1021,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1021",
+      "title": "RFI P0: LKT invCOP SAT E3 meter boundary, synchronized Qeq window and acceptance receipt",
+      "created_at": "2026-09-12T17:19:28Z",
+      "updated_at": "2026-09-15T14:58:55Z",
+      "labels": [],
+      "comments": 4,
+      "age_hours": 841
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1022,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1022",
+      "title": "RFI P0: LKT HP 2K-OP 56 Hz motor/VFD/auxiliary decomposition for baseload DoV",
+      "created_at": "2026-09-12T17:19:42Z",
+      "updated_at": "2026-09-23T16:14:02Z",
+      "labels": [],
+      "comments": 6,
+      "age_hours": 841
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1036,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1036",
+      "title": "Visual QA PCA proxy + reverse-BT burndown",
+      "created_at": "2026-09-12T19:17:23Z",
+      "updated_at": "2026-09-14T09:26:42Z",
+      "labels": [],
+      "comments": 10,
+      "age_hours": 839
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1063,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1063",
+      "title": "MC-1/MC-2: close non-compensating gates and drive measured N400 + semantic/runtime allocation",
+      "created_at": "2026-09-13T13:34:04Z",
+      "updated_at": "2026-09-28T16:20:26Z",
+      "labels": [],
+      "comments": 74,
+      "age_hours": 821
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1083,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1083",
+      "title": "W152 LKT L1: source return for RTM-661/664/680/681",
+      "created_at": "2026-09-13T17:41:07Z",
+      "updated_at": "2026-09-13T17:55:46Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 817
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1186,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1186",
+      "title": "W191 gate: execute exact Windows Master_Input return and bind governed receipt",
+      "created_at": "2026-09-14T18:08:01Z",
+      "updated_at": "2026-09-14T19:34:53Z",
+      "labels": [],
+      "comments": 3,
+      "age_hours": 792
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1258,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1258",
+      "title": "Mission Control: scale *.txt uptake with Scout → Reader → Editor → Curator routing",
+      "created_at": "2026-09-14T22:32:41Z",
+      "updated_at": "2026-09-23T09:24:11Z",
+      "labels": [],
+      "comments": 24,
+      "age_hours": 788
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1266,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1266",
+      "title": "W212 intake: reconcile legacy QPS presentation numerics against current engineering SSOT",
+      "created_at": "2026-09-14T22:49:21Z",
+      "updated_at": "2026-09-18T15:11:08Z",
+      "labels": [],
+      "comments": 7,
+      "age_hours": 788
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1284,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1284",
+      "title": "CONTROL: reconcile v5.2.1 735-row scaffold lineage with 722 RTM source authority",
+      "created_at": "2026-09-15T02:25:15Z",
+      "updated_at": "2026-09-15T02:34:07Z",
+      "labels": [
+        "control"
+      ],
+      "comments": 3,
+      "age_hours": 784
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1357,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1357",
+      "title": "W249 intake: bind V3.3.6 validation receipt and resolve CNL-73 designation hold",
+      "created_at": "2026-09-15T15:51:21Z",
+      "updated_at": "2026-09-18T15:11:10Z",
+      "labels": [],
+      "comments": 7,
+      "age_hours": 771
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1379,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1379",
+      "title": "QPS v6 release train: publish, Pages, binaries, provenance",
+      "created_at": "2026-09-16T21:18:24Z",
+      "updated_at": "2026-10-15T10:43:34Z",
+      "labels": [],
+      "comments": 20,
+      "age_hours": 741
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1398,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1398",
+      "title": "R3 — v6.0.0-rc.1 local binary factory and checksum receipt",
+      "created_at": "2026-09-17T01:43:14Z",
+      "updated_at": "2026-10-04T07:30:08Z",
+      "labels": [],
+      "comments": 60,
+      "age_hours": 737
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1593,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1593",
+      "title": "QPS peer review — LOOP/QCELL abnormal-event requirements and verification",
+      "created_at": "2026-09-21T15:53:58Z",
+      "updated_at": "2026-09-22T15:43:57Z",
+      "labels": [],
+      "comments": 6,
+      "age_hours": 627
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1722,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1722",
+      "title": "RFI-ALAT-WCS-SENS-01: bind Kaeser package sensor scope to exact RTM children",
+      "created_at": "2026-09-24T07:37:03Z",
+      "updated_at": "2026-09-24T07:37:03Z",
+      "labels": [],
+      "comments": 0,
+      "age_hours": 563
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1723,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1723",
+      "title": "RFI-ALAT-DRYER-01: bind single-dryer and maintenance-bypass architecture",
+      "created_at": "2026-09-24T07:37:05Z",
+      "updated_at": "2026-09-24T07:37:05Z",
+      "labels": [],
+      "comments": 0,
+      "age_hours": 563
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1724,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1724",
+      "title": "NEG-ALAT-SAT-01: member-level disposition of reduced FAT/SAT performance scope",
+      "created_at": "2026-09-24T07:37:06Z",
+      "updated_at": "2026-10-04T07:30:47Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 563
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1725,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1725",
+      "title": "RFI-ALAT-DEWAR-CIS-01: bind Dewar filling control-signal and interface boundary",
+      "created_at": "2026-09-24T07:37:08Z",
+      "updated_at": "2026-09-24T07:37:08Z",
+      "labels": [],
+      "comments": 0,
+      "age_hours": 563
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1738,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1738",
+      "title": "RFI-ALAT-MJA-P0: Controls/Cyber safety, CyFun and IAM closure return",
+      "created_at": "2026-09-24T12:39:22Z",
+      "updated_at": "2026-09-24T12:41:16Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 558
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1741,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1741",
+      "title": "RFI-ALAT-OFFER12: invCOP source, boundary and owner disposition",
+      "created_at": "2026-09-24T12:51:14Z",
+      "updated_at": "2026-09-24T12:51:14Z",
+      "labels": [],
+      "comments": 0,
+      "age_hours": 558
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1742,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1742",
+      "title": "RFI-LKT-CYBER: MIT access, CRA and system-owner security evidence return",
+      "created_at": "2026-09-24T12:51:17Z",
+      "updated_at": "2026-09-24T12:51:17Z",
+      "labels": [],
+      "comments": 0,
+      "age_hours": 558
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1745,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1745",
+      "title": "SOURCE-QPS-REVIEW: recover native ALAT-101..150 and OD15 review rows",
+      "created_at": "2026-09-24T12:54:09Z",
+      "updated_at": "2026-10-04T07:30:36Z",
+      "labels": [],
+      "comments": 5,
+      "age_hours": 558
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1801,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1801",
+      "title": "W287 — DREQ source integration review for candidate §4.9 rows 26–42",
+      "created_at": "2026-09-26T15:56:08Z",
+      "updated_at": "2026-09-26T15:57:28Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 507
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1882,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1882",
+      "title": "COV-01-TRIAGE: Coverity scan RED — curl 22 / HTTP 401, empty token (pre-analysis credential)",
+      "created_at": "2026-10-11T18:33:08Z",
+      "updated_at": "2026-10-11T18:33:08Z",
+      "labels": [
+        "control",
+        "BD",
+        "DoV-withheld"
+      ],
+      "comments": 0,
+      "age_hours": 144
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1897,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1897",
+      "title": "W363-T1: verify ICD-EL-001 rev 1.2 Master_Input binary publication",
+      "created_at": "2026-10-12T08:16:48Z",
+      "updated_at": "2026-10-12T16:14:56Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 130
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1904,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1904",
+      "title": "QPS CODE PURPLE — review ABACUS security REX and TOP7/14/21 advisory intake",
+      "created_at": "2026-10-12T14:00:26Z",
+      "updated_at": "2026-10-17T16:25:35Z",
+      "labels": [],
+      "comments": 37,
+      "age_hours": 124
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1920,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1920",
+      "title": "QPS P4 / gg_MATH wormhole — governed five-repository re-entry, telemetry and release gates",
+      "created_at": "2026-10-14T12:53:37Z",
+      "updated_at": "2026-10-15T11:07:15Z",
+      "labels": [],
+      "comments": 8,
+      "age_hours": 78
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1929,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1929",
+      "title": "CODE PURPLE C2 — implement executable session recensus and lossless BD receipts",
+      "created_at": "2026-10-15T15:31:46Z",
+      "updated_at": "2026-10-17T18:20:00Z",
+      "labels": [],
+      "comments": 12,
+      "age_hours": 51
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "issue_number": 1950,
+      "url": "https://github.com/GBOGEB/cryoplant-project/issues/1950",
+      "title": "QPS classified HTML visual QA adoption — public-safe output and owner-gated release",
+      "created_at": "2026-10-17T14:54:16Z",
+      "updated_at": "2026-10-17T16:25:37Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 4
+    },
+    {
+      "repo": "GBOGEB/document-organization-system",
+      "issue_number": 51,
+      "url": "https://github.com/GBOGEB/document-organization-system/issues/51",
+      "title": "release(v0.4.9): publish GitHub Release from existing immutable tag",
+      "created_at": "2026-09-14T11:31:23Z",
+      "updated_at": "2026-10-17T18:16:06Z",
+      "labels": [],
+      "comments": 6,
+      "age_hours": 799
+    },
+    {
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "issue_number": 86,
+      "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/issues/86",
+      "title": "P0-B owner gate: enable non-bypassable protection on main",
+      "created_at": "2026-10-02T10:12:57Z",
+      "updated_at": "2026-10-02T10:40:02Z",
+      "labels": [],
+      "comments": 5,
+      "age_hours": 368
+    },
+    {
+      "repo": "GBOGEB/GEMINI",
+      "issue_number": 12,
+      "url": "https://github.com/GBOGEB/GEMINI/issues/12",
+      "title": "GM-I-C IC3: bind GitHub OIDC to Google Drive readonly",
+      "created_at": "2026-09-17T09:29:49Z",
+      "updated_at": "2026-10-02T09:42:44Z",
+      "labels": [],
+      "comments": 9,
+      "age_hours": 729
+    },
+    {
+      "repo": "GBOGEB/GEMINI",
+      "issue_number": 16,
+      "url": "https://github.com/GBOGEB/GEMINI/issues/16",
+      "title": "GM-I-C R3 successor ingress: exact Git bundle + portable Python 3.12 capsule",
+      "created_at": "2026-09-18T11:09:28Z",
+      "updated_at": "2026-10-02T09:42:46Z",
+      "labels": [],
+      "comments": 12,
+      "age_hours": 703
+    },
+    {
+      "repo": "GBOGEB/gg_MATH",
+      "issue_number": 27,
+      "url": "https://github.com/GBOGEB/gg_MATH/issues/27",
+      "title": "W260 / LM-10 Phase 2 — Math Runtime Promotion BD queue",
+      "created_at": "2026-09-17T02:16:07Z",
+      "updated_at": "2026-10-16T16:42:28Z",
+      "labels": [],
+      "comments": 10,
+      "age_hours": 736
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 57,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/57",
+      "title": "GM-FLEET: prime GM-IV, GM-V and V+ through MissionControl federation",
+      "created_at": "2026-09-13T16:24:05Z",
+      "updated_at": "2026-09-13T16:25:11Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 818
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 59,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/59",
+      "title": "GM-V PRIME: 16-reserve Reader + lineage scout",
+      "created_at": "2026-09-13T16:24:33Z",
+      "updated_at": "2026-09-13T16:24:33Z",
+      "labels": [],
+      "comments": 0,
+      "age_hours": 818
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 60,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/60",
+      "title": "V+ PRIME: shallow Scout/Reader coverage for 32 reserve frontiers",
+      "created_at": "2026-09-13T16:24:45Z",
+      "updated_at": "2026-09-13T16:24:45Z",
+      "labels": [],
+      "comments": 0,
+      "age_hours": 818
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 61,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/61",
+      "title": "ESTATE TAIL: classify residual 16 for prune, park, reference or lineage review",
+      "created_at": "2026-09-13T16:24:53Z",
+      "updated_at": "2026-09-13T16:24:53Z",
+      "labels": [],
+      "comments": 0,
+      "age_hours": 818
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 63,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/63",
+      "title": "MISSIONCONTROL FEDERATION BUS: cross-feed GM-I..V+, H1..H4 and crew REX",
+      "created_at": "2026-09-13T16:25:05Z",
+      "updated_at": "2026-09-21T18:13:44Z",
+      "labels": [],
+      "comments": 4,
+      "age_hours": 818
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 64,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/64",
+      "title": "CREW SECONDMENT POLICY: diminishing-resource priming from GM-IV to estate tail",
+      "created_at": "2026-09-13T16:25:24Z",
+      "updated_at": "2026-09-13T17:15:41Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 818
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 76,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/76",
+      "title": "HISTORIAN-FLEET: all-repo PR/TODO debt fan-out + LLDB/Docker/runner roll-up",
+      "created_at": "2026-09-13T17:59:13Z",
+      "updated_at": "2026-09-28T16:45:30Z",
+      "labels": [],
+      "comments": 36,
+      "age_hours": 816
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 85,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/85",
+      "title": "BD-REX-CONTROL: living census, recurrence controls and specialist repair crews",
+      "created_at": "2026-09-13T18:09:56Z",
+      "updated_at": "2026-10-17T18:56:50Z",
+      "labels": [],
+      "comments": 46,
+      "age_hours": 816
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 129,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/129",
+      "title": "LM-10 three-pulse MIP roundtrip: gg_MATH -> Mission Control -> ABACUS/QPS",
+      "created_at": "2026-09-15T01:42:04Z",
+      "updated_at": "2026-09-21T12:55:59Z",
+      "labels": [],
+      "comments": 9,
+      "age_hours": 785
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 149,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/149",
+      "title": "Register horizontal mission: QPS v6 release-train orchestration",
+      "created_at": "2026-09-16T21:19:32Z",
+      "updated_at": "2026-09-17T02:18:02Z",
+      "labels": [],
+      "comments": 4,
+      "age_hours": 741
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 152,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/152",
+      "title": "LM-QPS-WAVES — QPS Wave Lineage & Dependency Cartography",
+      "created_at": "2026-09-16T23:34:17Z",
+      "updated_at": "2026-09-19T06:51:00Z",
+      "labels": [],
+      "comments": 2,
+      "age_hours": 739
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 153,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/153",
+      "title": "Mission Grand frontier — GLOBAL issue register → two-ended actionable BD queue",
+      "created_at": "2026-09-17T00:35:09Z",
+      "updated_at": "2026-10-17T18:56:48Z",
+      "labels": [],
+      "comments": 53,
+      "age_hours": 738
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 188,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/188",
+      "title": "GM-I-C — Cross-agent Drive federation bridgehead and Type-I mission telemetry",
+      "created_at": "2026-09-17T13:30:43Z",
+      "updated_at": "2026-09-22T05:36:21Z",
+      "labels": [],
+      "comments": 9,
+      "age_hours": 725
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 304,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/304",
+      "title": "W305 — First-Pass Closure Gate: review-clean exact-head merge barrier",
+      "created_at": "2026-09-18T20:14:22Z",
+      "updated_at": "2026-09-21T12:24:41Z",
+      "labels": [],
+      "comments": 3,
+      "age_hours": 694
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 308,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/308",
+      "title": "ISSUE-EXPEDITION — GM-I(A/B/C)→GM-V QPS TRIAGE reverse-pressure BD burn-down",
+      "created_at": "2026-09-19T05:47:05Z",
+      "updated_at": "2026-09-21T14:38:09Z",
+      "labels": [],
+      "comments": 7,
+      "age_hours": 685
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 324,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/324",
+      "title": "ISSUE-EXPEDITION W3 — measured PCA readiness + deeper burn-down",
+      "created_at": "2026-09-19T06:26:33Z",
+      "updated_at": "2026-09-27T07:25:11Z",
+      "labels": [],
+      "comments": 28,
+      "age_hours": 684
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 336,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/336",
+      "title": "W305-A1 — owner/admin required-status barrier for First-Pass Closure",
+      "created_at": "2026-09-19T07:09:42Z",
+      "updated_at": "2026-10-17T16:17:09Z",
+      "labels": [],
+      "comments": 21,
+      "age_hours": 683
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 358,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/358",
+      "title": "BD-QUEUE — pipeline-automation-hub current issue burn-down control",
+      "created_at": "2026-09-21T08:54:42Z",
+      "updated_at": "2026-10-17T18:16:04Z",
+      "labels": [],
+      "comments": 30,
+      "age_hours": 634
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 372,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/372",
+      "title": "MIP-STABILIZE — BD convergence waves, proof-drain pulses and CONTROL promotion",
+      "created_at": "2026-09-21T12:20:41Z",
+      "updated_at": "2026-10-15T09:11:33Z",
+      "labels": [],
+      "comments": 59,
+      "age_hours": 630
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 410,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/410",
+      "title": "DEVOPS drive: RUN-DELTA v0.3 + real-workbook schedule baseline",
+      "created_at": "2026-09-23T09:21:54Z",
+      "updated_at": "2026-09-23T09:33:32Z",
+      "labels": [],
+      "comments": 6,
+      "age_hours": 585
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 413,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/413",
+      "title": "GM Top7 CONTROL: rebind merged depth-3 work to exact-head hosted proof",
+      "created_at": "2026-09-26T07:31:34Z",
+      "updated_at": "2026-09-28T16:31:00Z",
+      "labels": [],
+      "comments": 15,
+      "age_hours": 515
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 418,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/418",
+      "title": "GM14 RETURN controller: owner, external and environmental re-entry",
+      "created_at": "2026-09-26T08:28:07Z",
+      "updated_at": "2026-09-29T13:11:53Z",
+      "labels": [],
+      "comments": 22,
+      "age_hours": 514
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 419,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/419",
+      "title": "GM Top7 DMAIC Runtime: workflows, runners, proof yield and CONTROL",
+      "created_at": "2026-09-26T14:25:01Z",
+      "updated_at": "2026-10-16T16:50:44Z",
+      "labels": [],
+      "comments": 7,
+      "age_hours": 508
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 426,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/426",
+      "title": "GM-FLEET-03: fleet-wide historical PR lineage backfill (90-repo census)",
+      "created_at": "2026-09-26T16:10:23Z",
+      "updated_at": "2026-09-29T08:12:53Z",
+      "labels": [],
+      "comments": 65,
+      "age_hours": 506
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 428,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/428",
+      "title": "GM DMAIC REX: coverage gate ratchet + first-three-red propagation",
+      "created_at": "2026-09-26T16:28:59Z",
+      "updated_at": "2026-09-30T08:34:10Z",
+      "labels": [],
+      "comments": 23,
+      "age_hours": 506
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 443,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/443",
+      "title": "MC-S2 adoption: read-only consumer crosswalk and bounded v2 migration",
+      "created_at": "2026-09-27T08:08:54Z",
+      "updated_at": "2026-09-28T16:20:35Z",
+      "labels": [],
+      "comments": 8,
+      "age_hours": 490
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 509,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/509",
+      "title": "GM-FLEET-03-H1: P1 1,079 recursive semantic coverage + order ledger",
+      "created_at": "2026-09-29T14:17:00Z",
+      "updated_at": "2026-09-29T17:29:34Z",
+      "labels": [],
+      "comments": 4,
+      "age_hours": 436
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 520,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/520",
+      "title": "CODE PURPLE Phase 02: bind six KPIs to exact-source telemetry with temporal diffs",
+      "created_at": "2026-10-12T13:18:06Z",
+      "updated_at": "2026-10-17T18:11:34Z",
+      "labels": [],
+      "comments": 12,
+      "age_hours": 125
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 529,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/529",
+      "title": "GOGREEN G0-G5: positive-evidence testbed, disjoint resilience and federation WBS",
+      "created_at": "2026-10-15T07:52:19Z",
+      "updated_at": "2026-10-16T20:38:49Z",
+      "labels": [],
+      "comments": 20,
+      "age_hours": 59
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 604,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/604",
+      "title": "CODE PURPLE / CBD! Golden Graph — governed 3-pulse Mission Control buildout",
+      "created_at": "2026-10-17T10:34:36Z",
+      "updated_at": "2026-10-17T18:54:38Z",
+      "labels": [],
+      "comments": 16,
+      "age_hours": 8
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 636,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/636",
+      "title": "QPS TRIAGE N2: complete 2-source/4-route native census and private-source authorization",
+      "created_at": "2026-10-17T14:39:10Z",
+      "updated_at": "2026-10-17T16:17:43Z",
+      "labels": [],
+      "comments": 2,
+      "age_hours": 4
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "issue_number": 638,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/638",
+      "title": "CODE PURPLE HTML QA fanout — Flight Deck, live census and GoGREEN G10",
+      "created_at": "2026-10-17T14:54:10Z",
+      "updated_at": "2026-10-17T18:54:41Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 4
+    },
+    {
+      "repo": "GBOGEB/Q_engineering_tools",
+      "issue_number": 104,
+      "url": "https://github.com/GBOGEB/Q_engineering_tools/issues/104",
+      "title": "GM7R D1: disable redundant branch-source Pages build",
+      "created_at": "2026-09-26T07:28:22Z",
+      "updated_at": "2026-09-26T08:10:34Z",
+      "labels": [],
+      "comments": 1,
+      "age_hours": 515
+    }
+  ],
+  "mission_links": {
+    "canonical_global_issue": "https://github.com/GBOGEB/pipeline-automation-hub/issues/153",
+    "canonical_BD_root": "https://github.com/GBOGEB/pipeline-automation-hub/issues/85",
+    "source_fixes": [
+      "https://github.com/GBOGEB/ABACUS/pull/2163",
+      "https://github.com/GBOGEB/ABACUS/pull/2167",
+      "https://github.com/GBOGEB/ABACUS/pull/2168",
+      "https://github.com/GBOGEB/ABACUS/pull/2170",
+      "https://github.com/GBOGEB/ABACUS/pull/2173"
+    ]
+  },
+  "disposition": {
+    "source_model": "READ_ONLY",
+    "admission": "HOLD",
+    "formal_QPS_credit": 0,
+    "security_waiver": false,
+    "independent_issue_close_attribution": false
+  }
+}

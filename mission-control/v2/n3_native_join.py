@@ -82,7 +82,8 @@ def project(source):
             jid = job.get('job_id')
             check(integer(jid) and jid not in seen_jobs, 'duplicate/invalid native job ID')
             seen_jobs.add(jid)
-            check(job.get('head_sha') == sha and job.get('run_id') == rid
+            check(job.get('head_sha') == sha and integer(job.get('run_id'))
+                  and integer(job.get('run_attempt')) and job.get('run_id') == rid
                   and job.get('run_attempt') == attempt, 'job identity/head/run-attempt conflict')
             outcome(job)
             steps = job.get('failed_steps')
@@ -129,7 +130,7 @@ def main():
     result = project(json.loads(args.snapshot.read_text(encoding='utf-8')))
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
-        args.out.write_text(json.dumps(result, sort_keys=True, indent=2) + '\n', encoding='utf-8')
+        args.out.write_text(json.dumps(result, sort_keys=True, indent=2) + '\n', encoding='utf-8', newline="\n")
     print(json.dumps(result, sort_keys=True))
 
 

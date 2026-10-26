@@ -17,7 +17,7 @@ jobs:
     name: No-authority graph and feed negative controls
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
@@ -31,7 +31,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
-          python -m unittest discover -s mission-control/federation-atlas/live-census/tests -p test_live_census.py -v
+          python -m unittest discover -s mission-control/federation-atlas/live-census/tests -p 'test_*.py' -v
       - name: Rebuild read-only frozen snapshot and verify member hashes
         shell: bash
         run: |
@@ -79,7 +79,7 @@ jobs:
           )
           PYRECEIPT
       - name: Upload diagnostic artifact only, no Pages publish or source mutation
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: disjoint-census-contract-${{ github.run_id }}-${{ github.run_attempt }}
           path: mission-control/federation-atlas/live-census/out/
@@ -88,8 +88,10 @@ jobs:
     name: Fresh GitHub GET and source-bound graph artifact
     if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
     runs-on: ubuntu-24.04
+    outputs:
+      census_disposition: ${{ steps.refresh.outputs.census }}
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
@@ -97,13 +99,27 @@ jobs:
         with:
           python-version: '3.11'
       - name: Refresh read-only census (native source, no merge admission)
+        id: refresh
         shell: bash
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          CROSS_REPO_READ_TOKEN: ${{ secrets.CROSS_REPO_READ_TOKEN }}
         run: |
           set -euo pipefail
           cd mission-control/federation-atlas/live-census
-          python source/live_census.py --refresh --out out
+          # Repo-scoped GITHUB_TOKEN cannot read sibling private repos (every GET 404s).
+          # Without the owner-installed cross-repo credential, defer with zero requests.
+          python source/live_census.py --refresh --require-cross-repo-token --out out
+          if [ ! -f out/snapshot.json ]; then
+            echo "census=DEFERRED_NO_CROSS_REPO_READ_TOKEN" >> "$GITHUB_OUTPUT"
+            echo "::warning::CROSS_REPO_READ_TOKEN not configured; live census DEFERRED, nothing credited"
+            {
+              echo "### CODE PURPLE live census: DEFERRED_NO_CROSS_REPO_READ_TOKEN"
+              echo "No cross-repo read credential installed. 0 requests made; no snapshot, no green credited."
+              echo "Owner action: install a read-only \`CROSS_REPO_READ_TOKEN\` secret (contents:read, actions:read, pull_requests:read on the federation repos)."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
           python source/live_census.py --verify out
           python - <<'PY'
           import json
@@ -114,9 +130,71 @@ jobs:
           if source['authority']['root_closures_verified'] is not None:
               raise SystemExit('fabricated root closure')
           PY
+          echo "census=NATIVE_READ" >> "$GITHUB_OUTPUT"
       - name: Upload fresh native read-only GET snapshot, NOT accepted REX
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: ${{ steps.refresh.outputs.census == 'NATIVE_READ' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: disjoint-census-native-${{ github.run_id }}-${{ github.run_attempt }}
           path: mission-control/federation-atlas/live-census/out/
+          if-no-files-found: error
+
+      - name: Preserve typed credential-deferral receipt
+        if: ${{ steps.refresh.outputs.census == 'DEFERRED_NO_CROSS_REPO_READ_TOKEN' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: disjoint-census-deferred-${{ github.run_id }}-${{ github.run_attempt }}
+          path: mission-control/federation-atlas/live-census/out/access_diagnostic.json
+          if-no-files-found: error
+
+      - name: Preserve native cross-repo source-access diagnostics on failure
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: disjoint-census-access-${{ github.run_id }}-${{ github.run_attempt }}
+          path: mission-control/federation-atlas/live-census/out/access_diagnostic.json
+          if-no-files-found: warn
+
+  qualified-native-five-repo-proof:
+    name: Authenticated five-repo readback qualification (never a deferred green)
+    needs: [native-readonly-census]
+    if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && needs.native-readonly-census.outputs.census_disposition == 'NATIVE_READ' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout immutable workflow source only
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Install Python 3.11
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.11'
+      - name: Download same-run native snapshot, never a deferred receipt
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: disjoint-census-native-${{ github.run_id }}-${{ github.run_attempt }}
+          path: mission-control/federation-atlas/live-census/qualified-input
+      - name: Verify five source identities, exact master and member digests
+        shell: bash
+        env:
+          EXPECTED_SOURCE_HEAD: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE_HEAD"
+          cd mission-control/federation-atlas/live-census
+          python source/live_census.py --verify qualified-input
+          mkdir -p qualified-output
+          python source/native_qualify.py --directory qualified-input \
+            --expected-master "$EXPECTED_SOURCE_HEAD" \
+            --run-id "$GITHUB_RUN_ID" --attempt "$GITHUB_RUN_ATTEMPT" \
+            --output qualified-output/qualification.json
+      - name: Publish narrowly scoped qualified readback receipt only
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: five-repo-native-qualified-${{ github.run_id }}-${{ github.run_attempt }}
+          path: mission-control/federation-atlas/live-census/qualified-output/qualification.json
           if-no-files-found: error

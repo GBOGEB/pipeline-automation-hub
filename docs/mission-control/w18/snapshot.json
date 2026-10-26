@@ -1,0 +1,170 @@
+{
+  "schema": "code-purple.communication-master.v1",
+  "slug": "cp-w18-fleet-dov-20261017",
+  "title": "CODE PURPLE / W18 - session DOD and global DOV",
+  "version": "1.0.0-rc1",
+  "measured_as_of_utc": "2026-10-17T18:37:00Z",
+  "snapshot_kind": "read_only_non_atomic_github_observations",
+  "authorities": {
+    "bd_ssot": "https://github.com/GBOGEB/pipeline-automation-hub/issues/85",
+    "global_issue_controller": "https://github.com/GBOGEB/pipeline-automation-hub/issues/153",
+    "local_queue": "https://github.com/GBOGEB/pipeline-automation-hub/issues/358",
+    "admission_controller": "https://github.com/GBOGEB/ABACUS/issues/1860",
+    "existing_census_candidate": "https://github.com/GBOGEB/pipeline-automation-hub/pull/663",
+    "existing_handover": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/README.md"
+  },
+  "controls": {
+    "merge_admission": "HOLD",
+    "formal_root_closure_credit_this_wave": 0,
+    "human_a10_approval": null,
+    "protected_main_proof": null,
+    "global_engineering_acceptance": false,
+    "authority_transfer": false,
+    "security_waiver": false,
+    "github_pages_http_200": null,
+    "original_conversation_message_count": null,
+    "original_conversation_prompt_count": null,
+    "pca_qualified": false,
+    "bt_qualified": false,
+    "six_sigma_qualified": false
+  },
+  "census": {
+    "search": "user:GBOGEB is:issue is:open",
+    "incomplete_results": false,
+    "first_observed_open": 153,
+    "latest_observed_open": 142,
+    "net_change": -11,
+    "closure_attribution": "concurrent_owner_lanes_not_this_controller",
+    "repos": [
+      {"name": "cryoplant-project", "open": 56},
+      {"name": "ABACUS", "open": 38},
+      {"name": "pipeline-automation-hub", "open": 32},
+      {"name": "CODEX", "open": 10},
+      {"name": "GEMINI", "open": 2},
+      {"name": "gg_MATH", "open": 1},
+      {"name": "DOCX_RTM_Automation", "open": 1},
+      {"name": "Q_engineering_tools", "open": 1},
+      {"name": "document-organization-system", "open": 1}
+    ],
+    "age_utc_date_windows": [
+      {"name": ">30d date boundary", "open": 64},
+      {"name": "8-30d date boundary", "open": 43},
+      {"name": "1-7d date boundary", "open": 28},
+      {"name": "Today UTC", "open": 7}
+    ],
+    "verified_closure_categories": [
+      {"class": "historical_dashboard_duplicate", "count": 9, "engineering_root_credit": 0,
+        "ids": [1447,1469,1481,1543,1641,1707,1763,1803,1845],
+        "canonical_url": "https://github.com/GBOGEB/ABACUS/issues/1885"},
+      {"class": "DAB_worker_deliverable_completed", "count": 2, "engineering_root_credit": 0,
+        "ids": [1864,1865],
+        "note": "T1 contains a previously merged verified tooling repair. T2 closed its classification worker, not Bandit root."}
+    ],
+    "historical_census": {
+      "count": 152,
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/pull/663",
+      "as_of_utc": "2026-10-17T18:11:56.309Z",
+      "classification": "historical_not_latest",
+      "classified_provisional": 24,
+      "unclassified": 128
+    }
+  },
+  "coverage": {
+    "schema": "g3a.w16.native.current_epoch.v2",
+    "exact_head": "e7195fe5588514f65891ddb8181725b9325fe19d",
+    "epoch": "G3A_W16_V2_PHASE4_REPAIRED",
+    "native_run": 39050945097,
+    "native_job": 117449223838,
+    "tests_pass": 157,
+    "tests_fail": 0,
+    "four_module": {"covered": 231, "eligible": 444, "uncovered": 213},
+    "phase8_same_blob": {"before_covered": 30, "after_covered": 63, "eligible": 118, "new_covered": 33},
+    "five_file_py312": {"covered": 336, "eligible": 560, "run": 39050945039},
+    "historical_n14": {"covered": 200, "eligible": 446, "comparable_with_w16": false},
+    "b0_success_run": 39050945332,
+    "b9_diff_coverage_current": null,
+    "b9_required_floor": 0.8,
+    "branch_scope_is_global": false
+  },
+  "ci": {
+    "w16_historical_head": "e7195fe5588514f65891ddb8181725b9325fe19d",
+    "w16_historical_workflow_rollup": {"success": 24, "failure": 3, "queued": 10, "denominator": 37, "observation_class": "historical_nonterminal"},
+    "w16_success_runs": [39050945097,39050945332,39050944942,39050945035],
+    "w16_successor_pr": 2156,
+    "w16_successor_head": "ed8f8c24388e44285c7caf26507b4bb96687b71b",
+    "successor_native_run_count_returned": 0,
+    "py_matrix_pr": 2161,
+    "py_matrix_head": "3d5554b7a62adc4b3df1760b7959fb390b7976c9",
+    "py_matrix_first_red_run": 39056628120,
+    "py_matrix_failed_assertions_per_job": 4,
+    "py_matrix_first_red": "pytest-asyncio specifier string normalization mismatch: <1.3 versus <1.3.0 and <1.5 versus <1.5.0",
+    "dashboard_pr": 2164,
+    "dashboard_head": "085f9991cb2735f178a4295a35b1fe380949b9eb",
+    "dashboard_b0_first_red_run": 39056967085,
+    "dashboard_b0_first_red": "tests/test_ariana_ci_federation.py imports missing defusedxml during pytest collection",
+    "dashboard_matrix_first_red_run": 39056967164,
+    "a10_run": 39050945051,
+    "a10_first_red": "generated workflow rationalization content requires independent human confidentiality disposition",
+    "queue_p50_seconds": null,
+    "queue_p95_seconds": null,
+    "runner_service_p95_seconds": null,
+    "w16_speedup_seconds": null
+  },
+  "metrics": [
+    {"id":"K-ISSUE","name":"Fleet open-issue burndown","kind":"count","n":142,"d":153,"value":-11,"delta_unit":"tickets","proof":"OBSERVED_NET_CHANGE","decision":"IMPROVE_NOT_CONTROL","source":"https://github.com/GBOGEB/pipeline-automation-hub/issues/153"},
+    {"id":"K-COV","name":"Frozen W16 four-module branch reach","kind":"ratio","n":231,"d":444,"value":0.5202702702702703,"proof":"NATIVE_EXACT_HEAD","decision":"BASELINE_NOT_TREND","source":"https://github.com/GBOGEB/ABACUS/actions/runs/39050945097"},
+    {"id":"K-PROOF","name":"Terminal matched-head proof yield","kind":"ratio","n":null,"d":null,"value":null,"proof":"UNKNOWN","decision":"HOLD","source":"https://github.com/GBOGEB/ABACUS/pull/2156"},
+    {"id":"K-ROOT","name":"Verified root closures in this controller wave","kind":"count","n":0,"d":null,"value":0,"proof":"NO_CLOSURE_CREDIT_AWARDED","decision":"HOLD","source":"https://github.com/GBOGEB/pipeline-automation-hub/issues/85"},
+    {"id":"K-TIME","name":"Queue and execution p95","kind":"seconds","n":null,"d":null,"value":null,"proof":"UNKNOWN","decision":"HOLD","source":"https://github.com/GBOGEB/CODEX/issues/319"},
+    {"id":"K-CONTROL","name":"Stable effect / statistical CONTROL","kind":"categorical","n":null,"d":null,"value":null,"proof":"INSUFFICIENT_INDEPENDENT_COMPARABLE_PULSES","decision":"NOT_QUALIFIED","source":"https://github.com/GBOGEB/gg_MATH/issues/27"}
+  ],
+  "session_dod": [
+    {"id":"DOD-01","title":"Recensus global open issues with same search","state":"VERIFIED","completion":"DONE","evidence":"https://github.com/GBOGEB/pipeline-automation-hub/issues/153","detail":"153 to 142 verified at separate readbacks, no causal attribution"},
+    {"id":"DOD-02","title":"Classify observed 11 issue closures without false credit","state":"VERIFIED","completion":"DONE","evidence":"https://github.com/GBOGEB/ABACUS/issues/1885","detail":"Nine dashboard duplicates and two completed census/tooling worker issues"},
+    {"id":"DOD-03","title":"Attribute B0, B9, branch epoch and current first-red separately","state":"VERIFIED","completion":"DONE","evidence":"https://github.com/GBOGEB/ABACUS/issues/1866","detail":"B0 SUCCESS does not imply B9 80% diff coverage; current W16 is 231/444"},
+    {"id":"DOD-04","title":"Source-own current Python 3.10 and Ariana first-reds","state":"PARTIAL","completion":"IN_PR","evidence":"https://github.com/GBOGEB/ABACUS/pull/2161","detail":"First-reds identified; disjoint owner PRs remain native-red and independent"},
+    {"id":"DOD-05","title":"Publish frozen communication SSOT and validated dashboard renditions","state":"LOCAL_PROOF","completion":"IN_PR","evidence":"https://github.com/GBOGEB/pipeline-automation-hub","detail":"One JSON master; three derived self-contained HTML views and PowerPoint handout; no hosted URL claimed"},
+    {"id":"DOD-06","title":"Complete independent A10 confidentiality review","state":"BLOCKED_HUMAN","completion":"HOLD","evidence":"https://github.com/GBOGEB/ABACUS/issues/1996","detail":"Only eligible owner/reviewer can disposition the exact file"},
+    {"id":"DOD-07","title":"Prove current Python matrix and B9 required admission","state":"NATIVE_RED","completion":"HOLD","evidence":"https://github.com/GBOGEB/ABACUS/actions/runs/39056628120","detail":"Requirements assertions red; defusedxml missing independently; B9 exact-head score UNKNOWN"},
+    {"id":"DOD-08","title":"Verify GitHub Pages publication and independent review","state":"NOT_MEASURED","completion":"TODO","evidence":"https://github.com/GBOGEB/pipeline-automation-hub/pull/663","detail":"Repo source presence or local QA is not hosted HTTP200 or protected-main admission"}
+  ],
+  "global_dov": [
+    {"id":"DOV-F01","domain":"Fleet census","state":"PASS","accept":"One scoped search, complete pagination, per-repo sum matches","observed":"142 open across nine repositories; no incomplete search","evidence":"https://github.com/GBOGEB/pipeline-automation-hub/issues/153"},
+    {"id":"DOV-F02","domain":"Issue lifecycle accounting","state":"PASS","accept":"Each closure reason recorded, duplicate vs work item distinct","observed":"9 duplicates + 2 completed work items = 11, external concurrent","evidence":"https://github.com/GBOGEB/ABACUS/issues/1885"},
+    {"id":"DOV-F03","domain":"Semantic root deduplication","state":"PARTIAL","accept":"All open issues owner/root/return route classified","observed":"Existing PR #663 historical: 24/152 provisional, 128 unclassified; current 142 not classified exhaustively","evidence":"https://github.com/GBOGEB/pipeline-automation-hub/pull/663"},
+    {"id":"DOV-F04","domain":"ABACUS tests and branch obligations","state":"PARTIAL","accept":"Current module + B9 same-head receipts and regression controls","observed":"157 PASS, 231/444 W16; historical B9 80% gate failed; new head not complete","evidence":"https://github.com/GBOGEB/ABACUS/actions/runs/39050945097"},
+    {"id":"DOV-F05","domain":"CI root convergence and time economy","state":"HOLD","accept":"New first-reds eliminated, comparable queue/execution p95 measured","observed":"Python specifier and Ariana defusedxml reds; latency p95 N/A","evidence":"https://github.com/GBOGEB/ABACUS/actions/runs/39056628120"},
+    {"id":"DOV-F06","domain":"Security and admission","state":"HOLD","accept":"Authorized A10, security, review, effective required rules","observed":"A10 independent review pending; merge HOLD","evidence":"https://github.com/GBOGEB/ABACUS/issues/1996"},
+    {"id":"DOV-F07","domain":"Method stability / gg_MATH","state":"HOLD","accept":"Independent source-comparable repeat samples and uncertainty intervals","observed":"PCA, BT, 6-sigma NOT QUALIFIED; 2 issue census points do not establish slope equivalence","evidence":"https://github.com/GBOGEB/gg_MATH/issues/27"},
+    {"id":"DOV-F08","domain":"Public communication and delivery","state":"PARTIAL","accept":"Source reviewed, native rendering tests, hosted HTTP200, review and control repeat","observed":"Candidate visual artifacts under review; hosted Pages and main SHA UNKNOWN","evidence":"https://github.com/GBOGEB/pipeline-automation-hub/pull/663"}
+  ],
+  "bd_queue": [
+    {"id":"BD-W18-01","priority":"P0","title":"A10 exact-byte security disposition","owner":"ABACUS security / named human reviewer","state":"RETURN","root":"SECURITY_CONTENT_REVIEW_REQUIRED","dependencies":[],"next":"Review flagged generated policy/report content and obtain fresh exact-head A10 PASS","exit":"Independent recorded review, no published controlled content; A10 native green","source":"https://github.com/GBOGEB/ABACUS/issues/1996"},
+    {"id":"BD-W18-02","priority":"P1","title":"W16 source-epoch TOML requalification","owner":"ABACUS G3A source owner","state":"PROVE","root":"PY310_COVERAGE_TOML","dependencies":[],"next":"Qualify #2156 head ed8f... with coverage[toml] on Python 3.10/3.12","exit":"Current-head native >=157 tests; frozen denominator and receipts; security independent","source":"https://github.com/GBOGEB/ABACUS/pull/2156"},
+    {"id":"BD-W18-03","priority":"P1","title":"Interpreter compatibility / Matplotlib markers","owner":"ABACUS dependency owner","state":"ACTIVE","root":"PY310_REQUIREMENT_CONTRACT","dependencies":[],"next":"Repair #2161 four version-assertion failures; rerun required matrix; preserve 3.9 support decision","exit":"Pinned resolver and interpreter tests terminal green; actual support policy approved","source":"https://github.com/GBOGEB/ABACUS/pull/2161"},
+    {"id":"BD-W18-04","priority":"P1","title":"Shared Ariana defusedxml collection first-red","owner":"ABACUS test-env / Ariana owner","state":"TODO","root":"ARIANA_DEPENDENCY_INSTALL","dependencies":[],"next":"Pin package installation contract and negative test, then prove one exact-head common-root recovery","exit":"B0 and matrix collect tests without missing defusedxml, no exclusion or skip","source":"https://github.com/GBOGEB/ABACUS/actions/runs/39056967085"},
+    {"id":"BD-W18-05","priority":"P1","title":"Main workflow governance duplicate semantic classifiers","owner":"ABACUS governance owner","state":"RETURN","root":"POLICY_COLLISION_MAIN","dependencies":[],"next":"Canonical generator + classify live workflows exactly once, compare protected-main first-red","exit":"Native policy/inventory green and owner-approved effective branch rule","source":"https://github.com/GBOGEB/ABACUS/issues/2087"},
+    {"id":"BD-W18-06","priority":"P2","title":"Dashboard broken href source repair","owner":"ABACUS dashboard source owner","state":"PROVE","root":"DASHBOARD_STATIC_LINKS","dependencies":[],"next":"Review #2164 source, repeat scan at matched detector population, negative regression","exit":"Exact-source native health succeeds, canonical #1885 verified; no placeholder pages","source":"https://github.com/GBOGEB/ABACUS/pull/2164"},
+    {"id":"BD-W18-07","priority":"P2","title":"B9 changed-line 80% gate","owner":"ABACUS canonical coverage owner","state":"HOLD","root":"B9_DIFF_COVERAGE","dependencies":[],"next":"Reproduce historic #1859 coverage CLI first-red on comparable eligible lines and head","exit":"Source-matched >=80% actual B9 numerator/denominator, canonical full-proof gates","source":"https://github.com/GBOGEB/ABACUS/issues/1866"},
+    {"id":"BD-W18-08","priority":"P2","title":"Global BD classification denominator","owner":"MissionControl #85 / issue expedition","state":"PROVE","root":"GLOBAL_BD_UNCLASSIFIED","dependencies":[],"next":"Refresh #663 historical 152 snapshot to current 142 separately; annotate open issue dispositions","exit":"Zero unclassified with independent root/owner/win and status evidence, no root ID conflicts","source":"https://github.com/GBOGEB/pipeline-automation-hub/pull/663"}
+  ],
+  "statistics": {
+    "descriptive_issue_net_change": -11,
+    "descriptive_issue_reduction_fraction": 0.0718954248366013,
+    "causal_closure_fraction": null,
+    "independent_same_scope_pulses_for_stability": null,
+    "bounded_queue_latency_p95_seconds": null,
+    "dopportunity_total_for_six_sigma": null,
+    "pca_geometry":"two non-independent portfolio counts cannot qualify stable multivariate PCA",
+    "bt_pairs": 0,
+    "control":"NOT_ESTIMABLE",
+    "recommended_next_statistical_probe":"Freeze root/issue populations; at least 3 independent repeat exact-head CI observations, capture duration and attributable root transitions; then test slope equivalence with uncertainty."
+  },
+  "presentation": {
+    "master": "snapshot.json",
+    "renditions": ["index.html", "cards.html", "deck.html", "CP_W18_FLEET_DOV_20261017.pptx"],
+    "audiences": ["executive", "mission_controller", "source_owner", "security_reviewer", "handover_receiver"],
+    "publication": "candidate_source_only_pages_not_verified",
+    "safeguard": "All derived views must embed the exact same snapshot digest, share slug and preserve null metrics as UNKNOWN."
+  }
+}

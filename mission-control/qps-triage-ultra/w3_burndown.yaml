@@ -38,13 +38,12 @@ gates:
   W3-11: {state: PASS, target: NON_ORIGIN_CONSUMER_RECEIPT, evidence: HOME_0fff3a6_run_34685792883_job_103532440469_SUCCESS_producer_d3799ae_artifact_10296110923}
   W3-12: {state: HOLD_EXTERNAL_EVIDENCE, target: M01_HEPAK_ADAPTER_EXTERNAL_CONSUMER_DOV2, evidence: CoolProp_merge_6fd6ee3_authority_run_34685855591_SUCCESS_hold_reason_MISSING_EXACT_LICENSED_HEPAK_NUMERIC_RECEIPT}
   W3-13: {state: PASS, target: THREE_COMPARABLE_MEASURED_FLEET_PULSES, evidence: six_measured_RED_REPAIR_CONTROL_pulses_in_W3_13_MEASURED_PULSES_json_plus_analytics_run_34685677445}
-  W3-14: {state: PASS, target: MEASURED_PCA_PASS, evidence: qps_w3_measured_analytics_receipt_v1_run_34685677445_PC1_0p8583968205_PC2_0p1416031795_PR27_merge_a110a835}
-  W3-15: {state: PENDING_RUNNER, target: OBSERVED_INTERVENTION_BT_PASS, evidence: PR31_head_feaab33e_runs_34686116162_and_34686126465_queued_runner_id_0_strict_FAIL_SUCCESS_CONTROL_pair_contract}
+  W3-14: {state: PASS, target: MEASURED_PCA_PASS, evidence: qps_w3_measured_analytics_receipt_v1_5_rows_native_run_39984340926_head_b2adcf96_PC1_0p7597403405_PC2_0p1871888366_refreshed_N12_was_3_row_stale_receipt}
+  W3-15: {state: PASS, target: OBSERVED_INTERVENTION_BT_PASS, evidence: PR31_head_feaab33e_runs_34686116162_and_34686126465_completed_SUCCESS_2026_09_12_ledger_never_updated_repeat_native_run_39984340926_head_b2adcf96_w3_15_PASS_OBSERVED_INTERVENTION_BT}
   W3-16: {state: PASS, target: M03_FOUR_FRONTIER_W0_RECON_WITH_COVERAGE_FLOOR, evidence: HOME_merge_8586e2de_run_34685848485_job_103532586180_SUCCESS_dispositions_ADAPT_EXTRACT_REFERENCE_PARK}
 
 ranked_burndown:
   - {rank: 1, id: W3-BD04, gates: [W3-12], target: EXACT_LICENSED_HEPAK_NUMERIC_RECEIPT_THEN_GOVERNED_EXTERNAL_CONSUMER}
-  - {rank: 2, id: W3-BD05B, gates: [W3-15], target: EXECUTE_ALREADY_QUEUED_STRICT_OBSERVED_BT_CANDIDATE}
 
 completed_burndown:
   - {id: W3-BD01, gates: [W3-05], result: PASS, target: MATERIAL_ADAPTER_RECEIPT_AND_RANGE_GUARDS}
@@ -52,24 +51,28 @@ completed_burndown:
   - {id: W3-BD03, gates: [W3-10, W3-11], result: PASS_CONTROLLED, target: MATH_BUNKER_BREADTH_AND_NON_ORIGIN_CONSUMPTION}
   - {id: W3-BD05A, gates: [W3-13, W3-14], result: PASS_MEASURED, target: MEASURED_TELEMETRY_PLUS_STANDARDIZED_PCA}
   - {id: W3-BD06, gates: [W3-16], result: PASS_RECON, target: M03_FOUR_FRONTIER_W0_RECON_AND_DISPOSITIONS}
+  - {id: W3-BD05B, gates: [W3-15], result: PASS_OBSERVED_NATIVE, target: EXECUTE_ALREADY_QUEUED_STRICT_OBSERVED_BT_CANDIDATE, note: runs_completed_2026_09_12_recorded_N12}
 
 measured_pca:
   receipt: mission-control/qps-triage-ultra/w3_measured_analytics_receipt.json
-  ci_run: 34685677445
-  ci_head: d394f7604f26fbed6355c7bc377da4ac9e0598b2
-  artifact_id: 10295681186
-  artifact_digest: sha256:33ebfb7b58ece93c602ba7e1f4762a1595eb30e1783bbf050cdbf8c0d4693d5d
+  ci_run: 39984340926
+  ci_head: b2adcf96a2a5b2ce728ca2f093dc150ab478f293
+  artifact_id: 12513824712
+  artifact_digest: sha256:f8af9a1a084d3d11cc697bbbc9c5c2f3cba1c3fd5647aed192c9c00145975933
+  drift_guard: mission-control/qps-triage-ultra/w3_receipt_sync.py --check (CI, every run)
+  superseded: {ci_run: 34685677445, rows: 3, PC1: 0.8583968205056489, PC2: 0.14160317949435108, reason: STALE_RECEIPT_PERSISTED_BEFORE_INPUTS_EXTENDED_TO_5_ROWS}
+  rows: 5
   fields: [queue_delay_s, job_duration_s, executed_step_count, artifact_count, artifact_bytes]
   standardization: sample_z_score
   PC1:
-    explained_variance_ratio: 0.8583968205056489
-    dominant_positive_loadings: {artifact_count: 0.48227045169823557, artifact_bytes: 0.4821773686879956, job_duration_s: 0.47677101797334037, executed_step_count: 0.467077161257914}
+    explained_variance_ratio: 0.7597403404704081
+    dominant_positive_loadings: {executed_step_count: 0.5018812212265074, artifact_bytes: 0.5018525138823168, artifact_count: 0.5015497941892694, job_duration_s: 0.46414618285732795}
     interpretation: PRODUCT_PROOF_FOOTPRINT_COMPLEXITY
   PC2:
-    explained_variance_ratio: 0.14160317949435108
-    dominant_loading: {queue_delay_s: 0.9328246300916585}
+    explained_variance_ratio: 0.18718883662736313
+    dominant_loading: {queue_delay_s: 0.9743586956353857}
     interpretation: RUNNER_QUEUE_FRICTION
-  statistical_boundary: n_equals_registry_minimum_3_rank_at_most_2_not_causal_not_engineering_maturity
+  statistical_boundary: n_equals_5_rank_at_most_4_not_causal_not_engineering_maturity
 
 current_wave_observations:
   source: mission-control/qps-triage-ultra/analytics/W3_13_MEASURED_PULSES.json

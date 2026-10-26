@@ -39,6 +39,8 @@ Crew-time, queue-time, execution-time, information gain, disposition yield, and 
 
 Measured telemetry features for PCA and observed pairwise evidence for Bradley–Terry reverse-pressure ranking.
 
+[gg_MATH bridge evidence](ggmath-bridge.html): scree with MP edge and PA95, BT strength intervals and rank frequency, principal-angle and Grassmann history, convergence velocity, and queue-versus-execute flow efficiency from pinned gg_MATH kernels.
+
 ## Publication contract
 
 Every built page carries `release_id`, `source_sha`, `schema_version`, `evidence_state`, and `QPS-UI/CSS v1.2` identity. Canonical diagrams must be pre-rendered to durable SVG; browser-side CDN rendering is not evidence.

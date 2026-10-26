@@ -1,0 +1,211 @@
+{
+  "schema": "missioncontrol.federated_launch_projection.v1",
+  "version": "N10",
+  "source": {
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "base_sha": "4455321f1ac5ead05135e2cd2355e64ff0a3d9a2",
+    "canonical": [
+      "mission-control/v2/MISSION_CONTROL_CURRENT_v2.json",
+      "mission-control/v2/MC_MISSION_TELEMETRY_CONTRACT_v1.json",
+      "mission-control/federation-atlas/ATLAS_GRAPH_v1.yaml",
+      "mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N9_20261017.json"
+    ]
+  },
+  "authority_transfer": false,
+  "merge_admission": "HOLD",
+  "projection_only": true,
+  "execution": {
+    "hierarchy": [
+      "MISSION",
+      "SPRINT",
+      "WAVE",
+      "PULSE",
+      "RUN"
+    ],
+    "dispatch_policy": "DECLARED_ONLY; no new native dispatch",
+    "scheduler": "SCHEDULE_PROPOSAL_ONLY",
+    "worker_capacity": null,
+    "actual_launch_count": null
+  },
+  "repositories": [
+    {
+      "id": "MC",
+      "label": "Mission Control",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "role": "orchestrator",
+      "authority": "CONTROL",
+      "sha": "4455321f1ac5ead05135e2cd2355e64ff0a3d9a2"
+    },
+    {
+      "id": "DOW",
+      "label": "ABACUS / DOW",
+      "repo": "GBOGEB/ABACUS",
+      "role": "source telemetry",
+      "authority": "SOURCE",
+      "sha": "8d0c6ca568d6ea0b5e658198d0046283c049e557"
+    },
+    {
+      "id": "KEB",
+      "label": "CODEX / KEB",
+      "repo": "GBOGEB/CODEX",
+      "role": "schema semantics",
+      "authority": "SOURCE",
+      "sha": null
+    },
+    {
+      "id": "QPS",
+      "label": "cryoplant-project",
+      "repo": "GBOGEB/cryoplant-project",
+      "role": "engineering consumer",
+      "authority": "SOURCE",
+      "sha": null
+    },
+    {
+      "id": "MATH",
+      "label": "gg_MATH",
+      "repo": "GBOGEB/gg_MATH",
+      "role": "method qualification",
+      "authority": "SOURCE",
+      "sha": null
+    }
+  ],
+  "nodes": [
+    {
+      "id": "scheduler",
+      "label": "Scheduler",
+      "kind": "DECLARED"
+    },
+    {
+      "id": "worker",
+      "label": "Worker dispatch",
+      "kind": "DECLARED"
+    },
+    {
+      "id": "join",
+      "label": "Evidence join",
+      "kind": "RECEIPT_CONSUMER"
+    },
+    {
+      "id": "gate",
+      "label": "Admission HOLD",
+      "kind": "CONTROL"
+    }
+  ],
+  "edges": [
+    {
+      "from": "MC",
+      "to": "DOW",
+      "kind": "DISPATCH",
+      "evidence": "DECLARED"
+    },
+    {
+      "from": "MC",
+      "to": "KEB",
+      "kind": "DISPATCH",
+      "evidence": "DECLARED"
+    },
+    {
+      "from": "MC",
+      "to": "QPS",
+      "kind": "DISPATCH",
+      "evidence": "DECLARED"
+    },
+    {
+      "from": "MC",
+      "to": "MATH",
+      "kind": "METHOD_REQUEST",
+      "evidence": "DECLARED"
+    },
+    {
+      "from": "DOW",
+      "to": "join",
+      "kind": "EVIDENCE",
+      "evidence": "HISTORICAL_RECEIPT"
+    },
+    {
+      "from": "KEB",
+      "to": "join",
+      "kind": "EVIDENCE",
+      "evidence": "HISTORICAL_RECEIPT"
+    },
+    {
+      "from": "QPS",
+      "to": "join",
+      "kind": "EVIDENCE",
+      "evidence": "HISTORICAL_RECEIPT"
+    },
+    {
+      "from": "join",
+      "to": "gate",
+      "kind": "NON_PROMOTING_REVIEW",
+      "evidence": "CONTROL"
+    },
+    {
+      "from": "scheduler",
+      "to": "worker",
+      "kind": "DISPATCH",
+      "evidence": "DECLARED"
+    }
+  ],
+  "sipoc": [
+    {
+      "supplier": "Repo owners",
+      "input": "Head SHA + CI receipts",
+      "process": "Read-only intake and validation",
+      "output": "Source-bound atoms",
+      "customer": "Evidence join"
+    },
+    {
+      "supplier": "Mission Control",
+      "input": "Mission, wave, pulse",
+      "process": "Scheduler and capacity classification",
+      "output": "Proposed disjoint jobs",
+      "customer": "Owner workers"
+    },
+    {
+      "supplier": "ABACUS / CODEX / QPS",
+      "input": "Typed source evidence",
+      "process": "Join and lineage validation",
+      "output": "DAG and KPI projections",
+      "customer": "Golden Thread"
+    },
+    {
+      "supplier": "Golden Thread",
+      "input": "Exact SHA and risk gates",
+      "process": "Noncompensating review",
+      "output": "HOLD or evidenced candidate",
+      "customer": "Human controller"
+    }
+  ],
+  "metrics": {
+    "repo_count": 5,
+    "observed_current_source_count": 2,
+    "node_count": 9,
+    "edge_count": 9,
+    "dispatch_verified": null,
+    "accepted_root_closed": null,
+    "worker_fanout": null
+  },
+  "links": [
+    {
+      "label": "Current v2 controller",
+      "path": "mission-control/v2/MISSION_CONTROL_CURRENT_v2.json"
+    },
+    {
+      "label": "Existing atlas",
+      "path": "mission-control/federation-atlas/ATLAS_GRAPH_v1.yaml"
+    },
+    {
+      "label": "N9 immutable evidence",
+      "path": "mission-control/federation-atlas/CBD_GOLDEN_GRAPH_N9_20261017.json"
+    },
+    {
+      "label": "Existing landing",
+      "path": "mission-control/federation-atlas/landing"
+    },
+    {
+      "label": "Existing flightdeck",
+      "path": "mission-control/federation-atlas/flightdeck"
+    }
+  ]
+}

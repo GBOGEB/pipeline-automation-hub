@@ -1,0 +1,33 @@
+{
+  "schema": "missioncontrol.g3a_math_bridge_view_contract.v1",
+  "source_repo": "GBOGEB/gg_MATH",
+  "source_schema": "gg_math.g3a_metric_bridge.v1",
+  "owner": "GBOGEB/pipeline-automation-hub",
+  "existing_kpi_registry": "mission-control/federation-atlas/PHASE02_KPI_TAXONOMY_v1.json",
+  "read_only": true,
+  "new_ssot": false,
+  "required_fields": [
+    "source_repo",
+    "source_head",
+    "provider_repo",
+    "provider_sha",
+    "receipt_sha256",
+    "coverage_n_series",
+    "historical_coverage",
+    "current_coverage",
+    "dispatch",
+    "merge_admission",
+    "authority_transfer",
+    "qps_acceptance"
+  ],
+  "semantic_guards": [
+    "NO_STALE_HEAD_COVERAGE_PROMOTION",
+    "NO_CROSS_REPO_COVERAGE_AGGREGATION",
+    "NO_AUTOMATIC_MERGE",
+    "NO_NEW_SIX_KPI_REGISTRY",
+    "RETAIN_A10_SAFETY_REVIEW_INDEPENDENCE"
+  ],
+  "authority_transfer": false,
+  "merge_admission": "HOLD",
+  "formal_credit_delta": 0
+}

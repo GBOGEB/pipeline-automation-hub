@@ -95,7 +95,7 @@ def load_module(path, unique):
 
 
 def validate_input(plan, atlas, taskset, policy, source_sha):
-    if not SHA.fullmatch(source_sha):
+    if not isinstance(source_sha, str) or not SHA.fullmatch(source_sha):
         raise ExecutionHold("exact source SHA required")
     if (policy.get("schema") != POLICY_SCHEMA or policy.get("scope") != "LOCAL_PILOT_ONLY"
             or policy.get("remote_dispatch") is not False or policy.get("github_write") is not False
@@ -110,11 +110,11 @@ def validate_input(plan, atlas, taskset, policy, source_sha):
         raise ExecutionHold("task owner not bound to policy")
     if not isinstance(taskset.get("tasks"), dict):
         raise ExecutionHold("task map missing")
-    if not (1 <= policy.get("max_parallel", 0) <= 3):
+    if type(policy.get("max_parallel")) is not int or not (1 <= policy["max_parallel"] <= 3):
         raise ExecutionHold("concurrency out of bounds")
-    if not (2 <= policy.get("timeout_seconds", 0) <= 60):
+    if type(policy.get("timeout_seconds")) is not int or not (2 <= policy["timeout_seconds"] <= 60):
         raise ExecutionHold("invalid timeout")
-    if not (1 <= policy.get("max_attempts", 0) <= 3):
+    if type(policy.get("max_attempts")) is not int or not (1 <= policy["max_attempts"] <= 3):
         raise ExecutionHold("retry count unbounded")
     input_paths = policy.get("source_allowlist")
     if (not isinstance(input_paths, list) or not input_paths
@@ -512,7 +512,7 @@ def run(args):
     assert verify_receipt(receipt)
     output = encoded(receipt)
     (out / "execution_receipt.json").write_bytes(output)
-    (out / "execution_receipt.sha256").write_text(digest(output) + "\n", encoding="ascii")
+    (out / "execution_receipt.sha256").write_text(digest(output) + "\n", encoding="ascii", newline="\n")
     print(json.dumps({"result": "ACTUAL_LOCAL_PILOT_PASS", "source_sha": source_sha,
                       **result}, sort_keys=True))
     return receipt

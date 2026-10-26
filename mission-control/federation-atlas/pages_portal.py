@@ -3,8 +3,95 @@
 import argparse, hashlib, html, json, re, shutil
 from pathlib import Path
 
-ALLOW={"index.html","code-purple.html","lane-process.html","lane-process.mmd","federation.svg","federation-latest.html","federation-wave-metrics.json","federation-latest.json","metrics.json","lane-process.json","code-health.html","code-health.json","code-health-dag.mmd","code-health-manifest.json","sideload-k8s.html","sideload-k8s.json","sideload-k8s.mmd","sideload-k8s.sha256.json","sideload-operator.html","sideload-operator-receipt.json","sideload-telemetry.json","sideload-telemetry.sha256.json"}
-FLIGHT={"index.html","flightdeck.svg","census.json","bd_leaves.json","anchors.json","manifest.json"}
+ALLOW={"index.html","code-purple.html","code-purple.json","lane-process.html","lane-process.mmd","federation.svg","federation-latest.html","federation-wave-metrics.json","federation-latest.json","metrics.json","lane-process.json","code-health.html","code-health.json","code-health-dag.mmd","code-health-manifest.json","sideload-k8s.html","sideload-k8s.json","sideload-k8s.mmd","sideload-k8s.sha256.json","sideload-operator.html","sideload-operator-receipt.json","sideload-telemetry.json","sideload-telemetry.sha256.json","federation-wave.html","phase02-temporal.html","phase02-temporal.json"}
+FLIGHT={"index.html","flightdeck.svg","census.json","bd_leaves.json","anchors.json","manifest.json","GUIDE.md"}
+
+# W55: optional, source-owned coverage-integrity viewer; never a second publisher.
+COVERAGE_INTEGRITY_SOURCE = Path(__file__).resolve().parent / "COVERAGE_INTEGRITY_OBSERVATIONS_v1.json"
+COVERAGE_INTEGRITY_MEMBERS = (
+    "index.html", "snapshot.json", "dependency.mmd", "sipoc.mmd",
+    "spline.mmd", "graph-light.svg", "graph-dark.svg",
+)
+
+
+def stage_coverage_integrity(atlas, out, sha, hashes, source_path=None):
+    """Fail closed on any incomplete, tampered or falsely authoritative child."""
+    import xml.etree.ElementTree as ET
+    child = Path(atlas) / "coverage-integrity"
+    if not child.exists():
+        return False
+    if not child.is_dir() or child.is_symlink():
+        raise ValueError("COVERAGE_CHILD_INVALID_DIRECTORY")
+    source = Path(source_path) if source_path is not None else COVERAGE_INTEGRITY_SOURCE
+    if not source.is_file() or source.is_symlink():
+        raise ValueError("COVERAGE_SOURCE_OWNER_NOT_JOINED")
+    source_bytes = source.read_bytes()
+    source_digest = hashlib.sha256(source_bytes).hexdigest()
+    source_doc = json.loads(source_bytes)
+    auth = source_doc.get("authority", {})
+    if not (source_doc.get("schema") == "codepurple.coverage_integrity.observations.v1"
+            and auth.get("merge_admission") == "HOLD"
+            and auth.get("engineering_acceptance") == "WITHHELD"
+            and auth.get("security_waiver") == "NONE"
+            and auth.get("formal_credit_delta") == 0
+            and auth.get("is_six_repo_canonical_breadth") is False):
+        raise ValueError("COVERAGE_SOURCE_AUTHORITY_VIOLATION")
+    declared = set(COVERAGE_INTEGRITY_MEMBERS) | {"manifest.json"}
+    entries = list(child.iterdir())
+    if ({p.name for p in entries} != declared or
+            any(not p.is_file() or p.is_symlink() for p in entries)):
+        raise ValueError("COVERAGE_MEMBER_POPULATION_DRIFT")
+    manifest = json.loads((child / "manifest.json").read_bytes())
+    if not (manifest.get("schema") == "codepurple.coverage_integrity.manifest.v1"
+            and manifest.get("presentation_head_sha") == sha
+            and manifest.get("source_json_sha256") == source_digest
+            and manifest.get("merge_admission") == "HOLD"
+            and manifest.get("authority_transfer") is False
+            and manifest.get("formal_credit_delta") == 0
+            and "current_main_coverage_attestation" in manifest
+            and manifest["current_main_coverage_attestation"] is None):
+        raise ValueError("COVERAGE_HEAD_SOURCE_OR_AUTHORITY_DRIFT")
+    digests, sizes = manifest.get("member_sha256"), manifest.get("member_bytes")
+    if not (isinstance(digests, dict) and isinstance(sizes, dict)
+            and set(digests) == set(COVERAGE_INTEGRITY_MEMBERS)
+            and set(sizes) == set(COVERAGE_INTEGRITY_MEMBERS)):
+        raise ValueError("COVERAGE_MEMBER_MANIFEST_DRIFT")
+    snapshot = json.loads((child / "snapshot.json").read_bytes())
+    state = snapshot.get("authority", {})
+    if not (snapshot.get("schema") == "codepurple.coverage_integrity.snapshot.v1"
+            and snapshot.get("presentation_head_sha") == sha
+            and snapshot.get("source_json_sha256") == source_digest
+            and snapshot.get("portfolio_total_coverage") is None
+            and state.get("merge_admission") == "HOLD"
+            and state.get("engineering_acceptance") == "WITHHELD"
+            and state.get("security_waiver") == "NONE"
+            and state.get("formal_credit_delta") == 0
+            and state.get("is_native_current_attestation") is False
+            and state.get("run_dispatch") is False):
+        raise ValueError("COVERAGE_SNAPSHOT_AUTHORITY_DRIFT")
+    for name in COVERAGE_INTEGRITY_MEMBERS:
+        raw = (child / name).read_bytes()
+        digest = digests[name]
+        if (not isinstance(digest, str) or
+                re.fullmatch("[0-9a-f]{64}", digest) is None or
+                hashlib.sha256(raw).hexdigest() != digest or
+                type(sizes[name]) is not int or sizes[name] != len(raw)):
+            raise ValueError("COVERAGE_MEMBER_DIGEST_MISMATCH:" + name)
+        if name.endswith(".svg"):
+            ET.fromstring(raw)
+        if name.endswith(".mmd") and not raw.lstrip().startswith(b"flowchart"):
+            raise ValueError("COVERAGE_MERMAID_INVALID:" + name)
+    for name in (*COVERAGE_INTEGRITY_MEMBERS, "manifest.json"):
+        dst = Path(out) / "coverage-integrity" / name
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(child / name, dst)
+        from_digest = hashlib.sha256((child / name).read_bytes()).hexdigest()
+        to_digest = hashlib.sha256(dst.read_bytes()).hexdigest()
+        if from_digest != to_digest:
+            raise ValueError("COVERAGE_COPY_TIME_MUTATION:" + name)
+        hashes[str(dst.relative_to(out))] = to_digest
+    return True
+
 def build(atlas,out,sha):
     atlas,out=Path(atlas),Path(out)
     if not re.fullmatch("[a-f0-9]{40}",sha): raise ValueError("exact SHA required")
@@ -53,12 +140,338 @@ def build(atlas,out,sha):
             dest=out/"federation-home"/name; dest.parent.mkdir(exist_ok=True,parents=True)
             shutil.copyfile(src,dest)
             hashes[str(dest.relative_to(out))]=hashlib.sha256(dest.read_bytes()).hexdigest()
-    links=[("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
+    # Execution Atlas is a derived child of this existing publisher. The shared
+    # verifier checks every member and current source byte before packaging.
+    execution_source = atlas / "orchestration"
+    if execution_source.exists():
+        import importlib.util
+        checker_path = Path(__file__).resolve().parent / "orchestration" / "main.py"
+        spec = importlib.util.spec_from_file_location("execution_atlas_packaging", checker_path)
+        if spec is None or spec.loader is None:
+            raise ValueError("execution Atlas verifier unavailable")
+        checker = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(checker)
+        receipt = checker.verify_bundle(execution_source, sha,
+                                        source_root=Path(__file__).resolve().parents[2])
+        for name in [*receipt["files_sha256"], "manifest.json"]:
+            source = checker.safe_path(execution_source, name)
+            dest = out / "orchestration" / name
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source, dest)
+            hashes[str(dest.relative_to(out))] = hashlib.sha256(dest.read_bytes()).hexdigest()
+        # Recheck the copied child as well: source verification alone cannot
+        # detect a copy-time mutation before the parent seals its public hashes.
+        checker.verify_bundle(out / "orchestration", sha,
+                              source_root=Path(__file__).resolve().parents[2])
+    # W55 bounded bridge: historical projection only when source owner is in checkout.
+    stage_coverage_integrity(atlas, out, sha, hashes)
+    # Single-owner Pages bridge: consume the approved G3P view in this existing
+    # portal build. This is file packaging only; no new deployer or release gate.
+    g3p_source=Path(__file__).resolve().parent
+    g3p_html=g3p_source/"G3P_LIVE_LEDGER.html"
+    g3p_manifest=g3p_source/"G3P_LIVE_SOURCES_v1.json"
+    if g3p_html.exists() != g3p_manifest.exists():
+        raise ValueError("incomplete G3P Pages source pair")
+    if g3p_html.is_file() and g3p_manifest.is_file():
+        source=json.loads(g3p_manifest.read_text(encoding="utf-8"))
+        if not (source.get("schema")=="missioncontrol.g3p.live_sources.v1"
+                and source.get("repository")=="GBOGEB/pipeline-automation-hub"
+                and source.get("authority_transfer") is False
+                and source.get("merge_admission")=="HOLD"):
+            raise ValueError("G3P Pages source contract invalid")
+        for src,name in ((g3p_html,"index.html"),(g3p_manifest,"G3P_LIVE_SOURCES_v1.json")):
+            dest=out/"g3p"/name
+            dest.parent.mkdir(exist_ok=True,parents=True)
+            shutil.copyfile(src,dest)
+            hashes[str(dest.relative_to(out))]=hashlib.sha256(dest.read_bytes()).hexdigest()
+    # Live Lossless is a generated sanitized consumer of the existing
+    # closeout/GitHub provenance. It has no separate Pages publisher.
+    live_allow = ("index.html", "app.js", "style.css", "snapshot.json", "manifest.json")
+    live_source = atlas / "live-lossless"
+    live_present = [name for name in live_allow if (live_source / name).is_file()]
+    if live_present and len(live_present) != len(live_allow):
+        raise ValueError("incomplete Live Lossless Pages source")
+    if len(live_present) == len(live_allow):
+        ll = json.loads((live_source / "manifest.json").read_text(encoding="utf-8"))
+        state = json.loads((live_source / "snapshot.json").read_text(encoding="utf-8"))
+        if not (ll.get("schema") == "missioncontrol.live_lossless.publication_manifest.v1"
+                and ll.get("publisher") == "EXISTING_PAGES_ONLY"
+                and ll.get("authority_transfer") is False
+                and ll.get("security_waiver") is False
+                and ll.get("merge_admission") == "HOLD"
+                and state.get("schema") == "missioncontrol.live_lossless.dashboard.v1"
+                and state.get("authority_transfer") is False
+                and state.get("merge_admission") == "INDEPENDENT_HOLD"):
+            raise ValueError("unsafe Live Lossless Pages projection")
+        for name in live_allow:
+            src = live_source / name
+            if name != "manifest.json" and hashlib.sha256(src.read_bytes()).hexdigest() != ll.get("files_sha256", {}).get(name):
+                raise ValueError("Live Lossless source hash mismatch: " + name)
+            dest = out / "live-lossless" / name
+            dest.parent.mkdir(exist_ok=True, parents=True)
+            shutil.copyfile(src, dest)
+            hashes[str(dest.relative_to(out))] = hashlib.sha256(dest.read_bytes()).hexdigest()
+    # Source-owned MissionControl navigator, packaged by the EXISTING Pages
+    # publisher only. This is a materialized read-only projection, never a
+    # second workflow/deployer or evidence-admission endpoint.
+    import sys
+    launch_dir=Path(__file__).resolve().parent.parent/"launchpad"
+    if launch_dir.is_dir():
+        if str(launch_dir) not in sys.path:sys.path.insert(0,str(launch_dir))
+        from render_launchpad import build as build_launchpad
+        nav=build_launchpad(out/"missioncontrol",sha)
+        if not (nav.get("schema")=="missioncontrol.launchpad.publication_manifest.v1"
+                and nav.get("publisher")=="EXISTING_ATLAS_PAGES_ONLY"
+                and nav.get("source_head_sha")==sha
+                and nav.get("native_qa") is None
+                and nav.get("hosted_http_verified") is False
+                and nav.get("authority_transfer") is False
+                and nav.get("merge_admission")=="HOLD"):
+            raise ValueError("MC navigation publication policy drift")
+        for name,want in nav["files_sha256"].items():
+            actual=hashlib.sha256((out/"missioncontrol"/name).read_bytes()).hexdigest()
+            if actual!=want:raise ValueError("MC navigation file digest mismatch: "+name)
+            hashes["missioncontrol/"+name]=actual
+        hashes["missioncontrol/manifest.json"]=hashlib.sha256((out/"missioncontrol/manifest.json").read_bytes()).hexdigest()
+        # Atomic review table derived from the same typed graph (not a BD SSOT).
+        atom_src=launch_dir/"GRAPH_ATOMS_W1_v1.json"
+        atom_doc=json.loads(atom_src.read_text(encoding="utf-8"))
+        from nav_model import CONFIG as graph_source
+        graph=json.loads(graph_source.read_text(encoding="utf-8"))
+        if not (atom_doc.get("schema")=="missioncontrol.launchpad.graph_atoms.v1"
+                and atom_doc.get("source_git_blob_sha")=="74a8e45d26d24f52aa751713df3706c492a9f94e"
+                and atom_doc.get("authority_transfer") is False
+                and atom_doc.get("merge_admission")=="HOLD"
+                and atom_doc.get("canonical_bd_unchanged") is True
+                and atom_doc.get("metrics",{}).get("all_atoms")==len(graph["nodes"])+len(graph["edges"])
+                and len(atom_doc.get("atoms",[]))==len(graph["nodes"])+len(graph["edges"])):
+            raise ValueError("MC graph atom source parity/authority failure")
+        target=out/"missioncontrol/GRAPH_ATOMS_W1_v1.json"
+        shutil.copyfile(atom_src,target)
+        hashes["missioncontrol/GRAPH_ATOMS_W1_v1.json"]=hashlib.sha256(target.read_bytes()).hexdigest()
+
+    # Mission rebuild: one owner portal; never an alternate Pages publisher.
+    rebuild_allow = ("index.html", "graph.json", "graph.mmd", "manifest.json")
+    rebuild_src = atlas / "mission-rebuild"
+    rebuild_present = [n for n in rebuild_allow if (rebuild_src / n).is_file()]
+    if rebuild_present and len(rebuild_present) != len(rebuild_allow):
+        raise ValueError("partial Mission rebuild output")
+    if len(rebuild_present) == len(rebuild_allow):
+        receipt = json.loads((rebuild_src / "manifest.json").read_text(encoding="utf-8"))
+        graph = json.loads((rebuild_src / "graph.json").read_text(encoding="utf-8"))
+        if not (receipt.get("schema") == "missioncontrol.makeover.manifest.v1"
+                and receipt.get("source_sha") == sha
+                and receipt.get("published_by") == "EXISTING_METHOD_ATLAS_PAGES_ONLY"
+                and receipt.get("merge_admission") == "HOLD"
+                and receipt.get("security_waiver") is False
+                and receipt.get("authority_transfer") is False
+                and graph.get("source_sha") == sha
+                and graph.get("gate", {}).get("merge_admission") == "HOLD"
+                and graph.get("scheduler", {}).get("dispatch_authorized") is False):
+            raise ValueError("unsafe Mission rebuild source")
+        for name in rebuild_allow:
+            src = rebuild_src / name
+            if name != "manifest.json" and hashlib.sha256(src.read_bytes()).hexdigest() != receipt.get("files_sha256", {}).get(name):
+                raise ValueError("Mission rebuild hash mismatch: " + name)
+            dst = out / "mission-rebuild" / name
+            dst.parent.mkdir(exist_ok=True, parents=True)
+            shutil.copyfile(src, dst)
+            hashes[str(dst.relative_to(out))] = hashlib.sha256(dst.read_bytes()).hexdigest()
+    # Additive W2 read-only gg_MATH evidence inlay; no second publisher.
+    w2_names = ("evidence.json", "evidence.html", "evidence-manifest.json")
+    w2_root = atlas / "mission-rebuild"
+    w2_present = [name for name in w2_names if (w2_root / name).is_file()]
+    if w2_present and len(w2_present) != len(w2_names):
+        raise ValueError("partial W2 MissionControl evidence output")
+    if len(w2_present) == len(w2_names):
+        w2_receipt = json.loads((w2_root / "evidence-manifest.json").read_text(encoding="utf-8"))
+        w2_state = json.loads((w2_root / "evidence.json").read_text(encoding="utf-8"))
+        if not (w2_receipt.get("schema") == "missioncontrol.makeover.w2_plotly_manifest.v1"
+                and w2_receipt.get("source_sha") == sha
+                and w2_receipt.get("publisher") == "EXISTING_METHOD_ATLAS_PAGES_ONLY"
+                and w2_receipt.get("merge_admission") == "HOLD"
+                and w2_receipt.get("security_waiver") is False
+                and w2_receipt.get("authority_transfer") is False
+                and w2_receipt.get("gg_math_kernel_duplicated") is False
+                and w2_state.get("schema") == "missioncontrol.makeover.w2_native_observation.v1"
+                and w2_state.get("source_head_sha") == sha
+                and w2_state.get("governance", {}).get("merge_admission") == "HOLD"
+                and w2_state.get("gg_math", {}).get("native_live_pulse_receipts_ingested") == 0
+                and w2_state.get("fleet", {}).get("capacity_slots") is None
+                and w2_state.get("unknown_burndown", {}).get("coverage", {}).get("covered_statements") is None):
+            raise ValueError("unsafe W2 gg_MATH/Plotly bridge admission")
+        if set(w2_receipt.get("member_sha256", {})) != {"evidence.json", "evidence.html"}:
+            raise ValueError("W2 manifest population drift")
+        for name in w2_names:
+            src = w2_root / name
+            if name != "evidence-manifest.json" and hashlib.sha256(src.read_bytes()).hexdigest() != w2_receipt["member_sha256"].get(name):
+                raise ValueError("W2 evidence source hash mismatch: " + name)
+            dst = out / "mission-rebuild" / name
+            dst.parent.mkdir(exist_ok=True, parents=True)
+            shutil.copyfile(src, dst)
+            hashes[str(dst.relative_to(out))] = hashlib.sha256(dst.read_bytes()).hexdigest()
+    # N3 consumes a scoped historical native run; Pages only mirrors verified bytes.
+    n3_root = atlas / "mission-rebuild"
+    n3_names = ("n3-metrics.html", "n3-metrics.json", "n3-manifest.json")
+    n3_present = [name for name in n3_names if (n3_root / name).is_file()]
+    if n3_present and len(n3_present) != len(n3_names):
+        raise ValueError("partial N3 source-bound KPI output")
+    if len(n3_present) == len(n3_names):
+        n3_receipt = json.loads((n3_root / "n3-manifest.json").read_text(encoding="utf-8"))
+        n3_state = json.loads((n3_root / "n3-metrics.json").read_text(encoding="utf-8"))
+        if not (n3_receipt.get("schema") == "missioncontrol.n3.readonly_publisher_manifest.v1"
+                and n3_receipt.get("presentation_sha") == sha
+                and n3_receipt.get("producer_sha") == n3_state.get("producer_sha")
+                and n3_receipt.get("publisher") == "EXISTING_METHOD_ATLAS_PAGES_ONLY"
+                and n3_receipt.get("merge_admission") == "HOLD"
+                and n3_receipt.get("authority_transfer") is False
+                and n3_state.get("schema") == "missioncontrol.n3.scoped_native_kpi.v1"
+                and n3_state.get("presentation_sha") == sha
+                and n3_state.get("source_repo") == "GBOGEB/pipeline-automation-hub"
+                and n3_state.get("authority", {}).get("merge_admission") == "HOLD"
+                and n3_state.get("authority", {}).get("remote_dispatch") is False
+                and n3_state.get("fleet_runner_capacity") is None
+                and n3_state.get("owner_required_status_gate", {}).get("owner_installed") is None):
+            raise ValueError("unsafe N3 KPI/REX publication promotion")
+        if set(n3_receipt.get("member_sha256", {})) != {
+                "n3-metrics.html", "n3-metrics.json"}:
+            raise ValueError("N3 manifest member population drift")
+        for name in n3_names:
+            src = n3_root / name
+            if name != "n3-manifest.json":
+                if hashlib.sha256(src.read_bytes()).hexdigest() != n3_receipt["member_sha256"].get(name):
+                    raise ValueError("N3 source member digest mismatch: " + name)
+            dst = out / "mission-rebuild" / name
+            dst.parent.mkdir(exist_ok=True, parents=True)
+            shutil.copyfile(src, dst)
+            hashes[str(dst.relative_to(out))] = hashlib.sha256(dst.read_bytes()).hexdigest()
+    # W32 Global DoV: pack an existing-publisher-only, exact-head projection.
+    # No second authority, no second Pages workflow, no GitHub status as proof.
+    hub_allow = ("index.html", "ledger.json", "lineage.mmd", "manifest.json")
+    hub_src = atlas / "convergence"
+    hub_present = [n for n in hub_allow if (hub_src / n).is_file()]
+    if hub_present and len(hub_present) != len(hub_allow):
+        raise ValueError("partial Convergence Hub output")
+    if len(hub_present) == len(hub_allow):
+        hub_manifest = json.loads((hub_src / "manifest.json").read_text(encoding="utf-8"))
+        hub_ledger = json.loads((hub_src / "ledger.json").read_text(encoding="utf-8"))
+        if not (hub_manifest.get("schema") == "codepurple.convergence_hub.manifest.v1"
+                and hub_manifest.get("presentation_head") == sha
+                and hub_manifest.get("publisher") == "EXISTING_METHOD_ATLAS_PAGES_ONLY"
+                and hub_manifest.get("merge_admission") == "HOLD"
+                and hub_manifest.get("security_waiver") is False
+                and hub_manifest.get("authority_transfer") is False
+                and hub_manifest.get("qps_owner_acceptance") is None
+                and hub_ledger.get("presentation_head") == sha
+                and hub_ledger.get("schema") == "codepurple.convergence_hub.projection.v1"
+                and hub_ledger.get("browser_refresh_credit") is False
+                and hub_ledger.get("native_cross_repo_attestation") is None
+                and hub_ledger.get("kpis", {}).get("coverage_rollup_global") is None):
+            raise ValueError("unsafe Convergence Hub publication contract")
+        if set(hub_manifest.get("member_sha256", {})) != {
+                "index.html", "ledger.json", "lineage.mmd"}:
+            raise ValueError("Convergence Hub manifest member drift")
+        for name in hub_allow:
+            src = hub_src / name
+            if name != "manifest.json" and hashlib.sha256(src.read_bytes()).hexdigest() != hub_manifest["member_sha256"][name]:
+                raise ValueError("Convergence Hub source member hash mismatch: " + name)
+            dst = out / "convergence" / name
+            dst.parent.mkdir(exist_ok=True, parents=True)
+            shutil.copyfile(src, dst)
+            hashes[str(dst.relative_to(out))] = hashlib.sha256(dst.read_bytes()).hexdigest()
+    # W34 Superstitch: existing Method Atlas is the ONLY public publisher.
+    sw_allow=("index.html","app.js","stitch_interaction.js","style.css",
+              "stitch_interaction.css","graph.svg","graph.json","spline.svg",
+              "taxonomy.json","glossary.json","groups.json","sipoc-lanes.svg",
+              "trigger-dag.svg","superstitch.mmd","sipoc-lanes.mmd",
+              "trigger-dag.mmd","manifest.json")
+    sw_src=atlas/"superstitch"
+    sw_present=[n for n in sw_allow if (sw_src/n).is_file()]
+    if sw_present and len(sw_present)!=len(sw_allow):
+        raise ValueError("partial W34 Superstitch output")
+    sw_ready=len(sw_present)==len(sw_allow)
+    if sw_ready:
+        sw_m=json.loads((sw_src/"manifest.json").read_text(encoding="utf-8"))
+        sw_g=json.loads((sw_src/"graph.json").read_text(encoding="utf-8"))
+        if not (sw_m.get("schema")=="missioncontrol.superstitch.manifest.v1"
+                and sw_m.get("presentation_head")==sha
+                and sw_m.get("role")=="READ_ONLY_EXISTING_PAGES_CONSUMER"
+                and sw_m.get("merger_admission")=="HOLD"
+                and sw_m.get("run_dispatch") is False
+                and sw_m.get("qps_owner_acceptance") is None
+                and sw_m.get("native_test_attestation") is None
+                and sw_g.get("publication",{}).get("presentation_head")==sha
+                and sw_g.get("publication",{}).get("native_current_attestation") is None
+                and sw_g.get("authority",{}).get("zip_verifier")=="MC-530"
+                and sw_g.get("authority",{}).get("breadth_producer")=="MC-531"
+                and sw_g.get("authority",{}).get("method_viewer")=="MC-533"
+                and sw_g.get("authority",{}).get("merge_admission")=="HOLD"):
+            raise ValueError("Superstitch publication/authority contract")
+        if set(sw_m.get("member_sha256",{})) != set(sw_allow)-{"manifest.json"}:
+            raise ValueError("Superstitch public-member population drift")
+        for filename in sw_allow:
+            src=sw_src/filename
+            if filename!="manifest.json":
+                if hashlib.sha256(src.read_bytes()).hexdigest()!=sw_m["member_sha256"][filename] or src.stat().st_size!=sw_m["member_bytes"][filename]:
+                    raise ValueError("Superstitch public-member byte mismatch: "+filename)
+            dest=out/"superstitch"/filename
+            dest.parent.mkdir(parents=True,exist_ok=True)
+            shutil.copyfile(src,dest)
+            hashes[str(dest.relative_to(out))]=hashlib.sha256(dest.read_bytes()).hexdigest()
+    # P process (Code Purple x EVERRED): prebuilt static site committed under qps-triage-ultra/p-process/site.
+    psite=atlas/"p-process"
+    if psite.is_dir():
+        for src in sorted(psite.rglob("*")):
+            if src.is_file() and src.suffix in {".html",".js",".json",".pdf",".md",".yaml",".py"}:
+                dest=out/"p-process"/src.relative_to(psite); dest.parent.mkdir(exist_ok=True,parents=True)
+                shutil.copyfile(src,dest); hashes[str(dest.relative_to(out))]=hashlib.sha256(dest.read_bytes()).hexdigest()
+    # JADE_CASTE is a fail-closed, hash-bound child of this existing Pages publisher.
+    # This is file staging, not independent deployment or release authority.
+    jade_root = Path(__file__).resolve().parents[1] / "jade_temple"
+    jade_bridge = jade_root / "portal_bridge.py"
+    if jade_bridge.is_file():
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("jade_temple_pages_bridge", jade_bridge)
+        if spec is None or spec.loader is None:
+            raise ValueError("JADE_BRIDGE_IMPORT_FAILED")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        module.stage_jade(jade_root, out, hashes, sha)
+    elif (jade_root / "site" / "green.html").exists():
+        raise ValueError("JADE_SOURCE_WITHOUT_VALIDATED_BRIDGE")
+    links=[("MissionControl · Federated Navigator","missioncontrol/index.html"),("JADE_CASTE · N+3 eight-point MIP","jade/eightpoint.html"),("JADE_CASTE · N+2 measured burn-down and stop rules","jade/burndown.html"),("JADE_CASTE · GoGREEN Top21 readiness","jade/green.html"),("GLOBAL DoV · Consolidated Convergence Hub","convergence/index.html"),("Live Lossless · Session Status","live-lossless/index.html"),("G3P Live Evidence","g3p/index.html"),("Method Atlas","atlas/index.html"),("Process and Mermaid","atlas/lane-process.html"),("CODE PURPLE controls","atlas/code-purple.html"),("Federation pulses","atlas/federation-latest.html"),("Flight Deck","atlas/flightdeck/index.html"),("Native pulse evidence","native-pulse/index.html"),("BD / CHAR temporal pulses","bd-char/index.html"),("Federation neighbors & recursive SIPOC","federation-home/index.html"),("Merged PR historical run chronology","pr-history/index.html"),("Disjoint worker and IDE P3","worker-devkit/index.html"),("P process: Code Purple × EVERRED","p-process/index.html"),("Kubernetes source inventory","atlas/sideload-k8s.html"),("Side-load proof and admission ladder","atlas/sideload-operator.html")]
     cards="".join('<a class="card" href="'+html.escape(u)+'">'+html.escape(t)+' ↗</a>' for t,u in links if (out/u).is_file())
+    if (out / "orchestration" / "index.html").is_file():
+        cards = '<a class="card" href="orchestration/index.html">Method Atlas · functional I/O, all workflow DAGs, broker and burndown ↗</a>' + cards
+    if (out / "coverage-integrity" / "index.html").is_file():
+        cards = '<a class="card" href="coverage-integrity/index.html">CODE PURPLE · source-matched coverage, zero-module integrity &amp; BD ↗</a>' + cards
+    if (out / "mission-rebuild" / "index.html").is_file():
+        cards += '<a class="card" href="mission-rebuild/index.html">MISSION CONTROL · Repository and DAG explorer ↗</a>'
+    if (out / "mission-rebuild" / "evidence.html").is_file():
+        cards += '<a class="card" href="mission-rebuild/evidence.html">MissionControl W2 · live queue / gg_MATH Plotly evidence ↗</a>'
+    if (out / "mission-rebuild" / "n3-metrics.html").is_file():
+        cards += '<a class="card" href="mission-rebuild/n3-metrics.html">N3 · Native job queue / KPI / LDAB proof boundary ↗</a>'
+    featured=('<div class="note"><strong>Mission Control makeover:</strong> '
+              '<a href="missioncontrol/index.html">Open six-panel federation navigator ↗</a> · <a href="missioncontrol/GRAPH_ATOMS_W1_v1.json">Inspect 32 graph atoms ↗</a>'
+              ' · graph/DAG, scheduler proposals, source-owned repositories, SIPOC and QA'
+              '</div>' if (out/"missioncontrol/index.html").is_file() else '')
+
+    # Source-owned gg_MATH Plotly proof is a navigational link, not a deployed
+    # Pages asset or a second KPI producer. Fail closed on unsafe bridge claims.
+    math_bridge=Path(__file__).resolve().parent/"GG_MATH_CONVERGENCE_BRIDGE_v1.json"
+    if math_bridge.is_file():
+        from gg_math_convergence_consumer import validate_bridge
+        math_view=validate_bridge(json.loads(math_bridge.read_text(encoding="utf-8")))
+        math_url=math_view["provider_source_url"]
+        if not math_url.startswith("https://github.com/GBOGEB/gg_MATH/blob/"):
+            raise ValueError("unsafe math provider link")
+        cards+='<a class="card" rel="noopener noreferrer" href="'+html.escape(math_url,quote=True)+'">gg_MATH · Convergence Plotly source (native/Pages verification pending) ↗</a>'
+
     diagram=(atlas/"lane-process.mmd").read_text() if (atlas/"lane-process.mmd").is_file() else 'flowchart LR\n A["Source"] --> B["Native CI"] --> C["Read-only Atlas"] --> D["Owner gate"]'
     page='''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>CODE PURPLE | MissionControl</title><style>
-body{background:#0d1728;color:#e9f2fc;font:16px/1.6 system-ui;margin:0}main{max-width:1120px;margin:auto;padding:28px}h1{font-size:clamp(2rem,5vw,3.5rem)}p{color:#b9cbe1}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.card{display:block;padding:22px;background:#1b2b46;color:#c6eeff;border:1px solid #516988;border-radius:14px;text-decoration:none;font-weight:650}.card:hover,.card:focus-visible{outline:2px solid #7ecce5}.note{border-left:4px solid #7ecce5;background:#22354e;padding:14px;margin:25px 0}.mermaid{background:#f4f8ff;color:#13233b;border-radius:12px;overflow:auto;padding:12px}a{color:#9de5fa}code{overflow-wrap:anywhere}</style></head><body><main><p>MISSIONCONTROL / CODE PURPLE — GOVERNED REVIEW PROJECTION</p><h1>Engineering evidence flight deck</h1><p>Source-bound methods, Mermaid diagrams, QPS evidence, ABACUS/DOW and CODEX/KEB workflows, separated by scope and authority.</p><div class="note"><strong>Read-only:</strong> hosted HTML is not merge admission, a security waiver, native federation acceptance or QPS engineering approval. UNKNOWN remains UNKNOWN.</div><section><h2>Navigate evidence views</h2><div class="grid">'''+cards+'''</div></section><section><h2>Execution and control DAG</h2><pre class="mermaid">'''+html.escape(diagram)+'''</pre><p><a href="atlas/lane-process.mmd">Open Mermaid source</a> · <a href="atlas/federation.svg">Open native SVG</a></p></section><section><h2>Exact source</h2><code>'''+sha+'''</code><p><a href="site-manifest.json">Published file hash manifest</a> · <a href="https://github.com/GBOGEB/pipeline-automation-hub">Repository</a></p></section></main><script type="module">try{let m=await import("https://cdn.jsdelivr.net/npm/mermaid@11.11.0/dist/mermaid.esm.min.mjs");m.default.initialize({startOnLoad:true,securityLevel:"strict",theme:"neutral"})}catch(e){document.querySelectorAll(".mermaid").forEach(x=>x.setAttribute("aria-label","Mermaid source available in text form"))}</script></body></html>'''
+body{background:#0d1728;color:#e9f2fc;font:16px/1.6 system-ui;margin:0}main{max-width:1120px;margin:auto;padding:28px}h1{font-size:clamp(2rem,5vw,3.5rem)}p{color:#b9cbe1}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.card{display:block;padding:22px;background:#1b2b46;color:#c6eeff;border:1px solid #516988;border-radius:14px;text-decoration:none;font-weight:650}.card:hover,.card:focus-visible{outline:2px solid #7ecce5}.note{border-left:4px solid #7ecce5;background:#22354e;padding:14px;margin:25px 0}.mermaid{background:#f4f8ff;color:#13233b;border-radius:12px;overflow:auto;padding:12px}a{color:#9de5fa}code{overflow-wrap:anywhere}</style></head><body><main><p>MISSIONCONTROL / CODE PURPLE — GOVERNED REVIEW PROJECTION</p><h1>Engineering evidence flight deck</h1><p>Source-bound methods, Mermaid diagrams, QPS evidence, ABACUS/DOW and CODEX/KEB workflows, separated by scope and authority.</p>'''+featured+'''<div class="note"><strong>Read-only:</strong> hosted HTML is not merge admission, a security waiver, native federation acceptance or QPS engineering approval. UNKNOWN remains UNKNOWN.</div><section><h2>Navigate evidence views</h2><div class="grid">'''+cards+'''</div></section><section><h2>Execution and control DAG</h2><pre class="mermaid">'''+html.escape(diagram)+'''</pre><p><a href="atlas/lane-process.mmd">Open Mermaid source</a> · <a href="atlas/federation.svg">Open native SVG</a></p></section><section><h2>Exact source</h2><code>'''+sha+'''</code><p><a href="site-manifest.json">Published file hash manifest</a> · <a href="https://github.com/GBOGEB/pipeline-automation-hub">Repository</a></p></section></main><script type="module">try{let m=await import("https://cdn.jsdelivr.net/npm/mermaid@11.11.0/dist/mermaid.esm.min.mjs");m.default.initialize({startOnLoad:true,securityLevel:"strict",theme:"neutral"})}catch(e){document.querySelectorAll(".mermaid").forEach(x=>x.setAttribute("aria-label","Mermaid source available in text form"))}</script></body></html>'''
     (out/"index.html").write_text(page,encoding="utf-8");hashes["index.html"]=hashlib.sha256((out/"index.html").read_bytes()).hexdigest()
+    hashes={name.replace("\\", "/"):value for name,value in hashes.items()}
     m={"schema":"codepurple.pages.readonly/v1","source_git_sha":sha,"public_files_sha256":hashes,"qps_owner_decision":"DEFER","merge_authorized":False,"security_waiver":False}
     (out/"site-manifest.json").write_text(json.dumps(m,indent=2,sort_keys=True)+"\n")
     return m

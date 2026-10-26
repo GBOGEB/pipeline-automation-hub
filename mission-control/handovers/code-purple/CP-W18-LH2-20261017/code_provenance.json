@@ -1,0 +1,178 @@
+{
+  "schema": "code-purple.source-provenance.v1",
+  "moniker": "CP-W18-LH2-20261017",
+  "source_cut_utc": "2026-10-17T19:51:25Z",
+  "repository": "GBOGEB/ABACUS",
+  "prs": [
+    {
+      "number": 2161,
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2161",
+      "head_sha": "6b89e0421fee000c4aa9bbdcffdc69b31f34d33c",
+      "state": "MERGED",
+      "paths": [
+        "DMAIC_V3/requirements.txt"
+      ],
+      "merge_commit_sha": null,
+      "source_head_is_not_main_commit": true
+    },
+    {
+      "number": 2163,
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2163",
+      "head_sha": "40012148352101a004f004d72c47ef70eef339f2",
+      "state": "OPEN_DRAFT_RED",
+      "paths": [
+        "docs/index.html",
+        "docs/runtime.html",
+        ".github/workflows/dashboard-health.yml",
+        "tests/test_dashboard_health_link_contract.py"
+      ],
+      "merge_commit_sha": null,
+      "source_head_is_not_main_commit": true
+    },
+    {
+      "number": 2167,
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2167",
+      "head_sha": "e3f6302ffa1d5312be7ec8a91f7b5969e8848cb6",
+      "state": "MERGED",
+      "paths": [
+        "requirements.txt",
+        "tests/test_ariana_secure_junit_dependency.py"
+      ],
+      "merge_commit_sha": "db1be4da2d33c264f23d6f819cf355c03d56836c",
+      "source_head_is_not_main_commit": true
+    },
+    {
+      "number": 2168,
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2168",
+      "head_sha": "bd589b5ab47f1011c50dace23cb86a9a75cc09a5",
+      "state": "MERGED",
+      "paths": [
+        ".github/workflows/ariana-cicd.yml"
+      ],
+      "merge_commit_sha": "79bda8caadc963f8fdcebb79105b5ba27529bad0",
+      "source_head_is_not_main_commit": true
+    },
+    {
+      "number": 2169,
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2169",
+      "head_sha": "b26830531dc61e0de0e7bf7e6fd78b2b48b27d99",
+      "state": "OPEN_DRAFT_RED",
+      "paths": [
+        "requirements-test.txt",
+        "tests/test_ariana_unit_matrix_dependency_contract.py"
+      ],
+      "merge_commit_sha": null,
+      "source_head_is_not_main_commit": true
+    },
+    {
+      "number": 2170,
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2170",
+      "head_sha": "3d69532bb218ea85cee4ed09b0e865864a0afc28",
+      "state": "CLOSED_UNMERGED",
+      "paths": [
+        "scripts/bd_three_pulse_bridge.py",
+        "tests/test_bd_three_pulse_bridge.py"
+      ],
+      "merge_commit_sha": null,
+      "source_head_is_not_main_commit": true
+    },
+    {
+      "number": 2175,
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2175",
+      "head_sha": "554a5fdd4d2a268c6e97e883788ad6c3e6e5a156",
+      "state": "MERGED",
+      "paths": [
+        "requirements-dev.txt"
+      ],
+      "merge_commit_sha": "2687ad9bd3afee9fcb824bd21b6ac73dd008dd80",
+      "source_head_is_not_main_commit": true
+    },
+    {
+      "number": 2178,
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2178",
+      "head_sha": "e31452a78ba33ba1eb03fe80a4517eea84e6bf68",
+      "state": "MERGED",
+      "paths": [
+        "tests/test_bd_three_pulse_bridge.py"
+      ],
+      "merge_commit_sha": "19d0581e640f252f39984ef893d4fd4e9d236ad5",
+      "source_head_is_not_main_commit": true
+    },
+    {
+      "number": 2182,
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2182",
+      "head_sha": "203f7d3e083eb1738a91655b9610b24d36e39351",
+      "state": "OPEN_DRAFT_PENDING",
+      "paths": [
+        "Bandit/DOW fan-in"
+      ],
+      "merge_commit_sha": null,
+      "source_head_is_not_main_commit": true
+    }
+  ],
+  "prior_repo_snapshots": [
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "pr": 663,
+      "head": "bea6da6ab7ce22ef2f4397362014e7ce5f3b2999",
+      "merge_commit": "6a89d28e7214294a85ecf33bff7c31fb40625a52",
+      "issue_population": 152
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "pr": 670,
+      "head": "3cd4fc93b26e770e8dbc6a5485961daad1269b97",
+      "issue_population": 142,
+      "asset": "docs/mission-control/w18/snapshot.json"
+    }
+  ],
+  "native_runs": [
+    {
+      "run": 39056760386,
+      "head": "e58cf5b218bad46d133ca37b28ad4bc79eace75b",
+      "first_red": "defusedxml import error"
+    },
+    {
+      "run": 39056760298,
+      "head": "e58cf5b218bad46d133ca37b28ad4bc79eace75b",
+      "first_red": "defusedxml 3-lane matrix"
+    },
+    {
+      "run": 39058767648,
+      "head": "e3f6302ffa1d5312be7ec8a91f7b5969e8848cb6",
+      "result": "552 passed, 3 failed before maxfail=3"
+    },
+    {
+      "run": 39059222420,
+      "head": "180ef6c7bfb719b2697e64c6a3999114c180166f",
+      "result": "562 passed, 3 failed before maxfail=3"
+    },
+    {
+      "run": 39063903966,
+      "head": "203f7d3e083eb1738a91655b9610b24d36e39351",
+      "result": "IN_PROGRESS_AT_CUT_B0"
+    },
+    {
+      "run": 39063903736,
+      "head": "203f7d3e083eb1738a91655b9610b24d36e39351",
+      "result": "IN_PROGRESS_AT_CUT_MATRIX"
+    }
+  ],
+  "local_prior_artifacts": [
+    {
+      "name": "CODE_PURPLE_DMAIC_TELEMETRY_N9_20261017.zip",
+      "sha256": "ad3b2a74e737760d71137ff2c24757e3984cd4980be704418b260b93c84d3d55"
+    },
+    {
+      "name": "GBOGEB_ISSUE_BURNDOWN_RECEIPT_20261017.json",
+      "sha256": "fe390efb6adcc12b17956fd717ad02dd08b05d4ff07a272561665f0324400afa"
+    }
+  ],
+  "security": {
+    "authority_transfer": false,
+    "security_waiver": false,
+    "qps_engineering_acceptance": null,
+    "merge_admission": "HOLD",
+    "causal_root_closure_credit": 0
+  }
+}

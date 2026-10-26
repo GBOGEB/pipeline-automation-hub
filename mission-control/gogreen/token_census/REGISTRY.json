@@ -1,0 +1,125 @@
+{
+  "schema": "gogreen.token.registry.v1",
+  "owner": "GBOGEB",
+  "observed_at": "2026-10-23T11:20:00Z",
+  "observed_by": "owner gh secret list (names and save times only; no values)",
+  "hub": "GBOGEB/pipeline-automation-hub",
+  "private_repos": [
+    "GBOGEB/cryoplant-project",
+    "GBOGEB/github_Documents",
+    "GBOGEB/qps_deck"
+  ],
+  "private_readers": [
+    "QPS_FEDERATION_READ_TOKEN",
+    "CROSS_REPO_READ_TOKEN",
+    "GOGREEN_TOP21_READ_TOKEN"
+  ],
+  "tokens": [
+    {
+      "id": 1,
+      "name": "dag-census-read-federation",
+      "repos": ["GBOGEB/ABACUS", "GBOGEB/CODEX", "GBOGEB/cryoplant-project", "GBOGEB/pipeline-automation-hub"],
+      "permissions": {"contents": "read", "actions": "read", "pull_requests": "read", "metadata": "read"},
+      "expires_days": 180
+    },
+    {
+      "id": 2,
+      "name": "dag-census-read-fleet",
+      "repos": ["GBOGEB/cryoplant-project", "GBOGEB/github_Documents", "GBOGEB/qps_deck"],
+      "public_read": true,
+      "permissions": {"contents": "read", "actions": "read", "pull_requests": "read", "metadata": "read"},
+      "expires_days": 180
+    },
+    {
+      "id": 3,
+      "name": "dag-dispatch-federation",
+      "repos": ["GBOGEB/ABACUS", "GBOGEB/CODEX", "GBOGEB/cryoplant-project"],
+      "permissions": {"actions": "write", "metadata": "read"},
+      "expires_days": 90
+    },
+    {
+      "id": 4,
+      "name": "abacus-metrics-pr-writer",
+      "repos": ["GBOGEB/ABACUS"],
+      "permissions": {"contents": "write", "pull_requests": "write", "metadata": "read"},
+      "expires_days": 90
+    }
+  ],
+  "secrets": [
+    {
+      "name": "CROSS_REPO_READ_TOKEN",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "token": 1,
+      "set_at": "2026-10-23T09:58:59Z",
+      "consumers": [
+        {"repo": "GBOGEB/pipeline-automation-hub", "workflow": "code-purple-live-census.yml", "branch": "master", "without": "SOFT_DEFERRED"},
+        {"repo": "GBOGEB/pipeline-automation-hub", "workflow": "gogreen-federation-spine.yml", "branch": "master", "without": "SOFT_DEFERRED"}
+      ]
+    },
+    {
+      "name": "QPS_FEDERATION_READ_TOKEN",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "token": 1,
+      "set_at": "2026-10-23T10:03:15Z",
+      "consumers": [
+        {"repo": "GBOGEB/pipeline-automation-hub", "workflow": "qps-metric-census-federation.yml", "branch": "master", "job": "plan-three-repo-slice", "without": "SOURCE_HEAD_HOLD"}
+      ]
+    },
+    {
+      "name": "GOGREEN_TOP21_READ_TOKEN",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "token": 2,
+      "set_at": "2026-10-23T11:16:53Z",
+      "consumers": [
+        {"repo": "GBOGEB/pipeline-automation-hub", "workflow": "gogreen-top21-merged-evidence.yml", "branch": "master", "without": "SOFT_DEFERRED"}
+      ]
+    },
+    {
+      "name": "QPS_TRIAGE_DISPATCH_TOKEN",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "token": 3,
+      "set_at": "2026-10-23T11:18:30Z",
+      "consumers": [
+        {"repo": "GBOGEB/pipeline-automation-hub", "workflow": "qps-metric-census-federation.yml", "branch": "master", "job": "dispatch-to-source-owners", "without": "DISPATCH_HOLD"}
+      ]
+    },
+    {
+      "name": "QPS_REPO_READ_TOKEN",
+      "repo": "GBOGEB/ABACUS",
+      "token": 1,
+      "set_at": "2026-10-23T10:03:28Z",
+      "consumers": [
+        {"repo": "GBOGEB/ABACUS", "workflow": "qps-w04-dow-receipt.yml", "branch": "main", "without": "SOFT_SKIP"}
+      ]
+    },
+    {
+      "name": "CRYOPLANT_FEDERATION_TOKEN",
+      "repo": "GBOGEB/ABACUS",
+      "environment": "cryoplant-federation",
+      "token": 1,
+      "set_at": "2026-10-23T10:03:46Z",
+      "consumers": [
+        {"repo": "GBOGEB/ABACUS", "workflow": "cryoplant-federation.yml", "branch": "main", "without": "RED"}
+      ]
+    },
+    {
+      "name": "METRICS_PR_TOKEN",
+      "repo": "GBOGEB/ABACUS",
+      "token": 4,
+      "set_at": "2026-10-23T10:00:36Z",
+      "consumers": [
+        {"repo": "GBOGEB/ABACUS", "workflow": "dmaic-commit-metrics.yml", "branch": "main", "events": ["push"], "job": "Publish DMAIC Metrics Through Governed PR", "without": "RED"}
+      ]
+    },
+    {
+      "name": "TRIAGE_CENSUS_TOKEN",
+      "repo": "GBOGEB/cryoplant-project",
+      "token": 1,
+      "set_at": null,
+      "optional": true,
+      "consumers": [
+        {"repo": "GBOGEB/cryoplant-project", "workflow": "qps-triage-console-refresh.yml", "branch": "main", "without": "BUILTIN_TOKEN"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+name: Mission Control N11 Top-21 Census
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/federation-atlas/central/top21/**'
+      - 'mission-control/federation-atlas/landing/MISSION_CONTROL_TOP21_CENSUS_N11.html'
+      - '.github/workflows/mission-control-n11-census.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mc-n11-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  exact-head-census:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out exact source SHA
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Enforce checked-out source identity
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+      - name: Node 22 for deterministic read-only replay
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - name: Execute N11 negative and positive contracts
+        run: node --test mission-control/federation-atlas/central/top21/test_top21_*.cjs
+      - name: Replay 21 immutable source-bound snapshots
+        run: |
+          node mission-control/federation-atlas/central/top21/top21_engine.cjs \
+            mission-control/federation-atlas/central/top21 \
+            /tmp/mc-n11-replay.json
+          node -e "const m=require('/tmp/mc-n11-replay.json'); if(m.total.repos!==21||m.total.files!==26836||m.total.root_files!==880||m.total.review_candidates!==706||m.merge_admission!=='HOLD'||m.authority_transfer!==false) process.exit(1)"
+      - name: Retain exact-head replay receipt
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: mc-n11-census-replay
+          path: /tmp/mc-n11-replay.json
+          if-no-files-found: warn

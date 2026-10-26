@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout MissionControl exact source
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           path: hub
@@ -58,6 +58,7 @@ jobs:
 
       - name: QA negative authority mutation must fail closed
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="QA negative authority mutation must fail closed" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           python3 - <<'PY'
           import os, pathlib, yaml
           src=pathlib.Path('f01/federation/ADR_OCD/bridge_manifest.yaml')
@@ -147,7 +148,7 @@ jobs:
           PY
 
       - name: Upload exact-SHA pilot receipts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gm-fleet-03-f01-pilot-${{ github.event.pull_request.head.sha || github.sha }}
           path: |

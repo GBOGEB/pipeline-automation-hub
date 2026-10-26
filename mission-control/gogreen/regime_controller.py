@@ -106,5 +106,5 @@ def emit(receipt,out):
     p=Path(out);p.mkdir(parents=True,exist_ok=True)
     raw=(json.dumps(receipt,sort_keys=True,indent=2)+'\n').encode();(p/'regime_receipt.json').write_bytes(raw)
     digest=hashlib.sha256(raw).hexdigest()
-    (p/'regime_manifest.json').write_text(json.dumps({'schema':'gogreen.regime.manifest.v1','sha256':{'regime_receipt.json':digest},'authority_transfer':False},sort_keys=True)+'\n')
+    (p/'regime_manifest.json').write_text(json.dumps({'schema':'gogreen.regime.manifest.v1','sha256':{'regime_receipt.json':digest},'authority_transfer':False},sort_keys=True)+'\n',encoding="utf-8",newline="\n")
     return digest

@@ -13,6 +13,11 @@ from pathlib import Path
 from n3_continuation import digest, validate, check
 
 
+def is_unproven_boundary(edge):
+    return (edge.get('relationship') == 'inter_wave_source_lineage'
+            and edge.get('source_ancestry_proven') is not True)
+
+
 def compile_waves(ledgers):
     check(isinstance(ledgers, list) and len(ledgers) >= 2, 'at least two wave ledgers required')
     nodes, edges, waves = [], [], []
@@ -53,7 +58,7 @@ def compile_waves(ledgers):
         waves.append({'wave':mission['wave'], 'initial_sha':mission['start_sha'],
                       'last_pulse_sha':last_head, 'source_digest':digest(ledger),
                       'pulse_count':3, 'native_proof_status':'UNKNOWN'})
-    gaps = sum(edge['evidence']=='DECLARED_GAP' for edge in edges)
+    gaps = sum(is_unproven_boundary(edge) for edge in edges)
     return {'schema':'missioncontrol.g3p.wave_lineage.v1',
             'repository':ledgers[0]['mission']['repo'], 'mission_id':ledgers[0]['mission']['id'],
             'waves':waves, 'nodes':nodes, 'edges':edges,
@@ -81,7 +86,7 @@ def mermaid(data):
     index = {n['id']:i for i,n in enumerate(data['nodes'])}
     for edge in data['edges']:
         a,b = index[edge['source']],index[edge['target']]
-        arrow = '-.->' if edge['evidence']=='DECLARED_GAP' else '-->'
+        arrow = '-.->' if is_unproven_boundary(edge) else '-->'
         result.append(f'  P{a} {arrow} P{b}')
     return '\n'.join(result)+'\n'
 
@@ -103,9 +108,9 @@ def main():
     args=p.parse_args()
     data=compile_waves([json.loads(f.read_text(encoding='utf-8')) for f in args.ledgers])
     args.out_dir.mkdir(parents=True,exist_ok=True)
-    (args.out_dir/'g3p-lineage.json').write_text(json.dumps(data,sort_keys=True,indent=2)+'\n',encoding='utf-8')
-    (args.out_dir/'g3p-lineage.mmd').write_text(mermaid(data),encoding='utf-8')
-    (args.out_dir/'g3p-lineage.html').write_text(html_report(data)+'\n',encoding='utf-8')
+    (args.out_dir/'g3p-lineage.json').write_text(json.dumps(data,sort_keys=True,indent=2)+'\n',encoding='utf-8',newline="\n")
+    (args.out_dir/'g3p-lineage.mmd').write_text(mermaid(data),encoding='utf-8',newline="\n")
+    (args.out_dir/'g3p-lineage.html').write_text(html_report(data)+'\n',encoding='utf-8',newline="\n")
     print(json.dumps(data['metrics'],sort_keys=True))
 
 

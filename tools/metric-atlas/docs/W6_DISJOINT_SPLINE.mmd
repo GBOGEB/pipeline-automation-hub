@@ -1,0 +1,11 @@
+flowchart LR
+  N0["N0 | Freeze eligible source cohort"] --> N1["N+1 | 1-repo read-only pilot"]
+  N1 --> N2["N+2 | 2-repo read-only pilot"]
+  N2 --> N3["N+3 | 3-repo review proposal"]
+  N3 -.->|requires independent native receipts| H["HOLD / next admissible epoch"]
+  classDef purple fill:#DFD5F2,stroke:#694AA8,color:#342355
+  classDef mission fill:#D1E3F5,stroke:#32669E,color:#173D64
+  classDef maroon fill:#F1D3DB,stroke:#A44962,color:#61283A
+  class N0,N1,N2 mission
+  class N3 purple
+  class H maroon

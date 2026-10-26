@@ -29,6 +29,7 @@
   .svg-wrap{overflow:auto;min-height:160px;border-radius:9px;background:linear-gradient(160deg,#fafcff,#f2f6fc);border:1px solid #e2eaf4}
   #lineage-svg{display:block;width:100%;min-width:650px;height:auto}
   #lineage-svg .pulse-node{cursor:pointer}#lineage-svg .pulse-node:focus{outline:none}
+  #lineage-svg .pulse-node:focus-visible circle{stroke:#d35400;stroke-width:5;stroke-dasharray:4 2}
   .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:#506682;margin:14px 0 0}
   .legend span:before{content:"";display:inline-block;vertical-align:middle;width:24px;border-top:3px solid #347d86;margin-right:7px}
   .legend .declared:before{border-top:3px dashed #c18a2d}.legend .claim:before{border-top:3px solid #546f96}
@@ -118,10 +119,11 @@ function valid(p){
 }
 function svg(name,attrs){const node=document.createElementNS(SVG_NS,name);for(const [key,value] of Object.entries(attrs||{})) node.setAttribute(key,safe(value));return node;}
 function textSet(id,value){el(id).textContent=safe(value)}
+function unprovenBoundary(e){return e.relationship==='inter_wave_source_lineage'&&e.source_ancestry_proven!==true;}
 function cutoffNodes(){return data.nodes.filter(n=>n.ordinal<=at)}
 function render(){
  const nodes=cutoffNodes(), ids=new Set(nodes.map(n=>n.id)); const edges=data.edges.filter(e=>ids.has(e.source)&&ids.has(e.target));
- const gap=edges.filter(e=>e.evidence==='DECLARED_GAP').length, top=nodes.at(-1), count=nodes.length;
+ const gap=edges.filter(unprovenBoundary).length, top=nodes.at(-1), count=nodes.length;
  textSet('header-n','N+'+at);textSet('ordinal-label','N+'+at);textSet('kpi-nodes',count);textSet('kpi-edges',edges.length);textSet('kpi-gaps',gap);
  textSet('kpi-tests',top.test_kind==='NOT_RUN'?'UNKNOWN':top.passed_test_claim);
  textSet('tests-note',top.test_kind==='NOT_RUN'?'NOT_RUN; not zero':top.test_kind+' methods, not native CI');
@@ -139,9 +141,10 @@ function render(){
  const eg=el('graph-edges');eg.replaceChildren();const ng=el('graph-nodes');ng.replaceChildren();
  const loc=new Map(nodes.map((n,i)=>[n.id,105+155*i]));
  for(const e of edges){const x1=loc.get(e.source)+31,x2=loc.get(e.target)-32;
-  const line=svg('line',{x1,y1:86,x2,y2:86,stroke:e.evidence==='DECLARED_GAP'?'#bc8528':'#456b94','stroke-width':e.evidence==='DECLARED_GAP'?2.3:2.8,'marker-end':'url(#arr)'});
-  if(e.evidence==='DECLARED_GAP')line.setAttribute('stroke-dasharray','7 6');
-  line.append(svg('title',{}));line.lastChild.textContent=e.evidence==='DECLARED_GAP'?'Unproven cross-wave ancestry':'Claimed pulse sequence';eg.append(line);
+  const gap=unprovenBoundary(e);
+  const line=svg('line',{x1,y1:86,x2,y2:86,stroke:gap?'#bc8528':'#456b94','stroke-width':gap?2.3:2.8,'marker-end':'url(#arr)'});
+  if(gap)line.setAttribute('stroke-dasharray','7 6');
+  line.append(svg('title',{}));line.lastChild.textContent=gap?'Unproven cross-wave ancestry':'Claimed pulse sequence';eg.append(line);
  }
  for(const n of nodes){let x=loc.get(n.id);let g=svg('g',{class:'pulse-node',tabindex:'0',role:'button','aria-label':'Select pulse N+'+n.ordinal});
   g.append(svg('circle',{cx:x,cy:86,r:31,fill:n.ordinal===selected?'#cce7ef':'#edf2f8',stroke:n.ordinal===selected?'#1b798c':'#426486','stroke-width':n.ordinal===selected?3:2}));
@@ -176,7 +179,7 @@ function wireEvents(){if(!/^https?:$/.test(location.protocol)||typeof EventSourc
 }
 function replay(){if(replayTimer){clearInterval(replayTimer);replayTimer=null;el('replay').textContent='▶ Play N replay';return}
  cutoff(data.nodes[0].ordinal);el('replay').textContent='■ Pause replay';replayTimer=setInterval(()=>{if(at>=data.nodes.at(-1).ordinal){clearInterval(replayTimer);replayTimer=null;el('replay').textContent='▶ Play N replay';return;}cutoff(at+1)},900)}
-valid(BOOT);at=data.nodes.at(-1).ordinal;selected=at;render();
+valid(BOOT);el('ordinal').min=data.nodes[0].ordinal;el('ordinal').max=data.nodes.at(-1).ordinal;at=data.nodes.at(-1).ordinal;selected=at;render();
 if(!/^https?:$/.test(location.protocol))textSet('feed-status','OFFLINE N+6 snapshot: replay works; start the local server for live updates');
 el('ordinal').addEventListener('input',e=>cutoff(e.target.value));el('reload').addEventListener('click',reload);
 el('poll').addEventListener('change',configurePoll);el('replay').addEventListener('click',replay);

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>MissionControl | Federation Navigator</title>
+<style>
+:root{color-scheme:dark;--bg:#071324;--surf:#102038;--surf2:#172b46;--text:#eef6ff;--muted:#a4bad2;--line:#324865;--accent:#73d4da;--amber:#ffc17b;--rose:#f19d9b;--good:#8bd7b2;--shadow:0 16px 48px #0004}
+html{scroll-behavior:smooth}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 88% 0,#1d3a54 0,transparent 44%),linear-gradient(160deg,var(--bg),#0a1726 70%);color:var(--text);font:14px/1.55 ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}
+body.light{color-scheme:light;--bg:#f3f7fb;--surf:#fff;--surf2:#ecf5fc;--text:#142a42;--muted:#4f657e;--line:#b9cbdc;--accent:#007e89;--amber:#8a5715;--rose:#b0484f;--good:#14694b;--shadow:0 12px 36px #4562a11c;background:linear-gradient(160deg,#e1f1f7,var(--bg) 54%)}
+a{color:var(--accent);overflow-wrap:anywhere}a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,.node:focus-visible{outline:3px solid var(--amber);outline-offset:3px}button,input,select{font:inherit}button,select,input{min-height:42px;color:var(--text);background:var(--surf2);border:1px solid var(--line);border-radius:10px;padding:9px 12px}button{cursor:pointer}button:hover{border-color:var(--accent)}button:disabled{cursor:not-allowed;opacity:.55}
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 96%,transparent);border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}
+.topinner{max-width:1740px;margin:auto;padding:10px clamp(13px,2.7vw,40px);display:flex;align-items:center;gap:15px;flex-wrap:wrap;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px}.mark{display:grid;place-items:center;border-radius:12px;width:38px;height:38px;background:var(--accent);color:var(--bg);font-weight:900;letter-spacing:-.07em}.brand strong{font-size:17px;letter-spacing:.02em}.eyebrow{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:800}.status{border:1px solid var(--amber);border-radius:99px;color:var(--amber);padding:5px 12px;font-size:11px;font-weight:850;letter-spacing:.07em}.topbuttons{display:flex;gap:8px;flex-wrap:wrap}
+main{max-width:1740px;margin:auto;padding:clamp(16px,3vw,40px)}.hero{display:grid;grid-template-columns:minmax(0,2fr) minmax(270px,1fr);gap:28px;align-items:end;padding:14px 0 25px}
+h1{font-size:clamp(30px,4.2vw,57px);line-height:1.06;letter-spacing:-.045em;margin:9px 0 15px;max-width:930px}h2{font-size:17px;letter-spacing:-.015em;margin:0}h3{font-size:13px;margin:14px 0 5px}.lede{font-size:15px;color:var(--muted);max-width:850px;margin:0}.heroaside{background:var(--surf);border:1px solid var(--line);border-radius:18px;padding:17px;box-shadow:var(--shadow);display:grid;gap:8px}.heroaside b{font-size:21px}.heroaside p{margin:0;color:var(--muted)}
+.scope{display:flex;gap:7px;flex-wrap:wrap;margin-top:18px}.tag{display:inline-flex;border-radius:99px;border:1px solid var(--line);font-size:11px;padding:3px 10px;gap:5px;align-items:center;color:var(--muted)}.tag b{color:var(--text)}.warn{color:var(--amber)}.mono{font:11px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}
+.toolbar{padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--surf);display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin:15px 0 23px}.field{display:grid;gap:5px;min-width:140px}.field label{color:var(--muted);font-size:11px;font-weight:750}.field input{width:clamp(190px,25vw,320px)}.field select{width:100%}.grow{flex:1}
+.panelgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.panel{background:var(--surf);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:20px;min-width:0;scroll-margin-top:86px}.panel-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}.panel-header h2{margin:2px 0 0}.pn{font:800 12px ui-monospace,monospace;color:var(--accent);border:1px solid var(--line);border-radius:9px;padding:7px 9px}
+.wide{grid-column:1/-1}.cardgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.mini{border:1px solid var(--line);background:var(--surf2);padding:12px;border-radius:12px;min-width:0}.mini b{font-size:15px}.mini p{color:var(--muted);margin:6px 0;font-size:12px}.mini a{font-weight:750;text-decoration:none}.mini a:hover{text-decoration:underline}.mini .mono{font-size:10px}
+.metricbar{display:flex;align-items:center;gap:10px;margin:8px 0}.metricbar .bar{height:9px;flex:1;background:var(--line);border-radius:99px;overflow:hidden}.metricbar .fill{height:100%;background:var(--accent);width:0}.metricbar span{font:700 12px ui-monospace,monospace}.stack{display:grid;gap:9px}.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.crumb{background:var(--surf2);border:1px solid var(--line);padding:9px 12px;border-radius:10px;min-width:90px}.crumb b{display:block}.crumb small{color:var(--muted)}.arrow{color:var(--accent);font-size:16px}
+.controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}.ctrl{display:flex;gap:8px;flex-wrap:wrap}.ctrl select{max-width:200px}.quiet{color:var(--muted);font-size:12px}.list{display:grid;gap:8px;max-height:390px;overflow:auto;padding-right:3px}.record{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surf2)}.recordhead{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.record p{color:var(--muted);font-size:12px;margin:4px 0}.split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.graph-panel{grid-column:1/-1}.graph-scroll{width:100%;overflow:auto;border:1px solid var(--line);border-radius:15px;background:linear-gradient(125deg,#0c1b32,#142e48);scrollbar-color:var(--line) transparent}.graph-scroll svg{display:block;width:100%;min-width:850px;height:auto;max-height:600px}.legend{display:flex;flex-wrap:wrap;gap:8px;position:sticky;top:0;background:var(--surf);z-index:3;border:1px solid var(--line);padding:7px 10px;border-radius:10px;margin:12px 0;font-size:11px}.legend span:before{display:inline-block;content:"";border-top:2px solid var(--accent);width:19px;margin-right:6px;vertical-align:middle}.legend .declared:before{border-top:2px dashed var(--amber)}.legend .feedback:before{border-top:2px dotted var(--rose)}
+.graph-edge{stroke:var(--accent);stroke-width:2;opacity:.72;fill:none;marker-end:url(#arrowhead)}.graph-edge.declared{stroke:var(--amber);stroke-dasharray:7 6;opacity:.7}.graph-edge.association{stroke:#9aafc4;stroke-dasharray:2 8;opacity:.5}.graph-edge.feedback{stroke:var(--rose);stroke-dasharray:3 6;opacity:.65}
+.node{cursor:pointer}.node rect{fill:#203a5b;stroke:#4e7792;stroke-width:1.5}.node text{fill:#eaf7ff;font-size:13px;font-weight:720;pointer-events:none}.node.selected rect{stroke:#ffc17b;stroke-width:3;fill:#2c546c}.node.repository rect{fill:#183b42;stroke:#478986}.node.gateway rect{fill:#563a39;stroke:#cd9a67}
+#node-detail{margin:11px 0 0;padding:12px;background:var(--surf2);border:1px solid var(--line);border-radius:10px;min-height:57px}.node-title{font-weight:800}
+.fullgraph{position:fixed!important;inset:10px!important;z-index:45!important;overflow:auto!important;grid-column:auto!important;max-width:none!important}.fullgraph .graph-scroll svg{max-height:none}
+table{border-collapse:collapse;width:100%;font-size:12px}th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-size:11px}.scrolltable{overflow:auto}.muted{color:var(--muted)}.footer{border-top:1px solid var(--line);margin-top:26px;padding-top:20px;color:var(--muted);display:flex;flex-wrap:wrap;justify-content:space-between;gap:15px}
+[hidden]{display:none!important}small{font-size:11px}
+@media(max-width:1080px){.hero{grid-template-columns:1fr}.split{grid-template-columns:1fr}.panelgrid{gap:13px}}
+@media(max-width:760px){.panelgrid{grid-template-columns:1fr}.wide,.graph-panel{grid-column:auto}.cardgrid{grid-template-columns:1fr}.heroaside{max-width:none}.top{position:relative}.toolbar{padding:12px}.toolbar .field,.field input{width:100%}.panel{padding:15px}.crumb{min-width:0}.graph-scroll svg{min-width:830px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style></head>
+<body>
+<header class="top"><div class="topinner">
+ <div class="brand"><span class="mark" aria-hidden="true">MC</span><div><strong>MISSION CONTROL</strong><div class="eyebrow">CODE PURPLE / federation navigator</div></div></div>
+ <div class="topbuttons"><span class="status" role="status">CONTROL HOLD</span><button type="button" id="theme" aria-label="Switch light or dark theme">Light theme</button><button type="button" id="reset">Reset filters</button></div>
+</div></header>
+<main>
+<section class="hero" aria-labelledby="title"><div><div class="eyebrow">Makeover 01 / source-bound operating picture</div><h1 id="title">One control plane.<br>Many sovereign repositories.</h1><p class="lede">Discover pipeline owners, examine dependency atoms, inspect scheduler boundaries and launch source-owned evidence. The lines on this map distinguish proven historical receipts from proposed routes; no HTML interaction dispatches workers.</p><div class="scope"><span class="tag">Source date <b id="observed"></b></span><span class="tag">Publisher head <b class="mono" id="publisher-sha"></b></span><span class="tag">Graph <b id="graph-summary"></b></span><span class="tag warn">Hosted verification UNKNOWN</span></div></div><aside class="heroaside" aria-label="Authority boundary"><div class="eyebrow">Operator boundary</div><b>Read / inspect / propose</b><p>Source-owned CI, reviewer approval, QPS engineering acceptance and all mutation transports are outside this page.</p><a id="control-issue" href="https://github.com/GBOGEB/pipeline-automation-hub/issues/604" target="_blank" rel="noopener noreferrer">Open owning control issue ↗</a></aside></section>
+<section class="toolbar" aria-label="Navigator filters">
+ <div class="field grow"><label for="search">Find repository, role, graph atom or queue</label><input type="search" id="search" placeholder="Search GBOGEB/*, KEB, QA, review…" autocomplete="off"></div>
+ <div class="field"><label for="lane">Repository lane</label><select id="lane"><option value="ALL">All lanes</option><option>CONTROL</option><option>SEMANTIC</option><option>EXECUTION</option><option>ENGINEERING</option><option>METHOD</option><option>HELPER</option></select></div>
+ <div class="field"><label for="graph-mode">Graph lens</label><select id="graph-mode"><option value="ALL">Universal graph</option><option value="DEPENDS_ON">Dependency DAG</option><option value="EVIDENCE">Evidence graph</option></select></div>
+</section>
+<div class="panelgrid">
+<section class="panel" id="command" aria-labelledby="command-title"><div class="panel-header"><div><div class="eyebrow">01 / command & intake</div><h2 id="command-title">Mission hierarchy</h2></div><span class="pn">H0–H4</span></div>
+ <div class="crumbs" id="hierarchy"></div><p class="quiet">The hierarchy is lifecycle structure, not a promise of five executed levels. Pulse indexes advance only after source disposition.</p>
+ <div class="cardgrid" id="shortcuts"></div>
+</section>
+<section class="panel" id="execution" aria-labelledby="execution-title"><div class="panel-header"><div><div class="eyebrow">02 / scheduling & worker recovery</div><h2 id="execution-title">Disjoint execution lanes</h2></div><span class="pn">STAGE ONLY</span></div>
+ <p class="quiet">One repair and one proof WIP slot per repository are advisory caps; measured runner concurrency and dispatch count are UNKNOWN.</p>
+ <div class="list" id="queue-list"></div><h3>Available logical crew roles — not running processes</h3><div class="list" id="worker-list"></div>
+ <div class="controls" style="margin-top:12px"><button type="button" disabled title="Gateway mutation disabled">Dispatch disabled</button><a id="gateway-link" href="#" target="_blank" rel="noopener noreferrer">Inspect CODEX gateway ↗</a></div>
+</section>
+<section class="panel graph-panel" id="federation-graph" aria-labelledby="graph-title"><div class="panel-header"><div><div class="eyebrow">03 / federation mycelium</div><h2 id="graph-title">Graph of evidence and dependencies</h2></div><div class="ctrl"><button type="button" id="graph-expand" aria-pressed="false">Expand graph</button><button type="button" id="graph-copy">Copy Mermaid</button></div></div>
+ <div class="legend" aria-label="Edge semantics"><span>Historical receipt</span><span class="declared">Declared route</span><span class="feedback">Feedback to next pulse</span><span>Associations are non-causal</span></div>
+ <div class="graph-scroll" tabindex="0" aria-label="Scrollable federation diagram"><svg id="graph" role="img" aria-label="Federation and execution graph" viewBox="0 0 1640 760"></svg></div><div id="node-detail" aria-live="polite">Select a graph node to inspect edges and source qualification.</div>
+ <p class="quiet">Solid links cite historical run-bound source receipts. Dashed routes are unexecuted declarations. The executable DAG excludes feedback and associations.</p>
+ <div class="controls"><a href="federation.mmd" id="mermaid-src">Open Mermaid source</a><a href="SIPOC.md">SIPOC source</a><a href="snapshot.json">Machine graph projection</a></div>
+</section>
+<section class="panel" id="evidence" aria-labelledby="evidence-title"><div class="panel-header"><div><div class="eyebrow">04 / evidence & lineage</div><h2 id="evidence-title">Source-rooted edges</h2></div><span class="pn">PROVENANCE</span></div>
+ <div class="split"><div class="mini"><div class="eyebrow">Historical receipt edges</div><b id="receipt-count">UNKNOWN</b><div class="metricbar"><div class="bar"><div class="fill" id="evidence-bar"></div></div><span id="evidence-label"></span></div><p>Topology edge binding only; not current CI yield, coverage or engineering proof.</p></div><div class="mini"><div class="eyebrow">Current native job / worker count</div><b>UNKNOWN</b><p>No live job/attempt population ingested. No fabricated confidence.</p></div></div>
+ <div class="controls" style="margin:12px 0"><label for="edge-filter">Edge classification</label><select id="edge-filter"><option value="ALL">All bindings</option><option value="RECEIPT">Historical receipts</option><option value="DECLARED">Declared / unproven</option></select></div><div class="list" id="edges-list"></div>
+</section>
+<section class="panel" id="analytics" aria-labelledby="analytics-title"><div class="panel-header"><div><div class="eyebrow">05 / DMAIC, MIP and method qualification</div><h2 id="analytics-title">Measured before promoted</h2></div><span class="pn">READ-ONLY</span></div>
+ <div class="cardgrid"><div class="mini"><div class="eyebrow">Accepted G3P N</div><b>UNKNOWN</b><p>Three pulse dispositions never automatically mean three accepted advances.</p></div><div class="mini"><div class="eyebrow">PCA / BT control</div><b>NOT ATTESTED</b><p>Requires independent comparable time series or pairwise outcomes.</p></div><div class="mini"><div class="eyebrow">DAG gate</div><b id="dag-state">PENDING</b><p>Dependency subgraph validated acyclic at build time.</p></div><div class="mini"><div class="eyebrow">QPS compliance credit</div><b>NONE</b><p>Public-safe metadata only; engineering owner retains authority.</p></div></div>
+ <h3>Five-phase DMAIC control</h3><div id="dmaic" class="crumbs"></div><p class="quiet">Modernize / Innovate / Perpetuate is conditional. No synthetic Six Sigma, code-coverage or root-closure claims.</p>
+</section>
+<section class="panel" id="repositories" aria-labelledby="repositories-title"><div class="panel-header"><div><div class="eyebrow">06 / repository discovery and launch</div><h2 id="repositories-title">Source-owner federation</h2></div><span class="pn" id="repo-count">—</span></div>
+ <p class="quiet">Launch opens pinned GitHub source views, not a presumed Pages deployment. Private/engineering sources receive metadata-only classification.</p>
+ <div class="cardgrid" id="repo-list"></div>
+</section>
+</div>
+<footer class="footer"><div><b>MissionControl / read-only</b><div>Single Pages publisher · disabled mutation · independent admission</div></div><div><a href="manifest.json">Artifact SHA-256 manifest</a> · <a href="SIPOC.md">SIPOC</a> · <a href="federation.mmd">Mermaid DAG</a> · <a href="snapshot.json">JSON</a></div></footer>
+</main>
+<script>
+"use strict";
+const DATA=/*MC_NAV_DATA*/null;
+const PUB=/*MC_NAV_SOURCE*/null;
+const $=id=>document.getElementById(id);
+const issue="https://github.com/GBOGEB/pipeline-automation-hub/issues/604";
+const svgNS="http://www.w3.org/2000/svg";
+const state={query:"",lane:"ALL",mode:"ALL",binding:"ALL",selected:null,light:false};
+function text(parent,tag,cls,value){const x=document.createElement(tag);if(cls)x.className=cls;if(value!==undefined)x.textContent=String(value);parent.appendChild(x);return x}
+function safeUrl(uri){const x=new URL(uri,document.baseURI);if(x.protocol!=="https:"||x.hostname!=="github.com"||!x.pathname.startsWith("/GBOGEB/"))throw new Error("UNSAFE_EXTERNAL_URL");return x.href}
+function link(parent,label,url){const a=text(parent,"a","",label);a.href=safeUrl(url);a.target="_blank";a.rel="noopener noreferrer";return a}
+function nodeLabel(id){const v=DATA.nodes.find(n=>n.id===id);return v?v.label:id}
+function highlight(t){return !state.query||String(t).toLowerCase().includes(state.query)}
+function paintHeader(){
+ $("observed").textContent=DATA.source_snapshot.observed_on+" · non-atomic";
+ $("publisher-sha").textContent=PUB.sha.slice(0,12);
+ $("graph-summary").textContent=DATA.counts.nodes+" nodes / "+DATA.counts.edges+" edges";
+ $("control-issue").href=safeUrl(DATA.links.owner_issue);
+ $("gateway-link").href=safeUrl("https://github.com/GBOGEB/CODEX/blob/"+DATA.repositories.find(r=>r.id==="codex").sha+"/mission_control/mycelium/execution_gateway_contract.yaml");
+ $("dag-state").textContent=DATA.executable_dag_topology.length+" / "+DATA.nodes.length+" ACYCLIC";
+ $("receipt-count").textContent=DATA.counts.receipt_edges_historical+" historical";
+ $("evidence-label").textContent=DATA.counts.receipt_edges_historical+" / "+DATA.counts.edges;
+ $("evidence-bar").style.width=(100*DATA.counts.receipt_edges_historical/DATA.counts.edges).toFixed(2)+"%";
+}
+function renderHierarchy(){const out=$("hierarchy");out.replaceChildren();DATA.hierarchy.forEach((h,i)=>{if(i)text(out,"span","arrow","›");const node=text(out,"div","crumb");text(node,"b","",h.level);text(node,"small","",h.description)})}
+function renderShortcuts(){
+ const out=$("shortcuts");out.replaceChildren();
+ const pointers=[["Mission register","https://github.com/GBOGEB/pipeline-automation-hub/blob/"+DATA.source_snapshot.basis_sha+"/mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml"],["Canonical BD queue","https://github.com/GBOGEB/pipeline-automation-hub/blob/"+DATA.source_snapshot.basis_sha+"/"+DATA.policy.code_purple_bd_registry],["CODEX Mycelium",DATA.links.mycelium],["Owner issue",DATA.links.owner_issue]];
+ pointers.forEach(p=>{const c=text(out,"div","mini");link(c,p[0]+" ↗",p[1])});
+}
+function renderQueues(){const out=$("queue-list");out.replaceChildren();DATA.queues.filter(q=>highlight(q.code+" "+q.meaning)).forEach(q=>{const r=text(out,"div","record");const h=text(r,"div","recordhead");text(h,"b","",q.code);text(h,"span","mono warn",q.admission);text(r,"p","",q.meaning)});if(!out.children.length)text(out,"p","quiet","No matching queues")}
+function renderWorkers(){const out=$("worker-list");out.replaceChildren();DATA.workers.filter(w=>highlight(w.role+" "+w.scope)).forEach(w=>{const r=text(out,"div","record");const h=text(r,"div","recordhead");text(h,"b","",w.role);text(h,"span","mono","count UNKNOWN");text(r,"p","",w.scope+" · "+w.permission)});if(!out.children.length)text(out,"p","quiet","No matching workers")}
+function renderRepos(){
+ const out=$("repo-list");out.replaceChildren();
+ const rows=DATA.repositories.filter(r=>(state.lane==="ALL"||r.lane===state.lane)&&highlight(r.name+" "+r.role+" "+r.lane));
+ rows.forEach(r=>{const c=text(out,"article","mini");text(c,"div","eyebrow",r.lane+" / "+r.public_class);link(c,r.name+" ↗","https://github.com/"+r.name+"/tree/"+r.sha);text(c,"p","",r.role);text(c,"div","mono","Pinned "+r.sha);if(r.public_class!=="PUBLIC_METADATA")text(c,"p","warn","Public source content withheld: owner classification needed")});
+ $("repo-count").textContent=rows.length+" / "+DATA.repositories.length+" repos";
+ if(!rows.length)text(out,"p","quiet","No repositories match. Reset filters.");
+}
+function renderEdges(){
+ const out=$("edges-list");out.replaceChildren();
+ DATA.edges.filter(e=>(state.binding==="ALL"||e.binding===state.binding)&&highlight(e.from+" "+e.to+" "+e.detail+" "+e.relation)).forEach(e=>{const r=text(out,"div","record");const h=text(r,"div","recordhead");text(h,"b","",nodeLabel(e.from)+" → "+nodeLabel(e.to));text(h,"span","mono "+(e.binding==="DECLARED"?"warn":""),e.binding);text(r,"p","",e.relation+" · "+e.detail);text(r,"small","mono",e.basis)});
+ if(!out.children.length)text(out,"p","quiet","No evidence edges match.");
+}
+function S(tag,attrs,parent){const n=document.createElementNS(svgNS,tag);Object.entries(attrs||{}).forEach(([k,v])=>n.setAttribute(k,String(v)));parent.appendChild(n);return n}
+function graphPosition(n){return {x:100+n.column*198,y:95+n.row*120}}
+function filteredEdges(){return DATA.edges.filter(e=>state.mode==="ALL"||(state.mode==="DEPENDS_ON"&&e.relation==="DEPENDS_ON")||(state.mode==="EVIDENCE"&&e.relation==="EVIDENCE"))}
+function graphInfo(id){
+ const n=DATA.nodes.find(x=>x.id===id),linked=DATA.edges.filter(e=>e.from===id||e.to===id);
+ $("node-detail").replaceChildren();
+ if(!n){$("node-detail").textContent="Select a graph node.";return}
+ text($("node-detail"),"div","node-title",n.label+" · "+n.kind);
+ text($("node-detail"),"div","quiet",linked.length+" incoming/outgoing source/dependency/feedback edges (not executed jobs)");
+ for(const e of linked.slice(0,7))text($("node-detail"),"div","mono",e.from+" → "+e.to+" / "+e.relation+" / "+e.binding);
+}
+function renderGraph(){
+ const root=$("graph");root.replaceChildren();
+ const defs=S("defs",{},root),marker=S("marker",{id:"arrowhead",viewBox:"0 0 10 10",refX:9,refY:5,markerWidth:6,markerHeight:6,orient:"auto"},defs);S("path",{d:"M0 0 L10 5 L0 10 Z",fill:"#77bdca"},marker);
+ filteredEdges().forEach(e=>{
+  const a=graphPosition(DATA.nodes.find(n=>n.id===e.from)),b=graphPosition(DATA.nodes.find(n=>n.id===e.to));
+  const feedback=e.relation==="FEEDBACK";const klass="graph-edge "+(feedback?"feedback":e.relation==="ASSOCIATION"?"association":e.binding==="DECLARED"?"declared":"");
+  let fromX=a.x+(b.x>=a.x?76:-76),toX=b.x+(b.x>=a.x?-76:76);
+  const d=feedback?"M "+(a.x-76)+" "+(a.y+25)+" Q 780 710 "+(b.x+76)+" "+(b.y+25):
+       "M "+fromX+" "+a.y+" L "+toX+" "+b.y;
+  const path=S("path",{d,class:klass},root);S("title",{},path).textContent=e.relation+" / "+e.binding+" / "+e.detail;
+ });
+ DATA.nodes.filter(n=>!state.query||highlight(n.id+" "+n.label)).forEach(n=>{
+  const p=graphPosition(n);const group=S("g",{class:"node "+(n.kind==="REPOSITORY"?"repository":n.kind==="GATEWAY"?"gateway":"")+(state.selected===n.id?" selected":""),role:"button",tabindex:0,"aria-label":"Inspect "+n.label,"data-node":n.id},root);
+  const name=S("title",{},group);name.textContent=n.label;
+  S("rect",{x:p.x-83,y:p.y-31,width:166,height:62,rx:11},group);
+  const lines=n.label.length>21?n.label.split(" / "):[n.label];const visible=lines.slice(0,2);
+  visible.forEach((line,i)=>{const v=S("text",{x:p.x,y:p.y+(i-(visible.length-1)/2)*16+5,"text-anchor":"middle"},group);v.textContent=line.slice(0,23)});
+  const select=()=>{state.selected=n.id;graphInfo(n.id);renderGraph()};
+  group.addEventListener("click",select);
+  group.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();select()}});
+ });
+}
+function mermaidText(){const labels=DATA.nodes.map(n=>'    '+n.id+'["'+n.label.replace(/"/g,"'")+'"]').join("\n");const edges=DATA.edges.map(e=>'    '+e.from+' '+(e.binding==="DECLARED"?"-.->":"-->")+' '+e.to).join("\n");return "flowchart LR\n"+labels+"\n"+edges+"\n"}
+async function copyMermaid(){const body=mermaidText();try{await navigator.clipboard.writeText(body);$("graph-copy").textContent="Copied Mermaid ✓"}catch(e){$("graph-copy").textContent="Use source link ↓";$("mermaid-src").focus()}}
+function reset(){state.query="";state.lane="ALL";state.mode="ALL";state.binding="ALL";$("search").value="";$("lane").value="ALL";$("graph-mode").value="ALL";$("edge-filter").value="ALL";renderAll()}
+function renderAll(){renderQueues();renderWorkers();renderRepos();renderEdges();renderGraph()}
+function init(){
+ if(DATA.schema!=="missioncontrol.launchpad.public_projection.v1"||DATA.admission!=="HOLD"||DATA.policy.merge_admission!=="HOLD"||DATA.policy.authority_transfer!==false||DATA.policy.mutation_enabled!==false||DATA.policy.remote_dispatch_enabled!==false)throw new Error("CONTROL_GUARD_FAIL");
+ paintHeader();renderHierarchy();renderShortcuts();text($("dmaic"),"span","crumb","DEFINE → MEASURE → ANALYZE → IMPROVE → CONTROL");
+ renderAll();
+ $("search").addEventListener("input",e=>{state.query=e.target.value.trim().toLowerCase();renderAll()});
+ $("lane").addEventListener("change",e=>{state.lane=e.target.value;renderRepos()});
+ $("graph-mode").addEventListener("change",e=>{state.mode=e.target.value;renderGraph()});
+ $("edge-filter").addEventListener("change",e=>{state.binding=e.target.value;renderEdges()});
+ $("reset").addEventListener("click",reset);
+ $("theme").addEventListener("click",()=>{state.light=!state.light;document.body.classList.toggle("light",state.light);$("theme").textContent=state.light?"Dark theme":"Light theme"});
+ $("graph-expand").addEventListener("click",()=>{const open=$("federation-graph").classList.toggle("fullgraph");$("graph-expand").setAttribute("aria-pressed",String(open));$("graph-expand").textContent=open?"Close full graph":"Expand graph"});
+ $("graph-copy").addEventListener("click",copyMermaid);
+ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("federation-graph").classList.contains("fullgraph"))$("graph-expand").click()});
+}
+init();
+</script></body></html>

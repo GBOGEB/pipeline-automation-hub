@@ -66,7 +66,7 @@ class LatestPulseTests(unittest.TestCase):
     def test_wrong_fleet_baseline_fails(self):
         o, h = fixtures()
         o["census"]["open_prs"] = 39
-        with self.assertRaisesRegex(ValueError, "N\+2 fleet"):
+        with self.assertRaisesRegex(ValueError, r"N\+2 fleet"):
             overlay.validate(o, h)
 
     def test_qps_engineering_accept_never_auto_promotes(self):
@@ -92,5 +92,5 @@ class LatestPulseTests(unittest.TestCase):
     def test_later_sample_cannot_be_silent_n2(self):
         o, h = fixtures()
         o["program_pulse"] = "N+3"
-        with self.assertRaisesRegex(ValueError, "N\+2 requires"):
+        with self.assertRaisesRegex(ValueError, r"N\+2 requires"):
             overlay.validate(o, h)

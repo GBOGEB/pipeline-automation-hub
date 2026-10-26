@@ -22,7 +22,7 @@ class Tags(HTMLParser):
 
 
 class WaveFederationTests(unittest.TestCase):
-    def setUp(self):self.ledgers=[json.loads(p.read_text()) for p in FILES]
+    def setUp(self):self.ledgers=[json.loads(p.read_text(encoding="utf-8")) for p in FILES]
     def graph(self):return fed.compile_waves(self.ledgers)
 
     def test_structural_counts_and_gap(self):
@@ -92,6 +92,12 @@ class WaveFederationTests(unittest.TestCase):
         e=[e for e in p['edges'] if e['relationship']=='inter_wave_source_lineage'][0]
         self.assertEqual(e['evidence'],'LEDGER_HEAD_EQUALITY')
         self.assertFalse(e['source_ancestry_proven'])
+        self.assertEqual(p['metrics']['intervening_unproven_source_boundaries'],1)
+        self.assertEqual(fed.mermaid(p).count('-.->'),1)
+        h=fed.html_report(p);parsed=Tags();parsed.feed(h)
+        lines=[attrs for tag,attrs in parsed.tags if tag=='line']
+        self.assertEqual(sum('stroke-dasharray' in attrs for attrs in lines),1)
+        self.assertIn("function unprovenBoundary(e){return e.relationship==='inter_wave_source_lineage'&&e.source_ancestry_proven!==true;}",h)
 
     def test_renderer_refuses_unsafe_authority(self):
         p=self.graph();p['merge_admission']='PASS'
@@ -102,10 +108,10 @@ class WaveFederationTests(unittest.TestCase):
             out=Path(t)/'artifacts'
             with patch.object(sys,'argv',['n3_wave_federation.py','--ledgers',*(str(p) for p in FILES),'--out-dir',str(out)]):
                 fed.main()
-            j=json.loads((out/'g3p-lineage.json').read_text())
+            j=json.loads((out/'g3p-lineage.json').read_text(encoding="utf-8"))
             self.assertEqual(j['metrics']['pulses'],6)
-            self.assertIn('-.->',(out/'g3p-lineage.mmd').read_text())
-            self.assertIn('UNKNOWN',(out/'g3p-lineage.html').read_text())
+            self.assertIn('-.->',(out/'g3p-lineage.mmd').read_text(encoding="utf-8"))
+            self.assertIn('UNKNOWN',(out/'g3p-lineage.html').read_text(encoding="utf-8"))
 
 
 if __name__=='__main__':unittest.main()

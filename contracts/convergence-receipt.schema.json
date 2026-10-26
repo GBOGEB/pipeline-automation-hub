@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "codepurple/convergence-receipt/1.1",
+  "title": "CODE PURPLE scaled convergence receipt",
+  "description": "Proposed contract. UNKNOWN != ZERO != VERIFIED NONE: every measured quantity is an Evidence object, never a bare number that could silently default to 0.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "programme", "generated_utc", "inputs", "repos", "fingerprints", "artifact_integrity", "crosschecks", "federation"],
+  "$defs": {
+    "state": {"enum": ["NOT_OBSERVED", "OBSERVED_EMPTY", "OBSERVED_NONEMPTY", "VERIFIED", "CONFLICT"]},
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "value"],
+      "properties": {
+        "state": {"$ref": "#/$defs/state"},
+        "value": {},
+        "numerator": {"type": ["integer", "null"]},
+        "denominator": {"type": ["integer", "null"]},
+        "scope": {"type": ["string", "null"]},
+        "sources": {"type": "array", "items": {"type": "string"}}
+      },
+      "allOf": [
+        {"if": {"properties": {"state": {"const": "NOT_OBSERVED"}}}, "then": {"properties": {"value": {"type": "null"}}}},
+        {"if": {"properties": {"state": {"const": "OBSERVED_EMPTY"}}}, "then": {"properties": {"value": {"enum": [0, []]}}}},
+        {"if": {"properties": {"state": {"const": "OBSERVED_NONEMPTY"}}}, "then": {"properties": {"value": {"not": {"enum": [null, 0, [], "", {}]}}}}},
+        {"if": {"properties": {"state": {"const": "VERIFIED"}}}, "then": {"properties": {"value": {"not": {"type": "null"}}}}},
+        {"if": {"required": ["numerator"], "properties": {"numerator": {"type": "integer"}}}, "then": {"required": ["denominator", "scope"], "properties": {"denominator": {"type": "integer"}, "scope": {"type": "string"}}}}
+      ]
+    },
+    "sha40": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "supersession_evidence": {
+      "description": "Additive (2026-10-25): exact-SHA proof that a reported head was replaced by a merged head.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pr", "old_head_sha", "new_head_sha", "merge_commit_sha", "run_id", "run_head_sha", "run_conclusion", "checks_total", "checks_failed", "failed_names"],
+      "properties": {
+        "pr": {"type": "integer"},
+        "old_head_sha": {"$ref": "#/$defs/sha40"},
+        "new_head_sha": {"$ref": "#/$defs/sha40"},
+        "merge_commit_sha": {"$ref": "#/$defs/sha40"},
+        "run_id": {"type": "integer"},
+        "run_head_sha": {"$ref": "#/$defs/sha40"},
+        "run_conclusion": {"type": ["string", "null"]},
+        "checks_total": {"type": "integer", "minimum": 0},
+        "checks_failed": {"type": "integer", "minimum": 0},
+        "failed_names": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  },
+  "properties": {
+    "schema_version": {"const": "1.1"},
+    "programme": {"const": "CODE_PURPLE"},
+    "generated_utc": {"type": "string"},
+    "inputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["file", "sha256", "authority"],
+        "properties": {
+          "file": {"type": "string"},
+          "sha256": {"$ref": "#/$defs/sha256"},
+          "authority": {"enum": ["LEDGER_FILE", "CHAT_TRANSCRIPT_UNVERIFIED", "GH_API_READONLY"]}
+        }
+      }
+    },
+    "repos": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["last_qualified_head", "observed_main", "populations", "progress", "governance", "plateau", "notify"],
+        "properties": {
+          "last_qualified_head": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/sha40"}]},
+          "observed_main": {"$ref": "#/$defs/evidence"},
+          "populations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["pr", "head_sha", "head_sha_exact", "eligible_for_comparison", "events"],
+              "properties": {
+                "pr": {"type": ["integer", "null"]},
+                "head_sha": {"type": ["string", "null"]},
+                "head_sha_exact": {"type": "boolean"},
+                "eligible_for_comparison": {"type": "boolean"},
+                "ineligible_reasons": {"type": "array", "items": {"type": "string"}},
+                "events": {"type": "array", "items": {"type": "object"}}
+              },
+              "allOf": [
+                {"if": {"properties": {"head_sha_exact": {"const": false}}},
+                 "then": {"properties": {"eligible_for_comparison": {"const": false}}}},
+                {"if": {"properties": {"head_sha_exact": {"const": true}}},
+                 "then": {"properties": {"head_sha": {"$ref": "#/$defs/sha40"}}}}
+              ]
+            }
+          },
+          "progress": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["new_terminal_events", "new_fingerprints", "qualified_root_closures", "coverage_delta", "worker_hours"],
+            "properties": {
+              "new_terminal_events": {"type": "integer", "minimum": 0},
+              "new_fingerprints": {"type": "array", "items": {"type": "string"}},
+              "qualified_root_closures": {"type": "integer", "minimum": 0},
+              "coverage_delta": {"$ref": "#/$defs/evidence"},
+              "worker_hours": {"$ref": "#/$defs/evidence"}
+            }
+          },
+          "governance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["independent_review", "admission"],
+            "properties": {
+              "independent_review": {"$ref": "#/$defs/evidence"},
+              "admission": {"enum": ["HOLD", "ADMITTED"]}
+            }
+          },
+          "plateau": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["comparable_equal_transitions", "fresh_measurements", "state", "asserted_state"],
+            "properties": {
+              "comparable_equal_transitions": {"type": "integer", "minimum": 0},
+              "fresh_measurements": {"type": "integer", "minimum": 0},
+              "state": {"enum": ["ACTIVE", "STABLE_HOLD", "STARVED"]},
+              "asserted_state": {"enum": ["ACTIVE", "STABLE_HOLD", "NONE"]},
+              "derivation": {"type": "string"}
+            }
+          },
+          "notify": {"type": "boolean"},
+          "notify_reasons": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "fingerprints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fingerprint", "occurrences", "occurrences_lower_bound", "populations", "classes", "accepted_root_id", "closed"],
+        "properties": {
+          "fingerprint": {"type": "string", "minLength": 1},
+          "occurrences": {"allOf": [{"$ref": "#/$defs/evidence"}, {"properties": {"value": {"type": ["integer", "null"], "minimum": 0}}}]},
+          "occurrences_lower_bound": {"type": "boolean"},
+          "populations": {"type": "array", "items": {"type": "string"}},
+          "classes": {"type": "array", "items": {"type": "string"}},
+          "accepted_root_id": {"type": ["string", "null"]},
+          "closed": {"type": "boolean"}
+        },
+        "if": {"properties": {"closed": {"const": true}}},
+        "then": {"properties": {"accepted_root_id": {"type": "string"}}}
+      }
+    },
+    "artifact_integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verified_unique_archives", "verified_unique_members", "verified_zip_bytes", "verified_member_bytes",
+                   "digest_failures", "crc_failures", "inconsistent_archives", "failed_archives", "verified_in_chat_only", "unknown"],
+      "properties": {
+        "verified_unique_archives": {"type": "integer", "minimum": 0},
+        "verified_unique_members": {"type": "integer", "minimum": 0},
+        "verified_zip_bytes": {"type": "integer", "minimum": 0},
+        "verified_member_bytes": {"type": "integer", "minimum": 0},
+        "digest_failures": {"type": "integer", "minimum": 0},
+        "crc_failures": {"type": "integer", "minimum": 0},
+        "inconsistent_archives": {"type": "array", "items": {"type": "integer"}},
+        "failed_archives": {"type": "array", "items": {"type": "integer"}},
+        "verified_in_chat_only": {"type": "array", "items": {"type": "integer"}},
+        "unknown": {"type": "array", "items": {"type": ["integer", "string"]}}
+      }
+    },
+    "crosschecks": {"type": "array", "items": {"type": "object", "required": ["id", "result", "detail"], "properties": {"result": {"enum": ["PASS", "FAIL", "WARN", "UNKNOWN"]},
+      "resolution": {"enum": ["SUPERSEDED"]},
+      "resolution_evidence": {"$ref": "#/$defs/supersession_evidence"},
+      "resolution_rejected": {"type": "array", "minItems": 1, "items": {"type": "string"}}},
+      "allOf": [
+        {"if": {"required": ["resolution"]}, "then": {"required": ["resolution_evidence"], "properties": {"result": {"enum": ["PASS", "WARN"]}}, "not": {"required": ["resolution_rejected"]}}},
+        {"if": {"required": ["resolution_rejected"]}, "then": {"properties": {"result": {"const": "FAIL"}}}}
+      ]}},
+    "federation": {
+      "type": "object",
+      "required": ["admission", "formal_credit_delta", "security_waiver", "notify"],
+      "properties": {
+        "admission": {"enum": ["HOLD", "ADMITTED"]},
+        "formal_credit_delta": {"type": "integer"},
+        "security_waiver": {"type": "boolean"},
+        "notify": {"type": "boolean"}
+      }
+    }
+  }
+}

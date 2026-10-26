@@ -1,5 +1,12 @@
 # Pipeline Automation Hub
 
+> **Start here (25 October 2026):** [GoGreen launcher](mission-control/gogreen/launcher/index.html) (metrics, every linked page, and a list of all committed HTML pages with GitHub and local-path links). GitHub shows HTML source, not the rendered page: clone the repo and open `mission-control\gogreen\launcher\index.html` from File Explorer. How-to: [launcher README](mission-control/gogreen/launcher/README.md#open-the-pages).
+
+> **JADE_CASTE N+2 pilot (19 October 2026):** [Measured Top21 burn-down](mission-control/jade_temple/site/burndown.html) · [Executable stop controller](mission-control/jade_temple/tools/stop_rules.py) · [MIP and DoV](mission-control/jade_temple/notes/NPLUS2_MIP_BURNDOWN_DOV.md) · [Lossless restart](mission-control/jade_temple/DROPIN_NEXT_CHAT.md). Read-only frozen evidence, not release admission, current live fleet truth or a verified hosted HTTP URL.
+
+> **JADE_TEMPLE / JADE_CASTE — Top21 GoGREEN readiness pilot (18 October 2026):** [Project start](mission-control/jade_temple/README.md) · [GoGREEN readiness/21 owner TODOs](mission-control/jade_temple/site/green.html) · [Full MIP analysis](mission-control/jade_temple/notes/MIP_ANALYSIS_NPLUS1.md) · [Root/SPINE and Pages design](mission-control/jade_temple/notes/NAVIGATION_PAGES_STYLE_CONTRACT.md) · [Lossless restart](mission-control/jade_temple/DROPIN_NEXT_CHAT.md). This is a **source-bound review projection**: GitHub source navigation is not proof of hosted Pages, a governed PR, or a point release. Existing Pages publisher remains authoritative.
+
+
 > **Federation navigation pilot — 16 Oct 2026:** [P4 Recursive SIPOC explorer](mission-control/federation-atlas/flightdeck/pulses/federation_landing_p4.html) · [P4 design/DoV](mission-control/federation-atlas/flightdeck/pulses/FEDERATION_LANDING_SIPOC_P4_20261016.md) · [Existing MissionControl Pages portal](mission-control/federation-atlas/pages_portal.py). This is a frozen, read-only source snapshot, **not live deployment, engineering acceptance, or release admission**. Existing M2 materials below remain historical.
 
 ## CODE PURPLE — M2 MissionControl user landing

@@ -1,0 +1,108 @@
+{
+  "schema": "missioncontrol.cp_close.protocol.v1",
+  "as_of": "2026-10-17",
+  "name": "CP.CLOSE",
+  "kind": "CHAT_INSTRUCTION_MONIKER_GITHUB_FIRST",
+  "compatibility": {
+    "extends": "CP.HANDOFF",
+    "restart": "CP.RESUME",
+    "wave_method": "G3P.EXECUTE",
+    "does_not_replace": [
+      "MC_GLOSSARY_TAXONOMY_v2.json",
+      "CODE_PURPLE_BD_QUEUE_v1.json",
+      "Golden Thread session_hook",
+      "BD_REX_CONTROL_REGISTER_v2"
+    ],
+    "canonical_closeout_profile": "mission-control/v2/handoff/CHAT_CLOSEOUT_PROFILE_V1.json",
+    "canonical_closeout_operator": "mission-control/v2/handoff/CHAT_CLOSEOUT_OPERATOR_V1.md",
+    "dual_profiles_not_second_ssot": true
+  },
+  "invocations": {
+    "canonical": "CP.CLOSEOUT(scope=\"CURRENT_CHAT\",mode=\"GITHUB_FIRST\",depth=\"LOSSLESS_INTENT\",metrics=\"FULL_AVAILABLE\",target=\"GOVERNED_MAIN\")",
+    "partial": "CP.CLOSE(scope=\"CURRENT_SESSION\",mode=\"EVIDENCE_FREEZE_ONLY\")",
+    "prior_chats": "CP.CLOSE(scope=\"EXPORTED_CHATS\",mode=\"LOSSLESS_CORPUS_REVIEW\",requires=\"USER_SUPPLIED_AUTHORIZED_EXPORT\")",
+    "resume": "CP.RESUME(source=\"GBOGEB/pipeline-automation-hub:mission-control/v2/handoff/closeout\",mode=\"VERIFY_REFRESH_EXECUTE\")",
+    "expanded_alias": "CP.CLOSE(scope=\"CURRENT_SESSION\",target=\"GBOGEB/pipeline-automation-hub:master\",mode=\"GITHUB_FIRST_LOSSLESS\",outputs=\"PR+STATE+STATS+INTENTS+BD+REX+TODO+DROPIN+MANIFEST\",admission=\"GOVERNED\")"
+  },
+  "contract": {
+    "input": "missioncontrol.cp_close.intake.v1",
+    "generator": "mission-control/v2/handoff/closeout/cp_close.py",
+    "external_messages": "missioncontrol.user_supplied_messages.v1; local only; text never committed",
+    "native_test": "mission-control/v2/handoff/closeout/test_cp_close.py",
+    "generated": [
+      "START_HERE.md",
+      "LOSSLESS_HANDOVER.md",
+      "NEXT_CHAT_DROPIN.md",
+      "STATE.json",
+      "CHAT_STATS.json",
+      "INTENT_ACTION_LEDGER.json",
+      "BD_QUEUE_READONLY.json",
+      "TODO_BD_QUEUE.csv",
+      "MANIFEST.json"
+    ],
+    "session_classes": [
+      "COMPLETE_VERBATIM_ONLY_IF_USER_EXPORT_EXISTS",
+      "SANITIZED_SEMANTIC_RECONSTRUCTION",
+      "SOURCE_BOUND_GITHUB_EVIDENCE",
+      "UNVERIFIED_OR_UNKNOWN"
+    ],
+    "report_metrics": [
+      "reconstructed_intents",
+      "tracked_actions",
+      "open_bdoverlay_count",
+      "pr_exact_head_states",
+      "known_native_tests",
+      "prompt_count_if_user_export",
+      "user_word_lengths_if_user_export",
+      "time_span_if_timestamps_complete",
+      "unresolved_gates"
+    ],
+    "states": [
+      "CAPTURED",
+      "PR_COMMITTED",
+      "CI_QUALIFIED",
+      "MAIN_MERGED",
+      "MAIN_READBACK",
+      "SESSION_CLOSED_WITH_HOLD"
+    ],
+    "do_d": [
+      "versioned public-safe intake",
+      "zero-orphan action and intent links",
+      "tests/negative controls",
+      "artifact SHA256 manifest",
+      "GitHub branch/PR candidate",
+      "eligible independent review",
+      "authorized main merge",
+      "postmerge exact-main receipt"
+    ],
+    "do_v": [
+      "new chat can reconstruct next safe action without original chat",
+      "no false full chat statistics",
+      "canonical BD queue preserved",
+      "no unbacked merge or QPS acceptance"
+    ],
+    "disclosure": {
+      "full_chat_message_count_without_export": null,
+      "full_chat_prompts_without_export": null,
+      "token_usage_without_provider": null,
+      "original_message_ids_without_export": null,
+      "hidden_reasoning": "NEVER_IN_SCOPE"
+    },
+    "stop_reasons": [
+      "SOURCE_DRIFT",
+      "REVIEW_BLOCKED",
+      "NATIVE_CI_RED",
+      "NONPUBLIC_INPUT",
+      "MISSING_CHAT_EXPORT",
+      "CANONICAL_BD_COLLISION"
+    ],
+    "security_waiver": false,
+    "authority_transfer": false,
+    "autonomous_merge": false
+  },
+  "aliases": [
+    "CP.CLOSEOUT",
+    "CP.CLOSEOUT!"
+  ],
+  "alias_policy": "All aliases invoke canonical CP.CLOSE generator; no second closeout schema, SSOT, BD queue or receipt publication lane."
+}

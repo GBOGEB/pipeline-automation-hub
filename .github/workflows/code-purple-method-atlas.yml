@@ -2,7 +2,11 @@ name: CODE PURPLE Method Atlas (read-only)
 on:
   pull_request:
     paths:
+      - 'mission-control/qps-triage-ultra/p-process/site/**'
       - 'mission-control/federation-atlas/**'
+      - 'mission-control/jade_temple/**'
+      - 'mission-control/html_qa/**'
+      - 'mission-control/v2/handoff/live_lossless/**'
       - 'mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json'
       - 'mission-control/grand-missions/GM_DMAIC_COVERAGE_TELEMETRY_v1.json'
       - 'mission-control/grand-missions/GM-I-A_FAST_HEAVY_FEDERATION_TOPOLOGY_v0.1.json'
@@ -11,7 +15,11 @@ on:
   push:
     branches: [master]
     paths:
+      - 'mission-control/qps-triage-ultra/p-process/site/**'
       - 'mission-control/federation-atlas/**'
+      - 'mission-control/jade_temple/**'
+      - 'mission-control/html_qa/**'
+      - 'mission-control/v2/handoff/live_lossless/**'
       - 'mission-control/v2/MC_MISSION_STATUS_CURRENT_v1.json'
       - 'mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json'
       - 'mission-control/grand-missions/GM_DMAIC_COVERAGE_TELEMETRY_v1.json'
@@ -39,9 +47,15 @@ permissions:
 jobs:
   render:
     runs-on: ubuntu-latest
+    # Same-PR/ref rebuilds share one render slot. This is not a fleet-wide
+    # capacity claim; the local broker separately bounds generator workers.
+    concurrency:
+      group: method-atlas-render-${{ github.event.pull_request.number || github.ref }}
+      queue: max
+      cancel-in-progress: false
     steps:
       - name: Checkout exact source
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Assert checkout identity
@@ -49,11 +63,13 @@ jobs:
           SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
       - name: Python 3.12
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.12'
       - name: Install pinned YAML parser
         run: python -m pip install pyyaml==6.0.3
+      - name: Install pinned offline Plotly for MissionControl W2
+        run: python -m pip install --disable-pip-version-check plotly==6.5.2
       - name: Contract and Doctor routing tests
         run: python -m unittest discover -s mission-control/federation-atlas -p "test_*.py" -v
       - name: CODE PURPLE series must match this tree (append an entry per closed iteration)
@@ -75,6 +91,41 @@ jobs:
           else
             python mission-control/federation-atlas/build_atlas.py --method "$SELECTED_METHOD" --stage "$SELECTED_STAGE" --out /tmp/code-purple-atlas
           fi
+      - name: Build Mission Control W1 repo/graph explorer
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/federation-atlas/mission_rebuild -p 'test_*.py' -v
+          python mission-control/federation-atlas/mission_rebuild/build.py --source-sha "$EXACT_SHA" --out /tmp/code-purple-atlas/mission-rebuild
+          test -s /tmp/code-purple-atlas/mission-rebuild/manifest.json
+      - name: Capture bounded native W1 and gg_MATH read-only statuses
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python mission-control/federation-atlas/mission_rebuild/w2_live_bridge.py \
+            --head "$EXACT_SHA" \
+            --out /tmp/code-purple-atlas/mission-rebuild/evidence.json
+          python mission-control/federation-atlas/mission_rebuild/w2_plotly.py \
+            --snapshot /tmp/code-purple-atlas/mission-rebuild/evidence.json \
+            --out /tmp/code-purple-atlas/mission-rebuild
+          test -s /tmp/code-purple-atlas/mission-rebuild/evidence-manifest.json
+      - name: N3 bounded native historical queue KPI / REX projection
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas/mission_rebuild
+          python "$SRC/n3_kpi_bridge.py" --head "$EXACT_SHA" \
+            --native-readonly --out /tmp/code-purple-atlas/mission-rebuild
+          test -s /tmp/code-purple-atlas/mission-rebuild/n3-metrics.json
+          test -s /tmp/code-purple-atlas/mission-rebuild/n3-manifest.json
       - name: "CPQ N5: source-bound convergence + disjoint test-coverage receipt"
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -84,7 +135,7 @@ jobs:
           SRC=mission-control/federation-atlas
           python -m pip install --disable-pip-version-check coverage==7.13.3
           python -m coverage run --branch --source=cpq_convergence_n5,source_freshness -m unittest discover \
-            -s "$SRC" -p "test_cpq_convergence_n5.py" -v
+            -s mission-control/federation-atlas -p "test_cpq_convergence_n5.py" -v
           python -m coverage json -o /tmp/code-purple-atlas/cpq-n5-coverage.json -q
           python "$SRC/cpq_convergence_n5.py" \
             --queue "$SRC/CODE_PURPLE_BD_QUEUE_v1.json" \
@@ -98,8 +149,10 @@ jobs:
           c=json.loads((out/'cpq-n5-coverage.json').read_text())
           t=c['totals']
           assert r['source']['exact_master_sha']==os.environ['EXACT_SHA']
-          assert r['metrics']['canonical_rows']==18
-          assert r['metrics']['open']+r['metrics']['done']==18
+          q=json.loads(Path('mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json').read_text())
+          rows=len(q['items'])
+          assert rows>=18 and r['metrics']['canonical_rows']==rows
+          assert r['metrics']['open']+r['metrics']['done']==rows
           assert r['metrics']['work_orders_with_routes']==r['metrics']['open']
           assert r['admission']=='HOLD' and r['formal_credit_delta']==0
           assert r['metrics']['accepted_causal_root_closures'] is None
@@ -116,7 +169,7 @@ jobs:
         run: |
           set -euo pipefail
           SRC=mission-control/federation-atlas
-          python -m coverage run --branch --source=cpq_i2_replay -m unittest discover -s "$SRC" -p "test_cpq_i2_replay.py" -v
+          python -m coverage run --branch --source=cpq_i2_replay -m unittest discover -s mission-control/federation-atlas -p "test_cpq_i2_replay.py" -v
           python -m coverage json -q -o /tmp/code-purple-atlas/cpq-n6-i2-coverage.json
           python "$SRC/cpq_i2_replay.py" \
             --input "$SRC/CPQ_I2_NATIVE_READBACK_20261017.json" \
@@ -143,12 +196,14 @@ jobs:
       - name: "CPQ N5: native browser/SVG seeded-negative visual proof"
         shell: bash
         run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="CPQ N5: native browser/SVG seeded-negative visual proof" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
           set -euo pipefail
           python -m pip install --disable-pip-version-check playwright==1.56.0
           python -m playwright install --with-deps chromium
           python mission-control/federation-atlas/cpq_browser_check.py \
             --atlas /tmp/code-purple-atlas/code-purple.html \
             --cpq /tmp/code-purple-atlas/cpq-n5.html \
+            --report /tmp/code-purple-atlas/cpq-n5.json \
             --out /tmp/code-purple-atlas/cpq-browser
           test -s /tmp/code-purple-atlas/cpq-browser/browser_receipt.json
       - name: Build CODE-HEALTH Central with exact-checkout and fail-closed corpus
@@ -245,7 +300,7 @@ jobs:
           OUT=/tmp/code-purple-atlas/flightdeck
           python -m pip install --disable-pip-version-check coverage==7.13.3
           python -m coverage run --branch --source=flightdeck -m unittest discover \
-            -s "$SRC" -p test_flightdeck.py -v > "$RUNNER_TEMP/flightdeck-tests.log" 2>&1
+            -s mission-control/federation-atlas/flightdeck -p test_flightdeck.py -v > "$RUNNER_TEMP/flightdeck-tests.log" 2>&1
           cat "$RUNNER_TEMP/flightdeck-tests.log"
           python -m coverage json -o "$RUNNER_TEMP/flightdeck-coverage.json" -q
           python - <<'PY'
@@ -268,8 +323,8 @@ jobs:
           python "$SRC/flightdeck.py" build --fleet "$FLEET" \
             --snapshot "$SRC/head_snapshot.json" --contract "$SRC/flightdeck_contract.json" \
             --out "$OUT" --exact-git-sha "$EXACT_SHA"
-          # The HTML links to four binary derivatives. Generate them in the
-          # same source-bound producer or the published navigation would break.
+          # The HTML names four binary derivatives as plain text (pages_portal.py
+          # never publishes binaries). Generate them here so they ride in the run artifact.
           python -m pip install --disable-pip-version-check \
             python-docx==1.2.0 openpyxl==3.1.5 reportlab==4.4.3
           npm install --no-save --no-package-lock --prefix "$RUNNER_TEMP/flightdeck-npm" 'pptxgenjs@3.12.0'
@@ -394,14 +449,247 @@ jobs:
           test -s /tmp/code-purple-atlas/federation-home/index.html
           test -s /tmp/code-purple-atlas/federation-home/snapshot.json
           test -s /tmp/code-purple-atlas/federation-home/manifest.json
+      - name: Build additive source-bound Live Lossless review site
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=mission-control/v2/handoff/live_lossless
+          python -m unittest discover -s mission-control/v2/handoff/live_lossless -p 'test_*.py' -v
+          node --check "$SRC/app.js"
+          python "$SRC/build_live_lossless.py" --out /tmp/code-purple-atlas/live-lossless
+          python "$SRC/build_live_lossless.py" --out /tmp/code-purple-atlas/live-lossless --check
+          if [ -f "$SRC/published/snapshot.json" ]; then
+            python "$SRC/build_live_lossless.py" --out "$SRC/published" --check
+          fi
+          test -s /tmp/code-purple-atlas/live-lossless/manifest.json
+      - name: "LDAB / DAG / SIPOC cold lint, negative tests and typed receipt"
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          COVERAGE_FILE: /tmp/mission-ldab-coverage
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas/mission_rebuild
+          python -m compileall -q "$SRC"
+          python -m tabnanny "$SRC"
+          python -m coverage run --branch --source=ldab_guard,ldab_dag_sipoc \
+            -m unittest discover -s "$SRC" -p 'test_ldab_*.py' -v
+          python -m coverage json -q -o /tmp/code-purple-atlas/mission-rebuild/ldab-focused-coverage.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("/tmp/code-purple-atlas/mission-rebuild/ldab-focused-coverage.json").read_text())
+          t=d["totals"]
+          assert t["covered_lines"] > 0 and t["num_branches"] > 0
+          assert t["percent_statements_covered"] >= 80
+          assert t["percent_branches_covered"] >= 80
+          print("LDAB_FOCUSED_STATEMENTS=%s/%s" % (t["covered_lines"],t["num_statements"]))
+          print("LDAB_FOCUSED_BRANCHES=%s/%s" % (t["covered_branches"],t["num_branches"]))
+          PY
+          python "$SRC/ldab_dag_sipoc.py" \
+            --graph /tmp/code-purple-atlas/mission-rebuild/graph.json \
+            --evidence /tmp/code-purple-atlas/mission-rebuild/evidence.json \
+            --out /tmp/code-purple-atlas/mission-rebuild
+          test -s /tmp/code-purple-atlas/mission-rebuild/ldab-sipoc-manifest.json
+          echo "LLDB_NATIVE_SESSION=NOT_RUN_NO_DEBUG_TRACE"
+      - name: Stage P process site (prebuilt, hash-checked by its own tests)
+        run: |
+          set -euo pipefail
+          test -s mission-control/qps-triage-ultra/p-process/site/index.html
+          cp -r mission-control/qps-triage-ultra/p-process/site /tmp/code-purple-atlas/p-process
+      - name: W32 Global DoV source-locked hub / local-scope branch coverage
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas
+          mkdir -p /tmp/code-purple-atlas/convergence
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          python -m coverage run --branch --source=convergence_hub -m unittest discover \
+            -s "$SRC" -p 'test_convergence_hub.py' -v > "$RUNNER_TEMP/convergence-hub-tests.log" 2>&1
+          cat "$RUNNER_TEMP/convergence-hub-tests.log"
+          python -m coverage json -q -o /tmp/code-purple-atlas/convergence/w32_coverage.json
+          cp "$RUNNER_TEMP/convergence-hub-tests.log" /tmp/code-purple-atlas/convergence/w32_tests.log
+          python "$SRC/convergence_hub.py" --source "$SRC/CONVERGENCE_HUB_SOURCES_W32.json" \
+            --out /tmp/code-purple-atlas/convergence --head "$EXACT_SHA"
+          python "$SRC/convergence_hub.py" --out /tmp/code-purple-atlas/convergence \
+            --head "$EXACT_SHA" --verify-only
+          python - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          root=Path("/tmp/code-purple-atlas/convergence")
+          log=(root/"w32_tests.log").read_text()
+          found=[int(n) for n in re.findall(r"Ran (\d+) tests? in",log)]
+          assert len(found)==1 and found[0]>=15 and "\nOK" in log, "W32_NATIVE_TEST_COUNT_OR_FAILURE"
+          c=json.loads((root/"w32_coverage.json").read_text())["totals"]
+          assert c["num_statements"]>0 and c["num_branches"]>0
+          l=json.loads((root/"ledger.json").read_text())
+          assert l["presentation_head"]==os.environ["EXACT_SHA"]
+          assert l["populations"]["canonical_federation"]["eligible"]==42
+          assert l["kpis"]["coverage_rollup_global"] is None
+          assert l["authority"]["merge_admission"]=="HOLD"
+          print(json.dumps({"w32_tests":found[0],
+                            "scope":"CONVERGENCE_HUB_MODULE_ONLY",
+                            "statements":[c["covered_lines"],c["num_statements"]],
+                            "branches":[c["covered_branches"],c["num_branches"]],
+                            "cross_repository_coverage_credit":False},sort_keys=True))
+          PY
+      - name: W34 source-bound Superstitch / DOW TESTFLIGHT and visual QA
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="W34 source-bound Superstitch / DOW TESTFLIGHT and visual QA" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
+          set -euo pipefail
+          SRC=mission-control/federation-atlas/superstitch
+          python "$SRC/testflight.py" --mode pr --expected-head "$EXACT_SHA" --browser \
+            --out "$RUNNER_TEMP/w34-testflight"
+          mkdir -p /tmp/code-purple-atlas/superstitch
+          cp "$RUNNER_TEMP/w34-testflight/site/"* /tmp/code-purple-atlas/superstitch/
+          cp "$RUNNER_TEMP/w34-testflight/home_testflight_receipt.json" \
+            /tmp/code-purple-atlas/w34-home-testflight-receipt.json
+          python "$SRC/build.py" --head "$EXACT_SHA" \
+            --out /tmp/code-purple-atlas/superstitch --verify-only
+          python -m pip install --disable-pip-version-check Pillow==11.3.0
+          for VIEW in desktop mobile; do
+            python "$SRC/visual_pattern_scanner.py" \
+              --image "$RUNNER_TEMP/w34-testflight/browser/$VIEW.png" \
+              --out "/tmp/code-purple-atlas/w34-$VIEW-pattern.json"
+          done
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          root=Path("/tmp/code-purple-atlas/superstitch")
+          m=json.loads((root/"manifest.json").read_text())
+          t=json.loads((Path(os.environ["RUNNER_TEMP"])/"w34-testflight"/"home_testflight_receipt.json").read_text())
+          b=json.loads((Path(os.environ["RUNNER_TEMP"])/"w34-testflight"/"browser"/"browser_qa_receipt.json").read_text())
+          assert m["presentation_head"]==os.environ["EXACT_SHA"]
+          assert m["run_dispatch"] is False and m["merger_admission"]=="HOLD"
+          assert t["qualification"]=="LOCAL_ONLY_NOT_GITHUB_NATIVE"
+          assert t["status"]=="PASS_LOCAL_PR_REPRODUCTION"
+          assert len(b["checks"])==3 and all(x["interactions"]=="PASS"
+               and x["page_errors"]==0 and x["document_horizontal_overflow_px"]==0
+               for x in b["checks"])
+          assert len(m["member_sha256"])==16
+          print(json.dumps({"W34_SUPERSTITCH":"LOCAL_REPRO_ON_NATIVE_RUNNER",
+            "presentation_head":m["presentation_head"],"members":len(m["member_sha256"]),
+            "viewports":len(b["checks"]),"native_owner_acceptance":None,
+            "merge_admission":"HOLD"},sort_keys=True))
+          PY
+      - name: Build source-bound execution Atlas and validate every output member
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Build source-bound execution Atlas and validate every output member" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
+          set -euo pipefail
+          SRC=mission-control/federation-atlas/orchestration
+          python "$SRC/main.py" check --root .
+          python "$SRC/main.py" build --root . \
+            --out /tmp/code-purple-atlas/orchestration --head "$EXACT_SHA"
+          python "$SRC/main.py" check --root . \
+            --out /tmp/code-purple-atlas/orchestration --head "$EXACT_SHA"
+          python "$SRC/browser_qa.py" --html /tmp/code-purple-atlas/orchestration/index.html \
+            --out /tmp/code-purple-atlas/orchestration-qa --head "$EXACT_SHA"
+      - name: Bind source-owned coverage-integrity view when present
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas
+          if [ -e "$SRC/coverage_integrity.py" ] || \
+             [ -e "$SRC/COVERAGE_INTEGRITY_OBSERVATIONS_v1.json" ] || \
+             [ -e "$SRC/test_coverage_integrity.py" ]; then
+            test -f "$SRC/coverage_integrity.py"
+            test -f "$SRC/COVERAGE_INTEGRITY_OBSERVATIONS_v1.json"
+            test -f "$SRC/test_coverage_integrity.py"
+            python -m unittest discover -s mission-control/federation-atlas -p test_coverage_integrity.py -v
+            python "$SRC/coverage_integrity.py" \
+              --head "$EXACT_SHA" --out /tmp/code-purple-atlas/coverage-integrity
+            python "$SRC/coverage_integrity.py" \
+              --head "$EXACT_SHA" --out /tmp/code-purple-atlas/coverage-integrity \
+              --verify-only
+            echo "COVERAGE_INTEGRITY=SOURCE_BOUND_VIEW; authority=HOLD"
+          else
+            echo "COVERAGE_INTEGRITY=SOURCE_OWNER_NOT_YET_JOINED"
+          fi
       - name: Build public review projection
         env:
           EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           python mission-control/federation-atlas/pages_portal.py --atlas /tmp/code-purple-atlas --out /tmp/code-purple-atlas/pages --sha "$EXACT_SHA"
           test -s /tmp/code-purple-atlas/pages/site-manifest.json
+      - name: W32 Global DoV three-viewport / status-overlay browser QA
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="W32 Global DoV three-viewport / status-overlay browser QA" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
+          set -euo pipefail
+          python mission-control/federation-atlas/convergence_browser_qa.py \
+            --html /tmp/code-purple-atlas/pages/convergence/index.html \
+            --out /tmp/code-purple-atlas/convergence/browser_qa \
+            --head "$EXACT_SHA"
+          test -s /tmp/code-purple-atlas/convergence/browser_qa/qa_receipt.json
+      - name: N3 responsive Plotly / SHA-bound Pages / control QA
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="N3 responsive Plotly / SHA-bound Pages / control QA" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
+          set -euo pipefail
+          SRC=mission-control/federation-atlas/mission_rebuild
+          python "$SRC/n3_browser_qa.py" \
+            --head "$EXACT_SHA" \
+            --source /tmp/code-purple-atlas/mission-rebuild \
+            --public /tmp/code-purple-atlas/pages/mission-rebuild \
+            --screens /tmp/code-purple-atlas/mission-rebuild/n3-screenshots \
+            --out /tmp/code-purple-atlas/mission-rebuild/n3-html-qa.json
+          test -s /tmp/code-purple-atlas/mission-rebuild/n3-html-qa.json
+      - name: Mission Control W1 Playwright three-viewport DoV and Pages byte parity
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          set +e
+          python mission-control/federation-atlas/mission_rebuild/browser_qa.py \
+            --source /tmp/code-purple-atlas/mission-rebuild \
+            --portal /tmp/code-purple-atlas/pages/mission-rebuild \
+            --sha "$EXACT_SHA" \
+            --out /tmp/code-purple-atlas/mission-rebuild/w1-browser-qa.json \
+            --screens /tmp/code-purple-atlas/mission-rebuild/browser-screens 2>&1 | tee "$RUNNER_TEMP/qa-w1-browser-qa.log"
+          rc=${PIPESTATUS[0]}; set -e
+          if [ "$rc" -ne 0 ]; then
+            msg=$(grep -E "Error|assert|require|FAIL|mismatch|parity" "$RUNNER_TEMP/qa-w1-browser-qa.log" | tail -n 3 | tr '\n' ' ' | cut -c1-900)
+            echo "::error title=w1-browser-qa::${msg:-exit $rc (no assertion text captured)}"
+            exit "$rc"
+          fi
+          test -s /tmp/code-purple-atlas/mission-rebuild/w1-browser-qa.json
+      - name: W2 native Plotly responsive QA and Pages source/hash parity
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          set +e
+          python mission-control/federation-atlas/mission_rebuild/w2_browser_qa.py \
+            --source /tmp/code-purple-atlas/mission-rebuild \
+            --portal /tmp/code-purple-atlas/pages/mission-rebuild \
+            --sha "$EXACT_SHA" \
+            --out /tmp/code-purple-atlas/mission-rebuild/w2-browser-qa.json \
+            --screens /tmp/code-purple-atlas/mission-rebuild/w2-screenshots 2>&1 | tee "$RUNNER_TEMP/qa-w2-browser-qa.log"
+          rc=${PIPESTATUS[0]}; set -e
+          if [ "$rc" -ne 0 ]; then
+            msg=$(grep -E "Error|assert|require|FAIL|mismatch|parity" "$RUNNER_TEMP/qa-w2-browser-qa.log" | tail -n 3 | tr '\n' ' ' | cut -c1-900)
+            echo "::error title=w2-browser-qa::${msg:-exit $rc (no assertion text captured)}"
+            exit "$rc"
+          fi
+          test -s /tmp/code-purple-atlas/mission-rebuild/w2-browser-qa.json
       - name: Upload identity-bound HTML SVG and metrics
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: code-purple-method-atlas-${{ github.event.pull_request.head.sha || github.sha }}
           path: /tmp/code-purple-atlas/
@@ -424,7 +712,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Download exact-run Atlas artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: code-purple-method-atlas-${{ github.sha }}
           path: ./atlas-artifact
@@ -445,11 +733,58 @@ jobs:
               assert hashlib.sha256(p.read_bytes()).hexdigest()==expected
           PY
       - name: Configure Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
       - name: Upload sanitized Pages
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: ./atlas-artifact/pages
       - name: Deploy GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+      - name: Checkout exact-main read-only Pages proof
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          path: publisher-source
+      - name: Independent HTTP 200 and repeated hosted hash parity
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python publisher-source/mission-control/html_qa/hosted_pages_verify.py \
+            --expected-dir ./atlas-artifact/pages \
+            --base-url "$PAGES_URL" \
+            --receipt ./g3p-hosted-parity.json \
+            --repeat 2 --attempts 8 --wait 5
+          test -s ./g3p-hosted-parity.json
+      - name: Independent hosted Live Lossless repeated SHA proof
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          python publisher-source/mission-control/v2/handoff/live_lossless/hosted_readback.py \
+            --expected-dir ./atlas-artifact/pages \
+            --base-url "$PAGES_URL" \
+            --receipt ./live-lossless-hosted-parity.json \
+            --repeat 2 --attempts 8 --wait 5
+          test -s ./live-lossless-hosted-parity.json
+      - name: Independent JADE N+2 served Pages exact-head SHA parity
+        env:
+          PAGES_URL: ${{ steps.deployment.outputs.page_url }}
+          EXACT_SHA: ${{ github.sha }}
+        run: |
+          python publisher-source/mission-control/jade_temple/tools/hosted_parity.py \
+            --expected-dir ./atlas-artifact/pages \
+            --base-url "$PAGES_URL" --head "$EXACT_SHA" \
+            --receipt ./jade-hosted-parity.json \
+            --repeat 2 --attempts 8 --wait 5
+          test -s ./jade-hosted-parity.json
+      - name: Preserve hosted Pages proof receipt
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: g3p-hosted-parity-${{ github.sha }}
+          path: |
+            ./g3p-hosted-parity.json
+            ./live-lossless-hosted-parity.json
+            ./jade-hosted-parity.json
+          if-no-files-found: warn

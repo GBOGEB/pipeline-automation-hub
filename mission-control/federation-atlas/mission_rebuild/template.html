@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="referrer" content="no-referrer"><title>MISSION CONTROL | Federation Rebuild</title><style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#091827;color:#e9f4fb}*{box-sizing:border-box}body{margin:0}header{padding:28px max(22px,4vw);background:#142e42;border-bottom:1px solid #355267}main{max-width:1500px;margin:auto;padding:20px}h1{margin:8px 0;font-size:clamp(26px,4vw,46px)}p{color:#b6cbdb;line-height:1.5}.tag{letter-spacing:.1em;font-size:12px;font-weight:700;color:#8bd2e2}.notice{background:#342d25;border:1px solid #aa8b57;border-radius:12px;padding:12px}.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}.stat,.panel{background:#132a3d;border:1px solid #355269;border-radius:12px;padding:16px;margin-top:15px}.stat b{font-size:26px;display:block}.stat span{color:#aac6d7;font-size:12px}.repos,.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}.repo,.node{background:#20394e;color:#eaf6fc;border:1px solid #527089;border-radius:9px;padding:13px;text-decoration:none}.repo strong{display:block}.repo small{display:block;color:#a8c5d7;margin:9px 0}input,select{padding:10px;border-radius:8px;border:1px solid #51748c;background:#0a1d2d;color:#e6f4fb}button{cursor:pointer;color:#e8f9ff;background:#23506a;border:1px solid #588da4;padding:8px 12px;border-radius:9px}.node{text-align:left}.node small{display:block;color:#a9c5d8;margin-top:6px}.cols{display:grid;grid-template-columns:minmax(0,2fr) minmax(240px,1fr);gap:12px}.details{padding:14px;border-radius:10px;background:#0b1e2e;white-space:pre-wrap;overflow-wrap:anywhere}.scroller{max-height:440px;overflow:auto}.tools{display:flex;gap:8px;flex-wrap:wrap;padding:10px 0}.tools input{flex:1}a{color:#9fdfef}code{overflow-wrap:anywhere}.sipoc{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}.sipoc>div{background:#1b394a;padding:12px;border-radius:9px}footer{padding:20px;color:#aac2d1;overflow-wrap:anywhere}.repo small,.node small{overflow-wrap:anywhere}@media(max-width:950px){.stats{grid-template-columns:repeat(3,1fr)}.sipoc{grid-template-columns:repeat(2,1fr)}}@media(max-width:670px){.stats{grid-template-columns:repeat(2,1fr)}.cols{grid-template-columns:1fr}.sipoc{grid-template-columns:1fr}}button:focus-visible,a:focus-visible{outline:3px solid #9fdfef}
+.beam-wrap{max-width:100%;background:#091b2b;border:1px solid #45657d;border-radius:12px;overflow-x:auto;margin:12px 0 18px}.beam-wrap svg{min-width:820px;width:100%;height:auto;display:block}.beam-wrap g[role=button]{cursor:pointer;outline:none}.beam-wrap g[role=button]:focus rect{stroke:#b7f5ff;stroke-width:3}.dag-legend{display:flex;gap:18px;align-items:center;flex-wrap:wrap;color:#a9c8d8;font-size:12px;margin:8px 0}.dag-legend span{white-space:nowrap}.details pre{white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%;font:12px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace}.details a{overflow-wrap:anywhere}
+/* G3C: prevent intrinsic grid min-content expansion at the 390 px viewport.
+   Keep the 820 px beam DAG horizontally scrollable IN ITS OWN container.
+   Never hide document overflow or loosen Playwright's no-overflow threshold. */
+@media (max-width:670px) {
+  .cols, .sipoc { grid-template-columns:minmax(0,1fr); }
+  .stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .repos, .grid {
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));
+  }
+  .cols > *, .sipoc > *, .stats > *, .repos > *,
+  .grid > *, .panel, .beam-wrap { min-width:0; max-width:100%; }
+  .sipoc > div, .node, .repo, .stat, .details,
+  .panel, .notice { overflow-wrap:anywhere; }
+  .tools input { min-width:0; flex-basis:min(100%,180px); }
+}
+</style></head><body><header><div class="tag">GBOGEB · CODE PURPLE · MISSION CONTROL W1</div><h1>Pipeline and federation observatory</h1><p>Repository discovery · orchestration DAG · process hierarchy · typed dependencies · scheduler and worker evidence</p><div class="notice">Source-model and historical planner sample only. Not a live worker scheduler, admission certificate, QPS owner acceptance, security waiver or cross-repository coverage proof.</div></header>
+<main><div class="stats" id="stats"></div><section class="panel"><h2>Five-repository launch / discovery</h2><div class="repos" id="repos"></div></section><section class="panel"><h2>Explore graph atoms, beams and dependencies</h2><div class="dag-legend"><span>— Same-pulse dependency</span><span>┄ N→N+1 feedback</span><span>Select a beam for provenance</span></div><div class="beam-wrap"><svg id="beam-dag" viewBox="0 0 990 625" role="img" aria-label="CODE PURPLE canonical beam dependency graph"></svg></div><div class="tools"><input id="query" aria-label="Find graph node" placeholder="Search node, lane, method, owner or ID"><select id="layer" aria-label="Select graph layer"><option value="ALL">All layers</option><option value="BEAM">Beams</option><option value="STAGE">39 process stages</option><option value="REPO">Repositories</option></select><button id="reset">Reset</button></div><div class="cols"><div id="nodes" class="grid scroller"></div><div id="details" class="details" aria-live="polite">Select an atom to inspect its source, inputs, outputs, failures and native evidence boundary.</div></div><p><a href="graph.json">Typed JSON graph</a> · <a href="graph.mmd">Mermaid dependency DAG</a> · <a href="manifest.json">Source SHA-256 manifest</a></p></section>
+<section class="panel"><h2>Scheduler and disjoint worker leases</h2><p id="capacity"></p><div id="workers" class="grid"></div></section><section class="panel"><h2>SIPOC federation contract</h2><div id="sipoc" class="sipoc"></div><p>FEEDFORWARD within N is acyclic; FEEDBACK is N→N+1. An output does not become an accepted source in another repository without its receiving owner.</p></section><footer id="footer"></footer></main>
+<script id="source-data" type="application/json">__GRAPH_DATA__</script><script>
+"use strict";const d=JSON.parse(document.getElementById("source-data").textContent),$=id=>document.getElementById(id),txt=(tag,value)=>{let n=document.createElement(tag);n.textContent=String(value);return n};
+for(const [k,v] of [["Repositories",d.population.repositories],["Process atoms",d.population.process_atoms],["Beams",d.population.beams],["Edges",d.population.edges],["Worker capacity","UNKNOWN"]]){let x=txt("div","");x.className="stat";x.append(txt("b",v),txt("span",k));$("stats").append(x)}
+
+const beamNodes=d.nodes.filter(n=>n.kind==="BEAM");
+const svg=document.getElementById("beam-dag"), svgNS="http://www.w3.org/2000/svg";
+function svgElt(tag,attrs){const o=document.createElementNS(svgNS,tag);for(const [k,v] of Object.entries(attrs))o.setAttribute(k,String(v));return o}
+const pos={};
+beamNodes.forEach((n,i)=>{pos[n.id]={x:28+(i%2)*485,y:25+Math.floor(i/2)*120}});
+for(const edge of d.edges.filter(e=>e.kind==="FEEDFORWARD"||e.kind==="FEEDBACK")){
+ const a=pos[edge.source],b=pos[edge.target];if(!a||!b)continue;
+ const link=svgElt("path",{d:"M"+(a.x+210)+","+(a.y+76)+" Q"+(a.x+210)+","+(a.y+94)+" "+(b.x+210)+","+(b.y),fill:"none",stroke:edge.temporal==="NEXT_PULSE"?"#d6b475":"#68c6e1","stroke-width":2,"stroke-dasharray":edge.temporal==="NEXT_PULSE"?"6 5":"none",opacity:0.82});
+ svg.append(link);
+}
+for(const n of beamNodes){
+ const xy=pos[n.id];const group=svgElt("g",{role:"button",tabindex:"0","aria-label":n.beam+" "+n.label});
+ const rect=svgElt("rect",{x:xy.x,y:xy.y,width:448,height:76,rx:13,fill:"#203a4e",stroke:"#53899f","stroke-width":1.5});group.append(rect);
+ const heading=svgElt("text",{x:xy.x+15,y:xy.y+29,fill:"#e7f5fc","font-size":16,"font-weight":700});heading.textContent=n.beam+"  "+n.label.slice(0,42);group.append(heading);
+ const note=svgElt("text",{x:xy.x+15,y:xy.y+53,fill:"#b1cbd9","font-size":12});note.textContent="Source beam · lane "+n.lane+" · "+n.id;group.append(note);
+ const tooltip=svgElt("title",{});tooltip.textContent=n.exit;group.append(tooltip);
+ group.addEventListener("click",()=>detail(n));group.addEventListener("keydown",ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();detail(n)}});
+ svg.append(group);
+}
+const safeHref=v=>{try{const s=String(v??""),u=new URL(s,document.baseURI);return u.protocol==="https:"||u.protocol==="http:"?encodeURI(decodeURI(s)):null}catch(_){return null}};
+d.repos.forEach(x=>{let a=txt("a","");const href=safeHref(x.url);if(href)a.href=href;a.target="_blank";a.rel="noopener noreferrer";a.className="repo";a.append(txt("strong",x.label),txt("small",x.role),txt("span","Open source ↗"));$("repos").append(a)});
+function detail(n){let box=$("details");box.replaceChildren(txt("h3",n.label),txt("pre",JSON.stringify({atom:n,inbound:d.edges.filter(e=>e.target===n.id),outbound:d.edges.filter(e=>e.source===n.id)},null,2)))}
+function redraw(){let q=$("query").value.toLowerCase(),kind=$("layer").value,host=$("nodes");host.replaceChildren();let found=d.nodes.filter(n=>(kind==="ALL"||kind===n.kind)&&JSON.stringify(n).toLowerCase().includes(q));found.forEach(n=>{let b=txt("button","");b.className="node";b.append(txt("strong",n.kind+" · "+n.label),txt("small",n.id));b.addEventListener("click",()=>detail(n));host.append(b)});if(!found.length)host.append(txt("p","No matches."))}
+$("query").addEventListener("input",redraw);$("layer").addEventListener("change",redraw);$("reset").addEventListener("click",()=>{$("query").value="";$("layer").value="ALL";redraw()});redraw();
+$("capacity").textContent="Historical planning bounds: total "+d.scheduler.historical_sample_max_parallel+", per repository "+d.scheduler.historical_sample_per_repo+". Actual worker capacity/hours UNKNOWN. Dispatch authorized: NO.";
+d.scheduler.workers.forEach(w=>{let x=txt("div","");x.className="node";x.append(txt("strong",w.id+" · "+w.status),txt("small",w.repo+" / "+w.stage),txt("small","Lease: "+(w.lease_paths.join(", ")||"read-only")+" | Depends on "+(w.depends_on.join(", ")||"none")));$("workers").append(x)});
+d.sipoc.forEach(s=>{let x=txt("div","");x.append(txt("h3",s.key+" · "+s.name),txt("p",s.detail),txt("small",s.constraint));$("sipoc").append(x)});
+$("footer").textContent="Read-only snapshot at "+d.source_sha+" · M1 structural model only; M2/M3 HOLD; empirical PCA/BT UNKNOWN.";
+</script></body></html>

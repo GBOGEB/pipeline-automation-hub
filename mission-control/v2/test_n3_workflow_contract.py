@@ -74,7 +74,11 @@ class N11WorkflowContractTests(unittest.TestCase):
         )
         for name in g3p_modules:
             with self.subTest(module=name):
-                self.assertEqual(src.count("'" + name + "'"), 2)
+                # Each N3 module appears in the seven-module (G3P) and
+                # eight-module (G3A) populations. G3P live also appears in
+                # its separate focused gate and the live replay gate.
+                count = 3 if name == "g3p_live_dashboard.py" else 2
+                self.assertEqual(src.count("'" + name + "'"), count)
         g3a_modules = (
             "n3_continuation.py", "n3_integrity.py", "n3_metrics.py",
             "n3_dashboard.py", "n3_native_join.py", "n3_wave_federation.py",
@@ -104,7 +108,7 @@ class N11WorkflowContractTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             sample = root / "probe.py"
-            sample.write_text("value = 1\nif value:\n    value += 1\n", encoding="utf-8")
+            sample.write_text("value = 1\nif value:\n    value += 1\n", encoding="utf-8", newline="\n")
             output = root / "probe.json"
             env = dict(__import__("os").environ)
             env["COVERAGE_FILE"] = str(root / ".coverage")

@@ -11,6 +11,10 @@ on:
       - mission-control/qps-triage-ultra/w3_analytics.py
       - mission-control/qps-triage-ultra/w3_bt_observations.json
       - mission-control/qps-triage-ultra/w3_bt_gate.py
+      - mission-control/qps-triage-ultra/test_w3_engines.py
+      - mission-control/qps-triage-ultra/w3_receipt_sync.py
+      - mission-control/qps-triage-ultra/w3_measured_analytics_receipt.json
+      - mission-control/qps-triage-ultra/w3_observed_bt_receipt.json
       - .github/workflows/qps-triage-w3-analytics.yml
   pull_request:
     paths:
@@ -18,6 +22,10 @@ on:
       - mission-control/qps-triage-ultra/w3_analytics.py
       - mission-control/qps-triage-ultra/w3_bt_observations.json
       - mission-control/qps-triage-ultra/w3_bt_gate.py
+      - mission-control/qps-triage-ultra/test_w3_engines.py
+      - mission-control/qps-triage-ultra/w3_receipt_sync.py
+      - mission-control/qps-triage-ultra/w3_measured_analytics_receipt.json
+      - mission-control/qps-triage-ultra/w3_observed_bt_receipt.json
       - .github/workflows/qps-triage-w3-analytics.yml
   workflow_dispatch:
 
@@ -29,13 +37,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact source head
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Assert exact source head
         shell: bash
         run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+
+      - name: Engine unit and negative controls (Jacobi, PCA DEFER branches, BT pair rules)
+        run: python -m unittest discover -s mission-control/qps-triage-ultra -p 'test_w3_engines.py' -v
+
+      - name: Committed receipts equal engine output on committed inputs (drift guard)
+        run: python mission-control/qps-triage-ultra/w3_receipt_sync.py --check
 
       - name: Execute measured fleet analytics
         run: |
@@ -88,7 +102,7 @@ jobs:
           PY
 
       - name: Upload measured analytics and BT receipts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: qps-w3-measured-analytics-${{ github.event.pull_request.head.sha || github.sha }}
           path: |

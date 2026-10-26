@@ -361,9 +361,9 @@ def emit(report, out):
     payload = (json.dumps(report, sort_keys=True, indent=2) + "\n").encode()
     digest = hashlib.sha256(payload).hexdigest()
     (out / "wave_timeline.json").write_bytes(payload)
-    (out / "wave_timeline.sha256").write_text(digest + "\n", encoding="ascii")
-    (out / "wave_timeline.md").write_text(render_markdown(report), encoding="utf-8")
-    (out / "wave_timeline.html").write_text(render_html(report), encoding="utf-8")
+    (out / "wave_timeline.sha256").write_text(digest + "\n", encoding="ascii", newline="\n")
+    (out / "wave_timeline.md").write_text(render_markdown(report), encoding="utf-8", newline="\n")
+    (out / "wave_timeline.html").write_text(render_html(report), encoding="utf-8", newline="\n")
     return digest
 
 
@@ -374,8 +374,8 @@ def main():
     parser.add_argument("--source-sha", required=True)
     parser.add_argument("--previous", type=Path)
     a = parser.parse_args()
-    data = json.loads(a.input.read_text())
-    previous = json.loads(a.previous.read_text()) if a.previous else None
+    data = json.loads(a.input.read_text(encoding="utf-8"))
+    previous = json.loads(a.previous.read_text(encoding="utf-8")) if a.previous else None
     validate(data, previous=previous)
     report = build(data, source_sha=a.source_sha)
     digest = emit(report, a.out)

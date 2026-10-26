@@ -1,0 +1,3776 @@
+{
+ "authority": {
+  "admission": "HOLD",
+  "merge_authorized": false,
+  "root_closure_credit": null
+ },
+ "digest_sha256": "b63d56d27ea44eae4f37a1eddd7941c28730829fe73167570c22a9d6b248b516",
+ "iteration": "N+8",
+ "observed_at_utc": "2026-10-20T05:56:59Z",
+ "repositories": [
+  {
+   "branch": "master",
+   "counts": {
+    "EVERRED": 1,
+    "FLAKY": 7,
+    "GREEN_TO_RED": 3,
+    "RED_TO_GREEN": 11,
+    "STABLE_GREEN": 56
+   },
+   "currently_red": 6,
+   "currently_red_stale": 2,
+   "non_green": [
+    {
+     "age_days": 0.5,
+     "class": "GREEN_TO_RED",
+     "current": "RED",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "GM-IV RECON_4 Governor Gate",
+     "path": ".github/workflows/gm-iv-recon4-governor.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "recon4-governor: Execute RECON_4 Governor gate"
+      ],
+      "first_red_at": "2026-09-16T20:51:50Z",
+      "first_red_run": 35149068279,
+      "first_red_sha": "612dd40421b645bd389e36d2e4849a41b64c716f",
+      "last_green_sha": "3a35154ae350f747eb650508ebd7e90f6a9dc779",
+      "red_streak_runs": 4,
+      "suspect_commit_count": 11
+     }
+    },
+    {
+     "age_days": 1.7,
+     "class": "GREEN_TO_RED",
+     "current": "RED",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "GM-V Governor Readiness",
+     "path": ".github/workflows/gm-v-governor-readiness.yml",
+     "pinned": true,
+     "stale": false,
+     "window": {
+      "failing": [
+       "gm-v-governor-readiness: Verify exact GM-IV runtime capacity run and artifact identity"
+      ],
+      "first_red_at": "2026-10-17T11:25:35Z",
+      "first_red_run": 39028648422,
+      "first_red_sha": "127f84b79f522242cdf9884c8d0acb55cc6bb5e8",
+      "last_green_sha": "445bced67e814b4246b4ad5ebaca5f64538ca00f",
+      "red_streak_runs": 2,
+      "suspect_commit_count": 595
+     }
+    },
+    {
+     "age_days": 4.5,
+     "class": "GREEN_TO_RED",
+     "current": "RED",
+     "flips": 1,
+     "history_truncated": true,
+     "name": "pages build and deployment",
+     "path": "dynamic/pages/pages-build-deployment",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "deploy: Deploy to GitHub Pages"
+      ],
+      "first_red_at": "2026-10-15T16:50:26Z",
+      "first_red_run": 38772328436,
+      "first_red_sha": "3b468f1e1f161a64566eb85c104335c40411153b",
+      "last_green_sha": "a3fb9a5afb56b36e8a4b12f23e3fb7b2fa7c8559",
+      "red_streak_runs": 1,
+      "suspect_commit_count": 15
+     }
+    },
+    {
+     "age_days": 2.6,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "Mission Control N3 Evidence Metrics",
+     "path": ".github/workflows/mission-control-n3-evidence.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "N3 evidence Python 3.12: Run bounded N3 unit, adversarial and CLI tests",
+       "N3 evidence Python 3.11: Run bounded N3 unit, adversarial and CLI tests"
+      ],
+      "first_red_at": "2026-10-17T11:24:44Z",
+      "first_red_run": 39028590472,
+      "first_red_sha": "d1012487f8fc8ea9115184e1f9b4577353f97b37"
+     }
+    },
+    {
+     "age_days": 31.0,
+     "class": "FLAKY",
+     "current": "RED",
+     "flips": 3,
+     "history_truncated": false,
+     "name": "GM-V 3PSTAR MIP Control",
+     "path": ".github/workflows/gm-v-3pstar-mip-control.yml",
+     "pinned": true,
+     "stale": true,
+     "window": {
+      "failing": [
+       "gm-v-3pstar-mip-control: Compile and run deterministic 3PSTAR MIP validator"
+      ],
+      "first_red_at": "2026-09-18T14:55:33Z",
+      "first_red_run": 35359256000,
+      "first_red_sha": "6980c60fae211f956e4ad3068f76882fa02139a3",
+      "last_green_sha": "75986e497f4e812cae01cb521f1bedb555fbaed3",
+      "red_streak_runs": 2,
+      "suspect_commit_count": 76
+     }
+    },
+    {
+     "age_days": 0.5,
+     "class": "FLAKY",
+     "current": "RED",
+     "flips": 5,
+     "history_truncated": true,
+     "name": "Zero-Test Gate Guard",
+     "path": ".github/workflows/zero-test-gate-guard.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "audit: Every unittest gate collects at least one test"
+      ],
+      "first_red_at": "2026-10-19T16:52:47Z",
+      "first_red_run": 39289287081,
+      "first_red_sha": "c3b874fe98c4201a8dd92e5978c763b8067f5f6e",
+      "last_green_sha": "76bafe29758c7bf82917c2de3da99da265800949",
+      "red_streak_runs": 1,
+      "suspect_commit_count": 2
+     }
+    },
+    {
+     "age_days": 0.5,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 3,
+     "history_truncated": false,
+     "name": "CODE PURPLE Live Lossless QA",
+     "path": ".github/workflows/live-lossless-qa.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "readonly-site-qa: Validate JS and build source-bound dashboard"
+      ],
+      "first_red_at": "2026-10-18T14:22:54Z",
+      "first_red_run": 39135727424,
+      "first_red_sha": "6078fb9f6d5a8c016e7feaf9cf5b12a93b982183",
+      "last_green_sha": "fb615a6fade149f892441f76f321339243a4a8bb",
+      "recovered_at": "2026-10-18T15:29:30Z",
+      "recovery_run": 39140712191,
+      "recovery_sha": "ccd695c22b50bf36369cdc669757063029a86551",
+      "red_hours": 1.11,
+      "suspect_commit_count": 31
+     }
+    },
+    {
+     "age_days": 0.5,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 11,
+     "history_truncated": true,
+     "name": "CODE PURPLE Method Atlas (read-only)",
+     "path": ".github/workflows/code-purple-method-atlas.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "render: W34 source-bound Superstitch / DOW TESTFLIGHT and visual QA"
+      ],
+      "first_red_at": "2026-10-18T22:56:26Z",
+      "first_red_run": 39174384467,
+      "first_red_sha": "d757aee382e0a0daf278d28fc08a6f032bcc6ea8",
+      "last_green_sha": "b7aa6e8f4379e6abb10136b70ce8f7b7c62e32ca",
+      "recovered_at": "2026-10-19T04:37:31Z",
+      "recovery_run": 39200403496,
+      "recovery_sha": "fe72f423395503728a89b1bb3d6ce32b688db3d0",
+      "red_hours": 5.68,
+      "suspect_commit_count": 5
+     }
+    },
+    {
+     "age_days": 31.0,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 3,
+     "history_truncated": false,
+     "name": "GM-IV Evidence Economics",
+     "path": ".github/workflows/gm-iv-evidence-economics.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "validate-evidence-economics: Validate measured evidence economics"
+      ],
+      "first_red_at": "2026-09-16T20:51:50Z",
+      "first_red_run": 35149068286,
+      "first_red_sha": "612dd40421b645bd389e36d2e4849a41b64c716f",
+      "last_green_sha": "3a35154ae350f747eb650508ebd7e90f6a9dc779",
+      "recovered_at": "2026-09-16T20:55:58Z",
+      "recovery_run": 35149466891,
+      "recovery_sha": "f518646f3a075d3193522e2ad8deeebb20a22dae",
+      "red_hours": 0.07,
+      "suspect_commit_count": 11
+     }
+    },
+    {
+     "age_days": 1.5,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 4,
+     "history_truncated": false,
+     "name": "Mission Control v2 Contract",
+     "path": ".github/workflows/mission-control-v2-contract.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "validate: Validate Mission Control v2"
+      ],
+      "first_red_at": "2026-10-17T11:20:01Z",
+      "first_red_run": 39028291042,
+      "first_red_sha": "7ca671fa808f3692c2f947746b0ef47393e3b8cc",
+      "last_green_sha": "6a7b045ef4fd1fb30e0e8c1219d4834091ad4d84",
+      "recovered_at": "2026-10-17T11:37:03Z",
+      "recovery_run": 39029381856,
+      "recovery_sha": "ec111f9e7d708eae4f76e0ee0d58c6d59041c78a",
+      "red_hours": 0.28,
+      "suspect_commit_count": 8
+     }
+    },
+    {
+     "age_days": 28.0,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 4,
+     "history_truncated": false,
+     "name": "MissionControl Measured Crew Allocation",
+     "path": ".github/workflows/measured-crew-allocation.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "measured-crew-allocation: Prove canonical negative-evidence retention, Fail closed after retaining runtime evidence"
+      ],
+      "first_red_at": "2026-09-21T07:53:19Z",
+      "first_red_run": 35575096066,
+      "first_red_sha": "86350271c04a583b27eddc5226a6112580399063",
+      "last_green_sha": "d097c8b4fbb5e0896ff16ac08cb3418f96b51a1a",
+      "recovered_at": "2026-09-21T07:56:43Z",
+      "recovery_run": 35575368403,
+      "recovery_sha": "92876db294a4f790a5a7acda60a3217ee8972922",
+      "red_hours": 0.06,
+      "suspect_commit_count": 5
+     }
+    },
+    {
+     "age_days": 0.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "CODE PURPLE Disjoint Live Census (read-only)",
+     "path": ".github/workflows/code-purple-live-census.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Fresh GitHub GET and source-bound graph artifact: Refresh read-only census (native source, no merge admission)"
+      ],
+      "first_red_at": "2026-10-16T15:27:52Z",
+      "first_red_run": 38924137249,
+      "first_red_sha": "0d881567f0481f4c6155ac1bac4cedd0d55b57d4",
+      "last_green_sha": null,
+      "recovered_at": "2026-10-18T12:36:04Z",
+      "recovery_run": 39127961347,
+      "recovery_sha": "28e0f3a3a9faf0a49c321c024a7bb1bbed0ca3a2",
+      "red_before_window": true,
+      "red_hours": 45.14
+     }
+    },
+    {
+     "age_days": 0.5,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "CODE PURPLE M3 Lossless Stabilization",
+     "path": ".github/workflows/code-purple-m3-lossless.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [],
+      "first_red_at": "2026-10-15T16:50:07Z",
+      "first_red_run": 38772284034,
+      "first_red_sha": "3b441b517baee741197a7c687c5fb33a16ad4454",
+      "last_green_sha": null,
+      "recovered_at": "2026-10-19T17:23:39Z",
+      "recovery_run": 39293721710,
+      "recovery_sha": "c3b874fe98c4201a8dd92e5978c763b8067f5f6e",
+      "red_before_window": true,
+      "red_hours": 96.56
+     }
+    },
+    {
+     "age_days": 1.5,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "CP.CLOSE GitHub Handover QA",
+     "path": ".github/workflows/cp-close-github-qa.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "closeout-evidence: Run CP.CLOSE negative/contract tests"
+      ],
+      "first_red_at": "2026-10-17T15:58:25Z",
+      "first_red_run": 39047377355,
+      "first_red_sha": "915e08bf4a5463c084f1be8d16de9bcfa9ce9842",
+      "last_green_sha": "fe1a20dd86b6f0aa5c4adf4395f87dac005f47e9",
+      "recovered_at": "2026-10-18T14:22:54Z",
+      "recovery_run": 39135727464,
+      "recovery_sha": "6078fb9f6d5a8c016e7feaf9cf5b12a93b982183",
+      "red_hours": 22.41,
+      "suspect_commit_count": 8
+     }
+    },
+    {
+     "age_days": 28.5,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "Fleet Open-Issue Convergence",
+     "path": ".github/workflows/fleet-open-issue-convergence.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "validate: Validate fleet compression"
+      ],
+      "first_red_at": "2026-09-21T12:39:13Z",
+      "first_red_run": 35600781118,
+      "first_red_sha": "b41de9ac10fbd8eaa76c872f1964fcd905bae1a8",
+      "last_green_sha": "1f47625171eeb004fdcb01f4e3dd4a839100fddd",
+      "recovered_at": "2026-09-21T12:43:16Z",
+      "recovery_run": 35601174474,
+      "recovery_sha": "42dc07b3ce58d65787265722c055312f01c03640",
+      "red_hours": 0.07,
+      "suspect_commit_count": 7
+     }
+    },
+    {
+     "age_days": 1.7,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": true,
+     "name": "GM-IV ACTIVE_8 Governor Readiness",
+     "path": ".github/workflows/gm-iv-active8-governor-readiness.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "active8-readiness: Run ACTIVE_8 Governor twice and compare receipts"
+      ],
+      "first_red_at": "2026-09-16T21:03:44Z",
+      "first_red_run": 35150232538,
+      "first_red_sha": "bf2179d7f0c06a29737951156bfe817b4e1b6e1c",
+      "last_green_sha": null,
+      "recovered_at": "2026-09-18T12:12:11Z",
+      "recovery_run": 35343419809,
+      "recovery_sha": "0d3b66ee8c2566ed1e5f8b83c2932e4a9160bcbb",
+      "red_before_window": true,
+      "red_hours": 39.14
+     }
+    },
+    {
+     "age_days": 31.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "GM-IV Forward Gate Safety",
+     "path": ".github/workflows/gm-iv-forward-gate-safety.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "fail-closed-forward-gate: Execute stage-aware forward-gate safety proof"
+      ],
+      "first_red_at": "2026-09-16T20:51:50Z",
+      "first_red_run": 35149068277,
+      "first_red_sha": "612dd40421b645bd389e36d2e4849a41b64c716f",
+      "last_green_sha": "3a35154ae350f747eb650508ebd7e90f6a9dc779",
+      "recovered_at": "2026-09-17T13:49:12Z",
+      "recovery_run": 35229506193,
+      "recovery_sha": "73e367a7f6714d489860648038ca32681a6e222f",
+      "red_hours": 16.96,
+      "suspect_commit_count": 11
+     }
+    },
+    {
+     "age_days": 1.7,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": true,
+     "name": "GM-IV PILOT_2_OF_8 Final Recensus",
+     "path": ".github/workflows/gm-iv-pilot2-final-recensus.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "final-recensus: Bind exact source SHA and current GM-IV stage"
+      ],
+      "first_red_at": "2026-09-18T11:46:28Z",
+      "first_red_run": 35341281283,
+      "first_red_sha": "f3657b820a99a4fbd408f1735f22373e6249ac1c",
+      "last_green_sha": null,
+      "recovered_at": "2026-09-18T12:17:53Z",
+      "recovery_run": 35343914428,
+      "recovery_sha": "3df37a0485874f968f0dffa02bc474c5f4645fba",
+      "red_before_window": true,
+      "red_hours": 0.52
+     }
+    },
+    {
+     "age_days": 28.9,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "GM-IV RECON_4 Promotion Control",
+     "path": ".github/workflows/gm-iv-recon4-promotion.yml",
+     "pinned": true,
+     "stale": true,
+     "window": {
+      "failing": [
+       "promote-recon4-control: Execute promotion validator and deterministic repeat"
+      ],
+      "first_red_at": "2026-09-16T20:51:50Z",
+      "first_red_run": 35149068210,
+      "first_red_sha": "612dd40421b645bd389e36d2e4849a41b64c716f",
+      "last_green_sha": "3a35154ae350f747eb650508ebd7e90f6a9dc779",
+      "recovered_at": "2026-09-18T12:17:53Z",
+      "recovery_run": 35343914458,
+      "recovery_sha": "3df37a0485874f968f0dffa02bc474c5f4645fba",
+      "red_hours": 39.43,
+      "suspect_commit_count": 11
+     }
+    },
+    {
+     "age_days": 0.5,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "GM-IV Runtime Capability Capacity Proof v2",
+     "path": ".github/workflows/gm-iv-runtime-capacity-proof-v2.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "gm-iv-runtime-capacity-proof-v2: Execute eight predeclared runtime capability probes"
+      ],
+      "first_red_at": "2026-10-12T04:38:50Z",
+      "first_red_run": 38204630324,
+      "first_red_sha": "d4f203afd369559ddbff7e833e74f2a6b7a43f70",
+      "last_green_sha": null,
+      "recovered_at": "2026-10-19T17:23:44Z",
+      "recovery_run": 39293734282,
+      "recovery_sha": "c3b874fe98c4201a8dd92e5978c763b8067f5f6e",
+      "red_before_window": true,
+      "red_hours": 180.75
+     }
+    },
+    {
+     "age_days": 28.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "MissionControl Crew Frontier PCA BT",
+     "path": ".github/workflows/crew-frontier-pca-bt.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "collect-windows: Execute predeclared frontier task mix",
+       "collect-linux: Execute predeclared frontier task mix"
+      ],
+      "first_red_at": "2026-09-13T19:08:00Z",
+      "first_red_run": 34776747627,
+      "first_red_sha": "2a7be4731e7f47f1aa95169cc87f3e00647d4d7b",
+      "last_green_sha": "ccaab18eaf545d8fe633f727173dbeea9ad6d102",
+      "recovered_at": "2026-09-13T19:11:56Z",
+      "recovery_run": 34776950952,
+      "recovery_sha": "58b7098b4eba22b6282706f45fe6a43967334509",
+      "red_hours": 0.07,
+      "suspect_commit_count": 17
+     }
+    },
+    {
+     "age_days": 21.5,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "MissionControl Historian Register Control",
+     "path": ".github/workflows/historian-register-control.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "register-contract: Validate Historian living register and Qtools fan-in"
+      ],
+      "first_red_at": "2026-09-22T13:51:47Z",
+      "first_red_run": 35736315638,
+      "first_red_sha": "d6343fbae4eef839f92203e77673857e06e884bb",
+      "last_green_sha": "399d1a7fc9de4bfd637023b9bd90f69fb151faae",
+      "recovered_at": "2026-09-22T15:03:59Z",
+      "recovery_run": 35744710561,
+      "recovery_sha": "a773551b57b3896203716d4dd78384271612aabc",
+      "red_hours": 1.2,
+      "suspect_commit_count": 6
+     }
+    }
+   ],
+   "observed_at_utc": "2026-10-20T05:45:51Z",
+   "repository": "GBOGEB/pipeline-automation-hub",
+   "role": "Mission Control hub \u00b7 pipeline origin (Master_Input document pipeline \u2192 MC/JADE/GOGREEN)",
+   "runs": 2974,
+   "shared_break_roots": [
+    {
+     "count": 4,
+     "first_red_sha": "612dd40421b645bd389e36d2e4849a41b64c716f",
+     "workflows": [
+      "GM-IV Evidence Economics",
+      "GM-IV Forward Gate Safety",
+      "GM-IV RECON_4 Governor Gate",
+      "GM-IV RECON_4 Promotion Control"
+     ]
+    }
+   ],
+   "short": "pipeline-automation-hub",
+   "source_digest": "121fae09ff3167d4839383234b06539a73012fb9e2ce22b28e8455640617d386",
+   "truncated_workflows": 22,
+   "workflows_traced": 78
+  },
+  {
+   "branch": "main",
+   "counts": {
+    "EVERRED": 18,
+    "FLAKY": 20,
+    "GREEN_TO_RED": 2,
+    "RED_TO_GREEN": 15,
+    "STABLE_GREEN": 50,
+    "UNKNOWN_NO_TERMINAL": 1
+   },
+   "currently_red": 30,
+   "currently_red_stale": 9,
+   "non_green": [
+    {
+     "age_days": 1.0,
+     "class": "GREEN_TO_RED",
+     "current": "RED",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "OSV-Scanner Scheduled",
+     "path": ".github/workflows/osv-scheduled.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "OSV Scan (schedule / manual) / osv-scan: Check that the scan completed, Upload to code-scanning"
+      ],
+      "first_red_at": "2026-09-28T06:13:48Z",
+      "first_red_run": 36385418595,
+      "first_red_sha": "d3db31411795524fb3e30074bc9588287c059e8a",
+      "last_green_sha": "599b6055ea39ecae161f6312fb18bc127fb3f94e",
+      "red_streak_runs": 4,
+      "suspect_commit_count": 310
+     }
+    },
+    {
+     "age_days": 1.3,
+     "class": "GREEN_TO_RED",
+     "current": "RED",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "TestPilot Pre-GitHub Parity",
+     "path": ".github/workflows/testpilot-preflight.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "parity: Run bounded TestPilot fast preflight"
+      ],
+      "first_red_at": "2026-10-14T12:19:36Z",
+      "first_red_run": 38562948844,
+      "first_red_sha": "2e8e8b95ddfa2c1b26eafa0ed7f9a842609e358c",
+      "last_green_sha": "5f0dfebb1cd567e3093050e6692ce53ef37e3250",
+      "red_streak_runs": 11,
+      "suspect_commit_count": 318
+     }
+    },
+    {
+     "age_days": 37.6,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": ".github/workflows/qps-debug-dow-consumer.yml",
+     "path": ".github/workflows/qps-debug-dow-consumer.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [],
+      "first_red_at": "2026-09-12T16:31:43Z",
+      "first_red_run": 34705507326,
+      "first_red_sha": "1b1366e69fbe7a4451db7bd11cccc8f7260f3b52"
+     }
+    },
+    {
+     "age_days": 23.9,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": true,
+     "name": "ABACUS DOW Integration CI/CD",
+     "path": ".github/workflows/dow-integration-ci-cd.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "Test DOW Phases (DMAIC): Run DOW Phase Tests"
+      ],
+      "first_red_at": "2026-09-18T11:27:10Z",
+      "first_red_run": 35339699035,
+      "first_red_sha": "a0de73a9a60071665f27bf2fecb6e17e24172a93"
+     }
+    },
+    {
+     "age_days": 51.4,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": true,
+     "name": "Auto-Merge PRs",
+     "path": ".github/workflows/auto-merge-prs.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [],
+      "first_red_at": "2026-08-28T18:08:51Z",
+      "first_red_run": 33197963751,
+      "first_red_sha": "505e0fb49ede8889378707031e9787d62b7c460d"
+     }
+    },
+    {
+     "age_days": 110.6,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": true,
+     "name": "Automatic Dependency Submission (Python)",
+     "path": "dynamic/dependency-graph/auto-submission",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "submit-pypi: validate-project"
+      ],
+      "first_red_at": "2026-06-15T16:36:45Z",
+      "first_red_run": 27561242880,
+      "first_red_sha": "799ec6a3a0fbc9f951c541e6449c018b603ec345"
+     }
+    },
+    {
+     "age_days": 5.9,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "Bandit Disjoint Census",
+     "path": ".github/workflows/bandit-disjoint-census.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "census: Check committed governance inventory, Validate coverage and JUnit receipts"
+      ],
+      "first_red_at": "2026-10-14T08:03:40Z",
+      "first_red_run": 38532480254,
+      "first_red_sha": "02cca5020d59cc339cea486ed38857f53eea3e88"
+     }
+    },
+    {
+     "age_days": 6.9,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": true,
+     "name": "CI Failure Debug Rerun",
+     "path": ".github/workflows/ci-failure-debug-rerun.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "rerun-with-debug: Extract failure location"
+      ],
+      "first_red_at": "2026-08-29T10:08:45Z",
+      "first_red_run": 33247129474,
+      "first_red_sha": "462a73fc8da650701f6e31099a58491aff9dcd97"
+     }
+    },
+    {
+     "age_days": 0.2,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": true,
+     "name": "CI/CD Test Suite",
+     "path": ".github/workflows/ci-cd-tests.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Security Scanning: Enforce security red roots",
+       "Code Quality Checks: Enforce code-quality red roots",
+       "Unit Tests (Python 3.12, windows-latest): Run Unit Tests"
+      ],
+      "first_red_at": "2026-10-18T13:43:10Z",
+      "first_red_run": 39132773955,
+      "first_red_sha": "6198d6cc411c6b6b836e1536edb7b4dc48aae24a"
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "DMAIC V3 - Cognitive Loop CI/CD",
+     "path": ".github/workflows/dmaic-v3-cognitive-cicd.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "P0: PHASE0 Validation Gate: Run PHASE0 Validation"
+      ],
+      "first_red_at": "2026-06-11T17:29:09Z",
+      "first_red_run": 27365306605,
+      "first_red_sha": "6178594f40d18ec78dd19781a9cbeb748b028dc4"
+     }
+    },
+    {
+     "age_days": 1.5,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "DMAIC V3 Bridge Integration - Test System",
+     "path": ".github/workflows/bridge-ci.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "\ud83d\udd25 Bridge Smoke Tests: ",
+       "\ud83d\udcca Static Analysis: "
+      ],
+      "first_red_at": "2025-11-15T22:03:44Z",
+      "first_red_run": 19396177522,
+      "first_red_sha": "edee4420e9fcb463323c44175722062103a74ca8"
+     }
+    },
+    {
+     "age_days": 51.7,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": true,
+     "name": "DMAIC V3 CI - Test System Bridge",
+     "path": ".github/workflows/ci.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "test-bridge-integration (3.12): Install dependencies",
+       "lint-and-static-analysis: Install dependencies"
+      ],
+      "first_red_at": "2026-06-12T05:46:34Z",
+      "first_red_run": 27397241108,
+      "first_red_sha": "1c2d72154c95fa6d732948a9784b74e46fe0a704"
+     }
+    },
+    {
+     "age_days": 1.2,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": true,
+     "name": "DMAIC V3.3 - CD Pipeline",
+     "path": ".github/workflows/cd.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "dmaic: Build handover PDF"
+      ],
+      "first_red_at": "2026-08-28T20:58:00Z",
+      "first_red_run": 33210483015,
+      "first_red_sha": "62ab9a6b0e37b6dacff9ce268642745845c25572"
+     }
+    },
+    {
+     "age_days": 0.2,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": true,
+     "name": "DOW + Recursive DMAIC - Unified CD Pipeline",
+     "path": ".github/workflows/cd-unified.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Lint & Validate: Run pre-commit hooks"
+      ],
+      "first_red_at": "2026-10-18T17:06:49Z",
+      "first_red_run": 39148074266,
+      "first_red_sha": "9e0200190555736c74295ee74881e3c003e8a35c"
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "DOW Sprint 6 - Cognitive Deployment CI/CD",
+     "path": ".github/workflows/dow-sprint6-cicd.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Step 1: Define - Initialize & Validate Structure: Define - Validate Repository Structure",
+       "Step 5: Control - Monitor & Report: Set up job"
+      ],
+      "first_red_at": "2026-06-11T17:29:09Z",
+      "first_red_run": 27365307109,
+      "first_red_sha": "6178594f40d18ec78dd19781a9cbeb748b028dc4"
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "GBOGEB/ABACUS \u2194 DOW Integration CI/CD",
+     "path": ".github/workflows/gbogeb-abacus-integration-ci-cd.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "\ud83d\udd0d Validate Integration Setup: "
+      ],
+      "first_red_at": "2025-11-19T10:30:35Z",
+      "first_red_run": 19498151485,
+      "first_red_sha": "6d48bf73bff680434572751ad2fcd864f799207d"
+     }
+    },
+    {
+     "age_days": 2.2,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "Inventory Scan",
+     "path": ".github/workflows/inventory.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "scan: "
+      ],
+      "first_red_at": "2025-11-16T00:31:09Z",
+      "first_red_run": 19397759477,
+      "first_red_sha": "edee4420e9fcb463323c44175722062103a74ca8"
+     }
+    },
+    {
+     "age_days": 19.2,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "Sprint Trigger",
+     "path": ".github/workflows/sprint-trigger.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "execute: "
+      ],
+      "first_red_at": "2026-02-01T00:53:33Z",
+      "first_red_run": 21553773334,
+      "first_red_sha": "bd3f7429b07842b4869f5cd5a2096e8bd2cd74a4"
+     }
+    },
+    {
+     "age_days": 339.3,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "Validate ABACUS Setup",
+     "path": ".github/workflows/validate-setup.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "validate-permissions: "
+      ],
+      "first_red_at": "2025-09-11T01:40:41Z",
+      "first_red_run": 17631452387,
+      "first_red_sha": "24df2e3842e2da3af55bb62884a7d96509fbc693"
+     }
+    },
+    {
+     "age_days": 0.0,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "cryoplant-project Federation Check",
+     "path": ".github/workflows/cryoplant-federation.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Reciprocal Probe (ABACUS -> cryoplant-project): Probe cryoplant-project live"
+      ],
+      "first_red_at": "2026-10-12T16:25:11Z",
+      "first_red_run": 38277255943,
+      "first_red_sha": "0ec1965356b047a3e8c614c5789f76be5a9be8da"
+     }
+    },
+    {
+     "age_days": 0.2,
+     "class": "FLAKY",
+     "current": "RED",
+     "flips": 4,
+     "history_truncated": true,
+     "name": "Bootstrap Statistics CI/CD Pipeline",
+     "path": ".github/workflows/ci-cd.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Deploy to Production: Run deployment script"
+      ],
+      "first_red_at": "2026-10-17T16:55:00Z",
+      "first_red_run": 39051478150,
+      "first_red_sha": "7fa5b7aca8884d90317afe26759beb177ad2570b",
+      "last_green_sha": "54da377cf82a358ac97903ecde0270c975b8fcc1",
+      "red_streak_runs": 18,
+      "suspect_commit_count": 85
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "FLAKY",
+     "current": "RED",
+     "flips": 7,
+     "history_truncated": true,
+     "name": "CI - ABACUS Matrix",
+     "path": ".github/workflows/ci-abacus.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "ABACUS - ubuntu-24.04 - Python 3.12: Run canonical coverage and emit governed evidence",
+       "ABACUS - ubuntu-24.04 - Python 3.11: Run functional compatibility proof",
+       "ABACUS - ubuntu-24.04 - Python 3.10: Run functional compatibility proof"
+      ],
+      "first_red_at": "2026-10-19T17:37:22Z",
+      "first_red_run": 39295699979,
+      "first_red_sha": "bbb08395a37033fb145d0bf62c748da4fcd3f5f8",
+      "last_green_sha": "0f9f0c3b48dc6c369e8a01faf06e433b30326db9",
+      "red_streak_runs": 3,
+      "suspect_commit_count": 2
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "FLAKY",
+     "current": "RED",
+     "flips": 4,
+     "history_truncated": true,
+     "name": "CI Workflow Governance",
+     "path": ".github/workflows/ci-governance.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "policy-and-inventory: Fail closed on governance red"
+      ],
+      "first_red_at": "2026-10-19T15:56:10Z",
+      "first_red_run": 39281653558,
+      "first_red_sha": "0416345a56f6b91f1a7af6d5ce3315515fa2d352",
+      "last_green_sha": "81ac7ea8ff42841ba8c19b9d99807dc2b0508d82",
+      "red_streak_runs": 2,
+      "suspect_commit_count": 2
+     }
+    },
+    {
+     "age_days": 0.2,
+     "class": "FLAKY",
+     "current": "RED",
+     "flips": 13,
+     "history_truncated": true,
+     "name": "Continuous Integration Pipeline",
+     "path": ".github/workflows/ci-pipeline.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Unit Tests (ubuntu-latest, 3.11): Run Tests"
+      ],
+      "first_red_at": "2026-10-19T17:37:22Z",
+      "first_red_run": 39295699965,
+      "first_red_sha": "bbb08395a37033fb145d0bf62c748da4fcd3f5f8",
+      "last_green_sha": "0f9f0c3b48dc6c369e8a01faf06e433b30326db9",
+      "red_streak_runs": 6,
+      "suspect_commit_count": 2
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "FLAKY",
+     "current": "RED",
+     "flips": 3,
+     "history_truncated": true,
+     "name": "DMAIC Metrics \u2014 Per-Commit Tracking & Feedback Loop",
+     "path": ".github/workflows/dmaic-commit-metrics.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Publish DMAIC Metrics Through Governed PR: Publish metrics artefacts through governed PR"
+      ],
+      "first_red_at": "2026-10-19T09:44:00Z",
+      "first_red_run": 39232263777,
+      "first_red_sha": "a7d01ff86da6d56eed45da900b7e8c87bb302a79",
+      "last_green_sha": "16b63ac81d3fd5b1534a25afa3b5d171f19db6a8",
+      "red_streak_runs": 17,
+      "suspect_commit_count": 3
+     }
+    },
+    {
+     "age_days": 0.8,
+     "class": "FLAKY",
+     "current": "RED",
+     "flips": 20,
+     "history_truncated": true,
+     "name": "DMAIC V3 Enterprise CI",
+     "path": ".github/workflows/dmaic-enterprise-ci.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Test Python 3.9 on ubuntu-latest: Install dependencies",
+       "Test Python 3.9 on windows-latest: Install dev dependencies",
+       "Test Python 3.9 on macos-latest: Install dependencies"
+      ],
+      "first_red_at": "2026-10-17T20:46:05Z",
+      "first_red_run": 39068108146,
+      "first_red_sha": "f7866ff09336ab69c44def3b928ceeb54947f1a6",
+      "last_green_sha": "e63d313f96791b845e0515a045ff784f9673c0da",
+      "red_streak_runs": 11,
+      "suspect_commit_count": 4
+     }
+    },
+    {
+     "age_days": 0.8,
+     "class": "FLAKY",
+     "current": "RED",
+     "flips": 12,
+     "history_truncated": true,
+     "name": "DOW + Recursive DMAIC - Enhanced CI",
+     "path": ".github/workflows/ci-enhanced.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Test - Ubuntu (3.11): Run python -m coverage erase"
+      ],
+      "first_red_at": "2026-10-17T20:47:55Z",
+      "first_red_run": 39068234571,
+      "first_red_sha": "e789b3b18836d8cc6ee75c1f2519e16577410282",
+      "last_green_sha": "3be70452d95cb86a6c4e86ad3aed83df091022f2",
+      "red_streak_runs": 5,
+      "suspect_commit_count": 1349
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "FLAKY",
+     "current": "RED",
+     "flips": 11,
+     "history_truncated": true,
+     "name": "MIP B0 Test Admission and Coverage Evidence",
+     "path": ".github/workflows/mip-coverage-evidence.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "B0 canonical coverage producer: Run canonical exact-head coverage surface",
+       "B0 report-only admission census: Require all exact-SHA producers GREEN, Upload B0 report-only evidence"
+      ],
+      "first_red_at": "2026-10-19T17:37:23Z",
+      "first_red_run": 39295700414,
+      "first_red_sha": "bbb08395a37033fb145d0bf62c748da4fcd3f5f8",
+      "last_green_sha": "0416345a56f6b91f1a7af6d5ce3315515fa2d352",
+      "red_streak_runs": 2,
+      "suspect_commit_count": 10
+     }
+    },
+    {
+     "age_days": 0.9,
+     "class": "FLAKY",
+     "current": "RED",
+     "flips": 4,
+     "history_truncated": true,
+     "name": "Security Dashboard \u2014 REX Telemetry",
+     "path": ".github/workflows/security-dashboard.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Build Security Dashboard: Commit dashboard if changed"
+      ],
+      "first_red_at": "2026-10-12T08:21:19Z",
+      "first_red_run": 38223058438,
+      "first_red_sha": "53688f26d5b9c4cd074ef905e426849e85324383",
+      "last_green_sha": "2201f86a1a77ba2c33fb78734fbd853bd98ce854",
+      "red_streak_runs": 2,
+      "suspect_commit_count": 45
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "FLAKY",
+     "current": "RED",
+     "flips": 9,
+     "history_truncated": true,
+     "name": "Session Tuple CI/CD",
+     "path": ".github/workflows/session_tuple_ci.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "test (3.11): Run Full Test Suite, Test Report"
+      ],
+      "first_red_at": "2026-10-19T17:37:22Z",
+      "first_red_run": 39295700018,
+      "first_red_sha": "bbb08395a37033fb145d0bf62c748da4fcd3f5f8",
+      "last_green_sha": "0f9f0c3b48dc6c369e8a01faf06e433b30326db9",
+      "red_streak_runs": 6,
+      "suspect_commit_count": 2
+     }
+    },
+    {
+     "age_days": 0.8,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 3,
+     "history_truncated": false,
+     "name": "Ariana CI/CD",
+     "path": ".github/workflows/ariana-cicd.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Ariana/DOW native Python 3.11: Install dependencies",
+       "Ariana/DOW native Python 3.12: Install dependencies"
+      ],
+      "first_red_at": "2026-10-17T17:13:57Z",
+      "first_red_run": 39052840077,
+      "first_red_sha": "a06c0339bb6369a22653fb467fc6fe9acd9689d5",
+      "last_green_sha": "7fa5b7aca8884d90317afe26759beb177ad2570b",
+      "recovered_at": "2026-10-17T19:11:07Z",
+      "recovery_run": 39061347750,
+      "recovery_sha": "79bda8caadc963f8fdcebb79105b5ba27529bad0",
+      "red_hours": 1.95,
+      "suspect_commit_count": 220
+     }
+    },
+    {
+     "age_days": 0.2,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 4,
+     "history_truncated": true,
+     "name": "DMAIC V3 Test Suite - Continuous Integration",
+     "path": ".github/workflows/dmaic-v3-ci.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Quality Gates: Check test coverage threshold"
+      ],
+      "first_red_at": "2026-10-17T17:54:52Z",
+      "first_red_run": 39055808205,
+      "first_red_sha": "2bbabf197d2beed75c9b376bb20b92b1f483c7a1",
+      "last_green_sha": "d72212c8429a9d3d7be92d06568ea8d14ec75627",
+      "recovered_at": "2026-10-17T19:47:38Z",
+      "recovery_run": 39063977406,
+      "recovery_sha": "7104bf83a252538ebbe28bafaa3bb56956b20580",
+      "red_hours": 1.88,
+      "suspect_commit_count": 5
+     }
+    },
+    {
+     "age_days": 1.0,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 3,
+     "history_truncated": true,
+     "name": "Dashboard Health Check",
+     "path": ".github/workflows/dashboard-health.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Validate Dashboards: Fail job on broken dashboards or links"
+      ],
+      "first_red_at": "2026-10-14T06:30:03Z",
+      "first_red_run": 38522561501,
+      "first_red_sha": "02cca5020d59cc339cea486ed38857f53eea3e88",
+      "last_green_sha": "e7f31f6bc485e608b484d954a3c6a0d46d3e40eb",
+      "recovered_at": "2026-10-18T06:26:36Z",
+      "recovery_run": 39104046706,
+      "recovery_sha": "49c945268ba26a8addb8a9cfa788de057b93fe1e",
+      "red_hours": 95.94,
+      "suspect_commit_count": 4044
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 3,
+     "history_truncated": false,
+     "name": "QPS DOW W43 TRIAGE",
+     "path": ".github/workflows/qps-dow-w43-triage.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "dow-w43-triage: Fail closed on executor or stage failure"
+      ],
+      "first_red_at": "2026-09-21T09:45:39Z",
+      "first_red_run": 35585075910,
+      "first_red_sha": "5fe7b2004ee9fe4293d4d767f0f26eb1d3ae4ce2",
+      "last_green_sha": "387ae83b55384e0ec576d71e30fb3d38ecef83b4",
+      "recovered_at": "2026-09-21T09:53:29Z",
+      "recovery_run": 35585770023,
+      "recovery_sha": "a896efec628c064a6b958a91eaaedf19e6d04055",
+      "red_hours": 0.13,
+      "suspect_commit_count": 2
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 4,
+     "history_truncated": false,
+     "name": "QPS DOW Wave 01 Warm-up",
+     "path": ".github/workflows/qps-dow-wave01-warmup.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "dow-warmup: Fail if any required canonical stage did not execute"
+      ],
+      "first_red_at": "2026-09-21T09:45:39Z",
+      "first_red_run": 35585075955,
+      "first_red_sha": "5fe7b2004ee9fe4293d4d767f0f26eb1d3ae4ce2",
+      "last_green_sha": "387ae83b55384e0ec576d71e30fb3d38ecef83b4",
+      "recovered_at": "2026-09-21T09:53:29Z",
+      "recovery_run": 35585770090,
+      "recovery_sha": "a896efec628c064a6b958a91eaaedf19e6d04055",
+      "red_hours": 0.13,
+      "suspect_commit_count": 2
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 4,
+     "history_truncated": true,
+     "name": "Tooling CI",
+     "path": ".github/workflows/tooling-ci.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "validate-scripts: Validate Python scripts"
+      ],
+      "first_red_at": "2026-10-05T08:58:31Z",
+      "first_red_run": 37287002015,
+      "first_red_sha": "c12ddf61430c20a156a249d2f779477e8003f381",
+      "last_green_sha": "14442541d89c0356880c0ad58110a1b2c69bde4e",
+      "recovered_at": "2026-10-12T16:17:50Z",
+      "recovery_run": 38276398904,
+      "recovery_sha": "c436d942ec3e38019259180b1c9b4e1981d38cd5",
+      "red_hours": 175.32,
+      "suspect_commit_count": 14
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 8,
+     "history_truncated": true,
+     "name": "Update Documentation on Code Changes",
+     "path": ".github/workflows/update-docs.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Extract & Update Documentation: Create PR with updated docs"
+      ],
+      "first_red_at": "2026-10-18T18:55:24Z",
+      "first_red_run": 39156382315,
+      "first_red_sha": "aabbc295a377b5be48cda7f3f454367f636a948e",
+      "last_green_sha": "9e0200190555736c74295ee74881e3c003e8a35c",
+      "recovered_at": "2026-10-18T19:02:24Z",
+      "recovery_run": 39156907521,
+      "recovery_sha": "0dd018768f46dbfecf8aad872776d4ba3f6d4fc8",
+      "red_hours": 0.12,
+      "suspect_commit_count": 99
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 30,
+     "history_truncated": true,
+     "name": "Validate Docs (Markdown/YAML/JSON)",
+     "path": ".github/workflows/validate_docs.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Changed docs lint: Validate changed docs"
+      ],
+      "first_red_at": "2026-10-19T16:53:26Z",
+      "first_red_run": 39289380998,
+      "first_red_sha": "0f9f0c3b48dc6c369e8a01faf06e433b30326db9",
+      "last_green_sha": "668fc7a80dff8449213ae0c51c205008085a5cba",
+      "recovered_at": "2026-10-19T17:37:23Z",
+      "recovery_run": 39295700437,
+      "recovery_sha": "bbb08395a37033fb145d0bf62c748da4fcd3f5f8",
+      "red_hours": 0.73,
+      "suspect_commit_count": 4
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 4,
+     "history_truncated": true,
+     "name": "a10-guard",
+     "path": ".github/workflows/a10-guard.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "a10-guard: Tender guard (new or changed files only)"
+      ],
+      "first_red_at": "2026-10-18T22:47:25Z",
+      "first_red_run": 39173752097,
+      "first_red_sha": "3dd86fe3100a66e5d3598ece113f0363e7492131",
+      "last_green_sha": "bdf750f51a2dfb8dc9b52500bd5371e8797f85eb",
+      "recovered_at": "2026-10-18T22:48:36Z",
+      "recovery_run": 39173833942,
+      "recovery_sha": "c4cc0bbe5b9eb171a764ddc6938de9f521f5120c",
+      "red_hours": 0.02,
+      "suspect_commit_count": 2
+     }
+    },
+    {
+     "age_days": 0.5,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 10,
+     "history_truncated": true,
+     "name": "npm_and_yarn in /qps_slide_reviewer for class-variance-authority - Update #1637669306",
+     "path": "dynamic/dependabot/dependabot-updates",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Dependabot: Run Dependabot"
+      ],
+      "first_red_at": "2026-10-06T06:23:16Z",
+      "first_red_run": 37423439667,
+      "first_red_sha": "53688f26d5b9c4cd074ef905e426849e85324383",
+      "last_green_sha": "904a0968c72276e5fe694a0bb85834b783a5d7e0",
+      "recovered_at": "2026-10-13T18:17:11Z",
+      "recovery_run": 38445494231,
+      "recovery_sha": "8bb4a9da4a9f59086012323ea92c1c17849176a9",
+      "red_hours": 179.9,
+      "suspect_commit_count": 1
+     }
+    },
+    {
+     "age_days": 1.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": true,
+     "name": "Bandit",
+     "path": ".github/workflows/bandit.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Bandit SAST: Upload SARIF to GitHub Security tab"
+      ],
+      "first_red_at": "2026-06-26T10:27:42Z",
+      "first_red_run": 28232368293,
+      "first_red_sha": "999712c774e9b2d3b18126b9cba57577333e2731",
+      "last_green_sha": "f01450c554d4970ccf723611b237a9ab726b9012",
+      "recovered_at": "2026-08-31T06:12:53Z",
+      "recovery_run": 33363286725,
+      "recovery_sha": "308a246d56df8f1001cc6c5cb39c8d76fd7e48f1",
+      "red_hours": 1579.75,
+      "suspect_commit_count": 1
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "Bootstrap Statistics Integration CI/CD",
+     "path": ".github/workflows/bootstrap-integration.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Quick Smoke Tests: Install Dependencies",
+       "Bootstrap Statistics Tests (28 tests): Install Dependencies, Publish Test Results"
+      ],
+      "first_red_at": "2026-06-11T17:29:09Z",
+      "first_red_run": 27365306803,
+      "first_red_sha": "6178594f40d18ec78dd19781a9cbeb748b028dc4",
+      "last_green_sha": null,
+      "recovered_at": "2026-09-07T23:43:16Z",
+      "recovery_run": 34170972193,
+      "recovery_sha": "c29b7956696ff880f7c80eb5ae93268dacee425f",
+      "red_before_window": true,
+      "red_hours": 2118.24
+     }
+    },
+    {
+     "age_days": 0.2,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": true,
+     "name": "DOW-KEB-GBOGEB Background Orchestrator",
+     "path": ".github/workflows/background_orchestrator.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "orchestrate: Initialize DOW-KEB-GBOGEB Orchestrator"
+      ],
+      "first_red_at": "2026-09-26T06:20:02Z",
+      "first_red_run": 36223431751,
+      "first_red_sha": "ab5df9bcdb6105b71e2517095e1eecbc1cc015ff",
+      "last_green_sha": null,
+      "recovered_at": "2026-09-28T00:39:33Z",
+      "recovery_run": 36363017998,
+      "recovery_sha": "fd992b0b1ce3af8a4aa19b58ee397862132fc645",
+      "red_before_window": true,
+      "red_hours": 42.33
+     }
+    },
+    {
+     "age_days": 0.8,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": true,
+     "name": "Deploy Documentation to GitHub Pages",
+     "path": ".github/workflows/deploy-docs.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Deploy to GitHub Pages: Deploy to GitHub Pages"
+      ],
+      "first_red_at": "2026-10-14T12:18:16Z",
+      "first_red_run": 38562792594,
+      "first_red_sha": "fcc423c2d64bae238b13830b99cc5fcc7783aa10",
+      "last_green_sha": "9f98bb4016cfcc758fdb1443dc4ba1eea26e5e85",
+      "recovered_at": "2026-10-14T13:09:59Z",
+      "recovery_run": 38569532757,
+      "recovery_sha": "faad5d8085adcb8ae3229d31f97447a27187fc08",
+      "red_hours": 0.86,
+      "suspect_commit_count": 5
+     }
+    },
+    {
+     "age_days": 0.2,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "EVERRED V3 Governed Control Plane",
+     "path": ".github/workflows/everred-v3-validation.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "EVERRED source, provenance and negative tests (3.12): Verify source, event chain and disjoint leases",
+       "EVERRED source, provenance and negative tests (3.10): Verify source, event chain and disjoint leases"
+      ],
+      "first_red_at": "2026-10-17T18:26:40Z",
+      "first_red_run": 39058110715,
+      "first_red_sha": "8d0c6ca568d6ea0b5e658198d0046283c049e557",
+      "last_green_sha": null,
+      "recovered_at": "2026-10-18T01:00:26Z",
+      "recovery_run": 39084865669,
+      "recovery_sha": "49c945268ba26a8addb8a9cfa788de057b93fe1e",
+      "red_before_window": true,
+      "red_hours": 6.56
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "Federation Notebook Plane \u2014 Smoke Validation",
+     "path": ".github/workflows/federation-notebook.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "\ud83e\ude90 Notebook Plane Federation Smoke: Install dependencies"
+      ],
+      "first_red_at": "2026-06-26T10:25:18Z",
+      "first_red_run": 28232260001,
+      "first_red_sha": "65a6c3f359446700487b3da002969933f05b469d",
+      "last_green_sha": "670d56fea2d76253810716f45b7fe6f0f9100908",
+      "recovered_at": "2026-08-19T19:32:05Z",
+      "recovery_run": 32293555192,
+      "recovery_sha": "d4a447d934c56074af7011b5e16d585a9a282791",
+      "red_hours": 1305.11,
+      "suspect_commit_count": 471
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "MIP v2 federated control",
+     "path": ".github/workflows/mip-v2-federated-control.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "federated-control-baseline: Exercise controller transition tests with B6 coverage floor"
+      ],
+      "first_red_at": "2026-10-01T11:20:58Z",
+      "first_red_run": 36854803412,
+      "first_red_sha": "c80b6701acb5ad6609a0147ed9e86f52f5471337",
+      "last_green_sha": "7a6df0aaa20bdd9c13356b5c31d4cd91f6b446e5",
+      "recovered_at": "2026-10-01T14:53:34Z",
+      "recovery_run": 36879940998,
+      "recovery_sha": "b97150d59243c65cb739c8261da557a596fb4164",
+      "red_hours": 3.54,
+      "suspect_commit_count": 429
+     }
+    },
+    {
+     "age_days": 51.4,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": true,
+     "name": "OSV-Scanner",
+     "path": ".github/workflows/osv-scanner.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "OSV Scan (push / schedule) / osv-scan: Upload to code-scanning"
+      ],
+      "first_red_at": "2026-08-29T15:11:35Z",
+      "first_red_run": 33259571035,
+      "first_red_sha": "cb94e3d0eae12812ca095ea764a02788fb73bd77",
+      "last_green_sha": "e835586c76b11bb50ce615219eaada9c5dfbda4e",
+      "recovered_at": "2026-08-29T19:38:34Z",
+      "recovery_run": 33271400661,
+      "recovery_sha": "4690bb5faeb83b6f0c9fb782138422cbd31889e3",
+      "red_hours": 4.45,
+      "suspect_commit_count": 1
+     }
+    },
+    {
+     "age_days": 2.5,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "Pytest Config Validation",
+     "path": ".github/workflows/pytest-config-validation.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "validate-config: Install dependencies"
+      ],
+      "first_red_at": "2026-06-11T17:29:09Z",
+      "first_red_run": 27365306636,
+      "first_red_sha": "6178594f40d18ec78dd19781a9cbeb748b028dc4",
+      "last_green_sha": null,
+      "recovered_at": "2026-09-07T20:58:18Z",
+      "recovery_run": 34161389342,
+      "recovery_sha": "e6fc81ece93a6fc6904ed6b1b61a6b5abae49048",
+      "red_before_window": true,
+      "red_hours": 2115.49
+     }
+    },
+    {
+     "age_days": 34.7,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "QPLANT Pages Runtime Publish",
+     "path": ".github/workflows/pages.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "publish-runtime: Validate W007 runtime foundation"
+      ],
+      "first_red_at": "2026-06-10T19:34:21Z",
+      "first_red_run": 27301094447,
+      "first_red_sha": "b7a7d8b10ca9e725827e8d6398930de41a300453",
+      "last_green_sha": "670d56fea2d76253810716f45b7fe6f0f9100908",
+      "recovered_at": "2026-09-15T14:13:42Z",
+      "recovery_run": 34980203351,
+      "recovery_sha": "c4dd80fe37ecc902e8115023efa964eeb7e95e25",
+      "red_hours": 2322.66,
+      "suspect_commit_count": 278
+     }
+    },
+    {
+     "age_days": 6.4,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "QPS M05 DOW Independent Attestation Consumer",
+     "path": ".github/workflows/qps_m05_dow_independent_consumer.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "independent-consumer: Verify historical CODEX M05 attestation control"
+      ],
+      "first_red_at": "2026-09-21T15:49:34Z",
+      "first_red_run": 35621554057,
+      "first_red_sha": "27c1fca9c22a712d87e5c4c81307a9a6c957eb51",
+      "last_green_sha": "5e0fb39cef03bc3eeccbc5ddc197b251715e8102",
+      "recovered_at": "2026-09-21T15:50:01Z",
+      "recovery_run": 35621604329,
+      "recovery_sha": "7a6df0aaa20bdd9c13356b5c31d4cd91f6b446e5",
+      "red_hours": 0.01,
+      "suspect_commit_count": 338
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "QPS W04 DOW receipt contract",
+     "path": ".github/workflows/qps-w04-dow-receipt.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "execute-w04-dow-runtime: Checkout QPS child SSOT"
+      ],
+      "first_red_at": "2026-08-30T16:39:35Z",
+      "first_red_run": 33323078865,
+      "first_red_sha": "380b869e4adaf220a1dfcd2bf3a8986d9695f031",
+      "last_green_sha": "ee378d8543044a9e4f4b73a950c370dda6800745",
+      "recovered_at": "2026-08-30T18:52:03Z",
+      "recovery_run": 33329278061,
+      "recovery_sha": "f54666dfbe3dde7ef5f8b8c77b1cf05ad94de5d6",
+      "red_hours": 2.21,
+      "suspect_commit_count": 3
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "QPS W05 Bidder Evaluation DOW receipt",
+     "path": ".github/workflows/qps-w05-bidder-eval-dow.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "execute-w05-dow-runtime: Run actions/upload-artifact@v4"
+      ],
+      "first_red_at": "2026-08-31T08:52:52Z",
+      "first_red_run": 33374966288,
+      "first_red_sha": "4f2245d81e38a76d56ea49a12fc7a1b146aed228",
+      "last_green_sha": "18e998c61a112cfa9279517c4387c76b103e31b3",
+      "recovered_at": "2026-09-09T17:03:22Z",
+      "recovery_run": 34380554876,
+      "recovery_sha": "f25a2f809a7d9b341da108fbc53bace4c78d8e42",
+      "red_hours": 224.18,
+      "suspect_commit_count": 31
+     }
+    },
+    {
+     "age_days": 2.4,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "QPS cost roundtrip contract",
+     "path": ".github/workflows/qps-cost-roundtrip-contract.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "contract: Validate public-safe SSOT boundary"
+      ],
+      "first_red_at": "2026-08-27T19:55:17Z",
+      "first_red_run": 33110776055,
+      "first_red_sha": "0cf0384858deb96f1a0062cd1cb6300e29b71660",
+      "last_green_sha": null,
+      "recovered_at": "2026-08-30T23:58:06Z",
+      "recovery_run": 33343181606,
+      "recovery_sha": "e0e884f4dcae93062d4146d149489a8251d247fb",
+      "red_before_window": true,
+      "red_hours": 76.05
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "codespace_jyperter Federation Check",
+     "path": ".github/workflows/codespace-federation.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "\ud83d\udd17 Federation Smoke \u2014 codespace_jyperter: Validate federation manifest YAML"
+      ],
+      "first_red_at": "2026-05-29T20:20:11Z",
+      "first_red_run": 26660156430,
+      "first_red_sha": "770e10ffacaefdf9b2ae727736f056e3a11d53a4",
+      "last_green_sha": "b3d268de7a198febeb6627404887173c5ada034e",
+      "recovered_at": "2026-10-12T16:27:17Z",
+      "recovery_run": 38277502724,
+      "recovery_sha": "e7a25eead87e9e8901cf37b09f1ad7f342a45394",
+      "red_hours": 3260.12,
+      "suspect_commit_count": 21
+     }
+    },
+    {
+     "age_days": null,
+     "class": "UNKNOWN_NO_TERMINAL",
+     "current": null,
+     "flips": 0,
+     "history_truncated": true,
+     "name": "CI - CODEX Matrix",
+     "path": ".github/workflows/ci-codex.yml",
+     "pinned": false,
+     "stale": false,
+     "window": null
+    }
+   ],
+   "observed_at_utc": "2026-10-20T05:56:59Z",
+   "repository": "GBOGEB/ABACUS",
+   "role": "System Under Test \u00b7 12-cluster DMAIC engine \u00b7 EVERRED ledger owner (local working tree: Master_Input)",
+   "runs": 6808,
+   "shared_break_roots": [
+    {
+     "count": 4,
+     "first_red_sha": "bbb08395a37033fb145d0bf62c748da4fcd3f5f8",
+     "workflows": [
+      "CI - ABACUS Matrix",
+      "Continuous Integration Pipeline",
+      "MIP B0 Test Admission and Coverage Evidence",
+      "Session Tuple CI/CD"
+     ]
+    },
+    {
+     "count": 2,
+     "first_red_sha": "53688f26d5b9c4cd074ef905e426849e85324383",
+     "workflows": [
+      "Security Dashboard \u2014 REX Telemetry",
+      "npm_and_yarn in /qps_slide_reviewer for class-variance-authority - Update #1637669306"
+     ]
+    },
+    {
+     "count": 2,
+     "first_red_sha": "5fe7b2004ee9fe4293d4d767f0f26eb1d3ae4ce2",
+     "workflows": [
+      "QPS DOW W43 TRIAGE",
+      "QPS DOW Wave 01 Warm-up"
+     ]
+    }
+   ],
+   "short": "ABACUS",
+   "source_digest": "db6452f1dcc2261e805de6424117424e6f71fc8797d523c8a6e59c24d36c0f36",
+   "truncated_workflows": 61,
+   "workflows_traced": 106
+  },
+  {
+   "branch": "main",
+   "counts": {
+    "EVERRED": 9,
+    "FLAKY": 15,
+    "GREEN_TO_RED": 2,
+    "RED_TO_GREEN": 12,
+    "STABLE_GREEN": 51,
+    "UNKNOWN_NO_TERMINAL": 1
+   },
+   "currently_red": 15,
+   "currently_red_stale": 6,
+   "non_green": [
+    {
+     "age_days": 2.0,
+     "class": "GREEN_TO_RED",
+     "current": "RED",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "MASTER Contract SSOT Validation",
+     "path": ".github/workflows/master-contract-ssot-validation.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "validate-master-contract-ssot: Validate MASTER contract SSOT"
+      ],
+      "first_red_at": "2026-09-07T22:17:40Z",
+      "first_red_run": 34166172257,
+      "first_red_sha": "855acb78b2c15fe3854bc32360b7469ab175e152",
+      "last_green_sha": "c552769ab62785a524e72893ad2ad0e3e27f3238",
+      "red_streak_runs": 5,
+      "suspect_commit_count": 1078
+     }
+    },
+    {
+     "age_days": 1.6,
+     "class": "GREEN_TO_RED",
+     "current": "RED",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "SPINE Gate",
+     "path": ".github/workflows/spine-gate.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "spine-gate: Receipt must be regenerated in the same PR"
+      ],
+      "first_red_at": "2026-10-18T14:23:12Z",
+      "first_red_run": 39135750113,
+      "first_red_sha": "18b5d47beb19186c457b1edb53f618749a248c90",
+      "last_green_sha": "b75fc4e7d35039c93f612f4cce34ae0f929f9ec8",
+      "red_streak_runs": 1,
+      "suspect_commit_count": 469
+     }
+    },
+    {
+     "age_days": 37.5,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": ".github/workflows/qps-debug-federation-consumer.yml",
+     "path": ".github/workflows/qps-debug-federation-consumer.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [],
+      "first_red_at": "2026-09-12T16:31:05Z",
+      "first_red_run": 34705474438,
+      "first_red_sha": "b7bc79ea0ffb5d4b33509818c66dced7f5172f94"
+     }
+    },
+    {
+     "age_days": 142.5,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": ".github/workflows/release.yml",
+     "path": ".github/workflows/release.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [],
+      "first_red_at": "2026-05-29T16:52:14Z",
+      "first_red_run": 26650356778,
+      "first_red_sha": "025ab083ab5be5a4e9893aa8b7d1c660d3d1a779"
+     }
+    },
+    {
+     "age_days": 27.7,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": true,
+     "name": ".github/workflows/w70-qps-zero-delta-diagnostic.yml",
+     "path": ".github/workflows/w70-qps-zero-delta-diagnostic.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [],
+      "first_red_at": "2026-09-14T19:12:52Z",
+      "first_red_run": 34885518023,
+      "first_red_sha": "1bc865a07c1c57e951b2c1d2633c45ab419aafa4"
+     }
+    },
+    {
+     "age_days": 141.0,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "G5 Unified Lifecycle Execution & Deployment Gateway",
+     "path": ".github/workflows/deploy_pipeline.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "g5-build-and-deploy: Execute G5 Master Orchestrator and Bake Artifacts"
+      ],
+      "first_red_at": "2026-05-27T16:34:57Z",
+      "first_red_run": 26524696576,
+      "first_red_sha": "3dbd06626d460c6d72b262bca6b1c22ea428763c"
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": true,
+     "name": "OSV-Scanner",
+     "path": ".github/workflows/osv-scanner.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "scan-scheduled / osv-scan: Run osv-scanner-reporter"
+      ],
+      "first_red_at": "2026-10-13T14:27:15Z",
+      "first_red_run": 38413481440,
+      "first_red_sha": "b6421d7f154c97152b1dd250011c5d87ea93525f"
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "Orchestration TypeScript CI",
+     "path": ".github/workflows/orchestration-ts.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "build-and-test: Route tests"
+      ],
+      "first_red_at": "2026-06-10T18:56:30Z",
+      "first_red_run": 27298977758,
+      "first_red_sha": "ea8c6db999a816c54aeb3cf1638d956d7eba9d6a"
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "QPS KEB W43 TRIAGE",
+     "path": ".github/workflows/qps-keb-w43-triage.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "keb-w43-triage: Execute source-bound W43 KEB exchange"
+      ],
+      "first_red_at": "2026-09-04T10:05:29Z",
+      "first_red_run": 33861535842,
+      "first_red_sha": "5821ad208f933ab86072017fb81180815b94ef51"
+     }
+    },
+    {
+     "age_days": 25.9,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": true,
+     "name": "QPS Roundtrip Zero-Delta",
+     "path": ".github/workflows/qps-roundtrip-zero-delta.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [],
+      "first_red_at": "2026-09-14T22:51:04Z",
+      "first_red_run": 34906099356,
+      "first_red_sha": "e48cfc7923be78343344762ea42bdbd1c72675c0"
+     }
+    },
+    {
+     "age_days": 25.9,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": true,
+     "name": "W05 QPS Roundtrip Regeneration Zero-Delta",
+     "path": ".github/workflows/w05-qps-roundtrip-regeneration-zero-delta.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [],
+      "first_red_at": "2026-09-14T22:51:05Z",
+      "first_red_run": 34906101152,
+      "first_red_sha": "e48cfc7923be78343344762ea42bdbd1c72675c0"
+     }
+    },
+    {
+     "age_days": 1.7,
+     "class": "FLAKY",
+     "current": "RED",
+     "flips": 3,
+     "history_truncated": false,
+     "name": "ABACUS Multi-Format Publication",
+     "path": ".github/workflows/abacus-multiformat-publication.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "deploy-and-prove-pages: Wait for hosted Pages to converge and create execution receipt"
+      ],
+      "first_red_at": "2026-09-14T16:45:06Z",
+      "first_red_run": 34870534075,
+      "first_red_sha": "6a9cf37718c945dc132d4ce58bea999dc3aa6b01",
+      "last_green_sha": "7006236938ac3d7d7e8539e6b492ca532a41346b",
+      "red_streak_runs": 31,
+      "suspect_commit_count": 19
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "FLAKY",
+     "current": "RED",
+     "flips": 5,
+     "history_truncated": false,
+     "name": "ABACUS Snapshot Publication",
+     "path": ".github/workflows/abacus-snapshot-publication.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "snapshot-publication: Validate semantic vocabulary before visual execution, Upload image-native execution evidence"
+      ],
+      "first_red_at": "2026-10-18T06:35:58Z",
+      "first_red_run": 39104611366,
+      "first_red_sha": "ad451cbc5be1d83d82ed0cf5d54dc8f911f19429",
+      "last_green_sha": "403524b03c14b0f7116a8707483cb007b534a51f",
+      "red_streak_runs": 1,
+      "suspect_commit_count": 616
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "FLAKY",
+     "current": "RED",
+     "flips": 6,
+     "history_truncated": false,
+     "name": "QPS W05 bidder evaluation KEB receipt",
+     "path": ".github/workflows/qps-w05-bidder-eval-keb.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "execute-validate: Validate repository semantic substrate"
+      ],
+      "first_red_at": "2026-10-18T06:35:58Z",
+      "first_red_run": 39104611151,
+      "first_red_sha": "ad451cbc5be1d83d82ed0cf5d54dc8f911f19429",
+      "last_green_sha": "403524b03c14b0f7116a8707483cb007b534a51f",
+      "red_streak_runs": 1,
+      "suspect_commit_count": 616
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "FLAKY",
+     "current": "RED",
+     "flips": 10,
+     "history_truncated": true,
+     "name": "semantic-validation",
+     "path": ".github/workflows/semantic-validation.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "validate-semantic-substrate: Run semantic validator"
+      ],
+      "first_red_at": "2026-10-18T06:35:58Z",
+      "first_red_run": 39104611195,
+      "first_red_sha": "ad451cbc5be1d83d82ed0cf5d54dc8f911f19429",
+      "last_green_sha": "403524b03c14b0f7116a8707483cb007b534a51f",
+      "red_streak_runs": 1,
+      "suspect_commit_count": 616
+     }
+    },
+    {
+     "age_days": 1.7,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 6,
+     "history_truncated": false,
+     "name": "ABACUS Semantic Runtime",
+     "path": ".github/workflows/abacus-semantic-runtime.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "semantic-runtime: Run repository semantic vocabulary validator"
+      ],
+      "first_red_at": "2026-09-15T06:26:16Z",
+      "first_red_run": 34936922101,
+      "first_red_sha": "3751fb00471ede2dcc1727366e6a028103ccb447",
+      "last_green_sha": "396ad4b17c86568cf749507e2b5198bcfe098429",
+      "recovered_at": "2026-09-15T07:10:23Z",
+      "recovery_run": 34940362119,
+      "recovery_sha": "3ae2228b5fed0e7f5929d64231163b4e0b509d50",
+      "red_hours": 0.74,
+      "suspect_commit_count": 35
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 8,
+     "history_truncated": true,
+     "name": "CI",
+     "path": ".github/workflows/ci.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "test: Run tests"
+      ],
+      "first_red_at": "2026-10-18T18:21:55Z",
+      "first_red_run": 39153820390,
+      "first_red_sha": "0790f75409ba0d4db42d12ae4316b594e3fb382e",
+      "last_green_sha": "1e80f32844a1a00613f0b33ea8b13483364c2ea4",
+      "recovered_at": "2026-10-18T22:55:58Z",
+      "recovery_run": 39174351034,
+      "recovery_sha": "4184b00433d178ffb6732f700a7af046555e05ed",
+      "red_hours": 4.57,
+      "suspect_commit_count": 12
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 29,
+     "history_truncated": true,
+     "name": "CODEX Metrics \u2014 Per-Commit Tracking & Feedback Loop",
+     "path": ".github/workflows/dmaic-commit-metrics.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Collect Repository Metrics: Commit metrics artefacts"
+      ],
+      "first_red_at": "2026-10-19T04:55:11Z",
+      "first_red_run": 39201881643,
+      "first_red_sha": "71a4d00f7016e3830c791cde172ca1db91b627e8",
+      "last_green_sha": "7de59b0e366158c14f33125099f35c5a1bb9caae",
+      "recovered_at": "2026-10-19T04:55:38Z",
+      "recovery_run": 39201916462,
+      "recovery_sha": "53320f70328323d7a91e94916f54e424c4326ce4",
+      "red_hours": 0.01,
+      "suspect_commit_count": 3
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 8,
+     "history_truncated": true,
+     "name": "CODEX Semantic Runtime CI",
+     "path": ".github/workflows/codex_semantic_runtime_ci.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "semantic-validation: Run tests"
+      ],
+      "first_red_at": "2026-10-18T18:21:56Z",
+      "first_red_run": 39153820524,
+      "first_red_sha": "0790f75409ba0d4db42d12ae4316b594e3fb382e",
+      "last_green_sha": "1e80f32844a1a00613f0b33ea8b13483364c2ea4",
+      "recovered_at": "2026-10-18T22:55:58Z",
+      "recovery_run": 39174350953,
+      "recovery_sha": "4184b00433d178ffb6732f700a7af046555e05ed",
+      "red_hours": 4.57,
+      "suspect_commit_count": 12
+     }
+    },
+    {
+     "age_days": 1.0,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 10,
+     "history_truncated": true,
+     "name": "Deploy GitHub Pages",
+     "path": ".github/workflows/pages.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "deploy: Verify public CODE PURPLE Pages byte identity"
+      ],
+      "first_red_at": "2026-10-18T16:02:40Z",
+      "first_red_run": 39143205056,
+      "first_red_sha": "f73c98c9f9c99f234446644e22c14c93d8300e92",
+      "last_green_sha": "ecaa248abed7cf665dd4afb1b9fd288da7a79a56",
+      "recovered_at": "2026-10-19T00:03:56Z",
+      "recovery_run": 39179077241,
+      "recovery_sha": "3991795a68fe51f96e300cdf6e2e6edbef1287b5",
+      "red_hours": 8.02,
+      "suspect_commit_count": 444
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 8,
+     "history_truncated": true,
+     "name": "Full Stack Governance CI",
+     "path": ".github/workflows/full-stack-governance.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "lineage-governance (abacus): Governance validation"
+      ],
+      "first_red_at": "2026-10-18T22:07:11Z",
+      "first_red_run": 39170831551,
+      "first_red_sha": "13ed167963312b897ba7e489bb5a81c80db104f7",
+      "last_green_sha": "8ae60f524ede20a0609b7f41d17e8ca56a9b31fd",
+      "recovered_at": "2026-10-18T22:45:30Z",
+      "recovery_run": 39173614757,
+      "recovery_sha": "61b889cffa34825748f9985d57af3a74131bd9ae",
+      "red_hours": 0.64,
+      "suspect_commit_count": 21
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 4,
+     "history_truncated": false,
+     "name": "MissionControl Graph Explorer Browser QA",
+     "path": ".github/workflows/missioncontrol-graph-explorer-browser-qa.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "browser-qa: Run graph explorer interaction QA"
+      ],
+      "first_red_at": "2026-10-13T14:12:08Z",
+      "first_red_run": 38411322379,
+      "first_red_sha": "e00bbf8553c1d2a7055a31eb3a033a5c6cebd4c0",
+      "last_green_sha": "ac1a0295e19184c11d543e39bcc113ee271afcda",
+      "recovered_at": "2026-10-13T14:25:37Z",
+      "recovery_run": 38413243286,
+      "recovery_sha": "ad37edad0ff82ce4dec661ff2fc993a95c8108c6",
+      "red_hours": 0.22,
+      "suspect_commit_count": 134
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 14,
+     "history_truncated": true,
+     "name": "MissionControl Mycelium CI",
+     "path": ".github/workflows/missioncontrol-mycelium.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "validate: Preflight generated-value parity before expensive tests"
+      ],
+      "first_red_at": "2026-10-18T22:07:11Z",
+      "first_red_run": 39170831466,
+      "first_red_sha": "13ed167963312b897ba7e489bb5a81c80db104f7",
+      "last_green_sha": "8ae60f524ede20a0609b7f41d17e8ca56a9b31fd",
+      "recovered_at": "2026-10-19T04:38:29Z",
+      "recovery_run": 39200482795,
+      "recovery_sha": "7de59b0e366158c14f33125099f35c5a1bb9caae",
+      "red_hours": 6.52,
+      "suspect_commit_count": 21
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 3,
+     "history_truncated": false,
+     "name": "Quality burndown and UBI 9 testflight",
+     "path": ".github/workflows/quality-ubi-testflight.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "evidence-join: Validate input source binding and join receipts"
+      ],
+      "first_red_at": "2026-10-13T14:27:15Z",
+      "first_red_run": 38413479538,
+      "first_red_sha": "b6421d7f154c97152b1dd250011c5d87ea93525f",
+      "last_green_sha": "ad37edad0ff82ce4dec661ff2fc993a95c8108c6",
+      "recovered_at": "2026-10-13T15:37:22Z",
+      "recovery_run": 38423643520,
+      "recovery_sha": "6fe9b7bef760ed009acab8e1036f084c4a3000a8",
+      "red_hours": 1.17,
+      "suspect_commit_count": 5
+     }
+    },
+    {
+     "age_days": 1.0,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 7,
+     "history_truncated": true,
+     "name": "Runtime Release Gate",
+     "path": ".github/workflows/runtime_release_gate.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "governance-checks: Run python scripts/check_stale.py"
+      ],
+      "first_red_at": "2026-10-14T16:27:11Z",
+      "first_red_run": 38598184499,
+      "first_red_sha": "0569df2e4cb88c5802e11359d241167db97c3ca3",
+      "last_green_sha": "3c156a4d1ff15bac50066563001fb7abd3073e19",
+      "recovered_at": "2026-10-18T14:23:12Z",
+      "recovery_run": 39135750111,
+      "recovery_sha": "18b5d47beb19186c457b1edb53f618749a248c90",
+      "red_hours": 93.93,
+      "suspect_commit_count": 204
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 3,
+     "history_truncated": true,
+     "name": "Update Documentation on Code Changes",
+     "path": ".github/workflows/update-docs.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Extract & Update Documentation: Publish reusable docs update branch"
+      ],
+      "first_red_at": "2026-10-13T14:01:22Z",
+      "first_red_run": 38409809250,
+      "first_red_sha": "7d87aa7567af4860975356ebca829b5b36a4381a",
+      "last_green_sha": "47c0d587b0a5baebe10c7ecfe82a3b964a5d9404",
+      "recovered_at": "2026-10-13T14:04:38Z",
+      "recovery_run": 38410273462,
+      "recovery_sha": "d73cf59bc29361a8edfb6abc975320b3c52c8c0b",
+      "red_hours": 0.05,
+      "suspect_commit_count": 3
+     }
+    },
+    {
+     "age_days": 1.3,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "CODE PURPLE REX Control",
+     "path": ".github/workflows/code-purple-rex-control.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Validate candidate return and KPI projection: Execute live ABACUS read-only source census"
+      ],
+      "first_red_at": "2026-10-12T17:29:55Z",
+      "first_red_run": 38284595201,
+      "first_red_sha": "05fd3224f5ddba7b22b986730e34b3bc5c3889a4",
+      "last_green_sha": "64b0bc42193d30240c52f40da331ce4f17748a56",
+      "recovered_at": "2026-10-12T17:48:49Z",
+      "recovery_run": 38286702735,
+      "recovery_sha": "27cbd8774b4fe0c3debba85de7717c2cddc08e1a",
+      "red_hours": 0.32,
+      "suspect_commit_count": 15
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "Contract Governance Workbench",
+     "path": ".github/workflows/contract-governance.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "build-validate: Verify contract governance runtime gate"
+      ],
+      "first_red_at": "2026-06-05T18:50:32Z",
+      "first_red_run": 27033859487,
+      "first_red_sha": "6662b38cb4fa6e77ad125a262bf113076257ec89",
+      "last_green_sha": null,
+      "recovered_at": "2026-09-01T12:54:11Z",
+      "recovery_run": 33510244596,
+      "recovery_sha": "a8525f61102d00cbbe5a7cbe832ac1573a86783c",
+      "red_before_window": true,
+      "red_hours": 2106.06
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "Contract Workbench SSOT",
+     "path": ".github/workflows/contract-workbench.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "drift-guard: Install package"
+      ],
+      "first_red_at": "2026-06-07T03:29:20Z",
+      "first_red_run": 27081543556,
+      "first_red_sha": "aee7f309b10444e0b3a0b3aeb8e75e1a4337da62",
+      "last_green_sha": null,
+      "recovered_at": "2026-08-28T20:59:00Z",
+      "recovery_run": 33210555548,
+      "recovery_sha": "ae72024f5dabaec15b097821cf3e0c542c8152b1",
+      "red_before_window": true,
+      "red_hours": 1985.49
+     }
+    },
+    {
+     "age_days": 1.6,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": true,
+     "name": "Governance Validation",
+     "path": ".github/workflows/validate.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [],
+      "first_red_at": "2026-09-14T22:35:28Z",
+      "first_red_run": 34904861810,
+      "first_red_sha": "3720c667230d074c93f1066245b7b210aab76787",
+      "last_green_sha": null,
+      "recovered_at": "2026-09-22T13:20:31Z",
+      "recovery_run": 35732832535,
+      "recovery_sha": "edf2c7b65a39159562a926f4f2572bf3002bf5bb",
+      "red_before_window": true,
+      "red_hours": 182.75
+     }
+    },
+    {
+     "age_days": 1.6,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "Graph Update: pip in /., /pca_engine #1634289607",
+     "path": "dynamic/dependabot/update-graph",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "update-pip-graph: Run Dependabot"
+      ],
+      "first_red_at": "2026-06-05T18:50:34Z",
+      "first_red_run": 27033861126,
+      "first_red_sha": "6662b38cb4fa6e77ad125a262bf113076257ec89",
+      "last_green_sha": "66f4ea461efd82044ba01186550501917b36b493",
+      "recovered_at": "2026-06-07T03:28:40Z",
+      "recovery_run": 27081530886,
+      "recovery_sha": "2904db83443aa281168b02770e388c53af4be920",
+      "red_hours": 32.63,
+      "suspect_commit_count": 18
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "QPS KEB Wave 01 Warm-up",
+     "path": ".github/workflows/qps-keb-wave01-warmup.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "keb-warmup: Regression - parsed glossary identity is not raw substring matching"
+      ],
+      "first_red_at": "2026-08-29T19:57:41Z",
+      "first_red_run": 33272212865,
+      "first_red_sha": "b53a4a62eeaf7a9c20026ab4be83ad809fb0561e",
+      "last_green_sha": "be0a1d07f975bdd7e0e4f44f8a75d1dcb5fa0bd6",
+      "recovered_at": "2026-08-29T20:08:32Z",
+      "recovery_run": 33272693060,
+      "recovery_sha": "b9f7ac2d02b054a12b22094ab41e32c918967e9e",
+      "red_hours": 0.18,
+      "suspect_commit_count": 8
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "QPS W04 KEB receipt contract",
+     "path": ".github/workflows/qps-w04-keb-receipt.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "execute-w04-keb-runtime: Checkout QPS child SSOT"
+      ],
+      "first_red_at": "2026-08-30T16:39:48Z",
+      "first_red_run": 33323087316,
+      "first_red_sha": "8e16dd148dfd68caaa4fceefa79f9f683037bb9a",
+      "last_green_sha": "a9ea32f96c15bddcce6fe0c67417e3dba32f2c63",
+      "recovered_at": "2026-08-30T18:52:18Z",
+      "recovery_run": 33329289158,
+      "recovery_sha": "c7b16138f13204df8f7ca3c4da5fbe8da65c0d16",
+      "red_hours": 2.21,
+      "suspect_commit_count": 7
+     }
+    },
+    {
+     "age_days": 8.6,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "QPS W05 Bidder Evaluation KEB receipt",
+     "path": ".github/workflows/qps-w05-bidder-eval-keb-receipt.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "execute-w05-keb-runtime: Validate receipt contract"
+      ],
+      "first_red_at": "2026-08-31T08:51:00Z",
+      "first_red_run": 33374824448,
+      "first_red_sha": "91d194608d389a75b703bda3f79e6bd2cc8fe3ab",
+      "last_green_sha": null,
+      "recovered_at": "2026-08-31T15:48:26Z",
+      "recovery_run": 33410548275,
+      "recovery_sha": "994d4e138bbca78ae0aa1e1ffcf29568123ac2ca",
+      "red_before_window": true,
+      "red_hours": 6.96
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "QPS accepted-release gate",
+     "path": ".github/workflows/qps-acceptance-gate.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "acceptance-contract: Parse PowerShell acceptance sources"
+      ],
+      "first_red_at": "2026-08-28T21:10:09Z",
+      "first_red_run": 33211377497,
+      "first_red_sha": "a5c4514721c433fc6bc2401bd66773972068e070",
+      "last_green_sha": null,
+      "recovered_at": "2026-08-31T03:52:51Z",
+      "recovery_run": 33355241820,
+      "recovery_sha": "b981ce7fa137fe481d66d5ef0c35949cc61c23c3",
+      "red_before_window": true,
+      "red_hours": 54.71
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "QPS roundtrip policy",
+     "path": ".github/workflows/qps-roundtrip-policy.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [],
+      "first_red_at": "2026-08-28T20:50:45Z",
+      "first_red_run": 33209969623,
+      "first_red_sha": "4a608461b4dd13de12ae17677e3d949ebba5408e",
+      "last_green_sha": "c836d48033983147b972b27c6557aa0e60e2c87d",
+      "recovered_at": "2026-08-31T04:11:14Z",
+      "recovery_run": 33356205467,
+      "recovery_sha": "da4c51968d9ff9d86a9d4f2d49987b0bb075e458",
+      "red_hours": 55.34,
+      "suspect_commit_count": 9
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": true,
+     "name": "Validate Documentation",
+     "path": ".github/workflows/deploy-docs.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Validate HTML / CSS / JS: Check for broken internal links"
+      ],
+      "first_red_at": "2026-10-12T17:29:55Z",
+      "first_red_run": 38284595203,
+      "first_red_sha": "05fd3224f5ddba7b22b986730e34b3bc5c3889a4",
+      "last_green_sha": "64b0bc42193d30240c52f40da331ce4f17748a56",
+      "recovered_at": "2026-10-12T18:22:54Z",
+      "recovery_run": 38290515316,
+      "recovery_sha": "ac1a0295e19184c11d543e39bcc113ee271afcda",
+      "red_hours": 0.88,
+      "suspect_commit_count": 15
+     }
+    },
+    {
+     "age_days": 2.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "Validate QPS DOW KEB bridge rows",
+     "path": ".github/workflows/validate_bridge_rows.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [],
+      "first_red_at": "2026-09-11T03:29:23Z",
+      "first_red_run": 34558625283,
+      "first_red_sha": "bba2249d424baba57e80451083ca77339b9ff2e6",
+      "last_green_sha": null,
+      "recovered_at": "2026-09-11T15:56:09Z",
+      "recovery_run": 34619046468,
+      "recovery_sha": "c14a641efc051774061ef79c580f81a31587db67",
+      "red_before_window": true,
+      "red_hours": 12.45
+     }
+    },
+    {
+     "age_days": null,
+     "class": "UNKNOWN_NO_TERMINAL",
+     "current": null,
+     "flips": 0,
+     "history_truncated": true,
+     "name": "MissionControl Owner Comment Transport",
+     "path": ".github/workflows/missioncontrol-owner-comment-transport.yml",
+     "pinned": false,
+     "stale": false,
+     "window": null
+    }
+   ],
+   "observed_at_utc": "2026-10-20T05:49:43Z",
+   "repository": "GBOGEB/CODEX",
+   "role": "Federation governance & orchestration hub (Mycelium, MissionControl receipts)",
+   "runs": 4655,
+   "shared_break_roots": [
+    {
+     "count": 3,
+     "first_red_sha": "ad451cbc5be1d83d82ed0cf5d54dc8f911f19429",
+     "workflows": [
+      "ABACUS Snapshot Publication",
+      "QPS W05 bidder evaluation KEB receipt",
+      "semantic-validation"
+     ]
+    },
+    {
+     "count": 2,
+     "first_red_sha": "05fd3224f5ddba7b22b986730e34b3bc5c3889a4",
+     "workflows": [
+      "CODE PURPLE REX Control",
+      "Validate Documentation"
+     ]
+    },
+    {
+     "count": 2,
+     "first_red_sha": "0790f75409ba0d4db42d12ae4316b594e3fb382e",
+     "workflows": [
+      "CI",
+      "CODEX Semantic Runtime CI"
+     ]
+    },
+    {
+     "count": 2,
+     "first_red_sha": "13ed167963312b897ba7e489bb5a81c80db104f7",
+     "workflows": [
+      "Full Stack Governance CI",
+      "MissionControl Mycelium CI"
+     ]
+    }
+   ],
+   "short": "CODEX",
+   "source_digest": "90b7fb65cecab083be3614e8190af7275e2683790728fed8b2e40d7a37e3216a",
+   "truncated_workflows": 38,
+   "workflows_traced": 90
+  },
+  {
+   "branch": "main",
+   "counts": {
+    "EVERRED": 9,
+    "FLAKY": 3,
+    "GREEN_TO_RED": 7,
+    "RED_TO_GREEN": 18,
+    "STABLE_GREEN": 11
+   },
+   "currently_red": 18,
+   "currently_red_stale": 9,
+   "non_green": [
+    {
+     "age_days": 2.5,
+     "class": "GREEN_TO_RED",
+     "current": "RED",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "QPS BD Queue Integrity",
+     "path": ".github/workflows/qps-bd-queue-integrity.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "parity: Validate live issue parity and partial-return no-close guards"
+      ],
+      "first_red_at": "2026-10-17T16:50:41Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_streak_runs": 1,
+      "suspect_commit_count": 190
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "GREEN_TO_RED",
+     "current": "RED",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "QPS Dependency SPINE Read-only Census",
+     "path": ".github/workflows/qps-dependency-spine.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Five-repository contract, QPS exact-head native observer: "
+      ],
+      "first_red_at": "2026-10-19T11:22:04Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_streak_runs": 12,
+      "suspect_commit_count": 32
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "GREEN_TO_RED",
+     "current": "RED",
+     "flips": 1,
+     "history_truncated": true,
+     "name": "QPS PR binary refresh",
+     "path": ".github/workflows/qps-pr-binary-refresh.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "refresh-open-prs-after-main: "
+      ],
+      "first_red_at": "2026-10-19T11:21:17Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_streak_runs": 14,
+      "suspect_commit_count": 4
+     }
+    },
+    {
+     "age_days": 0.2,
+     "class": "GREEN_TO_RED",
+     "current": "RED",
+     "flips": 1,
+     "history_truncated": true,
+     "name": "QPS TRIAGE Debug DAG Pilot",
+     "path": ".github/workflows/qps-debug-dag.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "plan DAG and prove session/port contract: ",
+       "roll up debug DAG metrics and next pulse: "
+      ],
+      "first_red_at": "2026-10-19T12:38:26Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_streak_runs": 3,
+      "suspect_commit_count": 190
+     }
+    },
+    {
+     "age_days": 33.1,
+     "class": "GREEN_TO_RED",
+     "current": "RED",
+     "flips": 1,
+     "history_truncated": true,
+     "name": "TODO-011 release pack smoke",
+     "path": ".github/workflows/todo011-release-smoke.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "release-smoke: "
+      ],
+      "first_red_at": "2026-09-07T23:34:38Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_streak_runs": 33,
+      "suspect_commit_count": 38
+     }
+    },
+    {
+     "age_days": 0.5,
+     "class": "GREEN_TO_RED",
+     "current": "RED",
+     "flips": 1,
+     "history_truncated": true,
+     "name": "TRIAGE Repository Census",
+     "path": ".github/workflows/triage-repo-census.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "runner-preflight: "
+      ],
+      "first_red_at": "2026-10-19T11:21:17Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_streak_runs": 6,
+      "suspect_commit_count": 4
+     }
+    },
+    {
+     "age_days": 4.3,
+     "class": "GREEN_TO_RED",
+     "current": "RED",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "github_actions in /. - Update PRIVATE_AGGREGATE_ONLY",
+     "path": "dynamic/dependabot/dependabot-updates",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "Dependabot: Run Dependabot"
+      ],
+      "first_red_at": "2026-10-15T23:23:27Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_streak_runs": 1,
+      "suspect_commit_count": 176
+     }
+    },
+    {
+     "age_days": 4.0,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": ".github/workflows/qps-code-purple-evolutionary.yml",
+     "path": ".github/workflows/qps-code-purple-evolutionary.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [],
+      "first_red_at": "2026-10-16T05:56:02Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY"
+     }
+    },
+    {
+     "age_days": 25.7,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": true,
+     "name": ".github/workflows/qps-debug-dow-reentry.yml",
+     "path": ".github/workflows/qps-debug-dow-reentry.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [],
+      "first_red_at": "2026-09-23T10:27:42Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY"
+     }
+    },
+    {
+     "age_days": 24.0,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": ".github/workflows/qps-golden-thread-bdq9-full-control-closure.yml",
+     "path": ".github/workflows/qps-golden-thread-bdq9-full-control-closure.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [],
+      "first_red_at": "2026-09-26T06:22:03Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY"
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "MIP N2 exact-SHA self-index",
+     "path": ".github/workflows/mip-n2-self-index.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "self-index-proof: "
+      ],
+      "first_red_at": "2026-10-19T14:46:02Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY"
+     }
+    },
+    {
+     "age_days": 0.2,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "QPS Triage Console Refresh",
+     "path": ".github/workflows/qps-triage-console-refresh.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "refresh: Census (read-only, fails closed)"
+      ],
+      "first_red_at": "2026-10-18T18:29:39Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY"
+     }
+    },
+    {
+     "age_days": 36.0,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "QPS W162 Visual Convergence Control",
+     "path": ".github/workflows/qps-w162-visual-convergence.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "visual-convergence: "
+      ],
+      "first_red_at": "2026-09-13T16:28:32Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY"
+     }
+    },
+    {
+     "age_days": 7.9,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "QPS W189 Federation Sample 4",
+     "path": ".github/workflows/qps-w189-federation-sample4.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "prove-w189: "
+      ],
+      "first_red_at": "2026-09-14T16:44:30Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY"
+     }
+    },
+    {
+     "age_days": 7.9,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "W99 R1 722 DOCX Reconciliation",
+     "path": ".github/workflows/w99-r1-722-docx-reconciliation.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "reconcile: "
+      ],
+      "first_red_at": "2026-09-10T00:45:35Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY"
+     }
+    },
+    {
+     "age_days": 37.8,
+     "class": "EVERRED",
+     "current": "RED",
+     "flips": 0,
+     "history_truncated": false,
+     "name": "qps-w142-invcop-thermo-control",
+     "path": ".github/workflows/qps-w142-invcop-thermo-control.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "validate: "
+      ],
+      "first_red_at": "2026-09-12T11:10:39Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY"
+     }
+    },
+    {
+     "age_days": 0.5,
+     "class": "FLAKY",
+     "current": "RED",
+     "flips": 10,
+     "history_truncated": false,
+     "name": "QPS W163 Namespace Collision Control",
+     "path": ".github/workflows/qps-w163-namespace-control.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "namespace-control: "
+      ],
+      "first_red_at": "2026-10-19T17:36:07Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_streak_runs": 1,
+      "suspect_commit_count": 339
+     }
+    },
+    {
+     "age_days": 0.4,
+     "class": "FLAKY",
+     "current": "RED",
+     "flips": 11,
+     "history_truncated": true,
+     "name": "qps-canonicalization",
+     "path": ".github/workflows/qps-canonicalization.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "validate: "
+      ],
+      "first_red_at": "2026-10-19T11:21:17Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_streak_runs": 14,
+      "suspect_commit_count": 4
+     }
+    },
+    {
+     "age_days": 7.9,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 4,
+     "history_truncated": false,
+     "name": "helium-properties-pages",
+     "path": ".github/workflows/helium-properties-pages.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "coolprop-wasm: Checkout exact CoolProp source"
+      ],
+      "first_red_at": "2026-10-07T14:15:46Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": "PRIVATE_AGGREGATE_ONLY",
+      "recovered_at": "2026-10-11T21:02:47Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_hours": 102.78,
+      "suspect_commit_count": 4
+     }
+    },
+    {
+     "age_days": 1.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "DELTA_1 Federation Smoke",
+     "path": ".github/workflows/federation-smoke.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "federation-smoke: "
+      ],
+      "first_red_at": "2026-09-10T18:08:44Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": "PRIVATE_AGGREGATE_ONLY",
+      "recovered_at": "2026-09-27T13:18:51Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_hours": 403.17,
+      "suspect_commit_count": 707
+     }
+    },
+    {
+     "age_days": 7.0,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": true,
+     "name": "Global Victory Score",
+     "path": ".github/workflows/global-victory-score.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "emit-global-victory-score: "
+      ],
+      "first_red_at": "2026-09-07T23:34:38Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": "PRIVATE_AGGREGATE_ONLY",
+      "recovered_at": "2026-09-25T16:11:09Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_hours": 424.61,
+      "suspect_commit_count": 38
+     }
+    },
+    {
+     "age_days": 7.8,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "Gloob causal responder",
+     "path": ".github/workflows/gloob-causal-responder.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "responder: "
+      ],
+      "first_red_at": "2026-09-15T06:25:00Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": null,
+      "recovered_at": "2026-10-11T14:38:16Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_before_window": true,
+      "red_hours": 632.22
+     }
+    },
+    {
+     "age_days": 7.9,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "Mesh Status Runtime",
+     "path": ".github/workflows/mesh-status-runtime.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "emit: "
+      ],
+      "first_red_at": "2026-09-11T15:50:19Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": null,
+      "recovered_at": "2026-10-11T14:38:16Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_before_window": true,
+      "red_hours": 718.8
+     }
+    },
+    {
+     "age_days": 7.9,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "QPS Golden Thread Exact-Head Replay",
+     "path": ".github/workflows/qps-golden-thread-exact-head.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "golden-thread-exact-head: "
+      ],
+      "first_red_at": "2026-09-17T01:41:15Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": null,
+      "recovered_at": "2026-09-24T10:17:14Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_before_window": true,
+      "red_hours": 176.6
+     }
+    },
+    {
+     "age_days": 7.9,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "QPS W162 N200 Candidate Intake",
+     "path": ".github/workflows/qps-w162-candidate-intake.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "candidate-intake: "
+      ],
+      "first_red_at": "2026-09-13T17:05:46Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": null,
+      "recovered_at": "2026-10-11T14:38:16Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_before_window": true,
+      "red_hours": 669.54
+     }
+    },
+    {
+     "age_days": 6.6,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "QPS W164 Mission Federation Control",
+     "path": ".github/workflows/qps-w164-mission-federation.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "validate-w164: "
+      ],
+      "first_red_at": "2026-09-13T17:31:46Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": null,
+      "recovered_at": "2026-10-13T16:10:58Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_before_window": true,
+      "red_hours": 718.65
+     }
+    },
+    {
+     "age_days": 7.9,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "QPS W166 Federation Measurement and Crew REX",
+     "path": ".github/workflows/qps-w166-federation-measurement.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "validate-w166: "
+      ],
+      "first_red_at": "2026-09-13T18:02:57Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": null,
+      "recovered_at": "2026-10-11T14:38:16Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_before_window": true,
+      "red_hours": 668.59
+     }
+    },
+    {
+     "age_days": 7.9,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "QPS W170 Federation Expansion Sample 3",
+     "path": ".github/workflows/qps-w170-federation-expansion.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "prove-w170: "
+      ],
+      "first_red_at": "2026-09-13T19:07:06Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": null,
+      "recovered_at": "2026-10-12T08:08:59Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_before_window": true,
+      "red_hours": 685.03
+     }
+    },
+    {
+     "age_days": 7.9,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "QPS W189R Federation Sample 4 Return",
+     "path": ".github/workflows/qps-w189r-authoritative-return.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "prove-w189r: "
+      ],
+      "first_red_at": "2026-09-14T16:49:24Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": null,
+      "recovered_at": "2026-10-11T14:38:16Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_before_window": true,
+      "red_hours": 645.81
+     }
+    },
+    {
+     "age_days": 5.9,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "QPS W257 Grandmission I-B Temporal PCA",
+     "path": ".github/workflows/qps-w257-grandmission-i-b-temporal-pca.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "validate-grandmission-i-b-binding: "
+      ],
+      "first_red_at": "2026-09-16T19:24:37Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": null,
+      "recovered_at": "2026-10-13T16:10:58Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_before_window": true,
+      "red_hours": 644.77
+     }
+    },
+    {
+     "age_days": 7.9,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "QPS W280R Federation Sample 5 Return",
+     "path": ".github/workflows/qps-w280-federation-sample5.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "validate-w280: "
+      ],
+      "first_red_at": "2026-09-18T11:53:49Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": null,
+      "recovered_at": "2026-10-11T14:38:16Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_before_window": true,
+      "red_hours": 554.74
+     }
+    },
+    {
+     "age_days": 7.9,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "QPS W283 Federation Surface 3Pstar MIP",
+     "path": ".github/workflows/qps-w283-federation-surface.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "prove-w283: "
+      ],
+      "first_red_at": "2026-09-18T13:29:40Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": null,
+      "recovered_at": "2026-10-11T14:38:16Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_before_window": true,
+      "red_hours": 553.14
+     }
+    },
+    {
+     "age_days": 7.9,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 2,
+     "history_truncated": false,
+     "name": "QPS cost source-policy",
+     "path": ".github/workflows/qps-cost-roundtrip.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "source-policy: "
+      ],
+      "first_red_at": "2026-09-08T05:11:42Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": "PRIVATE_AGGREGATE_ONLY",
+      "recovered_at": "2026-09-24T13:17:55Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_hours": 392.1,
+      "suspect_commit_count": 2669
+     }
+    },
+    {
+     "age_days": 7.9,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": true,
+     "name": "Validate cryoplant DOW KEB bridge rows",
+     "path": ".github/workflows/validate_cryo_bridge_rows.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [],
+      "first_red_at": "2026-09-11T08:26:15Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": null,
+      "recovered_at": "2026-10-11T14:38:16Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_before_window": true,
+      "red_hours": 726.2
+     }
+    },
+    {
+     "age_days": 7.9,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "Validate strict cryoplant DOW KEB receipts",
+     "path": ".github/workflows/validate_strict_cryo_receipts.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "validate-strict-receipts: "
+      ],
+      "first_red_at": "2026-09-11T04:28:47Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": null,
+      "recovered_at": "2026-10-11T14:38:16Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_before_window": true,
+      "red_hours": 730.16
+     }
+    },
+    {
+     "age_days": 7.8,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "W262 Temporal PCA Visual Runtime",
+     "path": ".github/workflows/w262-temporal-pca-visual-runtime.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "render-and-receipt: "
+      ],
+      "first_red_at": "2026-09-16T20:50:36Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": null,
+      "recovered_at": "2026-10-11T14:38:16Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_before_window": true,
+      "red_hours": 593.79
+     }
+    },
+    {
+     "age_days": 7.9,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "canonical-v5.3.0-qa",
+     "path": ".github/workflows/canonical-v5.3.0-qa.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "canonical-qa: "
+      ],
+      "first_red_at": "2026-09-15T02:18:03Z",
+      "first_red_run": null,
+      "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+      "last_green_sha": null,
+      "recovered_at": "2026-10-11T14:38:16Z",
+      "recovery_run": null,
+      "recovery_sha": "PRIVATE_AGGREGATE_ONLY",
+      "red_before_window": true,
+      "red_hours": 636.34
+     }
+    }
+   ],
+   "observed_at_utc": "2026-10-20T05:52:11Z",
+   "repository": "GBOGEB/cryoplant-project",
+   "role": "QPS engineering SSOT \u00b7 QPS TRIAGE owner (private)",
+   "runs": 1307,
+   "shared_break_roots": [
+    {
+     "count": 3,
+     "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+     "workflows": [
+      "QPS PR binary refresh",
+      "TRIAGE Repository Census",
+      "qps-canonicalization"
+     ]
+    },
+    {
+     "count": 2,
+     "first_red_sha": "PRIVATE_AGGREGATE_ONLY",
+     "workflows": [
+      "Global Victory Score",
+      "TODO-011 release pack smoke"
+     ]
+    }
+   ],
+   "short": "cryoplant-project",
+   "source_digest": "0f6ba1c16af25571c00dc5ad66df9f6e882d87dd6829ec5d72945b3dacf8babe",
+   "truncated_workflows": 9,
+   "workflows_traced": 48
+  },
+  {
+   "branch": "main",
+   "counts": {
+    "FLAKY": 1,
+    "RED_TO_GREEN": 1,
+    "STABLE_GREEN": 16
+   },
+   "currently_red": 0,
+   "currently_red_stale": 0,
+   "non_green": [
+    {
+     "age_days": 0.6,
+     "class": "FLAKY",
+     "current": "GREEN",
+     "flips": 4,
+     "history_truncated": false,
+     "name": "Release Infrastructure v1",
+     "path": ".github/workflows/release-infrastructure-v1.yml",
+     "pinned": false,
+     "stale": false,
+     "window": {
+      "failing": [
+       "Exact-head release gate: Execute complete test inventory with coverage"
+      ],
+      "first_red_at": "2026-10-18T22:46:49Z",
+      "first_red_run": 39173707688,
+      "first_red_sha": "a91d3ea59109773d0f747395c60d4597e807ebcb",
+      "last_green_sha": "8d198c0b399ecf895dda803ba218cfe16d18d4c9",
+      "recovered_at": "2026-10-19T04:36:36Z",
+      "recovery_run": 39200328168,
+      "recovery_sha": "5cf036c66be498cd00a4ff09687802806200368b",
+      "red_hours": 5.83,
+      "suspect_commit_count": 3
+     }
+    },
+    {
+     "age_days": 27.6,
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "flips": 1,
+     "history_truncated": false,
+     "name": "LM-10 W260 BD-260.4 Common Fixture",
+     "path": ".github/workflows/lm10-w260-bd2604-common-fixture.yml",
+     "pinned": false,
+     "stale": true,
+     "window": {
+      "failing": [
+       "prove: Execute common-fixture challenge"
+      ],
+      "first_red_at": "2026-09-21T11:01:43Z",
+      "first_red_run": 35591851834,
+      "first_red_sha": "ef466822aa14dfaf3799971329c008931b71efe1",
+      "last_green_sha": null,
+      "recovered_at": "2026-09-21T11:05:06Z",
+      "recovery_run": 35592153194,
+      "recovery_sha": "2b27f4a6d70a11324d9a7c81d9c88995888b3d74",
+      "red_before_window": true,
+      "red_hours": 0.06
+     }
+    }
+   ],
+   "observed_at_utc": "2026-10-20T05:46:34Z",
+   "repository": "GBOGEB/gg_MATH",
+   "role": "Mathematics provider (PCA/BT/Monte Carlo kernels, Plotly artifacts)",
+   "runs": 264,
+   "shared_break_roots": [],
+   "short": "gg_MATH",
+   "source_digest": "ab32cfda5a932188d3a4af192eef0d50415406d66979cff9c53595f14996ca8f",
+   "truncated_workflows": 0,
+   "workflows_traced": 18
+  }
+ ],
+ "schema": "jade.temple.redtrace_federation.v1",
+ "totals": {
+  "classes": {
+   "EVERRED": 37,
+   "FLAKY": 46,
+   "GREEN_TO_RED": 14,
+   "RED_TO_GREEN": 57,
+   "STABLE_GREEN": 184,
+   "UNKNOWN_NO_TERMINAL": 2
+  },
+  "pinned_red": 2,
+  "red": 69,
+  "red_fresh": 43,
+  "red_stale": 26,
+  "runs": 16008,
+  "workflows": 340
+ }
+}

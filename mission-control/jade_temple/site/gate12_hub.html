@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="description" content="JADE H01-H12 owner-facing, source-bound readiness and release-operations cockpit. Unqualified publication is not release.">
+<title>JADE | H01-H12 DoV &amp; Operations</title>
+<link rel="stylesheet" href="gate12.css">
+<script src="gate12_data.js" defer></script>
+<script src="gate12_ui.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to dashboard</a>
+<header class="mast">
+  <a class="brand" href="gate12_hub.html" aria-label="JADE DoV home"><strong>JADE</strong><span>/ H01–H12</span><small>Definition of Value · Operator Desk</small></a>
+  <div class="mast-right"><span id="readback-date" class="origin">Frozen focus-five readback</span><span class="hold">ADMISSION HOLD</span></div>
+</header>
+<div class="layout">
+  <aside class="sidebar" aria-label="Cockpit navigation">
+    <div class="sidebar-title">MISSION CONTROL / USER DESK</div>
+    <nav aria-label="DoV sections">
+      <a href="#executive">01 / Executive scorecard</a>
+      <a href="#pillars">02 / Twelve gate pillars</a>
+      <a href="#content-health">03 / Content &amp; code health</a>
+      <a href="#bd-queue">04 / Owner TODO &amp; BD queue</a>
+      <a href="#pages">05 / Pages, deploy &amp; runtime</a>
+      <a href="#discovery">06 / Asset discovery</a>
+      <a href="#source">07 / Source &amp; evidence</a>
+    </nav>
+    <div class="side-note"><b>Golden Thread</b><p>Source → content → build → native tests → review → asset QA → deployment → owner release.</p><span class="muted">The H01–H12 prerequisites are the canonical ordering authority.</span></div>
+    <div class="quicklinks"><span class="eyebrow">Existing views</span><a href="green.html">Top21 GoGREEN</a><a href="burndown.html">Owner burndown</a><a href="cicd_dag.html">CI/CD DAG</a><a href="eightpoint.html">Eight-point MIP</a><a href="redtrace.html">RED-trace</a></div>
+  </aside>
+  <main id="main">
+    <section id="executive" class="hero" aria-labelledby="hero-title">
+      <div class="eyebrow">READ-ONLY / SOURCE-BOUND / ZERO RELEASE CREDIT</div>
+      <h1 id="hero-title">A release is more than <em>green code.</em></h1>
+      <p class="lede">One central cockpit for the twelve generic JADE release pillars, content thresholds, semantic quality, code health, user-facing assets, Pages publication, deployed runtime and the owner burndown. Evidence is never borrowed from another source head or converted into release authority.</p>
+      <div class="hero-actions"><a class="primary" href="#bd-queue">Open action queue →</a><a href="gate12_bd_queue.csv" download>Export the H01–H12 queue CSV</a><a href="gate12_data.json" download>Projection JSON</a></div>
+      <p class="caution" id="source-warning">Source readback is historical and non-atomic; live current-head recertification, hosted parity and runtime health are NOT PROVEN.</p>
+    </section>
+    <section aria-label="Executive KPIs" class="scoreboard"><div id="scoreboard" class="kpi-grid"><p>Loading frozen source metrics. If the source script is absent, run the native generator; nothing is marked PASS by default.</p></div></section>
+    <section id="pillars" class="section">
+      <div class="section-head"><div><div class="eyebrow">01 / NONCOMPENSATING RELEASE GATES</div><h2>H01–H12 Definition of Value</h2><p>Original gate labels and status belong to the pinned JADE focus-five source; the new registry adds measurable owner actions but cannot issue a PASS.</p></div><span class="note-label">12 declared gates × 21 roster rows</span></div>
+      <div id="pillar-grid" class="pillar-grid" aria-live="polite"></div>
+    </section>
+    <section id="content-health" class="section">
+      <div class="section-head"><div><div class="eyebrow">02 / QUALITY UNDERSTOOD IN CONTEXT</div><h2>Content, code, safety &amp; service readiness</h2><p>Proposed minimum content and qualitative acceptance criteria are kept separate from measured test denominators and verified owner policy.</p></div></div>
+      <div id="quality-axes" class="facet-grid"></div>
+    </section>
+    <section id="bd-queue" class="section">
+      <div class="section-head"><div><div class="eyebrow">03 / 21-REPO × 12-GATE BACKLOG</div><h2>Owner TODO and blocked-dependency queue</h2><p>Every missing, unknown or failed gate remains an open candidate, including all 192 unassessed slots outside the frozen focus five. Filters do not rewrite the source.</p></div><a href="gate12_bd_queue.csv" download>Machine queue CSV ↗</a></div>
+      <div class="filters">
+        <label>Find repo, task, owner or pillar <input id="q-search" type="search" placeholder="Search H08, CODEX, CodeQL…" autocomplete="off"></label>
+        <label>Evidence <select id="q-status"><option value="ALL">All statuses</option><option value="FAIL">FAIL</option><option value="UNKNOWN">UNKNOWN</option><option value="UNOBSERVED">UNOBSERVED</option><option value="PASS">PASS</option></select></label>
+        <label>Frontier <select id="q-frontier"><option value="ALL">All readiness</option><option value="FIRST_RED">FIRST_RED</option><option value="READY">READY</option><option value="WAIT_DEPENDENCY">WAIT_DEPENDENCY</option><option value="COMPLETE">COMPLETE</option></select></label>
+        <label>Gate <select id="q-gate"><option value="ALL">All 12 pillars</option></select></label>
+      </div>
+      <p id="q-count" class="queue-note" aria-live="polite">Waiting for sourced task population</p>
+      <div class="table-scroll" role="region" tabindex="0" aria-label="Filterable 252-row JADE H01-H12 owner queue">
+      <table><caption>Source-bound H01-H12 worklist (observed and unobserved rows distinguished)</caption><thead><tr><th>Rank / Repository</th><th>Gate</th><th>Evidence</th><th>Dependency frontier</th><th>Owner / Next action</th><th>Source proof</th></tr></thead><tbody id="q-body"></tbody></table>
+      </div>
+    </section>
+    <section id="pages" class="section">
+      <div class="section-head"><div><div class="eyebrow">04 / PUBLICATION ≠ OPERATION</div><h2>Pages, deployment and operational acceptance</h2><p>Distinct source, QA, distribution and runtime states. No published/served status is inferred from a committed HTML file or CI artifact.</p></div></div>
+      <div id="publication-status" class="pub-grid" aria-live="polite"></div>
+      <h3>Source-to-owner publication ladder</h3><ol id="acceptance-ladder" class="ladder"></ol>
+      <div class="operations">
+        <article><h3>H11 / Asset and hosted QA</h3><p>Generate the static bundle and manifest, run semantic/anchor checks, Playwright at 1440×1000, 1280×800 and 390×844, stage through the existing single Pages publisher, then GET every hosted asset twice and prove exact hash/version parity.</p><span class="rule-tag">NO NEW PUBLISHER</span></article>
+        <article><h3>H12 / Operational proof</h3><p>For deployable services, prove boot/start, dependency reachability, a real health endpoint, log/trace evidence, bounded restart, rollback and on-call ownership. For static Pages, distinguish URL accessibility and asset bytes from application/service runtime.</p><span class="rule-tag">OWNER RELEASE REQUIRED</span></article>
+      </div>
+    </section>
+    <section id="discovery" class="section">
+      <div class="section-head"><div><div class="eyebrow">05 / DIGITAL LIBRARY AND CROSSWALK</div><h2>Discover the right authoritative or auxiliary view</h2><p>Views here are repository-source links. Their existence does not imply that <code>/jade/</code> is deployed or currently serving identical bytes.</p></div></div>
+      <div id="asset-grid" class="asset-grid"></div>
+    </section>
+    <section id="source" class="section source-card">
+      <div class="eyebrow">06 / GOLDEN THREAD &amp; RECEIPT</div><h2>What this dashboard can and cannot qualify</h2>
+      <p>Source-bound H01–H12 gates are read from <code>FOCUS5_POINT_RELEASE_NPLUS7.json</code>; Top21 membership is independently sourced from <code>TOP21_PORTFOLIO.json</code>; prerequisites are from <code>ROLLING5_POLICY.json</code>. Additional action thresholds are proposals in <code>GATE12_DOV_ACTIONS.json</code>.</p>
+      <dl id="source-oids"></dl>
+      <p>Unknown, unobserved, neutral and pending evidence never becomes PASS. A future N+10 pulse must re-read exact heads, qualify the full roster and join two independent native runs before any new acceptance claim.</p>
+      <a href="https://github.com/GBOGEB/pipeline-automation-hub/tree/master/mission-control/jade_temple" target="_blank" rel="noopener noreferrer">Open authoritative JADE repository ↗</a>
+    </section>
+    <footer>JADE_CASTE · Review projection only · MERGE_ADMISSION=HOLD · Formal release credit = 0</footer>
+  </main>
+</div>
+</body>
+</html>

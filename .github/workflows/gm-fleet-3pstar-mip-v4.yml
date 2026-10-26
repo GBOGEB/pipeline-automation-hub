@@ -25,7 +25,7 @@ jobs:
   prove:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Bind exact head
@@ -41,7 +41,7 @@ jobs:
           cp gm_fleet_3pstar_mip_v4_receipt.json first.json
           python mission-control/grand-missions/validate_gm_fleet_3pstar_mip_v4.py             --source-sha "${{ github.event.pull_request.head.sha || github.sha }}"             --out second.json >/dev/null
           cmp first.json second.json
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gm-fleet-3pstar-mip-v4-${{ github.event.pull_request.head.sha || github.sha }}
           path: gm_fleet_3pstar_mip_v4_receipt.json

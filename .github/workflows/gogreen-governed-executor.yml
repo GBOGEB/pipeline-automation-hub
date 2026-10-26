@@ -17,7 +17,7 @@ jobs:
     timeout-minutes: 12
     steps:
       - name: Checkout exact evaluated head
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
@@ -79,7 +79,7 @@ jobs:
           PY
       - name: Upload real local-pilot output receipts
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
           name: gogreen-governed-executor-${{ github.event.pull_request.head.sha || github.sha }}
           path: ${{ runner.temp }}/go-green-execution/

@@ -1,0 +1,230 @@
+# JADE N+9 reusable CI: exact-SHA checkout, fail-closed tests, coverage floor, build once, sha256 manifest.
+# Contract: mission-control/jade_temple/devops/DEPLOY_PRODUCTION_ARCHITECTURE_N9.md (S2_BUILD, S3_TEST).
+# Callers pin this file by commit SHA:
+#   uses: GBOGEB/pipeline-automation-hub/.github/workflows/jade-reusable-ci.yml@<40-hex>
+# Outputs feed jade-reusable-deploy.yml (artifact-name, manifest-sha256, tests-ran).
+# No merge, release or deploy authority is produced here.
+name: JADE reusable CI (build once, test fail-closed)
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        type: string
+        default: '3.12'
+      install:
+        description: Shell command that installs the project and its test dependencies
+        type: string
+        default: 'python -m pip install --disable-pip-version-check -r requirements.txt'
+      test-runner:
+        description: unittest or pytest
+        type: string
+        default: unittest
+      test-args:
+        type: string
+        default: 'discover -s tests -p test_*.py'
+      min-tests:
+        description: Fewer executed tests than this is a first red (zero-test guard)
+        type: number
+        default: 1
+      coverage-floor:
+        description: Minimum total coverage percent; 0 records coverage without gating
+        type: number
+        default: 0
+      coverage-include:
+        description: Optional coverage --include glob list (comma separated)
+        type: string
+        default: ''
+      build-command:
+        description: Optional build command; its output directory is artifact-path
+        type: string
+        default: ''
+      artifact-path:
+        description: Directory published as the single build artefact (empty = no artefact)
+        type: string
+        default: ''
+      artifact-name:
+        type: string
+        default: jade-build
+    outputs:
+      tests-ran:
+        value: ${{ jobs.test.outputs.tests-ran }}
+      coverage-percent:
+        value: ${{ jobs.test.outputs.coverage-percent }}
+      artifact-name:
+        value: ${{ jobs.build.outputs.artifact-name }}
+      manifest-sha256:
+        value: ${{ jobs.build.outputs.manifest-sha256 }}
+permissions:
+  contents: read
+jobs:
+  test:
+    name: Tests (zero-test guard + coverage floor)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    outputs:
+      tests-ran: ${{ steps.guard.outputs.tests-ran }}
+      coverage-percent: ${{ steps.coverage.outputs.percent }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Assert exact checkout
+        env:
+          EXPECTED: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED"
+          echo "JADE_SOURCE_HEAD=$EXPECTED"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ inputs.python-version }}
+      - name: Install
+        env:
+          INSTALL: ${{ inputs.install }}
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          bash -euo pipefail -c "$INSTALL"
+      - name: Run tests under coverage
+        env:
+          RUNNER: ${{ inputs.test-runner }}
+          ARGS: ${{ inputs.test-args }}
+          INCLUDE: ${{ inputs.coverage-include }}
+        run: |
+          set -euo pipefail
+          case "$RUNNER" in unittest|pytest) ;; *) echo "::error title=JADE_CI_FIRST_RED::test-runner must be unittest or pytest"; exit 1;; esac
+          read -ra args <<< "$ARGS"
+          inc=()
+          if [ -n "$INCLUDE" ]; then inc=(--include="$INCLUDE"); fi
+          python -m coverage run --branch "${inc[@]}" -m "$RUNNER" "${args[@]}" 2>&1 | tee "$RUNNER_TEMP/jade-tests.log"
+      - name: Zero-test guard
+        id: guard
+        env:
+          MIN_TESTS: ${{ inputs.min-tests }}
+        run: |
+          python - <<'PY'
+          import os, re
+          from pathlib import Path
+          log = (Path(os.environ["RUNNER_TEMP"]) / "jade-tests.log").read_text(errors="replace")
+          ran = [int(n) for n in re.findall(r"^Ran (\d+) tests? in ", log, re.M)]
+          passed = re.findall(r"(\d+) (passed|failed|errors?|xfailed|xpassed)", log)
+          total = ran[-1] if ran else sum(int(n) for n, _ in passed)
+          floor = int(float(os.environ["MIN_TESTS"]))
+          with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+              fh.write(f"tests-ran={total}\n")
+          if total < max(floor, 1):
+              raise SystemExit(f"::error title=JADE_ZERO_TEST_FIRST_RED::ran {total} tests, need >= {max(floor, 1)}")
+          print(f"JADE_TESTS_RAN={total}")
+          PY
+      - name: Coverage floor
+        id: coverage
+        env:
+          FLOOR: ${{ inputs.coverage-floor }}
+        run: |
+          set -euo pipefail
+          python -m coverage json -q -o "$RUNNER_TEMP/jade-coverage.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          t = json.loads((Path(os.environ["RUNNER_TEMP"]) / "jade-coverage.json").read_text())["totals"]
+          pct = round(t["percent_covered"], 2)
+          floor = float(os.environ["FLOOR"])
+          with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+              fh.write(f"percent={pct}\n")
+          if t["num_statements"] == 0:
+              raise SystemExit("::error title=JADE_COVERAGE_FIRST_RED::no instrumented statements")
+          if floor > 0 and pct < floor:
+              raise SystemExit(f"::error title=JADE_COVERAGE_FIRST_RED::coverage {pct} < floor {floor}")
+          print(f"JADE_COVERAGE={pct} floor={floor}")
+          PY
+      - name: CI receipt
+        if: always()
+        env:
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          TESTS_RAN: ${{ steps.guard.outputs.tests-ran }}
+          COVERAGE: ${{ steps.coverage.outputs.percent }}
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          receipt = {"schema": "jade.devops.ci_receipt.v1", "repository": os.environ["GITHUB_REPOSITORY"],
+                     "source_git_sha": os.environ["SHA"], "run_id": os.environ["GITHUB_RUN_ID"],
+                     "run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+                     "tests_ran": int(os.environ["TESTS_RAN"] or 0),
+                     "coverage_percent": float(os.environ["COVERAGE"]) if os.environ["COVERAGE"] else None,
+                     "merge_authorized": False}
+          Path(os.environ["RUNNER_TEMP"], "jade-ci-receipt.json").write_text(json.dumps(receipt, indent=1, sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: jade-ci-receipt-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/jade-tests.log
+            ${{ runner.temp }}/jade-coverage.json
+            ${{ runner.temp }}/jade-ci-receipt.json
+          retention-days: 30
+          if-no-files-found: warn
+
+  build:
+    name: Build once and hash the artefact
+    needs: test
+    if: inputs.artifact-path != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    outputs:
+      artifact-name: ${{ steps.manifest.outputs.artifact-name }}
+      manifest-sha256: ${{ steps.manifest.outputs.manifest-sha256 }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ inputs.python-version }}
+      - name: Install and build
+        env:
+          INSTALL: ${{ inputs.install }}
+          BUILD: ${{ inputs.build-command }}
+        run: |
+          set -euo pipefail
+          bash -euo pipefail -c "$INSTALL"
+          if [ -n "$BUILD" ]; then bash -euo pipefail -c "$BUILD"; fi
+      - name: sha256 manifest (jade-manifest.json)
+        id: manifest
+        env:
+          ARTIFACT_PATH: ${{ inputs.artifact-path }}
+          NAME: ${{ inputs.artifact-name }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          root = Path(os.environ["ARTIFACT_PATH"]).resolve()
+          if not root.is_dir():
+              raise SystemExit(f"::error title=JADE_BUILD_FIRST_RED::artifact-path {root} is not a directory")
+          files = {}
+          for p in sorted(root.rglob("*")):
+              if p.is_file() and not p.is_symlink() and p.name != "jade-manifest.json":
+                  files[p.relative_to(root).as_posix()] = hashlib.sha256(p.read_bytes()).hexdigest()
+          if not files:
+              raise SystemExit("::error title=JADE_BUILD_FIRST_RED::empty artefact")
+          manifest = {"schema": "jade.devops.artifact_manifest.v1", "repository": os.environ["GITHUB_REPOSITORY"],
+                      "source_git_sha": os.environ["SHA"], "files": files, "count": len(files),
+                      "merge_authorized": False}
+          body = (json.dumps(manifest, indent=1, sort_keys=True) + "\n").encode()
+          (root / "jade-manifest.json").write_bytes(body)
+          digest = hashlib.sha256(body).hexdigest()
+          name = f'{os.environ["NAME"]}-{os.environ["SHA"]}'
+          with open(os.environ["GITHUB_OUTPUT"], "a") as fh:
+              fh.write(f"manifest-sha256={digest}\nartifact-name={name}\n")
+          print(f"JADE_ARTIFACT={name} files={len(files)} manifest_sha256={digest}")
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ${{ steps.manifest.outputs.artifact-name }}
+          path: ${{ inputs.artifact-path }}
+          retention-days: 30
+          if-no-files-found: error

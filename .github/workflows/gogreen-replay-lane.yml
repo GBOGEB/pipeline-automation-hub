@@ -1,0 +1,74 @@
+name: GOGREEN Replay Lane (bounded)
+
+# #529 G04 (owner-approved, actions:write): re-evaluate STALE reds on master by dispatching
+# them on master, so the red-trace ledger reflects current HEAD instead of a weeks-old
+# verdict. Hard bounds live in mission-control/gogreen/replay_lane/REPLAY_POLICY.json:
+# red > 3 d stale, read-only + dispatchable workflows only, deny-list, <= 3 dispatches/run,
+# <= 1 replay per workflow per 24 h, skip if busy, skip the lane if > 40 runs queued.
+# The only write call is POST .../actions/workflows/<file>/dispatches {"ref": "master"}.
+on:
+  schedule:
+    - cron: '37 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Plan only, dispatch nothing
+        type: boolean
+        default: false
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/replay_lane/**'
+      - '.github/workflows/gogreen-replay-lane.yml'
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: gogreen-replay-lane
+  cancel-in-progress: false
+
+jobs:
+  lane:
+    name: Replay stale reds on master
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v5.1.0 (node24)
+        with:
+          # PRs test the lane code they change; scheduled/dispatch runs act on master.
+          ref: ${{ github.event.pull_request.head.sha || 'master' }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Lane safety tests
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check pyyaml==6.0.3
+          python -m unittest discover -s mission-control/gogreen/replay_lane -p 'test_*.py' -v
+      - name: Trace master (GET only)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/red_trace/red_trace.py --repo "$GITHUB_REPOSITORY" --branch master \
+            --per-workflow 60 --pr-lane 1 --no-enrich --root . --out "$RUNNER_TEMP/lane"
+      - name: Plan and dispatch (dry run on PRs and when requested)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          DRY: ${{ github.event_name == 'pull_request' || inputs.dry_run == true }}
+        run: |
+          set -euo pipefail
+          extra=""; [ "$DRY" = "true" ] && extra="--dry-run"
+          python mission-control/gogreen/replay_lane/replay_lane.py --repo "$GITHUB_REPOSITORY" \
+            --trace "$RUNNER_TEMP/lane/red_trace.json" --root . $extra \
+            --out "$RUNNER_TEMP/lane/replay_receipt.json" --summary "$RUNNER_TEMP/lane/replay.md"
+          cat "$RUNNER_TEMP/lane/replay.md" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v6.0.0 (node24)
+        if: always()
+        with:
+          name: gogreen-replay-lane-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/lane/replay_receipt.json
+          if-no-files-found: warn
+          retention-days: 30

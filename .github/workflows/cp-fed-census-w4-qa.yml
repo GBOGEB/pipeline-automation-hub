@@ -1,0 +1,119 @@
+name: CP.FED W4 canonical handover and public CENSUS QA
+on:
+  pull_request:
+    paths:
+      - 'mission-control/v2/handoff/**'
+      - '.github/workflows/cp-fed-census-w4-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  canonical-packet:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Exact source checkout and two native suites
+        shell: bash
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          python -m unittest discover -s mission-control/v2/handoff/closeout -p 'test_cp_close.py' -v
+          python -m unittest discover -s mission-control/v2/handoff/closeout -p 'test_public_census_pull.py' -v
+      - name: Generate canonical CP.CLOSE nine-artifact packet and replay
+        shell: bash
+        run: |
+          set -euo pipefail
+          C=mission-control/v2/handoff/closeout
+          I=$C/intakes/CP-FED-CENSUS-W4-20261018.json
+          Q=mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json
+          O="$RUNNER_TEMP/cp-fed-w4"
+          python "$C/cp_close.py" --intake "$I" --bd "$Q" --out "$O" --zip "$RUNNER_TEMP/CP-FED-CENSUS-W4-20261018.zip"
+          python "$C/cp_close.py" --intake "$I" --bd "$Q" --out "$O" --check
+          if [ -f "$C/records/CP-FED-CENSUS-W4-20261018/MANIFEST.json" ]; then
+            python "$C/cp_close.py" --intake "$I" --bd "$Q" --out "$C/records/CP-FED-CENSUS-W4-20261018" --check
+          else
+            echo 'CANONICAL_COMMITTED_PARITY=DEFERRED_UNTIL_GENERATED_RECORDS_COMMITTED'
+          fi
+      - name: Validate SHA256, read-only BD and no false chat completeness
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib, json, os, zipfile
+          from pathlib import Path
+          o=Path(os.environ['RUNNER_TEMP'])/'cp-fed-w4'
+          m=json.loads((o/'MANIFEST.json').read_text())
+          s=json.loads((o/'STATE.json').read_text())
+          b=json.loads((o/'BD_QUEUE_READONLY.json').read_text())
+          p=json.loads(Path('mission-control/v2/handoff/closeout/records/CP-FED-CENSUS-W4-20261018/CENSUS_PUBLIC_20261018.json').read_text())
+          assert len(m['member_sha256'])==8
+          assert all(hashlib.sha256((o/k).read_bytes()).hexdigest()==v for k,v in m['member_sha256'].items())
+          assert s['intent_count_reconstructed']==10 and s['action_count_reconstructed']==17
+          assert s['full_chat_prompt_count'] is None and s['full_chat_message_count'] is None
+          assert len(b['focus'])==6 and b['new_canonical_bd_items']==0
+          assert p['totals']['public_open_ordinary_issues']==sum(z['ordinary_open_issues'] for z in p['public_repositories'])==82
+          assert p['totals']['public_open_prs']==sum(z['open_prs'] for z in p['public_repositories'])==23
+          assert sum(p['totals']['public_issue_age_cohorts'])==82
+          native=Path('mission-control/v2/handoff/closeout/records/CP-FED-CENSUS-W4-20261018/CENSUS_PULL_NATIVE_20261018.json')
+          assert hashlib.sha256(native.read_bytes()).hexdigest()=='78e54ba29f51ce9d34157b8c502e043fc1f95fbf41ac9e10b0f7b9364719592e'
+          observed=json.loads(native.read_text())
+          assert observed['observed_utc']=='2026-10-18T15:10:42.787707Z'
+          assert observed['ordinary_open_issues']==83 and observed['open_prs']==25
+          assert sum(observed['age_bins'])==83
+          assert observed['causal_bd_roots_closed'] is None and observed['causal_bd_roots_open'] is None
+          assert observed['restricted_child_sources']=='WITHHELD' and observed['merge_admission']=='HOLD'
+          with zipfile.ZipFile(Path(os.environ['RUNNER_TEMP'])/'CP-FED-CENSUS-W4-20261018.zip') as z:
+              assert z.testzip() is None and set(z.namelist())==set(m['member_sha256'])|{'MANIFEST.json'}
+          print('CP_FED_CANONICAL=PASS INTENTS=10 ACTIONS=17 BD_FOCUS=6 PUBLIC_ISSUES=82 PUBLIC_PRS=23')
+          PY
+      - name: Emit sanitized generated files for governed commit
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,os
+          for file in sorted((Path(os.environ['RUNNER_TEMP'])/'cp-fed-w4').iterdir()):
+              if file.is_file():
+                  print('CP_FED_EXPORT_FILE='+json.dumps({'name':file.name,'content':file.read_text(encoding='utf-8')},ensure_ascii=True,separators=(',',':')))
+          PY
+      - name: Upload byte-verified nine-file packet and ZIP
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: cp-fed-w4-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/cp-fed-w4/
+            ${{ runner.temp }}/CP-FED-CENSUS-W4-20261018.zip
+          if-no-files-found: error
+          retention-days: 21
+  public-readonly-pull:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Read only public GitHub census
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python mission-control/v2/handoff/closeout/public_census_pull.py --out "$RUNNER_TEMP/public-census-live.json"
+      - name: Fail closed on missing public evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: cp-fed-public-pull-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/public-census-live.json
+          if-no-files-found: error
+          retention-days: 21

@@ -1,0 +1,122 @@
+name: JADE_CASTE N+3 point-release sprint readiness QA
+on:
+  push:
+    branches:
+      - 'code-purple/jade-n5-exact-head-testflight-20261019'
+    paths:
+      - 'mission-control/jade_temple/sprint/**'
+      - 'mission-control/jade_temple/tests/test_jade_sprint_n3.py'
+      - '.github/workflows/jade-sprint-n3-qualification.yml'
+  pull_request:
+    paths:
+      - 'mission-control/jade_temple/sprint/**'
+      - 'mission-control/jade_temple/tests/test_jade_sprint_n3.py'
+      - '.github/workflows/jade-sprint-n3-qualification.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: jade-n3-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  offline-contract:
+    name: JADE N+3 read-only ${{ matrix.os }} Python ${{ matrix.python }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-24.04, python: '3.11'}
+          - {os: windows-2022, python: '3.12'}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    steps:
+      # Windows runners default to core.autocrlf=true, so committed generated outputs check out
+      # as CRLF and every byte-parity check against the LF generators fails. Keep blobs byte-exact.
+      - name: Check out LF bytes on every OS
+        run: git config --global core.autocrlf false
+      - name: Exact-head checkout without saved credentials
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Source SHA and full N+3 adversarial testflight
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$HEAD_SHA"
+          python -m py_compile mission-control/jade_temple/sprint/model.py mission-control/jade_temple/sprint/cli.py
+          python -m unittest discover -s mission-control/jade_temple/tests -p 'test_jade_sprint_n3.py' -v
+      - name: Build source-bound DAG/SIPOC/queue/HTML receipts
+        shell: bash
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/jade_temple/sprint/cli.py --mode plan --out jade_sprint_results --expected-head "$HEAD_SHA"
+          python mission-control/jade_temple/sprint/cli.py --mode verify --out jade_sprint_results --expected-head "$HEAD_SHA"
+          test -s jade_sprint_results/SPRINT_SPINE.mmd
+          test -s jade_sprint_results/SPRINT_DASHBOARD.html
+      - name: Windows isolated venv / bounded worker pool / cache replay
+        if: matrix.os == 'windows-2022'
+        shell: pwsh
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          $work = Join-Path $env:RUNNER_TEMP 'JADE_N3_WORK'
+          try {
+            & ./mission-control/jade_temple/sprint/Start-JadeSprint.ps1 -Mode Full -Workspace $work -ExpectedHead $env:HEAD_SHA -Offline -MaxWorkers 2
+          } catch {
+            Write-Host 'JADE first-red: capturing bounded source-local failing task diagnostics'
+            $root = Join-Path $work 'output'
+            $receipt = Join-Path $root 'LOCAL_RUN.json'
+            if (Test-Path -LiteralPath $receipt) {
+              $report = Get-Content -LiteralPath $receipt -Raw | ConvertFrom-Json
+              foreach ($item in $report.results) {
+                Write-Host ('LOCAL_STEP '+$item.id+' status='+$item.status+' exit='+$item.exit_code)
+                $taskLog = Join-Path $root ($item.id + '.log')
+                if ((Test-Path -LiteralPath $taskLog) -and $item.status -ne 'LOCAL_TEST_PASS') {
+                  Get-Content -LiteralPath $taskLog -Tail 32 | ForEach-Object { Write-Host $_ }
+                }
+              }
+            }
+            throw
+          }
+          if ($LASTEXITCODE -ne 0) { throw 'PS1 isolated full testflight first red' }
+          $first = Get-Content (Join-Path $work 'output/LOCAL_RUN.json') -Raw | ConvertFrom-Json
+          if ($first.local_failures -ne 0 -or $first.local_pass -lt 3) { throw 'Local evidence first pulse not green' }
+          & ./mission-control/jade_temple/sprint/Start-JadeSprint.ps1 -Mode Local -Workspace $work -ExpectedHead $env:HEAD_SHA -Offline -MaxWorkers 2
+          if ($LASTEXITCODE -ne 0) { throw 'PS1 second bounded pulse failed' }
+          $second = Get-Content (Join-Path $work 'output/LOCAL_RUN.json') -Raw | ConvertFrom-Json
+          if ($second.local_failures -ne 0 -or $second.local_cache_hits -lt 3) { throw 'Same-head cache replay qualification failed' }
+          Copy-Item (Join-Path $work 'output/LOCAL_RUN.json') 'jade_sprint_results/WINDOWS_LOCAL_RUN.json'
+      - name: Retain first-red diagnostics even if Windows local preflight fails
+        if: always() && matrix.os == 'windows-2022'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: jade-sprint-local-debug-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/JADE_N3_WORK/output/LOCAL_RUN.json
+            ${{ runner.temp }}/JADE_N3_WORK/output/*.log
+          retention-days: 7
+          if-no-files-found: warn
+      - name: Retain Windows local diagnostic proof only
+        if: matrix.os == 'windows-2022'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: jade-sprint-local-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: jade_sprint_results/WINDOWS_LOCAL_RUN.json
+          retention-days: 14
+          if-no-files-found: warn
+      - name: Retain JADE non-authoritative candidate receipts
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: jade-sprint-${{ matrix.os }}-${{ matrix.python }}-${{ github.run_id }}-a${{ github.run_attempt }}
+          path: jade_sprint_results/
+          retention-days: 21
+          if-no-files-found: warn

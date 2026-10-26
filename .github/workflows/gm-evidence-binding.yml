@@ -1,0 +1,81 @@
+name: GM Evidence Binding Guard (read-only)
+
+# #529 G05: gates bind the LATEST VALID producer run (evidence_binding.py), never a pinned
+# run/artifact id; producers are scheduled inside the 30-day artifact retention
+# (EVIDENCE_BINDING_DAG_v1.json). This guard proves the DAG, and the daily census fails on any
+# DEAD live-gate pin and warns on pins that expire within 14 days (time-bombs).
+on:
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/evidence_binding.py'
+      - 'mission-control/grand-missions/EVIDENCE_BINDING_DAG_v1.*'
+      - 'mission-control/grand-missions/tests/test_evidence_binding.py'
+      - 'mission-control/gogreen/g5/fixtures/**'
+      - '.github/workflows/gm-evidence-binding.yml'
+      - '.github/workflows/gm-iv-runtime-capacity-proof-v2.yml'
+      - '.github/workflows/gm-v-governor-readiness.yml'
+      - '.github/workflows/gm-v-3pstar-mip-control.yml'
+      - '.github/workflows/gogreen-federation.yml'
+  schedule:
+    - cron: '23 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  guard:
+    name: Evidence binding DAG and pinned-evidence census
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v5.1.0 (node24)
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Contract tests and evidence DAG / scheduler check
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check pyyaml==6.0.3
+          python -m unittest mission-control/grand-missions/tests/test_evidence_binding.py -v
+          python mission-control/grand-missions/evidence_binding.py dag-check --out "$RUNNER_TEMP/dag-check.json"
+      - name: Pinned-evidence census (GET only)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python mission-control/grand-missions/evidence_binding.py census --root . \
+            --repo "$GITHUB_REPOSITORY" --api --out "$RUNNER_TEMP/pin-census.json"
+          python - "$RUNNER_TEMP/pin-census.json" <<'PY'
+          import json, sys
+          r = json.load(open(sys.argv[1]))
+          lines = ["### Pinned-evidence census", "",
+                   f"{r['pins_total']} pins · {r['live_gate_pins']} in live gates · "
+                   f"{r['live_gate_pins_dead']} DEAD · {r['live_gate_pins_time_bomb']} expire within {r['warn_days']} d", "",
+                   "| State | Kind | ID | Gate | Days left |", "|---|---|---|---|---:|"]
+          dead = 0
+          for x in r["rows"]:
+              if not x["live_gates"]:
+                  continue
+              s = x.get("state")
+              lines.append(f"| {s} | {x['kind']} | {x['id']} | {x['live_gates'][0]} | {x['api'].get('days_left', '')} |")
+              if s == "DEAD":
+                  dead += 1
+                  print(f"::error title=dead pinned evidence::{x['live_gates'][0]} asserts on purged {x['kind']} {x['id']}")
+              elif s == "TIME_BOMB":
+                  print(f"::warning title=pinned evidence expiring::{x['live_gates'][0]} {x['kind']} {x['id']} expires in {x['api']['days_left']} d")
+          open(__import__('os').environ['GITHUB_STEP_SUMMARY'], 'a').write("\n".join(lines) + "\n")
+          sys.exit(1 if dead else 0)
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v6.0.0 (node24)
+        if: always()
+        with:
+          name: gm-evidence-binding-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/dag-check.json
+            ${{ runner.temp }}/pin-census.json
+          if-no-files-found: warn
+          retention-days: 30

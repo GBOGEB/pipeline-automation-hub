@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="dark light">
+  <title>__TITLE__</title>
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to Method Atlas</a>
+<div class="shell">
+  <header class="mast">
+    <div class="atlas-mark" aria-hidden="true">◇</div>
+    <div class="mast-copy"><div class="eyebrow">Mission Control <span> / </span> Source → process → evidence</div><h1>__TITLE__</h1><p>Functional blocks, hierarchical diagrams and bounded execution across the source-owned pipeline.</p></div>
+    <div class="mast-actions"><span class="badge declared">__SOURCE_CLASS__</span><label class="theme-label" for="theme-mode">Theme<select id="theme-mode"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label></div>
+  </header>
+  <nav class="nav" aria-label="Atlas sections"><a href="#execution">Execution map</a><a href="#blocks">Functional blocks</a><a href="#sources">Python &amp; YAML</a><a href="#catalog">Diagram catalog</a><a href="#taxonomy">Taxonomy</a><a href="#broker">Broker &amp; queue</a><a href="#coverage">Coverage &amp; reach</a><a href="#burndown">Burndown &amp; SPLINE</a><a href="#rebuild">Rebuild</a><a href="#proof">Source proof</a></nav>
+  <main id="main">
+    <section class="intro" aria-label="Evidence scope">
+      <div><div class="eyebrow">Source snapshot <span class="tree-state">__DIRTY_LABEL__</span></div><p class="repo-name">__SOURCE_REPO__</p><div class="snapshot-meta"><span>Head <code>__SOURCE_HEAD__</code></span><span>Observed <time>__OBSERVED_AT__</time></span><span>Commit timestamp <time>__COMMIT_AT__</time></span></div></div>
+      <p class="scope-note">Code inventory describes intended behaviour. Execution, queue occupancy and acceptance require their own source-bound observations. Missing evidence is shown as <strong>UNKNOWN</strong>.</p>
+    </section>
+    <div class="stat-grid" aria-label="Source inventory counts">__STATS__</div>
+
+    <section class="panel" id="execution">
+      <div class="section-heading"><div><span class="eyebrow">01 / Canonical to child</span><h2>Execution map</h2><p>Inspect a process, its dependencies and the interfaces it produces or consumes.</p></div><span id="graph-count" class="count">Loading source graphs</span></div>
+      <div class="toolbar"><label for="graph-select">Diagram</label><select id="graph-select" aria-label="Select canonical or child graph"></select><label for="graph-depth">Hierarchy</label><select id="graph-depth"><option value="all">All supplied levels</option><option value="1">Level 1</option><option value="2">Through level 2</option><option value="3">Through level 3</option></select><button id="clear-focus" type="button">Clear focus</button></div>
+      <div class="graph-layout">
+        <div class="graph-stage">
+          <div class="view-tabs" role="group" aria-label="Graph projection"><button type="button" data-view="diagram" aria-pressed="true">Diagram</button><button type="button" data-view="mermaid" aria-pressed="false">Mermaid</button><button type="button" data-view="edges" aria-pressed="false">Edge contracts</button></div>
+          <div id="diagram-view" class="graph-viewport" tabindex="0" aria-label="Scrollable graph; choose a node to inspect its contract"><p class="empty">Reading the embedded graph model…</p></div>
+          <div id="mermaid-view" class="code-view" hidden><div class="toolbar"><button id="copy-mermaid" type="button">Copy Mermaid</button><button id="download-mermaid" type="button">Download .mmd</button></div><pre id="mermaid-source" tabindex="0"></pre></div>
+          <div id="edges-view" class="table-scroll edge-view" hidden><table><thead><tr><th>From</th><th>To</th><th>Relationship</th><th>Binding / evidence</th></tr></thead><tbody id="edge-rows"></tbody></table></div>
+          <p id="graph-note" class="fine"></p>
+          <div class="legend" aria-label="Node and edge colour legend"><span><i class="dot source"></i>Source / process</span><span><i class="dot qualified"></i>Native qualified</span><span><i class="dot waiting"></i>Explicit waiting</span><span><i class="dot blocked"></i>Blocked / failed</span><span><i class="dot viewer"></i>Viewer / control</span><span><i class="dot neutral"></i>Neutral / actor</span><span><i class="line"></i>Local contract / receipt binding</span><span><i class="line dashed"></i>Declared / static / other binding</span><span><i class="line dependency"></i>Dependency / step order</span><span><i class="line artifact-flow"></i>Artifact / input / output</span><span><i class="line feedback"></i>Next-pulse feedback</span><span><i class="line static"></i>Static call</span></div>
+        </div>
+        <aside class="inspector" id="graph-inspector" aria-label="Graph node and dependency inspector" aria-live="polite"><h3>Source / process / identity / node / evidence</h3><p class="empty">Select a node to inspect its SPINE and immediate dependency edges.</p></aside>
+      </div>
+    </section>
+
+    <section class="panel" id="blocks">
+      <div class="section-heading"><div><span class="eyebrow">02 / Functional contract</span><h2>What the code does, takes and produces</h2><p>Search the declared purpose, Python entrypoint, workflow source or programme tag. Inspect input and output checking before connecting blocks.</p></div><span id="block-count" class="count" role="status"></span></div>
+      <div class="filters"><label class="search-label" for="block-search">Find a functional block<input id="block-search" type="search" placeholder="Purpose, file, entrypoint, tag…" autocomplete="off"></label><label for="programme-filter">Programme<select id="programme-filter"><option value="all">All programmes</option></select></label><label for="role-filter">Role<select id="role-filter"><option value="all">All roles</option></select></label><button id="reset-filters" type="button">Reset filters</button></div>
+      <div class="block-layout"><div><div class="table-scroll"><table class="block-table"><thead><tr><th>Functional block</th><th>Purpose</th><th>Role / tags</th><th>Contracts</th><th><span class="sr-only">Action</span></th></tr></thead><tbody id="block-rows"></tbody></table></div><div class="pagination"><button type="button" id="previous-blocks">Previous</button><span id="block-page" role="status"></span><button type="button" id="next-blocks">Next</button></div></div><aside class="inspector block-inspector" id="block-inspector" aria-label="Functional block details" aria-live="polite"><h3>Input and output inspector</h3><p class="empty">Select Inspect on any block. Missing contracts remain explicit so the next source-owned improvement is visible.</p></aside></div>
+      <details><summary>Shared input/output and joining rules</summary>__IO_DETAILS__</details>
+    </section>
+
+    <section class="panel" id="sources">
+      <div class="section-heading"><div><span class="eyebrow">02b / Source to step</span><h2>Python and workflow source explorer</h2><p>Open a Python module for function signatures and static calls, or a workflow for triggers, dependency layers, matrix settings and every declared step in order.</p></div><span id="source-count" class="count" role="status"></span></div>
+      <div class="filters"><label class="search-label" for="source-search">Find source or a callable<input id="source-search" type="search" placeholder="Path, function, job, step, Python target…" autocomplete="off"></label><label for="source-kind">Source family<select id="source-kind"><option value="all">Python and workflows</option><option value="python">Python modules</option><option value="workflow">GitHub workflows</option></select></label></div>
+      <div class="source-layout"><div><div class="table-scroll"><table class="source-table"><thead><tr><th>Source file</th><th>Family</th><th>Callable / job count</th><th><span class="sr-only">Action</span></th></tr></thead><tbody id="source-rows"></tbody></table></div><div class="pagination"><button id="previous-sources" type="button">Previous</button><span id="source-page" role="status"></span><button id="next-sources" type="button">Next</button></div></div><aside class="inspector source-inspector" id="source-inspector" aria-live="polite" aria-label="Python and workflow source details"><h3>Sequence and callable inspector</h3><p class="empty">Choose a source file. Source order and static calls remain distinct from observed runtime order.</p></aside></div>
+    </section>
+
+    <section class="panel" id="catalog">
+      <div class="section-heading"><div><span class="eyebrow">03 / Hierarchy and stitching</span><h2>Canonical diagram catalog</h2><p>DAG, dependency, SIPOC and SPINE views share source identity. A downstream customer becomes the next supplier only when an explicit output-to-input contract binds the two processes.</p></div></div>
+      <div class="filters"><label class="search-label" for="graph-search">Find a diagram<input id="graph-search" type="search" placeholder="Name, kind or source path…"></label><label for="graph-kind">Diagram family<select id="graph-kind"><option value="all">All diagram families</option></select></label></div>
+      <p id="catalog-count" class="fine" role="status"></p><div class="table-scroll"><table><thead><tr><th>Diagram / source</th><th>Family</th><th>Parent / level</th><th>Nodes / edges</th><th><span class="sr-only">Action</span></th></tr></thead><tbody id="catalog-rows"></tbody></table></div><div class="pagination"><button id="previous-graphs" type="button">Previous</button><span id="graph-page" role="status"></span><button id="next-graphs" type="button">Next</button></div>
+    </section>
+
+    <section class="panel" id="taxonomy"><div class="section-heading"><div><span class="eyebrow">04 / Names with boundaries</span><h2>Programme and method taxonomy</h2><p>Names and aliases preserve their source-owned meanings. Programme identity, evidence class and execution status are separate fields.</p></div></div>__PROGRAMMES__</section>
+
+    <section class="panel" id="broker"><div class="section-heading"><div><span class="eyebrow">05 / Capacity and pressure</span><h2>Broker, scheduler and queue</h2><p>Use occupancy, oldest age, arrivals, completions and worker capacity together. A burst can invalidate normal-time latency expectations; a policy decision needs a fresh observation window.</p></div><span class="badge declared">Source / policy view</span></div>__BROKER__</section>
+
+    <section class="panel" id="coverage"><div class="section-heading"><div><span class="eyebrow">06 / Coverage and reach</span><h2>Coverage across the full source hierarchy</h2><p>Keep identity, population, comparison anchor and qualification together. Unmeasured files, zero coverage, missing module identities and unknown test depth remain visible beside each aggregate.</p></div><span id="coverage-count" class="count" role="status"></span></div>
+      <div class="coverage-breadcrumb" aria-label="Coverage evidence hierarchy"><span>Portfolio</span><i aria-hidden="true">›</i><span>Repository</span><i aria-hidden="true">›</i><span>Source family</span><i aria-hidden="true">›</i><span>Cohort</span><i aria-hidden="true">›</i><span>Module</span><i aria-hidden="true">›</i><span>Function / branch</span><i aria-hidden="true">›</i><span>Test context</span><i aria-hidden="true">›</i><span>Native evidence</span></div>
+      <div class="filters"><label for="coverage-repository">Repository<select id="coverage-repository"><option value="all">All supplied repositories</option></select></label><label for="coverage-kind">Observation family<select id="coverage-kind"><option value="all">All source populations</option></select></label></div>__COVERAGE__
+    </section>
+
+    <section class="panel" id="burndown"><div class="section-heading"><div><span class="eyebrow">07 / Population before percentage</span><h2>Burndown ledger and SPLINE</h2><p>Each card retains its original source population, units and evidence class. Unknown observations leave gaps; a programme colour never establishes completion.</p></div><span class="badge unknown">No mixed-cohort total</span></div>__BURNDOWN__</section>
+
+    <section class="panel" id="rebuild"><div class="section-heading"><div><span class="eyebrow">08 / Reproducible outputs</span><h2>Rebuild the user view from source</h2><p>HTML, cards, diagram projections and styles are generated deliverables in the execution pipeline. Re-run the source command to update the snapshot and retain the resulting evidence identity.</p></div></div>__BUILD__<p id="copy-status" class="fine" role="status"></p></section>
+
+    <section class="panel" id="proof"><div class="section-heading"><div><span class="eyebrow">09 / Audit the observation</span><h2>Source proof and inventory boundary</h2><p>The model below is the same input used by every interaction on this page.</p></div><button type="button" id="download-model">Download source model</button></div><div class="two-up"><article class="subpanel"><h3>Observation identity</h3>__SOURCE_DETAILS__</article><article class="subpanel"><h3>Scanned inventory</h3>__INVENTORY_DETAILS__</article></div></section>
+    <noscript><p class="panel">Graph and functional-block inspection require JavaScript. The taxonomy, source proof, broker evidence, rebuild commands and cohort ledger remain readable above.</p></noscript>
+  </main>
+  <footer><span>Method Atlas · source-owned execution and evidence</span><span>Local assets · offline inspection · source snapshot</span></footer>
+</div>
+<script id="source-model" type="application/json">__MODEL_JSON__</script>
+<script src="app.js" defer></script>
+</body>
+</html>

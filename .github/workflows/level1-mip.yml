@@ -17,11 +17,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact tested head
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Compile Level-1 kernel
         run: python -m py_compile level1/runtime.py
+      - name: Unit controls (analytic engines, census arithmetic, CLI contract)
+        run: python -m unittest discover -s level1 -p 'test_*.py' -v
       - name: Execute census MIP and orchestration
         run: |
           python level1/runtime.py census
@@ -34,7 +36,7 @@ jobs:
       - name: Prove Level-1.0 and emit receipt
         run: python level1/runtime.py self-test | tee level1-receipt.json
       - name: Upload Level-1 receipts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: level1-mip-receipt
           path: |

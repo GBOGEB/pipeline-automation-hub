@@ -40,7 +40,7 @@ jobs:
         python-version: ['3.11', '3.12']
     steps:
       - name: Checkout exact PR source
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Assert exact checkout
@@ -48,7 +48,7 @@ jobs:
           SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install pinned coverage
@@ -90,6 +90,21 @@ jobs:
           g3a_branch_total=sum(x['num_branches'] for x in g3a)
           assert g3a_branch_total>0 and 100*g3a_branches/g3a_branch_total>=80, 'G3A branch coverage gate failed'
           print(f'FOCUSED_G3A_BRANCH={g3a_branches}/{g3a_branch_total}')
+          PY
+      - name: Require separate focused G3P live statement+branch coverage >= 80
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          c=json.loads(Path('/tmp/n3-coverage.json').read_text())['files']
+          s=[v['summary'] for k,v in c.items() if Path(k).name=='g3p_live_dashboard.py']
+          assert len(s)==1, f'expected exactly one g3p_live_dashboard.py source, got {len(s)}'
+          x=s[0]
+          denominator=x['num_statements']+x['num_branches']
+          assert denominator>0
+          pct=100*(x['covered_lines']+x['covered_branches'])/denominator
+          print(f'FOCUSED_G3P_STMT_BRANCH={pct:.2f}%')
+          assert pct>=80, 'focused G3P live quality gate failed'
           PY
       - name: Test G3P live N-index replay and fail-closed HTTP/SSE
         run: |
@@ -181,7 +196,7 @@ jobs:
           PY
       - name: Upload read-only evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: n3-evidence-py${{ matrix.python-version }}
           path: /tmp/n3-evidence/

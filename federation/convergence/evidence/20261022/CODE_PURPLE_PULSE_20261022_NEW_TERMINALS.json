@@ -1,0 +1,243 @@
+{
+  "schema": "codepurple.federated_incremental_pulse.v1",
+  "inspection_date": "2026-10-22",
+  "baseline": "Previous report: QPS ICD PDF layout failure #2046, W366 smoke #2048, CODEX certifi security mismatch, Method Atlas unchanged",
+  "meaningful_event": true,
+  "events": [
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "classification": "NEW_FIRST_RED",
+      "fingerprint": "DEPENDENCY_FILE_NOT_PARSEABLE",
+      "exact_sha": "4cc691b59d24f357878c78ea5ea9039693d53cb7",
+      "run_id": 39795467475,
+      "run_attempt": 1,
+      "native_job_id": 119881618432,
+      "status": "FAILURE",
+      "tests_executed": null,
+      "tests_pass": null,
+      "tests_fail": null,
+      "tests_skip": null,
+      "artifact_ids": [],
+      "context": "Dependabot graph update fails reading recovered historical Hepak/templates/new_repo_integration/pyproject.toml. Accepted causal root ID UNKNOWN."
+    },
+    {
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "classification": "NEW_TERMINAL_MISMATCH",
+      "fingerprint": "PC3_COLLECTOR_CONCLUSION_CONFLICT",
+      "exact_sha": "e7a3c8514127bc66ee68d049487d7a7a7a16fc58",
+      "run_id": 39787756949,
+      "run_attempt": 1,
+      "native_job_id": 119859216610,
+      "status": "FAILURE",
+      "tests_executed": null,
+      "tests_pass": null,
+      "tests_fail": null,
+      "tests_skip": null,
+      "published_aggregate_artifact": false,
+      "successful_platform_jobs": 6,
+      "accepted_task_receipts": 72,
+      "total_task_receipts": 72,
+      "constrained_runner_status": "DEFERRED_NO_DECLARED_CONSTRAINED_RUNNER",
+      "at_run_job_api_snapshot_saved": false,
+      "context": "Collector failed its conclusion check; all six collectors are currently terminal success. No proof yet of timing/race cause."
+    },
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "classification": "BOUNDED_LOCAL_GREEN",
+      "exact_sha": "4cc691b59d24f357878c78ea5ea9039693d53cb7",
+      "run_id": 39795449266,
+      "run_attempt": 1,
+      "native_job_id": 119881548684,
+      "status": "SUCCESS",
+      "tests_executed": 148,
+      "tests_pass": 148,
+      "tests_fail": 0,
+      "tests_skip": 0,
+      "artifact_ids": [
+        12432148853
+      ],
+      "source_bound_census": {
+        "observed": 1,
+        "eligible": 5
+      },
+      "authority": "PASS_STRUCTURAL_ONLY; MERGE_ADMISSION_HOLD"
+    },
+    {
+      "repository": "GBOGEB/cryoplant-project",
+      "classification": "BOUNDED_LOCAL_GREEN",
+      "exact_sha": "3689ad0c41e3ee24b442498132b4978ebf6ad407",
+      "run_id": 39795640940,
+      "run_attempt": 1,
+      "native_job_id": 119882173517,
+      "status": "SUCCESS",
+      "tests_executed": 100,
+      "tests_pass": 100,
+      "tests_fail": 0,
+      "tests_skip": 0,
+      "artifact_ids": [
+        12432463935
+      ],
+      "statement_coverage": {
+        "scope": "federation/acceptance_debt_consumer.py",
+        "covered": 44,
+        "eligible": 44
+      },
+      "branch_coverage": {
+        "scope": "federation/acceptance_debt_consumer.py",
+        "covered": 2,
+        "eligible": 2
+      },
+      "temporal_comparison": "UNKNOWN_NO_MATCHED_BASELINE",
+      "authority": "No engineering-owner acceptance"
+    },
+    {
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "classification": "REPEATED_DEFERRED_NOT_NEW_AUTHORITY",
+      "exact_sha": "e7a3c8514127bc66ee68d049487d7a7a7a16fc58",
+      "run_id": 39796486153,
+      "run_attempt": 1,
+      "native_jobs": [
+        119884844192,
+        119884844908,
+        119886767948
+      ],
+      "tests_executed": 57,
+      "tests_pass": 57,
+      "tests_fail": 0,
+      "tests_skip": 0,
+      "artifact_ids": [
+        12433936196,
+        12433567329
+      ],
+      "authenticated_requests": 0,
+      "snapshot_at_utc": "2026-10-16T13:15:00Z",
+      "current_authenticated_federation": false
+    },
+    {
+      "repository": "GBOGEB/ABACUS",
+      "classification": "HISTORICAL_DENOMINATOR_CONTROL_GREEN",
+      "exact_sha": "44caccf716a7c20693a2911566289bfc75ea81d9",
+      "run_id": 39799140766,
+      "run_attempt": 1,
+      "native_job_id": 119894532651,
+      "tests_executed": null,
+      "artifact_ids": [
+        12435475709
+      ],
+      "embedded_cohort_source_sha": "54ee33b9d7af7fa442e61634ac296e602976f68d",
+      "focused_statements": "133/133",
+      "focused_branches": "17/18",
+      "temporal_delta": "UNKNOWN_NO_MATCHED_BASELINE",
+      "pca": "CANDIDATE_ONLY_6_DISTINCT_HISTORICAL_SHAS"
+    },
+    {
+      "repository": "GBOGEB/CODEX",
+      "classification": "RECURRING_SECURITY_RISK_NOT_CLOSED",
+      "exact_sha": "b254348fae784bf4214cdc623f942da10544e3a7",
+      "run_id": 39795352971,
+      "run_attempt": 1,
+      "native_job_id": 119881204732,
+      "tests_executed": null,
+      "artifact_ids": [
+        12433576186,
+        12433576189
+      ],
+      "advisory": "PYSEC-2026-4320",
+      "package": "certifi 2026.7.22",
+      "risk_present_old_and_new": true,
+      "authority": "No security waiver or closure"
+    }
+  ],
+  "method_atlas": {
+    "authority": "VIEWER_ONLY",
+    "original_head": "04e6bde112592993e2d026c42b4aa5c3b747f2f1",
+    "original_run": 38710173679,
+    "original_attempt": 1,
+    "original_job": 116339320611,
+    "original_tests": [
+      53,
+      53,
+      0,
+      0
+    ],
+    "original_artifact": 11961956624,
+    "pr533_head": "bf9383bc39bedf645175184049bdb2013379041d",
+    "qualified_run": 38719705691,
+    "qualified_attempt": 1,
+    "qualified_job": 116370959125,
+    "qualified_tests": [
+      74,
+      74,
+      0,
+      0
+    ],
+    "lane_contract_tests": 16,
+    "series_pass": "W1.C1.I2.S0",
+    "qualified_artifact": 11964700323,
+    "generated_members": {
+      "lane-process.html": 38236,
+      "lane-process.mmd": 4403,
+      "lane-process.json": 16695
+    },
+    "generated_members_match_original": true,
+    "later_run": 39725684929,
+    "later_sha": "010ac255dee7937b0040c548b69f80ff885a3c31",
+    "later_job": 119648913595,
+    "later_tests": [
+      888,
+      888,
+      0,
+      0
+    ],
+    "later_artifact": 12402873544,
+    "later_large_artifact_independently_rechecked": false
+  },
+  "canonical_authority": {
+    "zip_verifier": "Mission Control #530",
+    "six_repo_breadth": "Mission Control #531",
+    "method_lane_viewer": "Mission Control #533",
+    "last_canonical_six_repo_breadth": "6/42 historical cells, no new admission"
+  },
+  "coverage_comparison": "No newly qualified matching numerator/denominator across sources. QPS acceptance_debt_consumer.py 44/44 statements, 2/2 branches only within current scoped run. Historical ABACUS W70 133/133 statements, 17/18 branches not exact current main.",
+  "roots": {
+    "new_fingerprints": [
+      "DEPENDENCY_FILE_NOT_PARSEABLE",
+      "PC3_COLLECTOR_CONCLUSION_CONFLICT"
+    ],
+    "new_fingerprint_occurrences": {
+      "DEPENDENCY_FILE_NOT_PARSEABLE": 1,
+      "PC3_COLLECTOR_CONCLUSION_CONFLICT": 1
+    },
+    "accepted_distinct_causal_root_ids": null,
+    "verified_root_closures": 0
+  },
+  "capacity": {
+    "observed_collection_cells": 6,
+    "task_receipts_accepted": 72,
+    "task_receipts_total": 72,
+    "worker_hours": null,
+    "effective_capacity": null
+  },
+  "mip": {
+    "M1": "PARTIAL",
+    "M2": "HOLD",
+    "M3": "HOLD",
+    "pca": "ABACUS historical six-SHA diagnostic candidate; federation admission NOT ASSESSABLE",
+    "bradley_terry": "Historical 3/5 local class qualification; federation NOT ASSESSABLE"
+  },
+  "governance": {
+    "merge_admission": "HOLD",
+    "formal_engineering_credit_delta": 0,
+    "owner_acceptance": false,
+    "security_waiver": false,
+    "cross_repo_coverage_credit": 0
+  },
+  "artifact_verification": {
+    "validated_archive_count": 17,
+    "validated_members": 186,
+    "zip_bytes_total": 652453,
+    "member_bytes_total": 3253291,
+    "failed_archive_hashes": 0,
+    "failed_crc_members": 0
+  }
+}

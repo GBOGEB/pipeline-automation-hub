@@ -1,0 +1,150 @@
+{
+  "schema": "code_purple.monitor_pulse.v1",
+  "comparison_baseline": "prior conversation pulse: ABACUS #2367 W76 4/4 GREEN and #2391 Bandit RED",
+  "new_meaningful_events": [
+    {
+      "class": "ATTRIBUTABLE_RED",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 2046,
+      "head_sha": "29a799f28690220ce0cebca1ac1ef8580f86ad00",
+      "runs": [
+        {
+          "id": 39784725791,
+          "attempt": null,
+          "job": 119844765225,
+          "outcome": "failure",
+          "tests": null,
+          "artifact_id": 12428658601
+        },
+        {
+          "id": 39784726572,
+          "attempt": null,
+          "job": 119844767846,
+          "outcome": "failure",
+          "tests": null,
+          "artifact_id": null
+        }
+      ],
+      "first_red": "PDF overflow in five of eight ICD packs; deck PDF layout gate RED",
+      "fingerprint_classes_observed": 1,
+      "occurrences": {
+        "ICD_pack_failures": 5,
+        "failed_jobs": 2
+      },
+      "accepted_root_id": null,
+      "closure": false
+    },
+    {
+      "class": "SOURCE_BOUND_CANDIDATE_PASS",
+      "repo": "GBOGEB/cryoplant-project",
+      "pr": 2048,
+      "head_sha": "fb16a84bb999c8f2f4663fbad679fb08caea5825",
+      "run_id": 39788358873,
+      "attempt": null,
+      "job": 119857432684,
+      "tests": {
+        "executed": 10,
+        "passed": 10,
+        "failed": 0,
+        "skipped": 0
+      },
+      "artifact_id": 12431130883,
+      "limits": "smoke does not close ICD PDF gate or grant owner acceptance"
+    },
+    {
+      "class": "MEANINGFUL_MISMATCH",
+      "repo": "GBOGEB/CODEX",
+      "pr": 1155,
+      "head_sha": "19be5c7e9ec924cd38355d2ac3523bff31da90e5",
+      "run_id": 39780535582,
+      "attempt": null,
+      "job": 119830334113,
+      "job_outcome": "success",
+      "tests": null,
+      "finding": {
+        "id": "PYSEC-2026-4320",
+        "alias": "GHSA-6q48-6c7w-9gw2",
+        "package": "certifi",
+        "observed_version": "2026.7.22",
+        "severity": "9.1",
+        "old_new_results_unchanged": true
+      },
+      "closure": false
+    }
+  ],
+  "baseline_retained": {
+    "method_atlas_pr": 533,
+    "exact_head": "bf9383bc39bedf645175184049bdb2013379041d",
+    "run_id": 38719705691,
+    "job_id": 116370959125,
+    "test_counts": {
+      "executed": 74,
+      "passed": 74,
+      "failed": 0,
+      "skipped": 0
+    },
+    "lane_process_contract_tests": 16,
+    "code_purple_series": "PASS W1.C1.I2.S0",
+    "artifact_id": 11964700323,
+    "members_bytes": {
+      "lane-process.html": 38236,
+      "lane-process.mmd": 4403,
+      "lane-process.json": 16695
+    }
+  },
+  "coverage": {
+    "statements": null,
+    "branches": null,
+    "qualified_scope_matched_delta": null
+  },
+  "census": {
+    "canonical_source": "pipeline-automation-hub #531",
+    "historical_observed": 6,
+    "historical_eligible": 42,
+    "newly_attested": null
+  },
+  "roots": {
+    "accepted_distinct_root_ids": null,
+    "verified_root_closures": 0
+  },
+  "work": {
+    "worker_hours": null,
+    "effective_capacity": null,
+    "historical_n5_jobs_observed": 28,
+    "historical_n5_success_jobs": 26
+  },
+  "readiness": {
+    "M1": "PARTIAL",
+    "M2": "HOLD",
+    "M3": "HOLD",
+    "federation_PCA_BT": "NOT_ASSESSABLE",
+    "QPS_local_operational_PCA": "EXPLORATORY; 16 unique workflow runs, mixed workloads",
+    "QPS_BT": "WITHHELD_NO_APPROVED_OBSERVED_PAIRWISE"
+  },
+  "authority": {
+    "canonical_zip_verifier": "pipeline-automation-hub #530",
+    "canonical_six_repo_producer": "pipeline-automation-hub #531",
+    "method_viewer_only": "pipeline-automation-hub #533",
+    "merge_admission": "HOLD",
+    "formal_engineering_credit_delta": 0,
+    "security_waiver": false,
+    "QPS_owner_acceptance": false,
+    "cross_repo_coverage_credit": false
+  },
+  "zip_verification_summary": {
+    "verified_archives": 6,
+    "verified_members": 105,
+    "archive_bytes": 3736570,
+    "uncompressed_member_bytes": 11291549,
+    "digest_failures": 0,
+    "crc_failures": 0
+  },
+  "unknowns": [
+    "New run attempt identifiers not exposed by connector",
+    "QPS PDF deck artifact bytes UNKNOWN",
+    "New statement/branch denominators UNKNOWN",
+    "New authenticated six-repo breadth UNKNOWN",
+    "Accepted causal root IDs UNKNOWN",
+    "Worker hours/capacity UNKNOWN"
+  ]
+}

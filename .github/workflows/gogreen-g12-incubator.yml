@@ -1,0 +1,107 @@
+name: GoGREEN G12 read-only incubation and native preview
+on:
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/nurture_incubator/**'
+      - '.github/workflows/gogreen-g12-incubator.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/gogreen/nurture_incubator/**'
+      - '.github/workflows/gogreen-g12-incubator.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gogreen-g12-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  source-bound-incubator:
+    name: G12 native Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12']
+    steps:
+      - name: Checkout exact producer head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: 30+ adversarial unit tests and source-only branch coverage
+        env:
+          EXPECT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECT_SHA"
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          SRC=mission-control/gogreen/nurture_incubator
+          PYTHONPATH="$SRC" python -m coverage run --branch --source=incubator \
+            -m unittest discover -s "$SRC/tests" -p 'test_incubator.py' -v \
+            2>&1 | tee g12-tests.log
+          grep -Eq '^Ran (3[0-9]|[4-9][0-9]|[1-9][0-9][0-9]+) tests?' g12-tests.log
+          python -m coverage json -o g12-coverage.json
+          python -m coverage report --show-missing --fail-under=80
+          python "$SRC/incubator.py" \
+            --input "$SRC/samples/w4_w5_native_pulse.json" \
+            --source-sha "$EXPECT_SHA" --out dist/g12
+          python "$SRC/incubator.py" \
+            --input "$SRC/samples/w4_w5_native_pulse.json" \
+            --source-sha "$EXPECT_SHA" --out dist/g12 --check
+          python - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          log = Path("g12-tests.log").read_text()
+          m = re.search(r"^Ran (\d+) tests? in", log, re.M)
+          if not m or int(m.group(1)) < 30:
+              raise SystemExit("G12_FAIL_CLOSED: inadequate native test population")
+          coverage = json.loads(Path("g12-coverage.json").read_text())["totals"]
+          if not coverage["num_statements"] or not coverage["num_branches"]:
+              raise SystemExit("G12_FAIL_CLOSED: missing scoped statement/branch denominators")
+          metrics = json.loads(Path("dist/g12/metrics.json").read_text())
+          if metrics["matched_workflow_family_count"] != 2 or metrics["roots"]["new_accepted_root_closures"] != 0:
+              raise SystemExit("G12_FAIL_CLOSED: invalid convergence attribution")
+          receipt = {
+              "schema": "gogreen.g12.native_ci.v1",
+              "source_sha": os.environ["EXPECT_SHA"],
+              "run_id": int(os.environ["GITHUB_RUN_ID"]),
+              "attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
+              "job_name": os.environ["GITHUB_JOB"],
+              "numeric_job_id": None,
+              "native_tests": int(m.group(1)),
+              "tests_failed": 0,
+              "tests_skipped": 0,
+              "scope": "mission-control/gogreen/nurture_incubator/incubator.py",
+              "statement_covered": coverage["covered_lines"],
+              "statement_eligible": coverage["num_statements"],
+              "branch_covered": coverage["covered_branches"],
+              "branch_eligible": coverage["num_branches"],
+              "matched_workflow_family_count": 2,
+              "fresh_breadth_observed": None,
+              "byte_proof": "OUTPUT_MANIFEST_VERIFIED_IN_JOB_ZIP_EXTERNALLY_UNVERIFIED",
+              "producer_artifact_bytes_verified": False,
+              "authority_transfer": False,
+              "merge_admission": "HOLD",
+              "public_pages_deployed": False
+          }
+          Path("dist/g12/native_ci.json").write_text(
+              json.dumps(receipt, indent=2, sort_keys=True)+"\n", encoding="utf-8")
+          PY
+      - name: Stage review-only preview artifact (not Pages deployment)
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: gogreen-g12-incubation-${{ matrix.python-version }}-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            dist/g12/
+            g12-tests.log
+            g12-coverage.json
+          if-no-files-found: warn

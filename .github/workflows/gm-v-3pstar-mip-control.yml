@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact source head
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
@@ -64,34 +64,38 @@ jobs:
           cmp /tmp/gm-v-3pstar-mip-1.json /tmp/gm-v-3pstar-mip-2.json
           grep -q 'PASS_GM_V_3PSTAR_MIP_CONTROL' /tmp/gm-v-3pstar-mip-1.json
 
-      - name: Reverify exact predecessor runtime artifacts
+      - name: Bind latest valid predecessor runtime evidence (no pinned ids)
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          api="https://api.github.com/repos/${GITHUB_REPOSITORY}"
-          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json"             "$api/actions/runs/35171901674" > /tmp/capacity-run.json
-          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json"             "$api/actions/artifacts/10476967287" > /tmp/capacity-artifact.json
-          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json"             "$api/actions/runs/35343419829" > /tmp/gmv-run.json
-          curl -fsSL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json"             "$api/actions/artifacts/10546460986" > /tmp/gmv-artifact.json
+          # #529 G05: was pinned to runs 35171901674 / 35343419829 and artifacts
+          # 10476967287 / 10546460986, purged by 30-day retention (red with zero code
+          # change). Now each predecessor resolves to its latest successful master run
+          # whose head is an ancestor of this gate's source, with a live digested artifact.
+          python mission-control/grand-missions/evidence_binding.py resolve \
+            --producer gm-iv-runtime-capacity-proof-v2.yml \
+            --artifact-prefix gm-iv-runtime-capacity-v2- \
+            --source-sha "$SOURCE_SHA" \
+            --run-out /tmp/capacity-run.json --artifact-out /tmp/capacity-artifact.json \
+            --binding-out /tmp/capacity-binding.json
+          python mission-control/grand-missions/evidence_binding.py resolve \
+            --producer gm-v-governor-readiness.yml \
+            --artifact-prefix gm-v-governor-readiness- \
+            --source-sha "$SOURCE_SHA" \
+            --run-out /tmp/gmv-run.json --artifact-out /tmp/gmv-artifact.json \
+            --binding-out /tmp/gmv-binding.json
           python - <<'PY'
           import json
-          cap=json.load(open('/tmp/capacity-run.json'))
-          capa=json.load(open('/tmp/capacity-artifact.json'))
-          gmv=json.load(open('/tmp/gmv-run.json'))
-          gmva=json.load(open('/tmp/gmv-artifact.json'))
-          assert cap['head_sha']=='9cdb8fe35e15b675f3fe1b2492c16f9785fc3115'
-          assert cap['status']=='completed' and cap['conclusion']=='success'
-          assert capa['id']==10476967287
-          assert capa['digest']=='sha256:7a5a0910db8639b642d8e63b4e37169d636ee3e6b7fc2ba0da93789ad183fc68'
-          assert capa['expired'] is False
-          assert gmv['head_sha']=='0d3b66ee8c2566ed1e5f8b83c2932e4a9160bcbb'
-          assert gmv['status']=='completed' and gmv['conclusion']=='success'
-          assert gmva['id']==10546460986
-          assert gmva['digest']=='sha256:d1d252e6635c79baca4af4c03a89732cad2a004c96f55e0ce650f98d818090ba'
-          assert gmva['expired'] is False
-          print('PASS_EXACT_PREDECESSOR_RUNTIME_ARTIFACTS')
+          for run_f, art_f, bind_f in (('/tmp/capacity-run.json','/tmp/capacity-artifact.json','/tmp/capacity-binding.json'),
+                                       ('/tmp/gmv-run.json','/tmp/gmv-artifact.json','/tmp/gmv-binding.json')):
+              run, art, b = (json.load(open(f)) for f in (run_f, art_f, bind_f))
+              assert b['result']=='PASS' and b['pinned_ids_used'] is False
+              assert run['status']=='completed' and run['conclusion']=='success' and run['head_sha']==b['head_sha']
+              assert art['id']==b['artifact_id'] and art['expired'] is False
+              assert art['digest']==b['artifact_digest'] and art['digest'].startswith('sha256:')
+          print('PASS_LATEST_VALID_PREDECESSOR_RUNTIME_ARTIFACTS')
           PY
 
       - name: Enforce terminal handover boundary
@@ -113,7 +117,7 @@ jobs:
           PY
 
       - name: Upload exact-SHA 3PSTAR MIP handover receipt
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gm-v-3pstar-mip-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
@@ -122,6 +126,8 @@ jobs:
             /tmp/capacity-run.json
             /tmp/capacity-artifact.json
             /tmp/gmv-run.json
+            /tmp/capacity-binding.json
+            /tmp/gmv-binding.json
             /tmp/gmv-artifact.json
             mission-control/grand-missions/GM_V_3PSTAR_MIP_CONTROL_v1.json
             mission-control/grand-missions/GM_V_CURRENT_v1.json

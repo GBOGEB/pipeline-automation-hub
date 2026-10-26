@@ -1,0 +1,88 @@
+name: QBD Public Three-Repository Observer
+
+on:
+  pull_request:
+    paths:
+      - "mission-control/gogreen/bd_queue_wave.py"
+      - "mission-control/gogreen/tests/test_bd_queue_wave.py"
+      - "mission-control/gogreen/QBD_W50_PUBLIC_OWNER_BOUNDARY.md"
+      - ".github/workflows/qbd-public-three-observer.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  public-three:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - name: Checkout exact immutable source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify exact head and Python
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          python --version
+      - name: Run bounded public-only regression tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/gogreen/tests -p 'test_bd_queue_wave.py' -v
+      - name: Collect public 3-repo native observation (no private query)
+        shell: bash
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          SOURCE_RUN_ID: ${{ github.run_id }}
+          SOURCE_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/bd_queue_wave.py --public-only --max-parallel 4 --out "$RUNNER_TEMP/qbd-public"
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          p = Path(os.environ['RUNNER_TEMP']) / 'qbd-public'
+          raw = (p / 'bd_summary.json').read_bytes()
+          s = json.loads(raw)
+          assert s['scope'] == 'LIVE_PUBLIC_THREE_REPO_PARTIAL_QPS_UNKNOWN'
+          assert len(s['issues']) == 3
+          assert {r['repository'] for r in s['issues']} == {
+            'GBOGEB/ABACUS', 'GBOGEB/CODEX', 'GBOGEB/pipeline-automation-hub'
+          }
+          assert s['private_qps_open_issues'] is None
+          assert s['private_qps_open_prs'] is None
+          assert s['private_qps_root_closures'] is None
+          assert s['full_four_repo_census'] is False
+          assert s['federation_admission'] == 'HOLD'
+          assert s['merge_authorized'] is False
+          result = {
+            'schema': 'codepurple.qbd.public3.native-receipt.v1',
+            'source_sha': os.environ['SOURCE_SHA'],
+            'run_id': int(os.environ['SOURCE_RUN_ID']),
+            'attempt': int(os.environ['SOURCE_ATTEMPT']),
+            'public_open_issues': s['open_issues'],
+            'public_open_prs': s['open_prs'],
+            'public_failed_workflow_manifestations': s['manifestations'],
+            'unknown_public_prs': s['prs_unknown'],
+            'private_qps_source': None,
+            'four_repo_complete': False,
+            'merge_admission': 'HOLD',
+            'root_closure_credit': None,
+            'bd_summary_sha256': hashlib.sha256(raw).hexdigest()
+          }
+          (p / 'native_public_receipt.json').write_text(json.dumps(result,sort_keys=True,indent=2)+'\n')
+          print('QBD_PUBLIC3_NATIVE_PARTIAL',json.dumps(result,sort_keys=True))
+          PY
+      - name: Upload public-only read-only evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: qbd-public3-partial-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/qbd-public/
+          if-no-files-found: warn

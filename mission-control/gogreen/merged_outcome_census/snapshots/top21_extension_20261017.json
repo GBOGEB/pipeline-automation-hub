@@ -1,0 +1,757 @@
+{
+  "schema": "gogreen.top21.merged-check-snapshot.v1",
+  "cohort": "TOP21_EXTENSION",
+  "canonical_roster": "mission-control/grand-missions/GM_DMAIC_EVOLUTION_T7_T14_T21_v1.json",
+  "roster_blob": "0e42dd49eacc46a57fde432ad8d93ea17de4b4f9",
+  "observed_date": "2026-10-17",
+  "authority_transfer": false,
+  "merge_authorized": false,
+  "root_closure_credit": 0,
+  "prs": [
+    {
+      "repository": "GBOGEB/skills",
+      "pr": 1,
+      "head_sha": "def98cac879e222f4bf50277123937dc38e42d9d",
+      "merged_at": "2026-09-16T20:06:14Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/skills/pull/1",
+      "check_total": 0,
+      "check_runs": [],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/cryo_leak_rate_dashboard",
+      "pr": 17,
+      "head_sha": "4fa8814775d57379aeb970fa85ca27e7ba49793f",
+      "merged_at": "2026-10-11T21:41:45Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/cryo_leak_rate_dashboard/pull/17",
+      "check_total": 2,
+      "check_runs": [
+        {
+          "id": 114574337805,
+          "name": "apply",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-11T21:01:39Z",
+          "completed_at": "2026-10-11T21:01:38Z",
+          "details_url": "https://github.com/GBOGEB/cryo_leak_rate_dashboard/actions/runs/38174599300/job/114574337805"
+        },
+        {
+          "id": 114574175905,
+          "name": "unit",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T21:01:27Z",
+          "completed_at": "2026-10-11T21:01:38Z",
+          "details_url": "https://github.com/GBOGEB/cryo_leak_rate_dashboard/actions/runs/38174599300/job/114574175905"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/cryo_leak_rate_dashboard",
+      "pr": 16,
+      "head_sha": "73607eb6438f89e145ab5731aed7ea74ca6f5dcd",
+      "merged_at": "2026-09-12T09:32:07Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/cryo_leak_rate_dashboard/pull/16",
+      "check_total": 0,
+      "check_runs": [],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/telegraf",
+      "pr": 4,
+      "head_sha": "645c3bf5c6361d109a7b357456b2a76a9953421b",
+      "merged_at": "2026-09-12T09:31:08Z",
+      "base_branch": "master",
+      "pr_url": "https://github.com/GBOGEB/telegraf/pull/4",
+      "check_total": 6,
+      "check_runs": [
+        {
+          "id": 103533144356,
+          "name": "Assign milestones to PRs",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-09-12T09:36:10Z",
+          "completed_at": "2026-09-12T09:36:16Z",
+          "details_url": "https://github.com/GBOGEB/telegraf/actions/runs/34686064904/job/103533144356"
+        },
+        {
+          "id": 103533134112,
+          "name": "semantic / main",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-09-12T09:38:30Z",
+          "completed_at": "2026-09-12T09:38:36Z",
+          "details_url": "https://github.com/GBOGEB/telegraf/actions/runs/34686060822/job/103533134112"
+        },
+        {
+          "id": 103533133530,
+          "name": "run-readme-linter",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-12T09:41:03Z",
+          "completed_at": "2026-09-12T09:41:20Z",
+          "details_url": "https://github.com/GBOGEB/telegraf/actions/runs/34686060473/job/103533133530"
+        },
+        {
+          "id": 103533133409,
+          "name": "master",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-12T09:38:22Z",
+          "completed_at": "2026-09-12T09:38:27Z",
+          "details_url": "https://github.com/GBOGEB/telegraf/actions/runs/34686060557/job/103533133409"
+        },
+        {
+          "id": 103533133242,
+          "name": "Lint Code Base",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-12T09:38:17Z",
+          "completed_at": "2026-09-12T09:40:03Z",
+          "details_url": "https://github.com/GBOGEB/telegraf/actions/runs/34686060498/job/103533133242"
+        },
+        {
+          "id": 103533117605,
+          "name": "Lint Code Base",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-12T09:39:15Z",
+          "completed_at": "2026-09-12T09:41:29Z",
+          "details_url": "https://github.com/GBOGEB/telegraf/actions/runs/34686054026/job/103533117605"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/telegraf",
+      "pr": 3,
+      "head_sha": "9a2f306c551549cca696173023b3d7ec80327c88",
+      "merged_at": "2026-09-12T09:28:09Z",
+      "base_branch": "master",
+      "pr_url": "https://github.com/GBOGEB/telegraf/pull/3",
+      "check_total": 7,
+      "check_runs": [
+        {
+          "id": 103532797218,
+          "name": "Assign milestones to PRs",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-09-12T09:34:44Z",
+          "completed_at": "2026-09-12T09:34:50Z",
+          "details_url": "https://github.com/GBOGEB/telegraf/actions/runs/34685930464/job/103532797218"
+        },
+        {
+          "id": 103532231859,
+          "name": "semantic / main",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-09-12T09:23:20Z",
+          "completed_at": "2026-09-12T09:23:26Z",
+          "details_url": "https://github.com/GBOGEB/telegraf/actions/runs/34685712888/job/103532231859"
+        },
+        {
+          "id": 103532231188,
+          "name": "Lint Code Base",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-09-12T09:23:20Z",
+          "completed_at": "2026-09-12T09:25:07Z",
+          "details_url": "https://github.com/GBOGEB/telegraf/actions/runs/34685712674/job/103532231188"
+        },
+        {
+          "id": 103532231127,
+          "name": "run-readme-linter",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-12T09:23:20Z",
+          "completed_at": "2026-09-12T09:23:41Z",
+          "details_url": "https://github.com/GBOGEB/telegraf/actions/runs/34685712643/job/103532231127"
+        },
+        {
+          "id": 103532231032,
+          "name": "master",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-12T09:23:20Z",
+          "completed_at": "2026-09-12T09:23:23Z",
+          "details_url": "https://github.com/GBOGEB/telegraf/actions/runs/34685712647/job/103532231032"
+        },
+        {
+          "id": 103532230883,
+          "name": "bounded-observer-smoke",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-12T09:23:20Z",
+          "completed_at": "2026-09-12T09:30:10Z",
+          "details_url": "https://github.com/GBOGEB/telegraf/actions/runs/34685712612/job/103532230883"
+        },
+        {
+          "id": 103532216552,
+          "name": "Lint Code Base",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-09-12T09:23:12Z",
+          "completed_at": "2026-09-12T09:25:34Z",
+          "details_url": "https://github.com/GBOGEB/telegraf/actions/runs/34685707052/job/103532216552"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/github-mcp-server",
+      "pr": 5,
+      "head_sha": "bffce38c7f260adb6d4bf05bd06fb388ee8382e8",
+      "merged_at": "2026-09-11T16:42:13Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/github-mcp-server/pull/5",
+      "check_total": 18,
+      "check_runs": [
+        {
+          "id": 103343466783,
+          "name": "spam-detection",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:43:57Z",
+          "completed_at": "2026-09-11T16:44:03Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623673602/job/103343466783"
+        },
+        {
+          "id": 103343463206,
+          "name": "spam-detection",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:43:56Z",
+          "completed_at": "2026-09-11T16:44:03Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623672142/job/103343463206"
+        },
+        {
+          "id": 103342734901,
+          "name": "official-branch-write",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:41:36Z",
+          "completed_at": "2026-09-11T16:42:14Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623450785/job/103342734901"
+        },
+        {
+          "id": 103342734886,
+          "name": "Analyze (${{ matrix.language }})",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-09-11T16:41:35Z",
+          "completed_at": "2026-09-11T16:41:34Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623450203/job/103342734886"
+        },
+        {
+          "id": 103342734359,
+          "name": "official-actions-live-read",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:41:38Z",
+          "completed_at": "2026-09-11T16:42:20Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623450534/job/103342734359"
+        },
+        {
+          "id": 103342734084,
+          "name": "build (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:41:38Z",
+          "completed_at": "2026-09-11T16:42:47Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623450256/job/103342734084"
+        },
+        {
+          "id": 103342733960,
+          "name": "build (macos-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T17:14:28Z",
+          "completed_at": "2026-09-11T17:15:05Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623450256/job/103342733960"
+        },
+        {
+          "id": 103342733864,
+          "name": "build (windows-latest)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-09-11T16:41:37Z",
+          "completed_at": "2026-09-11T16:42:46Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623450256/job/103342733864"
+        },
+        {
+          "id": 103342733744,
+          "name": "docs-check",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:41:38Z",
+          "completed_at": "2026-09-11T16:42:02Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623450286/job/103342733744"
+        },
+        {
+          "id": 103342733573,
+          "name": "lint",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:41:37Z",
+          "completed_at": "2026-09-11T16:41:51Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623450179/job/103342733573"
+        },
+        {
+          "id": 103342733572,
+          "name": "mcp-diff",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:41:37Z",
+          "completed_at": "2026-09-11T16:42:03Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623450191/job/103342733572"
+        },
+        {
+          "id": 103342733440,
+          "name": "official-actions-proof",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:41:37Z",
+          "completed_at": "2026-09-11T16:42:23Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623450209/job/103342733440"
+        },
+        {
+          "id": 103342733349,
+          "name": "official-live-read",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:41:37Z",
+          "completed_at": "2026-09-11T16:42:13Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623450227/job/103342733349"
+        },
+        {
+          "id": 103342733284,
+          "name": "mcp-diff-http",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:41:37Z",
+          "completed_at": "2026-09-11T16:42:08Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623450191/job/103342733284"
+        },
+        {
+          "id": 103342645297,
+          "name": "Analyze (${{ matrix.language }})",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-09-11T16:41:17Z",
+          "completed_at": "2026-09-11T16:41:17Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623424340/job/103342645297"
+        },
+        {
+          "id": 103342643795,
+          "name": "build (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:41:56Z",
+          "completed_at": "2026-09-11T16:43:02Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623424377/job/103342643795"
+        },
+        {
+          "id": 103342643692,
+          "name": "build (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:41:21Z",
+          "completed_at": "2026-09-11T16:42:49Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623424377/job/103342643692"
+        },
+        {
+          "id": 103342643376,
+          "name": "build (macos-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T17:17:53Z",
+          "completed_at": "2026-09-11T17:18:45Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623424377/job/103342643376"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/github-mcp-server",
+      "pr": 4,
+      "head_sha": "109a691e8ddc35976cb5e87ca525d3135b967d91",
+      "merged_at": "2026-09-11T16:38:43Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/github-mcp-server/pull/4",
+      "check_total": 16,
+      "check_runs": [
+        {
+          "id": 103342620231,
+          "name": "spam-detection",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:41:15Z",
+          "completed_at": "2026-09-11T16:41:20Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623417578/job/103342620231"
+        },
+        {
+          "id": 103341605190,
+          "name": "Analyze (${{ matrix.language }})",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-09-11T16:37:57Z",
+          "completed_at": "2026-09-11T16:37:49Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623096847/job/103341605190"
+        },
+        {
+          "id": 103341567522,
+          "name": "official-actions-live-read",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:37:52Z",
+          "completed_at": "2026-09-11T16:38:28Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623097166/job/103341567522"
+        },
+        {
+          "id": 103341566820,
+          "name": "build (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-09-11T16:37:52Z",
+          "completed_at": "2026-09-11T16:39:01Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623096859/job/103341566820"
+        },
+        {
+          "id": 103341566731,
+          "name": "build (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:37:53Z",
+          "completed_at": "2026-09-11T16:39:05Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623096859/job/103341566731"
+        },
+        {
+          "id": 103341566558,
+          "name": "lint",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:37:52Z",
+          "completed_at": "2026-09-11T16:38:22Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623096880/job/103341566558"
+        },
+        {
+          "id": 103341566536,
+          "name": "build (macos-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T17:13:19Z",
+          "completed_at": "2026-09-11T17:13:50Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623096859/job/103341566536"
+        },
+        {
+          "id": 103341566477,
+          "name": "official-actions-proof",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:37:52Z",
+          "completed_at": "2026-09-11T16:38:38Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623096916/job/103341566477"
+        },
+        {
+          "id": 103341566383,
+          "name": "mcp-diff",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:37:52Z",
+          "completed_at": "2026-09-11T16:38:24Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623096868/job/103341566383"
+        },
+        {
+          "id": 103341566378,
+          "name": "docs-check",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:37:52Z",
+          "completed_at": "2026-09-11T16:38:14Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623096882/job/103341566378"
+        },
+        {
+          "id": 103341566353,
+          "name": "official-live-read",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:37:51Z",
+          "completed_at": "2026-09-11T16:38:28Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623096915/job/103341566353"
+        },
+        {
+          "id": 103341566023,
+          "name": "mcp-diff-http",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:37:51Z",
+          "completed_at": "2026-09-11T16:38:25Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623096868/job/103341566023"
+        },
+        {
+          "id": 103341523269,
+          "name": "Analyze (${{ matrix.language }})",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-09-11T16:37:41Z",
+          "completed_at": "2026-09-11T16:37:41Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623082532/job/103341523269"
+        },
+        {
+          "id": 103341518457,
+          "name": "build (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:37:42Z",
+          "completed_at": "2026-09-11T16:38:58Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623082478/job/103341518457"
+        },
+        {
+          "id": 103341518450,
+          "name": "build (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T16:37:42Z",
+          "completed_at": "2026-09-11T16:38:47Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623082478/job/103341518450"
+        },
+        {
+          "id": 103341518263,
+          "name": "build (macos-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-11T17:18:50Z",
+          "completed_at": "2026-09-11T17:19:15Z",
+          "details_url": "https://github.com/GBOGEB/github-mcp-server/actions/runs/34623082478/job/103341518263"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/github_Documents",
+      "pr": 12,
+      "head_sha": "c2d456c5f4ce68c3a3eddcca8b8f85de3f9dcfee",
+      "merged_at": "2026-10-11T21:42:24Z",
+      "base_branch": "master",
+      "pr_url": "https://github.com/GBOGEB/github_Documents/pull/12",
+      "check_total": 2,
+      "check_runs": [
+        {
+          "id": 114574266539,
+          "name": "apply",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-10-11T21:01:21Z",
+          "completed_at": "2026-10-11T21:01:20Z",
+          "details_url": "https://github.com/GBOGEB/github_Documents/actions/runs/38174606215/job/114574266539"
+        },
+        {
+          "id": 114574196496,
+          "name": "unit",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-10-11T21:01:08Z",
+          "completed_at": "2026-10-11T21:01:20Z",
+          "details_url": "https://github.com/GBOGEB/github_Documents/actions/runs/38174606215/job/114574196496"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/github_Documents",
+      "pr": 11,
+      "head_sha": "e9454ab0cd1710fae5c6387b3a896fa49dedc947",
+      "merged_at": "2026-09-11T07:56:36Z",
+      "base_branch": "master",
+      "pr_url": "https://github.com/GBOGEB/github_Documents/pull/11",
+      "check_total": 0,
+      "check_runs": [],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/stale",
+      "pr": 23,
+      "head_sha": "118caaeb183b14b01c0f6757f6472a29baedc075",
+      "merged_at": "2026-09-29T08:44:38Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/stale/pull/23",
+      "check_total": 6,
+      "check_runs": [
+        {
+          "id": 109327429383,
+          "name": "Basic validation / build (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-29T08:42:56Z",
+          "completed_at": "2026-09-29T08:43:47Z",
+          "details_url": "https://github.com/GBOGEB/stale/actions/runs/36544472504/job/109327429383"
+        },
+        {
+          "id": 109327429264,
+          "name": "Basic validation / build (macos-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-29T08:42:59Z",
+          "completed_at": "2026-09-29T08:43:46Z",
+          "details_url": "https://github.com/GBOGEB/stale/actions/runs/36544472504/job/109327429264"
+        },
+        {
+          "id": 109327429093,
+          "name": "Basic validation / build (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-29T08:42:55Z",
+          "completed_at": "2026-09-29T08:44:13Z",
+          "details_url": "https://github.com/GBOGEB/stale/actions/runs/36544472504/job/109327429093"
+        },
+        {
+          "id": 109327428918,
+          "name": "Licensed / Check licenses",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-29T08:42:55Z",
+          "completed_at": "2026-09-29T08:44:19Z",
+          "details_url": "https://github.com/GBOGEB/stale/actions/runs/36544472426/job/109327428918"
+        },
+        {
+          "id": 109327428406,
+          "name": "Check dist/ / check-dist",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-29T08:42:55Z",
+          "completed_at": "2026-09-29T08:43:22Z",
+          "details_url": "https://github.com/GBOGEB/stale/actions/runs/36544472333/job/109327428406"
+        },
+        {
+          "id": 109327425227,
+          "name": "dry-run-test",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-29T08:42:54Z",
+          "completed_at": "2026-09-29T08:43:01Z",
+          "details_url": "https://github.com/GBOGEB/stale/actions/runs/36544471437/job/109327425227"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/stale",
+      "pr": 22,
+      "head_sha": "4d0b739138b1c6db531ffefd82ebf77147a37a8a",
+      "merged_at": "2026-09-29T08:36:55Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/stale/pull/22",
+      "check_total": 6,
+      "check_runs": [
+        {
+          "id": 109324754702,
+          "name": "Basic validation / build (ubuntu-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-29T08:35:13Z",
+          "completed_at": "2026-09-29T08:36:01Z",
+          "details_url": "https://github.com/GBOGEB/stale/actions/runs/36543653031/job/109324754702"
+        },
+        {
+          "id": 109324754543,
+          "name": "Basic validation / build (macos-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-29T08:35:22Z",
+          "completed_at": "2026-09-29T08:36:15Z",
+          "details_url": "https://github.com/GBOGEB/stale/actions/runs/36543653031/job/109324754543"
+        },
+        {
+          "id": 109324754302,
+          "name": "Basic validation / build (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-29T08:35:13Z",
+          "completed_at": "2026-09-29T08:36:39Z",
+          "details_url": "https://github.com/GBOGEB/stale/actions/runs/36543653031/job/109324754302"
+        },
+        {
+          "id": 109324753285,
+          "name": "Check dist/ / check-dist",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-29T08:35:12Z",
+          "completed_at": "2026-09-29T08:35:36Z",
+          "details_url": "https://github.com/GBOGEB/stale/actions/runs/36543652922/job/109324753285"
+        },
+        {
+          "id": 109324752888,
+          "name": "Licensed / Check licenses",
+          "status": "completed",
+          "conclusion": "failure",
+          "started_at": "2026-09-29T08:35:13Z",
+          "completed_at": "2026-09-29T08:36:21Z",
+          "details_url": "https://github.com/GBOGEB/stale/actions/runs/36543652663/job/109324752888"
+        },
+        {
+          "id": 109324750238,
+          "name": "dry-run-test",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-09-29T08:35:12Z",
+          "completed_at": "2026-09-29T08:35:20Z",
+          "details_url": "https://github.com/GBOGEB/stale/actions/runs/36543651980/job/109324750238"
+        }
+      ],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/GBOGEB-profile",
+      "pr": 3,
+      "head_sha": "0d00bfc31e6d3ffab00810eec606c33c0b274aef",
+      "merged_at": "2025-09-29T07:24:55Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/GBOGEB-profile/pull/3",
+      "check_total": 0,
+      "check_runs": [],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED"
+    },
+    {
+      "repository": "GBOGEB/GBOGEB-profile",
+      "pr": 1,
+      "head_sha": "de9cb64e6e2db6388b215893b223eaca88b3afae",
+      "merged_at": "2025-09-08T15:55:52Z",
+      "base_branch": "main",
+      "pr_url": "https://github.com/GBOGEB/GBOGEB-profile/pull/1",
+      "check_total": 0,
+      "check_runs": [],
+      "complete": true,
+      "error": null,
+      "selection": "LATEST_TWO_MERGED_FROM_LAST_30_UPDATED_CLOSED",
+      "readback_correction": "Pr HEAD verified using get_pr_info; previous manually transcribed non-40hex was rejected by native tests"
+    }
+  ]
+}

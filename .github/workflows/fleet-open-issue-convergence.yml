@@ -23,7 +23,7 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Assert exact source
@@ -38,7 +38,7 @@ jobs:
           set -euo pipefail
           python mission-control/historian/validate_fleet_open_issue_convergence.py | tee fleet.out
           grep -q PASS_FLEET_OPEN_ISSUE_CONVERGENCE_94_31_0_63 fleet.out
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: fleet-open-issue-convergence-${{ github.event.pull_request.head.sha || github.sha }}
           path: |

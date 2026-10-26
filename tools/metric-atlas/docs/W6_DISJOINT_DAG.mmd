@@ -1,0 +1,19 @@
+flowchart LR
+  MI["W6-01 | MASTER INPUT source / SHA"] --> CP["W6-02 | CODE PURPLE census"]
+  CP --> MC["W6-03 | Mission Control bounded planning"]
+  MC --> G1["W6-04 | Disjoint round 1"]
+  G1 --> G2["W6-05 | Disjoint round 2 / route fan-in"]
+  G2 --> G3["W6-06 | Subsequent bounded round"]
+  G3 --> EV["W6-07 | Run/job/attempt & ZIP receipt gate"]
+  EV --> OW["W6-08 | Source owner / independent review HOLD"]
+  OW -.->|N+1 feedback only| N["W6-09 | NEW pulse recensus"]
+  classDef master fill:#CEE8E4,stroke:#156F70,color:#184244
+  classDef purple fill:#DFD5F2,stroke:#694AA8,color:#342355
+  classDef mission fill:#D1E3F5,stroke:#32669E,color:#173D64
+  classDef maroon fill:#F1D3DB,stroke:#A44962,color:#61283A
+  classDef green fill:#D2EACB,stroke:#357A50,color:#224B30
+  class MI master
+  class CP purple
+  class MC,G1,G2,G3 mission
+  class EV,OW maroon
+  class N green

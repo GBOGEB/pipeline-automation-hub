@@ -1,0 +1,175 @@
+name: CP.CLOSE GitHub Handover QA
+on:
+  pull_request:
+    paths:
+      - 'mission-control/v2/handoff/**'
+      - '.github/workflows/cp-close-github-qa.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/v2/handoff/**'
+      - '.github/workflows/cp-close-github-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  closeout-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact checkout
+        env:
+          EXPECTED: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Run CP.CLOSE negative/contract tests
+        run: python -m unittest discover -s mission-control/v2/handoff/closeout -p 'test_cp_close.py' -v
+      - name: Build, verify and optionally check committed closeout bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=mission-control/v2/handoff/closeout
+          INTAKE="$SRC/intakes/CP-G3P-HTMLQA-20261017.json"
+          QUEUE=mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json
+          OUT="$RUNNER_TEMP/cp-close-record"
+          python "$SRC/cp_close.py" --intake "$INTAKE" --bd "$QUEUE" --out "$OUT" --zip "$RUNNER_TEMP/CP-G3P-HTMLQA-20261017.zip"
+          python "$SRC/cp_close.py" --intake "$INTAKE" --bd "$QUEUE" --out "$OUT" --check
+          if [ -f "$SRC/records/CP-G3P-HTMLQA-20261017/STATE.json" ]; then
+            python "$SRC/cp_close.py" --intake "$INTAKE" --bd "$QUEUE" --out "$SRC/records/CP-G3P-HTMLQA-20261017" --check
+            echo COMMITTED_RECORD_BYTE_PARITY=PASS
+          else
+            echo COMMITTED_RECORD_BYTE_PARITY=PENDING_FIRST_GENERATION
+          fi
+      - name: CP-QPS-UNLOCK-RETIRE-20261026 byte parity and private boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          SRC=mission-control/v2/handoff/closeout
+          REC="$SRC/records/CP-QPS-UNLOCK-RETIRE-20261026"
+          python "$SRC/cp_close.py" --intake "$SRC/intakes/CP-QPS-UNLOCK-RETIRE-20261026.json" --bd mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json --out "$REC" --check
+          REC="$REC" python - <<'PY'
+          import json,os,re
+          from pathlib import Path
+          rec=Path(os.environ['REC'])
+          mark='PRIVATE_AGGREGATE_ONLY'
+          def walk(o):
+              if isinstance(o,dict):
+                  for k,v in o.items():
+                      if (k.endswith(('sha','_id')) or k in ('pr','via')) and v is not None:
+                          assert all(x in (mark,'UNKNOWN') for x in (v if isinstance(v,list) else [v])),(k,v)
+                      walk(v)
+              elif isinstance(o,list):
+                  for x in o: walk(x)
+          rows=0
+          for name in ('PULSE_R1_EVIDENCE.jsonl','PULSE_R1_CAUSAL_ROOTS.jsonl'):
+              for line in (rec/name).read_text(encoding='utf-8').splitlines():
+                  r=json.loads(line)
+                  if r.get('repo')=='GBOGEB/cryoplant-project':
+                      walk({k:v for k,v in r.items() if k not in ('ahead_by',)})
+                      assert not re.search(r'\b[0-9a-f]{7,40}\b|#\d+|\b\d{8,}\b',json.dumps(r)),r
+                      rows+=1
+          assert 'github.com/GBOGEB/cryoplant-project' not in (rec/'SOURCE_ADDENDUM.md').read_text(encoding='utf-8')
+          print('CP_QPS_UNLOCK_RETIRE_PARITY=PASS PRIVATE_ROWS_PROJECTED='+str(rows))
+          PY
+      - name: Native SHA and privacy assertions
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib,os
+          root=Path(os.environ['RUNNER_TEMP'])/'cp-close-record'
+          m=json.loads((root/'MANIFEST.json').read_text())
+          for name,digest in m['member_sha256'].items():
+              assert hashlib.sha256((root/name).read_bytes()).hexdigest()==digest
+          s=json.loads((root/'STATE.json').read_text())
+          p=json.loads((root/'CHAT_STATS.json').read_text())
+          b=json.loads((root/'BD_QUEUE_READONLY.json').read_text())
+          assert m['verbatim_transcript_claim'] is False
+          assert s['full_chat_prompt_count'] is None
+          assert p['full_chat_total_prompts'] is None and p['model_tokens'] is None
+          assert s['intent_count_reconstructed']==6 and s['action_count_reconstructed']==7
+          assert len(b['focus'])==3 and b['new_canonical_bd_items']==0
+          assert s['release_gate']=='INDEPENDENT_PR_AND_MAIN_ADMISSION'
+          print('CP_CLOSE_NATIVE=PASS INTENTS=6 ACTIONS=7 PROMPTS=UNKNOWN BD_READONLY=3')
+          PY
+      - name: Emit sanitized generated files for main-bound source commit
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os,json
+          root=Path(os.environ['RUNNER_TEMP'])/'cp-close-record'
+          for file in sorted(root.iterdir()):
+              if file.is_file():
+                  print('CP_CLOSE_EXPORT_'+'FILE='+json.dumps({'name':file.name,'content':file.read_text(encoding='utf-8')},ensure_ascii=True,separators=(',',':')))
+          PY
+      - name: Upload verified bundle and ZIP
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: cp-close-github-evidence-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ runner.temp }}/cp-close-record/
+            ${{ runner.temp }}/CP-G3P-HTMLQA-20261017.zip
+          if-no-files-found: warn
+          retention-days: 21
+
+  m3-fed-closeout-evidence:
+    name: M3 canonical lossless handover and digest proof
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Set up Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.12"
+      - name: Generate CP.CLOSE nine-artifact packet and reject drift
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          C=mission-control/v2/handoff/closeout
+          OUT="$RUNNER_TEMP/m3-closeout-record"
+          python "$C/cp_close.py" --intake "$C/intakes/CP-M3-FED-QA-20261017.json" --bd mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json --out "$OUT" --zip "$RUNNER_TEMP/CP-M3-FED-QA-20261017.zip"
+          python "$C/cp_close.py" --intake "$C/intakes/CP-M3-FED-QA-20261017.json" --bd mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json --out "$OUT" --check
+          python - <<"PY"
+          import json,os,hashlib,zipfile
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])/'m3-closeout-record'
+          manifest=json.loads((root/'MANIFEST.json').read_text())
+          assert len(manifest['member_sha256'])==8
+          assert all(hashlib.sha256((root/n).read_bytes()).hexdigest()==d for n,d in manifest['member_sha256'].items())
+          state=json.loads((root/'STATE.json').read_text())
+          stats=json.loads((root/'CHAT_STATS.json').read_text())
+          queue=json.loads((root/'BD_QUEUE_READONLY.json').read_text())
+          assert state['intent_count_reconstructed']==8 and state['action_count_reconstructed']==13
+          assert state['full_chat_prompt_count'] is None and stats['full_chat_total_prompts'] is None
+          assert queue['new_canonical_bd_items']==0 and len(queue['focus'])==5
+          assert manifest['verbatim_transcript_claim'] is False and manifest['authority_transfer'] is False
+          archive=Path(os.environ['RUNNER_TEMP'])/'CP-M3-FED-QA-20261017.zip'
+          with zipfile.ZipFile(archive) as z:
+              assert z.testzip() is None and len(z.namelist())==9
+          print('CP_CLOSE_M3_NATIVE=PASS INTENTS=8 ACTIONS=13 METRICS=7 CHAT_TOTAL=UNKNOWN')
+          PY
+      - name: Upload native canonical closeout artifact only
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: cp-close-m3-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/m3-closeout-record/
+            ${{ runner.temp }}/CP-M3-FED-QA-20261017.zip
+          if-no-files-found: error
+          retention-days: 21

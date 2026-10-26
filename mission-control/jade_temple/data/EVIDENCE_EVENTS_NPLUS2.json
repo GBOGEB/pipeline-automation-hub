@@ -1,0 +1,136 @@
+{
+  "authority_transfer": false,
+  "cohort": "N11_MISSION_SELECTED_TOP21",
+  "events": [
+    {
+      "attempt": 1,
+      "class": "NATIVE_POSITIVE",
+      "id": "E-JADE-001",
+      "job_ids": [
+        117793079847,
+        117793126928
+      ],
+      "measured": {
+        "browser_viewports_pass": 3,
+        "unit_tests_fail": 0,
+        "unit_tests_pass": 44
+      },
+      "outcome": "PASS",
+      "program": "GOGREEN",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "run_id": 39167392496,
+      "scope_not_qualified": [
+        "release",
+        "governance",
+        "served_pages"
+      ],
+      "sha": "a4697e4706f996e0c00212a26f217e9fe27d72ff",
+      "subject": "JADE N+1 exact-PR-head native QA",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39167392496"
+    },
+    {
+      "class": "MERGE_OBSERVATION",
+      "human_reviews_recorded": 0,
+      "id": "E-JADE-002",
+      "merged_at_utc": "2026-10-18T21:47:58Z",
+      "outcome": "MERGED_NOT_ADMITTED",
+      "pr": 732,
+      "program": "JADE_CASTE",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "sha": "ae0c652ccaa3dc0d55cd4edc4ad83dc491de917e",
+      "subject": "N+1 PR #732 merged with zero recorded human reviews",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/732"
+    },
+    {
+      "attempt": 1,
+      "class": "NATIVE_POSITIVE",
+      "hosted_jade_sha_verified": null,
+      "id": "E-JADE-003",
+      "job_ids": [
+        117799185508,
+        117801300739
+      ],
+      "outcome": "PASS",
+      "page_child_staged": true,
+      "program": "GOGREEN",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "run_id": 39169421552,
+      "sha": "ae0c652ccaa3dc0d55cd4edc4ad83dc491de917e",
+      "subject": "Postmerge Method Atlas render and Pages publisher",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39169421552"
+    },
+    {
+      "attempt": 1,
+      "class": "FIRST_RED",
+      "disposition": "OWNER_REPAIR_REQUIRED",
+      "first_red_signature": "cp-w10-federation-handover.yml: python -m unittest discover -s \"$ROOT\" -p test_cp_close.py -v",
+      "id": "E-JADE-004",
+      "job_id": 117799185507,
+      "observed_denominator": 78,
+      "outcome": "FAIL",
+      "program": "EVERRED",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "resolvable": 77,
+      "run_id": 39169421620,
+      "sha": "ae0c652ccaa3dc0d55cd4edc4ad83dc491de917e",
+      "subject": "Strict zero-test gate static selector audit",
+      "unresolved": 1,
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39169421620",
+      "zero_test_detected": 0
+    },
+    {
+      "branch_protected_flag": false,
+      "class": "GOVERNANCE_OBSERVATION",
+      "effective_required_contexts": null,
+      "id": "E-JADE-005",
+      "independent_human_review": false,
+      "negative_red_canary": null,
+      "outcome": "UNQUALIFIED",
+      "program": "CODE_PURPLE",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "sha": "ae0c652ccaa3dc0d55cd4edc4ad83dc491de917e",
+      "subject": "Default branch protection and required review proof",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/settings/rules"
+    },
+    {
+      "class": "CHECK_CENSUS",
+      "completeness": "GITHUB_CHECK_RUN_QUERY_AT_HEAD",
+      "counts": {
+        "failure": 1,
+        "skipped": 3,
+        "success": 23,
+        "total": 27
+      },
+      "id": "E-JADE-006",
+      "outcome": "MIXED",
+      "program": "EVERRED",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "sha": "ae0c652ccaa3dc0d55cd4edc4ad83dc491de917e",
+      "subject": "Bounded current main check-runs, 27 observed",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/commit/ae0c652ccaa3dc0d55cd4edc4ad83dc491de917e/checks"
+    }
+  ],
+  "merge_admission": "HOLD",
+  "schema": "jade.temple.evidence_events.v2",
+  "scope": "BOUND_TO_MISSION_CONTROL_JADE_NOT_PORTFOLIO_RELEASE",
+  "summary": {
+    "governed_merges_credited": 0,
+    "hosted_jade_exact_http_sha": null,
+    "main_exact_head_check_runs": {
+      "failure": 1,
+      "skipped": 3,
+      "success": 23,
+      "total": 27
+    },
+    "native_jade_browser": [
+      3,
+      3
+    ],
+    "native_jade_unit_tests": [
+      44,
+      44
+    ],
+    "owner_root_closures_credited": 0,
+    "point_release_qualified": null
+  }
+}

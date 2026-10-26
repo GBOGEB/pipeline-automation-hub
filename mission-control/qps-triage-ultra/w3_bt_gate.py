@@ -116,15 +116,8 @@ def validate_current_pairs(pairs, policy):
     return failures
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument(
-        "--input", default="mission-control/qps-triage-ultra/w3_bt_observations.json"
-    )
-    ap.add_argument("--out")
-    args = ap.parse_args()
-    doc = json.loads(Path(args.input).read_text(encoding="utf-8"))
-
+def build_receipt(doc):
+    """The W3-15 receipt for one observations document (pure; main() only does I/O)."""
     policy = doc.get("policy", {})
     historical_pairs = doc.get("historical_control_rex", {}).get("pairs", [])
     current_pairs = doc.get("current_frontier", {}).get("pairs", [])
@@ -165,6 +158,18 @@ def main():
         ),
         "authority_transfer": False,
     }
+    return receipt, current_eligible
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument(
+        "--input", default="mission-control/qps-triage-ultra/w3_bt_observations.json"
+    )
+    ap.add_argument("--out")
+    args = ap.parse_args()
+    doc = json.loads(Path(args.input).read_text(encoding="utf-8"))
+    receipt, current_eligible = build_receipt(doc)
     text = json.dumps(receipt, indent=2, sort_keys=True) + "\n"
     if args.out:
         Path(args.out).write_text(text, encoding="utf-8")

@@ -34,7 +34,7 @@ class GMDmaicEvolutionTests(unittest.TestCase):
         assert out["top14_promotion_ready"] is False
         assert out["top21_promotion_ready"] is False
         assert out["fail_closed"]["proof_debt_unknown_blocks_top21"] is True
-        assert out["fail_closed"]["unknown_repeat_metric_blocks_promotion"] is True
+        assert out["fail_closed"]["unknown_repeat_metric_blocks_promotion"] is False  # bound to 8 (FAIL) by CPQ-013
 
     def test_abacus_depth_is_serialized(self):
         doc = load()
@@ -42,22 +42,23 @@ class GMDmaicEvolutionTests(unittest.TestCase):
         assert a["d1"]["state"] == "CONTROL_AND_FRESH_HEAD_RECENSUS"
         assert a["d2"]["state"] == "CONTROL"
         assert a["d3"]["state"] == "CONTROL"
-        assert a["i2"]["d1"]["state"] == "PATCHED_WAIT_EXACT_HEAD_PROOF"
-        assert a["i2"]["d2"]["state"] == "CANDIDATE_WAIT_D1_CONTROL"
+        assert a["i2"]["d1"]["state"] == "CONTROL_AND_FRESH_HEAD_RECENSUS"
+        assert a["i2"]["d2"]["state"] == "CONTROL"
 
     def test_iteration_evolution_is_recursive_and_lineage_bound(self):
         doc = load()
         evo = doc["iteration_evolution"]
         assert evo["core_cycle"] == ["DEFINE", "MEASURE", "ANALYZE", "IMPROVE", "CONTROL"]
         assert evo["iteration_chain_integrity"] is True
-        assert evo["current_level"] == "E1_REPEATABLE"
-        assert evo["complete_iteration_count"] == 1
-        assert evo["recursive_control_handoff_count"] == 1
+        assert evo["current_level"] == "E2_RECURSIVE"
+        assert evo["complete_iteration_count"] == 2
+        assert evo["recursive_control_handoff_count"] == 2
         assert evo["completed_iterations"][0]["iteration_id"] == "ABACUS-I1-FIRST3"
         assert evo["completed_iterations"][0]["bounded_control_outcome"] == "CONTROLLED_WITH_RESIDUALS"
-        assert evo["active_iteration"]["iteration_id"] == "ABACUS-I2-RESIDUALS"
-        assert evo["active_iteration"]["input_control_receipt"]["iteration_id"] == "ABACUS-I1-FIRST3"
-        assert evo["active_iteration"]["control_outcome"] == "PENDING_EXACT_HEAD_PROOF"
+        assert evo["completed_iterations"][1]["iteration_id"] == "ABACUS-I2-RESIDUALS"
+        assert evo["active_iteration"]["iteration_id"] == "ABACUS-I3-PY310"
+        assert evo["active_iteration"]["input_control_receipt"]["iteration_id"] == "ABACUS-I2-RESIDUALS"
+        assert evo["active_iteration"]["control_outcome"] == "POSTMERGE_GREEN_REPEAT_PENDING_CONTRACT_REVIEW"
 
     def test_noncompensation_guards_present(self):
         doc = load()

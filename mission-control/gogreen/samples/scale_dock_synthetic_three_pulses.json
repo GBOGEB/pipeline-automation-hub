@@ -1,0 +1,429 @@
+{
+  "cohort_id": "SYNTHETIC-PROOF-N0-N2-NO-RELEASE-CREDIT",
+  "controls": {
+    "authority_transfer": false,
+    "dispatch_authorized": false,
+    "merge_admission": "HOLD",
+    "qps_engineering_acceptance": false,
+    "security_waiver": false
+  },
+  "dag": {
+    "hard_edges": [
+      [
+        "GATE",
+        "BUILD"
+      ],
+      [
+        "BUILD",
+        "ZIP"
+      ],
+      [
+        "ZIP",
+        "CONSUMER"
+      ]
+    ],
+    "nodes": [
+      "GATE",
+      "BUILD",
+      "ZIP",
+      "CONSUMER"
+    ]
+  },
+  "gg_math_decision": null,
+  "gg_math_provider_sha": "cccccccccccccccccccccccccccccccccccccccc",
+  "observation_class": "SYNTHETIC_REFERENCE",
+  "pulses": [
+    {
+      "coverage": [
+        {
+          "branches": {
+            "covered": 4,
+            "eligible": 6
+          },
+          "population": "same-cohort",
+          "repo": "GBOGEB/ABACUS",
+          "scope": "src/compat.py",
+          "selection": "same-test",
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "statements": {
+            "covered": 8,
+            "eligible": 10
+          },
+          "tool": "coverage.py"
+        }
+      ],
+      "eligible": 5,
+      "findings": [
+        {
+          "attempt": 1,
+          "dag_node": "GATE",
+          "family": "GOVERNANCE",
+          "fingerprint": "same",
+          "first_failed_step": "stage 1",
+          "id": "F1",
+          "job_id": 201,
+          "mode": "SUPERVISED_REPAIR",
+          "mutation_paths": [
+            "ci/governance"
+          ],
+          "owner_accepted": false,
+          "priority": "P0",
+          "repo": "GBOGEB/ABACUS",
+          "root_id": null,
+          "run_id": 101,
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "state": "RED"
+        },
+        {
+          "attempt": 1,
+          "dag_node": "GATE",
+          "family": "SECURITY",
+          "fingerprint": "same",
+          "first_failed_step": "stage 1",
+          "id": "F2",
+          "job_id": 202,
+          "mode": "UNSUPERVISED_READONLY",
+          "mutation_paths": [],
+          "owner_accepted": false,
+          "priority": "P0",
+          "repo": "GBOGEB/ABACUS",
+          "root_id": null,
+          "run_id": 102,
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "state": "RED"
+        },
+        {
+          "attempt": 1,
+          "dag_node": "BUILD",
+          "family": "COMPATIBILITY",
+          "fingerprint": "python",
+          "first_failed_step": "stage 1",
+          "id": "F3",
+          "job_id": 203,
+          "mode": "SUPERVISED_REPAIR",
+          "mutation_paths": [
+            "src/compat.py"
+          ],
+          "owner_accepted": false,
+          "priority": "P1",
+          "repo": "GBOGEB/ABACUS",
+          "root_id": "root-hyp-a",
+          "run_id": 103,
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "state": "RED"
+        },
+        {
+          "attempt": 1,
+          "dag_node": "BUILD",
+          "family": "COVERAGE",
+          "fingerprint": "zero",
+          "first_failed_step": "stage 1",
+          "id": "F4",
+          "job_id": 204,
+          "mode": "UNSUPERVISED_READONLY",
+          "mutation_paths": [],
+          "owner_accepted": false,
+          "priority": "P2",
+          "repo": "GBOGEB/ABACUS",
+          "root_id": null,
+          "run_id": 104,
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "state": "RED"
+        },
+        {
+          "attempt": 1,
+          "dag_node": "ZIP",
+          "family": "EVIDENCE",
+          "fingerprint": "manifest",
+          "first_failed_step": "stage 1",
+          "id": "F5",
+          "job_id": 205,
+          "mode": "UNSUPERVISED_READONLY",
+          "mutation_paths": [],
+          "owner_accepted": false,
+          "priority": "P1",
+          "repo": "GBOGEB/ABACUS",
+          "root_id": "root-hyp-b",
+          "run_id": 105,
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "state": "RED"
+        }
+      ],
+      "n": 0,
+      "observed_at": "2026-10-19T12:00:00Z",
+      "queue": {
+        "queue_ages_seconds": [],
+        "queued_run_ids": [],
+        "real_dispatches": 0,
+        "verified_runner_slots": null
+      },
+      "source_heads": {
+        "GBOGEB/ABACUS": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "GBOGEB/CODEX": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    {
+      "coverage": [
+        {
+          "branches": {
+            "covered": 4,
+            "eligible": 6
+          },
+          "population": "same-cohort",
+          "repo": "GBOGEB/ABACUS",
+          "scope": "src/compat.py",
+          "selection": "same-test",
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "statements": {
+            "covered": 9,
+            "eligible": 10
+          },
+          "tool": "coverage.py"
+        }
+      ],
+      "eligible": 5,
+      "findings": [
+        {
+          "attempt": 1,
+          "dag_node": "GATE",
+          "family": "GOVERNANCE",
+          "fingerprint": "same",
+          "first_failed_step": "stage 1",
+          "id": "F1",
+          "job_id": 201,
+          "mode": "SUPERVISED_REPAIR",
+          "mutation_paths": [
+            "ci/governance"
+          ],
+          "owner_accepted": false,
+          "priority": "P0",
+          "repo": "GBOGEB/ABACUS",
+          "root_id": null,
+          "run_id": 101,
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "state": "RECOVERED"
+        },
+        {
+          "attempt": 1,
+          "dag_node": "GATE",
+          "family": "SECURITY",
+          "fingerprint": "same",
+          "first_failed_step": "stage 1",
+          "id": "F2",
+          "job_id": 202,
+          "mode": "UNSUPERVISED_READONLY",
+          "mutation_paths": [],
+          "owner_accepted": false,
+          "priority": "P0",
+          "repo": "GBOGEB/ABACUS",
+          "root_id": null,
+          "run_id": 102,
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "state": "RED"
+        },
+        {
+          "attempt": 1,
+          "dag_node": "BUILD",
+          "family": "COMPATIBILITY",
+          "fingerprint": "python",
+          "first_failed_step": "stage 1",
+          "id": "F3",
+          "job_id": 203,
+          "mode": "SUPERVISED_REPAIR",
+          "mutation_paths": [
+            "src/compat.py"
+          ],
+          "owner_accepted": false,
+          "priority": "P1",
+          "repo": "GBOGEB/ABACUS",
+          "root_id": "root-hyp-a",
+          "run_id": 103,
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "state": "RED"
+        },
+        {
+          "attempt": 1,
+          "dag_node": "BUILD",
+          "family": "COVERAGE",
+          "fingerprint": "zero",
+          "first_failed_step": "stage 1",
+          "id": "F4",
+          "job_id": 204,
+          "mode": "UNSUPERVISED_READONLY",
+          "mutation_paths": [],
+          "owner_accepted": false,
+          "priority": "P2",
+          "repo": "GBOGEB/ABACUS",
+          "root_id": null,
+          "run_id": 104,
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "state": "RED"
+        },
+        {
+          "attempt": 1,
+          "dag_node": "ZIP",
+          "family": "EVIDENCE",
+          "fingerprint": "manifest",
+          "first_failed_step": "stage 1",
+          "id": "F5",
+          "job_id": 205,
+          "mode": "UNSUPERVISED_READONLY",
+          "mutation_paths": [],
+          "owner_accepted": false,
+          "priority": "P1",
+          "repo": "GBOGEB/ABACUS",
+          "root_id": "root-hyp-b",
+          "run_id": 105,
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "state": "RED"
+        }
+      ],
+      "n": 1,
+      "observed_at": "2026-10-19T12:10:00Z",
+      "queue": {
+        "queue_ages_seconds": [],
+        "queued_run_ids": [],
+        "real_dispatches": 0,
+        "verified_runner_slots": null
+      },
+      "source_heads": {
+        "GBOGEB/ABACUS": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "GBOGEB/CODEX": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    {
+      "coverage": [
+        {
+          "branches": {
+            "covered": 4,
+            "eligible": 6
+          },
+          "population": "same-cohort",
+          "repo": "GBOGEB/ABACUS",
+          "scope": "src/compat.py",
+          "selection": "same-test",
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "statements": {
+            "covered": 9,
+            "eligible": 10
+          },
+          "tool": "coverage.py"
+        }
+      ],
+      "eligible": 5,
+      "findings": [
+        {
+          "attempt": 1,
+          "dag_node": "GATE",
+          "family": "GOVERNANCE",
+          "fingerprint": "same",
+          "first_failed_step": "stage 1",
+          "id": "F1",
+          "job_id": 201,
+          "mode": "SUPERVISED_REPAIR",
+          "mutation_paths": [
+            "ci/governance"
+          ],
+          "owner_accepted": false,
+          "priority": "P0",
+          "repo": "GBOGEB/ABACUS",
+          "root_id": null,
+          "run_id": 101,
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "state": "RECOVERED"
+        },
+        {
+          "attempt": 1,
+          "dag_node": "GATE",
+          "family": "SECURITY",
+          "fingerprint": "same",
+          "first_failed_step": "stage 1",
+          "id": "F2",
+          "job_id": 202,
+          "mode": "UNSUPERVISED_READONLY",
+          "mutation_paths": [],
+          "owner_accepted": false,
+          "priority": "P0",
+          "repo": "GBOGEB/ABACUS",
+          "root_id": null,
+          "run_id": 102,
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "state": "RED"
+        },
+        {
+          "attempt": 1,
+          "dag_node": "BUILD",
+          "family": "COMPATIBILITY",
+          "fingerprint": "python",
+          "first_failed_step": "stage 1",
+          "id": "F3",
+          "job_id": 203,
+          "mode": "SUPERVISED_REPAIR",
+          "mutation_paths": [
+            "src/compat.py"
+          ],
+          "owner_accepted": false,
+          "priority": "P1",
+          "repo": "GBOGEB/ABACUS",
+          "root_id": "root-hyp-a",
+          "run_id": 103,
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "state": "RED"
+        },
+        {
+          "attempt": 1,
+          "dag_node": "BUILD",
+          "family": "COVERAGE",
+          "fingerprint": "zero",
+          "first_failed_step": "stage 1",
+          "id": "F4",
+          "job_id": 204,
+          "mode": "UNSUPERVISED_READONLY",
+          "mutation_paths": [],
+          "owner_accepted": false,
+          "priority": "P2",
+          "repo": "GBOGEB/ABACUS",
+          "root_id": null,
+          "run_id": 104,
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "state": "RED"
+        },
+        {
+          "attempt": 1,
+          "dag_node": "ZIP",
+          "family": "EVIDENCE",
+          "fingerprint": "manifest",
+          "first_failed_step": "stage 1",
+          "id": "F5",
+          "job_id": 205,
+          "mode": "UNSUPERVISED_READONLY",
+          "mutation_paths": [],
+          "owner_accepted": false,
+          "priority": "P1",
+          "repo": "GBOGEB/ABACUS",
+          "root_id": "root-hyp-b",
+          "run_id": 105,
+          "source_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "state": "RED"
+        }
+      ],
+      "n": 2,
+      "observed_at": "2026-10-19T12:20:00Z",
+      "queue": {
+        "queue_ages_seconds": [],
+        "queued_run_ids": [],
+        "real_dispatches": 0,
+        "verified_runner_slots": null
+      },
+      "source_heads": {
+        "GBOGEB/ABACUS": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "GBOGEB/CODEX": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    }
+  ],
+  "repos": [
+    "GBOGEB/ABACUS",
+    "GBOGEB/CODEX"
+  ],
+  "schema": "codepurple.scale-dock.series.v1"
+}

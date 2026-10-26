@@ -1,0 +1,76 @@
+name: MC gg_MATH G3P observed Plotly source projection
+on:
+  pull_request:
+    paths:
+      - docs/mission-control/g3p-math/**
+      - mission-control/v2/handoff/G3P_GGMATH_OBSERVED_CROSSWALK_20261017.json
+      - mission-control/v2/handoff/test_g3p_ggmath_projection.py
+      - .github/workflows/g3p-ggmath-observed-projection.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  read-only-projection:
+    name: MC source and browser-contract negative tests (Python 3.11/3.12)
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Exact-head source and case guard
+        env:
+          EXPECTED: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED"
+          python -m compileall -q mission-control/v2/handoff/test_g3p_ggmath_projection.py
+      - name: Run governed negative/readback tests
+        run: |
+          set -euo pipefail
+          mkdir -p build/g3p-observed
+          python -m unittest discover -s mission-control/v2/handoff \
+            -p test_g3p_ggmath_projection.py -v 2>&1 | tee build/g3p-observed/tests.log
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          log=Path("build/g3p-observed/tests.log").read_text()
+          matched=re.search(r"Ran (\d+) tests?",log)
+          assert matched and int(matched.group(1))>=12, "too few tested assertions"
+          assert re.search(r"^OK$",log,re.M), "negative regression suite not green"
+          PY
+      - name: Write nonadmitting source digest ledger
+        env:
+          EXPECTED: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python - <<'PY'
+          import hashlib,json,os,pathlib,subprocess
+          sources=["docs/mission-control/g3p-math/index.html",
+                   "mission-control/v2/handoff/G3P_GGMATH_OBSERVED_CROSSWALK_20261017.json",
+                   "mission-control/v2/handoff/test_g3p_ggmath_projection.py"]
+          exact=subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip()
+          assert exact==os.environ["EXPECTED"]
+          obj={"schema":"missioncontrol.ggmath.source_projection_qa.v1",
+               "source_sha":exact,
+               "source_sha256":{p:hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest() for p in sources},
+               "ui_browser_playwright":"NOT_EXECUTED_IN_THIS_MC_JOB",
+               "provider_native_gate":"SEPARATE_GGMATH_WORKFLOW",
+               "authority_transfer":False,"merge_admission":"HOLD",
+               "qps_engineering_acceptance":"NOT_ATTESTED"}
+          pathlib.Path("build/g3p-observed/source-receipt.json").write_text(
+              json.dumps(obj,sort_keys=True,indent=2)+"\n")
+          print("MC_GGMATH_PROJECTION_SOURCE_VALIDATED",exact)
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: mc-g3p-ggmath-source-${{ matrix.python }}
+          path: build/g3p-observed/
+          if-no-files-found: error

@@ -1,0 +1,245 @@
+{
+  "schema": "jade.temple.gate12.actions.v1",
+  "authority": "OWNER_DECISIONS_NOT_TRANSFERRED",
+  "source_owner": "GBOGEB/pipeline-automation-hub",
+  "merge_admission": "HOLD",
+  "formal_release_credit": 0,
+  "security_waiver": false,
+  "source_contract": "data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+  "roster_contract": "data/TOP21_PORTFOLIO.json",
+  "dependency_contract": "data/ROLLING5_POLICY.json",
+  "scope": "Top21 with five evidence-observed repositories and sixteen unassessed",
+  "threshold_policy": "PROPOSED_ACTION_CRITERIA_ONLY; per-repository numeric floors require owner policy before becoming enforcement",
+  "publication_policy": "Candidate repository files are NOT proof of Pages deployment, hosted byte parity, runtime health or release.",
+  "acceptance_ladder": [
+    "SOURCE_AUTHORED",
+    "GENERATED",
+    "STATIC_QA",
+    "BROWSER_QA",
+    "STAGED_SINGLE_PUBLISHER",
+    "DEPLOYED",
+    "HOSTED_SHA_VERIFIED",
+    "RUNTIME_HEALTH_VERIFIED",
+    "OWNER_RELEASE_ACCEPTED"
+  ],
+  "pillars": [
+    {
+      "id": "H01",
+      "facet": "SOURCE",
+      "priority": "P0",
+      "owner": "Repository owner",
+      "threshold": "Exactly one current default-branch 40-hex SHA per assessed repo; record timestamp and scope.",
+      "quality": "Reject stale, partial and cross-head evidence.",
+      "action": "Refresh HEAD and Git object census; pin source identity.",
+      "proof": "Branch API/readback receipt and exact source SHA.",
+      "threshold_state": "OWNER_POLICY_REVIEW_REQUIRED"
+    },
+    {
+      "id": "H02",
+      "facet": "CONTENT",
+      "priority": "P0",
+      "owner": "Repository maintainer",
+      "threshold": "Document at least one canonical entrypoint, README, source inventory and applicable test/asset populations; enumerate zero and missing buckets.",
+      "quality": "No ghost, untracked, empty or duplicate assets; provenance for source population.",
+      "action": "Deep-census source, docs, config, tests, binaries and orphan/zero-test files; classify disposition.",
+      "proof": "Content inventory with owner, path, blob OID and applicability.",
+      "threshold_state": "OWNER_POLICY_REVIEW_REQUIRED"
+    },
+    {
+      "id": "H03",
+      "facet": "CONTENT_QUALITY",
+      "priority": "P0",
+      "owner": "Engineering/release owner",
+      "threshold": "Scope and release applicability explicitly owned; required content attributes filled or classified as not applicable.",
+      "quality": "Schema, semantic links, freshness and provenance checked; unknown remains unknown.",
+      "action": "Approve source authority, acceptance criteria, completeness and semantic-quality defects.",
+      "proof": "Signed scope and validated content-quality receipt per repo.",
+      "threshold_state": "OWNER_POLICY_REVIEW_REQUIRED"
+    },
+    {
+      "id": "H04",
+      "facet": "BUILD",
+      "priority": "P1",
+      "owner": "Build/DevOps owner",
+      "threshold": "Reproducible build from pinned dependency and toolchain contracts with zero build/parse failures.",
+      "quality": "YAML/JSON/TOML/INIT validation, lint/format parity, reproducible output digests.",
+      "action": "Run independent clean checkout/build, dependency audit, formatters and deterministic replay.",
+      "proof": "Terminal build jobs, pinned inputs, artifact hash comparison.",
+      "threshold_state": "OWNER_POLICY_REVIEW_REQUIRED"
+    },
+    {
+      "id": "H05",
+      "facet": "CODE_HEALTH",
+      "priority": "P0",
+      "owner": "Test owner",
+      "threshold": "Native mandatory primary B0/job terminal success at exact head; zero untested critical entrypoints.",
+      "quality": "Pass/fail/skip denominators and first-red signatures captured, not suppressed.",
+      "action": "Repair native first-red, add tests for untested code; count statement/branch/asset populations.",
+      "proof": "Exact-head primary test report, zero-test registry and first-red receipt.",
+      "threshold_state": "OWNER_POLICY_REVIEW_REQUIRED"
+    },
+    {
+      "id": "H06",
+      "facet": "INTEGRATION_RUNTIME",
+      "priority": "P1",
+      "owner": "Integration/operations owner",
+      "threshold": "At least one owner-designated independent integration/startup/smoke proof for each applicable deployed runtime.",
+      "quality": "Exercise API/CLI/data flows, failure injection, rollback/restart and boundary contracts.",
+      "action": "Run cross-module smoke, deployment dry-run, negative paths and recovery tests.",
+      "proof": "Exact-head independent smoke run with job, logs and service identity.",
+      "threshold_state": "OWNER_POLICY_REVIEW_REQUIRED"
+    },
+    {
+      "id": "H07",
+      "facet": "SECURITY",
+      "priority": "P0",
+      "owner": "Security owner",
+      "threshold": "No undispositioned blocking security findings; pinned supply-chain inputs and approved scanner identities.",
+      "quality": "High-risk findings and exemptions independently reviewed; neutral CodeQL alone not positive scan proof.",
+      "action": "Qualify CodeQL languages, supply chain, dependency and vulnerability scans with first-red lineage.",
+      "proof": "Source-bound scan-completion jobs, severity ledger and accepted disposition.",
+      "threshold_state": "OWNER_POLICY_REVIEW_REQUIRED"
+    },
+    {
+      "id": "H08",
+      "facet": "GOVERNANCE",
+      "priority": "P0",
+      "owner": "Repository owner",
+      "threshold": "Effective required GoGREEN and applicable CodeQL contexts plus blocked RED canary; no force-push/deletion.",
+      "quality": "Fetch effective rules and check integration IDs; negative merge proof required.",
+      "action": "Activate enforceable branch rules and run failing unmerged canary after policy change.",
+      "proof": "Effective ruleset readback and rejected RED-canary PR receipt.",
+      "threshold_state": "OWNER_POLICY_REVIEW_REQUIRED"
+    },
+    {
+      "id": "H09",
+      "facet": "REVIEW",
+      "priority": "P0",
+      "owner": "Repository owner/reviewer",
+      "threshold": "Eligible head-matched human review; alternatively an explicitly authorized narrow solo-owner waiver.",
+      "quality": "WAIVED_MACH_II cannot replace required checks; matching automated review and policy evidence needed.",
+      "action": "Capture eligible review or signed waiver receipts; reject stale/other-head reviews.",
+      "proof": "Reviewer identity, exact commit, review disposition and waiver scope if applicable.",
+      "threshold_state": "OWNER_POLICY_REVIEW_REQUIRED"
+    },
+    {
+      "id": "H10",
+      "facet": "COVERAGE",
+      "priority": "P0",
+      "owner": "Code/test quality owner",
+      "threshold": "Matched-scope coverage floor signed per repo; hub JADE pilot currently 90% statements/80% branches.",
+      "quality": "Critical zero-covered modules, untested branches and mutation/negative paths tracked separately.",
+      "action": "Reduce zero-tested critical assets, expand branch and negative-path tests, compare matched denominators.",
+      "proof": "Scoped statement/branch reports with denominator, instrumentor and negative-path proof.",
+      "threshold_state": "OWNER_POLICY_REVIEW_REQUIRED"
+    },
+    {
+      "id": "H11",
+      "facet": "PAGES_ASSETS",
+      "priority": "P0",
+      "owner": "Pages/content owner",
+      "threshold": "Generated user views must pass 1440x1000, 1280x800, 390x844 QA, zero broken links/errors, complete source+artifact hashes.",
+      "quality": "Separate authored, built, staged, deployed, hosted-HTTP, served-SHA and browser-qualified states.",
+      "action": "Build central cockpit, KPI/BD/discovery views; hash-stage with single publisher; verify hosted GET parity.",
+      "proof": "Artifact manifest, responsive screenshots, URLs, HTTP 200, matching bytes and browser receipt.",
+      "threshold_state": "OWNER_POLICY_REVIEW_REQUIRED"
+    },
+    {
+      "id": "H12",
+      "facet": "RELEASE_OPERATIONS",
+      "priority": "P0",
+      "owner": "Release and runtime owner",
+      "threshold": "Owner-signed tag, manifest and rollback; independently proven runtime startup, health and recovery where applicable.",
+      "quality": "No release credit from a static page or green CI; applicability and operational limits signed.",
+      "action": "Exercise deploy/rollback/runbook, verify operational logs/alerts, capture owner release decision.",
+      "proof": "Tag, deploy/run/health/rollback receipts and explicit owner ACCEPT/HOLD.",
+      "threshold_state": "OWNER_POLICY_REVIEW_REQUIRED"
+    }
+  ],
+  "assets": [
+    {
+      "title": "JADE top-level overview",
+      "path": "index.html",
+      "kind": "overview",
+      "repository_state": "SOURCE_OR_CANDIDATE",
+      "hosted_status": "UNVERIFIED"
+    },
+    {
+      "title": "GoGREEN Top21 evidence",
+      "path": "green.html",
+      "kind": "dashboard",
+      "repository_state": "SOURCE_OR_CANDIDATE",
+      "hosted_status": "UNVERIFIED"
+    },
+    {
+      "title": "N+2 owner burndown",
+      "path": "burndown.html",
+      "kind": "burndown",
+      "repository_state": "SOURCE_OR_CANDIDATE",
+      "hosted_status": "UNVERIFIED"
+    },
+    {
+      "title": "Eight-point MIP audit",
+      "path": "eightpoint.html",
+      "kind": "audit",
+      "repository_state": "SOURCE_OR_CANDIDATE",
+      "hosted_status": "UNVERIFIED"
+    },
+    {
+      "title": "CI/CD DAG and SIPOC",
+      "path": "cicd_dag.html",
+      "kind": "graph",
+      "repository_state": "SOURCE_OR_CANDIDATE",
+      "hosted_status": "UNVERIFIED"
+    },
+    {
+      "title": "Code Purple red trace",
+      "path": "redtrace.html",
+      "kind": "security",
+      "repository_state": "SOURCE_OR_CANDIDATE",
+      "hosted_status": "UNVERIFIED"
+    },
+    {
+      "title": "QPS SUPERSTITCH",
+      "path": "qps_superstitch.html",
+      "kind": "graph",
+      "repository_state": "SOURCE_OR_CANDIDATE",
+      "hosted_status": "UNVERIFIED"
+    },
+    {
+      "title": "Rolling-five pulse data",
+      "path": "rolling5.json",
+      "kind": "metric-data",
+      "repository_state": "SOURCE_OR_CANDIDATE",
+      "hosted_status": "UNVERIFIED"
+    },
+    {
+      "title": "DAG source projection",
+      "path": "cicd_dag.json",
+      "kind": "metric-data",
+      "repository_state": "SOURCE_OR_CANDIDATE",
+      "hosted_status": "UNVERIFIED"
+    },
+    {
+      "title": "Historical Top21 queue CSV",
+      "path": "top21_bd_queue.csv",
+      "kind": "queue",
+      "repository_state": "SOURCE_OR_CANDIDATE",
+      "hosted_status": "UNVERIFIED"
+    },
+    {
+      "title": "H01-H12 gate queue CSV",
+      "path": "gate12_bd_queue.csv",
+      "kind": "queue",
+      "repository_state": "SOURCE_OR_CANDIDATE",
+      "hosted_status": "UNVERIFIED"
+    },
+    {
+      "title": "H01-H12 projection JSON",
+      "path": "gate12_data.json",
+      "kind": "metric-data",
+      "repository_state": "SOURCE_OR_CANDIDATE",
+      "hosted_status": "UNVERIFIED"
+    }
+  ]
+}

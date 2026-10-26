@@ -206,7 +206,7 @@ def emit(receipt, output):
     body = (json.dumps(receipt, sort_keys=True, indent=2) + "\n").encode("utf-8")
     (out / "scout_run.json").write_bytes(body)
     digest = hashlib.sha256(body).hexdigest()
-    (out / "scout_run.sha256").write_text(digest + "\n", encoding="ascii")
+    (out / "scout_run.sha256").write_text(digest + "\n", encoding="ascii", newline="\n")
     b, e = receipt["metric_start"], receipt["metric_end"]
     lines = [
         "# Mission Control RUN-i governed scout",
@@ -229,7 +229,7 @@ def emit(receipt, output):
         f"SHA-256: {digest}",
         "",
     ]
-    (out / "scout_run.md").write_text("\n".join(lines), encoding="utf-8")
+    (out / "scout_run.md").write_text("\n".join(lines), encoding="utf-8", newline="\n")
     return digest
 
 

@@ -1,0 +1,26 @@
+{
+  "authority_transfer": false,
+  "evidence_level": "LOCAL_REPRODUCIBILITY",
+  "hosted_sha": null,
+  "merge_admission": "HOLD",
+  "public_files_sha256": {
+    "burndown-data.js": "e6214a2908b1fbded4ced3153f8e595df5be89676dbbf6cdfc6bc1c24a3d4fa6",
+    "burndown.css": "879558e08bddb5f3469f72649e832fc97cdb16fb46c440c2c23c2b9675fe5122",
+    "burndown.csv": "c0de75e4934e1df034947e7e34d73069c6ebd439734acb58568f3eeb6ee10626",
+    "burndown.html": "036b2ad0a75b6b97ae503ba95cdbe36f5076f6f2b3c3013c23c31217dc58bf17",
+    "burndown.js": "af75e100e7526dc8d5773eecc70103e0c2dfda9ab64155cf99455014be20d5e6",
+    "burndown.json": "7a8dcbbebe49e9ff27913c47860e7357c73774eabdd7b2e079272fbcd0c2a4d4"
+  },
+  "publisher": "EXISTING_METHOD_ATLAS_PAGES_ONLY",
+  "readback_group": "N11_MISSION_SELECTED_TOP21",
+  "replay_command": "python mission-control/jade_temple/site/build_burndown.py --check",
+  "schema": "jade.temple.burndown_manifest.v2",
+  "security_waiver": false,
+  "source_files_sha256": {
+    "data/EVIDENCE_EVENTS_NPLUS2.json": "709adbf4692dbeeda7e2158c83f41399a9558dfb06ccc435d4b5bcea05f2f8cc",
+    "data/READBACK_NPLUS2.json": "38a651c85be05ff76dd4800463b2bf9ad72f49acecc5c716db6aa03d7544d906",
+    "data/REPO_READINESS_NPLUS1.json": "15c802ee040a003186ade5feb19afb0e7720a0347163a38ebd427920e7e13be9",
+    "data/STOP_MODEL_NPLUS2.json": "651c2c9420053c4b39644190225e56893f87e59e9b17d843bbb9547e01ae6bf2"
+  },
+  "static_population": 6
+}

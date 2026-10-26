@@ -1,0 +1,18 @@
+flowchart TD
+  GH["GitHub exact repo HEADs / PRs / native run-job-attempt"] --> IN["CP.CLOSE canonical source intake"]
+  AB["ABACUS LOSSLESS_HANDOVER_V2 / human template"] -. method reference .-> IN
+  CPQ["Canonical CPQ 19-item BD ledger"] --> GEN["MissionControl existing cp_close.py"]
+  IN --> VAL["Validate source, privacy, owner action DAG"]
+  VAL --> GEN
+  GEN --> ZIP["Nine files + manifest + ZIP CRC / SHA256"]
+  ZIP --> QA["Native exact-head --check / SHA256 / job receipts"]
+  QA --> REVIEW{"Effective admin protections and eligible independent human review?"}
+  REVIEW -- "No or UNKNOWN" --> HOLD["MERGE_ADMISSION HOLD; source PR preserved"]
+  REVIEW -- "Fully verified" --> ADM["Authorized serial merge + current-main reread"]
+  HOLD -. next CP.RESUME pulse .-> GH
+  ADM -. next CP.RESUME pulse .-> GH
+  QA -. read-only pointers .-> COD["CODEX semantic/OSV/annotated-GREEN owner"]
+  QA -. read-only pointers .-> MAT["gg_MATH MIP owner"]
+  QA -. public-safe pointer only .-> QPS["QPS PRIVATE engineering owner / no public SHA"]
+  QA -. read-only pointer .-> AWA["ABACUS DOW/BD governance receiver"]
+  CPQ -. "declared only" .-> D13["CPQ-013 depends on CPQ-010"]

@@ -1,0 +1,1198 @@
+{
+  "authority": "READ_ONLY_PROJECTION",
+  "authority_transfer": false,
+  "history_depth": 2,
+  "history_note": "Streaks need history: with fewer pulses than 3, 'unattended' is null and a nevergreen flag only means never PASS within the observed pulses.",
+  "inputs": {
+    "data/ROLLING5_POLICY.json": "77228bf9f0f54b2a9d3567ddef28c340d3ddf89fe333926b1b70d77a9bbd2d85",
+    "data/ROLLING5_PULSES.json": "28301d47c5e75d77acd235b0c2bc32ee270e3f17a7d11d1857aa898c2e728b96",
+    "data/TOP21_PORTFOLIO.json": "b3f711c33e878ce290e9e38c42d7e5028c5b5f58b2313efa2b43ef677a680a29"
+  },
+  "latest_pulse": "P0002",
+  "merge_admission": "HOLD",
+  "metrics": {
+    "fail_gate_instances": 2,
+    "gate_denominator": 60,
+    "nevergreen_gate_instances": 42,
+    "nirvana_count": 0,
+    "verified_completion_pct": 28.33,
+    "verified_pass": 17
+  },
+  "nirvana_ledger": [],
+  "pulses": [
+    {
+      "id": "P0001",
+      "observed_date": "2026-10-19",
+      "snapshot_sha256": "6ff7b1b54e38e7ff03940c03f8784915b042e582840233d0f7243867a231d3f5"
+    },
+    {
+      "id": "P0002",
+      "observed_date": "2026-10-25",
+      "snapshot_sha256": "2d93727a1ec98bb79934f3ec449fc0bd88fffec9e7625fa7ca3fcd673b6fcc4c"
+    }
+  ],
+  "race": [
+    {
+      "fail": 0,
+      "pass": 4,
+      "position": 1,
+      "rank": 4,
+      "remaining": 8,
+      "repo": "GBOGEB/cryoplant-project",
+      "unknown": 8
+    },
+    {
+      "fail": 0,
+      "pass": 4,
+      "position": 2,
+      "rank": 5,
+      "remaining": 8,
+      "repo": "GBOGEB/gg_MATH",
+      "unknown": 8
+    },
+    {
+      "fail": 1,
+      "pass": 4,
+      "position": 3,
+      "rank": 8,
+      "remaining": 8,
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "unknown": 7
+    },
+    {
+      "fail": 0,
+      "pass": 3,
+      "position": 4,
+      "rank": 2,
+      "remaining": 9,
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "unknown": 9
+    },
+    {
+      "fail": 1,
+      "pass": 2,
+      "position": 5,
+      "rank": 16,
+      "remaining": 10,
+      "repo": "GBOGEB/yaml-grammar",
+      "unknown": 9
+    }
+  ],
+  "release_credit": false,
+  "repos": [
+    {
+      "best_current_streak": 2,
+      "blockers": [],
+      "gate_denominator": 12,
+      "golden_thread": {
+        "first_break": "OWNER_SCOPE",
+        "of": 9,
+        "position": 1,
+        "steps": [
+          {
+            "status": "PASS",
+            "step": "SOURCE_SHA"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "OWNER_SCOPE"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "FIRST_RED_OR_NEGATIVE_TEST"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "DISJOINT_CANDIDATE_BRANCH"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "NATIVE_B0_RUN_JOB_ATTEMPT"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "SECURITY_AND_GOVERNANCE"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "HUMAN_REVIEW"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "POSTMERGE_SHA"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "RELEASE_TAG_AND_ROLLBACK"
+          }
+        ]
+      },
+      "nevergreen_gates": [
+        "H03",
+        "H04",
+        "H05",
+        "H07",
+        "H08",
+        "H09",
+        "H10",
+        "H11",
+        "H12"
+      ],
+      "nirvana": false,
+      "rank": 2,
+      "regressions": 0,
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "source_sha": "49a4486bc24c97be25ce44a8ecea2a4856d38007",
+      "streaks": {
+        "H01": {
+          "latest": "PASS",
+          "nevergreen": false,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 2,
+          "streak_record": 2,
+          "unattended": null
+        },
+        "H02": {
+          "latest": "PASS",
+          "nevergreen": false,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 2,
+          "streak_record": 2,
+          "unattended": null
+        },
+        "H03": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H04": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H05": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H06": {
+          "latest": "PASS",
+          "nevergreen": false,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 2,
+          "streak_record": 2,
+          "unattended": null
+        },
+        "H07": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H08": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H09": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H10": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H11": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H12": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        }
+      },
+      "unattended_gates": [],
+      "verified_pass": 3
+    },
+    {
+      "best_current_streak": 2,
+      "blockers": [],
+      "gate_denominator": 12,
+      "golden_thread": {
+        "first_break": "OWNER_SCOPE",
+        "of": 9,
+        "position": 1,
+        "steps": [
+          {
+            "status": "PASS",
+            "step": "SOURCE_SHA"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "OWNER_SCOPE"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "FIRST_RED_OR_NEGATIVE_TEST"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "DISJOINT_CANDIDATE_BRANCH"
+          },
+          {
+            "status": "PASS",
+            "step": "NATIVE_B0_RUN_JOB_ATTEMPT"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "SECURITY_AND_GOVERNANCE"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "HUMAN_REVIEW"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "POSTMERGE_SHA"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "RELEASE_TAG_AND_ROLLBACK"
+          }
+        ]
+      },
+      "nevergreen_gates": [
+        "H03",
+        "H04",
+        "H07",
+        "H08",
+        "H09",
+        "H10",
+        "H11",
+        "H12"
+      ],
+      "nirvana": false,
+      "rank": 4,
+      "regressions": 0,
+      "repo": "GBOGEB/cryoplant-project",
+      "source_sha": "PRIVATE_AGGREGATE_ONLY",
+      "streaks": {
+        "H01": {
+          "latest": "PASS",
+          "nevergreen": false,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 2,
+          "streak_record": 2,
+          "unattended": null
+        },
+        "H02": {
+          "latest": "PASS",
+          "nevergreen": false,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 2,
+          "streak_record": 2,
+          "unattended": null
+        },
+        "H03": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H04": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H05": {
+          "latest": "PASS",
+          "nevergreen": false,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 1,
+          "streak_record": 1,
+          "unattended": null
+        },
+        "H06": {
+          "latest": "PASS",
+          "nevergreen": false,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 1,
+          "streak_record": 1,
+          "unattended": null
+        },
+        "H07": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H08": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H09": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H10": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H11": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H12": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        }
+      },
+      "unattended_gates": [],
+      "verified_pass": 4
+    },
+    {
+      "best_current_streak": 2,
+      "blockers": [],
+      "gate_denominator": 12,
+      "golden_thread": {
+        "first_break": "OWNER_SCOPE",
+        "of": 9,
+        "position": 1,
+        "steps": [
+          {
+            "status": "PASS",
+            "step": "SOURCE_SHA"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "OWNER_SCOPE"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "FIRST_RED_OR_NEGATIVE_TEST"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "DISJOINT_CANDIDATE_BRANCH"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "NATIVE_B0_RUN_JOB_ATTEMPT"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "SECURITY_AND_GOVERNANCE"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "HUMAN_REVIEW"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "POSTMERGE_SHA"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "RELEASE_TAG_AND_ROLLBACK"
+          }
+        ]
+      },
+      "nevergreen_gates": [
+        "H03",
+        "H07",
+        "H08",
+        "H09",
+        "H10",
+        "H11",
+        "H12"
+      ],
+      "nirvana": false,
+      "rank": 5,
+      "regressions": 1,
+      "repo": "GBOGEB/gg_MATH",
+      "source_sha": "61ce59f754d23e010958927a731432672abf7621",
+      "streaks": {
+        "H01": {
+          "latest": "PASS",
+          "nevergreen": false,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 2,
+          "streak_record": 2,
+          "unattended": null
+        },
+        "H02": {
+          "latest": "PASS",
+          "nevergreen": false,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 2,
+          "streak_record": 2,
+          "unattended": null
+        },
+        "H03": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H04": {
+          "latest": "PASS",
+          "nevergreen": false,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 1,
+          "streak_record": 1,
+          "unattended": null
+        },
+        "H05": {
+          "latest": "PASS",
+          "nevergreen": false,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 1,
+          "streak_record": 1,
+          "unattended": null
+        },
+        "H06": {
+          "latest": "UNKNOWN",
+          "nevergreen": false,
+          "previous_streak": 1,
+          "pulses_observed": 2,
+          "regressions": 1,
+          "streak_on_current": 0,
+          "streak_record": 1,
+          "unattended": null
+        },
+        "H07": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H08": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H09": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H10": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H11": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H12": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        }
+      },
+      "unattended_gates": [],
+      "verified_pass": 4
+    },
+    {
+      "best_current_streak": 2,
+      "blockers": [
+        "H08: Default branch unprotected (no protection, no ruleset)"
+      ],
+      "gate_denominator": 12,
+      "golden_thread": {
+        "first_break": "OWNER_SCOPE",
+        "of": 9,
+        "position": 1,
+        "steps": [
+          {
+            "status": "PASS",
+            "step": "SOURCE_SHA"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "OWNER_SCOPE"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "FIRST_RED_OR_NEGATIVE_TEST"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "DISJOINT_CANDIDATE_BRANCH"
+          },
+          {
+            "status": "PASS",
+            "step": "NATIVE_B0_RUN_JOB_ATTEMPT"
+          },
+          {
+            "status": "FAIL",
+            "step": "SECURITY_AND_GOVERNANCE"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "HUMAN_REVIEW"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "POSTMERGE_SHA"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "RELEASE_TAG_AND_ROLLBACK"
+          }
+        ]
+      },
+      "nevergreen_gates": [
+        "H03",
+        "H04",
+        "H07",
+        "H08",
+        "H09",
+        "H10",
+        "H11",
+        "H12"
+      ],
+      "nirvana": false,
+      "rank": 8,
+      "regressions": 0,
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "source_sha": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
+      "streaks": {
+        "H01": {
+          "latest": "PASS",
+          "nevergreen": false,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 2,
+          "streak_record": 2,
+          "unattended": null
+        },
+        "H02": {
+          "latest": "PASS",
+          "nevergreen": false,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 2,
+          "streak_record": 2,
+          "unattended": null
+        },
+        "H03": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H04": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H05": {
+          "latest": "PASS",
+          "nevergreen": false,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 2,
+          "streak_record": 2,
+          "unattended": null
+        },
+        "H06": {
+          "latest": "PASS",
+          "nevergreen": false,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 2,
+          "streak_record": 2,
+          "unattended": null
+        },
+        "H07": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H08": {
+          "latest": "FAIL",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H09": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H10": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H11": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H12": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        }
+      },
+      "unattended_gates": [],
+      "verified_pass": 4
+    },
+    {
+      "best_current_streak": 2,
+      "blockers": [
+        "H08: Default branch unprotected (no protection, no ruleset)"
+      ],
+      "gate_denominator": 12,
+      "golden_thread": {
+        "first_break": "OWNER_SCOPE",
+        "of": 9,
+        "position": 1,
+        "steps": [
+          {
+            "status": "PASS",
+            "step": "SOURCE_SHA"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "OWNER_SCOPE"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "FIRST_RED_OR_NEGATIVE_TEST"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "DISJOINT_CANDIDATE_BRANCH"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "NATIVE_B0_RUN_JOB_ATTEMPT"
+          },
+          {
+            "status": "FAIL",
+            "step": "SECURITY_AND_GOVERNANCE"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "HUMAN_REVIEW"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "POSTMERGE_SHA"
+          },
+          {
+            "status": "UNKNOWN",
+            "step": "RELEASE_TAG_AND_ROLLBACK"
+          }
+        ]
+      },
+      "nevergreen_gates": [
+        "H03",
+        "H04",
+        "H05",
+        "H06",
+        "H07",
+        "H08",
+        "H09",
+        "H10",
+        "H11",
+        "H12"
+      ],
+      "nirvana": false,
+      "rank": 16,
+      "regressions": 0,
+      "repo": "GBOGEB/yaml-grammar",
+      "source_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+      "streaks": {
+        "H01": {
+          "latest": "PASS",
+          "nevergreen": false,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 2,
+          "streak_record": 2,
+          "unattended": null
+        },
+        "H02": {
+          "latest": "PASS",
+          "nevergreen": false,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 2,
+          "streak_record": 2,
+          "unattended": null
+        },
+        "H03": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H04": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H05": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H06": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H07": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H08": {
+          "latest": "FAIL",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H09": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H10": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H11": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        },
+        "H12": {
+          "latest": "UNKNOWN",
+          "nevergreen": true,
+          "previous_streak": null,
+          "pulses_observed": 2,
+          "regressions": 0,
+          "streak_on_current": 0,
+          "streak_record": 0,
+          "unattended": null
+        }
+      },
+      "unattended_gates": [],
+      "verified_pass": 2
+    }
+  ],
+  "schema": "jade.temple.rolling5.projection/1.0",
+  "source_red": {
+    "common_unknown": [
+      {
+        "blocks": [
+          "H12"
+        ],
+        "gate": "H03",
+        "repo_count": 5,
+        "repos": [
+          "GBOGEB/DOCX_RTM_Automation",
+          "GBOGEB/cryoplant-project",
+          "GBOGEB/gg_MATH",
+          "GBOGEB/pipeline-automation-hub",
+          "GBOGEB/yaml-grammar"
+        ]
+      },
+      {
+        "blocks": [
+          "H12"
+        ],
+        "gate": "H07",
+        "repo_count": 5,
+        "repos": [
+          "GBOGEB/DOCX_RTM_Automation",
+          "GBOGEB/cryoplant-project",
+          "GBOGEB/gg_MATH",
+          "GBOGEB/pipeline-automation-hub",
+          "GBOGEB/yaml-grammar"
+        ]
+      },
+      {
+        "blocks": [
+          "H12"
+        ],
+        "gate": "H09",
+        "repo_count": 5,
+        "repos": [
+          "GBOGEB/DOCX_RTM_Automation",
+          "GBOGEB/cryoplant-project",
+          "GBOGEB/gg_MATH",
+          "GBOGEB/pipeline-automation-hub",
+          "GBOGEB/yaml-grammar"
+        ]
+      },
+      {
+        "blocks": [
+          "H12"
+        ],
+        "gate": "H10",
+        "repo_count": 5,
+        "repos": [
+          "GBOGEB/DOCX_RTM_Automation",
+          "GBOGEB/cryoplant-project",
+          "GBOGEB/gg_MATH",
+          "GBOGEB/pipeline-automation-hub",
+          "GBOGEB/yaml-grammar"
+        ]
+      },
+      {
+        "blocks": [
+          "H12"
+        ],
+        "gate": "H11",
+        "repo_count": 5,
+        "repos": [
+          "GBOGEB/DOCX_RTM_Automation",
+          "GBOGEB/cryoplant-project",
+          "GBOGEB/gg_MATH",
+          "GBOGEB/pipeline-automation-hub",
+          "GBOGEB/yaml-grammar"
+        ]
+      },
+      {
+        "blocks": [],
+        "gate": "H12",
+        "repo_count": 5,
+        "repos": [
+          "GBOGEB/DOCX_RTM_Automation",
+          "GBOGEB/cryoplant-project",
+          "GBOGEB/gg_MATH",
+          "GBOGEB/pipeline-automation-hub",
+          "GBOGEB/yaml-grammar"
+        ]
+      },
+      {
+        "blocks": [
+          "H05",
+          "H06",
+          "H07",
+          "H10",
+          "H11",
+          "H12"
+        ],
+        "gate": "H04",
+        "repo_count": 4,
+        "repos": [
+          "GBOGEB/DOCX_RTM_Automation",
+          "GBOGEB/cryoplant-project",
+          "GBOGEB/pipeline-automation-hub",
+          "GBOGEB/yaml-grammar"
+        ]
+      },
+      {
+        "blocks": [
+          "H09",
+          "H12"
+        ],
+        "gate": "H08",
+        "repo_count": 3,
+        "repos": [
+          "GBOGEB/cryoplant-project",
+          "GBOGEB/gg_MATH",
+          "GBOGEB/pipeline-automation-hub"
+        ]
+      }
+    ],
+    "core_focus": "H08",
+    "instances": [
+      {
+        "blocks": [
+          "H09",
+          "H12"
+        ],
+        "edge_score": 2,
+        "gate": "H08",
+        "repo": "GBOGEB/DOCX_RTM_Automation",
+        "unlock_score": 4
+      },
+      {
+        "blocks": [
+          "H09",
+          "H12"
+        ],
+        "edge_score": 1,
+        "gate": "H08",
+        "repo": "GBOGEB/yaml-grammar",
+        "unlock_score": 3
+      }
+    ],
+    "ranked_gates": [
+      {
+        "class": "LOCAL",
+        "gate": "H08",
+        "repo_count": 2,
+        "repos": [
+          "GBOGEB/DOCX_RTM_Automation",
+          "GBOGEB/yaml-grammar"
+        ],
+        "unlock_score": 7
+      }
+    ]
+  },
+  "window": {
+    "admitted": [],
+    "current": [
+      "GBOGEB/pipeline-automation-hub",
+      "GBOGEB/cryoplant-project",
+      "GBOGEB/gg_MATH",
+      "GBOGEB/DOCX_RTM_Automation",
+      "GBOGEB/yaml-grammar"
+    ],
+    "empty_slots": 0,
+    "graduated": [],
+    "next": [
+      "GBOGEB/pipeline-automation-hub",
+      "GBOGEB/cryoplant-project",
+      "GBOGEB/gg_MATH",
+      "GBOGEB/DOCX_RTM_Automation",
+      "GBOGEB/yaml-grammar"
+    ]
+  },
+  "window_size": 5
+}

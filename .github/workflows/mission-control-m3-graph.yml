@@ -1,0 +1,134 @@
+name: Mission Control M3 graph and portal contract
+on:
+  pull_request:
+    paths:
+      - "docs/mission-control/m3/**"
+      - "mission-control/federation-atlas/m3_session/**"
+      - ".github/workflows/mission-control-m3-graph.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  m3-graph:
+    name: M3 exact-head read-only contract
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact event SHA
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Setup node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "20"
+      - name: Fail closed on checkout drift; validate graph/projection
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          node mission-control/federation-atlas/m3_session/test_m3_contract.js
+          node mission-control/federation-atlas/m3_session/test_m3_live_bridge.js
+          node mission-control/federation-atlas/m3_session/test_m3_dispatch_planner.js
+          node mission-control/federation-atlas/m3_session/test_m3_metrics.js
+          node mission-control/federation-atlas/m3_session/m3_live_bridge.js --live --out out/m3/telemetry.json
+          python - <<'PY'
+          import json, os, hashlib
+          from pathlib import Path
+          out=Path("out/m3")
+          out.mkdir(parents=True,exist_ok=True)
+          members={}
+          for p in (Path("docs/mission-control/m3/index.html"),Path("docs/mission-control/m3/state.json"),Path("out/m3/telemetry.json")):
+              members[str(p)]=hashlib.sha256(p.read_bytes()).hexdigest()
+          result={"schema":"missioncontrol.m3.native_receipt.v1","checkout_sha":os.environ["EXPECTED_SHA"],
+                  "run_id":os.environ["GITHUB_RUN_ID"],"attempt":os.environ["GITHUB_RUN_ATTEMPT"],
+                  "members":members,"qualification":"NATIVE_EXACT_HEAD_READ_ONLY_CONTRACT_NOT_ADMISSION",
+                  "crew_dispatch":"NOT_LAUNCHED","security_waiver":False,"merge_authorized":False}
+          (out/"receipt.json").write_text(json.dumps(result,indent=2,sort_keys=True)+"\n")
+          PY
+      - name: Assemble offline launch bundle from native measured telemetry
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p out/m3/site/docs/mission-control/m3
+          mkdir -p out/m3/site/docs/mission-control
+          cp -a docs/mission-control/m2 out/m3/site/docs/mission-control/m2
+          mkdir -p out/m3/site/docs/code-purple-live
+          cp -a docs/code-purple-live/. out/m3/site/docs/code-purple-live/
+          cp docs/mission-control/m3/index.html out/m3/site/docs/mission-control/m3/index.html
+          cp docs/mission-control/m3/state.json out/m3/site/docs/mission-control/m3/state.json
+          cp out/m3/telemetry.json out/m3/site/docs/mission-control/m3/telemetry.json
+          printf '%s\n' 'Read-only artifact. Serve this site folder via python -m http.server 8000; navigate to docs/mission-control/m3/index.html. No Pages publication or authority transfer.' > out/m3/site/README.txt
+      - name: Build owner-gated release candidate and deny forged/missing release
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          node mission-control/federation-atlas/m3_session/m3_publication_preflight.js --site out/m3/site --out out/m3/publication-preflight.json --sha "$EXPECTED_SHA"
+          node mission-control/federation-atlas/m3_session/test_m3_publication_preflight.js
+      - name: Generate single-file M3 open-me download and test portable integrity
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          node mission-control/federation-atlas/m3_session/m3_offline_delivery.js --site out/m3/site --sha "$EXPECTED_SHA" --out out/m3/M3_OPEN_ME_OFFLINE.html
+          node mission-control/federation-atlas/m3_session/test_m3_offline_delivery.js
+      - name: Publish diagnostic receipt, never Pages
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: m3-graph-contract-${{ github.run_id }}-${{ github.run_attempt }}
+          path: out/m3/
+          if-no-files-found: error
+
+  m3-browser:
+    name: M3 Chromium responsive and interaction QA
+    needs: m3-graph
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact event SHA
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: "3.11"
+      - name: Install pinned Playwright and Chromium
+        run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Install pinned Playwright and Chromium" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium
+      - name: Download matching exact-run M3 graph and open-me artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: m3-graph-contract-${{ github.run_id }}-${{ github.run_attempt }}
+          path: out/m3/from-graph
+      - name: Verify standalone open-me offline with all networking denied
+        shell: bash
+        run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Verify standalone open-me offline with all networking denied" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
+          set -euo pipefail
+          python mission-control/federation-atlas/m3_session/m3_offline_browser_qa.py --html out/m3/from-graph/M3_OPEN_ME_OFFLINE.html --out out/m3/browser
+      - name: QA 1440x1000, 1280x800, 390x844 with exact checkout
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="QA 1440x1000, 1280x800, 390x844 with exact checkout" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          python mission-control/federation-atlas/m3_session/m3_browser_qa.py --out out/m3/browser
+      - name: Upload QA screenshots and negative receipt
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: m3-browser-qa-${{ github.run_id }}-${{ github.run_attempt }}
+          path: out/m3/browser/
+          if-no-files-found: warn

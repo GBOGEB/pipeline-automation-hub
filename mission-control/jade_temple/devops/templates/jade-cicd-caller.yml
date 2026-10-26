@@ -1,0 +1,60 @@
+# JADE N+9 caller template: copy to <repo>/.github/workflows/jade-cicd.yml and adapt the `with:` blocks.
+# Replace 0000000000000000000000000000000000000000 with the pipeline-automation-hub commit SHA that
+# contains jade-reusable-ci.yml and jade-reusable-deploy.yml (never a branch or tag name).
+# Before the first production deploy, the repository owner configures the `production` environment
+# (required reviewers, branch policy refs/heads/main) and enables Pages "GitHub Actions" as source.
+name: JADE CI/CD
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        options: [staging, production]
+        default: staging
+permissions:
+  contents: read
+jobs:
+  ci:
+    uses: GBOGEB/pipeline-automation-hub/.github/workflows/jade-reusable-ci.yml@0000000000000000000000000000000000000000
+    with:
+      install: python -m pip install --disable-pip-version-check -r requirements.txt
+      test-runner: unittest
+      test-args: discover -s tests -p test_*.py
+      min-tests: 1
+      coverage-floor: 80
+      build-command: python tools/build_site.py --out site
+      artifact-path: site
+      artifact-name: site
+
+  deploy-staging:
+    needs: ci
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: GBOGEB/pipeline-automation-hub/.github/workflows/jade-reusable-deploy.yml@0000000000000000000000000000000000000000
+    with:
+      environment: staging
+      target: artifact
+      artifact-name: ${{ needs.ci.outputs.artifact-name }}
+      manifest-sha256: ${{ needs.ci.outputs.manifest-sha256 }}
+      tests-ran: ${{ fromJSON(needs.ci.outputs.tests-ran) }}
+
+  deploy-production:
+    needs: [ci, deploy-staging]
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || inputs.environment == 'production')
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: GBOGEB/pipeline-automation-hub/.github/workflows/jade-reusable-deploy.yml@0000000000000000000000000000000000000000
+    with:
+      environment: production
+      target: pages
+      artifact-name: ${{ needs.ci.outputs.artifact-name }}
+      manifest-sha256: ${{ needs.ci.outputs.manifest-sha256 }}
+      tests-ran: ${{ fromJSON(needs.ci.outputs.tests-ran) }}

@@ -1,0 +1,203 @@
+{
+  "schema": "missioncontrol.code_purple.iteration_observation.v1",
+  "series_key": "W1.C1.I3.S0",
+  "observed_on": "2026-10-17",
+  "evidence_class": "OBSERVED_NATIVE",
+  "authority_transfer": false,
+  "formal_credit_delta": 0,
+  "population": {
+    "repo": "GBOGEB/ABACUS",
+    "workflow": "DMAIC V3 Test Suite - Continuous Integration",
+    "branch": "main",
+    "window_utc": [
+      "2026-09-27T17:25:11Z",
+      "2026-10-17T12:08:19Z"
+    ],
+    "from_control_run": 36336861952,
+    "terminal_runs": 162,
+    "success_runs": 119,
+    "jobs_with_timestamps": 1982
+  },
+  "dmaic": {
+    "I2_bind": {
+      "d1_job": 108424874248,
+      "d1_run": 36249393504,
+      "d1_head": "f8c3365feac6903152b7d42bdcc3cd992ff48414",
+      "d2_postmerge_job": 108675180909,
+      "d2_repeat_job": 108921685543,
+      "state": "CONTROL_EVIDENCE_PRESENT_CONTRACT_NOT_YET_REBOUND"
+    },
+    "I3": {
+      "root": "PY310_MATPLOTLIB_FLOOR",
+      "introduced_by": "GBOGEB/ABACUS#2012 (5bbc09a)",
+      "first_red_run": 38746401869,
+      "repair": "GBOGEB/ABACUS#2130 merged 2026-10-17T17:04Z",
+      "repro": "uv pip compile: before py3.10 No solution; after 3.10->matplotlib 3.10.9, 3.11/3.12->3.11.2",
+      "exact_head_proof": "PENDING (post-merge runs queued)"
+    }
+  },
+  "repeat_metric": {
+    "name": "max_unchanged_root_auto_repeat_after_control",
+    "definition": "max failures of the same job+failing step on one unchanged head after CONTROL",
+    "value_any_root": 8,
+    "value_controlled_roots_only": 1,
+    "gate_max": 2,
+    "predicate": "FAIL",
+    "evidence": "Unit Tests (3.10)/Install dependencies on 54da377: 8 scheduled runs 38783153394..39031344672"
+  },
+  "first_red": {
+    "episodes": [
+      {
+        "job": "Quality Gates",
+        "step": "Check test coverage threshold",
+        "first_run": "36854803482",
+        "first_head": "c80b6701acb5ad6609a0147ed9e86f52f5471337",
+        "first_at": "2026-10-01T11:20:58Z",
+        "runs": 23,
+        "heads": 23,
+        "events": {
+          "push": 18,
+          "schedule": 5
+        },
+        "last_run": "37005136739",
+        "last_at": "2026-10-02T12:10:34Z",
+        "closed_by_run": "37012517163",
+        "closed_at": "2026-10-02T13:22:07Z",
+        "max_same_head_failures": 1
+      },
+      {
+        "job": "Smoke Tests (Quick Validation)",
+        "step": "Install dependencies",
+        "first_run": "36909066995",
+        "first_head": "b51e614520183758d109f761104decf3d959dd24",
+        "first_at": "2026-10-01T18:44:23Z",
+        "runs": 1,
+        "heads": 1,
+        "events": {
+          "push": 1
+        },
+        "last_run": "36909066995",
+        "last_at": "2026-10-01T18:44:23Z",
+        "closed_by_run": "37012517163",
+        "closed_at": "2026-10-02T13:22:07Z",
+        "max_same_head_failures": 1
+      },
+      {
+        "job": "Unit Tests (3.10)",
+        "step": "Install dependencies",
+        "first_run": "36908797232",
+        "first_head": "735829d9f6edd8dc295bd4556c94a5ca01f09d3d",
+        "first_at": "2026-10-01T18:42:11Z",
+        "runs": 5,
+        "heads": 5,
+        "events": {
+          "push": 5
+        },
+        "last_run": "36914198086",
+        "last_at": "2026-10-01T19:25:40Z",
+        "closed_by_run": "37012517163",
+        "closed_at": "2026-10-02T13:22:07Z",
+        "max_same_head_failures": 1
+      },
+      {
+        "job": "Unit Tests (3.10)",
+        "step": "Install dependencies",
+        "first_run": "38746401869",
+        "first_head": "5bbc09ab72cda4bbc74ddc054f899c76252743b7",
+        "first_at": "2026-10-15T13:52:20Z",
+        "runs": 14,
+        "heads": 7,
+        "events": {
+          "push": 6,
+          "schedule": 8
+        },
+        "last_run": "39031344672",
+        "last_at": "2026-10-17T12:08:19Z",
+        "closed_by_run": null,
+        "max_same_head_failures": 8
+      }
+    ],
+    "episodes_in_window": 4,
+    "open": 1
+  },
+  "kpis": {
+    "QUEUE_P95": {
+      "value_s": 1497.5,
+      "p50_s": 3.0,
+      "n": 1982,
+      "state": "OBSERVED_CURRENT"
+    },
+    "EXACT_HEAD_PROOF_YIELD": {
+      "num": 119,
+      "den": 162,
+      "value": 0.7346,
+      "state": "OBSERVED_CURRENT"
+    },
+    "FIRST_RED_COUNT": {
+      "value": 4,
+      "open": 1,
+      "state": "OBSERVED_CURRENT"
+    },
+    "ACCEPTED_RECEIPT_YIELD": {
+      "value": null,
+      "state": "UNBOUND"
+    },
+    "PREDICTION_VS_ACTUAL": {
+      "scored": 5,
+      "hits": 2,
+      "mae": 1.4,
+      "brier": null,
+      "rows": [
+        [
+          "SC-1",
+          "dmaic_complete_iterations",
+          2,
+          "pending contract rebind"
+        ],
+        [
+          "SC-2",
+          "top14_gate_unknown",
+          0,
+          "0 once repeat bound (FAIL)"
+        ],
+        [
+          "SC-4",
+          "top7_pulse_green_control",
+          6,
+          1
+        ],
+        [
+          "SC-5",
+          "receipt_edges",
+          3,
+          2
+        ],
+        [
+          "SC-6",
+          "coverage_rows_measured",
+          4,
+          3
+        ]
+      ],
+      "state": "OBSERVED_CURRENT",
+      "note": "SC-1/SC-2 hits assume the contract rebind in CPQ-010/013"
+    },
+    "RUNNER_HEALTH": {
+      "value": null,
+      "state": "UNBOUND"
+    }
+  },
+  "coverage": {
+    "statement_gate": "ABACUS Quality Gates (G75) success on every run after 2026-10-03 incl. 54da377",
+    "changed_line_rollup_20261013": {
+      "cryoplant-project": 96.02,
+      "CODEX": 94.83,
+      "ABACUS": 93.75
+    },
+    "statement_rows_measured_of_21": 3
+  },
+  "pca": {
+    "state": "HOLD",
+    "reason": "FLEET_TELEMETRY pca_gate needs >=3 MEASURED rows across >=2 missions; this observation is one population (ABACUS DMAIC)"
+  }
+}

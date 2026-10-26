@@ -1,0 +1,40 @@
+name: Actions pin ratchet
+
+# CI lesson 3: every remote action in a workflow file a PR adds or changes must be pinned to a
+# 40-hex commit SHA. Only the changed files are checked, so legacy files never block unrelated PRs.
+# Fix locally with: python scripts/ci/pin_actions.py <file>
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/**"
+      - "scripts/ci/pin_actions.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: actions-pin-ratchet-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  pin-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Check changed workflow files are SHA-pinned
+        run: |
+          # The pull_request checkout is the merge commit; its first parent is the base tip.
+          mapfile -t files < <(git diff --name-only --diff-filter=ACMR HEAD^1 HEAD -- \
+            '.github/workflows/*.yml' '.github/workflows/*.yaml')
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "no workflow files added or changed in this PR"
+            exit 0
+          fi
+          printf 'checking %s\n' "${files[@]}"
+          python3 scripts/ci/pin_actions.py --check "${files[@]}"

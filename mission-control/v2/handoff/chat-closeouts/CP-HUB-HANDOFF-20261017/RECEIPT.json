@@ -1,0 +1,248 @@
+{
+  "schema": "code_purple.chat_closeout_receipt.v1",
+  "session": {
+    "id": "CP-HUB-HANDOFF-20261017",
+    "source_scope": "VISIBLE_CONTEXT_PARTIAL",
+    "source_description": "Two user requests visible in this bounded conversation excerpt; entire historical conversation not accessible as a verified export",
+    "snapshot_atomic": false,
+    "as_of_utc": "2026-10-17",
+    "export_sha256": null,
+    "export_format": null,
+    "chat_url": null,
+    "complete_verbatim_transcript": false,
+    "limitation": "Partial context/attached source readback is not a full chat export; exact global prompt and token totals unavailable."
+  },
+  "narrative": {
+    "mission": "Source-controlled GitHub-first lossless-intent continuation and safe closeout for CODE PURPLE / MissionControl.",
+    "original_intent": "Preserve the correct current handover from screenshot and canonical GitHub source without shadow SSOT or mandatory ZIP.",
+    "evolution": "The source-owned handover #634 merged; #640 added a post-merge delta and opt-in GitHub-first moniker transport. The follow-up asks for a reusable CP.CLOSEOUT command, narrative/intent/decisions, prompt/session statistics, TODO, deduplicated BD queue and eventual governed-main custody.",
+    "decisions": "Reuse CP_HANDOFF_RESUME_V1, GITHUB_FIRST_PROFILE_V1 and existing #640 branch; preserve immutable handover #634 and source-owned seven-module fix #630. A PR is not a merged main receipt; historical UI and partial prompt counts do not earn native or full-session proof.",
+    "insights": "Separate three dimensions: chat/evidence completeness, repository engineering verification and independent publication. The visible screenshot and two native matrix failures share one contract mismatch, not two deduplicated roots. Missing complete conversation export prevents defensible full prompt counts; prompt totals remain null.",
+    "next_session_goal": "Requalify #640 checks, owner review and main publication separately; repair #630 inheritance via actual stack owner and #631 FPC MISSING_RECEIPT under existing GitHub governance."
+  },
+  "statistics": {
+    "full_counts": {
+      "user_prompts": null,
+      "assistant_replies": null,
+      "tool_calls": null
+    },
+    "visible_context_counts": {
+      "user_prompts": 2,
+      "assistant_replies": null,
+      "tool_calls": null,
+      "basis": "CONTEXT_PARTIAL_NOT_FULL_SESSION",
+      "note": "Two visible user prompts in the excerpt at drafting cutoff, not a full-session count or independently exported transcript."
+    },
+    "intent_topics": [
+      "GitHub-first lossless handover",
+      "Reusable closeout moniker",
+      "Chat/session prompt statistics",
+      "Narrative and intent evolution",
+      "TODO and deduplicated BD queue",
+      "Governed PR-to-main publication"
+    ],
+    "token_count": null,
+    "message_timestamps_start_utc": null,
+    "message_timestamps_end_utc": null,
+    "duration_seconds": null,
+    "metric_receipts": [
+      {
+        "id": "N3-39041480567-PY311",
+        "source": "GITHUB_NATIVE_RUN",
+        "eligible_tests": 146,
+        "passed_tests": 145,
+        "failed_tests": 1,
+        "status": "FAIL",
+        "run_id": 39041480567,
+        "job_id": 117426883189,
+        "exact_head_sha": "dcf11a8c475ac7a6c420f919e08a82df7cfcbdc6",
+        "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39041480567/job/117426883189"
+      },
+      {
+        "id": "N3-39041480567-PY312",
+        "source": "GITHUB_NATIVE_RUN",
+        "eligible_tests": 146,
+        "passed_tests": 145,
+        "failed_tests": 1,
+        "status": "FAIL",
+        "run_id": 39041480567,
+        "job_id": 117426883394,
+        "exact_head_sha": "dcf11a8c475ac7a6c420f919e08a82df7cfcbdc6",
+        "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39041480567/job/117426883394"
+      }
+    ],
+    "coverage": {
+      "changed_lines": null,
+      "statements": null,
+      "branches": null,
+      "reason": "native N3 coverage step skipped; do not compare unrelated cohorts"
+    }
+  },
+  "lineage": {
+    "repositories": [
+      "GBOGEB/pipeline-automation-hub",
+      "GBOGEB/ABACUS",
+      "GBOGEB/CODEX",
+      "GBOGEB/cryoplant-project",
+      "GBOGEB/gg_MATH"
+    ],
+    "prs": [
+      {
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "number": 634,
+        "status": "MERGED_TO_MASTER",
+        "head_sha": "dcf11a8c475ac7a6c420f919e08a82df7cfcbdc6",
+        "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/634"
+      },
+      {
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "number": 640,
+        "status": "DRAFT_OPEN_HEAD_ADVANCING",
+        "head_sha": null,
+        "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/640"
+      },
+      {
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "number": 630,
+        "status": "MERGED_TO_INTERMEDIATE_620_ONLY",
+        "head_sha": "91f66ed542f2a3b393afa0a615344315fac2125a",
+        "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/630"
+      },
+      {
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "number": 620,
+        "status": "OPEN_PARENT",
+        "head_sha": "f3374560af1755693f53a4b2e9f8ef3c184a08a3",
+        "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/620"
+      },
+      {
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "number": 621,
+        "status": "OPEN_STACKED",
+        "head_sha": "296c2dfa6c81849038b3d378d2e179dfdb4ca8a4",
+        "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/621"
+      },
+      {
+        "repo": "GBOGEB/pipeline-automation-hub",
+        "number": 631,
+        "status": "OPEN_STACKED_FPC_FAIL_HISTORICAL",
+        "head_sha": "ea234657c0d030e816a4a4368c95b15fc8dd661e",
+        "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/631"
+      }
+    ],
+    "native_runs": [
+      {
+        "run_id": 39041480567,
+        "job_id": 117426883189,
+        "attempt": null,
+        "head_sha": "dcf11a8c475ac7a6c420f919e08a82df7cfcbdc6",
+        "conclusion": "FAILURE",
+        "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39041480567/job/117426883189"
+      },
+      {
+        "run_id": 39041480567,
+        "job_id": 117426883394,
+        "attempt": null,
+        "head_sha": "dcf11a8c475ac7a6c420f919e08a82df7cfcbdc6",
+        "conclusion": "FAILURE",
+        "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/39041480567/job/117426883394"
+      }
+    ]
+  },
+  "work": {
+    "completed": [
+      "Original GitHub-first #634 handover and 11 negative guard tests were committed; #634 merged to master (transport custody only).",
+      "GitHub-readback analysis identified same stale six-module assertion in both Python 3.11/3.12; source-owned fix #630 already merged to #620 feature branch.",
+      "Draft PR #640 committed additive GitHub-first transport moniker and append-only post-merge delta.",
+      "This continuation introduces reusable CP.CLOSEOUT profile/operator/receipt validation in the same source-owned PR."
+    ],
+    "todo": [
+      "Finish local and exact-head native validation of CP.CLOSEOUT artifacts, record matched results.",
+      "Obtain eligible review/security and merge PR #640 only if effective gates pass; verify exact-main SHA/CI.",
+      "Reconcile #630's canonical seven-module fix along #620→#621→#631 and requalify native N3.",
+      "Resolve independent #631 First-Pass Closure trusted receipt failure.",
+      "If complete prompt statistics are required, obtain a verified normalized full chat export off-GitHub and compute scoped counts."
+    ],
+    "blocked": [
+      "Full-session prompt/token/time totals have no complete exported source.",
+      "Engineering/N15 acceptance not established, independent FPC fails historical checkpoint, admission HOLD.",
+      "No automatic chat deletion or main merge authorized."
+    ]
+  },
+  "bd_queue": [
+    {
+      "id": "CP-CLOSEOUT-01",
+      "priority": "P0",
+      "status": "VERIFY_PENDING",
+      "root_or_symptom": "CP.CLOSEOUT contract and negative tests require live native qualification",
+      "owner": "MissionControl handover owner",
+      "repo_or_pr": "GBOGEB/pipeline-automation-hub#640",
+      "next_action": "Validate per-chat receipt and run native closeout testflight; inspect exact PR head.",
+      "definition_of_verification": "Terminal matched exact-head test jobs and schema negative controls."
+    },
+    {
+      "id": "BD-N3-01",
+      "priority": "P0",
+      "status": "BLOCKED",
+      "root_or_symptom": "Inherited seven-module source vs six-module assertion",
+      "owner": "MissionControl #620/#630 source owner",
+      "repo_or_pr": "GBOGEB/pipeline-automation-hub#630",
+      "next_action": "Reuse existing repair in owned integration chain and rerun exact-head Python matrix.",
+      "definition_of_verification": "Both lanes pass, coverage k/d source-bound, correct module population."
+    },
+    {
+      "id": "BD-FPC-02",
+      "priority": "P0",
+      "status": "BLOCKED",
+      "root_or_symptom": "Independent First-Pass Closure missing trusted receipt",
+      "owner": "MissionControl FPC owner",
+      "repo_or_pr": "GBOGEB/pipeline-automation-hub#631",
+      "next_action": "Repair actual receipt producer, not approval logic; requalify native FPC.",
+      "definition_of_verification": "Exact-head trusted FPC terminal PASS and applicable independent reviews."
+    },
+    {
+      "id": "BD-STACK-03",
+      "priority": "P1",
+      "status": "OPEN",
+      "root_or_symptom": "#620→#621→#631 feature stack diverged from advancing master",
+      "owner": "MissionControl stack owners",
+      "repo_or_pr": "GBOGEB/pipeline-automation-hub#620",
+      "next_action": "Recheck base/head ancestry and owner lease before authorized serial fan-in.",
+      "definition_of_verification": "Current exact base/head checks, native CI and admission receipts for each PR."
+    },
+    {
+      "id": "CP-STAT-05",
+      "priority": "P2",
+      "status": "DEFER",
+      "root_or_symptom": "Full chat message export unavailable",
+      "owner": "Chat owner",
+      "repo_or_pr": "GBOGEB/pipeline-automation-hub#640",
+      "next_action": "Export privately and normalize only when exact statistics are essential.",
+      "definition_of_verification": "Complete source export SHA256, declared normalization and passing count validation."
+    }
+  ],
+  "custody": {
+    "target": "GOVERNED_MAIN",
+    "stage": "COMMITTED_TO_PR",
+    "pr_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/640",
+    "pr_head_sha": null,
+    "native_verification_url": null,
+    "merged_pr_url": null,
+    "merge_commit_sha": null,
+    "main_sha": null,
+    "exact_main_verification_url": null,
+    "authorized_merge_readback": false,
+    "postmerge_checks_passed": false,
+    "next_step": "Obtain exact-head PR CI and independent authorized review; only then merge and verify main."
+  },
+  "controls": {
+    "raw_transcript_committed": false,
+    "auto_merge": false,
+    "security_waiver": false,
+    "branch_protection_relaxed": false,
+    "authority_transfer": false,
+    "chat_deleted_by_assistant": false,
+    "engineering_merge_admission": "HOLD",
+    "qps_accepted": false
+  }
+}

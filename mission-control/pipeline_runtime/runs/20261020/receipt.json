@@ -1,0 +1,2582 @@
+{
+ "command": [
+  "python3",
+  "/home/claude/pipeline-automation-hub/scripts/run_processing.py",
+  "--input-dir",
+  "/home/claude/pipeline-automation-hub/app/public/master_input",
+  "--output-dir",
+  "<work>/outputs"
+ ],
+ "consumers": [
+  "app/app/api/document-engines/route.ts",
+  "app/app/api/io-files/route.ts",
+  "app/components/dashboard.tsx"
+ ],
+ "errors": {
+  "stderr_flagged": [],
+  "stderr_tail": "",
+  "uncaught": []
+ },
+ "exit_code": 0,
+ "input": {
+  "assets": [
+   {
+    "bytes": 8704764,
+    "oid": "6b501995a3dbe1b575c8c76443e304bb26025f89",
+    "path": "Path to PED compliance of Cryo systems.pptx",
+    "sha256": "ccbf1f23e30576d9e9864e1c6cc24c6db22dae7688ad5c7d4c5e03a35897c2cb"
+   },
+   {
+    "bytes": 8188957,
+    "oid": "65a9ee438b39a1ed386390959d78e2ab19fa262f",
+    "path": "Path to PED compliance of Cryo systems_fontnorm.pptx",
+    "sha256": "9f416e9f5825d4fd9cb86024b76f71e6ddd693db5d54f31ba4a5156ec6518bea"
+   },
+   {
+    "bytes": 6666498,
+    "oid": "4c9be24f006a7f9df5bdb38229a18fb2e81cef44",
+    "path": "QPLANT Buildings.pptx",
+    "sha256": "c4a5f277c42cec480f0133fa58f01e2651537446fcaeda79ad652c0c2cc7e311"
+   },
+   {
+    "bytes": 5265258,
+    "oid": "9bef9b2474f3cc2a8ec8cf5625658a74ef3b634c",
+    "path": "QPLANT_GrantingPhase_Status.pptx",
+    "sha256": "4a85211596e23c80a6d9bf0afaaf8978a769e6e64eb1f790c02e9869a68deb17"
+   },
+   {
+    "bytes": 7912333,
+    "oid": "03df398e4a45d746e4aefff7ee335859b9910462",
+    "path": "QSYS - ATS Database Management System.pptx",
+    "sha256": "b3ed970a4eebe7468cd5d6149329343d3f66254fb96743f4d5d67e375a0be754"
+   },
+   {
+    "bytes": 16467164,
+    "oid": "5813ea997cd4b3830a1aefa32125b3b371c18316",
+    "path": "QSYS - Architecture for MINERVA - VISUAL and HUMAN.pptx",
+    "sha256": "be3404272c67cf9361479bfb0aa89d9f1cbad92a7f7e0afdc6bde961f5ced1ca"
+   },
+   {
+    "bytes": 18081548,
+    "oid": "0ef85c3e7db046e48b62a7099f315b9667f26a35",
+    "path": "QSYS - Architecture for MINERVA.pptx",
+    "sha256": "ed0bcb060220ed7a189b9af125742c87f75220dbdd8a703e0a93fb92bd7103af"
+   },
+   {
+    "bytes": 4780972,
+    "oid": "0aee2826434e583a8dca3a8232fade58e3c41e59",
+    "path": "QSYS - Architecture for MINERVA_fontnorm.pptx",
+    "sha256": "fe09926ad3b940bfbaa9e8ed44fa4c50af8d52c311e429f7c04917cc81b963e4"
+   },
+   {
+    "bytes": 3689028,
+    "oid": "624a9bcb4fde3869d0d3cd768b8fe7a7de1e763c",
+    "path": "QSYS - Commissioning Overview.pptx",
+    "sha256": "d023abfcdb97e99b9a9e8e60bb90876c2c6b7f3b332eb8630a7b20f4c6ca4094"
+   },
+   {
+    "bytes": 3184292,
+    "oid": "b41a59d277690bef240538ee07cf535c7e4cb316",
+    "path": "QSYS - He Recovery.pptx",
+    "sha256": "e00622b22c81e2870171e49e77aa57da8dd693490bd90a59de92817f6c3cb13c"
+   },
+   {
+    "bytes": 3051446,
+    "oid": "72e89abbd23ab383d5e274acbd3be87b9735b86f",
+    "path": "QSYS - He Recovery_fontnorm.pptx",
+    "sha256": "6d41af6d2b69584ad3925556a23837b59ce5aa09009b90de20be3ddf3428e40d"
+   },
+   {
+    "bytes": 2455234,
+    "oid": "f0a82eb82969b9ec5e39795ada7ee6f635304107",
+    "path": "QSYS - IADR Overview.pptx",
+    "sha256": "3186d9ea7a188948d752ee69135d3c15af1211ccda0af7b371146bc48692a6c5"
+   },
+   {
+    "bytes": 8981373,
+    "oid": "3a2464fda1857d20a32ce1ab90fa29ea8ffc812b",
+    "path": "QSYS - Installation Overview.pptx",
+    "sha256": "419b40770f496eb84ec1df8644ba4bc661f8c46f7661e9aca5f075755c50a2e4"
+   },
+   {
+    "bytes": 2551669,
+    "oid": "37ee8ad792f421184a37ae9510c218e77794a04b",
+    "path": "QSYS - Pipping Pressure Overview.pptx",
+    "sha256": "1fc67beb0c2a528ba28c5175c152abe746ae4d5db29d64baf6a9f287bf2e1a09"
+   },
+   {
+    "bytes": 2398127,
+    "oid": "c81b3b36f3fc1e332dcc209fd535fbcce5eef90d",
+    "path": "QSYS - Pipping Pressure Overview_fontnorm.pptx",
+    "sha256": "e06c47d50765d55a59c1f4f63f832522aa1a92f16094253cb1281c8c12042dba"
+   },
+   {
+    "bytes": 2429439,
+    "oid": "b7464ab453d3c04894c3741d556a631c9ffc4336",
+    "path": "QSYS - Top-level system description.pptx",
+    "sha256": "52dc0fb50fe591f915a7bed200f4c7e0a3462a911fdcbfec0e2b67b623481206"
+   },
+   {
+    "bytes": 12588190,
+    "oid": "8752bb081158b58ddfd0042cd70f1a39e5c49641",
+    "path": "QSYS Buildings Overview.pptx",
+    "sha256": "2d37c7e8270a8e62c4a47e9550ecbc2807fbfd4201e74de75f2bf98a3fe32055"
+   },
+   {
+    "bytes": 12092565,
+    "oid": "d19f4e316383ad1d4c19fe7531fa002ac06c24e5",
+    "path": "QSYS Buildings Overview_fontnorm.pptx",
+    "sha256": "eeaa778b6dd6a0f091c35b12528d1156696d78cb6b2c86e1df8c029d63b360d9"
+   },
+   {
+    "bytes": 7739036,
+    "oid": "6be8f2b5c4e87988fb45477d4715bcd18b383976",
+    "path": "QSYS Naming Conventions.pptx",
+    "sha256": "b8cfd68a1d02194b74b956e656e4d1f966a7d113278d0b130a6139baa0066024"
+   },
+   {
+    "bytes": 7170310,
+    "oid": "1392e905a15b8c03081e111bd96395b2510d35c0",
+    "path": "QSYS Naming Conventions_fontnorm.pptx",
+    "sha256": "478f03196a90b2590547c4171948b42c06e27c019407d3894ac1ca277f779662"
+   },
+   {
+    "bytes": 8721597,
+    "oid": "09be4bbfa400913f602bc537837ba185a1e56e22",
+    "path": "QSYS Process and Utilities Overview.pptx",
+    "sha256": "e0d85da5ad28e01616fddfcaa28aa02d1a5aa47915ec060f9da8e288bb56b063"
+   },
+   {
+    "bytes": 31211,
+    "oid": "1f8fbed133dc8035e27433b1ab704a165d14fea2",
+    "path": "Values_Commitments_v1 2025-06-05 19_04_08.pptx",
+    "sha256": "fc3a146610f11c2cc38e6f984f628fe9e77ab0deb03ce7a4dc570206b6c3b796"
+   },
+   {
+    "bytes": 28779,
+    "oid": "80ba794a9a07cdc16cf815b338332915e86883d9",
+    "path": "redrawn_figure5.pptx",
+    "sha256": "d678387bdb250d7557e8b21174f0a811849d51f42b7cb36656e72d7b58fff7a4"
+   },
+   {
+    "bytes": 28797,
+    "oid": "d838b097d21898ea770ca2d7e0c23f506c3948c7",
+    "path": "redrawn_figure5_fontnorm.pptx",
+    "sha256": "18a93776af6cc01135097c786a606abdeb3901eaa3d1a4182383071e793b706c"
+   }
+  ],
+  "changed": null,
+  "dir": "app/public/master_input",
+  "files": 24,
+  "immutable": true
+ },
+ "merge_authorized": false,
+ "mode": "SANDBOX",
+ "outputs": {
+  "counts": {
+   "created": 28,
+   "deleted": 0,
+   "modified": 74,
+   "unchanged": 32
+  },
+  "created": [
+   {
+    "bytes": 925,
+    "oid": "3a473976bf0ffed68f84ba8c2cddff88b634ff84",
+    "path": "pipeline_run_receipt.json",
+    "sha256": "695261ccf5cbe8c39183cba95dba342cf62e2b330a360c24fbe7c12a2df7fdd6"
+   },
+   {
+    "bytes": 624,
+    "oid": "fe271fe28ccc4b6dd1f9cadf065a04220c59bd3f",
+    "path": "recursive_build/.buildlog/path_to_ped_compliance_of_cryo_systems_fontnorm_pptx/artefact_id.yaml",
+    "sha256": "97cdbf2653cfd39df5cce2017244f7c95b3f0ed30f0e60e2ff3e3385600ace7a"
+   },
+   {
+    "bytes": 597,
+    "oid": "1ddca832a80990443b02ec99691aa9e4e796a906",
+    "path": "recursive_build/.buildlog/path_to_ped_compliance_of_cryo_systems_pptx/artefact_id.yaml",
+    "sha256": "8c5e308810f34d854c0e933108d36bdf632b29f2b296a64916cc2c028405a0b4"
+   },
+   {
+    "bytes": 535,
+    "oid": "5d070ba1840e7c037e7a0c4e489cc1fb3508b279",
+    "path": "recursive_build/.buildlog/qplant_buildings_pptx/artefact_id.yaml",
+    "sha256": "53bf8ca0085ba7bf9d518018afd82037a1f2de84b41e42c2075c7b1efecc2695"
+   },
+   {
+    "bytes": 568,
+    "oid": "37bb6d5ca1a98bbc9ef874f2d4a45e84e57e04d9",
+    "path": "recursive_build/.buildlog/qplant_grantingphase_status_pptx/artefact_id.yaml",
+    "sha256": "0c59b02ae50e9c1f5b3568808203cf5cc6cfb51ebbbf6fe8ce7bf1e99a6cb4d8"
+   },
+   {
+    "bytes": 609,
+    "oid": "1bcd40c64dbe7bc5cfca96bf61d09c0f7585c807",
+    "path": "recursive_build/.buildlog/qsys_architecture_for_minerva_fontnorm_pptx/artefact_id.yaml",
+    "sha256": "2de6bdb991f3d5ab83d3f0d68b84b42bb955688d30b138a0b065da402c660000"
+   },
+   {
+    "bytes": 582,
+    "oid": "0662be69f60c3b64b6563fec0e9d0616a0adec87",
+    "path": "recursive_build/.buildlog/qsys_architecture_for_minerva_pptx/artefact_id.yaml",
+    "sha256": "d7241ef7e060c83822d75b07094e505c4487c79f9357165d6cc56dd837a04351"
+   },
+   {
+    "bytes": 639,
+    "oid": "027f67c68cfcc84e447e0f79ff77d016bde56160",
+    "path": "recursive_build/.buildlog/qsys_architecture_for_minerva_visual_and_human_pptx/artefact_id.yaml",
+    "sha256": "76bc0cd8cc1bf317b61306f3a0aeaa70985faa1bc3ac613b60a265e4ba694301"
+   },
+   {
+    "bytes": 591,
+    "oid": "93ad26e571988fe7017b8e4a341f31ee6b7c52aa",
+    "path": "recursive_build/.buildlog/qsys_ats_database_management_system_pptx/artefact_id.yaml",
+    "sha256": "b56394899f04ac361927c211e93cb7a97a47b2e6ea4edc7b749896ec8cd4d55e"
+   },
+   {
+    "bytes": 583,
+    "oid": "97718518e727e3dfc0479683229cffa8f316c7e0",
+    "path": "recursive_build/.buildlog/qsys_buildings_overview_fontnorm_pptx/artefact_id.yaml",
+    "sha256": "f82f3223bb068172a5f98bc236e1e8330e1a26d3e3aceade67cc9a1f2b12952b"
+   },
+   {
+    "bytes": 556,
+    "oid": "2e9762ad8eea8fdbf1910506a48845156b908237",
+    "path": "recursive_build/.buildlog/qsys_buildings_overview_pptx/artefact_id.yaml",
+    "sha256": "ab46f148e38e3a9fa4bee8e332725bb3b55a90682e66e0664e3409fb9786ed3c"
+   },
+   {
+    "bytes": 567,
+    "oid": "f68a1657c545e146b297dd248232c4e3a8c8617b",
+    "path": "recursive_build/.buildlog/qsys_commissioning_overview_pptx/artefact_id.yaml",
+    "sha256": "61084d20e0941b5fafdb2c2a7317aef32bb47fc59bb3c7051ef2f23cfa08776e"
+   },
+   {
+    "bytes": 558,
+    "oid": "d14f506b68c211ff4432b0f6a2c662a5ad8e2214",
+    "path": "recursive_build/.buildlog/qsys_he_recovery_fontnorm_pptx/artefact_id.yaml",
+    "sha256": "f7a55ac02b88e99a728424b399dfcee84f0b3c76d1e3a1058af939d1a432d8c6"
+   },
+   {
+    "bytes": 531,
+    "oid": "c1bd49c7fa1498361046bb913c39f26a814ab69a",
+    "path": "recursive_build/.buildlog/qsys_he_recovery_pptx/artefact_id.yaml",
+    "sha256": "b363e86afebfdad38b136fe984edd68f3c2b6b10681ce21ade7e1ca86943b024"
+   },
+   {
+    "bytes": 540,
+    "oid": "64a646f9a00f95f01d830a18a18777692ec499b9",
+    "path": "recursive_build/.buildlog/qsys_iadr_overview_pptx/artefact_id.yaml",
+    "sha256": "50167dbe03460f1c3e96c645afeee759014b9a354663cb6540b716856f10bfde"
+   },
+   {
+    "bytes": 564,
+    "oid": "ad24201ab352e0a8054face30c30562cbeb0b8b9",
+    "path": "recursive_build/.buildlog/qsys_installation_overview_pptx/artefact_id.yaml",
+    "sha256": "0686a22c77bac387e2f1577786ee4ac99cc954b9d36c675834e61e2542b7b466"
+   },
+   {
+    "bytes": 576,
+    "oid": "c91fdb4b7c6e023a7d7b684fb88ff8232ac6b9b5",
+    "path": "recursive_build/.buildlog/qsys_naming_conventions_fontnorm_pptx/artefact_id.yaml",
+    "sha256": "08a0b1365681d6de30a58d9142fefe4477141a2cb6818e3e9b5056455a744f5b"
+   },
+   {
+    "bytes": 549,
+    "oid": "e4ad2d4fe448aa7459d25b0df81092c65d9160e1",
+    "path": "recursive_build/.buildlog/qsys_naming_conventions_pptx/artefact_id.yaml",
+    "sha256": "923092bae3b5d19e5a8d508c385a7615884892782f04475340e4062bbcc9df9f"
+   },
+   {
+    "bytes": 600,
+    "oid": "c5711122f4ed67da993139207eba6674e0b37e91",
+    "path": "recursive_build/.buildlog/qsys_pipping_pressure_overview_fontnorm_pptx/artefact_id.yaml",
+    "sha256": "11adea96ac07ba816cfbe6e4b7290214c894f6d2b593a93bed3d3b4715b1f78b"
+   },
+   {
+    "bytes": 573,
+    "oid": "f9e06aed4670ee98200664da167d1630b7bc3b4b",
+    "path": "recursive_build/.buildlog/qsys_pipping_pressure_overview_pptx/artefact_id.yaml",
+    "sha256": "dd850d8bc64a236ae442be8020d6d9408847b503b394a3d81e0cd22588d02299"
+   },
+   {
+    "bytes": 585,
+    "oid": "e21cbe1d038a7c62c0882426a20dd2b7b14183c7",
+    "path": "recursive_build/.buildlog/qsys_process_and_utilities_overview_pptx/artefact_id.yaml",
+    "sha256": "6adffe81e39ba16ed951e206e54f27e5cb4437e9d0281a7715c9125872687fd2"
+   },
+   {
+    "bytes": 585,
+    "oid": "57625c341005d2cfc6d687d9406d8de7abcf326f",
+    "path": "recursive_build/.buildlog/qsys_top_level_system_description_pptx/artefact_id.yaml",
+    "sha256": "75ba3776e2380a9d2b7d11c30dfbc15a30c4e4999471fdc379f2138a74221d23"
+   },
+   {
+    "bytes": 552,
+    "oid": "d6167dc24bf817bf9da6de3481ef5d416a575e7a",
+    "path": "recursive_build/.buildlog/redrawn_figure5_fontnorm_pptx/artefact_id.yaml",
+    "sha256": "fadaa68e86f934dd93f996f3977034ba3b681e5ed891a64a1629cceb08961bf7"
+   },
+   {
+    "bytes": 525,
+    "oid": "6d4d6a9694044c297a6a85e8e91fe0a79e284950",
+    "path": "recursive_build/.buildlog/redrawn_figure5_pptx/artefact_id.yaml",
+    "sha256": "9f291173d937750db897e96fbc7947e88888352a606fb05344b9133387452ece"
+   },
+   {
+    "bytes": 607,
+    "oid": "44928d8d3a939e58b83ddd274ffca97215e896a7",
+    "path": "recursive_build/.buildlog/values_commitments_v1_2025_06_05_19_04_08_pptx/artefact_id.yaml",
+    "sha256": "1b1d895ea0c9f6c58f8c0f8db01db2616710cc414acfa8be46e3acf7483597a6"
+   },
+   {
+    "bytes": 529,
+    "oid": "2da49bdbdbc50fd5e678fb33469e5718ad74db2f",
+    "path": "recursive_build/build_receipt.json",
+    "sha256": "ad1516c23676977abb0ce609e79826e809ed6e2fe64fa306913afa2ea58f2971"
+   },
+   {
+    "bytes": 16481,
+    "oid": "2d3ef4bf8496ceb3c6fbf718999860d3a9315e4e",
+    "path": "recursive_build/index.json",
+    "sha256": "413b9c721085f9b337d62eb9ba7728c3be22dbe1119c1d4d55653439dbcf525d"
+   },
+   {
+    "bytes": 2118,
+    "oid": "d16a89f36c52d0011731110f045844c17f02e5db",
+    "path": "recursive_build/index_top30.md",
+    "sha256": "6c5d1faa6779ad2a734d614a72ce370637fe2340721ae2f16437d918596a628c"
+   }
+  ],
+  "deleted": [],
+  "dir": "app/public/outputs (sandbox copy)",
+  "modified": [
+   {
+    "after": {
+     "bytes": 192,
+     "oid": "3b07fecf3ec90b48025fe230aacca77852bc252d",
+     "sha256": "2735b5917132d77851b44404d74f8734f2ea65d0fa3cafd0e401501f07519087"
+    },
+    "before": {
+     "bytes": 99,
+     "oid": "a24042a457245d8e089fe689a6cc8975cd1b1492",
+     "sha256": "09edf7613935b9cc5db74829f7d6e8cc3d927c9f636a8e8e31a1cafeb1516b24"
+    },
+    "bytes": 192,
+    "json_keys_changed": null,
+    "oid": "3b07fecf3ec90b48025fe230aacca77852bc252d",
+    "path": "cross_references/Path to PED compliance of Cryo systems_cross_refs.json",
+    "sha256": "2735b5917132d77851b44404d74f8734f2ea65d0fa3cafd0e401501f07519087"
+   },
+   {
+    "after": {
+     "bytes": 192,
+     "oid": "3b07fecf3ec90b48025fe230aacca77852bc252d",
+     "sha256": "2735b5917132d77851b44404d74f8734f2ea65d0fa3cafd0e401501f07519087"
+    },
+    "before": {
+     "bytes": 99,
+     "oid": "a24042a457245d8e089fe689a6cc8975cd1b1492",
+     "sha256": "09edf7613935b9cc5db74829f7d6e8cc3d927c9f636a8e8e31a1cafeb1516b24"
+    },
+    "bytes": 192,
+    "json_keys_changed": null,
+    "oid": "3b07fecf3ec90b48025fe230aacca77852bc252d",
+    "path": "cross_references/Path to PED compliance of Cryo systems_fontnorm_cross_refs.json",
+    "sha256": "2735b5917132d77851b44404d74f8734f2ea65d0fa3cafd0e401501f07519087"
+   },
+   {
+    "after": {
+     "bytes": 191,
+     "oid": "48ab4e6f5e4c20238247d8f0e692051756379936",
+     "sha256": "24afaccc7ce1ceeb9f13e494c81eb822c7291014d6248483b5e7ec43e1d8390a"
+    },
+    "before": {
+     "bytes": 98,
+     "oid": "2666b96ce9b8d5a6b3c7b397e11b12c61a8d8a82",
+     "sha256": "45febdbbb8a71960ed93122e3011ee222af9b34c364ee078f4e97e5e6c412b61"
+    },
+    "bytes": 191,
+    "json_keys_changed": null,
+    "oid": "48ab4e6f5e4c20238247d8f0e692051756379936",
+    "path": "cross_references/QPLANT Buildings_cross_refs.json",
+    "sha256": "24afaccc7ce1ceeb9f13e494c81eb822c7291014d6248483b5e7ec43e1d8390a"
+   },
+   {
+    "after": {
+     "bytes": 191,
+     "oid": "48ab4e6f5e4c20238247d8f0e692051756379936",
+     "sha256": "24afaccc7ce1ceeb9f13e494c81eb822c7291014d6248483b5e7ec43e1d8390a"
+    },
+    "before": {
+     "bytes": 98,
+     "oid": "2666b96ce9b8d5a6b3c7b397e11b12c61a8d8a82",
+     "sha256": "45febdbbb8a71960ed93122e3011ee222af9b34c364ee078f4e97e5e6c412b61"
+    },
+    "bytes": 191,
+    "json_keys_changed": null,
+    "oid": "48ab4e6f5e4c20238247d8f0e692051756379936",
+    "path": "cross_references/QPLANT_GrantingPhase_Status_cross_refs.json",
+    "sha256": "24afaccc7ce1ceeb9f13e494c81eb822c7291014d6248483b5e7ec43e1d8390a"
+   },
+   {
+    "after": {
+     "bytes": 3,
+     "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+     "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "before": {
+     "bytes": 2,
+     "oid": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc",
+     "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "bytes": 3,
+    "json_keys_changed": null,
+    "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+    "path": "cross_references/QSYS - ATS Database Management System_cross_refs.json",
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+   },
+   {
+    "after": {
+     "bytes": 198,
+     "oid": "eef0583b4a8946da3f41ac6d768ec5a84f444cd1",
+     "sha256": "4304e2821068efbae744e2834b9e1a37f034437c0a693372240fde48deaf35cd"
+    },
+    "before": {
+     "bytes": 105,
+     "oid": "7b3bd61596019d806eb19debf4a35cb6b898768d",
+     "sha256": "2eb00fd7e54106c8fb3d7785eab3cbefdc6bcd4a0678b4ee26c3ba0e8eae262d"
+    },
+    "bytes": 198,
+    "json_keys_changed": null,
+    "oid": "eef0583b4a8946da3f41ac6d768ec5a84f444cd1",
+    "path": "cross_references/QSYS - Architecture for MINERVA - VISUAL and HUMAN_cross_refs.json",
+    "sha256": "4304e2821068efbae744e2834b9e1a37f034437c0a693372240fde48deaf35cd"
+   },
+   {
+    "after": {
+     "bytes": 198,
+     "oid": "eef0583b4a8946da3f41ac6d768ec5a84f444cd1",
+     "sha256": "4304e2821068efbae744e2834b9e1a37f034437c0a693372240fde48deaf35cd"
+    },
+    "before": {
+     "bytes": 105,
+     "oid": "7b3bd61596019d806eb19debf4a35cb6b898768d",
+     "sha256": "2eb00fd7e54106c8fb3d7785eab3cbefdc6bcd4a0678b4ee26c3ba0e8eae262d"
+    },
+    "bytes": 198,
+    "json_keys_changed": null,
+    "oid": "eef0583b4a8946da3f41ac6d768ec5a84f444cd1",
+    "path": "cross_references/QSYS - Architecture for MINERVA_cross_refs.json",
+    "sha256": "4304e2821068efbae744e2834b9e1a37f034437c0a693372240fde48deaf35cd"
+   },
+   {
+    "after": {
+     "bytes": 198,
+     "oid": "eef0583b4a8946da3f41ac6d768ec5a84f444cd1",
+     "sha256": "4304e2821068efbae744e2834b9e1a37f034437c0a693372240fde48deaf35cd"
+    },
+    "before": {
+     "bytes": 105,
+     "oid": "7b3bd61596019d806eb19debf4a35cb6b898768d",
+     "sha256": "2eb00fd7e54106c8fb3d7785eab3cbefdc6bcd4a0678b4ee26c3ba0e8eae262d"
+    },
+    "bytes": 198,
+    "json_keys_changed": null,
+    "oid": "eef0583b4a8946da3f41ac6d768ec5a84f444cd1",
+    "path": "cross_references/QSYS - Architecture for MINERVA_fontnorm_cross_refs.json",
+    "sha256": "4304e2821068efbae744e2834b9e1a37f034437c0a693372240fde48deaf35cd"
+   },
+   {
+    "after": {
+     "bytes": 3,
+     "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+     "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "before": {
+     "bytes": 2,
+     "oid": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc",
+     "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "bytes": 3,
+    "json_keys_changed": null,
+    "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+    "path": "cross_references/QSYS - Commissioning Overview_cross_refs.json",
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+   },
+   {
+    "after": {
+     "bytes": 3,
+     "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+     "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "before": {
+     "bytes": 2,
+     "oid": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc",
+     "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "bytes": 3,
+    "json_keys_changed": null,
+    "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+    "path": "cross_references/QSYS - He Recovery_cross_refs.json",
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+   },
+   {
+    "after": {
+     "bytes": 3,
+     "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+     "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "before": {
+     "bytes": 2,
+     "oid": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc",
+     "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "bytes": 3,
+    "json_keys_changed": null,
+    "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+    "path": "cross_references/QSYS - He Recovery_fontnorm_cross_refs.json",
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+   },
+   {
+    "after": {
+     "bytes": 3,
+     "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+     "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "before": {
+     "bytes": 2,
+     "oid": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc",
+     "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "bytes": 3,
+    "json_keys_changed": null,
+    "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+    "path": "cross_references/QSYS - IADR Overview_cross_refs.json",
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+   },
+   {
+    "after": {
+     "bytes": 3,
+     "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+     "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "before": {
+     "bytes": 2,
+     "oid": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc",
+     "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "bytes": 3,
+    "json_keys_changed": null,
+    "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+    "path": "cross_references/QSYS - Installation Overview_cross_refs.json",
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+   },
+   {
+    "after": {
+     "bytes": 3,
+     "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+     "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "before": {
+     "bytes": 2,
+     "oid": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc",
+     "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "bytes": 3,
+    "json_keys_changed": null,
+    "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+    "path": "cross_references/QSYS - Pipping Pressure Overview_cross_refs.json",
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+   },
+   {
+    "after": {
+     "bytes": 3,
+     "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+     "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "before": {
+     "bytes": 2,
+     "oid": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc",
+     "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "bytes": 3,
+    "json_keys_changed": null,
+    "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+    "path": "cross_references/QSYS - Pipping Pressure Overview_fontnorm_cross_refs.json",
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+   },
+   {
+    "after": {
+     "bytes": 3,
+     "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+     "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "before": {
+     "bytes": 2,
+     "oid": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc",
+     "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "bytes": 3,
+    "json_keys_changed": null,
+    "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+    "path": "cross_references/QSYS - Top-level system description_cross_refs.json",
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+   },
+   {
+    "after": {
+     "bytes": 3,
+     "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+     "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "before": {
+     "bytes": 2,
+     "oid": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc",
+     "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "bytes": 3,
+    "json_keys_changed": null,
+    "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+    "path": "cross_references/QSYS Buildings Overview_cross_refs.json",
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+   },
+   {
+    "after": {
+     "bytes": 3,
+     "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+     "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "before": {
+     "bytes": 2,
+     "oid": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc",
+     "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "bytes": 3,
+    "json_keys_changed": null,
+    "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+    "path": "cross_references/QSYS Buildings Overview_fontnorm_cross_refs.json",
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+   },
+   {
+    "after": {
+     "bytes": 196,
+     "oid": "70a829fed741ef11ff3b46ba3dd9972aca0ed6a5",
+     "sha256": "7b71110c4a58172a438f0aaaafd0f7c2f3d8df73d0ba910868d1b32d91c3dec5"
+    },
+    "before": {
+     "bytes": 103,
+     "oid": "013147637444fa7a51dad7f8889b05f680e2d853",
+     "sha256": "665fc89a7ddfebaae6d2e83914f17e53e9f8bc4d3d4fa90f0efa42994d8fc231"
+    },
+    "bytes": 196,
+    "json_keys_changed": null,
+    "oid": "70a829fed741ef11ff3b46ba3dd9972aca0ed6a5",
+    "path": "cross_references/QSYS Naming Conventions_cross_refs.json",
+    "sha256": "7b71110c4a58172a438f0aaaafd0f7c2f3d8df73d0ba910868d1b32d91c3dec5"
+   },
+   {
+    "after": {
+     "bytes": 196,
+     "oid": "70a829fed741ef11ff3b46ba3dd9972aca0ed6a5",
+     "sha256": "7b71110c4a58172a438f0aaaafd0f7c2f3d8df73d0ba910868d1b32d91c3dec5"
+    },
+    "before": {
+     "bytes": 103,
+     "oid": "013147637444fa7a51dad7f8889b05f680e2d853",
+     "sha256": "665fc89a7ddfebaae6d2e83914f17e53e9f8bc4d3d4fa90f0efa42994d8fc231"
+    },
+    "bytes": 196,
+    "json_keys_changed": null,
+    "oid": "70a829fed741ef11ff3b46ba3dd9972aca0ed6a5",
+    "path": "cross_references/QSYS Naming Conventions_fontnorm_cross_refs.json",
+    "sha256": "7b71110c4a58172a438f0aaaafd0f7c2f3d8df73d0ba910868d1b32d91c3dec5"
+   },
+   {
+    "after": {
+     "bytes": 3,
+     "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+     "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "before": {
+     "bytes": 2,
+     "oid": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc",
+     "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "bytes": 3,
+    "json_keys_changed": null,
+    "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+    "path": "cross_references/QSYS Process and Utilities Overview_cross_refs.json",
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+   },
+   {
+    "after": {
+     "bytes": 198,
+     "oid": "f4c21ffeb890f64c8b8fbea91a77f6c409c4e359",
+     "sha256": "0b680872b8f03a12e544d8425b42e6f14585431fce6232b7cf517552545598cf"
+    },
+    "before": {
+     "bytes": 105,
+     "oid": "d3014ef71006ce84268524590e8d861d1164fe00",
+     "sha256": "a1672a9180e6c3ad9aa4fcc0802bcd390e6ce3644657004916b72c3c603172d1"
+    },
+    "bytes": 198,
+    "json_keys_changed": null,
+    "oid": "f4c21ffeb890f64c8b8fbea91a77f6c409c4e359",
+    "path": "cross_references/Values_Commitments_v1 2025-06-05 19_04_08_cross_refs.json",
+    "sha256": "0b680872b8f03a12e544d8425b42e6f14585431fce6232b7cf517552545598cf"
+   },
+   {
+    "after": {
+     "bytes": 3,
+     "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+     "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "before": {
+     "bytes": 2,
+     "oid": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc",
+     "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "bytes": 3,
+    "json_keys_changed": null,
+    "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+    "path": "cross_references/redrawn_figure5_cross_refs.json",
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+   },
+   {
+    "after": {
+     "bytes": 3,
+     "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+     "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    "before": {
+     "bytes": 2,
+     "oid": "0637a088a01e8ddab3bf3fa98dbe804cbde1a0dc",
+     "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "bytes": 3,
+    "json_keys_changed": null,
+    "oid": "fe51488c7066f6687ef680d6bfaa4f7768ef205c",
+    "path": "cross_references/redrawn_figure5_fontnorm_cross_refs.json",
+    "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+   },
+   {
+    "after": {
+     "bytes": 1788,
+     "oid": "c4fb496443dd5f89c3454d13ad99ee421402334a",
+     "sha256": "f0174c515ff50cadf68cb252a912ab86ce9b3ade17f5c4ae19c2018a07107d98"
+    },
+    "before": {
+     "bytes": 1557,
+     "oid": "6fab7f5ed3a061db0a136e171c0b84fcaa74bebd",
+     "sha256": "8159ca50b0a30939bb33c14662cefc28f24f47744a44e64481c523acec099fda"
+    },
+    "bytes": 1788,
+    "oid": "c4fb496443dd5f89c3454d13ad99ee421402334a",
+    "path": "digital_twins/Path_to_PED_compliance_of_Cryo_systems.md",
+    "sha256": "f0174c515ff50cadf68cb252a912ab86ce9b3ade17f5c4ae19c2018a07107d98"
+   },
+   {
+    "after": {
+     "bytes": 1815,
+     "oid": "35d7e7673b5547b24f8a6a62d1b2c0a5eef02739",
+     "sha256": "4c2c03f8e6dbdf617ce66a3a4c329efcfc5b60900d483a43c9de57ecc5a20696"
+    },
+    "before": {
+     "bytes": 1584,
+     "oid": "43d8c2839e339ffa7523590b7de0a927a998937e",
+     "sha256": "88c07ed83f36accd39fc0ece135128d57bebbebd0aac152f3b4dd8691aa561b6"
+    },
+    "bytes": 1815,
+    "oid": "35d7e7673b5547b24f8a6a62d1b2c0a5eef02739",
+    "path": "digital_twins/Path_to_PED_compliance_of_Cryo_systems_fontnorm.md",
+    "sha256": "4c2c03f8e6dbdf617ce66a3a4c329efcfc5b60900d483a43c9de57ecc5a20696"
+   },
+   {
+    "after": {
+     "bytes": 1723,
+     "oid": "43f8e705d0a937f206394f3a5ee0711970bfdd9e",
+     "sha256": "b849cc3518cbaf84bc8d69dba07675bd7979685f276415e447eab84a6a78dcfa"
+    },
+    "before": {
+     "bytes": 1492,
+     "oid": "1ea4e048689b1cb1753f640bbc9230c971dbf2b7",
+     "sha256": "5632cc317e8cb9fed00360f6e8ffe76934c4897e3d517701ca24322219773e61"
+    },
+    "bytes": 1723,
+    "oid": "43f8e705d0a937f206394f3a5ee0711970bfdd9e",
+    "path": "digital_twins/QPLANT_Buildings.md",
+    "sha256": "b849cc3518cbaf84bc8d69dba07675bd7979685f276415e447eab84a6a78dcfa"
+   },
+   {
+    "after": {
+     "bytes": 1763,
+     "oid": "e98cebb92dfeae91ea08497049acbc0c2460bc05",
+     "sha256": "70f7e954aea42c3eac8ab4e783257829f2f508b4d6212d915a65c2c858bae1f2"
+    },
+    "before": {
+     "bytes": 1532,
+     "oid": "376f2d5e284269646b648fc33939b8fcfd032c83",
+     "sha256": "88a0b9fbeea564ea63e39637f88d4a8c6ea2bc418cca94234a087ad5e1cf9dd7"
+    },
+    "bytes": 1763,
+    "oid": "e98cebb92dfeae91ea08497049acbc0c2460bc05",
+    "path": "digital_twins/QPLANT_GrantingPhase_Status.md",
+    "sha256": "70f7e954aea42c3eac8ab4e783257829f2f508b4d6212d915a65c2c858bae1f2"
+   },
+   {
+    "after": {
+     "bytes": 1721,
+     "oid": "ec43c81dee8dbe813781f683084b472de0f6b070",
+     "sha256": "46035e2f13134ea77d8495702bb3d638e30e924da15cb25679a4fe4788e8f036"
+    },
+    "before": {
+     "bytes": 1529,
+     "oid": "6eea88702582fe32eae48d7ba07fd151bbfeeb99",
+     "sha256": "b34430dc15ce690c31484c6caf368b08ca91d3f797a3e2a28c3f8c3e28fcab2a"
+    },
+    "bytes": 1721,
+    "oid": "ec43c81dee8dbe813781f683084b472de0f6b070",
+    "path": "digital_twins/QSYS_-_ATS_Database_Management_System.md",
+    "sha256": "46035e2f13134ea77d8495702bb3d638e30e924da15cb25679a4fe4788e8f036"
+   },
+   {
+    "after": {
+     "bytes": 1780,
+     "oid": "0953e3f6cd99d3976fddaf8b626b30900b2b80ba",
+     "sha256": "c025e771359822f52dbdad91c2382622815605781de805bf0c4d8e2248db4274"
+    },
+    "before": {
+     "bytes": 1549,
+     "oid": "1a48d02a4f6cc3b70323fbe4f1edca3e0eff2d01",
+     "sha256": "c8f96207efdf65ecb1e02dafbd83f8f4cb0acfd2f0c511b082001c1051aa855b"
+    },
+    "bytes": 1780,
+    "oid": "0953e3f6cd99d3976fddaf8b626b30900b2b80ba",
+    "path": "digital_twins/QSYS_-_Architecture_for_MINERVA.md",
+    "sha256": "c025e771359822f52dbdad91c2382622815605781de805bf0c4d8e2248db4274"
+   },
+   {
+    "after": {
+     "bytes": 1837,
+     "oid": "049fe5bb0d96118d595a22a617e721793ee8e215",
+     "sha256": "c97ba84149adf0c5477f5fd2705736b3878401332198f04eb0828b526ed034e5"
+    },
+    "before": {
+     "bytes": 1606,
+     "oid": "bc772b9a68d1897234192e13f9c89a8e48166179",
+     "sha256": "c2fc55b0bd442d033160785259740398cece332e64f513234d0c701be24b0d37"
+    },
+    "bytes": 1837,
+    "oid": "049fe5bb0d96118d595a22a617e721793ee8e215",
+    "path": "digital_twins/QSYS_-_Architecture_for_MINERVA_-_VISUAL_and_HUMAN.md",
+    "sha256": "c97ba84149adf0c5477f5fd2705736b3878401332198f04eb0828b526ed034e5"
+   },
+   {
+    "after": {
+     "bytes": 1807,
+     "oid": "a7c2ed808b2533b8bbfbd5263c31662371acafb9",
+     "sha256": "c21401beec86ea4344495f12af38195d603bbdff2fc288e634fdeb5748b778de"
+    },
+    "before": {
+     "bytes": 1576,
+     "oid": "a03ce860eb9352148f69cc157865ce57f82e7fed",
+     "sha256": "96c037cf344028775e5032e1306e2b2581773f986182677eb1a6dc1076484acd"
+    },
+    "bytes": 1807,
+    "oid": "a7c2ed808b2533b8bbfbd5263c31662371acafb9",
+    "path": "digital_twins/QSYS_-_Architecture_for_MINERVA_fontnorm.md",
+    "sha256": "c21401beec86ea4344495f12af38195d603bbdff2fc288e634fdeb5748b778de"
+   },
+   {
+    "after": {
+     "bytes": 1697,
+     "oid": "16dd35eedcbfacbfce4be384968ef1e67ec2c166",
+     "sha256": "c829be58112ebaa379ef200166e98455794e196ee30672031b1466fe39023639"
+    },
+    "before": {
+     "bytes": 1505,
+     "oid": "c8ca5d8f61e7e079c3af63797b806c48e93e469d",
+     "sha256": "1561cd88b2431bddf2cce5d1a97334b4822098f0fba7ec1afbcc9f2b4bc28a9c"
+    },
+    "bytes": 1697,
+    "oid": "16dd35eedcbfacbfce4be384968ef1e67ec2c166",
+    "path": "digital_twins/QSYS_-_Commissioning_Overview.md",
+    "sha256": "c829be58112ebaa379ef200166e98455794e196ee30672031b1466fe39023639"
+   },
+   {
+    "after": {
+     "bytes": 1668,
+     "oid": "208e7e4c74f178ba231319d8fe354da2409dddad",
+     "sha256": "09b566eb975d629d4329009ad61148716fe90a20a9801e936ef9c896b945329a"
+    },
+    "before": {
+     "bytes": 1476,
+     "oid": "cd61d27d7af00f5cf79fa9bf6d3f09eeefccba14",
+     "sha256": "d8ae04a12f094bdf6aed80a46188caec8a4d981cbb39cfe9cd8cc39db189c81a"
+    },
+    "bytes": 1668,
+    "oid": "208e7e4c74f178ba231319d8fe354da2409dddad",
+    "path": "digital_twins/QSYS_-_He_Recovery.md",
+    "sha256": "09b566eb975d629d4329009ad61148716fe90a20a9801e936ef9c896b945329a"
+   },
+   {
+    "after": {
+     "bytes": 1695,
+     "oid": "dc464373b7e6f9ca361e5f955b6acc5dad6695af",
+     "sha256": "b69cd64bae181722dd0a51709577329562a1d73a1509c114201f39059f982626"
+    },
+    "before": {
+     "bytes": 1503,
+     "oid": "67062c6ba36f5fdcb2fe95dc8f39553720064d14",
+     "sha256": "240a3414862be3a2ff34322e4d1b5298ee833ce2bd186175a82aeb3c009eac61"
+    },
+    "bytes": 1695,
+    "oid": "dc464373b7e6f9ca361e5f955b6acc5dad6695af",
+    "path": "digital_twins/QSYS_-_He_Recovery_fontnorm.md",
+    "sha256": "b69cd64bae181722dd0a51709577329562a1d73a1509c114201f39059f982626"
+   },
+   {
+    "after": {
+     "bytes": 1670,
+     "oid": "67e0d395a8301d7afa3e49d32bb192044a286aaf",
+     "sha256": "9c68ba38ba72ed48cb5ea076ff9ba582ae07571a3587054d2b67f656cbc194f3"
+    },
+    "before": {
+     "bytes": 1478,
+     "oid": "cd17595f4d6aaa067c19e827df5b0084850bc041",
+     "sha256": "e78e655909943209f9d9b70e6c7578609c1e615ff0504716873ad39ae4f0813a"
+    },
+    "bytes": 1670,
+    "oid": "67e0d395a8301d7afa3e49d32bb192044a286aaf",
+    "path": "digital_twins/QSYS_-_IADR_Overview.md",
+    "sha256": "9c68ba38ba72ed48cb5ea076ff9ba582ae07571a3587054d2b67f656cbc194f3"
+   },
+   {
+    "after": {
+     "bytes": 1694,
+     "oid": "7a45bef87987f627615a24f15a5c68e771464edb",
+     "sha256": "5f92600fd382ce451a52611ad2dd5e442cc6d5d63cac68ceda002356b568441c"
+    },
+    "before": {
+     "bytes": 1502,
+     "oid": "8661d7c0ebcab79ddc39ab65aa5406da7555063f",
+     "sha256": "f8abf9db9e904e4143951eda4f7d991fecf9c119fb9648fe3c78c4196573909d"
+    },
+    "bytes": 1694,
+    "oid": "7a45bef87987f627615a24f15a5c68e771464edb",
+    "path": "digital_twins/QSYS_-_Installation_Overview.md",
+    "sha256": "5f92600fd382ce451a52611ad2dd5e442cc6d5d63cac68ceda002356b568441c"
+   },
+   {
+    "after": {
+     "bytes": 1710,
+     "oid": "2740e1c3e20077f075d598cb2d00b52d177e4658",
+     "sha256": "0e77ddc95deefe8da2ce4fb75d27270962a8091d36f2ba6c93b4d739eacfa0f1"
+    },
+    "before": {
+     "bytes": 1518,
+     "oid": "9e9f6ffe4da3273eda3fa179874966a405cee477",
+     "sha256": "3921a62497b826b7564daf51d37fcd69dc6dca59ab6de6d012c0e9b0858e4487"
+    },
+    "bytes": 1710,
+    "oid": "2740e1c3e20077f075d598cb2d00b52d177e4658",
+    "path": "digital_twins/QSYS_-_Pipping_Pressure_Overview.md",
+    "sha256": "0e77ddc95deefe8da2ce4fb75d27270962a8091d36f2ba6c93b4d739eacfa0f1"
+   },
+   {
+    "after": {
+     "bytes": 1737,
+     "oid": "7b00e479135b02e5fe9778e66c624f095d1a46c2",
+     "sha256": "129722d85950ab7eac0875ec508c642a3b813c41fee9f231f5911ce92af79351"
+    },
+    "before": {
+     "bytes": 1545,
+     "oid": "939ba6646f09595a8860d504ed1ca7b38cacc0a7",
+     "sha256": "7f22a92a3807f8ea6627c2178466baa8fdce77c97b5e5c1636236d5d5d8ae6b2"
+    },
+    "bytes": 1737,
+    "oid": "7b00e479135b02e5fe9778e66c624f095d1a46c2",
+    "path": "digital_twins/QSYS_-_Pipping_Pressure_Overview_fontnorm.md",
+    "sha256": "129722d85950ab7eac0875ec508c642a3b813c41fee9f231f5911ce92af79351"
+   },
+   {
+    "after": {
+     "bytes": 1715,
+     "oid": "59fff8307d4201d30b9a6ba4fa6bdd7867b0c73e",
+     "sha256": "ecd5499ac8f11da5dee7d590ca2991ae1c54211c3f3502954a14385136bd30eb"
+    },
+    "before": {
+     "bytes": 1523,
+     "oid": "efcfe2d007739b21bd9ad59d670269a7ea3dbf3c",
+     "sha256": "5e697093a5772c33b609c3bbb121772d6c02b3b5bed75d828ecbdba3fb6b402d"
+    },
+    "bytes": 1715,
+    "oid": "59fff8307d4201d30b9a6ba4fa6bdd7867b0c73e",
+    "path": "digital_twins/QSYS_-_Top-level_system_description.md",
+    "sha256": "ecd5499ac8f11da5dee7d590ca2991ae1c54211c3f3502954a14385136bd30eb"
+   },
+   {
+    "after": {
+     "bytes": 1692,
+     "oid": "8ca8b7ff4801704f6698b25068ee074a5d403b8e",
+     "sha256": "3e8def67d3c0d1b4f00bf7fba3b46dba0c76b41ab3c8cd0440608db731b59e33"
+    },
+    "before": {
+     "bytes": 1500,
+     "oid": "f837c83a9bbf714c8c9e411a42d761c4cdee9559",
+     "sha256": "b8cba19486aa8485282215bccce69d4fd573de535f6982997fde03f9053ba97c"
+    },
+    "bytes": 1692,
+    "oid": "8ca8b7ff4801704f6698b25068ee074a5d403b8e",
+    "path": "digital_twins/QSYS_Buildings_Overview.md",
+    "sha256": "3e8def67d3c0d1b4f00bf7fba3b46dba0c76b41ab3c8cd0440608db731b59e33"
+   },
+   {
+    "after": {
+     "bytes": 1719,
+     "oid": "78bf823d80b6342b3c0aaa551d9a651dd7003a6f",
+     "sha256": "c3d509ffa3b46bf544e397efe4fa282d4538103ffaad782533b031b61e350e6f"
+    },
+    "before": {
+     "bytes": 1527,
+     "oid": "346d5d5738f2ecb2e97c770a15d8421ee77d82d5",
+     "sha256": "e26f148b6256420015dc40354b150879622b7a3d7cbc52409bf8e54fc010fb69"
+    },
+    "bytes": 1719,
+    "oid": "78bf823d80b6342b3c0aaa551d9a651dd7003a6f",
+    "path": "digital_twins/QSYS_Buildings_Overview_fontnorm.md",
+    "sha256": "c3d509ffa3b46bf544e397efe4fa282d4538103ffaad782533b031b61e350e6f"
+   },
+   {
+    "after": {
+     "bytes": 1745,
+     "oid": "0c38adb06beefba760d683ac7c2c8da97a98011c",
+     "sha256": "81caf04ec3b8e26768c18e069b557eee0b64976b96a2f62aa02ddea21513ece7"
+    },
+    "before": {
+     "bytes": 1514,
+     "oid": "3bffdbf1bc5a46ce3c8f13232fea961cc01bd48f",
+     "sha256": "e769dd724b841f88e41de796a3ccbb28678df676a46468210aae8db6908447b3"
+    },
+    "bytes": 1745,
+    "oid": "0c38adb06beefba760d683ac7c2c8da97a98011c",
+    "path": "digital_twins/QSYS_Naming_Conventions.md",
+    "sha256": "81caf04ec3b8e26768c18e069b557eee0b64976b96a2f62aa02ddea21513ece7"
+   },
+   {
+    "after": {
+     "bytes": 1772,
+     "oid": "f138b0b8788cf0e37c416872becf6f3d7e61291a",
+     "sha256": "c707bfe97f140031b6834e48593d78ad7d6e3d6ecc786933e1490c8f0dcf98a8"
+    },
+    "before": {
+     "bytes": 1541,
+     "oid": "468dea75b81d92f6fca32a627eea1a2f90cf12ec",
+     "sha256": "3e6cde83358dba8a3aeb3d5cd91c5549ea2930ce3a1dc4bfb1b8d7eb2c644e5c"
+    },
+    "bytes": 1772,
+    "oid": "f138b0b8788cf0e37c416872becf6f3d7e61291a",
+    "path": "digital_twins/QSYS_Naming_Conventions_fontnorm.md",
+    "sha256": "c707bfe97f140031b6834e48593d78ad7d6e3d6ecc786933e1490c8f0dcf98a8"
+   },
+   {
+    "after": {
+     "bytes": 1715,
+     "oid": "3e03dc7c0c397789dfc8373be4769769fc153e45",
+     "sha256": "4a612ba96d714150e4104213e2d642ba1d22072fd9a516b448dd441aeae5a654"
+    },
+    "before": {
+     "bytes": 1523,
+     "oid": "1abcc43659937a288076acebd38aec4fd0532340",
+     "sha256": "ec049d78517be694e0d3c9e5f089bf59da88fd4737b4599f24acc1f3681d5dcc"
+    },
+    "bytes": 1715,
+    "oid": "3e03dc7c0c397789dfc8373be4769769fc153e45",
+    "path": "digital_twins/QSYS_Process_and_Utilities_Overview.md",
+    "sha256": "4a612ba96d714150e4104213e2d642ba1d22072fd9a516b448dd441aeae5a654"
+   },
+   {
+    "after": {
+     "bytes": 1802,
+     "oid": "91bc2d38434f28e8e28cc177f1b61a1b592e9292",
+     "sha256": "97e4b4f00b2897d00f407297379d2baf808624b431394a902d74f004d098d1b2"
+    },
+    "before": {
+     "bytes": 1571,
+     "oid": "9f589cbf52147c905eaf4eab1fdf5dda73263fdb",
+     "sha256": "e455439de1345aa27d55e4de4b471e553a4a0b19e3d6faa7b9d3a018ca874970"
+    },
+    "bytes": 1802,
+    "oid": "91bc2d38434f28e8e28cc177f1b61a1b592e9292",
+    "path": "digital_twins/Values_Commitments_v1_2025-06-05_19_04_08.md",
+    "sha256": "97e4b4f00b2897d00f407297379d2baf808624b431394a902d74f004d098d1b2"
+   },
+   {
+    "after": {
+     "bytes": 1655,
+     "oid": "928a7303da90e3162f6b5389786268b0e18c54fd",
+     "sha256": "2eddaed71e0206922fae2a16687da0eeff1ce402f706a968023f350b144104ed"
+    },
+    "before": {
+     "bytes": 1463,
+     "oid": "407d1d9a7c252d71334542460cf51ae592353717",
+     "sha256": "1e147b7ae7bd51edb81d216221de97ace7add0f16a5011dd24d56e6cdc82f101"
+    },
+    "bytes": 1655,
+    "oid": "928a7303da90e3162f6b5389786268b0e18c54fd",
+    "path": "digital_twins/redrawn_figure5.md",
+    "sha256": "2eddaed71e0206922fae2a16687da0eeff1ce402f706a968023f350b144104ed"
+   },
+   {
+    "after": {
+     "bytes": 1682,
+     "oid": "d89e8c2fa993928d88b4b0538e942d49a8a7a3c2",
+     "sha256": "a0426d7ae2615b33d72d3ddccb650133c53806ec42051b7c18bd542a75bacbdf"
+    },
+    "before": {
+     "bytes": 1490,
+     "oid": "6d3fa8d00a420c613282ab7ea1dccc31b3d84e62",
+     "sha256": "e9a226f939e2322c2f4d9288a4f1bac5fd4f0312612d4a8232eb1c2991ec1ee2"
+    },
+    "bytes": 1682,
+    "oid": "d89e8c2fa993928d88b4b0538e942d49a8a7a3c2",
+    "path": "digital_twins/redrawn_figure5_fontnorm.md",
+    "sha256": "a0426d7ae2615b33d72d3ddccb650133c53806ec42051b7c18bd542a75bacbdf"
+   },
+   {
+    "after": {
+     "bytes": 669,
+     "oid": "7e9015d8799019e61ed78dc8830297d6741ed54c",
+     "sha256": "af265de4fe84fb767e4e250117557ba32959ef37318b64481257f9ee4cbd9ef0"
+    },
+    "before": {
+     "bytes": 430,
+     "oid": "22e0a52c15582a67759404ed70e8622bc0db34de",
+     "sha256": "b21674a9fc45ef0eb51d305ff6f869af727bee34a09dd30f236066a925e84fdf"
+    },
+    "bytes": 669,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "7e9015d8799019e61ed78dc8830297d6741ed54c",
+    "path": "metadata/Path to PED compliance of Cryo systems_fontnorm_metadata.json",
+    "sha256": "af265de4fe84fb767e4e250117557ba32959ef37318b64481257f9ee4cbd9ef0"
+   },
+   {
+    "after": {
+     "bytes": 651,
+     "oid": "f0f22fae5c919b40d370a837802e9202bbdf9813",
+     "sha256": "d4500d3f7e6c80e1ad61f9f9d3fd6dfe5cdbdc00f39ccb1f2ce8b0f5c4c6c435"
+    },
+    "before": {
+     "bytes": 412,
+     "oid": "b745452e9b61b7490407ad791e36de2e8b3d8232",
+     "sha256": "d46ea593fd9d29896bd51fb44ca5a40863f24498755f464b14b79579d0d91e50"
+    },
+    "bytes": 651,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "f0f22fae5c919b40d370a837802e9202bbdf9813",
+    "path": "metadata/Path to PED compliance of Cryo systems_metadata.json",
+    "sha256": "d4500d3f7e6c80e1ad61f9f9d3fd6dfe5cdbdc00f39ccb1f2ce8b0f5c4c6c435"
+   },
+   {
+    "after": {
+     "bytes": 609,
+     "oid": "60624bc34fbbcd8df1866b8e4a9d7a0349324a2c",
+     "sha256": "a9c31b4f728a61a0c6cdd9a85b65eedfa427453dc6244ba9167aedca91798090"
+    },
+    "before": {
+     "bytes": 370,
+     "oid": "37e3ddc6e8bfc328bd08dc37f6b9a5d6eb68b822",
+     "sha256": "1b42e67cc23ed599236a656da47d960490975b7071a2fd63885f79986014018b"
+    },
+    "bytes": 609,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "60624bc34fbbcd8df1866b8e4a9d7a0349324a2c",
+    "path": "metadata/QPLANT Buildings_metadata.json",
+    "sha256": "a9c31b4f728a61a0c6cdd9a85b65eedfa427453dc6244ba9167aedca91798090"
+   },
+   {
+    "after": {
+     "bytes": 638,
+     "oid": "37e66b575b457dafcbf572405f7084deb253bb3d",
+     "sha256": "caa1221df913208907f702a41b366b0f687826cb446fdd61faa0a1bfef40b55e"
+    },
+    "before": {
+     "bytes": 399,
+     "oid": "89c7072420913e942838fcbeea3b4a7071fa857c",
+     "sha256": "7a44f48c303d90b0a8be078bf80c397a7490ed82b0b2ac7abbeaf76456fc39ea"
+    },
+    "bytes": 638,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "37e66b575b457dafcbf572405f7084deb253bb3d",
+    "path": "metadata/QPLANT_GrantingPhase_Status_metadata.json",
+    "sha256": "caa1221df913208907f702a41b366b0f687826cb446fdd61faa0a1bfef40b55e"
+   },
+   {
+    "after": {
+     "bytes": 638,
+     "oid": "2576cd7b0f5ec4c872e77bdfacf6b10034aa8601",
+     "sha256": "17d14f111c1ae2782a2ffb33a172e5dbc688c966d987f6c132f4c424feae8c40"
+    },
+    "before": {
+     "bytes": 399,
+     "oid": "9ad5a8d78cb7f00090cff4b81d1fd37518eb95b3",
+     "sha256": "d82e3ac8573186f009ca1abf1f163d2bb684e53e73bc8775b229a939ac1ef31d"
+    },
+    "bytes": 638,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "2576cd7b0f5ec4c872e77bdfacf6b10034aa8601",
+    "path": "metadata/QSYS - ATS Database Management System_metadata.json",
+    "sha256": "17d14f111c1ae2782a2ffb33a172e5dbc688c966d987f6c132f4c424feae8c40"
+   },
+   {
+    "after": {
+     "bytes": 683,
+     "oid": "1ef65b8686d879bea566cf27d31291ca9fd73a07",
+     "sha256": "09daa6e8d683bfac3c1239cd8964f8ce84737d5603cfae29acc501c7ad17a8ce"
+    },
+    "before": {
+     "bytes": 444,
+     "oid": "244a9749fc4f2b2a088bbc16594aa935775cc90b",
+     "sha256": "d4698181827ed870d4158bd42ed41f9b10e2bbf55d37262a2174c33a755f5c9e"
+    },
+    "bytes": 683,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "1ef65b8686d879bea566cf27d31291ca9fd73a07",
+    "path": "metadata/QSYS - Architecture for MINERVA - VISUAL and HUMAN_metadata.json",
+    "sha256": "09daa6e8d683bfac3c1239cd8964f8ce84737d5603cfae29acc501c7ad17a8ce"
+   },
+   {
+    "after": {
+     "bytes": 662,
+     "oid": "cf683b420284f96a8e024a295ac818ed1b8948b3",
+     "sha256": "0a4bc0ef7490b1b8472843c1ffd03f5caa581eccc658375a0e90063cb548cfa2"
+    },
+    "before": {
+     "bytes": 423,
+     "oid": "2b692f304f6700b5cb27423a4abbf07dbda3aa4a",
+     "sha256": "4a8b332f8ececf62e56cca00738d15ca109db2666ae593915f08cefd64a3e489"
+    },
+    "bytes": 662,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "cf683b420284f96a8e024a295ac818ed1b8948b3",
+    "path": "metadata/QSYS - Architecture for MINERVA_fontnorm_metadata.json",
+    "sha256": "0a4bc0ef7490b1b8472843c1ffd03f5caa581eccc658375a0e90063cb548cfa2"
+   },
+   {
+    "after": {
+     "bytes": 645,
+     "oid": "78fd0372036f18f5e0436c98e13ea9a91107186b",
+     "sha256": "ba788ac62cea9302e036c0777dc4d9092faac41fa3bde21cd2538d650045f8f5"
+    },
+    "before": {
+     "bytes": 406,
+     "oid": "b777ce2ecbc011e57aea8ef06469a220074a580e",
+     "sha256": "ce2c3024106ad2964754927de75a7b82d5d7e57a652d0d1708c5730671b1c99b"
+    },
+    "bytes": 645,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "78fd0372036f18f5e0436c98e13ea9a91107186b",
+    "path": "metadata/QSYS - Architecture for MINERVA_metadata.json",
+    "sha256": "ba788ac62cea9302e036c0777dc4d9092faac41fa3bde21cd2538d650045f8f5"
+   },
+   {
+    "after": {
+     "bytes": 622,
+     "oid": "4d9571464d8765f186d5bebb08cb7a78f3006d49",
+     "sha256": "b8b3899b3063ac4aae744b9f05baaec5cc6931c496895c2bfcc2a1c57f519c0f"
+    },
+    "before": {
+     "bytes": 383,
+     "oid": "3e5c59bcd418f60f528987cb815848c9da705ae8",
+     "sha256": "b4267e7970114b7440b08ca90e0c5be773f60cf50f5a594cbca73d1611110b74"
+    },
+    "bytes": 622,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "4d9571464d8765f186d5bebb08cb7a78f3006d49",
+    "path": "metadata/QSYS - Commissioning Overview_metadata.json",
+    "sha256": "b8b3899b3063ac4aae744b9f05baaec5cc6931c496895c2bfcc2a1c57f519c0f"
+   },
+   {
+    "after": {
+     "bytes": 622,
+     "oid": "4c1bad66c08c5a20378794f044b85c1b89e4009c",
+     "sha256": "04b48bb0fb112f792963b156bbeaa25779dcc5133fa467f4a703cfad0f81b5b3"
+    },
+    "before": {
+     "bytes": 383,
+     "oid": "0da4e3ef91991b94d0cfa50559520d7d97a1334f",
+     "sha256": "bd3dbc1e4756807b39f599d6299883b6e35f2a540c6eb1b9834f10953c4dbf46"
+    },
+    "bytes": 622,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "4c1bad66c08c5a20378794f044b85c1b89e4009c",
+    "path": "metadata/QSYS - He Recovery_fontnorm_metadata.json",
+    "sha256": "04b48bb0fb112f792963b156bbeaa25779dcc5133fa467f4a703cfad0f81b5b3"
+   },
+   {
+    "after": {
+     "bytes": 604,
+     "oid": "4e012026a61999364b284fea9f0e766818358578",
+     "sha256": "62eb3cc267d39337bfdb57bdaf96cb78709d2d20fb389a292902148755335632"
+    },
+    "before": {
+     "bytes": 365,
+     "oid": "47ce397b4485dc35cde1c656675826da16d4d087",
+     "sha256": "b7903c4d58c2747eb2bee08252597ffa3425ddeece8272dfa4121410ff0fbab8"
+    },
+    "bytes": 604,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "4e012026a61999364b284fea9f0e766818358578",
+    "path": "metadata/QSYS - He Recovery_metadata.json",
+    "sha256": "62eb3cc267d39337bfdb57bdaf96cb78709d2d20fb389a292902148755335632"
+   },
+   {
+    "after": {
+     "bytes": 604,
+     "oid": "6cbf53351f2bc0e280252730a2b0232f2c1dd2c4",
+     "sha256": "c93356020b8321c3a1d0203175008bd21ec597fb0da3b1be2a8f05a8955aff57"
+    },
+    "before": {
+     "bytes": 365,
+     "oid": "1037724b6d086fa43a50b2e440cc11f765841f77",
+     "sha256": "8d2b4d06a47ff758bbd3d586e00f113d97f4feaa3c4eae9a0b68bd195167354d"
+    },
+    "bytes": 604,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "6cbf53351f2bc0e280252730a2b0232f2c1dd2c4",
+    "path": "metadata/QSYS - IADR Overview_metadata.json",
+    "sha256": "c93356020b8321c3a1d0203175008bd21ec597fb0da3b1be2a8f05a8955aff57"
+   },
+   {
+    "after": {
+     "bytes": 620,
+     "oid": "65e734454837f98510a7df0e1d69bb5f9b5b83ef",
+     "sha256": "29aae9bfe6aae7e509adebe6203769f304371110a3ecd5dd1c7caf006f3e90c0"
+    },
+    "before": {
+     "bytes": 381,
+     "oid": "62f6c750138f080de8a27240249a2d4bb73bf61b",
+     "sha256": "614270799d74c2956eb5f9718ec19f3553511cd3a18d03c0d251e2114037622d"
+    },
+    "bytes": 620,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "65e734454837f98510a7df0e1d69bb5f9b5b83ef",
+    "path": "metadata/QSYS - Installation Overview_metadata.json",
+    "sha256": "29aae9bfe6aae7e509adebe6203769f304371110a3ecd5dd1c7caf006f3e90c0"
+   },
+   {
+    "after": {
+     "bytes": 650,
+     "oid": "5a4546b68cfde1c3704ad67682570ee490f5a018",
+     "sha256": "eb78509387aa98706d033c3a3dec1fd9ebf94c79995eb04455484447ec11b892"
+    },
+    "before": {
+     "bytes": 411,
+     "oid": "79068a8dbb60dc71ade1912a9b9e389059ed6967",
+     "sha256": "4f45e2c3015188a54a73094ec3c2d018b7d472ae1ee83eb001d945b1d3d6c8ad"
+    },
+    "bytes": 650,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "5a4546b68cfde1c3704ad67682570ee490f5a018",
+    "path": "metadata/QSYS - Pipping Pressure Overview_fontnorm_metadata.json",
+    "sha256": "eb78509387aa98706d033c3a3dec1fd9ebf94c79995eb04455484447ec11b892"
+   },
+   {
+    "after": {
+     "bytes": 632,
+     "oid": "47d5bf6b3f5fa43407e32c30e6d424f0be79cbee",
+     "sha256": "62e796b2534af706d8f033aab0ec607608532cf30b8ff5438faa6d8e1d067c32"
+    },
+    "before": {
+     "bytes": 393,
+     "oid": "dd904514e2b66d2d8099adc710a5aa3a45e8fdd3",
+     "sha256": "d2adc62dd29ffa2770006eb6efafe8a001ae10a7502a5fa721a5fc6cc094a7db"
+    },
+    "bytes": 632,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "47d5bf6b3f5fa43407e32c30e6d424f0be79cbee",
+    "path": "metadata/QSYS - Pipping Pressure Overview_metadata.json",
+    "sha256": "62e796b2534af706d8f033aab0ec607608532cf30b8ff5438faa6d8e1d067c32"
+   },
+   {
+    "after": {
+     "bytes": 634,
+     "oid": "a2db7907f9d18c09eaa722bda8fc98961b12cdf9",
+     "sha256": "30bb53df4cddfdc8e18b51c88a035cf808707fffbfa48cc89a296bff5ded484e"
+    },
+    "before": {
+     "bytes": 395,
+     "oid": "5adb3dda7c08f3e59434e2c690fd27b788029b84",
+     "sha256": "4325fccd5c6f1ce50e05365a9254843da72164d86fb96254a22b03f4b2620ba5"
+    },
+    "bytes": 634,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "a2db7907f9d18c09eaa722bda8fc98961b12cdf9",
+    "path": "metadata/QSYS - Top-level system description_metadata.json",
+    "sha256": "30bb53df4cddfdc8e18b51c88a035cf808707fffbfa48cc89a296bff5ded484e"
+   },
+   {
+    "after": {
+     "bytes": 642,
+     "oid": "0be6c679744624df1c3d744f3e5be85282c16a62",
+     "sha256": "c80c2def0932070e090cdea1a3a1f5d0f870c73c87bc3f176c5284407cabff7a"
+    },
+    "before": {
+     "bytes": 403,
+     "oid": "d1176170719fe5c27c7d91fce7515c1b90ceb311",
+     "sha256": "84866f498fc9c28fb9d8893a49658e37228587a43049388525ac74dbd8be557d"
+    },
+    "bytes": 642,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "0be6c679744624df1c3d744f3e5be85282c16a62",
+    "path": "metadata/QSYS Buildings Overview_fontnorm_metadata.json",
+    "sha256": "c80c2def0932070e090cdea1a3a1f5d0f870c73c87bc3f176c5284407cabff7a"
+   },
+   {
+    "after": {
+     "bytes": 624,
+     "oid": "5016ca4a9c5ec6ce98619b8a34ece7c7ebdab268",
+     "sha256": "fb3776acd24a0e53d9fd7db42bf0002022907c0d63b6b987529f6ece45390cec"
+    },
+    "before": {
+     "bytes": 385,
+     "oid": "0eb8aea1c27eaa774a7be8014b5fd7d2b9f5fca1",
+     "sha256": "86a0dd74933360165e9d801114dc998e303630ab109cc0eebfbc6c721a477d29"
+    },
+    "bytes": 624,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "5016ca4a9c5ec6ce98619b8a34ece7c7ebdab268",
+    "path": "metadata/QSYS Buildings Overview_metadata.json",
+    "sha256": "fb3776acd24a0e53d9fd7db42bf0002022907c0d63b6b987529f6ece45390cec"
+   },
+   {
+    "after": {
+     "bytes": 637,
+     "oid": "cd55da5f155b245902cad0c72e2b80c3b7663517",
+     "sha256": "22a6bd01b5b116c4512aef77048b2041818fa68277228be701180070873a7b59"
+    },
+    "before": {
+     "bytes": 398,
+     "oid": "e9cb12b222d5c5bd3251f389321888bf53491bf6",
+     "sha256": "c641ad672e6c5bf3ccd908c389f7db83a337c31a53c709b78109dd4be56cea04"
+    },
+    "bytes": 637,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "cd55da5f155b245902cad0c72e2b80c3b7663517",
+    "path": "metadata/QSYS Naming Conventions_fontnorm_metadata.json",
+    "sha256": "22a6bd01b5b116c4512aef77048b2041818fa68277228be701180070873a7b59"
+   },
+   {
+    "after": {
+     "bytes": 619,
+     "oid": "b6afeb06c0f0efe07a342e7d7d1e93326c21e8e5",
+     "sha256": "c6b6eba7aba9628fc96024ef9c2b67489ece1f0b0b8b6537fa93477c110d5bb0"
+    },
+    "before": {
+     "bytes": 380,
+     "oid": "a1ba71a5dfacef93b611a4c799fa28debbfbc912",
+     "sha256": "8aa76d13a4a07a3959a7c305f0c7d4f4f040d03623650254816716c1406c7334"
+    },
+    "bytes": 619,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "b6afeb06c0f0efe07a342e7d7d1e93326c21e8e5",
+    "path": "metadata/QSYS Naming Conventions_metadata.json",
+    "sha256": "c6b6eba7aba9628fc96024ef9c2b67489ece1f0b0b8b6537fa93477c110d5bb0"
+   },
+   {
+    "after": {
+     "bytes": 634,
+     "oid": "f3f481b2708213aa06245bfcf82ddaa93553dc00",
+     "sha256": "f875276b7eba4656970f696185f91d5f5c0d3e7a45d9413fee8864875955c283"
+    },
+    "before": {
+     "bytes": 395,
+     "oid": "d1becaeb5bdafee31fb88ff5a4cd39d7a16d85c3",
+     "sha256": "eb0606e80f962aa7758ee957234426b964b62b974bb723a0ed9ff3b6d6fcf32b"
+    },
+    "bytes": 634,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "f3f481b2708213aa06245bfcf82ddaa93553dc00",
+    "path": "metadata/QSYS Process and Utilities Overview_metadata.json",
+    "sha256": "f875276b7eba4656970f696185f91d5f5c0d3e7a45d9413fee8864875955c283"
+   },
+   {
+    "after": {
+     "bytes": 654,
+     "oid": "17f1e01d90bb9ed87f6cff5df48fc2120b1d8c1c",
+     "sha256": "781b83ca4b3f00ec85b8986f713c5df9d7ecee46973413c54369325180c4a7cc"
+    },
+    "before": {
+     "bytes": 415,
+     "oid": "0960855fa54fd5fbdb8afdba5b1b8bf8a1464e3c",
+     "sha256": "90b658b0975bee3dd56701526786f330e488f25a53fdad9a0a6352fb84030f21"
+    },
+    "bytes": 654,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "17f1e01d90bb9ed87f6cff5df48fc2120b1d8c1c",
+    "path": "metadata/Values_Commitments_v1 2025-06-05 19_04_08_metadata.json",
+    "sha256": "781b83ca4b3f00ec85b8986f713c5df9d7ecee46973413c54369325180c4a7cc"
+   },
+   {
+    "after": {
+     "bytes": 610,
+     "oid": "6f3618fbfe3e5ce150bf2768353564d8999e3ab3",
+     "sha256": "1d9460e542636e207efa9624a86013248aa551ac411ec3186ac7a7114f839dd4"
+    },
+    "before": {
+     "bytes": 371,
+     "oid": "e52b99e03dd4abc9ed6f05ff1e86fc7dbc14dfc9",
+     "sha256": "691ff3871a6732ba12c9e7e84db440a1563a323a4019e1779808bab5d2d00bee"
+    },
+    "bytes": 610,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "6f3618fbfe3e5ce150bf2768353564d8999e3ab3",
+    "path": "metadata/redrawn_figure5_fontnorm_metadata.json",
+    "sha256": "1d9460e542636e207efa9624a86013248aa551ac411ec3186ac7a7114f839dd4"
+   },
+   {
+    "after": {
+     "bytes": 592,
+     "oid": "0abbcbf4cebe79c368554a88ba5d4779b392a6f9",
+     "sha256": "90393cdc50e2d9d96b6bffbb846460bea1025a978692f69a73f6d5aa292e4caf"
+    },
+    "before": {
+     "bytes": 353,
+     "oid": "083e5ae6bede4e4d18440a2c99c376698e02096f",
+     "sha256": "e1adc6de94bd056f8bef02c594b74982eb2028eb5da2215582aa05a2d0ae3b50"
+    },
+    "bytes": 592,
+    "json_keys_changed": [
+     "authority",
+     "content_parsed",
+     "cross_reference_basis",
+     "pptx_package_validated",
+     "processing_scope",
+     "processing_timestamp"
+    ],
+    "oid": "0abbcbf4cebe79c368554a88ba5d4779b392a6f9",
+    "path": "metadata/redrawn_figure5_metadata.json",
+    "sha256": "90393cdc50e2d9d96b6bffbb846460bea1025a978692f69a73f6d5aa292e4caf"
+   },
+   {
+    "after": {
+     "bytes": 26160,
+     "oid": "747817e0752091ec795ae8f2cbb251c49979141f",
+     "sha256": "39e7689f5214592e7c7f34cfd36470206bdcb64ae0af0c7e98e6cc6e8fc50c2b"
+    },
+    "before": {
+     "bytes": 17549,
+     "oid": "d05461bf31e2e9a69a8f650beecdfd4ae7deb900",
+     "sha256": "35f28e7bdfb15b8f6ed0c07259bf52ca79b2b24f8c95de272bc45f5ab5c6d454"
+    },
+    "bytes": 26160,
+    "json_keys_changed": [
+     "files_processed",
+     "processing_completed",
+     "processing_scope",
+     "processing_started"
+    ],
+    "oid": "747817e0752091ec795ae8f2cbb251c49979141f",
+    "path": "processing_summary.json",
+    "sha256": "39e7689f5214592e7c7f34cfd36470206bdcb64ae0af0c7e98e6cc6e8fc50c2b"
+   },
+   {
+    "after": {
+     "bytes": 3897,
+     "oid": "47c53ff089b9c3e50a00e1e7922ccdbcd74c2c72",
+     "sha256": "3ec7542a4cc84414458e2bb9350288e8f9b4a3a111b23c097c0402027f671fa3"
+    },
+    "before": {
+     "bytes": 10134,
+     "oid": "258d7216538094e92ba4ce5766f5bc25a479e61a",
+     "sha256": "d72e8b988f982dab2d86caff7821dcc26b7a5b9c04140a7d56e2841bfdb52732"
+    },
+    "bytes": 3897,
+    "oid": "47c53ff089b9c3e50a00e1e7922ccdbcd74c2c72",
+    "path": "recursive_build/master_index.md",
+    "sha256": "3ec7542a4cc84414458e2bb9350288e8f9b4a3a111b23c097c0402027f671fa3"
+   }
+  ],
+  "unchanged_sample": [
+   {
+    "bytes": 2043,
+    "oid": "b4f2d93abfb207845f8648df9f46460a1ff712db",
+    "path": "recursive_build/Path_to_PED_compliance_of_Cryo_systems.md",
+    "sha256": "af6c86f90b0514e748462b60e5a01474512a26cd01109e65cd51121f7db5b171"
+   },
+   {
+    "bytes": 2052,
+    "oid": "a85212904864999bb2ae839be5f9be9859b79aff",
+    "path": "recursive_build/Path_to_PED_compliance_of_Cryo_systems_fontnorm.md",
+    "sha256": "4f4148f740ae55130fa1440a154426d79e7de0702c59dc056f64e8c873f745e4"
+   },
+   {
+    "bytes": 2027,
+    "oid": "97b3d161f874da046d2227c7d352b021d2afef71",
+    "path": "recursive_build/QPLANT_Buildings.md",
+    "sha256": "be8ce66b14c42b1a9e3b29fc7404bde2b8090381c849c75ff3853da6770868ba"
+   },
+   {
+    "bytes": 1953,
+    "oid": "68d2200fe57ad0678c17eb73606bae3edf826b65",
+    "path": "recursive_build/QPLANT_GrantingPhase_Status.md",
+    "sha256": "40ceddf96ac917db6ce338afd0c492c83e574d7e61023f9574d75e4e501429e8"
+   },
+   {
+    "bytes": 2259,
+    "oid": "a4945583f690afc8b44338bdc97b7c7d6746a4ca",
+    "path": "recursive_build/QSYS_-_ATS_Database_Management_System.md",
+    "sha256": "a9ea08e75c7008985776c7db19e37399d0734a3d482083fd825031feab1bd4eb"
+   },
+   {
+    "bytes": 2176,
+    "oid": "a3c36c4556fcf58bdf4fedde872361d03882635f",
+    "path": "recursive_build/QSYS_-_Architecture_for_MINERVA.md",
+    "sha256": "4402cea14fdfdfd13f40d8137037f2916758030df6f2f5dde94647ab09253e7f"
+   },
+   {
+    "bytes": 2195,
+    "oid": "8d163095e1ec054399df69c1c03cde1c5fe5ca22",
+    "path": "recursive_build/QSYS_-_Architecture_for_MINERVA_-_VISUAL_and_HUMAN.md",
+    "sha256": "b96a0403d09688f62ec707c1334990a4481c06741add85ce686f738e79c09376"
+   },
+   {
+    "bytes": 2185,
+    "oid": "f5a46146be2b7a65b5ccf529ed4f22a989e2561d",
+    "path": "recursive_build/QSYS_-_Architecture_for_MINERVA_fontnorm.md",
+    "sha256": "6eda8456bcf45a1293ccd776f868004efdd3e46c0da31e3fd616ee5c29403f08"
+   },
+   {
+    "bytes": 2239,
+    "oid": "62ff96377c149d9848c35b1fabd9ab46de2d6b86",
+    "path": "recursive_build/QSYS_-_Commissioning_Overview.md",
+    "sha256": "cfb06fc3f8e1ab378960ac1732859f77b4fbc2a5e706cc144201f13b2051175d"
+   },
+   {
+    "bytes": 2096,
+    "oid": "95655a591b8d2503573bf7a7746915902fdeea19",
+    "path": "recursive_build/QSYS_-_He_Recovery.md",
+    "sha256": "b3e6512c328722ff9a05511be5c86cca7d91ead30909a313e66d8cb5937b5df6"
+   },
+   {
+    "bytes": 2105,
+    "oid": "6b9fdb44bd061e1a4e62a6f9f4ebbcb25834e96a",
+    "path": "recursive_build/QSYS_-_He_Recovery_fontnorm.md",
+    "sha256": "0204b665ab3dddd96ef3dbf8556b725a9955c22af6b831d161c1662ca54c1c71"
+   },
+   {
+    "bytes": 2242,
+    "oid": "dd4e9fe248c00749033ae6727664d186a354a19a",
+    "path": "recursive_build/QSYS_-_IADR_Overview.md",
+    "sha256": "408d158fb71244012e18655b859b6361af50061652b422d2ba229e2256d3ceae"
+   },
+   {
+    "bytes": 2250,
+    "oid": "b3e104814cdc2bb21f3c9538efc7f7598ba195db",
+    "path": "recursive_build/QSYS_-_Installation_Overview.md",
+    "sha256": "c16080fee5c27cd1b65ab74278b43e623a0f1f8ca32bc280e99ead2d68b0d969"
+   },
+   {
+    "bytes": 2110,
+    "oid": "0aa2390173edc3268c2b407b1166ba413b510b03",
+    "path": "recursive_build/QSYS_-_Pipping_Pressure_Overview.md",
+    "sha256": "47fa4352dd4b67a355e19bc654d8cfd4c3e970b602efc014e2d65f5acaa073d4"
+   },
+   {
+    "bytes": 2119,
+    "oid": "d5f6d8c84c646cb67c2fcfe3bf98786fc974594b",
+    "path": "recursive_build/QSYS_-_Pipping_Pressure_Overview_fontnorm.md",
+    "sha256": "4637ae68caf2e6479b6c806c670f3f7207156e8b6a0ea44fefa9b5ccc23bd5af"
+   },
+   {
+    "bytes": 2257,
+    "oid": "45b3b9ffeae4aef1b969bcbead1bfe6fefa931ff",
+    "path": "recursive_build/QSYS_-_Top-level_system_description.md",
+    "sha256": "facaecd21dbba763b048f51e49a4265a3d356a378dec9151693887156b8ba795"
+   },
+   {
+    "bytes": 2015,
+    "oid": "9473e135c2f1878464920de96475ce712fe68897",
+    "path": "recursive_build/QSYS_Buildings_Overview.md",
+    "sha256": "1193458c5ec1eee8447470f6ed31771c2a106a3075dc5a8eab7cbc366af4ac27"
+   },
+   {
+    "bytes": 2024,
+    "oid": "b85aac72767fe5e59ef94891a703c3b92d1f2a41",
+    "path": "recursive_build/QSYS_Buildings_Overview_fontnorm.md",
+    "sha256": "a3c6ddbe9c0ef05f757774362cac326b1919b228ddff306aa2dd1d02fadf1bea"
+   },
+   {
+    "bytes": 1971,
+    "oid": "d7f5c7b7403b8d6c349a9a93b1e827a50874a262",
+    "path": "recursive_build/QSYS_Naming_Conventions.md",
+    "sha256": "81c5a58bfde8de767faa3f63754bbe0233ac8ebc3de8569e0a71a5e3542d2475"
+   },
+   {
+    "bytes": 1980,
+    "oid": "9d8e6e856d164575f337e00362ebd084f80875e1",
+    "path": "recursive_build/QSYS_Naming_Conventions_fontnorm.md",
+    "sha256": "6f6123b30fa74fce0b0f6c4e0c7480dba80e3c61bc0e6bc235b9289bf2a5eda0"
+   }
+  ]
+ },
+ "processes": [
+  {
+   "argv": [
+    "scripts/run_processing.py",
+    "--input-dir",
+    "app/public/master_input",
+    "--output-dir",
+    "<work>/outputs"
+   ],
+   "calls_total": 16,
+   "functions": [
+    {
+     "calls": 1,
+     "file": "scripts/run_processing.py",
+     "file_oid": "70e58a284984b8bb892102c7ee4eb7f303466679",
+     "file_sha256": "c836f37538a79b99383a94887cc1c6c1b7e8c9daa3f204558c816b73329c0717",
+     "id": "70e58a284984:1",
+     "line": 1,
+     "order": 0,
+     "qualname": "<module>"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/run_processing.py",
+     "file_oid": "70e58a284984b8bb892102c7ee4eb7f303466679",
+     "file_sha256": "c836f37538a79b99383a94887cc1c6c1b7e8c9daa3f204558c816b73329c0717",
+     "id": "70e58a284984:388",
+     "line": 388,
+     "order": 1,
+     "qualname": "main"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/run_processing.py",
+     "file_oid": "70e58a284984b8bb892102c7ee4eb7f303466679",
+     "file_sha256": "c836f37538a79b99383a94887cc1c6c1b7e8c9daa3f204558c816b73329c0717",
+     "id": "70e58a284984:36",
+     "line": 36,
+     "order": 2,
+     "qualname": "parse_args"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/run_processing.py",
+     "file_oid": "70e58a284984b8bb892102c7ee4eb7f303466679",
+     "file_sha256": "c836f37538a79b99383a94887cc1c6c1b7e8c9daa3f204558c816b73329c0717",
+     "id": "70e58a284984:29",
+     "line": 29,
+     "order": 3,
+     "qualname": "_env_bool"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/run_processing.py",
+     "file_oid": "70e58a284984b8bb892102c7ee4eb7f303466679",
+     "file_sha256": "c836f37538a79b99383a94887cc1c6c1b7e8c9daa3f204558c816b73329c0717",
+     "id": "70e58a284984:100",
+     "line": 100,
+     "order": 4,
+     "qualname": "run_ppt_processing"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/run_processing.py",
+     "file_oid": "70e58a284984b8bb892102c7ee4eb7f303466679",
+     "file_sha256": "c836f37538a79b99383a94887cc1c6c1b7e8c9daa3f204558c816b73329c0717",
+     "id": "70e58a284984:124",
+     "line": 124,
+     "order": 5,
+     "qualname": "summarize"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/run_processing.py",
+     "file_oid": "70e58a284984b8bb892102c7ee4eb7f303466679",
+     "file_sha256": "c836f37538a79b99383a94887cc1c6c1b7e8c9daa3f204558c816b73329c0717",
+     "id": "70e58a284984:148",
+     "line": 148,
+     "order": 6,
+     "qualname": "run_recursive_build"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/run_processing.py",
+     "file_oid": "70e58a284984b8bb892102c7ee4eb7f303466679",
+     "file_sha256": "c836f37538a79b99383a94887cc1c6c1b7e8c9daa3f204558c816b73329c0717",
+     "id": "70e58a284984:274",
+     "line": 274,
+     "order": 7,
+     "qualname": "write_pipeline_receipt"
+    },
+    {
+     "calls": 2,
+     "file": "scripts/run_processing.py",
+     "file_oid": "70e58a284984b8bb892102c7ee4eb7f303466679",
+     "file_sha256": "c836f37538a79b99383a94887cc1c6c1b7e8c9daa3f204558c816b73329c0717",
+     "id": "70e58a284984:176",
+     "line": 176,
+     "order": 8,
+     "qualname": "_load_json"
+    },
+    {
+     "calls": 2,
+     "file": "scripts/run_processing.py",
+     "file_oid": "70e58a284984b8bb892102c7ee4eb7f303466679",
+     "file_sha256": "c836f37538a79b99383a94887cc1c6c1b7e8c9daa3f204558c816b73329c0717",
+     "id": "70e58a284984:92",
+     "line": 92,
+     "order": 9,
+     "qualname": "sha256_file"
+    },
+    {
+     "calls": 4,
+     "file": "scripts/run_processing.py",
+     "file_oid": "70e58a284984b8bb892102c7ee4eb7f303466679",
+     "file_sha256": "c836f37538a79b99383a94887cc1c6c1b7e8c9daa3f204558c816b73329c0717",
+     "id": "70e58a284984:95",
+     "line": 95,
+     "order": 10,
+     "qualname": "sha256_file.<locals>.<lambda>"
+    }
+   ],
+   "functions_called": 11,
+   "pid": 519,
+   "ppid": 517,
+   "seconds": 0.826,
+   "uncaught": 0
+  },
+  {
+   "argv": [
+    "scripts/ppt_processor.py",
+    "--input-dir",
+    "app/public/master_input",
+    "--output-dir",
+    "<work>/outputs"
+   ],
+   "calls_total": 38141,
+   "functions": [
+    {
+     "calls": 1,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:1",
+     "line": 1,
+     "order": 0,
+     "qualname": "<module>"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:42",
+     "line": 42,
+     "order": 1,
+     "qualname": "PPTProcessor"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:292",
+     "line": 292,
+     "order": 2,
+     "qualname": "main"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:277",
+     "line": 277,
+     "order": 3,
+     "qualname": "_parse_args"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:45",
+     "line": 45,
+     "order": 4,
+     "qualname": "PPTProcessor.__init__"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:235",
+     "line": 235,
+     "order": 5,
+     "qualname": "PPTProcessor.process_all_files"
+    },
+    {
+     "calls": 26,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:31",
+     "line": 31,
+     "order": 6,
+     "qualname": "_timestamp_now"
+    },
+    {
+     "calls": 24,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:197",
+     "line": 197,
+     "order": 7,
+     "qualname": "PPTProcessor.process_file"
+    },
+    {
+     "calls": 24,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:55",
+     "line": 55,
+     "order": 8,
+     "qualname": "PPTProcessor.validate_pptx_package"
+    },
+    {
+     "calls": 24,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:70",
+     "line": 70,
+     "order": 9,
+     "qualname": "PPTProcessor.extract_filename_metadata"
+    },
+    {
+     "calls": 69,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:85",
+     "line": 85,
+     "order": 10,
+     "qualname": "PPTProcessor.extract_filename_metadata.<locals>.<genexpr>"
+    },
+    {
+     "calls": 62,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:87",
+     "line": 87,
+     "order": 11,
+     "qualname": "PPTProcessor.extract_filename_metadata.<locals>.<genexpr>"
+    },
+    {
+     "calls": 78,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:89",
+     "line": 89,
+     "order": 12,
+     "qualname": "PPTProcessor.extract_filename_metadata.<locals>.<genexpr>"
+    },
+    {
+     "calls": 55,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:91",
+     "line": 91,
+     "order": 13,
+     "qualname": "PPTProcessor.extract_filename_metadata.<locals>.<genexpr>"
+    },
+    {
+     "calls": 49,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:93",
+     "line": 93,
+     "order": 14,
+     "qualname": "PPTProcessor.extract_filename_metadata.<locals>.<genexpr>"
+    },
+    {
+     "calls": 42,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:95",
+     "line": 95,
+     "order": 15,
+     "qualname": "PPTProcessor.extract_filename_metadata.<locals>.<genexpr>"
+    },
+    {
+     "calls": 42,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:97",
+     "line": 97,
+     "order": 16,
+     "qualname": "PPTProcessor.extract_filename_metadata.<locals>.<genexpr>"
+    },
+    {
+     "calls": 24,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:129",
+     "line": 129,
+     "order": 17,
+     "qualname": "PPTProcessor.generate_file_hash"
+    },
+    {
+     "calls": 37442,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:132",
+     "line": 132,
+     "order": 18,
+     "qualname": "PPTProcessor.generate_file_hash.<locals>.<lambda>"
+    },
+    {
+     "calls": 24,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:103",
+     "line": 103,
+     "order": 19,
+     "qualname": "PPTProcessor.extract_cross_references"
+    },
+    {
+     "calls": 24,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:136",
+     "line": 136,
+     "order": 20,
+     "qualname": "PPTProcessor.create_digital_twin"
+    },
+    {
+     "calls": 24,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:189",
+     "line": 189,
+     "order": 21,
+     "qualname": "PPTProcessor._format_cross_references"
+    },
+    {
+     "calls": 24,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:223",
+     "line": 223,
+     "order": 22,
+     "qualname": "PPTProcessor._save_metadata"
+    },
+    {
+     "calls": 24,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:227",
+     "line": 227,
+     "order": 23,
+     "qualname": "PPTProcessor._save_cross_references"
+    },
+    {
+     "calls": 24,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:231",
+     "line": 231,
+     "order": 24,
+     "qualname": "PPTProcessor._save_digital_twin"
+    },
+    {
+     "calls": 10,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:108",
+     "line": 108,
+     "order": 25,
+     "qualname": "PPTProcessor.extract_cross_references.<locals>.candidate"
+    },
+    {
+     "calls": 20,
+     "file": "scripts/ppt_processor.py",
+     "file_oid": "c261f8e3866a1b2bbb8735e551ab5026d30743b8",
+     "file_sha256": "dd9e519516081af8f09d157d00453aaf72a5e20304589954db461f1d49b9163f",
+     "id": "c261f8e3866a:192",
+     "line": 192,
+     "order": 26,
+     "qualname": "PPTProcessor._format_cross_references.<locals>.<genexpr>"
+    }
+   ],
+   "functions_called": 27,
+   "pid": 520,
+   "ppid": 519,
+   "seconds": 0.653,
+   "uncaught": 0
+  },
+  {
+   "argv": [
+    "scripts/Recursive_Build_Master.py",
+    "--outputs-dir",
+    "<work>/outputs"
+   ],
+   "calls_total": 553,
+   "functions": [
+    {
+     "calls": 1,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:1",
+     "line": 1,
+     "order": 0,
+     "qualname": "<module>"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:73",
+     "line": 73,
+     "order": 1,
+     "qualname": "ArtefactRecord"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:104",
+     "line": 104,
+     "order": 2,
+     "qualname": "RecursiveBuildMaster"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:298",
+     "line": 298,
+     "order": 3,
+     "qualname": "main"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:284",
+     "line": 284,
+     "order": 4,
+     "qualname": "parse_args"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:105",
+     "line": 105,
+     "order": 5,
+     "qualname": "RecursiveBuildMaster.__init__"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:42",
+     "line": 42,
+     "order": 6,
+     "qualname": "deterministic_timestamp"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:32",
+     "line": 32,
+     "order": 7,
+     "qualname": "source_date_epoch"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:271",
+     "line": 271,
+     "order": 8,
+     "qualname": "RecursiveBuildMaster.build"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:140",
+     "line": 140,
+     "order": 9,
+     "qualname": "RecursiveBuildMaster.make_records"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:115",
+     "line": 115,
+     "order": 10,
+     "qualname": "RecursiveBuildMaster.load_metadata"
+    },
+    {
+     "calls": 24,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:122",
+     "line": 122,
+     "order": 11,
+     "qualname": "RecursiveBuildMaster.reference_count"
+    },
+    {
+     "calls": 27,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:24",
+     "line": 24,
+     "order": 12,
+     "qualname": "sha256_file"
+    },
+    {
+     "calls": 54,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:27",
+     "line": 27,
+     "order": 13,
+     "qualname": "sha256_file.<locals>.<lambda>"
+    },
+    {
+     "calls": 24,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:133",
+     "line": 133,
+     "order": 14,
+     "qualname": "RecursiveBuildMaster.score"
+    },
+    {
+     "calls": 24,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:160",
+     "line": 160,
+     "order": 15,
+     "qualname": "RecursiveBuildMaster.make_records.<locals>.<lambda>"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:166",
+     "line": 166,
+     "order": 16,
+     "qualname": "RecursiveBuildMaster.write_artefact_logs"
+    },
+    {
+     "calls": 24,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:52",
+     "line": 52,
+     "order": 17,
+     "qualname": "slug"
+    },
+    {
+     "calls": 24,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:67",
+     "line": 67,
+     "order": 18,
+     "qualname": "write_simple_yaml"
+    },
+    {
+     "calls": 312,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:56",
+     "line": 56,
+     "order": 19,
+     "qualname": "yaml_scalar"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:188",
+     "line": 188,
+     "order": 20,
+     "qualname": "RecursiveBuildMaster.write_index_json"
+    },
+    {
+     "calls": 24,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:87",
+     "line": 87,
+     "order": 21,
+     "qualname": "ArtefactRecord.as_dict"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:201",
+     "line": 201,
+     "order": 22,
+     "qualname": "RecursiveBuildMaster.write_top_index"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:227",
+     "line": 227,
+     "order": 23,
+     "qualname": "RecursiveBuildMaster.write_master_index"
+    },
+    {
+     "calls": 1,
+     "file": "scripts/Recursive_Build_Master.py",
+     "file_oid": "070af8af959ae428d19d0091012b58418ea05078",
+     "file_sha256": "b4ec620263c468d7f8be484ef93252f3c336cb7da89a434eb2c3cb6c2255d2dc",
+     "id": "070af8af959a:254",
+     "line": 254,
+     "order": 24,
+     "qualname": "RecursiveBuildMaster.write_receipt"
+    }
+   ],
+   "functions_called": 25,
+   "pid": 521,
+   "ppid": 519,
+   "seconds": 0.052,
+   "uncaught": 0
+  }
+ ],
+ "python": "3.13.16",
+ "repo_head": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+ "result": "PASS",
+ "schema": "pipeline.master_input.runtime_receipt.v1",
+ "started_utc": "2026-10-20T18:21:19Z",
+ "stdout_tail": "Pipeline Automation Hub - bounded MAIN pipeline\ninput=/home/claude/pipeline-automation-hub/app/public/master_input\noutput=<work>/outputs\nPhase 1: bounded legacy PPTX metadata processor\nStarting legacy metadata-only PPTX processor...\n{\n  \"scope\": \"LEGACY_METADATA_ONLY\",\n  \"total_files\": 24,\n  \"successful\": 24,\n  \"failed\": 0,\n  \"output_dir\": \"<work>/outputs\"\n}\n{\n  \"authority\": \"METADATA_ONLY_NOT_DOCUMENT_TRUTH\",\n  \"candidate_cross_references\": 5,\n  \"failed\": 0,\n  \"processing_scope\": \"LEGACY_METADATA_ONLY\",\n  \"successful\": 24,\n  \"summary_path\": \"<work>/outputs/processing_summary.json\",\n  \"total_files\": 24\n}\nPhase 2: canonical recursive-build indexing and lineage\n<work>/outputs/recursive_build/build_receipt.json\n{\n  \"authority\": \"METADATA_ONLY_NOT_DOCUMENT_TRUTH\",\n  \"excel_requested\": false,\n  \"pipeline_receipt\": \"<work>/outputs/pipeline_run_receipt.json\",\n  \"status\": \"PASS\"\n}\n",
+ "stray_repo_writes": {
+  "created": [],
+  "deleted": [],
+  "modified": []
+ },
+ "timings_s": {
+  "pipeline": 0.87,
+  "snapshot_after": 1.72,
+  "snapshot_before": 1.81
+ }
+}

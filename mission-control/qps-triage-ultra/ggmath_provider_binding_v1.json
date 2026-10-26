@@ -1,0 +1,85 @@
+{
+  "schema": "qps-ggmath-provider-binding/v1",
+  "mission_id": "QPS-TRIAGE-GGMATH-BRIDGE",
+  "consumer_repo": "GBOGEB/pipeline-automation-hub",
+  "consumer_path": "mission-control/qps-triage-ultra",
+  "provider_repo": "GBOGEB/gg_MATH",
+  "provider_sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc",
+  "provider_tree_sha": "5f983af1746a39ca2c3d365fac316528a9d72cea",
+  "provider_ref_note": "gg_MATH main merge of PR #73 (N5 spectral provider native), committed 2026-10-19T16:35:56+02:00. Bump with `python ggmath_bridge.py rebind --sha <40-hex>` once the W5a numerical-hygiene PR merges; never edit digests by hand.",
+  "fetch": {
+    "mode": "EXACT_SHA_RAW_FETCH_OR_LOCAL_PROVIDER_ROOT",
+    "raw_url_template": "https://raw.githubusercontent.com/{repo}/{sha}/{path}",
+    "cache_env": "GGMATH_CACHE",
+    "provider_root_env": "GGMATH_PROVIDER_ROOT",
+    "vendored_in_consumer": false,
+    "digest_algorithm": "sha256",
+    "on_digest_mismatch": "DEFER_PROVIDER_DIGEST_MISMATCH",
+    "on_unbound_import": "DEFER_UNBOUND_PROVIDER_MODULE"
+  },
+  "python_requirements": {
+    "source": "requirements-release.txt",
+    "pins": ["numpy==2.3.5", "scipy==1.17.0", "plotly==7.0.0"],
+    "plotly_role": "OPTIONAL_VALIDATION_AND_OFFLINE_PLOTLYJS_ONLY; figure JSON is built without plotly"
+  },
+  "bridged_kernels": [
+    {"path": "kernels/bt_uncertainty.py", "sha256": "a2a727366cd7c6e5c4860d10848f6a536135204bbc3e597cc0c156a037245121", "role": "BRIDGED"},
+    {"path": "kernels/pca_uncertainty.py", "sha256": "49d7b2f122bf8175ea523c98107c387ae982e7cb6edb4469a5a75cf00ba4382d", "role": "BRIDGED"},
+    {"path": "kernels/pca_alignment.py", "sha256": "765e45002a98f41a4b9b1a5a78e69e15ebecb18a035cd895ffe2e477205ea4f2", "role": "BRIDGED"},
+    {"path": "kernels/rmt_calibration.py", "sha256": "52e77790fe24a663ba22073a71113a54b409eab82168269b3576e1f96ef5805c", "role": "BRIDGED"},
+    {"path": "kernels/convergence_control.py", "sha256": "f672b5dceacef19e637fedad6cf17d6080c2c68cbe4b1f21441f73fe215b150e", "role": "BRIDGED"},
+    {"path": "kernels/temporal_subspace_trace.py", "sha256": "c26b1c339dab5f26035f06abaf3cb586333142b5e14a5ac4adbf670fb5c2d6e2", "role": "BRIDGED"},
+    {"path": "kernels/temporal_pca_receipt.py", "sha256": "f5e8fdf390b4fe9b55cb8fa8a4815eda046ae9621efba760d6dfede4fc096c63", "role": "BRIDGED"},
+    {"path": "kernels/visual_engine_bridge.py", "sha256": "b269dee5e1c9dfd0423f84384b039cc984f650a7473b69f4b9774fc2c134ab18", "role": "BRIDGED"},
+    {"path": "kernels/uncertainty.py", "sha256": "674372d48d79116613164df3a7bb0d0c04d2c3f427c1a59aaa93f61e086f9477", "role": "BRIDGED"},
+    {"path": "kernels/stats_core.py", "sha256": "c35d9d886ba809a9b6cb6320668dc8ed24ffd2bd35b0cda450dc3424602bbbed", "role": "BRIDGED"},
+    {"path": "kernels/matrix_core.py", "sha256": "a6cec382bdd827310568416fcc113e408483662d3813f58b0d99493ebddb929e", "role": "IMPORT_CLOSURE"},
+    {"path": "kernels/pca_reference.py", "sha256": "acafe56e3006a054b9fbd4770a52c6a51a9bc807a86faab47362893b297c6096", "role": "IMPORT_CLOSURE"},
+    {"path": "kernels/rmt_signal.py", "sha256": "815285216e83995bb96f344415dac2283049b44fa155f7600a459aad11b27677", "role": "IMPORT_CLOSURE"},
+    {"path": "kernels/subspace_metrics.py", "sha256": "6130a69d14efa02cc12483ed037a7578dac0c200480f0d5562f7c012164ebc91", "role": "IMPORT_CLOSURE"}
+  ],
+  "provider_data": [
+    {
+      "id": "GM_I_A_MULTI_CLOCK_MEASURED_PULSES",
+      "path": "mission/GRANDMISSION_I_B_TEMPORAL_PCA/inbound/GM_I_A_MULTI_CLOCK_MEASURED_PULSES_v1.json",
+      "sha256": "22fc75a043ebb4df52cb1895ce932ff0c8a1678f9abd1ea7344d7dad3ac0adb6",
+      "evidence_class": "MEASURED"
+    },
+    {
+      "id": "REQUIREMENTS_RELEASE",
+      "path": "requirements-release.txt",
+      "sha256": "09b2e378ece490413589457345a477f2cd6dd9ba571875916386e30a547291dd",
+      "evidence_class": "PROVIDER_PIN"
+    }
+  ],
+  "outputs": {
+    "bt_finite_mle_guard": {"adapter": "bt_strength", "threshold_kind": "EXACT_IDENTITY"},
+    "bt_log_strength_intervals": {"adapter": "bt_strength", "threshold_kind": "DISTRIBUTION_DERIVED"},
+    "bt_rank_frequency": {"adapter": "bt_strength", "threshold_kind": "DATA_CALIBRATED"},
+    "bt_order_effect": {"adapter": "bt_order_effect", "threshold_kind": "DISTRIBUTION_DERIVED"},
+    "bt_reverse_pressure": {"adapter": "bt_reverse_pressure", "threshold_kind": "PROJECT_GOVERNED"},
+    "bt_bayesian": {"adapter": "research_interfaces", "threshold_kind": "RESEARCH_TODO"},
+    "pca_mp_edge": {"adapter": "pca_retention", "threshold_kind": "MODEL_DERIVED"},
+    "pca_pa95": {"adapter": "pca_retention", "threshold_kind": "DATA_CALIBRATED"},
+    "pca_eigengap_guard": {"adapter": "pca_retention", "threshold_kind": "HEURISTIC"},
+    "pca_bootstrap_subspace": {"adapter": "pca_retention", "threshold_kind": "DATA_CALIBRATED"},
+    "pca_alignment_congruence": {"adapter": "pca_alignment", "threshold_kind": "HEURISTIC"},
+    "pca_temporal_subspace_uncertainty": {"adapter": "pca_alignment", "threshold_kind": "DATA_CALIBRATED"},
+    "rmt_finite_sample_calibration": {"adapter": "rmt_calibration", "threshold_kind": "DATA_CALIBRATED"},
+    "convergence_classification": {"adapter": "convergence", "threshold_kind": "PROJECT_GOVERNED"},
+    "temporal_subspace_trace": {"adapter": "temporal_trace", "threshold_kind": "NO_UNIVERSAL_THRESHOLD"},
+    "grassmann_state_space": {"adapter": "research_interfaces", "threshold_kind": "RESEARCH_TODO"},
+    "flow_efficiency": {"adapter": "flow_kpi", "threshold_kind": "EXACT_IDENTITY"},
+    "queue_execute_ratio": {"adapter": "flow_kpi", "threshold_kind": "EXACT_IDENTITY"},
+    "littles_law_consistency": {"adapter": "flow_kpi", "threshold_kind": "EXACT_IDENTITY"}
+  },
+  "boundaries": {
+    "pca_outputs_are_bt_evidence": false,
+    "reverse_trials_from_swapped_labels": false,
+    "bt_admissible_outcome_sources": ["OBSERVED_PAIRWISE_OUTCOME", "MEASURED_DURATION_COMPARISON"],
+    "provider_math_is_engineering_acceptance": false
+  },
+  "jade_hook": "ggmath_jade_hook_v1.json",
+  "authority_transfer": false,
+  "engineering_acceptance": false
+}

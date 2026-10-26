@@ -1,0 +1,89 @@
+{
+  "schema": "missioncontrol.mcex.isolated_preflight.v1",
+  "source_hashes": {
+    "probe_blob_sha": "4a56e81fedb73cc3027a0bcc9a41312cc2804291",
+    "test_blob_sha": "8c4d189d1ac24a8869ca543f83c5f88720f847c8"
+  },
+  "baseline": "acdf24c4a9ff50fec353120c4531e77c3baf9b33",
+  "unit": "PURE_DECISION_LOGIC_CASES_NOT_INDEPENDENT_CTQ",
+  "method": "GitHub fetched probe.mjs identical blob; strip ESM syntax and inject deterministic noncryptographic test hash in restricted JS runtime. Execute suite(profile) for each exact PR-head arm profile; compare source-defined decisions to expected classifications. No OS, network, real SHA-256, GitHub account or real review involved.",
+  "limits": "The restricted JS sandbox cannot import Node's node:crypto; this preflight probes branch logic only, not digest security or Node runtime correctness.",
+  "aggregate": {
+    "cases": 88,
+    "negatives": 80,
+    "negatives_held": 80,
+    "false_classifications": 0,
+    "actual_repo_writes": 0,
+    "native_terminal_passes": null
+  },
+  "arms": [
+    {
+      "arm": "00",
+      "source": "V8_ISOLATED_EXECUTION_OF_COMMITTED_DECISION_LOGIC_WITH_SUBSTITUTE_NONCRYPTO_TEST_HASH",
+      "cases": 22,
+      "negative_cases": 20,
+      "negative_cases_held": 20,
+      "classification_mismatches": 0,
+      "simulated_local_shadow_offers": 0,
+      "simulated_remote_return_offers": 0,
+      "actual_repository_writes": 0,
+      "native_node22_result": null,
+      "authenticated_principal_verified": false,
+      "security_review_verified": false
+    },
+    {
+      "arm": "10",
+      "source": "V8_ISOLATED_EXECUTION_OF_COMMITTED_DECISION_LOGIC_WITH_SUBSTITUTE_NONCRYPTO_TEST_HASH",
+      "cases": 22,
+      "negative_cases": 20,
+      "negative_cases_held": 20,
+      "classification_mismatches": 0,
+      "simulated_local_shadow_offers": 2,
+      "simulated_remote_return_offers": 0,
+      "actual_repository_writes": 0,
+      "native_node22_result": null,
+      "authenticated_principal_verified": false,
+      "security_review_verified": false
+    },
+    {
+      "arm": "01",
+      "source": "V8_ISOLATED_EXECUTION_OF_COMMITTED_DECISION_LOGIC_WITH_SUBSTITUTE_NONCRYPTO_TEST_HASH",
+      "cases": 22,
+      "negative_cases": 20,
+      "negative_cases_held": 20,
+      "classification_mismatches": 0,
+      "simulated_local_shadow_offers": 0,
+      "simulated_remote_return_offers": 2,
+      "actual_repository_writes": 0,
+      "native_node22_result": null,
+      "authenticated_principal_verified": false,
+      "security_review_verified": false
+    },
+    {
+      "arm": "11",
+      "source": "V8_ISOLATED_EXECUTION_OF_COMMITTED_DECISION_LOGIC_WITH_SUBSTITUTE_NONCRYPTO_TEST_HASH",
+      "cases": 22,
+      "negative_cases": 20,
+      "negative_cases_held": 20,
+      "classification_mismatches": 0,
+      "simulated_local_shadow_offers": 2,
+      "simulated_remote_return_offers": 2,
+      "actual_repository_writes": 0,
+      "native_node22_result": null,
+      "authenticated_principal_verified": false,
+      "security_review_verified": false
+    }
+  ],
+  "not_established": [
+    "NODE22_GITHUB_ACTIONS_TERMINAL",
+    "REAL_CRYPTO_HMAC_AUTH",
+    "SERVER_SIDE_PRINCIPAL_BINDING",
+    "CROSS_RUN_DURABLE_REPLAY",
+    "HUMAN_APPROVAL",
+    "REAL_REMOTE_DISPATCH",
+    "REPO_MAIN_ADMISSION"
+  ],
+  "merge_admission": "HOLD",
+  "security_waiver": false,
+  "authority_transfer": false
+}

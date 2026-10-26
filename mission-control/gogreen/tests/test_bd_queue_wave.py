@@ -149,8 +149,78 @@ class Tests(unittest.TestCase):
             a={k:Path(d,k).read_bytes() for k in x['files']}
             mod.write_outputs(d,summary,rows,m)
             self.assertEqual(a,{k:Path(d,k).read_bytes() for k in x['files']})
-            self.assertEqual(1,len(json.loads(Path(d,'bd_manifestations.json').read_text())))
-            self.assertTrue(Path(d,'bd_pr_queue.csv').read_text().startswith('repository,pr,'))
+            self.assertEqual(1,len(json.loads(Path(d,'bd_manifestations.json').read_text(encoding="utf-8"))))
+            self.assertTrue(Path(d,'bd_pr_queue.csv').read_text(encoding="utf-8").startswith('repository,pr,'))
+    def test_public_only_explicit_three_sources(self):
+        self.assertEqual(mod.REPOS[:-1], mod.PUBLIC_REPOS)
+        self.assertNotIn(mod.PRIVATE_OWNER_REPO, mod.PUBLIC_REPOS)
+
+    def test_public_census_does_not_probe_private(self):
+        class OwnerSafe(Fake):
+            def paginate(self, route, key=None):
+                if 'cryoplant-project' in route:
+                    raise AssertionError("private QPS API was queried")
+                return super().paginate(route, key)
+        fake = OwnerSafe(
+            prs={'GBOGEB/ABACUS': [raw_pr()]},
+            issues={'GBOGEB/ABACUS': [{'number': 9, 'state': 'open'}]},
+            runs={H: {'total_count': 1, 'workflow_runs': [run()]}}
+        )
+        summary, prs, reds = mod.scan_public(fake, max_parallel=2)
+        self.assertEqual(mod.PUBLIC_SCOPE, summary['scope'])
+        self.assertEqual(3, len(summary['issues']))
+        self.assertEqual(1, summary['open_issues'])
+        self.assertEqual(1, summary['open_prs'])
+        self.assertEqual(1, len(reds))
+        self.assertEqual([mod.PRIVATE_OWNER_REPO],
+                         summary['unobserved_private_repositories'])
+        self.assertIsNone(summary['private_qps_open_issues'])
+        self.assertIsNone(summary['private_qps_root_closures'])
+        self.assertFalse(summary['full_four_repo_census'])
+        self.assertEqual('HOLD', summary['federation_admission'])
+        self.assertTrue(summary['public_is_not_global_denominator'])
+
+    def test_public_census_denominator_does_not_include_qps(self):
+        fake = Fake(issues={
+            'GBOGEB/ABACUS': [{'number': 1, 'state': 'open'}],
+            'GBOGEB/CODEX': [{'number': 2, 'state': 'open'}],
+            'GBOGEB/pipeline-automation-hub': [{'number': 3, 'state': 'open'}],
+            'GBOGEB/cryoplant-project': [{'number': n, 'state': 'open'} for n in range(10, 25)]
+        })
+        summary, rows, red = mod.scan_public(fake)
+        self.assertEqual((3, 0, 3), (summary['open_issues'], len(rows), summary['open_items']))
+        self.assertEqual([], red)
+        self.assertEqual('HOLD_OWNER_PRIVATE_RECEIPT_REQUIRED', summary['private_receipt_status'])
+
+    def test_public_census_fails_if_a_public_source_is_denied(self):
+        class Denied(Fake):
+            def paginate(self, route, key=None):
+                if '/repos/GBOGEB/CODEX/pulls?' in route:
+                    raise OSError('public source denied')
+                return super().paginate(route, key)
+        with self.assertRaisesRegex(OSError, 'denied'):
+            mod.scan_public(Denied())
+
+    def test_public_snapshot_receipt_is_explicit_partial(self):
+        summary, rows, manifest = mod.scan_public(Fake())
+        with tempfile.TemporaryDirectory() as root:
+            mod.write_outputs(root, summary, rows, manifest)
+            parsed = json.loads(Path(root, 'bd_summary.json').read_text(encoding="utf-8"))
+            receipt = json.loads(Path(root, 'bd_files_sha256.json').read_text(encoding="utf-8"))
+            self.assertEqual('LIVE_PUBLIC_THREE_REPO_PARTIAL_QPS_UNKNOWN', parsed['scope'])
+            self.assertTrue(receipt['source_is_live_api'])
+            self.assertFalse(receipt['complete_federation_observed'])
+            self.assertIsNone(parsed['private_qps_open_prs'])
+
+    def test_public_cli_dry_fixture(self):
+        snapshot, prs, manifestations = mod.scan_public(Fake())
+        with tempfile.TemporaryDirectory() as root:
+            with patch.object(mod, 'scan_public',
+                              return_value=(snapshot, prs, manifestations)):
+                with patch('sys.argv', ['bd_queue_wave.py', '--public-only', '--out', root]):
+                    self.assertEqual(0, mod.main())
+            self.assertEqual('HOLD', json.loads(Path(root, 'bd_summary.json').read_text(encoding="utf-8"))['federation_admission'])
+
     def test_scan_fully_mocked(self):
         fake=Fake(prs={'GBOGEB/ABACUS':[raw_pr()]},issues={'GBOGEB/ABACUS':[{'number':15,'state':'open'}]},runs={H:{'total_count':1,'workflow_runs':[run()]}})
         summary,rows,manifest=mod.scan(fake,repos=['GBOGEB/ABACUS'],max_parallel=2)
