@@ -85,7 +85,8 @@ def _source_key(event: dict):
                              native["attempt"], native["job_id"]]), lane
 
 
-def qualify(event: dict, candidate: dict, envelope: dict, key: bytes,\n            baseline: dict | None = None) -> dict:
+def qualify(event: dict, candidate: dict, envelope: dict, key: bytes,
+            baseline: dict | None = None) -> dict:
     """Fail-closed, signed qualification; NEVER native acceptance authority.
 
     Authenticity is conditional on QPS private key custody and the QPS signer
@@ -449,7 +450,8 @@ def verify(db: sqlite3.Connection, key: bytes | None = None) -> dict:
             require(hmac.compare_digest(owner_mac(key, doc["attestation"]),
                                         doc["signature"]), "owner MAC tampering")
         observations += 1
-    return {"audit_entries": count, "native_observations": native,\n            "observations": observations,
+    return {"audit_entries": count, "native_observations": native,
+            "observations": observations,
             "pending": db.execute("SELECT COUNT(*) FROM outbox WHERE state='PENDING'").fetchone()[0],
             "claimed": db.execute("SELECT COUNT(*) FROM outbox WHERE state='CLAIMED'").fetchone()[0],
             "acked": db.execute("SELECT COUNT(*) FROM outbox WHERE state='ACKED'").fetchone()[0],
@@ -461,7 +463,8 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description="Offline signed QPS-effect gate (no alert sender)")
     for arg in ("event", "candidate", "proof"):
         parser.add_argument("--" + arg, type=Path, required=True)
-    parser.add_argument("--baseline", type=Path,\n                        help="required for B: exact previous native comparator")
+    parser.add_argument("--baseline", type=Path,
+                        help="required for B: exact previous native comparator")
     parser.add_argument("--database", type=Path)
     parser.add_argument("--record", action="store_true",
                         help="opt-in local SQLite observation/outbox write")
