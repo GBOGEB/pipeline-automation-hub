@@ -22,7 +22,8 @@ Two tiers, never mixed:
     and it is labelled as such.
 
 Completed runs and their job lists are immutable, so --cache keeps them per run attempt.
-Each pulse fetches only new runs and spends at most --job-budget job calls, newest first.
+Each pulse fetches only new runs and spends at most --job-budget job calls per repo, spread
+round-robin over (ISO week, workflow) so that no week or workflow goes unsampled.
 History therefore builds up across pulses, and `weekly` gives every workflow its ISO-week
 series.
 
@@ -43,6 +44,7 @@ import re
 import statistics
 import subprocess
 import sys
+import time
 import urllib.error
 import urllib.request
 from collections import Counter, defaultdict
@@ -62,6 +64,7 @@ def _load(name: str, path: Path):
 
 PB = _load("jade_private_boundary", ROOT / "tools" / "private_boundary.py")
 BQ = _load("gogreen_bd_queue_wave", ROOT.parent / "gogreen" / "bd_queue_wave.py")  # owner of utc(), percentile()
+STRATA_DOC = "job lists are fetched round-robin over (ISO week, workflow), newest first per stratum"
 
 SCHEMA = "jade.devops.actions-metrics.v1"
 ROSTER = ROOT / "data" / "FOCUS5_POINT_RELEASE_NPLUS7.json"  # the FOCUS5 object the CI/CD DAG pins
@@ -77,10 +80,12 @@ BANDS = ((10, "B0_INSTANT_<10s"), (60, "B1_SHORT_10s-1m"), (300, "B2_MEDIUM_1-5m
 _r = lambda p: re.compile(p, re.I)
 CLASSES = (
     ("SECURITY", _r(r"codeql|security|secret|dependabot|scorecard|bandit|semgrep|osv|token.census")),
-    ("GATE", _r(r"gate|guard|closure|required|admission|fail.?closed|first.?red|everred|red.trace")),
-    ("TEST_QA", _r(r"\btests?\b|test-|pytest|\bqa\b|-qa\b|qualification|regression|coverage|smoke|verify")),
+    ("GATE", _r(r"gate|guard|closure|required|admission|fail.?closed|first.?red|everred|red.trace|contract|"
+                r"policy|integrity")),
+    ("TEST_QA", _r(r"\btests?\b|test-|pytest|\bqa\b|-qa\b|qualification|regression|coverage|smoke|verify|\bci\b")),
     ("CENSUS_TELEMETRY", _r(r"census|telemetry|metric|pulse|recon|triage|harvest|frequency|history|ledger")),
-    ("EXPERIMENT_PROBE", _r(r"probe|experiment|proof|\bbt\b|-bt\b|pca|sandbox|spike|frontier|launchpad")),
+    ("EXPERIMENT_PROBE", _r(r"probe|experiment|proof|\bbt\b|-bt\b|pca|sandbox|spike|frontier|launchpad|pilot|"
+                            r"testflight|monte.carlo|reference|bridge")),
     ("BUILD_DEPLOY", _r(r"build|deploy|pages|publish|release|site|dashboard|atlas|render")),
     ("DOCS_LINT", _r(r"lint|format|markdown|docs?\b|yaml|link")),
 )
@@ -146,9 +151,18 @@ class Reader:
         req = urllib.request.Request(self.base + route, headers={
             "Accept": "application/vnd.github+json", "User-Agent": "jade-actions-metrics-v1",
             **({"Authorization": "Bearer " + self.tok} if self.tok else {})})
-        self.calls += 1
-        with urllib.request.urlopen(req, timeout=40) as r:
-            return json.load(r)
+        for attempt in range(4):  # transient socket / 5xx only; 4xx is an answer, not a retry
+            self.calls += 1
+            try:
+                with urllib.request.urlopen(req, timeout=40) as r:
+                    return json.load(r)
+            except urllib.error.HTTPError as exc:
+                if exc.code < 500 or attempt == 3:
+                    raise
+            except (urllib.error.URLError, TimeoutError, ConnectionError):
+                if attempt == 3:
+                    raise
+            time.sleep(2 ** attempt * 3)
 
     def pages(self, route: str, key: str) -> tuple[list, int]:
         out, total = [], 0
@@ -191,6 +205,22 @@ def fetch_runs_day(rd: Reader, repo: str, day: date) -> list:
     return [slim(r, RUN_KEYS) for r in runs]
 
 
+def stratified(runs: list) -> list:
+    """Round-robin over (ISO week, workflow), newest first in each stratum.
+
+    A newest-first budget only samples the last days and hides past queue storms. This order
+    gives every week and every workflow job-tier coverage before any stratum gets a second run.
+    """
+    strata = defaultdict(list)
+    for r in sorted(runs, key=lambda r: r["created_at"], reverse=True):
+        strata[(iso_week(r["created_at"]), r.get("path") or "")].append(r)
+    queues, out = [strata[k] for k in sorted(strata, reverse=True)], []
+    while queues:
+        out.extend(q.pop(0) for q in queues)
+        queues = [q for q in queues if q]
+    return out
+
+
 def fetch(cache: Path, repos: list, since: date, until: date, job_budget: int, rd: Reader,
           workers: int = 6, log=print) -> dict:
     today = datetime.now(timezone.utc).date()
@@ -214,8 +244,8 @@ def fetch(cache: Path, repos: list, since: date, until: date, job_budget: int, r
             log(f"{repo}: {summary[repo]}")
             continue
         runs = [r for r in load_runs(cache, repo, since, until) if r["status"] == "completed"]
-        todo = [r for r in sorted(runs, key=lambda r: r["created_at"], reverse=True)
-                if not (d / "jobs" / f"{r['id']}-{r['run_attempt']}.json").exists()][:max(0, job_budget)]
+        missing = [r for r in runs if not (d / "jobs" / f"{r['id']}-{r['run_attempt']}.json").exists()]
+        todo = stratified(missing)[:max(0, job_budget)]
 
         def one(r):
             jobs, _ = rd.pages(f"/repos/{repo}/actions/runs/{r['id']}/jobs?filter=all", "jobs")
@@ -281,8 +311,9 @@ def aggregate(runs: list, jobs_by_run: dict) -> dict:
     failed_min = sum(math.ceil(s / 60) for j in failed
                      if (s := seconds(j.get("started_at"), j.get("completed_at"))))
     runners = Counter(runner_of(j) for j in jobs)
+    # Wall time of the latest attempt only; created -> run_started measures rerun delay, not queueing,
+    # so queue time is job-tier only (job created -> started, as Insights reports it).
     wall = [s for r in runs if (s := seconds(r.get("run_started_at"), r.get("updated_at"))) is not None]
-    rqueue = [s for r in runs if (s := BQ.queue_seconds(r)) is not None]
     concl = Counter(r.get("conclusion") or r.get("status") for r in runs)
     cov = round(len(read) / len(runs), 4) if runs else None
     return {
@@ -290,8 +321,9 @@ def aggregate(runs: list, jobs_by_run: dict) -> dict:
         "workflow_runs": len(runs),
         "run_failure_rate": pct(sum(concl[c] for c in FAILED), len(runs)),
         "run_cancel_rate": pct(concl["cancelled"], len(runs)),
-        "avg_run_wall_s": mean(wall), "p95_run_wall_s": BQ.percentile(wall, 0.95),
-        "avg_run_queue_s": mean(rqueue), "p95_run_queue_s": BQ.percentile(rqueue, 0.95),
+        "rerun_rate": pct(sum(1 for r in runs if (r.get("run_attempt") or 1) > 1), len(runs)),
+        "avg_run_wall_s": mean(wall), "p50_run_wall_s": BQ.percentile(wall, 0.5),
+        "p95_run_wall_s": BQ.percentile(wall, 0.95),
         "events": dict(Counter(r.get("event") for r in runs).most_common()),
         "conclusions": dict(concl.most_common()),
         # job tier
@@ -387,7 +419,8 @@ def project(cache: Path, repos: list, since: date, until: date, heads: dict, cen
         "method": {"failed_conclusions": sorted(FAILED), "skipped_jobs": "excluded from job runs, minutes and timings",
                    "total_minutes": "sum of per-job ceil(run seconds / 60), the billing rounding",
                    "bands": [label for _, label in BANDS], "classes": [label for label, _ in CLASSES] + ["OTHER"],
-                   "job_tier_basis": "OBSERVED over job_coverage; est_total_minutes = total_minutes / job_coverage"},
+                   "job_tier_basis": "OBSERVED over job_coverage; est_total_minutes = total_minutes / job_coverage",
+                   "job_sample": STRATA_DOC},
         "fleet": {"totals": aggregate(all_runs, all_jobs), "weekly": weekly(all_runs, all_jobs),
                   "by_class": group(wf_rows, "class"), "by_band": group(wf_rows, "band"),
                   "by_event": group(wf_rows, "dominant_event")},
@@ -399,7 +432,7 @@ def project(cache: Path, repos: list, since: date, until: date, heads: dict, cen
 CSV_COLS = ("repo", "workflow", "path", "class", "band", "dominant_event", "workflow_runs", "jobs", "job_runs",
             "total_minutes", "est_total_minutes", "runner_type", "runtime_os", "has_job_failures_pct",
             "avg_job_run_s", "p95_job_run_s", "avg_job_queue_s", "p95_job_queue_s", "job_failure_rate",
-            "failed_job_minutes", "run_failure_rate", "run_cancel_rate", "avg_run_wall_s", "avg_run_queue_s",
+            "failed_job_minutes", "run_failure_rate", "run_cancel_rate", "rerun_rate", "avg_run_wall_s",
             "job_coverage", "blob_oid")
 
 
@@ -425,7 +458,7 @@ def main(argv=None) -> int:
     p.add_argument("--until", type=date.fromisoformat, default=datetime.now(timezone.utc).date())
     p.add_argument("--roster", type=Path, default=ROSTER)
     p.add_argument("--repo", action="append", help="limit to these repos (default: the roster)")
-    p.add_argument("--job-budget", type=int, default=1500, help="job-list API calls per repo this pulse, newest runs first")
+    p.add_argument("--job-budget", type=int, default=1500, help="job-list API calls per repo this pulse (stratified by week x workflow)")
     p.add_argument("--census", type=Path, default=CENSUS)
     p.add_argument("--out", type=Path)
     p.add_argument("--csv", type=Path)

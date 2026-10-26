@@ -119,6 +119,17 @@ class Project(unittest.TestCase):
         self.assertEqual(doc["repos"][0]["weekly"], {"2026-W41": {"runs": 2, "failed_runs": 0, "minutes": 2,
                                                                    "job_runs": 2}})
 
+    def test_stratified_sample_covers_every_week_and_workflow_first(self):
+        runs = [run(i, path=f".github/workflows/{p}.yml", created=f"2026-10-{d:02d}T0{i % 9}:00:00Z")
+                for i, (p, d) in enumerate([("a", 5), ("a", 5), ("a", 6), ("b", 5), ("a", 20)], start=1)]
+        # strata: W43/a [5], W41/b [4], W41/a [3, 2, 1]; one per stratum per round
+        self.assertEqual([r["id"] for r in M.stratified(runs)], [5, 4, 3, 2, 1])
+
+    def test_rerun_rate(self):
+        r2 = dict(run(2), run_attempt=2)
+        t = self.doc([run(1), r2], {1: [job(1)]})["repos"][0]["totals"]
+        self.assertEqual(t["rerun_rate"], 50.0)
+
     def test_self_hosted_runner(self):
         self.assertEqual(M.runner_of({"labels": ["self-hosted", "Linux", "X64"], "runner_group_name": "Default"}),
                          ("self-hosted", "linux"))
