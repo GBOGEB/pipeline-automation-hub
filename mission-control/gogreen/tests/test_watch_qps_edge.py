@@ -230,7 +230,7 @@ class FourClassNoncompensatingGates(unittest.TestCase):
         signed_original = proof(e, candidate)
         tampered_candidate = copy.deepcopy(candidate)
         tampered_candidate["reasons"] = ["RED_TO_GREEN"]
-        with self.assertRaisesRegex(ValueError, "signed candidate justification mismatch"):
+        with self.assertRaisesRegex(ValueError, "attestation candidate payload mismatch"):
             Q.qualify(e, tampered_candidate, signed_original, KEY)
 
     def test_unsigned_changed_candidate_reason_fails(self):
