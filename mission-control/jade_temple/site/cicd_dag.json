@@ -59,10 +59,10 @@
     "../qps-triage-ultra/p-process/site/data/p_state.json": "98cfa8ed19755bfc2172cfcda6f1267ec7f78c7779c2920a60a97fcb9045a45e",
     "../qps-triage-ultra/p-process/site/everred/data/everred.json": "0eb4b3c5287ee352f15669e8f8d500bc17c63d8da3617f76392e8f6b8ac25120",
     "data/BD_QUEUE.csv": "e17e22ecf996c66858c67e6d37ffe137d9053c84f53faee11741798ca841c445",
-    "data/CICD_DAG_POLICY.json": "1461988c949d81470b7cd00cfbb908ba300b025e8f10d455e1e3d1db67152050",
+    "data/CICD_DAG_POLICY.json": "cf8773fbb140cc1541430e44f3e6c9bb9b571029f743b17f31dc7d492031a121",
     "data/COHORT_CROSSWALK_NPLUS1.json": "8e22c5963cc165b2ec8e83383a7469aebd177335eaddca8043b1692bf10e2cbc",
-    "data/DEVOPS_CENSUS_N11.json": "0122edc4f7c55adff5406c8afc54c85c14cfa99661b2b7fd9c06eb05a2c3f077",
-    "data/DEVOPS_OBJECTS_N11.json": "c4c7bac66eb7af1a379ce5ad0c4a5decc8fa989b478fb078ef33568f15229269",
+    "data/DEVOPS_CENSUS_N12.json": "00079bd5fe1a2267f02eed67d26f5e88653b56a3c893c7e4569f101f73b3e0ca",
+    "data/DEVOPS_OBJECTS_N12.json": "0b55823951f4a5b085e0170091a4105d21c0ee54f95515927fcb370402eac72e",
     "data/HEAD_CROSSWALK.json": "70d2ca8d6fb2364e6d385f43b2043fea5157edd96cbafb233362b3b1254c70bc",
     "data/RED_TRACE_FEDERATION_N8.json": "3238f61bd0bac44656f454d3d59d92610df4cc9157a56df67bf59c99a1ee0e89",
     "data/ROLLING5_POLICY.json": "77228bf9f0f54b2a9d3567ddef28c340d3ddf89fe333926b1b70d77a9bbd2d85",
@@ -77,7 +77,7 @@
     "OID"
   ],
   "lifecycle": {
-    "digest_sha256": "35bf393ddcd6b4886b43d384e956f3540bae7e0ee3f4925b178bf49b637b806b",
+    "digest_sha256": "1b867b4365cb869c9eab34bc8795354f015309e7396d8fa92274ea40ce592452",
     "fleet": {
       "S0_PLAN": {
         "mean_completion": 0.4857,
@@ -85,32 +85,32 @@
         "repos_ge_L3": 6
       },
       "S1_CODE": {
-        "mean_completion": 0.4286,
+        "mean_completion": 0.4381,
         "median_level": 1,
-        "repos_ge_L3": 6
+        "repos_ge_L3": 7
       },
       "S2_BUILD": {
-        "mean_completion": 0.5524,
-        "median_level": 2,
-        "repos_ge_L3": 8
+        "mean_completion": 0.6286,
+        "median_level": 3,
+        "repos_ge_L3": 11
       },
       "S3_TEST": {
-        "mean_completion": 0.4667,
+        "mean_completion": 0.5619,
         "median_level": 3,
-        "repos_ge_L3": 12
+        "repos_ge_L3": 16
       },
       "S4_SECURE": {
-        "mean_completion": 0.3333,
+        "mean_completion": 0.381,
         "median_level": 0,
-        "repos_ge_L3": 5
+        "repos_ge_L3": 6
       },
       "S5_RELEASE": {
-        "mean_completion": 0.3143,
+        "mean_completion": 0.3429,
         "median_level": 1,
         "repos_ge_L3": 4
       },
       "S6_DEPLOY": {
-        "mean_completion": 0.3333,
+        "mean_completion": 0.3714,
         "median_level": 1,
         "repos_ge_L3": 8
       },
@@ -120,12 +120,12 @@
         "repos_ge_L3": 4
       },
       "S8_MONITOR": {
-        "mean_completion": 0.2286,
-        "median_level": 0,
+        "mean_completion": 0.2381,
+        "median_level": 1,
         "repos_ge_L3": 5
       },
       "S9_CONTROL": {
-        "mean_completion": 0.2286,
+        "mean_completion": 0.2381,
         "median_level": 1,
         "repos_ge_L3": 4
       }
@@ -138,12 +138,12 @@
       "4": "GATED",
       "5": "CONTROLLED"
     },
-    "observed_at_utc": "2026-10-25T23:31:24Z",
-    "pulse": "N+11",
+    "observed_at_utc": "2026-10-26T03:48:52Z",
+    "pulse": "N+12",
     "repos": [
       {
         "focus_sha": null,
-        "head_sha": "20b4c2383f442891211c99bae2725bcf1688299b",
+        "head_sha": "83046f9b4c7053035424c83f63177c8bf0287b9d",
         "lane": "CORE",
         "levels": {
           "S0_PLAN": 5,
@@ -187,7 +187,7 @@
       },
       {
         "focus_sha": "49a4486bc24c97be25ce44a8ecea2a4856d38007",
-        "head_sha": "e4b901afa7706dee862730c4a468a96b7b07bcfc",
+        "head_sha": "3ed30b2b9ae53a24ec72780b4e01df484c0fb591",
         "lane": "CORE",
         "levels": {
           "S0_PLAN": 2,
@@ -231,7 +231,7 @@
       },
       {
         "focus_sha": null,
-        "head_sha": "cb3b0d269bcd0ff9e96982cfc8276aa4bc187acf",
+        "head_sha": "d6a0b080e5c8173e706e68c23a2ddae5b1dc96d3",
         "lane": "CORE",
         "levels": {
           "S0_PLAN": 5,
@@ -451,35 +451,35 @@
       },
       {
         "focus_sha": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
-        "head_sha": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
+        "head_sha": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
         "lane": "EXPAND",
         "levels": {
           "S0_PLAN": 1,
           "S1_CODE": 2,
-          "S2_BUILD": 1,
-          "S3_TEST": 1,
+          "S2_BUILD": 3,
+          "S3_TEST": 3,
           "S4_SECURE": 0,
           "S5_RELEASE": 2,
-          "S6_DEPLOY": 1,
-          "S7_OPERATE": 1,
+          "S6_DEPLOY": 0,
+          "S7_OPERATE": 0,
           "S8_MONITOR": 0,
-          "S9_CONTROL": 1
+          "S9_CONTROL": 2
         },
         "next_blocker": {
           "S0_PLAN": "plan.templates",
           "S1_CODE": "code.lint_ci",
-          "S2_BUILD": "build.lock",
-          "S3_TEST": "test.cases",
+          "S2_BUILD": "build.pinned_actions",
+          "S3_TEST": "test.fail_closed",
           "S4_SECURE": "secure.policy",
           "S5_RELEASE": "release.automation",
-          "S6_DEPLOY": "deploy.workflow",
-          "S7_OPERATE": "operate.runbook",
+          "S6_DEPLOY": "deploy.descriptor",
+          "S7_OPERATE": "operate.runtime",
           "S8_MONITOR": "monitor.schedule",
-          "S9_CONTROL": "control.gates"
+          "S9_CONTROL": "control.zero_test_guard"
         },
         "rank": 8,
         "repo": "GBOGEB/DOCX_RTM_Automation",
-        "sha_drift": false,
+        "sha_drift": true,
         "status": {
           "S0_PLAN": "FAIL",
           "S1_CODE": "FAIL",
@@ -544,8 +544,8 @@
         "levels": {
           "S0_PLAN": 1,
           "S1_CODE": 1,
-          "S2_BUILD": 1,
-          "S3_TEST": 1,
+          "S2_BUILD": 3,
+          "S3_TEST": 4,
           "S4_SECURE": 0,
           "S5_RELEASE": 2,
           "S6_DEPLOY": 1,
@@ -556,8 +556,8 @@
         "next_blocker": {
           "S0_PLAN": "plan.templates",
           "S1_CODE": "code.lint_config",
-          "S2_BUILD": "build.lock",
-          "S3_TEST": "test.cases",
+          "S2_BUILD": "build.pinned_actions",
+          "S3_TEST": "test.controlled",
           "S4_SECURE": "secure.policy",
           "S5_RELEASE": "release.automation",
           "S6_DEPLOY": "deploy.workflow",
@@ -803,13 +803,13 @@
       },
       {
         "focus_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
-        "head_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+        "head_sha": "971717280b2ed72acae1a8b835ec3f4beb6fc7cf",
         "lane": "SUPPORT",
         "levels": {
           "S0_PLAN": 1,
           "S1_CODE": 0,
           "S2_BUILD": 1,
-          "S3_TEST": 0,
+          "S3_TEST": 3,
           "S4_SECURE": 0,
           "S5_RELEASE": 0,
           "S6_DEPLOY": 0,
@@ -821,7 +821,7 @@
           "S0_PLAN": "plan.templates",
           "S1_CODE": "code.source",
           "S2_BUILD": "build.lock",
-          "S3_TEST": "test.files",
+          "S3_TEST": "test.fail_closed",
           "S4_SECURE": "secure.policy",
           "S5_RELEASE": "release.notes",
           "S6_DEPLOY": "deploy.descriptor",
@@ -831,7 +831,7 @@
         },
         "rank": 16,
         "repo": "GBOGEB/yaml-grammar",
-        "sha_drift": false,
+        "sha_drift": true,
         "status": {
           "S0_PLAN": "FAIL",
           "S1_CODE": "FAIL",
@@ -939,26 +939,26 @@
         "lane": "SUPPORT",
         "levels": {
           "S0_PLAN": 3,
-          "S1_CODE": 2,
-          "S2_BUILD": 2,
-          "S3_TEST": 1,
-          "S4_SECURE": 2,
+          "S1_CODE": 3,
+          "S2_BUILD": 3,
+          "S3_TEST": 3,
+          "S4_SECURE": 5,
           "S5_RELEASE": 0,
           "S6_DEPLOY": 0,
           "S7_OPERATE": 0,
-          "S8_MONITOR": 0,
+          "S8_MONITOR": 1,
           "S9_CONTROL": 0
         },
         "next_blocker": {
           "S0_PLAN": "plan.protection",
-          "S1_CODE": "code.lint_ci",
-          "S2_BUILD": "build.ci",
-          "S3_TEST": "test.cases",
-          "S4_SECURE": "secure.scan_ci",
+          "S1_CODE": "code.typecheck_ci",
+          "S2_BUILD": "build.pinned_actions",
+          "S3_TEST": "test.fail_closed",
+          "S4_SECURE": null,
           "S5_RELEASE": "release.notes",
           "S6_DEPLOY": "deploy.descriptor",
           "S7_OPERATE": "operate.runtime",
-          "S8_MONITOR": "monitor.schedule",
+          "S8_MONITOR": "monitor.canary",
           "S9_CONTROL": "control.ledger"
         },
         "rank": 19,
@@ -969,7 +969,7 @@
           "S1_CODE": "FAIL",
           "S2_BUILD": "FAIL",
           "S3_TEST": "FAIL",
-          "S4_SECURE": "FAIL",
+          "S4_SECURE": "PASS",
           "S5_RELEASE": "FAIL",
           "S6_DEPLOY": "FAIL",
           "S7_OPERATE": "FAIL",
@@ -1270,19 +1270,19 @@
       "symbol": null
     },
     {
-      "function": "N+10 DevOps lifecycle census: 21 repos, S0..S9 levels, workflows, jobs, tests, git blob ids",
+      "function": "N+12 DevOps lifecycle census: 21 repos, S0..S9 levels, workflows, jobs, tests, git blob ids",
       "id": "OBJ.DEVOPS_CENSUS",
       "kind": "data",
-      "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-      "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+      "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+      "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
       "symbol": null
     },
     {
-      "function": "N+10 object table: python modules and test files with blob ids",
+      "function": "N+12 object table: python modules and test files with blob ids",
       "id": "OBJ.DEVOPS_OBJECTS",
       "kind": "data",
-      "oid": "19ca1945310caa57bcaf52277929af7bdf338a11",
-      "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json",
+      "oid": "921cae4bb10c14e3ef7fe757b8e9a6ebeb82b0fc",
+      "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N12.json",
       "symbol": null
     },
     {
@@ -1343,24 +1343,26 @@
     }
   ],
   "pulse_alignment": {
-    "census_digest_sha256": "35bf393ddcd6b4886b43d384e956f3540bae7e0ee3f4925b178bf49b637b806b",
-    "census_observed_at_utc": "2026-10-25T23:31:24Z",
+    "census_digest_sha256": "1b867b4365cb869c9eab34bc8795354f015309e7396d8fa92274ea40ce592452",
+    "census_observed_at_utc": "2026-10-26T03:48:52Z",
     "focus_repos": 5,
     "gate_observed_date": "2026-10-25",
     "gate_pulse": "P0002",
     "gate_snapshot": "data/FOCUS5_POINT_RELEASE_P0002.json",
-    "mismatch_count": 1,
+    "mismatch_count": 3,
     "mismatched": [
-      "pipeline-automation-hub"
+      "pipeline-automation-hub",
+      "DOCX_RTM_Automation",
+      "yaml-grammar"
     ],
     "one_pulse": false,
     "repos": {
       "DOCX_RTM_Automation": {
-        "census_sha": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
+        "census_sha": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
         "gate_sha": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
-        "pulse_mismatch": false,
+        "pulse_mismatch": true,
         "repo": "GBOGEB/DOCX_RTM_Automation",
-        "state": "ALIGNED"
+        "state": "MISMATCH"
       },
       "cryoplant-project": {
         "census_sha": "PRIVATE_AGGREGATE_ONLY",
@@ -1377,18 +1379,18 @@
         "state": "ALIGNED"
       },
       "pipeline-automation-hub": {
-        "census_sha": "e4b901afa7706dee862730c4a468a96b7b07bcfc",
+        "census_sha": "3ed30b2b9ae53a24ec72780b4e01df484c0fb591",
         "gate_sha": "49a4486bc24c97be25ce44a8ecea2a4856d38007",
         "pulse_mismatch": true,
         "repo": "GBOGEB/pipeline-automation-hub",
         "state": "MISMATCH"
       },
       "yaml-grammar": {
-        "census_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+        "census_sha": "971717280b2ed72acae1a8b835ec3f4beb6fc7cf",
         "gate_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
-        "pulse_mismatch": false,
+        "pulse_mismatch": true,
         "repo": "GBOGEB/yaml-grammar",
-        "state": "ALIGNED"
+        "state": "MISMATCH"
       }
     }
   },
@@ -1404,10 +1406,10 @@
           "FAIL": 9,
           "ISSUE_BD": 1,
           "NEUTRAL": 7,
-          "PASS": 4,
+          "PASS": 5,
           "P_PROCESS": 7,
           "ROOT_RED": 2,
-          "UNKNOWN": 13
+          "UNKNOWN": 12
         },
         "by_sipoc": {
           "C": 3,
@@ -2174,62 +2176,64 @@
           "n11": 21
         },
         "devops": {
-          "actions_pinned_pct": 43.66,
+          "actions_pinned_pct": 43.37,
           "census_sha_drift": [
-            "pipeline-automation-hub"
+            "DOCX_RTM_Automation",
+            "pipeline-automation-hub",
+            "yaml-grammar"
           ],
-          "deploy_contract_core": "2/30",
-          "deploy_env": 23,
-          "deploy_verified": 9,
-          "digest_sha256": "35bf393ddcd6b4886b43d384e956f3540bae7e0ee3f4925b178bf49b637b806b",
-          "jobs": 1197,
+          "deploy_contract_core": "2/36",
+          "deploy_env": 29,
+          "deploy_verified": 10,
+          "digest_sha256": "1b867b4365cb869c9eab34bc8795354f015309e7396d8fa92274ea40ce592452",
+          "jobs": 1267,
           "lifecycle_median_level": {
             "S0_PLAN": 1,
             "S1_CODE": 1,
-            "S2_BUILD": 2,
+            "S2_BUILD": 3,
             "S3_TEST": 3,
             "S4_SECURE": 0,
             "S5_RELEASE": 1,
             "S6_DEPLOY": 1,
             "S7_OPERATE": 0,
-            "S8_MONITOR": 0,
+            "S8_MONITOR": 1,
             "S9_CONTROL": 1
           },
-          "observed_at_utc": "2026-10-25T23:31:24Z",
+          "observed_at_utc": "2026-10-26T03:48:52Z",
           "outcomes_since_baseline": {
             "automation": 0,
-            "ci_changes": 222,
-            "controlled": 2,
-            "dependency_updates": 5,
-            "expanded": 13,
-            "fixed": 15,
-            "test_cases_added_net": 411,
-            "test_files_added_net": 21,
+            "ci_changes": 8,
+            "controlled": 0,
+            "dependency_updates": 0,
+            "expanded": 6,
+            "fixed": 3,
+            "test_cases_added_net": 65,
+            "test_files_added_net": 8,
             "tested": 1,
-            "untested_modules_net": -20,
-            "zero_case_files_net": 1
+            "untested_modules_net": -6,
+            "zero_case_files_net": 0
           },
-          "py_untested": "1916/3501",
+          "py_untested": "1821/3513",
           "reachable": 21,
           "repos": 21,
           "repos_ge_L3": {
             "S0_PLAN": 6,
-            "S1_CODE": 6,
-            "S2_BUILD": 8,
-            "S3_TEST": 12,
-            "S4_SECURE": 5,
+            "S1_CODE": 7,
+            "S2_BUILD": 11,
+            "S3_TEST": 16,
+            "S4_SECURE": 6,
             "S5_RELEASE": 4,
             "S6_DEPLOY": 8,
             "S7_OPERATE": 4,
             "S8_MONITOR": 5,
             "S9_CONTROL": 4
           },
-          "test_cases": 21073,
-          "test_files": 3735,
-          "unguarded_test_job_pct": 57.08,
-          "untested_module_pct": 54.73,
-          "workflows": 858,
-          "zero_case_files": 83
+          "test_cases": 23020,
+          "test_files": 3747,
+          "unguarded_test_job_pct": 56.64,
+          "untested_module_pct": 51.84,
+          "workflows": 902,
+          "zero_case_files": 96
         },
         "everred": {
           "everred": 37,
@@ -2480,7 +2484,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.federation-atlas.pages_portal",
               "object": "OBJ.PAGES_PORTAL",
               "oid": "6a0ab0460d5e2440c3388133cfd361d9b4133b74",
               "path": "mission-control/federation-atlas/pages_portal.py",
@@ -2846,7 +2850,7 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.rolling5",
               "object": "OBJ.SOURCE_RED",
               "oid": "c98be2f450099a8bb628a31203b0e2e40c07ebea",
               "path": "mission-control/jade_temple/tools/rolling5.py",
@@ -3074,23 +3078,23 @@
         },
         {
           "colour": "CROSSWALK",
-          "detail": "21/21 repos · 858 workflows · 1197 jobs · observed 2026-10-25T23:31:24Z",
+          "detail": "21/21 repos · 902 workflows · 1267 jobs · observed 2026-10-26T03:48:52Z",
           "id": "I.DEVOPS_CENSUS",
           "kind": "I",
-          "label": "DevOps lifecycle census N+11",
+          "label": "DevOps lifecycle census N+12",
           "layer": 1,
           "metrics": {
-            "jobs": 1197,
+            "jobs": 1267,
             "repos": 21,
-            "workflows": 858
+            "workflows": 902
           },
           "oids": [
             {
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             },
@@ -3098,8 +3102,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_OBJECTS",
-              "oid": "19ca1945310caa57bcaf52277929af7bdf338a11",
-              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json",
+              "oid": "921cae4bb10c14e3ef7fe757b8e9a6ebeb82b0fc",
+              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -3109,7 +3113,7 @@
             {
               "kind": "sha256",
               "label": "census digest",
-              "value": "35bf393ddcd6b4886b43d384e956f3540bae7e0ee3f4925b178bf49b637b806b"
+              "value": "1b867b4365cb869c9eab34bc8795354f015309e7396d8fa92274ea40ce592452"
             }
           ],
           "status": null,
@@ -3169,7 +3173,7 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
               "object": "OBJ.RED_TRACE",
               "oid": "031cdce65d719e6f3e5c6ed9a3b2b6dd783efefd",
               "path": "mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
@@ -3279,7 +3283,7 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
               "object": "OBJ.RED_TRACE",
               "oid": "031cdce65d719e6f3e5c6ed9a3b2b6dd783efefd",
               "path": "mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
@@ -3288,7 +3292,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.build_redtrace_data",
               "object": "OBJ.RED_TRACE_BUILD",
               "oid": "d1f1fb3ff13031139092dde8906a7c5fe2067ebc",
               "path": "mission-control/jade_temple/tools/build_redtrace_data.py",
@@ -3393,8 +3397,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -3407,7 +3411,7 @@
         },
         {
           "colour": "FAIL",
-          "detail": "median L1 AD_HOC · ≥L3 6/21 · completion 43% · PARTIAL · gates H01, H02",
+          "detail": "median L1 AD_HOC · ≥L3 7/21 · completion 44% · PARTIAL · gates H01, H02",
           "id": "L.S1_CODE",
           "kind": "P",
           "label": "S1_CODE · Is source linted and type-checked by the",
@@ -3417,14 +3421,14 @@
             "levels": {
               "0": 1,
               "1": 10,
-              "2": 4,
-              "3": 3,
+              "2": 3,
+              "3": 4,
               "4": 2,
               "5": 1
             },
-            "mean_completion": 0.4286,
+            "mean_completion": 0.4381,
             "median_level": 1,
-            "repos_ge_L3": 6,
+            "repos_ge_L3": 7,
             "repos_ge_L4": 3
           },
           "oids": [
@@ -3432,8 +3436,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -3445,8 +3449,8 @@
           "url": null
         },
         {
-          "colour": "UNKNOWN",
-          "detail": "median L2 DEFINED · ≥L3 8/21 · completion 55% · PARTIAL · gates H04",
+          "colour": "PASS",
+          "detail": "median L3 AUTOMATED · ≥L3 11/21 · completion 63% · PARTIAL · gates H04",
           "id": "L.S2_BUILD",
           "kind": "P",
           "label": "S2_BUILD · Is the build declared, pinned and reprod",
@@ -3455,15 +3459,15 @@
             "formalization": "PARTIAL",
             "levels": {
               "0": 1,
-              "1": 9,
-              "2": 3,
-              "3": 5,
+              "1": 7,
+              "2": 2,
+              "3": 8,
               "4": 1,
               "5": 2
             },
-            "mean_completion": 0.5524,
-            "median_level": 2,
-            "repos_ge_L3": 8,
+            "mean_completion": 0.6286,
+            "median_level": 3,
+            "repos_ge_L3": 11,
             "repos_ge_L4": 3
           },
           "oids": [
@@ -3471,21 +3475,21 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
           ],
           "phase": "LIFECYCLE",
           "shas": [],
-          "status": "UNKNOWN",
+          "status": "PASS",
           "type": "LIFECYCLE",
           "url": null
         },
         {
           "colour": "PASS",
-          "detail": "median L3 AUTOMATED · ≥L3 12/21 · completion 47% · FORMALIZED · gates H05, H06, H10",
+          "detail": "median L3 AUTOMATED · ≥L3 16/21 · completion 56% · FORMALIZED · gates H05, H06, H10",
           "id": "L.S3_TEST",
           "kind": "P",
           "label": "S3_TEST · Do tests run on every change, fail close",
@@ -3493,17 +3497,17 @@
           "metrics": {
             "formalization": "FORMALIZED",
             "levels": {
-              "0": 4,
-              "1": 3,
+              "0": 3,
+              "1": 0,
               "2": 2,
-              "3": 7,
-              "4": 5,
+              "3": 10,
+              "4": 6,
               "5": 0
             },
-            "mean_completion": 0.4667,
+            "mean_completion": 0.5619,
             "median_level": 3,
-            "repos_ge_L3": 12,
-            "repos_ge_L4": 5
+            "repos_ge_L3": 16,
+            "repos_ge_L4": 6
           },
           "oids": [
             {
@@ -3528,8 +3532,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -3542,7 +3546,7 @@
         },
         {
           "colour": "FAIL",
-          "detail": "median L0 ABSENT · ≥L3 5/21 · completion 33% · PARTIAL · gates H07",
+          "detail": "median L0 ABSENT · ≥L3 6/21 · completion 38% · PARTIAL · gates H07",
           "id": "L.S4_SECURE",
           "kind": "P",
           "label": "S4_SECURE · Are dependencies, workflows and artefact",
@@ -3552,23 +3556,23 @@
             "levels": {
               "0": 11,
               "1": 2,
-              "2": 3,
+              "2": 2,
               "3": 2,
               "4": 2,
-              "5": 1
+              "5": 2
             },
-            "mean_completion": 0.3333,
+            "mean_completion": 0.381,
             "median_level": 0,
-            "repos_ge_L3": 5,
-            "repos_ge_L4": 3
+            "repos_ge_L3": 6,
+            "repos_ge_L4": 4
           },
           "oids": [
             {
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -3581,7 +3585,7 @@
         },
         {
           "colour": "FAIL",
-          "detail": "median L1 AD_HOC · ≥L3 4/21 · completion 31% · FORMALIZED · gates H11, H12",
+          "detail": "median L1 AD_HOC · ≥L3 4/21 · completion 34% · FORMALIZED · gates H11, H12",
           "id": "L.S5_RELEASE",
           "kind": "P",
           "label": "S5_RELEASE · Is a versioned, test-gated, provenance-b",
@@ -3596,7 +3600,7 @@
               "4": 2,
               "5": 1
             },
-            "mean_completion": 0.3143,
+            "mean_completion": 0.3429,
             "median_level": 1,
             "repos_ge_L3": 4,
             "repos_ge_L4": 3
@@ -3615,8 +3619,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -3629,7 +3633,7 @@
         },
         {
           "colour": "FAIL",
-          "detail": "median L1 AD_HOC · ≥L3 8/21 · completion 33% · FORMALIZED · gates H11, DP1-DP10",
+          "detail": "median L1 AD_HOC · ≥L3 8/21 · completion 37% · FORMALIZED · gates H11, DP1-DP10",
           "id": "L.S6_DEPLOY",
           "kind": "P",
           "label": "S6_DEPLOY · Is the same artefact promoted by digest ",
@@ -3637,14 +3641,14 @@
           "metrics": {
             "formalization": "FORMALIZED",
             "levels": {
-              "0": 9,
-              "1": 4,
+              "0": 10,
+              "1": 3,
               "2": 0,
               "3": 7,
               "4": 0,
               "5": 1
             },
-            "mean_completion": 0.3333,
+            "mean_completion": 0.3714,
             "median_level": 1,
             "repos_ge_L3": 8,
             "repos_ge_L4": 1
@@ -3672,8 +3676,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -3694,8 +3698,8 @@
           "metrics": {
             "formalization": "PARTIAL",
             "levels": {
-              "0": 12,
-              "1": 3,
+              "0": 13,
+              "1": 2,
               "2": 2,
               "3": 4,
               "4": 0,
@@ -3711,7 +3715,7 @@
               "at": null,
               "jade_oid": "jade:stage:S7_OPERATE",
               "object": null,
-              "oid": "33a70507fb86ab282be104fad0a857111bf3c693",
+              "oid": "c6a6e43ef4e0a1a8977d07021715862aea1db82f",
               "path": "mission-control/jade_temple/tools/hosted_parity.py",
               "status": "BOUND_AT_CENSUS_HEAD",
               "symbol": null
@@ -3720,8 +3724,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -3734,7 +3738,7 @@
         },
         {
           "colour": "FAIL",
-          "detail": "median L0 ABSENT · ≥L3 5/21 · completion 23% · PARTIAL · gates DP-MON",
+          "detail": "median L1 AD_HOC · ≥L3 5/21 · completion 24% · PARTIAL · gates DP-MON",
           "id": "L.S8_MONITOR",
           "kind": "P",
           "label": "S8_MONITOR · Is production re-verified on a clock and",
@@ -3742,15 +3746,15 @@
           "metrics": {
             "formalization": "PARTIAL",
             "levels": {
-              "0": 11,
-              "1": 4,
+              "0": 10,
+              "1": 5,
               "2": 1,
               "3": 5,
               "4": 0,
               "5": 0
             },
-            "mean_completion": 0.2286,
-            "median_level": 0,
+            "mean_completion": 0.2381,
+            "median_level": 1,
             "repos_ge_L3": 5,
             "repos_ge_L4": 0
           },
@@ -3759,8 +3763,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -3773,7 +3777,7 @@
         },
         {
           "colour": "FAIL",
-          "detail": "median L1 AD_HOC · ≥L3 4/21 · completion 23% · PARTIAL · gates H08, H09, P-loop",
+          "detail": "median L1 AD_HOC · ≥L3 4/21 · completion 24% · PARTIAL · gates H08, H09, P-loop",
           "id": "L.S9_CONTROL",
           "kind": "P",
           "label": "S9_CONTROL · Do red signals become ledgered, root-cau",
@@ -3782,13 +3786,13 @@
             "formalization": "PARTIAL",
             "levels": {
               "0": 10,
-              "1": 4,
-              "2": 3,
+              "1": 3,
+              "2": 4,
               "3": 4,
               "4": 0,
               "5": 0
             },
-            "mean_completion": 0.2286,
+            "mean_completion": 0.2381,
             "median_level": 1,
             "repos_ge_L3": 4,
             "repos_ge_L4": 0
@@ -3825,8 +3829,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -3864,7 +3868,7 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/BD_QUEUE.csv",
               "object": "OBJ.BD_QUEUE",
               "oid": "1fcff70e9f6801b923c409f8b142d8c05c4485f4",
               "path": "mission-control/jade_temple/data/BD_QUEUE.csv",
@@ -3923,7 +3927,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.rolling5",
               "object": "OBJ.NIRVANA",
               "oid": "c98be2f450099a8bb628a31203b0e2e40c07ebea",
               "path": "mission-control/jade_temple/tools/rolling5.py",
@@ -3948,7 +3952,7 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.cicd_dag",
               "object": "OBJ.CICD_DAG",
               "oid": "cbfe1e53927b0b5d0db6c90ab180bd2cab42d8f0",
               "path": "mission-control/jade_temple/tools/cicd_dag.py",
@@ -5766,10 +5770,10 @@
       "metrics": {
         "critical_path_pass_depth": 2,
         "devops": {
-          "actions_pinned": "542/542",
-          "census_head": "e4b901afa7706dee862730c4a468a96b7b07bcfc",
+          "actions_pinned": "545/545",
+          "census_head": "3ed30b2b9ae53a24ec72780b4e01df484c0fb591",
           "ci_mttr_hours_median": 22.41,
-          "commits_since_baseline": 21,
+          "commits_since_baseline": 10,
           "deploy_contract_core": 2,
           "deploy_jobs": 2,
           "lane": "CORE",
@@ -5787,23 +5791,23 @@
           },
           "outcomes_since_baseline": {
             "automation": 0,
-            "ci_changes": 4,
+            "ci_changes": 5,
             "controlled": 0,
             "dependency_updates": 0,
-            "expanded": 11,
-            "fixed": 9,
-            "test_cases_added_net": 111,
-            "test_files_added_net": 5,
-            "tested": 0,
-            "untested_modules_net": 0,
+            "expanded": 4,
+            "fixed": 3,
+            "test_cases_added_net": 32,
+            "test_files_added_net": 4,
+            "tested": 1,
+            "untested_modules_net": -4,
             "zero_case_files_net": 0
           },
-          "py_untested": "101/356",
+          "py_untested": "97/359",
           "sha_drift": true,
-          "test_cases": 3908,
-          "tests_ci": 95,
-          "unguarded_test_jobs": 87,
-          "workflows": 163
+          "test_cases": 3940,
+          "tests_ci": 96,
+          "unguarded_test_jobs": 88,
+          "workflows": 164
         },
         "everred": {
           "everred": 1,
@@ -6415,8 +6419,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             },
@@ -6424,8 +6428,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_OBJECTS",
-              "oid": "19ca1945310caa57bcaf52277929af7bdf338a11",
-              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json",
+              "oid": "921cae4bb10c14e3ef7fe757b8e9a6ebeb82b0fc",
+              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -6435,7 +6439,7 @@
             {
               "kind": "commit",
               "label": "census HEAD",
-              "value": "e4b901afa7706dee862730c4a468a96b7b07bcfc"
+              "value": "3ed30b2b9ae53a24ec72780b4e01df484c0fb591"
             },
             {
               "kind": "commit",
@@ -6517,7 +6521,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
               "object": "OBJ.RED_TRACE",
               "oid": "031cdce65d719e6f3e5c6ed9a3b2b6dd783efefd",
               "path": "mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
@@ -6557,7 +6561,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
               "object": "OBJ.RED_TRACE",
               "oid": "031cdce65d719e6f3e5c6ed9a3b2b6dd783efefd",
               "path": "mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
@@ -6602,7 +6606,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
               "object": "OBJ.RED_TRACE",
               "oid": "031cdce65d719e6f3e5c6ed9a3b2b6dd783efefd",
               "path": "mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
@@ -6647,7 +6651,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
               "object": "OBJ.RED_TRACE",
               "oid": "031cdce65d719e6f3e5c6ed9a3b2b6dd783efefd",
               "path": "mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
@@ -6692,7 +6696,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
               "object": "OBJ.RED_TRACE",
               "oid": "031cdce65d719e6f3e5c6ed9a3b2b6dd783efefd",
               "path": "mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
@@ -6737,7 +6741,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
               "object": "OBJ.RED_TRACE",
               "oid": "031cdce65d719e6f3e5c6ed9a3b2b6dd783efefd",
               "path": "mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
@@ -7553,21 +7557,21 @@
         },
         {
           "colour": "FAIL",
-          "detail": "275 files · 3908 cases · untested modules 101/356 · zero-case files 6",
+          "detail": "279 files · 3940 cases · untested modules 97/359 · zero-case files 6",
           "id": "I.TESTS",
           "kind": "I",
           "label": "Test inventory (census)",
           "layer": 1,
           "metrics": {
-            "cases": 3908,
-            "files": 275,
-            "py_modules": 356,
-            "py_untested": 101,
+            "cases": 3940,
+            "files": 279,
+            "py_modules": 359,
+            "py_untested": 97,
             "zero_case_files": 6
           },
           "oids": [
             {
-              "at": "e4b901afa7706dee862730c4a468a96b7b07bcfc",
+              "at": "3ed30b2b9ae53a24ec72780b4e01df484c0fb591",
               "jade_oid": "jade:py:pipeline-automation-hub:mission-control.qps-triage-ultra.crew.measured.frontier.temporal.temporal_policy_engine",
               "object": null,
               "oid": "9802f2956ef863da5696308f3d61e766812bfe51",
@@ -7576,7 +7580,7 @@
               "symbol": null
             },
             {
-              "at": "e4b901afa7706dee862730c4a468a96b7b07bcfc",
+              "at": "3ed30b2b9ae53a24ec72780b4e01df484c0fb591",
               "jade_oid": "jade:py:pipeline-automation-hub:mission-control.grand-missions.probe_gm_iv_runtime_capability",
               "object": null,
               "oid": "455a1edd5c91c7f1043e1cbe1108453309dc2bbf",
@@ -7585,7 +7589,7 @@
               "symbol": null
             },
             {
-              "at": "e4b901afa7706dee862730c4a468a96b7b07bcfc",
+              "at": "3ed30b2b9ae53a24ec72780b4e01df484c0fb591",
               "jade_oid": "jade:py:pipeline-automation-hub:mission-control.qps-triage-ultra.crew.measured.frontier.pc3.analyze_pc3_frontier",
               "object": null,
               "oid": "c97fcf679661adfd87ee3fa410ed9b6ba14cb13a",
@@ -7594,7 +7598,7 @@
               "symbol": null
             },
             {
-              "at": "e4b901afa7706dee862730c4a468a96b7b07bcfc",
+              "at": "3ed30b2b9ae53a24ec72780b4e01df484c0fb591",
               "jade_oid": "jade:py:pipeline-automation-hub:mission-control.grand-missions.analytics.gm_i_a_multiclock_capture",
               "object": null,
               "oid": "ef03eb23d442c59ec7691981599a20a59219841b",
@@ -7603,7 +7607,7 @@
               "symbol": null
             },
             {
-              "at": "e4b901afa7706dee862730c4a468a96b7b07bcfc",
+              "at": "3ed30b2b9ae53a24ec72780b4e01df484c0fb591",
               "jade_oid": "jade:py:pipeline-automation-hub:mission-control.grand-missions.run_gm_iv_pilot2_recensus",
               "object": null,
               "oid": "f8758d51164dafd0e6f1509ff616281ea3659f4b",
@@ -7615,8 +7619,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             },
@@ -7624,8 +7628,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_OBJECTS",
-              "oid": "19ca1945310caa57bcaf52277929af7bdf338a11",
-              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json",
+              "oid": "921cae4bb10c14e3ef7fe757b8e9a6ebeb82b0fc",
+              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -7679,8 +7683,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -7716,8 +7720,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -7750,8 +7754,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -7805,8 +7809,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -7842,8 +7846,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -7888,8 +7892,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -7940,8 +7944,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -7977,7 +7981,7 @@
               "at": null,
               "jade_oid": "jade:stage:S7_OPERATE",
               "object": null,
-              "oid": "33a70507fb86ab282be104fad0a857111bf3c693",
+              "oid": "c6a6e43ef4e0a1a8977d07021715862aea1db82f",
               "path": "mission-control/jade_temple/tools/hosted_parity.py",
               "status": "BOUND_AT_CENSUS_HEAD",
               "symbol": null
@@ -7986,8 +7990,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -8023,8 +8027,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -8087,8 +8091,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -8114,7 +8118,7 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/BD_QUEUE.csv",
               "object": "OBJ.BD_QUEUE",
               "oid": "1fcff70e9f6801b923c409f8b142d8c05c4485f4",
               "path": "mission-control/jade_temple/data/BD_QUEUE.csv",
@@ -8166,16 +8170,16 @@
           },
           "oids": [
             {
-              "at": "e4b901afa7706dee862730c4a468a96b7b07bcfc",
+              "at": "3ed30b2b9ae53a24ec72780b4e01df484c0fb591",
               "jade_oid": "jade:job:pipeline-automation-hub:.github/workflows/code-purple-method-atlas.yml#publish-pages",
               "object": null,
-              "oid": "204654912e51e90bcb245fcddf57bb5003f47b01",
+              "oid": "d7522320849327ef87d1d1282258578f51752049",
               "path": "GBOGEB/pipeline-automation-hub:.github/workflows/code-purple-method-atlas.yml",
               "status": "BOUND_AT_CENSUS_HEAD",
               "symbol": null
             },
             {
-              "at": "e4b901afa7706dee862730c4a468a96b7b07bcfc",
+              "at": "3ed30b2b9ae53a24ec72780b4e01df484c0fb591",
               "jade_oid": "jade:job:pipeline-automation-hub:.github/workflows/jade-reusable-deploy.yml#deploy",
               "object": null,
               "oid": "60cb50fbdcabc27bb87688f225cc093289396d85",
@@ -8187,8 +8191,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             },
@@ -8196,8 +8200,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_OBJECTS",
-              "oid": "19ca1945310caa57bcaf52277929af7bdf338a11",
-              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json",
+              "oid": "921cae4bb10c14e3ef7fe757b8e9a6ebeb82b0fc",
+              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -8228,7 +8232,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.rolling5",
               "object": "OBJ.NIRVANA",
               "oid": "c98be2f450099a8bb628a31203b0e2e40c07ebea",
               "path": "mission-control/jade_temple/tools/rolling5.py",
@@ -9108,7 +9112,7 @@
       "metrics": {
         "critical_path_pass_depth": 2,
         "devops": {
-          "actions_pinned": "425/425",
+          "actions_pinned": "427/427",
           "census_head": "PRIVATE_AGGREGATE_ONLY",
           "ci_mttr_hours_median": 640.56,
           "commits_since_baseline": null,
@@ -9128,12 +9132,12 @@
             "S9_CONTROL": 3
           },
           "outcomes_since_baseline": null,
-          "py_untested": "727/1071",
+          "py_untested": "728/1079",
           "sha_drift": false,
-          "test_cases": 3444,
-          "tests_ci": 78,
-          "unguarded_test_jobs": 52,
-          "workflows": 148
+          "test_cases": 3522,
+          "tests_ci": 79,
+          "unguarded_test_jobs": 53,
+          "workflows": 149
         },
         "everred": {
           "everred": 9,
@@ -9687,8 +9691,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             },
@@ -9696,8 +9700,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_OBJECTS",
-              "oid": "19ca1945310caa57bcaf52277929af7bdf338a11",
-              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json",
+              "oid": "921cae4bb10c14e3ef7fe757b8e9a6ebeb82b0fc",
+              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -9778,7 +9782,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
               "object": "OBJ.RED_TRACE",
               "oid": "031cdce65d719e6f3e5c6ed9a3b2b6dd783efefd",
               "path": "mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
@@ -9812,7 +9816,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
               "object": "OBJ.RED_TRACE",
               "oid": "031cdce65d719e6f3e5c6ed9a3b2b6dd783efefd",
               "path": "mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
@@ -9846,7 +9850,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
               "object": "OBJ.RED_TRACE",
               "oid": "031cdce65d719e6f3e5c6ed9a3b2b6dd783efefd",
               "path": "mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
@@ -9880,7 +9884,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
               "object": "OBJ.RED_TRACE",
               "oid": "031cdce65d719e6f3e5c6ed9a3b2b6dd783efefd",
               "path": "mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
@@ -9914,7 +9918,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
               "object": "OBJ.RED_TRACE",
               "oid": "031cdce65d719e6f3e5c6ed9a3b2b6dd783efefd",
               "path": "mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
@@ -9948,7 +9952,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
               "object": "OBJ.RED_TRACE",
               "oid": "031cdce65d719e6f3e5c6ed9a3b2b6dd783efefd",
               "path": "mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
@@ -9973,7 +9977,7 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
               "object": "OBJ.RED_TRACE",
               "oid": "031cdce65d719e6f3e5c6ed9a3b2b6dd783efefd",
               "path": "mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
@@ -9982,7 +9986,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.build_redtrace_data",
               "object": "OBJ.RED_TRACE_BUILD",
               "oid": "d1f1fb3ff13031139092dde8906a7c5fe2067ebc",
               "path": "mission-control/jade_temple/tools/build_redtrace_data.py",
@@ -10202,16 +10206,16 @@
         },
         {
           "colour": "FAIL",
-          "detail": "383 files · 3444 cases · untested modules 727/1071 · zero-case files 4",
+          "detail": "387 files · 3522 cases · untested modules 728/1079 · zero-case files 4",
           "id": "I.TESTS",
           "kind": "I",
           "label": "Test inventory (census)",
           "layer": 1,
           "metrics": {
-            "cases": 3444,
-            "files": 383,
-            "py_modules": 1071,
-            "py_untested": 727,
+            "cases": 3522,
+            "files": 387,
+            "py_modules": 1079,
+            "py_untested": 728,
             "zero_case_files": 4
           },
           "oids": [
@@ -10264,8 +10268,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             },
@@ -10273,8 +10277,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_OBJECTS",
-              "oid": "19ca1945310caa57bcaf52277929af7bdf338a11",
-              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json",
+              "oid": "921cae4bb10c14e3ef7fe757b8e9a6ebeb82b0fc",
+              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -10328,8 +10332,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -10365,8 +10369,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -10399,8 +10403,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -10454,8 +10458,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -10491,8 +10495,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -10537,8 +10541,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -10592,8 +10596,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -10629,7 +10633,7 @@
               "at": null,
               "jade_oid": "jade:stage:S7_OPERATE",
               "object": null,
-              "oid": "33a70507fb86ab282be104fad0a857111bf3c693",
+              "oid": "c6a6e43ef4e0a1a8977d07021715862aea1db82f",
               "path": "mission-control/jade_temple/tools/hosted_parity.py",
               "status": "BOUND_AT_CENSUS_HEAD",
               "symbol": null
@@ -10638,8 +10642,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -10675,8 +10679,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -10739,8 +10743,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -10766,7 +10770,7 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/BD_QUEUE.csv",
               "object": "OBJ.BD_QUEUE",
               "oid": "1fcff70e9f6801b923c409f8b142d8c05c4485f4",
               "path": "mission-control/jade_temple/data/BD_QUEUE.csv",
@@ -10830,8 +10834,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             },
@@ -10839,8 +10843,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_OBJECTS",
-              "oid": "19ca1945310caa57bcaf52277929af7bdf338a11",
-              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json",
+              "oid": "921cae4bb10c14e3ef7fe757b8e9a6ebeb82b0fc",
+              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -10871,7 +10875,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.rolling5",
               "object": "OBJ.NIRVANA",
               "oid": "c98be2f450099a8bb628a31203b0e2e40c07ebea",
               "path": "mission-control/jade_temple/tools/rolling5.py",
@@ -12293,8 +12297,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             },
@@ -12302,8 +12306,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_OBJECTS",
-              "oid": "19ca1945310caa57bcaf52277929af7bdf338a11",
-              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json",
+              "oid": "921cae4bb10c14e3ef7fe757b8e9a6ebeb82b0fc",
+              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -12795,8 +12799,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             },
@@ -12804,8 +12808,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_OBJECTS",
-              "oid": "19ca1945310caa57bcaf52277929af7bdf338a11",
-              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json",
+              "oid": "921cae4bb10c14e3ef7fe757b8e9a6ebeb82b0fc",
+              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -12859,8 +12863,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -12896,8 +12900,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -12933,8 +12937,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -12988,8 +12992,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -13025,8 +13029,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -13068,8 +13072,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -13123,8 +13127,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -13160,7 +13164,7 @@
               "at": null,
               "jade_oid": "jade:stage:S7_OPERATE",
               "object": null,
-              "oid": "33a70507fb86ab282be104fad0a857111bf3c693",
+              "oid": "c6a6e43ef4e0a1a8977d07021715862aea1db82f",
               "path": "mission-control/jade_temple/tools/hosted_parity.py",
               "status": "BOUND_AT_CENSUS_HEAD",
               "symbol": null
@@ -13169,8 +13173,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -13206,8 +13210,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -13270,8 +13274,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -13297,7 +13301,7 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/BD_QUEUE.csv",
               "object": "OBJ.BD_QUEUE",
               "oid": "1fcff70e9f6801b923c409f8b142d8c05c4485f4",
               "path": "mission-control/jade_temple/data/BD_QUEUE.csv",
@@ -13370,8 +13374,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             },
@@ -13379,8 +13383,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_OBJECTS",
-              "oid": "19ca1945310caa57bcaf52277929af7bdf338a11",
-              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json",
+              "oid": "921cae4bb10c14e3ef7fe757b8e9a6ebeb82b0fc",
+              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -13411,7 +13415,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.rolling5",
               "object": "OBJ.NIRVANA",
               "oid": "c98be2f450099a8bb628a31203b0e2e40c07ebea",
               "path": "mission-control/jade_temple/tools/rolling5.py",
@@ -13528,12 +13532,12 @@
       "dag": {
         "by_colour": {
           "CROSSWALK": 4,
-          "FAIL": 12,
+          "FAIL": 13,
           "ISSUE_BD": 1,
           "NEUTRAL": 4,
           "PASS": 12,
           "ROOT_RED": 1,
-          "UNKNOWN": 11
+          "UNKNOWN": 10
         },
         "by_sipoc": {
           "C": 3,
@@ -14132,44 +14136,44 @@
       "metrics": {
         "critical_path_pass_depth": 2,
         "devops": {
-          "actions_pinned": "0/0",
-          "census_head": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
+          "actions_pinned": "7/81",
+          "census_head": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
           "ci_mttr_hours_median": null,
           "commits_since_baseline": null,
           "deploy_contract_core": 0,
-          "deploy_jobs": 0,
+          "deploy_jobs": 2,
           "lane": "EXPAND",
           "levels": {
             "S0_PLAN": 1,
             "S1_CODE": 2,
-            "S2_BUILD": 1,
-            "S3_TEST": 1,
+            "S2_BUILD": 3,
+            "S3_TEST": 3,
             "S4_SECURE": 0,
             "S5_RELEASE": 2,
-            "S6_DEPLOY": 1,
-            "S7_OPERATE": 1,
+            "S6_DEPLOY": 0,
+            "S7_OPERATE": 0,
             "S8_MONITOR": 0,
-            "S9_CONTROL": 1
+            "S9_CONTROL": 2
           },
           "outcomes_since_baseline": {
             "automation": 0,
-            "ci_changes": 0,
+            "ci_changes": 1,
             "controlled": 0,
             "dependency_updates": 0,
             "expanded": 0,
             "fixed": 0,
-            "test_cases_added_net": 0,
-            "test_files_added_net": 0,
+            "test_cases_added_net": 4,
+            "test_files_added_net": 1,
             "tested": 0,
-            "untested_modules_net": 0,
+            "untested_modules_net": -1,
             "zero_case_files_net": 0
           },
-          "py_untested": "409/409",
-          "sha_drift": false,
-          "test_cases": 0,
-          "tests_ci": 0,
-          "unguarded_test_jobs": 0,
-          "workflows": 0
+          "py_untested": "323/409",
+          "sha_drift": true,
+          "test_cases": 274,
+          "tests_ci": 9,
+          "unguarded_test_jobs": 2,
+          "workflows": 26
         },
         "everred": null,
         "gates": {
@@ -14212,7 +14216,7 @@
           "ruleset_gaps": 0,
           "worst": null
         },
-        "pulse_mismatch": false
+        "pulse_mismatch": true
       },
       "nodes": [
         {
@@ -14585,7 +14589,7 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.rolling5",
               "object": "OBJ.SOURCE_RED",
               "oid": "c98be2f450099a8bb628a31203b0e2e40c07ebea",
               "path": "mission-control/jade_temple/tools/rolling5.py",
@@ -14797,21 +14801,21 @@
         },
         {
           "colour": "CROSSWALK",
-          "detail": "census HEAD = gate SHA",
+          "detail": "census HEAD differs from gate SHA: census OIDs describe a different tree",
           "id": "I.CENSUS_HEAD",
           "kind": "I",
           "label": "Census HEAD vs gate SHA",
           "layer": 1,
           "metrics": {
-            "sha_drift": false
+            "sha_drift": true
           },
           "oids": [
             {
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             },
@@ -14819,8 +14823,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_OBJECTS",
-              "oid": "19ca1945310caa57bcaf52277929af7bdf338a11",
-              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json",
+              "oid": "921cae4bb10c14e3ef7fe757b8e9a6ebeb82b0fc",
+              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -14830,7 +14834,7 @@
             {
               "kind": "commit",
               "label": "census HEAD",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "beab8fcedb67bfde2ce6bd12f39622b9d1448307"
             },
             {
               "kind": "commit",
@@ -14877,7 +14881,7 @@
           "metrics": {},
           "oids": [
             {
-              "at": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
+              "at": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
               "jade_oid": "jade:py:DOCX_RTM_Automation:parser.direct_docx",
               "object": null,
               "oid": "72f6cd6b25a678b953395a1e282dc7c4b62afed2",
@@ -14902,7 +14906,7 @@
           "metrics": {},
           "oids": [
             {
-              "at": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
+              "at": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
               "jade_oid": "jade:py:DOCX_RTM_Automation:parser.source_extractor",
               "object": null,
               "oid": "c6a99b5ff2d53de04c289222cffe6fd9805001dc",
@@ -14928,7 +14932,7 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
               "object": "OBJ.RED_TRACE",
               "oid": "031cdce65d719e6f3e5c6ed9a3b2b6dd783efefd",
               "path": "mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
@@ -14937,7 +14941,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.build_redtrace_data",
               "object": "OBJ.RED_TRACE_BUILD",
               "oid": "d1f1fb3ff13031139092dde8906a7c5fe2067ebc",
               "path": "mission-control/jade_temple/tools/build_redtrace_data.py",
@@ -14960,6 +14964,15 @@
           "layer": 1,
           "metrics": {},
           "oids": [
+            {
+              "at": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
+              "jade_oid": "jade:wf:DOCX_RTM_Automation:.github/workflows/admission-policy.yml",
+              "object": null,
+              "oid": "cd16c3db17838c856e64f42ab4c1e8bd80ff8a7e",
+              "path": "GBOGEB/DOCX_RTM_Automation:.github/workflows/admission-policy.yml",
+              "status": "BOUND_AT_CENSUS_HEAD",
+              "symbol": null
+            },
             {
               "at": null,
               "jade_oid": null,
@@ -14992,6 +15005,15 @@
           "metrics": {},
           "oids": [
             {
+              "at": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
+              "jade_oid": "jade:wf:DOCX_RTM_Automation:.github/workflows/jekyll-gh-pages.yml",
+              "object": null,
+              "oid": "67be9b00bb678d6dcb059ad708b2130499bca1e9",
+              "path": "GBOGEB/DOCX_RTM_Automation:.github/workflows/jekyll-gh-pages.yml",
+              "status": "BOUND_AT_CENSUS_HEAD",
+              "symbol": null
+            },
+            {
               "at": null,
               "jade_oid": null,
               "object": "OBJ.FOCUS5",
@@ -15022,6 +15044,15 @@
           "layer": 1,
           "metrics": {},
           "oids": [
+            {
+              "at": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
+              "jade_oid": "jade:wf:DOCX_RTM_Automation:.github/workflows/python-ci.yml",
+              "object": null,
+              "oid": "d69e46d5bd2073f4f9514c8a7204e0b37c0b0625",
+              "path": "GBOGEB/DOCX_RTM_Automation:.github/workflows/python-ci.yml",
+              "status": "BOUND_AT_CENSUS_HEAD",
+              "symbol": null
+            },
             {
               "at": null,
               "jade_oid": null,
@@ -15054,6 +15085,15 @@
           "metrics": {},
           "oids": [
             {
+              "at": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
+              "jade_oid": "jade:wf:DOCX_RTM_Automation:.github/workflows/release-identity.yml",
+              "object": null,
+              "oid": "38d715786ebb088408dc7ac27403586d23acb834",
+              "path": "GBOGEB/DOCX_RTM_Automation:.github/workflows/release-identity.yml",
+              "status": "BOUND_AT_CENSUS_HEAD",
+              "symbol": null
+            },
+            {
               "at": null,
               "jade_oid": null,
               "object": "OBJ.FOCUS5",
@@ -15084,6 +15124,15 @@
           "layer": 1,
           "metrics": {},
           "oids": [
+            {
+              "at": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
+              "jade_oid": "jade:wf:DOCX_RTM_Automation:.github/workflows/repository-integrity.yml",
+              "object": null,
+              "oid": "86cdd17e332a1020dc8f153b8d757bd3c4344749",
+              "path": "GBOGEB/DOCX_RTM_Automation:.github/workflows/repository-integrity.yml",
+              "status": "BOUND_AT_CENSUS_HEAD",
+              "symbol": null
+            },
             {
               "at": null,
               "jade_oid": null,
@@ -15116,6 +15165,15 @@
           "metrics": {},
           "oids": [
             {
+              "at": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
+              "jade_oid": "jade:wf:DOCX_RTM_Automation:.github/workflows/static.yml",
+              "object": null,
+              "oid": "460f782006e8bb929c92b9357c59c8b1d73f18c7",
+              "path": "GBOGEB/DOCX_RTM_Automation:.github/workflows/static.yml",
+              "status": "BOUND_AT_CENSUS_HEAD",
+              "symbol": null
+            },
+            {
               "at": null,
               "jade_oid": null,
               "object": "OBJ.FOCUS5",
@@ -15146,6 +15204,15 @@
           "layer": 1,
           "metrics": {},
           "oids": [
+            {
+              "at": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
+              "jade_oid": "jade:wf:DOCX_RTM_Automation:.github/workflows/typescript-orchestration-ci.yml",
+              "object": null,
+              "oid": "f9662500f7314ccc7d6d452434187aa9247dff3b",
+              "path": "GBOGEB/DOCX_RTM_Automation:.github/workflows/typescript-orchestration-ci.yml",
+              "status": "BOUND_AT_CENSUS_HEAD",
+              "symbol": null
+            },
             {
               "at": null,
               "jade_oid": null,
@@ -15241,61 +15308,61 @@
         },
         {
           "colour": "FAIL",
-          "detail": "65 files · 0 cases · untested modules 409/409 · zero-case files 0",
+          "detail": "66 files · 274 cases · untested modules 323/409 · zero-case files 8",
           "id": "I.TESTS",
           "kind": "I",
           "label": "Test inventory (census)",
           "layer": 1,
           "metrics": {
-            "cases": 0,
-            "files": 65,
+            "cases": 274,
+            "files": 66,
             "py_modules": 409,
-            "py_untested": 409,
-            "zero_case_files": 0
+            "py_untested": 323,
+            "zero_case_files": 8
           },
           "oids": [
             {
-              "at": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
-              "jade_oid": "jade:py:DOCX_RTM_Automation:activate_environment",
+              "at": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
+              "jade_oid": "jade:py:DOCX_RTM_Automation:scripts.clean_repository",
               "object": null,
-              "oid": "49eef52f2b13ec0f8eb6865618b0a6df81573d83",
-              "path": "GBOGEB/DOCX_RTM_Automation:activate_environment.py",
+              "oid": "652defbe87abb5c055e2002204ab84a41de18fc6",
+              "path": "GBOGEB/DOCX_RTM_Automation:scripts/clean_repository.py",
               "status": "BOUND_AT_CENSUS_HEAD",
               "symbol": null
             },
             {
-              "at": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
-              "jade_oid": "jade:py:DOCX_RTM_Automation:activate_venv",
+              "at": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
+              "jade_oid": "jade:py:DOCX_RTM_Automation:scripts.full_integration",
               "object": null,
-              "oid": "c2f37cc02c710bb2b32cc96f389b491260d0248b",
-              "path": "GBOGEB/DOCX_RTM_Automation:activate_venv.py",
+              "oid": "35d6a6dcafc7f14493d2fdad3a2119ff83ca411d",
+              "path": "GBOGEB/DOCX_RTM_Automation:scripts/full_integration.py",
               "status": "BOUND_AT_CENSUS_HEAD",
               "symbol": null
             },
             {
-              "at": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
-              "jade_oid": "jade:py:DOCX_RTM_Automation:agents.agent_common",
+              "at": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
+              "jade_oid": "jade:py:DOCX_RTM_Automation:scripts.repo_artifact_index",
               "object": null,
-              "oid": "78fd3cd0deb5d2becc12e0a3b9177a31bd75645d",
-              "path": "GBOGEB/DOCX_RTM_Automation:agents/agent_common.py",
+              "oid": "62052a2d81d749de952b0a54dc052e3919a60e07",
+              "path": "GBOGEB/DOCX_RTM_Automation:scripts/repo_artifact_index.py",
               "status": "BOUND_AT_CENSUS_HEAD",
               "symbol": null
             },
             {
-              "at": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
-              "jade_oid": "jade:py:DOCX_RTM_Automation:agents.agent_orchestrator",
+              "at": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
+              "jade_oid": "jade:py:DOCX_RTM_Automation:level1.runtime",
               "object": null,
-              "oid": "3b6810fc5d0efc8561dc826f76db188185592af2",
-              "path": "GBOGEB/DOCX_RTM_Automation:agents/agent_orchestrator.py",
+              "oid": "71fa7f8a93122416c9e478a6f44a44d0f78b9a07",
+              "path": "GBOGEB/DOCX_RTM_Automation:level1/runtime.py",
               "status": "BOUND_AT_CENSUS_HEAD",
               "symbol": null
             },
             {
-              "at": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
-              "jade_oid": "jade:py:DOCX_RTM_Automation:agents.copilot_agent",
+              "at": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
+              "jade_oid": "jade:py:DOCX_RTM_Automation:code.git_helper",
               "object": null,
-              "oid": "9862c9f14da2e98c1804aee9f5a72fa95827a5ca",
-              "path": "GBOGEB/DOCX_RTM_Automation:agents/copilot_agent.py",
+              "oid": "a82d2bc234d836fdad29330f2264a35dfcfddefb",
+              "path": "GBOGEB/DOCX_RTM_Automation:code/git_helper.py",
               "status": "BOUND_AT_CENSUS_HEAD",
               "symbol": null
             },
@@ -15303,8 +15370,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             },
@@ -15312,8 +15379,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_OBJECTS",
-              "oid": "19ca1945310caa57bcaf52277929af7bdf338a11",
-              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json",
+              "oid": "921cae4bb10c14e3ef7fe757b8e9a6ebeb82b0fc",
+              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -15367,8 +15434,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -15404,8 +15471,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -15418,31 +15485,31 @@
         },
         {
           "colour": "FAIL",
-          "detail": "L1 AD_HOC · blocked by build.lock FAIL · 1/5 probes · gates H04",
+          "detail": "L3 AUTOMATED · blocked by build.pinned_actions FAIL · 4/5 probes · gates H04",
           "id": "L.S2_BUILD",
           "kind": "P",
           "label": "S2_BUILD",
           "layer": 4,
           "metrics": {
-            "completion": 0.2,
-            "fail": 3,
-            "label": "AD_HOC",
-            "level": 1,
+            "completion": 0.8,
+            "fail": 1,
+            "label": "AUTOMATED",
+            "level": 3,
             "next_blocker": {
-              "probe": "build.lock",
+              "probe": "build.pinned_actions",
               "state": "FAIL"
             },
-            "pass": 1,
+            "pass": 4,
             "probes": 5,
-            "unknown": 1
+            "unknown": 0
           },
           "oids": [
             {
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -15455,21 +15522,21 @@
         },
         {
           "colour": "FAIL",
-          "detail": "L1 AD_HOC · blocked by test.cases FAIL · 1/5 probes · gates H05, H06, H10",
+          "detail": "L3 AUTOMATED · blocked by test.fail_closed FAIL · 3/5 probes · gates H05, H06, H10",
           "id": "L.S3_TEST",
           "kind": "P",
           "label": "S3_TEST",
           "layer": 5,
           "metrics": {
-            "completion": 0.2,
-            "fail": 4,
-            "label": "AD_HOC",
-            "level": 1,
+            "completion": 0.6,
+            "fail": 2,
+            "label": "AUTOMATED",
+            "level": 3,
             "next_blocker": {
-              "probe": "test.cases",
+              "probe": "test.fail_closed",
               "state": "FAIL"
             },
-            "pass": 1,
+            "pass": 3,
             "probes": 5,
             "unknown": 0
           },
@@ -15496,8 +15563,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -15533,8 +15600,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -15579,8 +15646,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -15593,21 +15660,21 @@
         },
         {
           "colour": "FAIL",
-          "detail": "L1 AD_HOC · blocked by deploy.workflow FAIL · 1/5 probes · gates H11, DP1-DP10",
+          "detail": "L0 ABSENT · blocked by deploy.descriptor FAIL · 2/5 probes · gates H11, DP1-DP10",
           "id": "L.S6_DEPLOY",
           "kind": "P",
           "label": "S6_DEPLOY",
           "layer": 8,
           "metrics": {
-            "completion": 0.2,
-            "fail": 4,
-            "label": "AD_HOC",
-            "level": 1,
+            "completion": 0.4,
+            "fail": 3,
+            "label": "ABSENT",
+            "level": 0,
             "next_blocker": {
-              "probe": "deploy.workflow",
+              "probe": "deploy.descriptor",
               "state": "FAIL"
             },
-            "pass": 1,
+            "pass": 2,
             "probes": 5,
             "unknown": 0
           },
@@ -15634,8 +15701,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -15648,21 +15715,21 @@
         },
         {
           "colour": "FAIL",
-          "detail": "L1 AD_HOC · blocked by operate.runbook FAIL · 3/5 probes · gates DP-OPS",
+          "detail": "L0 ABSENT · blocked by operate.runtime FAIL · 2/5 probes · gates DP-OPS",
           "id": "L.S7_OPERATE",
           "kind": "P",
           "label": "S7_OPERATE",
           "layer": 9,
           "metrics": {
-            "completion": 0.6,
-            "fail": 2,
-            "label": "AD_HOC",
-            "level": 1,
+            "completion": 0.4,
+            "fail": 3,
+            "label": "ABSENT",
+            "level": 0,
             "next_blocker": {
-              "probe": "operate.runbook",
+              "probe": "operate.runtime",
               "state": "FAIL"
             },
-            "pass": 3,
+            "pass": 2,
             "probes": 5,
             "unknown": 0
           },
@@ -15671,7 +15738,7 @@
               "at": null,
               "jade_oid": "jade:stage:S7_OPERATE",
               "object": null,
-              "oid": "33a70507fb86ab282be104fad0a857111bf3c693",
+              "oid": "c6a6e43ef4e0a1a8977d07021715862aea1db82f",
               "path": "mission-control/jade_temple/tools/hosted_parity.py",
               "status": "BOUND_AT_CENSUS_HEAD",
               "symbol": null
@@ -15680,8 +15747,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -15701,7 +15768,7 @@
           "layer": 10,
           "metrics": {
             "completion": 0.0,
-            "fail": 4,
+            "fail": 5,
             "label": "ABSENT",
             "level": 0,
             "next_blocker": {
@@ -15710,15 +15777,15 @@
             },
             "pass": 0,
             "probes": 5,
-            "unknown": 1
+            "unknown": 0
           },
           "oids": [
             {
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -15731,21 +15798,21 @@
         },
         {
           "colour": "FAIL",
-          "detail": "L1 AD_HOC · blocked by control.gates FAIL · 1/5 probes · gates H08, H09, P-loop",
+          "detail": "L2 DEFINED · blocked by control.zero_test_guard FAIL · 2/5 probes · gates H08, H09, P-loop",
           "id": "L.S9_CONTROL",
           "kind": "P",
           "label": "S9_CONTROL",
           "layer": 11,
           "metrics": {
-            "completion": 0.2,
-            "fail": 2,
-            "label": "AD_HOC",
-            "level": 1,
+            "completion": 0.4,
+            "fail": 1,
+            "label": "DEFINED",
+            "level": 2,
             "next_blocker": {
-              "probe": "control.gates",
+              "probe": "control.zero_test_guard",
               "state": "FAIL"
             },
-            "pass": 1,
+            "pass": 2,
             "probes": 5,
             "unknown": 2
           },
@@ -15781,8 +15848,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -15810,7 +15877,7 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/BD_QUEUE.csv",
               "object": "OBJ.BD_QUEUE",
               "oid": "1fcff70e9f6801b923c409f8b142d8c05c4485f4",
               "path": "mission-control/jade_temple/data/BD_QUEUE.csv",
@@ -15850,23 +15917,41 @@
           "url": null
         },
         {
-          "colour": "UNKNOWN",
-          "detail": "no deploy job found: deploy path UNKNOWN",
+          "colour": "FAIL",
+          "detail": "2 deploy jobs · core contract 0/2",
           "id": "O.DEPLOY",
           "kind": "O",
           "label": "Deploy jobs vs DP1-DP10",
           "layer": 9,
           "metrics": {
             "core_pass": 0,
-            "deploy_jobs": 0
+            "deploy_jobs": 2
           },
           "oids": [
+            {
+              "at": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
+              "jade_oid": "jade:job:DOCX_RTM_Automation:.github/workflows/jekyll-gh-pages.yml#deploy",
+              "object": null,
+              "oid": "67be9b00bb678d6dcb059ad708b2130499bca1e9",
+              "path": "GBOGEB/DOCX_RTM_Automation:.github/workflows/jekyll-gh-pages.yml",
+              "status": "BOUND_AT_CENSUS_HEAD",
+              "symbol": null
+            },
+            {
+              "at": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
+              "jade_oid": "jade:job:DOCX_RTM_Automation:.github/workflows/static.yml#deploy",
+              "object": null,
+              "oid": "460f782006e8bb929c92b9357c59c8b1d73f18c7",
+              "path": "GBOGEB/DOCX_RTM_Automation:.github/workflows/static.yml",
+              "status": "BOUND_AT_CENSUS_HEAD",
+              "symbol": null
+            },
             {
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             },
@@ -15874,15 +15959,15 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_OBJECTS",
-              "oid": "19ca1945310caa57bcaf52277929af7bdf338a11",
-              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json",
+              "oid": "921cae4bb10c14e3ef7fe757b8e9a6ebeb82b0fc",
+              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
           ],
           "phase": null,
           "shas": [],
-          "status": "UNKNOWN",
+          "status": "FAIL",
           "type": "OUTPUT",
           "url": null
         },
@@ -15906,7 +15991,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.rolling5",
               "object": "OBJ.NIRVANA",
               "oid": "c98be2f450099a8bb628a31203b0e2e40c07ebea",
               "path": "mission-control/jade_temple/tools/rolling5.py",
@@ -16517,10 +16602,10 @@
       "metrics": {
         "critical_path_pass_depth": 2,
         "devops": {
-          "actions_pinned": "0/0",
-          "census_head": "75083c2aaabd0d7453d72de895666b21021826c1",
+          "actions_pinned": "2/2",
+          "census_head": "971717280b2ed72acae1a8b835ec3f4beb6fc7cf",
           "ci_mttr_hours_median": null,
-          "commits_since_baseline": 0,
+          "commits_since_baseline": 1,
           "deploy_contract_core": 0,
           "deploy_jobs": 0,
           "lane": "SUPPORT",
@@ -16528,7 +16613,7 @@
             "S0_PLAN": 1,
             "S1_CODE": 0,
             "S2_BUILD": 1,
-            "S3_TEST": 0,
+            "S3_TEST": 3,
             "S4_SECURE": 0,
             "S5_RELEASE": 0,
             "S6_DEPLOY": 0,
@@ -16538,23 +16623,23 @@
           },
           "outcomes_since_baseline": {
             "automation": 0,
-            "ci_changes": 0,
+            "ci_changes": 1,
             "controlled": 0,
             "dependency_updates": 0,
-            "expanded": 0,
+            "expanded": 1,
             "fixed": 0,
-            "test_cases_added_net": 0,
-            "test_files_added_net": 0,
+            "test_cases_added_net": 7,
+            "test_files_added_net": 1,
             "tested": 0,
             "untested_modules_net": 0,
             "zero_case_files_net": 0
           },
           "py_untested": "0/0",
-          "sha_drift": false,
-          "test_cases": 0,
-          "tests_ci": 0,
-          "unguarded_test_jobs": 0,
-          "workflows": 0
+          "sha_drift": true,
+          "test_cases": 7,
+          "tests_ci": 1,
+          "unguarded_test_jobs": 1,
+          "workflows": 1
         },
         "everred": null,
         "gates": {
@@ -16599,7 +16684,7 @@
           "ruleset_gaps": 0,
           "worst": null
         },
-        "pulse_mismatch": false
+        "pulse_mismatch": true
       },
       "nodes": [
         {
@@ -16972,7 +17057,7 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.rolling5",
               "object": "OBJ.SOURCE_RED",
               "oid": "c98be2f450099a8bb628a31203b0e2e40c07ebea",
               "path": "mission-control/jade_temple/tools/rolling5.py",
@@ -17184,21 +17269,21 @@
         },
         {
           "colour": "CROSSWALK",
-          "detail": "census HEAD = gate SHA",
+          "detail": "census HEAD differs from gate SHA: census OIDs describe a different tree",
           "id": "I.CENSUS_HEAD",
           "kind": "I",
           "label": "Census HEAD vs gate SHA",
           "layer": 1,
           "metrics": {
-            "sha_drift": false
+            "sha_drift": true
           },
           "oids": [
             {
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             },
@@ -17206,8 +17291,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_OBJECTS",
-              "oid": "19ca1945310caa57bcaf52277929af7bdf338a11",
-              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json",
+              "oid": "921cae4bb10c14e3ef7fe757b8e9a6ebeb82b0fc",
+              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -17217,7 +17302,7 @@
             {
               "kind": "commit",
               "label": "census HEAD",
-              "value": "75083c2aaabd0d7453d72de895666b21021826c1"
+              "value": "971717280b2ed72acae1a8b835ec3f4beb6fc7cf"
             },
             {
               "kind": "commit",
@@ -17315,7 +17400,7 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
               "object": "OBJ.RED_TRACE",
               "oid": "031cdce65d719e6f3e5c6ed9a3b2b6dd783efefd",
               "path": "mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
@@ -17324,7 +17409,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.build_redtrace_data",
               "object": "OBJ.RED_TRACE_BUILD",
               "oid": "d1f1fb3ff13031139092dde8906a7c5fe2067ebc",
               "path": "mission-control/jade_temple/tools/build_redtrace_data.py",
@@ -17380,14 +17465,14 @@
         },
         {
           "colour": "UNKNOWN",
-          "detail": "0 files · 0 cases · untested modules 0/0 · zero-case files 0",
+          "detail": "1 files · 7 cases · untested modules 0/0 · zero-case files 0",
           "id": "I.TESTS",
           "kind": "I",
           "label": "Test inventory (census)",
           "layer": 1,
           "metrics": {
-            "cases": 0,
-            "files": 0,
+            "cases": 7,
+            "files": 1,
             "py_modules": 0,
             "py_untested": 0,
             "zero_case_files": 0
@@ -17397,8 +17482,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             },
@@ -17406,8 +17491,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_OBJECTS",
-              "oid": "19ca1945310caa57bcaf52277929af7bdf338a11",
-              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json",
+              "oid": "921cae4bb10c14e3ef7fe757b8e9a6ebeb82b0fc",
+              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -17461,8 +17546,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -17498,8 +17583,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -17512,13 +17597,13 @@
         },
         {
           "colour": "FAIL",
-          "detail": "L1 AD_HOC · blocked by build.lock FAIL · 1/5 probes · gates H04",
+          "detail": "L1 AD_HOC · blocked by build.lock FAIL · 2/5 probes · gates H04",
           "id": "L.S2_BUILD",
           "kind": "P",
           "label": "S2_BUILD",
           "layer": 4,
           "metrics": {
-            "completion": 0.2,
+            "completion": 0.4,
             "fail": 3,
             "label": "AD_HOC",
             "level": 1,
@@ -17526,17 +17611,17 @@
               "probe": "build.lock",
               "state": "FAIL"
             },
-            "pass": 1,
+            "pass": 2,
             "probes": 5,
-            "unknown": 1
+            "unknown": 0
           },
           "oids": [
             {
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -17549,21 +17634,21 @@
         },
         {
           "colour": "FAIL",
-          "detail": "L0 ABSENT · blocked by test.files FAIL · 0/5 probes · gates H05, H06, H10",
+          "detail": "L3 AUTOMATED · blocked by test.fail_closed FAIL · 3/5 probes · gates H05, H06, H10",
           "id": "L.S3_TEST",
           "kind": "P",
           "label": "S3_TEST",
           "layer": 5,
           "metrics": {
-            "completion": 0.0,
-            "fail": 5,
-            "label": "ABSENT",
-            "level": 0,
+            "completion": 0.6,
+            "fail": 2,
+            "label": "AUTOMATED",
+            "level": 3,
             "next_blocker": {
-              "probe": "test.files",
+              "probe": "test.fail_closed",
               "state": "FAIL"
             },
-            "pass": 0,
+            "pass": 3,
             "probes": 5,
             "unknown": 0
           },
@@ -17590,8 +17675,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -17604,21 +17689,21 @@
         },
         {
           "colour": "FAIL",
-          "detail": "L0 ABSENT · blocked by secure.policy FAIL · 0/5 probes · gates H07",
+          "detail": "L0 ABSENT · blocked by secure.policy FAIL · 1/5 probes · gates H07",
           "id": "L.S4_SECURE",
           "kind": "P",
           "label": "S4_SECURE",
           "layer": 6,
           "metrics": {
-            "completion": 0.0,
-            "fail": 5,
+            "completion": 0.2,
+            "fail": 4,
             "label": "ABSENT",
             "level": 0,
             "next_blocker": {
               "probe": "secure.policy",
               "state": "FAIL"
             },
-            "pass": 0,
+            "pass": 1,
             "probes": 5,
             "unknown": 0
           },
@@ -17627,8 +17712,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -17673,8 +17758,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -17728,8 +17813,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -17765,7 +17850,7 @@
               "at": null,
               "jade_oid": "jade:stage:S7_OPERATE",
               "object": null,
-              "oid": "33a70507fb86ab282be104fad0a857111bf3c693",
+              "oid": "c6a6e43ef4e0a1a8977d07021715862aea1db82f",
               "path": "mission-control/jade_temple/tools/hosted_parity.py",
               "status": "BOUND_AT_CENSUS_HEAD",
               "symbol": null
@@ -17774,8 +17859,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -17811,8 +17896,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -17875,8 +17960,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -17904,7 +17989,7 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/BD_QUEUE.csv",
               "object": "OBJ.BD_QUEUE",
               "oid": "1fcff70e9f6801b923c409f8b142d8c05c4485f4",
               "path": "mission-control/jade_temple/data/BD_QUEUE.csv",
@@ -17959,8 +18044,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_CENSUS",
-              "oid": "134f94b75b45e8acdbbc8f343652f3f1e9949ec2",
-              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json",
+              "oid": "cd941288492c207243b7546659c05a9b37334a8e",
+              "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json",
               "status": "BOUND",
               "symbol": null
             },
@@ -17968,8 +18053,8 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.DEVOPS_OBJECTS",
-              "oid": "19ca1945310caa57bcaf52277929af7bdf338a11",
-              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json",
+              "oid": "921cae4bb10c14e3ef7fe757b8e9a6ebeb82b0fc",
+              "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N12.json",
               "status": "BOUND",
               "symbol": null
             }
@@ -18000,7 +18085,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.rolling5",
               "object": "OBJ.NIRVANA",
               "oid": "c98be2f450099a8bb628a31203b0e2e40c07ebea",
               "path": "mission-control/jade_temple/tools/rolling5.py",
@@ -18307,7 +18392,7 @@
         "repos": {
           "GBOGEB/ABACUS": {
             "authority_bound_in": 0,
-            "census_head": "20b4c2383f442891211c99bae2725bcf1688299b",
+            "census_head": "83046f9b4c7053035424c83f63177c8bf0287b9d",
             "everred": 18,
             "in_degree": 0,
             "lifecycle_median_level": 3.0,
@@ -18326,7 +18411,7 @@
           },
           "GBOGEB/CODEX": {
             "authority_bound_in": 0,
-            "census_head": "cb3b0d269bcd0ff9e96982cfc8276aa4bc187acf",
+            "census_head": "d6a0b080e5c8173e706e68c23a2ddae5b1dc96d3",
             "everred": 9,
             "in_degree": 0,
             "lifecycle_median_level": 3.0,
@@ -18345,10 +18430,10 @@
           },
           "GBOGEB/DOCX_RTM_Automation": {
             "authority_bound_in": 0,
-            "census_head": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
+            "census_head": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
             "everred": null,
             "in_degree": 0,
-            "lifecycle_median_level": 1.0,
+            "lifecycle_median_level": 1.5,
             "lifecycle_min_level": 0,
             "mode": null,
             "observation_in": 0,
@@ -18402,7 +18487,7 @@
           },
           "GBOGEB/pipeline-automation-hub": {
             "authority_bound_in": 2,
-            "census_head": "e4b901afa7706dee862730c4a468a96b7b07bcfc",
+            "census_head": "3ed30b2b9ae53a24ec72780b4e01df484c0fb591",
             "everred": 1,
             "in_degree": 6,
             "lifecycle_median_level": 3.0,
@@ -18421,7 +18506,7 @@
           },
           "GBOGEB/yaml-grammar": {
             "authority_bound_in": 0,
-            "census_head": "75083c2aaabd0d7453d72de895666b21021826c1",
+            "census_head": "971717280b2ed72acae1a8b835ec3f4beb6fc7cf",
             "everred": null,
             "in_degree": 0,
             "lifecycle_median_level": 0.0,
@@ -18504,7 +18589,7 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.rolling5",
               "object": "OBJ.SOURCE_RED",
               "oid": "c98be2f450099a8bb628a31203b0e2e40c07ebea",
               "path": "mission-control/jade_temple/tools/rolling5.py",
@@ -18513,7 +18598,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.rolling5",
               "object": "OBJ.GOLDEN_THREAD",
               "oid": "c98be2f450099a8bb628a31203b0e2e40c07ebea",
               "path": "mission-control/jade_temple/tools/rolling5.py",
@@ -18522,7 +18607,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.rolling5",
               "object": "OBJ.NIRVANA",
               "oid": "c98be2f450099a8bb628a31203b0e2e40c07ebea",
               "path": "mission-control/jade_temple/tools/rolling5.py",
@@ -18540,7 +18625,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.cicd_dag",
               "object": "OBJ.CICD_DAG",
               "oid": "cbfe1e53927b0b5d0db6c90ab180bd2cab42d8f0",
               "path": "mission-control/jade_temple/tools/cicd_dag.py",
@@ -18687,7 +18772,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.federation-atlas.pages_portal",
               "object": "OBJ.PAGES_PORTAL",
               "oid": "6a0ab0460d5e2440c3388133cfd361d9b4133b74",
               "path": "mission-control/federation-atlas/pages_portal.py",
@@ -18737,7 +18822,7 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.jade_temple.tools.build_redtrace_data",
               "object": "OBJ.RED_TRACE_BUILD",
               "oid": "d1f1fb3ff13031139092dde8906a7c5fe2067ebc",
               "path": "mission-control/jade_temple/tools/build_redtrace_data.py",
@@ -18746,7 +18831,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:file:pipeline-automation-hub:mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
               "object": "OBJ.RED_TRACE",
               "oid": "031cdce65d719e6f3e5c6ed9a3b2b6dd783efefd",
               "path": "mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json",
@@ -18805,7 +18890,7 @@
             },
             {
               "at": null,
-              "jade_oid": null,
+              "jade_oid": "jade:py:pipeline-automation-hub:mission-control.federation-atlas.pages_portal",
               "object": "OBJ.PAGES_PORTAL",
               "oid": "6a0ab0460d5e2440c3388133cfd361d9b4133b74",
               "path": "mission-control/federation-atlas/pages_portal.py",
@@ -18828,7 +18913,7 @@
           "layer": 2,
           "metrics": {
             "authority_bound_in": 0,
-            "census_head": "20b4c2383f442891211c99bae2725bcf1688299b",
+            "census_head": "83046f9b4c7053035424c83f63177c8bf0287b9d",
             "everred": 18,
             "in_degree": 0,
             "lifecycle_median_level": 3.0,
@@ -18886,7 +18971,7 @@
           "layer": 2,
           "metrics": {
             "authority_bound_in": 0,
-            "census_head": "cb3b0d269bcd0ff9e96982cfc8276aa4bc187acf",
+            "census_head": "d6a0b080e5c8173e706e68c23a2ddae5b1dc96d3",
             "everred": 9,
             "in_degree": 0,
             "lifecycle_median_level": 3.0,
@@ -18944,7 +19029,7 @@
           "layer": 3,
           "metrics": {
             "authority_bound_in": 2,
-            "census_head": "e4b901afa7706dee862730c4a468a96b7b07bcfc",
+            "census_head": "3ed30b2b9ae53a24ec72780b4e01df484c0fb591",
             "everred": 1,
             "in_degree": 6,
             "lifecycle_median_level": 3.0,
@@ -19002,10 +19087,10 @@
           "layer": 0,
           "metrics": {
             "authority_bound_in": 0,
-            "census_head": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
+            "census_head": "beab8fcedb67bfde2ce6bd12f39622b9d1448307",
             "everred": null,
             "in_degree": 0,
-            "lifecycle_median_level": 1.0,
+            "lifecycle_median_level": 1.5,
             "lifecycle_min_level": 0,
             "mode": null,
             "observation_in": 0,
@@ -19170,7 +19255,7 @@
           "layer": 0,
           "metrics": {
             "authority_bound_in": 0,
-            "census_head": "75083c2aaabd0d7453d72de895666b21021826c1",
+            "census_head": "971717280b2ed72acae1a8b835ec3f4beb6fc7cf",
             "everred": null,
             "in_degree": 0,
             "lifecycle_median_level": 0.0,
