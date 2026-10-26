@@ -66,16 +66,16 @@ The generated JADE outputs pin the git blob OIDs of the p-process files,
 `mission-control/jade_temple/data/CICD_DAG_POLICY.json`). Changing any of them turns JADE QA red by
 design until the outputs are regenerated.
 
-- After changing a pinned input, regenerate and verify in the same PR:
+- After changing a pinned input, and after every merge of master into your branch, regenerate and verify
+  in the same PR with one command. It runs the whole chain in dependency order, leaves fresh steps alone
+  and then runs every check (`--list` prints the chain, plain `regen.py` only checks):
   ```
-  python mission-control/jade_temple/tools/rolling5.py --write
-  python mission-control/jade_temple/tools/cicd_dag.py --write
-  python mission-control/jade_temple/site/build_cicd_dag.py
-  python mission-control/jade_temple/tools/rolling5.py --check
-  python mission-control/jade_temple/tools/cicd_dag.py --check
-  python mission-control/jade_temple/site/build_cicd_dag.py --check
+  python mission-control/jade_temple/tools/regen.py --write
   ```
+  If it reports `REGEN_DEFER launcher`, commit and run it again: the launcher reads its inputs at HEAD.
 - Never hand-edit `site/cicd_dag.*`, `site/rolling5.*` or `diagrams/CICD_DAG_*.mmd`; they are generated.
+- Line endings are hashed. `.gitattributes` keeps text LF on every platform; on Windows write generated
+  files with `newline="\n"` and `encoding="utf-8"`.
 
 ## Metric ownership
 
