@@ -16,7 +16,7 @@ def observation(required=False, merged=True, red=True, reviews=None):
         {"type": "required_status_checks", "parameters": {
             "strict_required_status_checks_policy": False,
             "required_status_checks": [{"context": REQ}] if required else [
-                {"context": "GOGREEN required gate"}]}]
+                {"context": "GOGREEN required gate"}]}}]
     return {"schema": "jade.admission-observation.v1",
             "pull_request": {"repository": "GBOGEB/pipeline-automation-hub",
                              "number": 941, "head_sha": HEAD,
