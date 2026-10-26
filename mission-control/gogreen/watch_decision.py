@@ -14,7 +14,7 @@ import copy
 import hashlib
 import json
 import re
-from datetime import datetime, timezone
+from datetime import datetime
 
 EVENT_SCHEMA = "codepurple.watch.terminal/v1"
 CURSOR_SCHEMA = "codepurple.watch.cursor/v1"
@@ -236,8 +236,12 @@ def fold(events, cursor=None):
         _require(len(seen) < 100000, "cursor exceeds reviewed observation budget")
         seen[key] = payload
         prev = state["lanes"].get(lane)
-        if prev is not None and _utc(n["observed_at"]) <= _utc(prev["observed_at"]):
-            # Out-of-order arrival cannot downgrade the last-qualified decision.
+        if prev is not None and (
+            _utc(n["completed_at"]) <= _utc(prev["completed_at"])
+            or _utc(n["observed_at"]) <= _utc(prev["observed_at"])
+        ):
+            # Late older-source completions cannot roll back a newer lane, even
+            # when GitHub reveals them after the later completion was observed.
             continue
         if r["conclusion"] in ("skipped", "cancelled"):
             # Not a verified regression or recovery and not a stability wave.
@@ -276,7 +280,8 @@ def fold(events, cursor=None):
                            "source": "CALLER_ASSERTED_NEEDS_NATIVE_READBACK",
                            "coverage_delta": coverage_delta, "admission": "HOLD"})
         state["lanes"][lane] = {
-            "observed_at": n["observed_at"], "native_key": key,
+            "observed_at": n["observed_at"], "completed_at": n["completed_at"],
+            "native_key": key,
             "checkout_sha": i["checkout_sha"], "cohort": cohort,
             "signature": signature, "conclusion": r["conclusion"],
             "fingerprint": r["fingerprint"], "veto": list(veto),
