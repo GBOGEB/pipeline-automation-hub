@@ -81,7 +81,17 @@ class StopTests(unittest.TestCase):
             with patch.object(sys,'argv',['stop_rules.py','--receipt',str(out)]):
                 mod.main()
             data=json.loads(out.read_text(encoding='utf-8'))
-            self.assertEqual(data['action'],'REPAIR_FIRST_RED')
+            # The default model is the current pulse, so a bare run replays the committed N+10 receipt.
+            self.assertEqual(data,json.loads((ROOT/'data/STOP_RECEIPT_N10.json').read_text(encoding='utf-8')))
+            self.assertEqual(data['action'],'OWNER_BLOCKED')
+    def test_frozen_nplus2_replays_with_explicit_model(self):
+        import sys
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as t:
+            out=Path(t)/'receipt.json'
+            with patch.object(sys,'argv',['stop_rules.py','--model',str(ROOT/'data/STOP_MODEL_NPLUS2.json'),'--receipt',str(out)]):
+                mod.main()
+            self.assertEqual(json.loads(out.read_text(encoding='utf-8'))['action'],'REPAIR_FIRST_RED')
     def test_incomplete_gate_population_refused(self):
         g=dict(GATES);del g['matched_coverage']
         with self.assertRaisesRegex(ValueError,'incomplete or extra'):
@@ -174,10 +184,44 @@ class StopTests(unittest.TestCase):
         d=self.n10();alerts=[e for e in d["gate_receipts"]["security"]["evidence"] if e["kind"]=="open_code_scanning_alert"]
         self.assertTrue(alerts)
         self.assertTrue(all(a["path"].startswith("mission-control/jade_temple/") for a in alerts))
+    def test_n10_gate_flip_without_matching_receipt_is_rejected(self):
+        # Flipping gate states while the receipts still say FAIL / UNKNOWN must never reach target-met.
+        d=self.n10();d["gates"]["security"]="PASS";d["gates"]["owner_release"]="PASS"
+        with self.assertRaisesRegex(ValueError,"gate receipt disagrees with gate state: (security|owner_release)"):
+            mod.from_snapshot(d)
+        d=self.n10();d["gates"]["owner_release"]="PASS"
+        with self.assertRaisesRegex(ValueError,"disagrees with gate state: owner_release"):
+            mod.from_snapshot(d)
+    def test_n10_flipped_receipt_without_bound_evidence_is_rejected(self):
+        d=self.n10();d["gates"]["owner_release"]="PASS";d["gate_receipts"]["owner_release"]["state"]="PASS"
+        with self.assertRaisesRegex(ValueError,"positive gate without receipt evidence: owner_release"):
+            mod.from_snapshot(d)
+        d["gate_receipts"]["owner_release"]["evidence"]=[{"source_sha":"c"*40,"url":"https://github.com/GBOGEB/pipeline-automation-hub/pull/1"}]
+        with self.assertRaisesRegex(ValueError,"not bound to the current head: owner_release"):
+            mod.from_snapshot(d)
+        d["gate_receipts"]["owner_release"]["evidence"]=[{"source_sha":d["current_main_sha"],"url":"http://example.com/x"}]
+        with self.assertRaisesRegex(ValueError,"untrusted gate receipt: owner_release"):
+            mod.from_snapshot(d)
+    def test_n10_receipts_must_cover_every_gate_and_succeed(self):
+        d=self.n10();del d["gate_receipts"]["hosted_parity"]
+        with self.assertRaisesRegex(ValueError,"do not cover the gates"):
+            mod.from_snapshot(d)
+        d=self.n10();d["gate_receipts"]["native_tests"]["evidence"][0]["conclusion"]="failure"
+        with self.assertRaisesRegex(ValueError,"unsuccessful receipt: native_tests"):
+            mod.from_snapshot(d)
+    def test_snapshot_without_receipts_cannot_meet_target(self):
+        d=self.n10();del d["gate_receipts"];d["gates"]["security"]="PASS";d["gates"]["owner_release"]="PASS"
+        self.assertNotEqual(mod.from_snapshot(d)["action"],"TARGET_MET_STOP_ENGINEERING")
     def test_n10_only_security_and_owner_release_remain(self):
-        d=self.n10();d["gates"]["security"]="PASS"
+        # The same flips with receipts that agree and are bound to the head are the only way to target-met.
+        d=self.n10();head=d["current_main_sha"]
+        def grant(gate):
+            d["gates"][gate]="PASS"
+            d["gate_receipts"][gate]={"state":"PASS","evidence":[{"kind":"test_fixture","source_sha":head,
+                "url":"https://github.com/GBOGEB/pipeline-automation-hub/pull/1"}]}
+        grant("security")
         self.assertEqual(mod.from_snapshot(d)["action"],"CONTINUE_DISJOINT_MEASUREMENT")
-        d["gates"]["owner_release"]="PASS"
+        grant("owner_release")
         self.assertEqual(mod.from_snapshot(d)["action"],"TARGET_MET_STOP_ENGINEERING")
     def test_n10_pulse_reads_the_same_cohort_without_inventing_metrics(self):
         d=self.n10();p=d["pulses"][-1];prev=d["pulses"][-2]
