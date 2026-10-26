@@ -45,6 +45,6 @@ jobs:
         run: |
           set -euo pipefail
           python -m pip install --disable-pip-version-check coverage==7.13.3
-          python -m coverage run --branch --include=issue_rank.py,issue_math.py -m unittest -v test_issue_rank test_issue_rank_v2 test_title_taxonomy test_wave_control
+          python -m coverage run --branch --include=issue_rank.py,issue_math.py -m unittest -v test_issue_rank test_issue_rank_v2 test_title_taxonomy test_wave_control test_taxonomy_pulse
           python -m coverage report --fail-under=80
           python -m unittest discover -s ../qps-triage-ultra/issue-expedition -p test_triway_burndown.py -v
