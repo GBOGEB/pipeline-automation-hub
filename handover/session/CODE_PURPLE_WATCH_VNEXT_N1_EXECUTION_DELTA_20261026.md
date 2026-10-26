@@ -65,3 +65,21 @@ On draft [#883](https://github.com/GBOGEB/pipeline-automation-hub/pull/883), exa
 This is strong **candidate technical recovery of the G4 concurrency first-red** at one exact PR head. It is not proof of an approved root closure, enforced required-status branch rule, First-Pass completion, independent approval or a merged-main recovery. #881's earlier gate failure remains a distinct immutable historical event until its current-head proof is renewed.
 
 **Disposition remains HOLD; zero formal credit.**
+
+
+## N1.2 source-head supersession — no evidence transfer
+
+A subsequent read found concurrent source-branch updates after the earlier native test observations:
+
+| Lane | Earlier tested candidate head | Newer GitHub PR head | Current qualification at this read |
+|---|---|---|---|
+| #881 | `3e14b63d621519ab1f4d909d4f6c36b7b4d19305` (615 tests OK, separate required-gate FAIL) | `62be74c29c989200f72c0cac550f6c8f7b520001` | Head advanced; new exact-head G4/required-gate/CodeQL runs still executing; earlier proof is historical |
+| #882 | `31493de8e7d2cae61fd8cc13c81409cea6f2d05f` (625 tests OK) | `b06a52f453da39d8a5f9e782d29effba3d3eb86d` | Stack rebased on newer #881; fresh terminal required checks and review pending |
+
+Do **not** copy native 615/625 test counts from the earlier SHA to the new head, or treat source branch rebasing as a recovery milestone. #881's reported GitHub PR state changed from draft to open-for-review, but that is not eligible independent approval. For #882 the base is still #881's source branch, not master.
+
+The documentation PR #876 also moved to head `7b9fbcb0501700540e9b3a7d72f744cd0cfe0994`. Its previously written First-Pass PR-body receipt still names old head `f41f8e13eed46e459f95154b086fe125f13cbea3`; that receipt is stale. Regenerate only with the repository's trusted `scripts/fpc_receipt.py --pr 876 --write` after all exact-head candidate runs qualify. Do not manually forge a replacement.
+
+At the same read, #878 remained draft and GitHub reported `mergeable=false`; determine conflict versus gate status before taking action. The #883 source-collision repair remains draft despite native successful Wave, Fleet and required-gate checks. FPC/reviewer authority is still missing.
+
+**Stop rule:** do not merge, close a root, or activate the consolidated watch on any of these moving-head candidates. Continue with newly terminal exact-head evidence and one owner-reviewed source correction at a time.
