@@ -23,10 +23,11 @@ the handover is lossless; it is to be reconciled into the owner, not run from he
 | `data/raw.json.gz` | The pulse: every PR and issue title, state, dates, labels, parent, closing references, body references and timeline cross-references (bodies themselves not stored), per-repo head SHA | Source of truth |
 | `outputs/*.gz`, `outputs/*.md`, `outputs/*.json`, `outputs/conformance.csv` | Census outputs (`census.json`, `rows.csv`, `stats.csv`, `timeseries.csv`), keyword inventory, issue plan, gap table | `out/` in the handover; large files gzipped |
 | `outputs/edges.csv.gz` | PR / issue links (closes, parent, title mentions, body refs, timeline cross-references; one per pair, merged evidence) with each end's family and scope | Counts only; ranking stays in `issue_rank.py` |
+| `data/checks.json.gz`, `outputs/ci_*.csv(.gz)` | Per-PR CI evidence and the per-family CI view (EVERRED / red-green classes, rates, main red driver, checks with SIPOC / DAG / OID, activity signatures) | Built on `red_trace.classify()` and `cicd_dag.everred_metrics()` |
 | `outputs/dash/*.json.gz`, `outputs/dash/blobs.json` | The dashboard's attached datasets and their blob ids | `out/dash/` in the handover |
 | `outputs/apply_log.txt` | The GitHub issue edits made on 2026-10-26 (12 issues labelled, 10 retitled, user-approved) | |
 | `MANIFEST.json` | sha256 of every output (uncompressed) and dataset, per-repo head SHAs | |
-| `reference/title_taxonomy_src.zip` | Census tool source: `taxonomy.py`, `test_taxonomy.py`, `graph.py`, `test_graph.py`, `fetch.py`, `report.py`, `dash_export.py`, `apply_issues.py`, `manifest.py` | Reference only |
+| `reference/title_taxonomy_src.zip` | Census tool source: `taxonomy.py`, `test_taxonomy.py`, `graph.py`, `test_graph.py`, `fetch.py`, `fetch_checks.py`, `ci_census.py`, `report.py`, `dash_export.py`, `apply_issues.py`, `manifest.py` | Reference only |
 
 ## Reproduce (outside the repo)
 
@@ -34,9 +35,9 @@ the handover is lossless; it is to be reconciled into the owner, not run from he
 mkdir /tmp/tc && cd /tmp/tc
 unzip <repo>/mission-control/issue_rank/title_census/reference/title_taxonomy_src.zip
 cp <repo>/mission-control/issue_rank/title_census/{vocabulary.json,MANIFEST.json} .
-mkdir data && cp <repo>/mission-control/issue_rank/title_census/data/raw.json.gz data/
+mkdir data && cp <repo>/mission-control/issue_rank/title_census/data/*.json.gz data/
 python -m unittest test_taxonomy test_graph
-python manifest.py --check        # regenerates every output from the pulse; prints "reproducible"
+python manifest.py --check --pah <repo>   # regenerates every output, CI view included; prints "reproducible"
 ```
 
 Verified on Python 3.12 on the workstation only; unverified on the repository's CI runtime.

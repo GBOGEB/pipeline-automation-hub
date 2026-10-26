@@ -2,7 +2,7 @@
 
 > **In pipeline-automation-hub** this handover lives in `mission-control/issue_rank/title_census/`. There `out/` is `outputs/` (large files gzipped), the scripts are in `reference/title_taxonomy_src.zip`, and the reconciliation into the owner `../title_taxonomy.py` is in `RECONCILIATION.md`. See `README.md`.
 
-Session date 2026-10-26. Owner GBOGEB. Status: working tool and census; one small set of GitHub issue edits applied; landed as artefacts only (no code path) in draft PR #934 stacked on #927. It overlaps open draft PRs pipeline-automation-hub #925 and #927 (see "Overlap").
+Session date 2026-10-26. Owner GBOGEB. Status: working tool and census; one small set of GitHub issue edits applied; landed as artefacts only (no code path) in PR #934 (targets master after #927 merged). It overlaps open draft PRs pipeline-automation-hub #925 and #927 (see "Overlap").
 
 ## What it does
 
@@ -33,6 +33,8 @@ Lint rules T001 to T011 (`taxonomy.py` `LINT_RULES`): no prefix, unknown type, t
 | `vocabulary.json` | The vocabulary: 12 types, 26 families, scopes and aliases (`=alias` = only inside an explicit prefix or label, never free text), qualifier patterns, type keywords, label map, `generic` families that lose to domain families in free-text inference |
 | `graph.py` | PR / issue crosswalk edges: `closes` (PR -> issue, both sides, cross-repo), `parent` (sub-issues), `mentions` (`#123`, `Repo#123`, `PR123` in titles), `refs` (body references), `xref` (timeline cross-references); one edge per pair, strongest type wins. Counts only: PageRank / betweenness stay with `issue_rank.py` |
 | `test_graph.py` | 7 edge tests |
+| `fetch_checks.py` | Per-PR CI evidence (head OID, last 10 commit states, head-commit workflow runs); about 2 GraphQL points per 50 PRs |
+| `ci_census.py` | Per-family CI view on the PAH owners (`red_trace.classify`, `cicd_dag.everred_metrics`, red-trace data, DAG crosswalk) |
 | `taxonomy.py` | `Vocabulary`, `parse_title`, `lint`, `classify_own`, `classify_all` (recursive issue inheritance), `suggest_title` (lossless: never drops a label token or ID), `levels` |
 | `test_taxonomy.py` | 18 unit tests (`python -m unittest test_taxonomy`) |
 | `fetch.py` | Read-only GraphQL fetch via `gh`; one pulse, each repo's default-branch head SHA recorded (AGENTS.md L6); `--resume` reuses `data/repos/*.json` |
@@ -98,6 +100,31 @@ Titles whose own text maps to no family (655) get a **candidate** family voted b
 of the weight; mostly ci-ops 40, governance 26, qps 22, cryo-eng 12), 328 mixed (links spread over several families:
 cross-cutting items), 191 with no linked item that has a family (generic one-off titles such as "add ...", "repeat pass",
 "accidental", Copilot setup; no hidden new family among them).
+
+## CI health per family (EVERRED, red / green, checks, DAG / SIPOC, OID)
+
+For every family with more than 10 titles (27 families), from `data/checks.json.gz` (fetched by `fetch_checks.py`: per PR the head
+OID, the combined check state of its last 10 commits, and the workflow runs on its head commit with file path and conclusion).
+`ci_census.py` imports the PAH owners instead of re-implementing them:
+
+| Piece | Owner used | Output |
+|---|---|---|
+| Class per PR over its commits: EVERRED, GREEN_TO_RED, RED_TO_GREEN, FLAKY, STABLE_GREEN | `mission-control/gogreen/red_trace/red_trace.py` `classify()` | `out/ci_prs.csv` |
+| everred ratio, recovery rate, flake rate, red now, red-now median age per family | `mission-control/jade_temple/tools/cicd_dag.py` `everred_metrics()` (fed a red_trace-shaped document per family) | `out/ci_family.csv` |
+| Workflow class on the default branch | `mission-control/jade_temple/data/RED_TRACE_FEDERATION_N8.json` (five core repos) | `out/ci_checks.csv` `default_branch_class` |
+| DAG node, SIPOC letter, node type, DMAIC phase, layer, bound blob OID per workflow file | `mission-control/jade_temple/site/cicd_dag_crosswalk.csv` | `out/ci_checks.csv` |
+
+Also per family: the newest PR (state, final CI state, head OID), the **main red driver** (the workflow failing on the head commit
+of the most red PRs), and **activity signatures** (PRs that ran exactly the same set of workflows; `out/ci_signatures.csv`).
+
+Finding at the 09:18 pulse: most PRs in every family never reach a green combined state (qps 739 of 1,305 EVERRED; ci-ops 367
+of 487). The per-workflow view shows why: a few checks fail on almost every PR, e.g. First-Pass Closure Gate is the main red
+driver for gogreen (51 of 66 red PRs) and jade-devops (50 of 77); `verify-ssot` for qps and the unassigned group; Validate Docs
+for ci-ops. Read EVERRED here as "a gate stayed red", not "the change is broken". The unit is a PR, not a default-branch
+workflow, so these numbers do not replace the EVERRED ledger. 512 of 10,740 family × workflow rows bind to a DAG node (260 with
+a blob OID): the DAG covers pipeline-automation-hub, cryoplant-project, DOCX_RTM_Automation, gg_MATH and yaml-grammar only.
+
+`python manifest.py --check --pah <pipeline-automation-hub checkout>` regenerates the CI outputs too (they need the owner modules).
 
 ## Overlap with pipeline-automation-hub #925 / #927 (read before landing)
 

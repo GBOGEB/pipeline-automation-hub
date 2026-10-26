@@ -35,6 +35,9 @@
    "bytes": 529552,
    "rows": 7278
   },
+  "data/checks.json.gz": {
+   "sha256": "20d57ded63c06e9c96a0c0de553eff8cf4c645d4a45d757992606fdb63fd7b76"
+  },
   "vocabulary.json": {
    "sha256": "54a274e662c988c15c1366d38021fcec6984c5a0b7fef8592faf8fd7623affbd"
   }
@@ -75,23 +78,54 @@
   "out/edges.csv": {
    "sha256": "f91b70196dbd72a0ecf171e7643b71fd00d6b36d5deff3b866aaeb573e97cd12",
    "bytes": 3196361
+  },
+  "out/ci_family.csv": {
+   "sha256": "5e1aec7459def42d6a137bc2c7011a74503a4efedccf470188a9359483d79dff",
+   "bytes": 67217
+  },
+  "out/ci_checks.csv": {
+   "sha256": "bfd5cdbaad1fa5b01e220534b737da7234ba2a408b7610fc925df9a499ab0268",
+   "bytes": 2323647
+  },
+  "out/ci_signatures.csv": {
+   "sha256": "95b69d2f6c85ef7d340d8f39c296c4dfcf209a4c9bdea7443ce7ecd8d211004e",
+   "bytes": 579967
+  },
+  "out/ci_prs.csv": {
+   "sha256": "7112d45e638069527e145f4ac801b7a4406187d0647954d8719144a036b44bdd",
+   "bytes": 3702484
   }
  },
  "dashboard": {
   "url": "https://claude.ai/artifact/RARdwhuvVk2emp2iCRRhDw",
   "page": {
-   "dash/index.html": "bf62fd09c6d792fa6c054c81dda55ab7d6738afd388fc499bdc6494e8b0d2e11"
+   "dash/index.html": "4f311e5f1d45c4535e22e50f20aeb0795be5f9977d345969f00c3c78f5964a63"
   },
   "datasets": {
    "titles": {
     "file": "out/dash/titles.json",
-    "sha256": "7b3782202d8c36cb6155dd2e630579a298dd1054758758b4ccf5fee4e35d2177",
-    "blob": "/_blob/0d4af9704b572871cb5537425c714626"
+    "sha256": "c0418b3cacb2d29c9ea16886a6af03d64a8cb698985b12dddb8047930a6c1086",
+    "blob": "/_blob/b3f88feca75e814a255381c6ffffeb2e"
    },
    "edges": {
     "file": "out/dash/edges.json",
     "sha256": "c410e36433fa76600a9a0782aed4c15c9c4e1e0419c1f94837ff9b35331ceb91",
     "blob": "/_blob/99aa944af79485ba28e01ccf3af31347"
+   },
+   "ci_family": {
+    "file": "out/dash/ci_family.json",
+    "sha256": "0da6359210a85441d44d5bcb62913918f3357b147b15459793096c64677e6b67",
+    "blob": "/_blob/ea20ca4c0f287658dbc25ac5d5d73d29"
+   },
+   "ci_checks": {
+    "file": "out/dash/ci_checks.json",
+    "sha256": "8f1fdc9d0c62ac28e39c1609af5d2ff16d090e4dd60f8d5f128d678674871fc3",
+    "blob": "/_blob/bffdb8ec2dff29009201e1e2c57bdd82"
+   },
+   "ci_signatures": {
+    "file": "out/dash/ci_signatures.json",
+    "sha256": "1877c1fe338b3959ca70cf2cf3ef559b259eab0d27014937262340f723e1c2e1",
+    "blob": "/_blob/efd6182844860a6ae3d48a722f13ddef"
    },
    "stats": {
     "file": "out/dash/stats.json",
