@@ -19,7 +19,7 @@ SAMPLE = ROOT / "samples" / "code_purple_recovery.json"
 class RecoveryWaveTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.data = json.loads(SAMPLE.read_text())
+        cls.data = json.loads(SAMPLE.read_text(encoding="utf-8"))
 
     def record(self):
         return copy.deepcopy(self.data)
@@ -132,7 +132,7 @@ class RecoveryWaveTests(unittest.TestCase):
             self.assertEqual(sha1, sha2)
             self.assertEqual(first, (out / "recovery_wave.json").read_bytes())
             self.assertEqual(64, len(sha1))
-            self.assertIn("UNKNOWN", (out / "recovery_wave.md").read_text())
+            self.assertIn("UNKNOWN", (out / "recovery_wave.md").read_text(encoding="utf-8"))
 
     def test_native_cli_produces_no_admission(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -140,7 +140,7 @@ class RecoveryWaveTests(unittest.TestCase):
                                 "--input", str(SAMPLE), "--out", tmp],
                                text=True, capture_output=True, check=True, timeout=10)
             self.assertEqual(json.loads(p.stdout)["source_root_recoveries"], 2)
-            result = json.loads((Path(tmp) / "recovery_wave.json").read_text())
+            result = json.loads((Path(tmp) / "recovery_wave.json").read_text(encoding="utf-8"))
             self.assertFalse(result["merge_authorized"])
             self.assertIsNone(result["methods"]["rolling_n_plus_2_forecast"])
 

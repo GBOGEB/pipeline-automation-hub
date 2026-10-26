@@ -1,0 +1,118 @@
+{
+  "schema": "jade.temple.j09_codex_main.v1",
+  "bd_item": "J09",
+  "observed_at": "2026-10-25, one GitHub API read at CODEX head cb3b0d26",
+  "authority_transfer": false,
+  "merge_admission": "HOLD",
+  "observation": {
+    "repo": "GBOGEB/CODEX",
+    "predecessor": {
+      "sha": "843020d9e85b404ac10a94bbc1a1283865d1d57e",
+      "source": "mission-control/jade_temple/data/HEAD_RECENSUS_NPLUS3.json observed_head (pulse N+3, observed 2026-10-18T22:47Z); earlier N+2 head 13ed167963312b897ba7e489bb5a81c80db104f7"
+    },
+    "current": {
+      "sha": "cb3b0d269bcd0ff9e96982cfc8276aa4bc187acf",
+      "commit_date": "2026-10-25T21:02:02Z",
+      "branch": "main"
+    },
+    "main_changed": true,
+    "compare": {
+      "status": "ahead",
+      "ahead_by": 290,
+      "behind_by": 0,
+      "commits": 290,
+      "merged_prs_count": 82,
+      "pr_range": "#1112-#1197 (merge commits)",
+      "files_listed": 300,
+      "files_note": "GitHub compare caps file list at 300; true count may be higher -> grouping is a lower bound",
+      "files_by_topdir": {
+        ".github": 146,
+        "docs": 54,
+        "integrations": 37,
+        "abacus_render_pipeline": 14,
+        "(root)": 10,
+        "delta1_bridge": 10,
+        "governance": 7,
+        "MIP": 4,
+        ".codex": 3,
+        "99_handover": 3,
+        "book_md": 3,
+        "federation": 3,
+        ".claude": 2,
+        "MANIFEST": 2,
+        "GISTAU": 1,
+        "analytics": 1
+      },
+      "prs_titles_file": "prs.json (scratch dir)"
+    },
+    "federation_return": {
+      "verdict": "UNKNOWN for hub-return; only partial evidence",
+      "ran_on_head": [
+        {
+          "name": "Validate Federation",
+          "conclusion": "success",
+          "url": "https://github.com/GBOGEB/CODEX/actions/runs/40233548174"
+        },
+        {
+          "name": "Deploy GitHub Pages (workflow_run)",
+          "conclusion": "success",
+          "url": "https://github.com/GBOGEB/CODEX/actions/runs/40234175346"
+        }
+      ],
+      "no_run_on_head_UNKNOWN": [
+        "creq-federation-ci.yml",
+        "runtime_federation_ci.yml",
+        "qps-w111-dow-return.yml",
+        "qps-debug-federation-consumer.yml",
+        "qps-federated-native-lldb.yml",
+        "leg5-federation-metric-semantics.yml",
+        "missioncontrol-federated-launchpad-browser-qa.yml",
+        "receive_superpipeline_dispatch.yml",
+        "deploy_pipeline.yml",
+        "runtime_convergence_pipeline.yml",
+        "code-purple-rex-control.yml"
+      ],
+      "note": "Validate Federation is a CODEX-side validation; no run proves a return/dispatch to pipeline-automation-hub on this head. #1165 retired repository-dispatch."
+    },
+    "pages": {
+      "api": {
+        "status": "built",
+        "build_type": "workflow",
+        "source": {
+          "branch": "main",
+          "path": "/docs"
+        },
+        "html_url": "https://gbogeb.github.io/CODEX/"
+      },
+      "latest_legacy_build": {
+        "commit": "383ae6e50edb564c4d9cae4f5365fd84ef9d25ad",
+        "updated": "2026-10-21T15:05:04Z",
+        "equals_head": false,
+        "note": "legacy builds API stale for workflow-type pages"
+      },
+      "latest_deployment": {
+        "id": 7319233211,
+        "sha": "cb3b0d269bcd0ff9e96982cfc8276aa4bc187acf",
+        "created": "2026-10-25T21:12:29Z",
+        "status": "success",
+        "equals_head": true
+      },
+      "root_http_status": 200
+    },
+    "native_ci_check_runs": {
+      "total": 53,
+      "success": 50,
+      "skipped": 2,
+      "failure": 1,
+      "failures": [
+        "validate (MissionControl Mycelium CI, step 'Preflight generated-value parity before expensive tests') https://github.com/GBOGEB/CODEX/actions/runs/40233548256"
+      ],
+      "combined_status": "pending, 0 statuses"
+    },
+    "workflow_runs_on_head": {
+      "total": 27,
+      "success": 26,
+      "failure": 1
+    }
+  }
+}

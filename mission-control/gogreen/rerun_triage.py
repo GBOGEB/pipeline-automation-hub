@@ -203,7 +203,7 @@ def emit(receipt, out):
     raw = (json.dumps(receipt, sort_keys=True, indent=2) + "\n").encode("utf-8")
     digest = hashlib.sha256(raw).hexdigest()
     (out / "rerun_receipt.json").write_bytes(raw)
-    (out / "rerun_receipt.sha256").write_text(digest + "\n", encoding="ascii")
+    (out / "rerun_receipt.sha256").write_text(digest + "\n", encoding="ascii", newline="\n")
     return digest
 
 

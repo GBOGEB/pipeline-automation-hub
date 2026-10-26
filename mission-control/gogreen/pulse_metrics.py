@@ -158,7 +158,7 @@ def main():
     p.add_argument('--output',type=Path,required=True)
     args=p.parse_args()
     head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
-    comparison=json.loads(args.baseline.read_text()) if args.baseline else None
+    comparison=json.loads(args.baseline.read_text(encoding="utf-8")) if args.baseline else None
     report=produce(args.coverage_json.read_bytes(),args.unittest_log.read_bytes(),
         args.repository,args.expected_sha,head,args.wave_id,comparison)
     args.output.parent.mkdir(parents=True,exist_ok=True)
@@ -169,7 +169,7 @@ def main():
                         args.unittest_log.name:sha256(args.unittest_log.read_bytes()),
                         args.output.name:sha256(raw)}}
     (args.output.parent/'pulse_manifest.json').write_text(
-        json.dumps(manifest,indent=2,sort_keys=True)+'\n')
+        json.dumps(manifest,indent=2,sort_keys=True)+'\n',encoding="utf-8",newline="\n")
     print(json.dumps({'tests':report['tests'],'coverage':report['coverage']['combined_percent'],
         'comparability':report['comparability'],'merge_authorized':False}))
 

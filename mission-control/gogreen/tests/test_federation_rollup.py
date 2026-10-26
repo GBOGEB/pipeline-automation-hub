@@ -180,7 +180,7 @@ class FederationTests(unittest.TestCase):
             module.emit(fixture(), None, b)
             target = Path(a)
             digest = hashlib.sha256((target / "rollup.json").read_bytes()).hexdigest()
-            m = json.loads((target / "manifest.json").read_text())
+            m = json.loads((target / "manifest.json").read_text(encoding="utf-8"))
             self.assertEqual(digest, m["sha256"]["rollup.json"])
             self.assertEqual((target / "rollup.json").read_bytes(), (Path(b) / "rollup.json").read_bytes())
             self.assertFalse(x["authority_transfer"])
@@ -277,7 +277,7 @@ class FederationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             base = Path(tmp)
             current = base / "current.json"
-            current.write_text(json.dumps(fixture()), encoding="utf8")
+            current.write_text(json.dumps(fixture()), encoding="utf8", newline="\n")
             with mock.patch.object(sys, "argv", ["federation_rollup.py", "--current", str(current), "--output", str(base / "out")]):
                 module.main()
             self.assertTrue((base / "out" / "rollup.json").exists())

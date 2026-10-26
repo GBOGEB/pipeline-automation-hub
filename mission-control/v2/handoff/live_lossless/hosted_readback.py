@@ -110,7 +110,7 @@ def main():
     p.add_argument("--wait",type=float,default=5)
     a=p.parse_args()
     outcome=verify(a.expected_dir,a.base_url,a.repeat,a.attempts,a.wait)
-    a.receipt.write_text(json.dumps(outcome,sort_keys=True,indent=2)+"\n")
+    a.receipt.write_text(json.dumps(outcome,sort_keys=True,indent=2)+"\n",encoding="utf-8",newline="\n")
     print(json.dumps({"status":outcome["state"],"hosted_verified":outcome["hosted_verified"],
                       "matched":outcome["consecutive_full_matches"],
                       "url":outcome["url"]},sort_keys=True))

@@ -85,7 +85,7 @@ class Gate12Tests(unittest.TestCase):
             path = root / gate12.FILES["actions"]
             d = json.loads(path.read_text(encoding="utf-8"))
             d["merge_admission"] = "PASS"
-            path.write_text(json.dumps(d), encoding="utf-8")
+            path.write_text(json.dumps(d), encoding="utf-8", newline="\n")
             with self.assertRaisesRegex(ValueError, "unsafe DoV authority"):
                 gate12.project(root)
         finally:
@@ -98,7 +98,7 @@ class Gate12Tests(unittest.TestCase):
             d = json.loads(path.read_text(encoding="utf-8"))
             target = next(g for g in d["rows"][0]["gates"] if g["status"] == "UNKNOWN")
             target["status"] = "PASS"
-            path.write_text(json.dumps(d), encoding="utf-8")
+            path.write_text(json.dumps(d), encoding="utf-8", newline="\n")
             with self.assertRaisesRegex(ValueError, "misstated evidence totals"):
                 gate12.project(root)
         finally:
@@ -110,7 +110,7 @@ class Gate12Tests(unittest.TestCase):
             path = root / gate12.FILES["roster"]
             d = json.loads(path.read_text(encoding="utf-8"))
             d["repositories"].pop()
-            path.write_text(json.dumps(d), encoding="utf-8")
+            path.write_text(json.dumps(d), encoding="utf-8", newline="\n")
             with self.assertRaisesRegex(ValueError, "Top21 population drift"):
                 gate12.project(root)
         finally:

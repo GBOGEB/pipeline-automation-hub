@@ -14,6 +14,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 SITE=ROOT/'site'
+_pb=importlib.util.spec_from_file_location('jade_private_boundary',ROOT/'tools/private_boundary.py');PB=importlib.util.module_from_spec(_pb);_pb.loader.exec_module(PB)
 SOURCE_FILES=(
  'data/EIGHT_POINT_AUDIT_NPLUS3.json',
  'data/HEAD_RECENSUS_NPLUS3.json',
@@ -30,7 +31,7 @@ def compact(z):
 def builds():
  spec=importlib.util.spec_from_file_location('jade_eight_contract', ROOT/'tools/eight_point_contract.py')
  model=importlib.util.module_from_spec(spec);spec.loader.exec_module(model)
- d=model.projection()
+ d=PB.project(model.projection())
  files={
   'eightpoint.html':(SITE/'eightpoint_template.html').read_bytes(),
   'eightpoint.json':(json.dumps(d,sort_keys=True,indent=2,ensure_ascii=True)+'\n').encode(),

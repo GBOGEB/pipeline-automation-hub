@@ -69,13 +69,13 @@ def emit(report,out):
     raw=(json.dumps(report,sort_keys=True,indent=2)+'\n').encode()
     digest=hashlib.sha256(raw).hexdigest()
     (out/'incremental_pulses.json').write_bytes(raw)
-    (out/'incremental_pulses.sha256').write_text(digest+'\n')
+    (out/'incremental_pulses.sha256').write_text(digest+'\n', encoding="utf-8", newline="\n")
     rows=['# GOGREEN incremental wave census','','| Wave | Observed | Breadth | New cells | Status only |',
           '|---|---:|---:|---:|---:|']
     for p in report['pulses']:
         rows.append(f"| {p['wave']} | {p['observed_cells']}/42 | {p['breadth_pct']:.2f}% | {p['new_cells']} | {p['native_status_only_obs']} |")
     rows+=['','All gains concern historical source-bound metadata cells. No native depth or numerical code coverage gain is inferred.','', 'SHA-256: '+digest, '']
-    (out/'incremental_pulses.md').write_text('\n'.join(rows))
+    (out/'incremental_pulses.md').write_text('\n'.join(rows), encoding="utf-8", newline="\n")
     return digest
 
 def main():
@@ -83,7 +83,7 @@ def main():
     p.add_argument('--g0',type=Path,required=True);p.add_argument('--g1',type=Path,required=True)
     p.add_argument('--g2',type=Path,required=True);p.add_argument('--out',type=Path,required=True)
     a=p.parse_args()
-    d=[json.loads(p.read_text()) for p in (a.g0,a.g1,a.g2)]
+    d=[json.loads(p.read_text(encoding="utf-8")) for p in (a.g0,a.g1,a.g2)]
     result=analyze(*d);emit(result,a.out)
     print(json.dumps({'waves':[p['observed_cells'] for p in result['pulses']], 'source':result['increment']['exact_sha']}))
 

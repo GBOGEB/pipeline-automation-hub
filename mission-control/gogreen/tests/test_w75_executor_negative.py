@@ -19,10 +19,10 @@ class W75ExecutorNegatives(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         samples = ROOT / "samples"
-        cls.plan = json.loads((samples / "execution_plan_pilot_v1.json").read_text())
-        cls.taskset = json.loads((samples / "task_bindings_pilot_v1.json").read_text())
-        cls.policy = json.loads((samples / "execution_policy_pilot_v1.json").read_text())
-        cls.atlas = json.loads((ROOT.parent / "federation-atlas" / "PROCESS_LANES_v1.json").read_text())
+        cls.plan = json.loads((samples / "execution_plan_pilot_v1.json").read_text(encoding="utf-8"))
+        cls.taskset = json.loads((samples / "task_bindings_pilot_v1.json").read_text(encoding="utf-8"))
+        cls.policy = json.loads((samples / "execution_policy_pilot_v1.json").read_text(encoding="utf-8"))
+        cls.atlas = json.loads((ROOT.parent / "federation-atlas" / "PROCESS_LANES_v1.json").read_text(encoding="utf-8"))
 
     def check(self, *, policy=None, tasks=None, plan=None, sha=SHA):
         return MOD.validate_input(plan if plan is not None else copy.deepcopy(self.plan),

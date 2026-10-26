@@ -1,0 +1,346 @@
+{
+  "actions": [
+    {
+      "depends_on": [],
+      "done_when": "PR merged to master with CP.CLOSE GitHub Handover QA green at the exact head and a master readback of the merge SHA.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/closeout/README.md"
+      ],
+      "id": "SC-A001",
+      "owner": "Claude Code session (this record's PR)",
+      "priority": "P0",
+      "state": "IN_PR",
+      "summary": "Commit the H1 checkpoint and the R1 pulse rows through the canonical CP.CLOSE generator, with QPS identifiers aggregate-only."
+    },
+    {
+      "depends_on": [],
+      "done_when": "Owner confirms in the ChatGPT scheduler that the task is disabled.",
+      "evidence_urls": [],
+      "id": "SC-A002",
+      "owner": "Retiring ChatGPT session",
+      "priority": "P2",
+      "state": "DONE",
+      "summary": "Disable the ChatGPT scheduled task 'CODE PURPLE QPS Unlock Watch' (last run 2026-10-25T22:43:47Z). Reported by the retiring session only; not verifiable from GitHub. BREAD & BUTTER QPS Burndown and CODE PURPLE Scaled Convergence were left enabled."
+    },
+    {
+      "depends_on": [],
+      "done_when": "A scheduled code-purple-live-census run at current master passes step 4 with no HTTP 401 and uploads a source-bound graph artifact.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40244674158",
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/843"
+      ],
+      "id": "SC-A003",
+      "owner": "Repository owner (GBOGEB)",
+      "priority": "P0",
+      "state": "HOLD",
+      "summary": "Replace or re-scope CROSS_REPO_READ_TOKEN so the CODE PURPLE Disjoint Live Census can read ABACUS. One root (ROOT-HUB-ABACUS-401), at least 13 known occurrences, latest run 40244674158 job 121323610711 at 2026-10-25T23:25:09Z."
+    },
+    {
+      "depends_on": [],
+      "done_when": "One CPQ item exists for the 401 root; later failures append occurrences and never add items.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json"
+      ],
+      "id": "SC-A004",
+      "owner": "CODE PURPLE BD queue owner",
+      "priority": "P1",
+      "state": "TODO",
+      "summary": "Register the census HTTP 401 family as one canonical BD root with an occurrence history; no CPQ item currently names it."
+    },
+    {
+      "depends_on": [],
+      "done_when": "A native QPS owner acceptance or blockage receipt names the affected QPS child requirement.",
+      "evidence_urls": [],
+      "id": "SC-A005",
+      "owner": "QPS engineering owner / SPOC",
+      "priority": "P0",
+      "state": "HOLD",
+      "summary": "Decide, in the QPS repository, whether the DELTA_1 consumer and the W163 namespace recovery count as accepted. Parent repositories and this hub cannot decide it."
+    },
+    {
+      "depends_on": [
+        "SC-A001"
+      ],
+      "done_when": "Replaying R1 and the 48-hour ledger yields zero alerts, one 401 root with many occurrences, and no unlock without a named QPS child.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/876"
+      ],
+      "id": "SC-A006",
+      "owner": "Next CODE PURPLE method session",
+      "priority": "P1",
+      "state": "TODO",
+      "summary": "Implement the event reducer in H2 MIP-01..06 (observation/delta ledger, canonical root registry, typed QPS consumer graph, admission veto, matched coverage comparator, idempotent alerts) against the backlog in PR #876, replaying the 48-hour ledger as fixtures."
+    },
+    {
+      "depends_on": [],
+      "done_when": "A required_status_checks rule exists on ABACUS main and a deliberately red canary is blocked from merging.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/ABACUS/pull/2470",
+        "https://github.com/GBOGEB/ABACUS/issues/1860"
+      ],
+      "id": "SC-A007",
+      "owner": "Repository owner (GBOGEB)",
+      "priority": "P1",
+      "state": "HOLD",
+      "summary": "Make ABACUS main enforce required status checks so the RED canary is platform-rejected rather than UNSTABLE."
+    },
+    {
+      "depends_on": [
+        "SC-A001"
+      ],
+      "done_when": "A fresh session reproduces R1 heads and roots, or records each difference as a new dated delta.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/CP_HANDOFF_RESUME_V1.json"
+      ],
+      "id": "SC-A008",
+      "owner": "Next CP.RESUME session",
+      "priority": "P2",
+      "state": "TODO",
+      "summary": "Run the restart contract once from a fresh session and confirm its reads match R1; this is the last retirement condition for the old chat."
+    },
+    {
+      "depends_on": [],
+      "done_when": "Each remaining scheduled task has a recorded keep/retire decision.",
+      "evidence_urls": [],
+      "id": "SC-A009",
+      "owner": "Owner (GBOGEB)",
+      "priority": "P3",
+      "state": "TODO",
+      "summary": "Review overlap of CODE PURPLE Scaled Convergence and Mission Control CI Gate scheduled tasks with BREAD & BUTTER; retire nothing without owner decision."
+    }
+  ],
+  "decisions": [
+    {
+      "disposition": "REUSE_EXISTING_CP_CLOSE",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/CHAT_CLOSEOUT_OPERATOR_V1.md",
+      "name": "Canonical handover producer",
+      "rationale": "CHAT_CLOSEOUT_OPERATOR_V1 names cp_close.py as the only session renderer; the nine flat CODE_PURPLE_QPS_* files proposed in H1 section 3.7 would be a second receipt pipeline."
+    },
+    {
+      "disposition": "LINK_NOT_DUPLICATE",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/876",
+      "name": "Relationship to PR #876",
+      "rationale": "PR #876 preserves the separate Federated MIP Pulse watch and owns MIP-01..15; this record maps H2 MIP IDs onto it and copies no rows."
+    },
+    {
+      "disposition": "AGGREGATE_ONLY",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/jade_temple/tools/private_boundary.py",
+      "name": "Private repository boundary",
+      "rationale": "cryoplant-project is private and this hub is public; its SHAs, run, job, PR and issue numbers are replaced by PRIVATE_AGGREGATE_ONLY."
+    },
+    {
+      "disposition": "SILENT",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40244674158",
+      "name": "R1 alert disposition",
+      "rationale": "No alert class A-D qualified at 2026-10-26T00:45Z: no governed parent admission, no matched coverage gain, no changed parent root affecting a named QPS child, no authenticated census milestone."
+    }
+  ],
+  "insights": [
+    {
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/876",
+      "implication": "H1's 'canonicalization remained RED after DELTA_1 merged' must not be read as DELTA_1 causing it; the recovery earns no credit; PR #876 ledger row 7 (fix unmerged) is now stale.",
+      "observation": "QPS canonicalization was green at the DELTA_1 consumer merge; the W163 namespace red began at a later QPS merge and cleared on QPS main after a source-gate rename that merged with no review at its head."
+    },
+    {
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40244674158",
+      "implication": "Count it as an occurrence of one open root; it is not new work and not a new alert.",
+      "observation": "The census HTTP 401 recurred once more after the checkpoint with the identical fingerprint (step 4 exit 2, http_status 401, repository ABACUS)."
+    },
+    {
+      "evidence_url": "https://github.com/GBOGEB/ABACUS/pull/2441",
+      "implication": "Software integration advanced without governed admission; never convert it into QPS support credit.",
+      "observation": "The DELTA_1 parent adapters ABACUS #2441 and CODEX #1192 merged while their PR-head A10 and governance lanes were red."
+    },
+    {
+      "evidence_url": "https://github.com/GBOGEB/ABACUS/pull/2468",
+      "implication": "Parent reds without a named QPS consumer stay out of the QPS alert stream.",
+      "observation": "ABACUS main moved to 6ebebbc2 via #2468 and #2469; 88 non-cancelled terminal push runs there, 5 failed; 32 cancelled runs are all a superseded PR Feedback Gate Evaluator."
+    }
+  ],
+  "intents": [
+    {
+      "actions": [
+        "SC-A001",
+        "SC-A002"
+      ],
+      "id": "SC-I001",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "summary": "Retire the hourly CODE PURPLE QPS Unlock Watch and preserve its H1 operational handover in the repository rather than in chat."
+    },
+    {
+      "actions": [
+        "SC-A003",
+        "SC-A008"
+      ],
+      "id": "SC-I002",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_EXPLICIT_INTAKE",
+      "summary": "Resume as an event-gated, read-only CP.RESUME V2 that verifies the 2026-10-25 ~22:42 UTC checkpoint against live GitHub and stays silent unless one of four alert classes qualifies."
+    },
+    {
+      "actions": [
+        "SC-A006",
+        "SC-A004"
+      ],
+      "id": "SC-I003",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "summary": "Promote the H2 method learnings (MIP/REX) into durable repository method, reusing the backlog PR #876 already carries instead of a second list."
+    },
+    {
+      "actions": [
+        "SC-A005",
+        "SC-A007"
+      ],
+      "id": "SC-I004",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "SOURCE_BOUND_REFERENCE",
+      "summary": "Keep QPS engineering authority with the QPS owner: parent merges, green parent CI or a QPS ordinary merge never become QPS acceptance or burn-down credit."
+    },
+    {
+      "actions": [
+        "SC-A009"
+      ],
+      "id": "SC-I005",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "summary": "Assess overlap of the remaining scheduled CODE PURPLE tasks without disturbing BREAD & BUTTER."
+    }
+  ],
+  "issues": [
+    {
+      "owner_lane": "ABACUS_MERGE_ADMISSION",
+      "state": "SOURCE_ISSUE_READBACK_OPEN",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1860"
+    },
+    {
+      "owner_lane": "ABACUS_BD_LDAB_ROOT_CENSUS",
+      "state": "SOURCE_ISSUE_READBACK_OPEN",
+      "url": "https://github.com/GBOGEB/ABACUS/issues/1929"
+    },
+    {
+      "owner_lane": "CODEX_MISSIONCONTROL_EXECUTION_PROMOTION",
+      "state": "SOURCE_ISSUE_READBACK_OPEN",
+      "url": "https://github.com/GBOGEB/CODEX/issues/977"
+    }
+  ],
+  "metrics": [
+    {
+      "denominator": null,
+      "evidence_class": "UNKNOWN_NOT_ZERO",
+      "metric": "QPS_CROSS_REPO_ACCEPTED_UNLOCKS",
+      "numerator": null,
+      "population": "Parent-to-QPS transitions with a named QPS child and owner receipt, 2026-10-23T23:56Z..2026-10-26T00:45Z; none established, denominator undefined",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/pull/876",
+      "unit": "ACCEPTED_TRANSITIONS"
+    },
+    {
+      "denominator": 60,
+      "evidence_class": "HISTORICAL_CHAT_REPORTED",
+      "metric": "JADE_READINESS_P0002_PASS",
+      "numerator": 17,
+      "population": "P0002 readiness snapshot as reported by the retiring chat (P0001 was 14/60); no member-level crosswalk, not a matched cohort",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/pull/848",
+      "unit": "OBSERVATIONS"
+    },
+    {
+      "denominator": 88,
+      "evidence_class": "CURRENT_GITHUB_API",
+      "metric": "ABACUS_MAIN_PUSH_RUNS_FAILED",
+      "numerator": 5,
+      "population": "All workflow runs at ABACUS main 6ebebbc2aee8c400ecec7a8b9ee76fff80153c17 read 2026-10-26T00:55Z; 32 cancelled runs excluded",
+      "source": "https://github.com/GBOGEB/ABACUS/pull/2468",
+      "unit": "NON_CANCELLED_TERMINAL_RUNS"
+    },
+    {
+      "denominator": 42,
+      "evidence_class": "CURRENT_GITHUB_API",
+      "metric": "CENSUS_FRESH_AUTHENTICATED_BREADTH",
+      "numerator": 0,
+      "population": "Disjoint Live Census cells as recorded by PR #876 N0; unchanged at R1",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/pull/876",
+      "unit": "CELLS"
+    }
+  ],
+  "prs": [
+    {
+      "admission": "HOLD",
+      "head_sha": "1a73121314690643c586ea51237d894ec98e347b",
+      "merge_sha": "635980c54b1a7759312e8a9a7def1498c80d0644",
+      "number": 2441,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2441"
+    },
+    {
+      "admission": "HOLD",
+      "head_sha": "e6ae244a0f69b54501bafe6db67333163baa54f1",
+      "merge_sha": "0bc810fbb74847b40a477f474f8c76bd8037032c",
+      "number": 1192,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/CODEX/pull/1192"
+    },
+    {
+      "admission": "HOLD",
+      "head_sha": "aa7ee3a9bae0e89d611eda54fc770b15781d4e78",
+      "merge_sha": "6ebebbc2aee8c400ecec7a8b9ee76fff80153c17",
+      "number": 2468,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2468"
+    },
+    {
+      "admission": "HOLD",
+      "head_sha": "eea98a7c18376ac0d4e9914cec18f3e1c177e61e",
+      "merge_sha": "c6bd590b8d7d9b06f92cd746a4a5fb07c62b415a",
+      "number": 2469,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2469"
+    },
+    {
+      "admission": "HOLD",
+      "head_sha": "ae482b3e0f871a1f8e6b429e2d80f907ea18e1d3",
+      "merge_sha": null,
+      "number": 2470,
+      "state": "OPEN",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2470"
+    },
+    {
+      "admission": "HOLD",
+      "head_sha": "787ab6255b0519a5fa0e2f837e95cf28a12bea18",
+      "merge_sha": null,
+      "number": 843,
+      "state": "OPEN",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/843"
+    },
+    {
+      "admission": "HOLD",
+      "head_sha": "c3b1e4459560a975108769ae67ebf71a448c448c",
+      "merge_sha": "313a2009c1be5844bfe6a7c634e7162207885ef9",
+      "number": 848,
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/848"
+    },
+    {
+      "admission": "HOLD",
+      "head_sha": "3b21d162b7a047c3a354d21120c53ce80e0629af",
+      "merge_sha": null,
+      "number": 849,
+      "state": "OPEN",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/849"
+    },
+    {
+      "admission": "HOLD",
+      "head_sha": "bc91a9bc8089e3d347e55ad10aafc5060d1b5dda",
+      "merge_sha": null,
+      "number": 876,
+      "state": "OPEN",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/876"
+    }
+  ],
+  "schema": "missioncontrol.cp_close.semantic_ledger.v1"
+}
