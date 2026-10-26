@@ -225,7 +225,7 @@ def main(argv=None):
     payload = json.dumps(result, ensure_ascii=False, sort_keys=True, indent=2) + "\n"
     if opts.out:
         opts.out.parent.mkdir(parents=True, exist_ok=True)
-        opts.out.write_text(payload, encoding="utf-8")
+        opts.out.write_text(payload, encoding="utf-8", newline="\n")
     else:
         print(payload, end="")
     return 0
