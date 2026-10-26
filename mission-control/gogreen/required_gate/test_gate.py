@@ -406,7 +406,7 @@ class DecidingRunLink(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             root = mini_repo(d, wf)
             (root / g.ADMISSION).parent.mkdir(parents=True)
-            (root / g.ADMISSION).write_text(json.dumps(ledger), encoding="utf-8")
+            (root / g.ADMISSION).write_text(json.dumps(ledger), encoding="utf-8", newline="\n")
             out, summ = root / "rep.json", root / "summary.md"
             buf = io.StringIO()
             with mock.patch("urllib.request.urlopen", fake.opener), \
