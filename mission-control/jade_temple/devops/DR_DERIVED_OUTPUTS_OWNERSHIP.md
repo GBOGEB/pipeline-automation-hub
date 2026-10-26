@@ -1,7 +1,7 @@
 # DR: who owns derived outputs, and what a function pin hashes
 
 Status: **PROPOSED**. This is an owner decision. D and E are decided separately. Nothing in this record changes behaviour until it is accepted.
-Context: *Derived Outputs Architecture* plan, phase P3; roll-up in [DERIVED_OUTPUTS_ROLLUP.md](DERIVED_OUTPUTS_ROLLUP.md).
+Context: *Derived Outputs Architecture* plan, phase P3. The TODO, REX and phase owners are tracked in issue #870, which is the one roll-up; this file is only the decision.
 
 ## Context
 
@@ -60,6 +60,16 @@ pins where they disagree.
 - Python-only. Other pinned files keep blob OIDs.
 
 **Accept when:** the owner agrees that an AST hash is admissible source-bound evidence for function pins.
+
+## Proof and rollback (both decisions)
+
+- **Negative controls before activation.** Each control runs on a PR and must produce the stated outcome:
+  - a hand edit to a generated output: red;
+  - a generator change without its output: red;
+  - an unrelated PR on a stale master: green, with a "master will refresh" note;
+  - a comment-only edit to a pinned function: no drift under E, drift under the old OID.
+- **F1 byte provenance stays.** Every view keeps its source blob OIDs and sha256. E adds a field; it removes none.
+- **Rollback.** Revert the activating PR. The byte-equality PR check and whole-file pins are the fallback and stay in the code until one release after activation.
 
 ## Options not taken
 
