@@ -1,0 +1,114 @@
+{
+  "schema": "codepurple.watch.n2.1-exact-head-receipts/v1",
+  "observation_date_utc": "2026-10-26",
+  "authority": "PUBLIC_NATIVE_GITHUB_READBACK_NO_RELEASE_CREDIT",
+  "previous": "STATE_N2.json",
+  "immutable_append_not_rewrite": true,
+  "receipts": [
+    {
+      "pr": 891,
+      "lane": "SIGNED_QPS_EDGE_SECURITY_CANDIDATE",
+      "head": "5cd77c75ebe68ed4dd90e4fe0a3606d2540d4b46",
+      "base": "code-purple/watch-vnext-qps-edge-20261026",
+      "test_count_per_full_g4_job": 671,
+      "full_g4_jobs": [
+        121355200486,
+        121355200014
+      ],
+      "full_g4_run_ids": [
+        40255120761,
+        40255120717
+      ],
+      "packet_tests": 16,
+      "first_pass_proof_run": 40255120825,
+      "pr_body_proof_written": true,
+      "code_review": "RE_REQUESTED_PENDING",
+      "admission": "HOLD"
+    },
+    {
+      "pr": 893,
+      "lane": "READ_ONLY_FLIGHTDECK_AFTER_CODEX_P2_FIX",
+      "head": "4d0516ae89d5d67aeccbb2a6e9252c3a1c7e4a0c",
+      "static_tests": 10,
+      "browser_viewports": [
+        {
+          "name": "desktop",
+          "width": 1440,
+          "height": 1000
+        },
+        {
+          "name": "laptop",
+          "width": 1280,
+          "height": 800
+        },
+        {
+          "name": "mobile",
+          "width": 390,
+          "height": 844
+        }
+      ],
+      "browser_job": 121354830678,
+      "browser_run": 40254997078,
+      "browser_state": "PASS_ZERO_ERRORS_OVERFLOW_BROKEN_IMAGES",
+      "html_sha256": "57963c17da0e01f3e53ad5396bade24ef1f3cc2265e10ad40c961358edd17dec",
+      "first_pass_proof_run": 40254997126,
+      "pr_body_proof_written": true,
+      "review": "CURRENT_HEAD_CODEX_NOT_CLEAN_OR_COMPLETED",
+      "last_first_pass_gate_failure": "CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD",
+      "hosted_parity": "DEFER",
+      "manual_visual_review": "PENDING",
+      "admission": "HOLD"
+    },
+    {
+      "pr": 894,
+      "lane": "RESTART_SAFE_CURSOR_LOCK",
+      "head": "bf1cf0b07059b56e1527daf8036ee09e3aa7c722",
+      "base": "code-purple/watch-vnext-transition-control-20261026",
+      "full_g4_jobs": [
+        121354015394,
+        121354015405
+      ],
+      "full_g4_run_ids": [
+        40254726357,
+        40254726395
+      ],
+      "test_count_per_g4_job": 626,
+      "packet_tests": 16,
+      "exact_head_success": true,
+      "first_pass_for_master": "NOT_ELIGIBLE_STACKED",
+      "independent_review": "MISSING",
+      "admission": "HOLD"
+    },
+    {
+      "pr": 881,
+      "lane": "TRANSITION_CONSUMER",
+      "head": "cbbeaa3d1bd4f6504a214872e47006f8dd7b9f85",
+      "fpc_proof_run": 40253607766,
+      "pr_body_proof_written": true,
+      "code_review": "RE_REQUESTED_EXACT_HEAD",
+      "admission": "HOLD"
+    },
+    {
+      "pr": 882,
+      "lane": "PUBLIC_FEED",
+      "head": "3cd3216172ff37bf38d8da36abd3784c2266b2b8",
+      "fpc_proof_run": 40253858524,
+      "pr_body_proof_written": true,
+      "code_review": "RE_REQUESTED_EXACT_HEAD",
+      "admission": "HOLD"
+    }
+  ],
+  "remaining_system_blockers": [
+    "effective_required_status_check_enforcement_off_on_master",
+    "independent_human_reviewer_not_proven",
+    "fresh_authenticated_42_cell_531_producer_UNKNOWN",
+    "token_census_ACTION_REQUIRED_9_LANES",
+    "qps_private_owner_acceptance_WITHHELD",
+    "Pages_hosted_SHA_parity_NOT_PROVEN"
+  ],
+  "causal_closure_new": 0,
+  "formal_engineering_credit_delta": 0,
+  "security_waiver": "NONE",
+  "merge_admission": "HOLD",
+  "future_currentness": "REFRESH_REQUIRED"
+}

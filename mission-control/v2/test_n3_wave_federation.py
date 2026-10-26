@@ -22,7 +22,7 @@ class Tags(HTMLParser):
 
 
 class WaveFederationTests(unittest.TestCase):
-    def setUp(self):self.ledgers=[json.loads(p.read_text()) for p in FILES]
+    def setUp(self):self.ledgers=[json.loads(p.read_text(encoding="utf-8")) for p in FILES]
     def graph(self):return fed.compile_waves(self.ledgers)
 
     def test_structural_counts_and_gap(self):
@@ -108,10 +108,10 @@ class WaveFederationTests(unittest.TestCase):
             out=Path(t)/'artifacts'
             with patch.object(sys,'argv',['n3_wave_federation.py','--ledgers',*(str(p) for p in FILES),'--out-dir',str(out)]):
                 fed.main()
-            j=json.loads((out/'g3p-lineage.json').read_text())
+            j=json.loads((out/'g3p-lineage.json').read_text(encoding="utf-8"))
             self.assertEqual(j['metrics']['pulses'],6)
-            self.assertIn('-.->',(out/'g3p-lineage.mmd').read_text())
-            self.assertIn('UNKNOWN',(out/'g3p-lineage.html').read_text())
+            self.assertIn('-.->',(out/'g3p-lineage.mmd').read_text(encoding="utf-8"))
+            self.assertIn('UNKNOWN',(out/'g3p-lineage.html').read_text(encoding="utf-8"))
 
 
 if __name__=='__main__':unittest.main()

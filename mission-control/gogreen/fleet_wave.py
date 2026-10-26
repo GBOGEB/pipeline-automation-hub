@@ -117,10 +117,10 @@ def main():
     ap.add_argument('--pulse',default='G4-P0')
     ap.add_argument('--out',required=True,type=Path)
     x=ap.parse_args()
-    data=lambda p: json.loads(p.read_text()) if p else None
+    data=lambda p: json.loads(p.read_text(encoding="utf-8")) if p else None
     obj=rollup(data(x.intake),data(x.scout),x.pulse,data(x.baseline))
     x.out.parent.mkdir(parents=True,exist_ok=True)
-    x.out.write_text(json.dumps(obj,sort_keys=True,indent=2)+'\n')
+    x.out.write_text(json.dumps(obj,sort_keys=True,indent=2)+'\n',encoding="utf-8",newline="\n")
     print(canonical({'pulse':x.pulse,'metrics':obj['metrics'],'admission':'HOLD'}))
 
 if __name__=='__main__':main()

@@ -173,9 +173,9 @@ class RunIScoutTests(unittest.TestCase):
             digest = m.emit(report, Path(temp))
             raw = (Path(temp) / "scout_run.json").read_bytes()
             self.assertEqual(digest, hashlib.sha256(raw).hexdigest())
-            self.assertEqual((Path(temp) / "scout_run.sha256").read_text().strip(),
+            self.assertEqual((Path(temp) / "scout_run.sha256").read_text(encoding="utf-8").strip(),
                              digest)
-            self.assertIn("21 | 23", (Path(temp) / "scout_run.md").read_text())
+            self.assertIn("21 | 23", (Path(temp) / "scout_run.md").read_text(encoding="utf-8"))
 
     def test_terminal_status_claims_remain_metadata_only(self):
         doc = sample()

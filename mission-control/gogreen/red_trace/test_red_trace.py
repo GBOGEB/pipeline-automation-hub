@@ -128,9 +128,9 @@ class Pins(unittest.TestCase):
     def test_detects_pinned_run_and_artifact(self):
         with tempfile.TemporaryDirectory() as d:
             f = Path(d) / "w.yml"
-            f.write_text("curl $api/actions/runs/35171901674\n a=next(x for x in arts if x['id']==10476967287)\n")
+            f.write_text("curl $api/actions/runs/35171901674\n a=next(x for x in arts if x['id']==10476967287)\n", encoding="utf-8", newline="\n")
             self.assertEqual(t.pins(f), ["10476967287", "35171901674"])
-            f.write_text("run: echo ok\n")
+            f.write_text("run: echo ok\n", encoding="utf-8", newline="\n")
             self.assertEqual(t.pins(f), [])
             self.assertEqual(t.pins(Path(d) / "missing.yml"), [])
 
@@ -181,7 +181,7 @@ class ReaderGuard(unittest.TestCase):
     def test_token_not_in_outputs(self):
         with tempfile.TemporaryDirectory() as d:
             src = Path(d) / "runs.json"
-            src.write_text(json.dumps([run("a.yml", 1, "success", 1)]))
+            src.write_text(json.dumps([run("a.yml", 1, "success", 1)]), encoding="utf-8", newline="\n")
             import os
             old = os.environ.get("GITHUB_TOKEN")
             os.environ["GITHUB_TOKEN"] = "ghs_SECRETVALUE"
@@ -190,7 +190,7 @@ class ReaderGuard(unittest.TestCase):
             finally:
                 os.environ.pop("GITHUB_TOKEN") if old is None else os.environ.__setitem__("GITHUB_TOKEN", old)
             for f in ("red_trace.json", "red_trace.md"):
-                self.assertNotIn("SECRETVALUE", (Path(d) / f).read_text())
+                self.assertNotIn("SECRETVALUE", (Path(d) / f).read_text(encoding="utf-8"))
 
 
 class Nondeterminism(unittest.TestCase):

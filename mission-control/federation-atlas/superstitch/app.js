@@ -13,7 +13,7 @@ const E=(tag,text,cls)=>{const v=document.createElement(tag);if(text!==undefined
 const div=(parent,text,cls)=>{const v=E('div',text,cls);parent.appendChild(v);return v};
 const add=(parent,tag,text,cls)=>{const v=E(tag,text,cls);parent.appendChild(v);return v};
 const unknown=v=>v===null||v===undefined?'UNKNOWN':String(v);
-function referenceUrl(s){if(!s||s.classification.startsWith('PRIVATE_'))return null;return `https://github.com/${s.repo}/blob/${s.head}/${s.path}`;}
+function referenceUrl(s){if(!s||s.classification.startsWith('PRIVATE_'))return null;const seg=v=>String(v??'').split('/').map(encodeURIComponent).join('/');return `https://github.com/${seg(s.repo)}/blob/${encodeURIComponent(s.head)}/${seg(s.path)}`;}
 function focusNode(id){
   const n=svg.querySelector(`[data-node="${id}"]`);
   if(!n)return;

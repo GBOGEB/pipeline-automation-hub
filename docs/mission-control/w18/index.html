@@ -193,10 +193,16 @@ const add = (p, ...kids) => { kids.flat().filter(Boolean).forEach(x => p.append(
 const whole = (n) => new Intl.NumberFormat('en-US').format(n);
 const unknown = (v, suffix='') => v === null || v === undefined ? 'UNKNOWN' : String(v) + suffix;
 const pct = (n,d) => (n === null || d === null || !d) ? 'UNKNOWN' : (100*n/d).toFixed(2) + '%';
+// Only GBOGEB GitHub URLs from the frozen master become links; encodeURI re-encodes markup metacharacters.
+const githubHref = (url) => {
+  if (typeof url!=='string' || !/^https:\/\/github\.com\/GBOGEB\/[A-Za-z0-9_.\-/]+(?:[?#][^\s]*)?$/.test(url)) return null;
+  try { return encodeURI(decodeURI(url)); } catch (_error) { return null; }
+};
 const link = (url, label) => {
   const a = E('a','source-link',label || 'Evidence');
-  if (typeof url==='string' && /^https:\/\/github\.com\/GBOGEB\/[A-Za-z0-9_.\-/]+(?:[?#][^\s]*)?$/.test(url)) {
-    a.href=url; a.target='_blank'; a.rel='noopener noreferrer';
+  const href = githubHref(url);
+  if (href) {
+    a.href=href; a.target='_blank'; a.rel='noopener noreferrer';
   } else { a.textContent='SOURCE UNAVAILABLE'; }
   return a;
 };
@@ -288,7 +294,7 @@ function overview() {
         add(E('a','action-link','Open global BD register — 8 actionable leaves ↗')),
         add(E('a','source-link','Open canonical global issue #153 ↗'))));
   const leaf=p.querySelector('.evidence-actions .action-link');leaf.href='cards.html#bd-register';
-  const origin=p.querySelector('.evidence-actions .source-link');origin.href=M.authorities.global_issue_controller;origin.target='_blank';origin.rel='noopener noreferrer';
+  const origin=p.querySelector('.evidence-actions .source-link');const originHref=githubHref(M.authorities.global_issue_controller);if(originHref){origin.href=originHref;origin.target='_blank';origin.rel='noopener noreferrer';}
   const jump=E('button','jump-bd','Jump to BD queue here');jump.type='button';
   jump.onclick=()=>{location.hash='bd@bd-register';};p.querySelector('.evidence-actions').append(jump);
   root.append(p);
@@ -429,7 +435,9 @@ function lineage() {
   root.append(q);return root;
 }
 function pageInit() {
-  const views={overview,dod,dov,bd,recursiveFocus,telemetry,lineage};
+  // Explicit allow-list: route names from location.hash never index an object or its prototype.
+  const views=new Map(Object.entries({overview,dod,dov,bd,recursiveFocus,telemetry,lineage}));
+  const isView=id=>typeof id==='string'&&views.has(id)&&typeof views.get(id)==='function';
   const holder=$('content');
   const nav=$('view-nav');
   Object.entries({overview:'Overview',dod:'Session DOD',dov:'Global DOV',bd:'BD queue',recursiveFocus:'Recursive TODO',telemetry:'Telemetry',lineage:'Master lineage'}).forEach(([id,label])=>{
@@ -437,11 +445,12 @@ function pageInit() {
     nav.append(b);
   });
   function activate(id,focus) {
-    const current=views[id]?id:'overview';
+    const current=isView(id)?id:'overview';
     activeView=current;
     const button=nav.querySelector('button[data-view="'+current+'"]');
     nav.querySelectorAll('button').forEach(x=>x.setAttribute('aria-selected',String(x===button)));
-    holder.replaceChildren(views[current]());
+    const renderView=views.get(current);
+    holder.replaceChildren(renderView());
     if(current==='overview')loadOptionalPlotly();
     if(focus)requestAnimationFrame(()=>{
       const target=[...holder.querySelectorAll('[data-location-key]')].find(x=>x.dataset.locationKey===focus);
@@ -453,7 +462,7 @@ function pageInit() {
     const at=hash.indexOf('@');
     const view=at>=0?hash.slice(0,at):hash;
     const focus=at>=0?hash.slice(at+1):null;
-    activate(views[view]?view:'overview',focus);
+    activate(isView(view)?view:'overview',focus);
   }
   nav.addEventListener('click',ev=>{
     const b=ev.target.closest('button[data-view]');if(!b)return;

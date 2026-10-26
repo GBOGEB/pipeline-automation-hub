@@ -30,10 +30,10 @@ g9mod=m.import_source(ROOT/"outcome_convergence/outcome_flight.py","g9_under_tes
 
 class ConvergenceNative(unittest.TestCase):
     def setUp(self):
-        self.g7=json.loads(G7.read_text())
-        self.g9=json.loads(G9.read_text())
-        self.g10=json.loads(G10.read_text())
-        self.registry=json.loads(REGISTRY.read_text())
+        self.g7=json.loads(G7.read_text(encoding="utf-8"))
+        self.g9=json.loads(G9.read_text(encoding="utf-8"))
+        self.g10=json.loads(G10.read_text(encoding="utf-8"))
+        self.registry=json.loads(REGISTRY.read_text(encoding="utf-8"))
 
     def joined(self):
         return m.join(self.g7,self.registry,self.g9,self.g10,g7mod,g9mod)

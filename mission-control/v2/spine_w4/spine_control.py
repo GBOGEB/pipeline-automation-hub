@@ -232,7 +232,7 @@ def build(d, out:Path):
     manifest={"schema":"missioncontrol.spine.w4.artifact_manifest.v1",
               "source_sha":receipt["source_sha"],"gate":"HOLD",
               "artifacts_sha256":{k:hashlib.sha256(v).hexdigest() for k,v in sorted(artifacts.items())}}
-    (out/"manifest.json").write_text(json.dumps(manifest,indent=2,sort_keys=True)+"\n")
+    (out/"manifest.json").write_text(json.dumps(manifest,indent=2,sort_keys=True)+"\n",encoding="utf-8",newline="\n")
     return manifest
 
 

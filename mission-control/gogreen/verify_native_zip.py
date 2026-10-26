@@ -62,7 +62,18 @@ def verify(archive: bytes, binding: dict) -> dict:
                 raise ValueError("ZIP expansion budget exceeded")
         data = {name: z.read(name) for name in names}  # z.read checks each member CRC
     member_sha256 = {name: sha256(data[name]) for name in sorted(names)}
-    manifest = json.loads(data["manifest.json"])
+
+    def json_object_member(name: str) -> dict:
+        """Semantic qualification is independent of ZIP digest and member CRC."""
+        try:
+            value = json.loads(data[name].decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise ValueError(f"malformed JSON member: {name}") from exc
+        if type(value) is not dict:
+            raise ValueError(f"JSON member is not an object: {name}")
+        return value
+
+    manifest = json_object_member("manifest.json")
     if manifest.get("schema") != "gogreen.manifest.v1" or manifest.get("authority_transfer") is not False:
         raise ValueError("invalid inner manifest contract")
     digests = manifest.get("sha256")
@@ -72,7 +83,7 @@ def verify(archive: bytes, binding: dict) -> dict:
     for name, expected in digests.items():
         if not isinstance(expected, str) or not DIGEST.fullmatch(expected) or sha256(data[name]) != expected:
             raise ValueError(f"inner byte digest mismatch: {name}")
-    provenance = json.loads(data["execution_provenance.json"])
+    provenance = json_object_member("execution_provenance.json")
     if provenance.get("schema") != "gogreen.execution-provenance.v1" or any([
             provenance.get("repository") != binding["repository"],
             provenance.get("checked_out_sha") != binding["source_sha"],
@@ -84,8 +95,19 @@ def verify(archive: bytes, binding: dict) -> dict:
             provenance.get("execution_proof") != "EXACT_CHECKOUT_CONFIRMED",
         ]):
         raise ValueError("forged or mismatched execution provenance")
-    evidence = json.loads(data["evidence.json"])
-    hooks = json.loads(data["federation_hooks.json"])
+    evidence = json_object_member("evidence.json")
+    hooks = json_object_member("federation_hooks.json")
+    scout = json_object_member("scout_packets.json")
+    # Optional producer/source annotations cannot contradict the authenticated
+    # caller's binding. Missing annotations are not evidence of authentication.
+    for member_name, member in (("evidence.json", evidence),
+                                ("federation_hooks.json", hooks),
+                                ("scout_packets.json", scout)):
+        for key, expected in (("repository", binding["repository"]),
+                              ("source_sha", binding["source_sha"]),
+                              ("checked_out_sha", binding["source_sha"])):
+            if key in member and member[key] != expected:
+                raise ValueError(f"conflicting producer binding: {member_name}.{key}")
     if (evidence.get("schema") != "gogreen.fleet.positive-evidence.v1"
             or evidence.get("authority_transfer") is not False
             or evidence.get("merge_authorized") is not False
@@ -99,7 +121,9 @@ def verify(archive: bytes, binding: dict) -> dict:
         "job_id": binding["job_id"], "artifact_id": binding["artifact_id"],
         "archive_sha256": actual, "verified_inner_files": len(digests),
         "member_sha256": member_sha256, "zip_crc_verified": True,
-        "artifact_bytes_verified": True, "metadata_origin_authenticated": False,
+        "artifact_bytes_verified": True, "semantic_json_verified": True,
+        "producer_metadata_origin_authenticated": False,
+        "metadata_origin_authenticated": False,
         "native_green_admission": "HOLD", "owner_acceptance": "DEFER",
         "source_class": "OFFLINE_BYTES_WITH_CALLER_ASSERTED_METADATA",
     }
@@ -110,9 +134,9 @@ def main() -> None:
     p.add_argument("--binding", required=True, type=Path)
     p.add_argument("--out", required=True, type=Path)
     a = p.parse_args()
-    receipt = verify(a.archive.read_bytes(), json.loads(a.binding.read_text()))
+    receipt = verify(a.archive.read_bytes(), json.loads(a.binding.read_text(encoding="utf-8")))
     a.out.parent.mkdir(parents=True, exist_ok=True)
-    a.out.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
+    a.out.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps(receipt, sort_keys=True))
 
 if __name__ == "__main__":

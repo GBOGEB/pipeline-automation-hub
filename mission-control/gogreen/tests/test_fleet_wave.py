@@ -5,7 +5,7 @@ from pathlib import Path
 P=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(P))
 from fleet_wave import rollup
-CAT=json.loads((P/'samples'/'fleet_g0.json').read_text())
+CAT=json.loads((P/'samples'/'fleet_g0.json').read_text(encoding="utf-8"))
 
 def scout():
     return {'schema':'gogreen.readonly-scout.v1','mode':'PASSIVE_GET_ONLY',

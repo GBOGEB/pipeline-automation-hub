@@ -73,9 +73,9 @@ def main():
     a = ap.parse_args()
     data = collect(json.loads(a.ledger.read_text(encoding='utf-8')))
     a.html.parent.mkdir(parents=True, exist_ok=True)
-    a.html.write_text(render(data)+'\n', encoding='utf-8')
+    a.html.write_text(render(data)+'\n', encoding='utf-8', newline="\n")
     if a.metrics:
-        a.metrics.write_text(json.dumps(data, indent=2, sort_keys=True)+'\n', encoding='utf-8')
+        a.metrics.write_text(json.dumps(data, indent=2, sort_keys=True)+'\n', encoding='utf-8', newline="\n")
     print(json.dumps({'html':str(a.html),'metric_digest':data['source_ledger_digest'],'pulse_count':len(data['pulses'])}))
 
 

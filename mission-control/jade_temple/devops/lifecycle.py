@@ -150,6 +150,11 @@ def _ratio_ok(num, den, floor):
     return num / den >= floor
 
 
+def _live(f, key):
+    """A live-code test count (archived copies excluded); censuses before N+11 only carry the total."""
+    return f["tests"].get(f"live_{key}", f["tests"][key])
+
+
 def probe_states(f: dict) -> dict:
     """Evaluate every probe from a flat fact dictionary built by census.facts()."""
     wf = f["wf"]
@@ -179,9 +184,10 @@ def probe_states(f: dict) -> dict:
         "test.ci": _b(wf["tests_ci"] > 0),
         "test.fail_closed": _b((wf["zero_test_guard"] + wf["zero_test_guard_implicit"] > 0
                                 or wf["coverage_floor_max"] is not None)
-                               and f["tests"]["files"] > 0 and f["tests"]["zero_case_files"] == 0),
-        "test.controlled": _b((wf["coverage_floor_max"] or 0) >= 80 and f["tests"]["py_modules"] > 0
-                              and f["tests"]["py_untested"] <= 0.2 * f["tests"]["py_modules"]),
+                               and f["tests"]["files"] > 0
+                               and f["tests"].get("live_zero_case_files", f["tests"]["zero_case_files"]) == 0),
+        "test.controlled": _b((wf["coverage_floor_max"] or 0) >= 80 and _live(f, "py_modules") > 0
+                              and _live(f, "py_untested") <= 0.2 * _live(f, "py_modules")),
         "secure.policy": _b(f["has"]("security_policy") or f["has"]("dependency_bot")),
         "secure.depbot": _b(f["has"]("dependency_bot")),
         "secure.scan_ci": _b(wf["security"] > 0),

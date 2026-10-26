@@ -51,10 +51,10 @@ class Census(unittest.TestCase):
         root = Path(cls.tmp.name)
         (root / ".github" / "workflows").mkdir(parents=True)
         for k, v in WF.items():
-            (root / ".github" / "workflows" / k).write_text(v)
+            (root / ".github" / "workflows" / k).write_text(v, encoding="utf-8", newline="\n")
         for k, v in FILES.items():
             (root / k).parent.mkdir(parents=True, exist_ok=True)
-            (root / k).write_text(v)
+            (root / k).write_text(v, encoding="utf-8", newline="\n")
         subprocess.run(["git", "init", "-q", str(root)], check=True)
         subprocess.run(["git", "-C", str(root), "add", "-A"], check=True)
         cls.root = root
