@@ -87,6 +87,7 @@ def proof(e, c, cls="C", effect="BLOCK", *, baseline=None, overrides=None,
     a = {
         "schema": Q.SCHEMA, "class": cls, "effect": effect,
         "event_key": c["event_key"],
+        "candidate_sha256": Q.digest(c),
         "source_sha": e["identity"]["checkout_sha"],
         "run_id": n["run_id"], "attempt": n["attempt"],
         "job_id": n["job_id"], "completed_at": n["completed_at"],
@@ -222,6 +223,15 @@ class FourClassNoncompensatingGates(unittest.TestCase):
             signed(event(2, outcome="success"), candidates(event(1), event(2, outcome="success"))[-1],
                    "D", "ACCEPT")
 
+    def test_signature_cannot_be_reused_with_changed_notification_reason(self):
+        e = event()
+        candidate = candidates(e)[0]
+        signed_original = proof(e, candidate)
+        tampered_candidate = copy.deepcopy(candidate)
+        tampered_candidate["reasons"] = ["RED_TO_GREEN"]
+        with self.assertRaisesRegex(ValueError, "signed candidate justification mismatch"):
+            Q.qualify(e, tampered_candidate, signed_original, KEY)
+
     def test_unsigned_changed_candidate_reason_fails(self):
         e = event()
         cand = copy.deepcopy(candidates(e)[0])
@@ -344,6 +354,19 @@ class DurableReplayAndOutbox(unittest.TestCase):
         db.execute("UPDATE audit SET entry_sha256=? WHERE seq=1", ("f" * 64,))
         with self.assertRaisesRegex(ValueError, "audit chain"):
             Q.verify(db)
+
+    def test_externally_trusted_audit_root_rejects_tail_truncation(self):
+        db = self.db()
+        e, candidate = event(), candidates(event())[0]
+        Q.record(db, e, candidate, proof(e, candidate), KEY)
+        receipt = Q.verify(db, KEY)
+        root = receipt["last_audit_sha256"]
+        self.assertEqual(Q.verify(db, KEY, expected_root=root)["last_audit_sha256"], root)
+        # A database admin could delete a correctly chained final row.
+        db.execute("DELETE FROM audit WHERE seq=(SELECT MAX(seq) FROM audit)")
+        self.assertGreater(Q.verify(db, KEY)["audit_entries"], 0)
+        with self.assertRaisesRegex(ValueError, "audit root rollback"):
+            Q.verify(db, KEY, expected_root=root)
 
     def test_no_state_written_when_owner_signature_invalid(self):
         db = self.db()
