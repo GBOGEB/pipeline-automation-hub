@@ -127,6 +127,14 @@ class ReplayAndStability(unittest.TestCase):
         self.assertEqual(replay_alerts, [])
         self.assertEqual(state, next_state)
 
+    def test_same_terminal_job_seen_on_later_poll_is_suppressed(self):
+        first = terminal(1)
+        repeated = copy.deepcopy(first)
+        repeated["native"]["observed_at"] = "2026-10-26T01:09:10Z"
+        state, alerts = W.fold([first, repeated])
+        self.assertEqual(len(state["seen"]), 1)
+        self.assertEqual(len(alerts), 1)
+
     def test_native_identity_collision_with_changed_payload_fails(self):
         a = terminal(1)
         b = copy.deepcopy(a)
