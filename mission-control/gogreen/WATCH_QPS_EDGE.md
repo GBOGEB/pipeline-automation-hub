@@ -13,9 +13,9 @@ QPS_OWNER_PROOF_KEY_HEX must be a hex-encoded 32+ byte secret provisioned only b
 
 Three private identifiers become opaque owner-secret-derived 64-hex tokens outside this repo: child_token, dependency_token and receipt_token. Never export raw QPS issue numbers, PRs, RTM atoms or vendor originals. #881 public source allowlist and #882 source SHA-chain validation must run first. Missing proof => HOLD/UNKNOWN.
 
-The signed attestation exact fields are schema, class, effect, event_key, source_sha, run_id, attempt, job_id, completed_at, issued_at, baseline_sha256, child_token, dependency_token, receipt_token, checks. Checks include verified native/owner claims, QPS native, security, required checks, independent review, last-push approval, stale dismissal, review thread resolution, current-base proof, blocked RED canary, matched coverage and MissionControl authentication.
+The signed attestation exact fields are schema, class, effect, event_key, source_sha, run_id, attempt, job_id, completed_at, issued_at, candidate_sha256, baseline_sha256, child_token, dependency_token, receipt_token, checks. Checks include verified native/owner claims, QPS native, security, required checks, independent review, last-push approval, stale dismissal, review thread resolution, current-base proof, blocked RED canary, matched coverage and MissionControl authentication.
 
-Proof envelope consists of attestation and signature (lowercase HMAC-SHA256). Sign the canonical ASCII JSON of attestation with sorted keys, no whitespace. Class B additionally requires an exact preceding native event whose SHA256 matches baseline_sha256; both source blobs and statement/branch scope denominators must agree.
+Proof envelope consists of attestation and signature (lowercase HMAC-SHA256). Sign the canonical ASCII JSON of attestation with sorted keys, no whitespace. candidate_sha256 must equal SHA256 of the exact canonical full candidate object; changing event classification or delta after signing is rejected. Class B additionally requires an exact preceding native event whose SHA256 matches baseline_sha256; both source blobs and statement/branch scope denominators must agree.
 
 ## Offline CLI
 First authenticate source, obtain a QPS private owner attestation from a separate trusted runtime, and provision QPS_OWNER_PROOF_KEY_HEX securely. Default dry run never persists state:
@@ -29,6 +29,8 @@ To persist a qualified event locally only:
 The baseline is mandatory only for class B. This queues an opaque local notification; it does not send.
 
 An authorized delivery adapter must claim() exactly once, send notification_id as a provider idempotency key if supported, then acknowledge() with the external provider receipt digest. After CLAIMED do not automatically resend on crash: reconcile provider receipt first. A local at-most-once claim is NOT proof of exactly-once external delivery. Provider integration remains separate.
+
+The SQLite audit chain is append-only under the application contract, not protected against a malicious host administrator. For rollback/truncation detection, keep the returned last_audit_sha256 in an independently trusted owner-controlled anchor and on restart use verify(db, key, expected_root=<trusted previous root>). Without that independent root, a plausible but truncated local chain could pass internal integrity verification. Never treat local hashes as external provider delivery or QPS engineering acceptance.
 
 ## Offline QA
     python -m unittest discover -s mission-control/gogreen/tests -p 'test_watch_qps_edge.py' -v
