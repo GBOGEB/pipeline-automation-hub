@@ -186,8 +186,8 @@ def main(argv=None):
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--summary", type=Path)
     a = ap.parse_args(argv)
-    policy = json.loads(a.policy.read_text())
-    trace = json.loads(a.trace.read_text())
+    policy = json.loads(a.policy.read_text(encoding="utf-8"))
+    trace = json.loads(a.trace.read_text(encoding="utf-8"))
     if trace.get("schema") != "gogreen.red_trace.v1" or trace.get("branch") != policy["branch"]:
         raise SystemExit("REPLAY_LANE_REFUSED: trace is not a default-branch gogreen.red_trace.v1 report")
     api = Api(a.repo)
@@ -198,9 +198,9 @@ def main(argv=None):
         for path in rep["dispatch"]:
             api.dispatch(path, policy["branch"])
             rep["dispatched"].append(path)
-    a.out.write_text(json.dumps(rep, indent=2, sort_keys=True) + "\n")
+    a.out.write_text(json.dumps(rep, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     if a.summary:
-        a.summary.write_text(markdown(rep))
+        a.summary.write_text(markdown(rep), encoding="utf-8", newline="\n")
     print(json.dumps({"lane": rep["lane"], "candidates": sum(1 for r in rep["rows"] if not r["skip"]),
                       "planned": len(rep["dispatch"]), "dispatched": len(rep["dispatched"]), "dry_run": rep["dry_run"]}))
     return 0

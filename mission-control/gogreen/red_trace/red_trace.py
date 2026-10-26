@@ -562,7 +562,7 @@ def main(argv=None):
         raise SystemExit("--repo required")
     reader = Reader(a.repo)
     if a.runs_json:
-        runs = json.loads(a.runs_json.read_text())
+        runs = json.loads(a.runs_json.read_text(encoding="utf-8"))
         collected = {"runs": runs, "truncated": False}
     else:
         collected = collect(reader, a.branch, a.per_workflow)
@@ -570,8 +570,8 @@ def main(argv=None):
                 None if (a.no_enrich or a.runs_json) else reader, root=a.root)
     rep["requests"] = reader.requests
     a.out.mkdir(parents=True, exist_ok=True)
-    (a.out / "red_trace.json").write_text(json.dumps(rep, indent=2, sort_keys=True) + "\n")
-    (a.out / "red_trace.md").write_text(markdown(rep))
+    (a.out / "red_trace.json").write_text(json.dumps(rep, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    (a.out / "red_trace.md").write_text(markdown(rep), encoding="utf-8", newline="\n")
     summary = {"status": "PASS", "counts": rep["counts"], "runs": rep["window"]["runs"],
                "truncated": rep["window"]["truncated"], "requests": rep["requests"]}
     if a.pr_lane > 0 and not a.runs_json:
@@ -579,8 +579,8 @@ def main(argv=None):
         pr = build_pr_lane(a.repo, a.branch, collect_pr_lane(reader, a.branch, a.pr_lane,
                                                               collected.get("workflows_meta")))
         pr["requests"] = reader.requests - before
-        (a.out / "red_trace_pr.json").write_text(json.dumps(pr, indent=2, sort_keys=True) + "\n")
-        (a.out / "red_trace_pr.md").write_text(markdown_pr_lane(pr))
+        (a.out / "red_trace_pr.json").write_text(json.dumps(pr, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+        (a.out / "red_trace_pr.md").write_text(markdown_pr_lane(pr), encoding="utf-8", newline="\n")
         summary["pr_lane"] = {"merged_prs": pr["window"]["merged_prs"], "counts": pr["counts"],
                               "merged_with_red": len(pr["merged_with_red"]), "requests": pr["requests"]}
     print(json.dumps(summary, sort_keys=True))

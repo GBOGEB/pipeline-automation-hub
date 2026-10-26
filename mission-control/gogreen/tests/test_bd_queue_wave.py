@@ -149,8 +149,8 @@ class Tests(unittest.TestCase):
             a={k:Path(d,k).read_bytes() for k in x['files']}
             mod.write_outputs(d,summary,rows,m)
             self.assertEqual(a,{k:Path(d,k).read_bytes() for k in x['files']})
-            self.assertEqual(1,len(json.loads(Path(d,'bd_manifestations.json').read_text())))
-            self.assertTrue(Path(d,'bd_pr_queue.csv').read_text().startswith('repository,pr,'))
+            self.assertEqual(1,len(json.loads(Path(d,'bd_manifestations.json').read_text(encoding="utf-8"))))
+            self.assertTrue(Path(d,'bd_pr_queue.csv').read_text(encoding="utf-8").startswith('repository,pr,'))
     def test_public_only_explicit_three_sources(self):
         self.assertEqual(mod.REPOS[:-1], mod.PUBLIC_REPOS)
         self.assertNotIn(mod.PRIVATE_OWNER_REPO, mod.PUBLIC_REPOS)
@@ -205,8 +205,8 @@ class Tests(unittest.TestCase):
         summary, rows, manifest = mod.scan_public(Fake())
         with tempfile.TemporaryDirectory() as root:
             mod.write_outputs(root, summary, rows, manifest)
-            parsed = json.loads(Path(root, 'bd_summary.json').read_text())
-            receipt = json.loads(Path(root, 'bd_files_sha256.json').read_text())
+            parsed = json.loads(Path(root, 'bd_summary.json').read_text(encoding="utf-8"))
+            receipt = json.loads(Path(root, 'bd_files_sha256.json').read_text(encoding="utf-8"))
             self.assertEqual('LIVE_PUBLIC_THREE_REPO_PARTIAL_QPS_UNKNOWN', parsed['scope'])
             self.assertTrue(receipt['source_is_live_api'])
             self.assertFalse(receipt['complete_federation_observed'])
@@ -219,7 +219,7 @@ class Tests(unittest.TestCase):
                               return_value=(snapshot, prs, manifestations)):
                 with patch('sys.argv', ['bd_queue_wave.py', '--public-only', '--out', root]):
                     self.assertEqual(0, mod.main())
-            self.assertEqual('HOLD', json.loads(Path(root, 'bd_summary.json').read_text())['federation_admission'])
+            self.assertEqual('HOLD', json.loads(Path(root, 'bd_summary.json').read_text(encoding="utf-8"))['federation_admission'])
 
     def test_scan_fully_mocked(self):
         fake=Fake(prs={'GBOGEB/ABACUS':[raw_pr()]},issues={'GBOGEB/ABACUS':[{'number':15,'state':'open'}]},runs={H:{'total_count':1,'workflow_runs':[run()]}})

@@ -19,7 +19,7 @@ URL="https://gbogeb.github.io/pipeline-automation-hub/"
 def site(root):
     atlas=root/"atlas"
     atlas.mkdir(parents=True)
-    (atlas/"index.html").write_text("<html><head><title>QA</title></head><body><h1>Atlas</h1></body></html>")
+    (atlas/"index.html").write_text("<html><head><title>QA</title></head><body><h1>Atlas</h1></body></html>", encoding="utf-8", newline="\n")
     build_live_lossless.build(atlas/"live-lossless")
     result=pages_portal.build(atlas,root/"public","a"*40)
     return root/"public",result
@@ -66,8 +66,8 @@ class HostedLiveLosslessTests(unittest.TestCase):
     def test_candidate_manifest_hash_tamper_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             p,_=site(Path(d));manifest=p/"site-manifest.json"
-            d0=json.loads(manifest.read_text());d0["public_files_sha256"]["live-lossless/index.html"]="f"*64
-            manifest.write_text(json.dumps(d0))
+            d0=json.loads(manifest.read_text(encoding="utf-8"));d0["public_files_sha256"]["live-lossless/index.html"]="f"*64
+            manifest.write_text(json.dumps(d0), encoding="utf-8", newline="\n")
             with self.assertRaisesRegex(ValueError,"site-manifest hash mismatch"):
                 hosted.verify(p,URL,2,2,0,fetcher(p))
     def test_repeated_limit_enforced(self):

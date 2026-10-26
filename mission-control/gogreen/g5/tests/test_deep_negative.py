@@ -17,10 +17,10 @@ SAMPLES=HERE/'samples'
 class DeepNegative(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.doc=json.loads((SAMPLES/'federation_g5.json').read_text())
-        cls.g0=json.loads((SAMPLES/'fleet_g0.json').read_text())
-        cls.g1=json.loads((SAMPLES/'fleet_g1_snapshot.json').read_text())
-        cls.g2=json.loads((SAMPLES/'fleet_g2_snapshot.json').read_text())
+        cls.doc=json.loads((SAMPLES/'federation_g5.json').read_text(encoding="utf-8"))
+        cls.g0=json.loads((SAMPLES/'fleet_g0.json').read_text(encoding="utf-8"))
+        cls.g1=json.loads((SAMPLES/'fleet_g1_snapshot.json').read_text(encoding="utf-8"))
+        cls.g2=json.loads((SAMPLES/'fleet_g2_snapshot.json').read_text(encoding="utf-8"))
 
     def test_validation_invalid_inputs_matrix(self):
         transforms=[

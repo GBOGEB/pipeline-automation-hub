@@ -293,7 +293,7 @@ def emit(receipt, out):
     raw = (json.dumps(receipt, sort_keys=True, indent=2) + "\n").encode()
     digest = hashlib.sha256(raw).hexdigest()
     (out / "subtype_receipt.json").write_bytes(raw)
-    (out / "subtype_receipt.sha256").write_text(digest + "\n", encoding="ascii")
+    (out / "subtype_receipt.sha256").write_text(digest + "\n", encoding="ascii", newline="\n")
     lines = [
         "# CBD subtype worker roll-up",
         "",
@@ -325,7 +325,7 @@ def emit(receipt, out):
         f"SHA-256: {digest}",
         "",
     ]
-    (out / "subtype_receipt.md").write_text("\n".join(lines), encoding="utf-8")
+    (out / "subtype_receipt.md").write_text("\n".join(lines), encoding="utf-8", newline="\n")
     return digest
 
 

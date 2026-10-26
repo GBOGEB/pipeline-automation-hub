@@ -237,7 +237,7 @@ def main(argv=None):
     verify(obs)
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(obs, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    out.write_text(json.dumps(obs, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     control = obs["targets"][0]
     complete = control["source_quality"] == "EXACT_DEFAULT_BRANCH_GITHUB_API"
     print(json.dumps({"status": "PARTIAL_PROJECTION_NEVER_ADMISSION",

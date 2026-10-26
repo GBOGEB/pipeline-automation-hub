@@ -169,6 +169,6 @@ def main():
     p.add_argument("--wait",type=float,default=5)
     a=p.parse_args()
     data=verify(Path(a.expected_dir),a.base_url,a.head,repeat=a.repeat,attempts=a.attempts,wait=a.wait)
-    Path(a.receipt).write_text(json.dumps(data,sort_keys=True,indent=2)+"\n",encoding="utf-8")
+    Path(a.receipt).write_text(json.dumps(data,sort_keys=True,indent=2)+"\n",encoding="utf-8",newline="\n")
     print(json.dumps({"status":"PASS","head":data["head"],"members":data["members_verified"],"rounds":len(data["observations"])}))
 if __name__=="__main__":main()

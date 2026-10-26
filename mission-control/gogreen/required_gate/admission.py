@@ -130,7 +130,7 @@ def build(root: Path, master: dict | None, pr: dict | None, previous: dict | Non
     incumbents = ({e["path"] for e in previous["entries"] if e["disposition"] == g.ENFORCED}
                   if previous else set(g.GUARDED))
     wdir = root / ".github" / "workflows"
-    files = sorted(str(f.relative_to(root)) for f in list(wdir.glob("*.yml")) + list(wdir.glob("*.yaml")))
+    files = sorted(f.relative_to(root).as_posix() for f in list(wdir.glob("*.yml")) + list(wdir.glob("*.yaml")))
     entries = []
     for rel in files:
         text = (root / rel).read_text(encoding="utf-8")
@@ -233,21 +233,21 @@ def main(argv=None):
     ap.add_argument("--resolve-runtimes", action="store_true", help="git-fetch action.yml for unknown refs")
     a = ap.parse_args(argv)
     ledger = a.ledger or (a.root / g.ADMISSION)
-    previous = json.loads(ledger.read_text()) if ledger.exists() else None
-    load = lambda p: json.loads(p.read_text()) if p else None
+    previous = json.loads(ledger.read_text(encoding="utf-8")) if ledger.exists() else None
+    load = lambda p: json.loads(p.read_text(encoding="utf-8")) if p else None
     runtimes = dict((previous or {}).get("runtimes", {}))
     if a.resolve_runtimes:
         wdir = a.root / ".github" / "workflows"
-        for ref in sorted({r for f in list(wdir.glob("*.yml")) + list(wdir.glob("*.yaml")) for r in uses(f.read_text())}):
+        for ref in sorted({r for f in list(wdir.glob("*.yml")) + list(wdir.glob("*.yaml")) for r in uses(f.read_text(encoding="utf-8"))}):
             if runtimes.get(ref, "UNRESOLVED") == "UNRESOLVED":
                 runtimes[ref] = resolve_runtime(ref)
     doc = build(a.root, load(a.master_trace), load(a.pr_trace), previous, runtimes)
     d = diff(previous, doc)
     if a.out:
-        a.out.write_text(json.dumps(doc, indent=1, sort_keys=True, ensure_ascii=False) + "\n")
+        a.out.write_text(json.dumps(doc, indent=1, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     md = markdown(doc, d if previous else None)
     if a.summary:
-        a.summary.write_text(md)
+        a.summary.write_text(md, encoding="utf-8", newline="\n")
     print(json.dumps({"counts": doc["counts"], "coverage": doc["coverage"],
                       "node20_workflows": doc["runtime_debt"]["node20_workflows"], "drift": {k: len(v) for k, v in d.items()}},
                      sort_keys=True))

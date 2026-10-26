@@ -110,9 +110,9 @@ def main() -> None:
     p.add_argument("--binding", required=True, type=Path)
     p.add_argument("--out", required=True, type=Path)
     a = p.parse_args()
-    receipt = verify(a.archive.read_bytes(), json.loads(a.binding.read_text()))
+    receipt = verify(a.archive.read_bytes(), json.loads(a.binding.read_text(encoding="utf-8")))
     a.out.parent.mkdir(parents=True, exist_ok=True)
-    a.out.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
+    a.out.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps(receipt, sort_keys=True))
 
 if __name__ == "__main__":

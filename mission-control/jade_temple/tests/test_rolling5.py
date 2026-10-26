@@ -53,7 +53,7 @@ class Sandbox:
         self.write("data/ROLLING5_PULSES.json", {"pulses": []})
 
     def write(self, rel, obj):
-        (self.root / rel).write_text(json.dumps(obj), encoding="utf-8")
+        (self.root / rel).write_text(json.dumps(obj), encoding="utf-8", newline="\n")
 
     def add(self, pid, snap):
         self.count = getattr(self, "count", 0) + 1
@@ -224,7 +224,7 @@ class EndToEndTests(unittest.TestCase):
 
     def test_snapshot_tamper_fails_closed(self):
         self.box.add("P1", snapshot("2026-10-01", five()))
-        (self.box.root / "data/snap_1.json").write_text("{}", encoding="utf-8")
+        (self.box.root / "data/snap_1.json").write_text("{}", encoding="utf-8", newline="\n")
         with self.assertRaisesRegex(ValueError, "snapshot drift"):
             r5.project(self.box.root)
 
@@ -260,7 +260,7 @@ class EndToEndTests(unittest.TestCase):
 
     def test_append_refuses_a_ledger_that_already_drifted(self):
         self.box.add("P1", snapshot("2026-10-01", five()))
-        (self.box.root / "data/snap_1.json").write_text("{}", encoding="utf-8")
+        (self.box.root / "data/snap_1.json").write_text("{}", encoding="utf-8", newline="\n")
         self.box.write("data/next.json", snapshot("2026-10-02", five()))
         with self.assertRaisesRegex(ValueError, "drift"):
             r5.append_pulse(self.box.root, "data/next.json", "P2")

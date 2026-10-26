@@ -108,9 +108,9 @@ def main():
     args=p.parse_args()
     data=compile_waves([json.loads(f.read_text(encoding='utf-8')) for f in args.ledgers])
     args.out_dir.mkdir(parents=True,exist_ok=True)
-    (args.out_dir/'g3p-lineage.json').write_text(json.dumps(data,sort_keys=True,indent=2)+'\n',encoding='utf-8')
-    (args.out_dir/'g3p-lineage.mmd').write_text(mermaid(data),encoding='utf-8')
-    (args.out_dir/'g3p-lineage.html').write_text(html_report(data)+'\n',encoding='utf-8')
+    (args.out_dir/'g3p-lineage.json').write_text(json.dumps(data,sort_keys=True,indent=2)+'\n',encoding='utf-8',newline="\n")
+    (args.out_dir/'g3p-lineage.mmd').write_text(mermaid(data),encoding='utf-8',newline="\n")
+    (args.out_dir/'g3p-lineage.html').write_text(html_report(data)+'\n',encoding='utf-8',newline="\n")
     print(json.dumps(data['metrics'],sort_keys=True))
 
 

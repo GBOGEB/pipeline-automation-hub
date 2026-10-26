@@ -60,7 +60,7 @@ class BurndownTests(unittest.TestCase):
    (proj/'data').mkdir()
    for k in ('REPO_READINESS_NPLUS1.json','COHORT_CROSSWALK_NPLUS1.json','GLOBAL_METRICS_NPLUS1.json','READBACK_NPLUS2.json','EVIDENCE_EVENTS_NPLUS2.json','STOP_MODEL_NPLUS2.json'):
     shutil.copyfile(ROOT/'data'/k,proj/'data'/k)
-   (proj/'data/STOP_MODEL_NPLUS2.json').write_text('{}',encoding='utf-8')
+   (proj/'data/STOP_MODEL_NPLUS2.json').write_text('{}',encoding='utf-8',newline="\n")
    with self.assertRaisesRegex(ValueError,'JADE_N2_SOURCE_DIGEST_DRIFT'):
     bridge.stage_jade(proj,Path(t)/'out',{},'a'*40)
  def test_n2_static_not_partial(self):
@@ -79,7 +79,7 @@ class BurndownTests(unittest.TestCase):
    for k in ('REPO_READINESS_NPLUS1.json','COHORT_CROSSWALK_NPLUS1.json','GLOBAL_METRICS_NPLUS1.json','READBACK_NPLUS2.json','EVIDENCE_EVENTS_NPLUS2.json','STOP_MODEL_NPLUS2.json'):
     shutil.copyfile(ROOT/'data'/k,proj/'data'/k)
    m=json.loads((proj/'site/burndown-manifest.json').read_text(encoding='utf-8'));m['merge_admission']='PASS'
-   (proj/'site/burndown-manifest.json').write_text(json.dumps(m),encoding='utf-8')
+   (proj/'site/burndown-manifest.json').write_text(json.dumps(m),encoding='utf-8',newline="\n")
    with self.assertRaisesRegex(ValueError,'JADE_N2_UNSAFE_MANIFEST'):
     bridge.stage_jade(proj,Path(t)/'out',{},'a'*40)
  def test_no_remote_js_client(self):

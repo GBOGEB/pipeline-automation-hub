@@ -124,7 +124,7 @@ def main():
     try:
         census = collect()
         opts.out.parent.mkdir(parents=True, exist_ok=True)
-        opts.out.write_text(json.dumps(census, sort_keys=True, indent=2)+"\n",encoding="utf-8")
+        opts.out.write_text(json.dumps(census, sort_keys=True, indent=2)+"\n",encoding="utf-8", newline="\n")
     except (ValueError, OSError, RuntimeError, KeyError, TypeError) as exc:
         print("CENSUS_PULL_HOLD: incomplete source ("+type(exc).__name__+")",file=sys.stderr)
         return 2
