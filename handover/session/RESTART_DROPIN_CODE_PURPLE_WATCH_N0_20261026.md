@@ -8,6 +8,7 @@ Read first, in GitHub:
 - `mission-control/federation-atlas/watch_n0_session/STATE_N0.json` and `EVIDENCE_LEDGER_N0.jsonl`.
 - `handover/session/MIP_WATCH_EVOLUTION_20261026.md`: future work, NOT IMPLEMENTED.
 - `handover/session/CODE_PURPLE_WATCH_VNEXT_EXECUTION_CROSSWALK_20261026.md`: concrete MIP-01..15 owners, implementation gaps and PR dependencies; #878 and #881 are still candidates, NOT merge acceptance.
+- `handover/session/CODE_PURPLE_WATCH_VNEXT_N1_EXECUTION_DELTA_20261026.md`: chronological N1 GitHub readback, #881/#882/#883, shared-G4 concurrency first-red, next governed landing order; preserve N0 as historical.
 - `mission-control/jade_temple/DROPIN_NEXT_CHAT.md`: JADE N+11 checkpoint, owned by #867.
 
 Then re-resolve every default head and relevant PR head before comparing anything.
