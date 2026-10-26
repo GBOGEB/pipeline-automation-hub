@@ -29,12 +29,17 @@ python -m unittest discover -s mission-control/gogreen/tests -p 'test_watch_feed
 python mission-control/gogreen/watch_feed.py
 
 # Opt in to a public-only transient events snapshot; no new event journal.
-python mission-control/gogreen/watch_feed.py --output /path/to/public-terminal-events.jsonl
+python mission-control/gogreen/watch_feed.py --cursor /path/to/watch_cursor.json --limit 2000 --output /path/to/public-terminal-events.jsonl
+# Only if output_written=true: consume the bounded batch, then persist the cursor.
 python mission-control/gogreen/watch_decision.py \
-  --events /path/to/public-terminal-events.jsonl --cursor /path/to/watch_cursor.json
+  --events /path/to/public-terminal-events.jsonl --cursor /path/to/watch_cursor.json --write-cursor
+# Repeat with the updated cursor until deferred_for_next_cursor=0.
 ```
 
 **Important:** The committed legacy ledger may yield zero eligible exported events because it did not retain the job completion clock. Such a result is a **lineage gap**, not proof that no native events occurred, and not evidence of a stable fleet. A later approved native source pulse will be needed for an end-to-end qualifying readback.
+
+
+New controls: the live pulse's observation clock is captured **after** reading job API data; old immutable rows with job completion later than their pulse are quarantined as `NATIVE_AFTER_PULSE` gaps. The feed selects deterministic native-completion-ordered, distinct unseen events under the consumer's 2,000-row / 4 MB budget. It uses the existing cursor for incremental batches, not a second journal. If none are eligible, `output_written=false` and no JSONL consumer file is left behind (a stale transient output file is removed); the caller must not invoke the consumer. All gaps and deferred counts are reported explicitly.
 
 ## Governing boundary
 
