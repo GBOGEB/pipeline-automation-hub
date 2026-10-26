@@ -81,6 +81,53 @@ class PulseIdentity(unittest.TestCase):
         self.assertTrue(s["code_memberships_nonadditive"])
         self.assertEqual(s["typed_prefix_rate"], 1.0)
 
+    def test_source_population_preserves_zero_item_repository(self):
+        m = model([item(HUB, 1, "fix: one")])
+        r = pulse.build(m, public=False)
+        self.assertEqual(r["rollups"][QPS]["total"], 0)
+        self.assertEqual(r["rollups"][QPS]["issues"], 0)
+        self.assertEqual(sum(r["rollups"]["USER"]["primary_family"].values()), 1)
+
+    def test_history_has_two_source_pinned_points_and_long_form_csv(self):
+        older = model([item(HUB, 1, "fix(watch): old")])
+        current = model([item(HUB, 1, "fix(watch): new"), item(HUB, 2, "docs: new")],
+                        at="2026-10-26T15:00:00+01:00")
+        r = pulse.build(current, older, parser_sha="c"*40, previous_parser_sha="c"*40)
+        self.assertEqual([x["wave"] for x in r["history_points"]], ["N", "N+1"])
+        self.assertEqual([x["rollups"]["USER"]["total"] for x in r["history_points"]], [1, 2])
+        self.assertTrue(r["delta"]["parser_identity_comparable"])
+        csv = pulse.csv_view(r)
+        self.assertIn(",N,", csv)
+        self.assertIn(",N+1,", csv)
+        self.assertIn("scope_denominator,additive", csv.splitlines()[0])
+        r2 = pulse.build(current, older, parser_sha="d"*40, previous_parser_sha="c"*40)
+        self.assertFalse(r2["delta"]["parser_identity_comparable"])
+        self.assertEqual(r2["delta"]["classification_attribution"],
+                         "WITHHELD_PARSER_VERSION_NOT_MATCHED")
+
+    def test_empty_cluster_first_red_is_safe_and_additive(self):
+        # Native first red 40329143161, Python 3.11/3.12:
+        # taxonomy_pulse.py:125 IndexError when family==scope but clusters=[].
+        x = item(HUB, 1, "fix(watch): status")
+        projected = pulse.visible(model([x]), public=True)["items"][0]
+        self.assertEqual(projected["technical_clusters"], [])
+        facet = pulse.facets(projected)
+        self.assertEqual(facet["scope"], "watch")
+        self.assertEqual(facet["family"], "watch")
+        self.assertEqual(facet["cluster"], "general")
+        report = pulse.build(model([x]))
+        self.assertEqual(report["rollups"]["USER"]["total"], 1)
+        self.assertEqual(sum(report["rollups"]["USER"]["single_composite"].values()), 1)
+
+    def test_empty_cluster_and_unscoped_title_stays_general(self):
+        x = item(HUB, 1, "[U14] plain status note")
+        projected = pulse.visible(model([x]), public=True)["items"][0]
+        facet = pulse.facets(projected)
+        self.assertEqual(facet["scope"], "unscoped")
+        self.assertEqual(facet["family"], "general")
+        self.assertEqual(facet["cluster"], "general")
+        self.assertEqual(facet["action"], "unclassified")
+
     def test_reject_duplicates_unknown_ids_and_inconsistent_privacy(self):
         source = model()
         source["items"].append(copy.deepcopy(source["items"][0]))
@@ -136,7 +183,7 @@ class PulseDelta(unittest.TestCase):
 
     def test_reversed_time_and_type_rewrite_fail_closed(self):
         old = model([item(HUB, 1, "fix: first")], at="2026-10-27T10:00:00+01:00")
-        with self.assertRaisesRegex(ValueError, "PULSE_TIMESTAMP_REVERSED"):
+        with self.assertRaisesRegex(ValueError, "PULSE_TIMESTAMP_NOT_STRICTLY_LATER"):
             pulse.build(model([item(HUB, 1, "fix: newer")]), old)
         old = model([item(HUB, 1, "fix: first")])
         now = model([item(HUB, 1, "fix: first", "PullRequest")],

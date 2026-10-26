@@ -60,5 +60,26 @@ reversed time, cohort drift, type changes, nonadditive facets and
 semantic root-closure withholding are mandatory. No release or Pages
 workflow is enabled by this PR.
 
-Future: append these pulse records to the existing chained issue-rank ledger
-and render a filtered viewer from local snapshots. No duplicate ledger writer.
+## Integrated single-writer output and chain (N+2)
+
+The existing `issue_rank.py run` / `rank` path now emits `taxonomy_pulse.json`
+and `taxonomy_pulse.csv` alongside its original `issue_rank.json/.csv/.html`
+and `delta.json`, using the SAME output hash manifest / JSONL ledger writer.
+There is no competing scheduled trigger, webhook or artifact authority.
+
+    python mission-control/issue_rank/issue_rank.py run --scope jade       --redact-private --parser-sha <CURRENT_EXACT_40_HEX_SHA>       --previous-parser-sha <PREVIOUS_EXACT_40_HEX_SHA>
+
+N and N+1 both contribute long-form CSV rows keyed by
+`observed_at, wave, scope, facet_dimension, facet`. Each carries its
+own denominator; never add counts from different waves or JADE + USER.
+Zero-item repositories are retained with an explicit zero denominator.
+For an unmatched parser producer SHA, classification-change attribution is
+WITHHELD, not a validated title rename. Repo-population drift prevents matched
+current-versus-previous delta claims. The publicly safe projection excludes
+private rows even when the existing local rank model retains them.
+
+To visualize locally, use the disjoint `taxonomy_explorer.py` producer in
+PR #941, which operates read-only on the same rank model and never needs
+the taxonomy-pulse output. Before any Pages publication, perform owner
+privacy review plus browser/Playwright visual QA. This integration creates
+no automatic publication route.

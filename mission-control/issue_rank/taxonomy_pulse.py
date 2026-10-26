@@ -122,7 +122,7 @@ def facets(item: dict) -> dict:
     else:
         family = scope if scope != "unscoped" else "general"
     remaining = [c for c in clusters if c != family]
-    cluster = remaining[0] if remaining else (clusters[0] if family == scope else "general")
+    cluster = remaining[0] if remaining else (clusters[0] if clusters and family == scope else "general")
     return {"action": action, "scope": scope, "family": family,
             "cluster": cluster,
             "composite": "/".join((action, scope, family, cluster))}
@@ -174,8 +174,9 @@ def aggregate(items: list[dict]) -> dict:
     }
 
 
-def _breakdown(items: list[dict]) -> dict:
-    repos = sorted({i["repo"] for i in items})
+def _breakdown(items: list[dict], heads: dict) -> dict:
+    # Zero-item repositories still belong in the measured source population.
+    repos = sorted(heads)
     scopes = ["USER", "JADE"] + repos
     return {scope: aggregate(_scope_items(items, scope)) for scope in scopes}
 
@@ -214,48 +215,78 @@ def changes(previous: dict, current: dict) -> dict:
     }
 
 
+def _history_point(wave: str, projection: dict) -> dict:
+    rollups = _breakdown(projection["items"], projection["heads"])
+    return {
+        "wave": wave, "observed_at": projection["fetched_at"],
+        "source_heads": projection["heads"],
+        "visible_projection_sha256": hashlib.sha256(canonical(
+            {"heads": projection["heads"], "items": projection["items"]})).hexdigest(),
+        "rollups": rollups,
+    }
+
+
 def build(current_model: dict, previous_model: dict | None = None, *,
-          public: bool = True, parser_sha: str | None = None) -> dict:
-    if parser_sha is not None and not SHA.fullmatch(parser_sha):
-        raise ValueError("INVALID_PARSER_SHA")
+          public: bool = True, parser_sha: str | None = None,
+          previous_parser_sha: str | None = None) -> dict:
+    for name, value in (("parser", parser_sha), ("previous_parser", previous_parser_sha)):
+        if value is not None and not SHA.fullmatch(value):
+            raise ValueError("INVALID_" + name.upper() + "_SHA")
     cur = visible(current_model, public=public)
     previous = visible(previous_model, public=public) if previous_model is not None else None
-    scales = _breakdown(cur["items"])
-    stamp = cur["fetched_at"]
-    digest = hashlib.sha256(canonical({"items": cur["items"], "heads": cur["heads"]})).hexdigest()
-    result = {
-        "schema": SCHEMA, "taxonomy_schema": tax.SCHEMA, "observed_at": stamp,
+    if previous is not None and _timestamp(previous["fetched_at"]) >= _timestamp(cur["fetched_at"]):
+        raise ValueError("PULSE_TIMESTAMP_NOT_STRICTLY_LATER")
+    points = ([_history_point("N", previous)] if previous is not None else [])
+    points.append(_history_point("N+1" if previous is not None else "N0", cur))
+    scales = points[-1]["rollups"]
+    delta = (changes(previous, cur) if previous is not None else
+             {"comparable": False, "reason": "BASELINE_ONLY",
+              "verified_closed": None, "formal_credit_delta": 0})
+    if previous is not None:
+        delta["parser_identity_comparable"] = (
+            parser_sha is not None and previous_parser_sha is not None
+            and parser_sha == previous_parser_sha
+        )
+        delta["classification_attribution"] = (
+            "SAME_PINNED_PARSER" if delta["parser_identity_comparable"]
+            else "WITHHELD_PARSER_VERSION_NOT_MATCHED"
+        )
+    return {
+        "schema": SCHEMA, "taxonomy_schema": tax.SCHEMA,
+        "observed_at": cur["fetched_at"],
         "source_grade": cur["source_grade"], "source_heads": cur["heads"],
         "parser_sha": parser_sha, "parser_pin_state": "PINNED" if parser_sha else "UNKNOWN",
+        "previous_parser_sha": previous_parser_sha,
         "visibility": "PUBLIC_PROJECTION" if public else "PRIVATE_LOCAL_ONLY",
         "private_items_excluded": cur["excluded_private_count"],
-        "visible_projection_sha256": digest,
+        "visible_projection_sha256": points[-1]["visible_projection_sha256"],
         "population": {"total": scales["USER"]["total"],
                        "issues": scales["USER"]["issues"], "prs": scales["USER"]["prs"]},
         "rollups": scales,
-        "delta": changes(previous, cur) if previous else
-                 {"comparable": False, "reason": "BASELINE_ONLY",
-                  "verified_closed": None, "formal_credit_delta": 0},
+        "history_points": points,
+        "wave_semantics": "N/N+1 are distinct snapshots, never additive work-item totals",
+        "delta": delta,
         "closure_authority": False, "merge_admission_authority": False,
         "root_causal_claims": "WITHHELD", "formal_credit_delta": 0,
     }
-    return result
 
 
 def csv_view(report: dict) -> str:
+    """Long-form two-pulse table: one row per facet/point/scope, no raw titles."""
     buff = io.StringIO()
     writer = csv.writer(buff, lineterminator="\n")
-    writer.writerow(["observed_at", "scope", "facet_dimension", "facet",
+    writer.writerow(["observed_at", "wave", "scope", "facet_dimension", "facet",
                      "count", "scope_denominator", "additive"])
-    for scope, roll in sorted(report["rollups"].items()):
-        for dimension in ("primary_family", "single_composite", "peer_cohorts",
-                          "topic_memberships_nonadditive", "cluster_memberships_nonadditive",
-                          "code_memberships_nonadditive"):
-            for name, number in sorted(roll[dimension].items()):
-                writer.writerow([report["observed_at"], scope, dimension, name, number,
-                                 roll["total"], dimension in ("primary_family", "single_composite")])
+    for point in report["history_points"]:
+        for scope, roll in sorted(point["rollups"].items()):
+            for dimension in ("primary_family", "single_composite", "peer_cohorts",
+                              "topic_memberships_nonadditive", "cluster_memberships_nonadditive",
+                              "code_memberships_nonadditive"):
+                for name, number in sorted(roll[dimension].items()):
+                    writer.writerow([point["observed_at"], point["wave"], scope,
+                                     dimension, name, number, roll["total"],
+                                     dimension in ("primary_family", "single_composite")])
     return buff.getvalue()
-
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
@@ -264,12 +295,14 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--json-out", type=Path, required=True)
     ap.add_argument("--csv-out", type=Path)
     ap.add_argument("--parser-sha")
+    ap.add_argument("--previous-parser-sha")
     ap.add_argument("--private-local", action="store_true",
                     help="Only for private owner-controlled local storage; public is default")
     a = ap.parse_args(argv)
     cur = json.loads(a.current.read_text(encoding="utf-8"))
     prev = json.loads(a.previous.read_text(encoding="utf-8")) if a.previous else None
-    report = build(cur, prev, public=not a.private_local, parser_sha=a.parser_sha)
+    report = build(cur, prev, public=not a.private_local, parser_sha=a.parser_sha,
+                   previous_parser_sha=a.previous_parser_sha)
     a.json_out.parent.mkdir(parents=True, exist_ok=True)
     a.json_out.write_bytes(canonical(report) + b"\n")
     if a.csv_out:
