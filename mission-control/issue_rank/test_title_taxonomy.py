@@ -70,6 +70,29 @@ class TitleParsing(unittest.TestCase):
         self.assertEqual(out["leaf_clusters"]["feat/test/W51/C0"]["total"], 1)
         self.assertGreater(sum(x["total"] for x in out["hierarchy_nodes_nonadditive"].values()), 4)
 
+
+    def test_semantic_topic_cluster_and_word_boundaries(self):
+        obj = tax.parse_title("fix(watch): signed payload and outbox integrity hard gates",
+                              "PullRequest", ["CODE PURPLE"])
+        self.assertEqual(obj["family"], "fix")
+        self.assertIn("watch", obj["topic_families"])
+        self.assertIn("code-purple", obj["topic_families"])
+        self.assertIn("integrity", obj["technical_clusters"])
+        false_positive = tax.parse_title("docs: specific requirements", "Issue")
+        self.assertNotIn("ci", false_positive["technical_clusters"])
+        self.assertEqual(false_positive["path"], "docs")
+
+    def test_nonexclusive_semantic_counts_do_not_inflate_items(self):
+        items = [{"type": "Issue", "title": "fix(watch): signed payload and outbox"},
+                 {"type": "PullRequest", "title": "feat(jade devops): census with coverage"},
+                 {"type": "Issue", "title": "[U14] CODE PURPLE: security checks"}]
+        result = tax.summary(items)
+        self.assertEqual(result["total"], 3)
+        self.assertEqual(sum(c["total"] for c in result["family"].values()), 3)
+        self.assertIn("integrity", result["technical_clusters_nonexclusive"])
+        self.assertIn("code-purple", result["topic_families_nonexclusive"])
+        self.assertFalse(result["hierarchy_nodes_additive"])
+
     def test_candidates_are_unverified_and_cycle_safe(self):
         items = [
             {"key": "a", "type": "Issue", "title": "[U1] task"},
@@ -112,6 +135,8 @@ class Integration(unittest.TestCase):
         self.assertEqual(redacted["rollups"][QPS]["title_taxonomy"]["total"], 0)
         self.assertGreater(redacted["rollups"][QPS]["title_taxonomy"]["private_items_excluded"], 0)
         self.assertNotIn("secret-supplier", str(redacted["rollups"]))
+        self.assertEqual(redacted["rollups"][QPS]["title_taxonomy"]["topic_families_nonexclusive"], {})
+        self.assertEqual(redacted["rollups"][QPS]["title_taxonomy"]["technical_clusters_nonexclusive"], {})
         for i in redacted["items"]:
             if i.get("private"):
                 self.assertEqual(i["title_taxonomy"]["family"], "REDACTED_PRIVATE")
