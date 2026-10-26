@@ -391,6 +391,48 @@ class DurableReplayAndOutbox(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "audit chain"):
             Q.verify(db)
 
+    def test_outbox_payload_tampering_rejected_before_claim(self):
+        db = self.db()
+        e, cand = event(), candidates(event())[0]
+        notification = Q.record(db, e, cand, proof(e, cand), KEY)["notification_id"]
+        db.execute("UPDATE outbox SET payload_json='{}' WHERE notification_id=?",
+                   (notification,))
+        with self.assertRaisesRegex(ValueError, "outbox payload metadata"):
+            Q.verify(db, KEY)
+        with self.assertRaisesRegex(ValueError, "outbox payload metadata"):
+            Q.claim(db, notification, "2026-10-26T02:00:00Z")
+
+    def test_forged_ack_state_rejected_by_replayed_audit(self):
+        db = self.db()
+        e, cand = event(), candidates(event())[0]
+        notification = Q.record(db, e, cand, proof(e, cand), KEY)["notification_id"]
+        db.execute(
+            "UPDATE outbox SET state='ACKED',claimed_at=?,ack_digest=?"
+            " WHERE notification_id=?",
+            ("2026-10-26T02:00:00Z", "f" * 64, notification))
+        with self.assertRaisesRegex(ValueError, "outbox delivery state tampering"):
+            Q.verify(db, KEY)
+
+    def test_forged_closed_root_cannot_suppress_next_root_event(self):
+        db = self.db()
+        e, cand = event(), candidates(event())[0]
+        Q.record(db, e, cand, proof(e, cand), KEY)
+        db.execute("UPDATE root_state SET state='CLOSED'")
+        with self.assertRaisesRegex(ValueError, "root_state diverges"):
+            Q.verify(db, KEY)
+        newer = event(2)
+        changed = copy.deepcopy(candidates(newer)[0])
+        with self.assertRaisesRegex(ValueError, "root_state diverges"):
+            Q.record(db, newer, changed, proof(newer, changed), KEY)
+
+    def test_deleted_outbox_row_is_detected_from_append_only_audit(self):
+        db = self.db()
+        e, cand = event(), candidates(event())[0]
+        Q.record(db, e, cand, proof(e, cand), KEY)
+        db.execute("DELETE FROM outbox")
+        with self.assertRaisesRegex(ValueError, "outbox enqueue vs audit"):
+            Q.verify(db, KEY)
+
     def test_externally_trusted_audit_root_rejects_tail_truncation(self):
         db = self.db()
         e, candidate = event(), candidates(event())[0]
