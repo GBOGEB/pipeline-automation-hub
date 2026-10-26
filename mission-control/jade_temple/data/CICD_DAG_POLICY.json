@@ -21,13 +21,13 @@
     "note": "#781 scale-dock owns the EVERRED / P-process / Code Purple dock definitions and the cross-source consistency checks; this projection calls those functions instead of keeping a parallel definition. issue_bd and crosswalk docks need inputs JADE does not hold and stay NOT_DOCKED (UNKNOWN, never zero)."
   },
   "devops_census": {
-    "census": "data/DEVOPS_CENSUS_N11.json",
-    "objects": "data/DEVOPS_OBJECTS_N11.json",
+    "census": "data/DEVOPS_CENSUS_N12.json",
+    "objects": "data/DEVOPS_OBJECTS_N12.json",
     "schema": "jade.devops.census.v1",
-    "digest_sha256": "35bf393ddcd6b4886b43d384e956f3540bae7e0ee3f4925b178bf49b637b806b",
-    "source_commit": "e4b901afa7706dee862730c4a468a96b7b07bcfc",
-    "source_branch": "feat/jade-n11-recensus-20261026 (pulse at master e4b901a, 2026-10-25T23:31Z)",
-    "note": "Latest committed census pulse (N+11; N+9 and N+10 stay beside it). Re-pin census, objects and digest here when a new pulse lands, then regenerate (AGENTS.md L7). Its blob ids are read at each repo's census HEAD, which can be newer than the FOCUS5 gate SHA; every such binding carries that HEAD and the drift is reported, never hidden."
+    "digest_sha256": "1b867b4365cb869c9eab34bc8795354f015309e7396d8fa92274ea40ce592452",
+    "source_commit": "2078a71eeb8384b6810e7a138d568ac5040cca3b",
+    "source_branch": "feat/jade-census-n12-20261026 (pulse at 2078a71, stacked on u5/fix-872, 2026-10-26T03:48Z)",
+    "note": "Latest committed census pulse (N+12; N+9, N+10 and N+11 stay beside it). Re-pin census, objects and digest here when a new pulse lands, then regenerate (AGENTS.md L7). Its blob ids are read at each repo's census HEAD, which can be newer than the FOCUS5 gate SHA; every such binding carries that HEAD and the drift is reported, never hidden."
   },
   "lifecycle_level_status": {"0": "FAIL", "1": "FAIL", "2": "UNKNOWN", "3": "PASS", "4": "PASS", "5": "PASS"},
   "lifecycle_level_note": "Fleet stage colour uses the median census level: L3 AUTOMATED is the pass floor, L2 DEFINED is not yet automated, L0-L1 is red. Per-repo stage nodes are coloured by the state of the next blocking probe (census level = attainment, not a verdict): no blocker (L5) is PASS, a FAIL blocker is FAIL, an UNKNOWN blocker stays UNKNOWN.",
@@ -114,8 +114,8 @@
     {"id": "OBJ.BD_QUEUE", "path": "mission-control/jade_temple/data/BD_QUEUE.csv", "kind": "data", "function": "JADE burn-down queue (issue BD)"},
     {"id": "OBJ.HEAD_CROSSWALK", "path": "mission-control/jade_temple/data/HEAD_CROSSWALK.json", "kind": "data", "function": "Prior vs observed default-branch SHA per repo"},
     {"id": "OBJ.COHORT_CROSSWALK", "path": "mission-control/jade_temple/data/COHORT_CROSSWALK_NPLUS1.json", "kind": "data", "function": "N11 roster vs GoGREEN roster intersection"},
-    {"id": "OBJ.DEVOPS_CENSUS", "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N10.json", "kind": "data", "function": "N+10 DevOps lifecycle census: 21 repos, S0..S9 levels, workflows, jobs, tests, git blob ids"},
-    {"id": "OBJ.DEVOPS_OBJECTS", "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N10.json", "kind": "data", "function": "N+10 object table: python modules and test files with blob ids"},
+    {"id": "OBJ.DEVOPS_CENSUS", "path": "mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json", "kind": "data", "function": "N+12 DevOps lifecycle census: 21 repos, S0..S9 levels, workflows, jobs, tests, git blob ids"},
+    {"id": "OBJ.DEVOPS_OBJECTS", "path": "mission-control/jade_temple/data/DEVOPS_OBJECTS_N12.json", "kind": "data", "function": "N+12 object table: python modules and test files with blob ids"},
     {"id": "OBJ.SCALE_DOCK", "path": "mission-control/gogreen/scale_dock.py", "symbol": "dock_consistency", "kind": "code", "function": "#781 scale-dock: read-only EVERRED / P-process / Code Purple docks and cross-source consistency"},
     {"id": "OBJ.CP_CENSUS", "path": "mission-control/qps-triage-ultra/p-process/site/code-purple/kit/census.json", "kind": "data", "function": "Code Purple census v2: lift criteria, admission audit, follow-ups"},
     {"id": "OBJ.CICD_DAG", "path": "mission-control/jade_temple/tools/cicd_dag.py", "symbol": "project", "kind": "code", "function": "This projection: DAG/SIPOC, metrics, SHA/OID crosswalk"},
