@@ -134,5 +134,109 @@ class FrontierSafety(unittest.TestCase):
         self.assertNotIn("GBOGEB/cryoplant-project", json.dumps(report))
 
 
+    def test_aggressive_n_plus_eleven_is_staged_once_without_dispatch(self):
+        """Twelve diverse bounded waves do not create twelve worker executions."""
+        roots = [root(i, repo="ABACUS") for i in range(1, 25)]
+        result = rf.build(source(roots=roots), now=NOW, max_waves=16,
+                          capacity=8, per_repo=2)
+        self.assertEqual(len(result["waves"]), 12)
+        self.assertEqual(result["waves"][-1]["wave"], "N+11")
+        self.assertEqual(sum(w["count"] for w in result["waves"]), 24)
+        self.assertEqual(len({p["id"] for w in result["waves"]
+                              for p in w["packets"]}), 24)
+        self.assertEqual(result["remaining_candidate_count"], 0)
+        self.assertTrue(all(w["status"] == "STAGED_NOT_DISPATCHED"
+                            for w in result["waves"]))
+        self.assertFalse(result["worker_dispatch"])
+
+    def test_strict_wave_cap_defers_unassigned_candidates(self):
+        """A cap is a real upper bound; overflow remains pending without credit."""
+        roots = [root(i) for i in range(1, 20)]
+        report = rf.build(source(roots=roots), now=NOW,
+                          max_waves=3, capacity=5, per_repo=2)
+        self.assertEqual([w["wave"] for w in report["waves"]],
+                         ["N", "N+1", "N+2"])
+        self.assertEqual(sum(w["count"] for w in report["waves"]), 6)
+        self.assertEqual(report["remaining_candidate_count"], 13)
+        self.assertEqual(report["formal_closure_credit"], 0)
+
+    def test_security_priority_is_not_offset_by_occurrence_volume(self):
+        """A P0 MAROON root remains ahead of a high-volume P3 recurrence."""
+        critical = root(1, severity="P0", family="SECURITY_OR_POLICY",
+                        security="RED", occ=1, prs=[])
+        low = root(2, severity="P3", occ=5000, prs=list(range(1, 60)))
+        out = rf.build(source(roots=[low, critical]), now=NOW,
+                       max_waves=1, capacity=2, per_repo=2)
+        self.assertEqual(out["waves"][0]["packets"][0]["id"], critical["id"])
+        self.assertEqual(out["waves"][0]["packets"][0]["family"], rf.MAROON)
+        self.assertFalse(out["merge_authorized"])
+
+    def test_invalid_boolean_counts_fail_closed(self):
+        """Python bool must not masquerade as an integer occurrence count."""
+        for count in (True, False, -1, 1.5, "2"):
+            with self.subTest(count=count):
+                with self.assertRaisesRegex(ValueError, "INVALID_NONNEGATIVE_COUNT"):
+                    rf.build(source(roots=[root(1, occ=count)]), now=NOW)
+
+    def test_invalid_pr_references_and_consumers_fail_closed(self):
+        """Bad source identities cannot enter a source-owned repair packet."""
+        for prs in ([True], [0], [-1], ["42"], None):
+            with self.subTest(prs=prs):
+                bad = dict(root(1), affected_prs=prs)
+                with self.assertRaises(ValueError):
+                    rf.build(source(roots=[bad]), now=NOW)
+        with self.assertRaisesRegex(ValueError, "INVALID_CONSUMERS"):
+            rf.build(source(roots=[dict(root(1), consumers="not-a-list")]),
+                     now=NOW)
+
+    def test_private_unmatched_is_suppressed_before_signature_inspection(self):
+        """Even malformed private log signatures stay private, with no packets."""
+        private = {"repos": ["GBOGEB/cryoplant-project"],
+                   "signature": {"secret": "MUST_NOT_ESCAPE"},
+                   "occurrences": -1, "prs": [313]}
+        result = rf.build(source(roots=[], unmatched=[private]), now=NOW)
+        self.assertEqual(result["private_or_unmapped_suppressed"], 1)
+        self.assertEqual(result["candidate_count"], 0)
+        self.assertEqual(result["waves"], [])
+        self.assertNotIn("MUST_NOT_ESCAPE", json.dumps(result))
+
+    def test_duplicate_signature_is_not_counted_twice(self):
+        """Two identical unmatched source signatures do not become two roots."""
+        item = {"repos": ["GBOGEB/CODEX"], "signature": "same-head rerun",
+                "occurrences": 10, "prs": [1]}
+        with self.assertRaisesRegex(ValueError, "DUPLICATE_SOURCE_IDENTITY"):
+            rf.build(source(roots=[], unmatched=[item, item]), now=NOW)
+
+    def test_missing_timezone_proof_fails_closed(self):
+        """A naive producer clock or naive comparison clock is inadmissible."""
+        with self.assertRaisesRegex(ValueError, "SOURCE_CLOCK_NO_OFFSET"):
+            rf.build(source(generated="2026-10-26T13:00:00"), now=NOW)
+        with self.assertRaisesRegex(ValueError, "NOW_MISSING_OFFSET"):
+            rf.build(source(), now=datetime(2026, 10, 26, 14))
+
+    def test_invalid_caps_and_empty_source_never_summon_workers(self):
+        """Capacity may not be a bool, and an empty census creates no work."""
+        for bad in ({"capacity": True}, {"max_waves": 65}, {"per_repo": 9,
+                                                             "capacity": 8}):
+            with self.subTest(bad=bad):
+                with self.assertRaises(ValueError):
+                    rf.build(source(), now=NOW, **bad)
+        report = rf.build(source(roots=[], unmatched=[]), now=NOW)
+        self.assertEqual(report["candidate_count"], 0)
+        self.assertEqual(report["waves"], [])
+        self.assertFalse(report["worker_dispatch"])
+
+    def test_matched_replay_is_deterministic_and_never_closure_proof(self):
+        """Same source clock and membership must produce byte-identical output."""
+        census = source(roots=[root(i, repo="CODEX") for i in range(1, 8)])
+        one = rf.build(census, now=NOW, max_waves=8, per_repo=2)
+        two = rf.build(census, now=NOW, max_waves=8, per_repo=2)
+        self.assertEqual(json.dumps(one, sort_keys=True),
+                         json.dumps(two, sort_keys=True))
+        self.assertEqual(one["formal_closure_credit"], 0)
+        self.assertTrue(all(p["path_lease"] == "UNVERIFIED_NO_WRITE"
+                            for w in one["waves"] for p in w["packets"]))
+
+
 if __name__ == "__main__":
     unittest.main()
