@@ -30,5 +30,9 @@ class Tests(unittest.TestCase):
  def test_code_fences_ignored(self):
   self.assertEqual([r["target"] for r in m.references("~~~\nblocked by #2\n~~~\nsee #1",A)],[A+"#1"])
  def test_csv(self):
-  self.assertIn("dod_checked",m.csv_view(m.project(sample())))
+  result=m.project(sample())
+  self.assertIn("dod_checked",m.csv_view(result))
+  self.assertEqual(result["title_taxonomy_total"]["total"],3)
+  self.assertEqual(sum(x["total"] for x in result["title_taxonomy_total"]["family"].values()),3)
+  self.assertIn("title_taxonomy",result["issues"][A+"#1"])
 if __name__=="__main__":unittest.main()
