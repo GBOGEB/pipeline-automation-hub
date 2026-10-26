@@ -11,6 +11,7 @@ import argparse
 from datetime import datetime
 import json
 import math
+import re
 from pathlib import Path
 
 SCHEMA = "issue-rank-wave-control/v1"
@@ -19,6 +20,9 @@ METRICS = ("open_issues", "open_prs", "tasks_done", "tasks_total",
            "dov_declared", "measurable", "prs_red", "prs_unreviewed",
            "stale_21d", "actionable", "parked", "deadlocked")
 PERCENT = frozenset(("checklist_coverage", "dod_declared", "dov_declared", "measurable"))
+SOURCE_SHA = re.compile(r"^[0-9a-f]{40}$", re.I)
+RECEIPT_SHA = re.compile(r"^[0-9a-f]{64}$", re.I)
+DISCRETE = frozenset(METRICS) - PERCENT
 
 
 def _time(value):
@@ -53,6 +57,13 @@ def _scope(row, scope):
     values = {k: _numeric(metrics[k], k) for k in METRICS if k in metrics}
     if "open_issues" not in values or "open_prs" not in values:
         raise ValueError("open item denominator absent")
+    if any(type(values[k]) is not int for k in DISCRETE if k in values):
+        raise ValueError("noninteger count telemetry")
+    if ("tasks_done" in values and "tasks_total" in values
+            and values["tasks_done"] > values["tasks_total"]):
+        raise ValueError("tasks done exceeds tasks total")
+    if any(values.get(k, 0) > values["open_prs"] for k in ("prs_red", "prs_unreviewed")):
+        raise ValueError("PR subset exceeds open PR denominator")
     flow = metrics.get("flow") or {}
     burn = flow.get("net_burn_per_day") or {}
     if burn:
@@ -95,6 +106,10 @@ def summarize(rows, scope="USER", j=3):
         heads = tele.get("heads")
         if not isinstance(heads, dict) or not heads:
             raise ValueError("head census missing")
+        if any(not isinstance(repo, str) or not repo.strip()
+               or not isinstance(sha, str) or not SOURCE_SHA.fullmatch(sha)
+               for repo, sha in heads.items()):
+            raise ValueError("invalid source head SHA or repository identity")
         memberships.append(frozenset(heads))
         method = tele.get("method") or {}
         versions.append(method.get("version"))
@@ -127,6 +142,13 @@ def summarize(rows, scope="USER", j=3):
         reasons.append("METHOD_VERSION_DRIFT")
     if any(not x.get("row_sha256") for x in summaries):
         reasons.append("MISSING_LEDGER_RECEIPT")
+    elif any(not isinstance(x["row_sha256"], str)
+             or not RECEIPT_SHA.fullmatch(x["row_sha256"]) for x in summaries):
+        reasons.append("INVALID_LEDGER_RECEIPT")
+    if any(window[i].get("prev_sha256") is not None
+           and window[i]["prev_sha256"] != window[i - 1].get("row_sha256")
+           for i in range(1, len(window))):
+        reasons.append("LEDGER_LINK_MISMATCH")
     if reasons:
         comparable = False
     first = _scope(window[0], scope)[1]
@@ -146,10 +168,15 @@ def summarize(rows, scope="USER", j=3):
                type(d.get("scope_added_net")) is int for d in deltas):
             matched_ticked = sum(d["tasks_ticked_net"] for d in deltas)
             scope_added = sum(d["scope_added_net"] for d in deltas)
-    independent_windows = True
-    for earlier, later, a in zip(times, times[1:], window):
-        fd = (_scope(a, scope)[2]).get("window_days")
-        if not isinstance(fd, (int, float)) or fd <= 0 or (later - earlier).total_seconds() < fd * 86400:
+    window_days = [_scope(row, scope)[2].get("window_days") for row in window]
+    # A final pulse with a missing window is not independent evidence.
+    independent_windows = (
+        all(type(fd) in (int, float) and math.isfinite(fd) and fd > 0
+            for fd in window_days)
+        and len(set(window_days)) == 1
+    )
+    for earlier, later, fd in zip(times, times[1:], window_days):
+        if not independent_windows or (later - earlier).total_seconds() < fd * 86400:
             independent_windows = False
     burns = [_scope(r, scope)[3] for r in window]
     evidence_burn = (independent_windows and all(
@@ -167,6 +194,7 @@ def summarize(rows, scope="USER", j=3):
                        "matched_items_scope_added_net": scope_added},
         "waves": summaries,
         "control": {"independent_flow_windows": independent_windows,
+                    "receipt_integrity": "VERIFY_WITH_CANONICAL_LEDGER_CLI",
                     "sustained_positive_burn_observed": bool(comparable and evidence_burn),
                     "formally_verified_dod": False,
                     "closure_credit": 0,
