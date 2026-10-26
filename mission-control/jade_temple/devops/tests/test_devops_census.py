@@ -189,7 +189,7 @@ class EndToEnd(unittest.TestCase):
         self.assertEqual(C.unread_errors(self.census), [])
         roster = self.tmp / "starved-roster.json"
         roster.write_text(json.dumps({"repositories": [json.loads(self.roster.read_text(encoding="utf-8"))["repositories"][0]]}),
-                          encoding="utf-8")
+                          encoding="utf-8", newline="\n")
         with redirect_stdout(io.StringIO()), mock.patch.object(C.Git, "fetch_blobs", lambda _self, _oids: None):
             self.assertEqual(C.main(["fetch", "--cache", str(cache), "--roster", str(roster)]), 1)
         with redirect_stdout(io.StringIO()):
