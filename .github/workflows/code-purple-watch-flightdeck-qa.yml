@@ -1,0 +1,97 @@
+name: CODE PURPLE Watch N2 source-bound flightdeck QA
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/watch_vnext/**'
+      - 'mission-control/gogreen/scale-dock/real/receipt/scale-dock.json'
+      - 'mission-control/gogreen/scale_dock.py'
+      - '.github/workflows/code-purple-watch-flightdeck-qa.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cp-watch-view-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  watch-flightdeck-qa:
+    name: Exact-head structural and responsive browser proof
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact source commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Verify checkout and source-owned static contract
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          python -m unittest discover -s mission-control/gogreen/watch_vnext -p 'test_*.py' -v
+          python mission-control/gogreen/watch_vnext/build_view.py \
+            --rev "$EXPECTED_SHA" --out "$RUNNER_TEMP/cp-watch-flightdeck"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])/'cp-watch-flightdeck'
+          manifest=json.loads((root/'manifest.json').read_text())
+          view=json.loads((root/'snapshot.json').read_text())
+          assert manifest['source_sha']==os.environ['EXPECTED_SHA']
+          assert view['source']['commit_sha']==os.environ['EXPECTED_SHA']
+          assert view['merge_admission']=='HOLD'
+          assert view['fresh_authenticated_42_cell_breadth'] is None
+          assert view['published_pages_verified'] is False
+          assert view['qps_owner_readback']=='RESTRICTED_OWNER_RETURN'
+          for file,digest in manifest['sha256'].items():
+              assert hashlib.sha256((root/file).read_bytes()).hexdigest()==digest
+          assert len(view['planning'])==15
+          print('WATCH_FLIGHTDECK_STATIC_EXACT_HEAD=PASS')
+          PY
+      - name: Install pinned browser QA dependency
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Run desktop, laptop and mobile browser acceptance
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/watch_vnext/browser_qa.py \
+            --html "$RUNNER_TEMP/cp-watch-flightdeck/index.html" \
+            --out "$RUNNER_TEMP/cp-watch-flightdeck/browser"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'cp-watch-flightdeck/browser/receipt.json'
+          receipt=json.loads(p.read_text())
+          assert receipt['source_git_sha']==os.environ['EXPECTED_SHA']
+          assert {row['viewport'] for row in receipt['results']}=={'desktop','laptop','mobile'}
+          assert all(not row['horizontal_overflow'] and not row['page_or_console_errors']
+                     and row['mip_rows']==15 for row in receipt['results'])
+          assert receipt['manual_visual_review']=='PENDING'
+          assert receipt['hosted_parity']=='DEFER'
+          assert receipt['merge_admission']=='HOLD'
+          print('WATCH_FLIGHTDECK_BROWSER_CANDIDATE=PASS')
+          PY
+      - name: Upload source-bound candidate only (no Pages publication)
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: cp-watch-view-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/cp-watch-flightdeck/
+          if-no-files-found: warn
+          retention-days: 21
