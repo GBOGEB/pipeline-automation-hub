@@ -151,6 +151,26 @@ def _safe(value):
     return str(value)
 
 
+def navigation_markup(label):
+    """Render authored PR references as source-specific links, other owners as text.
+
+    This is an allowlisted presenter for human-authored navigation labels, not
+    an arbitrary HTML/URL interpolation path from the data source.
+    """
+    require(type(label) is str and len(label) <= 180, "invalid navigation label")
+    pieces = re.split(r"(#[0-9]+)", label)
+    out = []
+    for p in pieces:
+        if re.fullmatch(r"#[0-9]+", p):
+            number = int(p[1:])
+            require(0 < number < 1000000, "PR navigation number invalid")
+            out.append('<a href="' + REPO_URL + '/pull/' + str(number) + '">' +
+                       html.escape(p) + '</a>')
+        else:
+            out.append(html.escape(p))
+    return "".join(out)
+
+
 def render(snapshot):
     require(snapshot["schema"] == SCHEMA and snapshot["merge_admission"] == "HOLD",
             "false readiness")
@@ -167,6 +187,7 @@ def render(snapshot):
         "<tr><th scope='row'>" + html.escape(x["id"]) + "</th><td>" +
         html.escape(x["action"]) + "</td><td>" +
         html.escape(x["next_proof"]) + "</td><td>" +
+        navigation_markup(x["navigation"]) + "</td><td>" +
         html.escape(x["status"]) + "</td></tr>"
         for x in snapshot["planning"]
     )
@@ -227,7 +248,7 @@ footer{{border-top:1px solid var(--border);color:var(--muted);font-size:.88rem;p
 <p>Fresh source authentication and publication proof require separate canonical producer receipts. This page neither dispatches workers nor sends notifications.</p></section>
 <section id="mip" class="panel"><h2>MIP-01–15 · Next governed work</h2>
 <p class="meta">Planning registry only. These 15 actions are <b>not qualified completions</b>; refer to the source-owned handover for actual dispositions.</p>
-<div class="tablewrap"><table><thead><tr><th>ID</th><th>Scope</th><th>Required next proof</th><th>Status in this view</th></tr></thead><tbody>{actions}</tbody></table></div></section>
+<div class="tablewrap"><table><thead><tr><th>ID</th><th>Scope</th><th>Required next proof</th><th>Source / PR links</th><th>Status in this view</th></tr></thead><tbody>{actions}</tbody></table></div></section>
 <section id="sources" class="panel"><h2>Golden thread / provenance</h2>
 <details id="provenance"><summary>Show exact source identity and interpretation limits</summary>
 <p>Repository: <code>{html.escape(source["repository"])}</code></p>
