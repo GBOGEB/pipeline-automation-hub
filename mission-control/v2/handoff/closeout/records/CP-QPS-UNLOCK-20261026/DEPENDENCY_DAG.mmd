@@ -1,0 +1,9 @@
+flowchart LR
+ QPS_SOURCE[QPS owner engineering source] -->|SOURCE_OF| QPS_SSOT[QPS controlled SSOT]
+ QPS_SSOT -->|VALIDATED_BY| QPS_QA[QPS native binary and QA]
+ QPS_QA -->|CONSUMED_BY| CODEX[CODEX federation]
+ CODEX -->|ANALYSED_BY| ABACUS[ABACUS DOW]
+ ABACUS -->|SUPPORTS only| TOP7[JADE TOP7]
+ TOP7 -->|EXPANDS_TO| TOP21[TOP21]
+ QPS_OWNER[QPS owner approval] -.->|NONCOMPENSATING VETO| TOP7
+ GOVERNANCE[Effective review and security] -.->|NONCOMPENSATING VETO| TOP7
