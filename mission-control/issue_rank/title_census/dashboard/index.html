@@ -1,0 +1,563 @@
+<style>
+  .tx { display: grid; gap: var(--cds-gap-lg); font-family: var(--font-anthropic-sans); }
+  .tx h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; }
+  .tx h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+  .tx .muted { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .tx .lead { margin: var(--cds-gap-xs) 0 0; max-width: 70ch; }
+  .tx-bar { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
+  .tx-bar label { display: flex; gap: var(--cds-gap-xs); align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .tx-bar select { font: inherit; padding: var(--cds-pad-xs) var(--cds-pad-sm); border-radius: var(--cds-radius); border: 1px solid var(--color-border-line); background: var(--color-panel); color: var(--color-fg); }
+  .tx-seg { display: inline-flex; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); overflow: hidden; }
+  .tx-seg button { font: inherit; font-size: var(--cds-font-size-caption); border: 0; padding: var(--cds-pad-xs) var(--cds-pad-md); background: var(--color-panel); color: var(--color-fg); cursor: pointer; }
+  .tx-seg button[aria-pressed="true"] { background: var(--color-fg); color: var(--color-bg); }
+  .tx-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: var(--cds-gap-md); }
+  .tx-tile, .tx-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+  .tx-tile .v { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; }
+  .tx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); gap: var(--cds-gap-md); }
+  .tx-card > header { display: grid; gap: var(--cds-gap-xs); margin-bottom: var(--cds-gap-md); }
+  .tx-card > header .row { display: flex; justify-content: space-between; gap: var(--cds-gap-sm); flex-wrap: wrap; align-items: center; }
+  .tx-chart { position: relative; min-height: 14rem; }
+  .tx-scroll { max-height: 26rem; overflow: auto; }
+  .tx table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .tx th { position: sticky; top: 0; background: var(--color-panel); text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); cursor: pointer; white-space: nowrap; }
+  .tx td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
+  .tx td.num, .tx th.num { text-align: right; }
+  .tx code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.95em; }
+  .tx .up { color: var(--color-warn); } .tx .down { color: var(--color-ok); }
+  .tx .pill { display: inline-block; padding: 0 var(--cds-pad-xs); border-radius: var(--cds-radius); border: 1px solid var(--color-border-line); font-size: var(--cds-font-size-caption); }
+  .tx .pill.explicit { color: var(--color-ok); } .tx .pill.inferred { color: var(--color-warn); }
+  .tx-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; }
+  .tx-search { font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); min-width: 0; }
+  .tx-chip { font: inherit; font-size: var(--cds-font-size-caption); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-panel); color: var(--color-fg); padding: var(--cds-pad-xs) var(--cds-pad-sm); cursor: pointer; }
+  .tx-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr)); gap: var(--cds-gap-sm); margin-bottom: var(--cds-gap-md); }
+  .tx-stats > div { display: grid; gap: 2px; }
+  .tx .tx-stats b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-heading); font-variant-numeric: tabular-nums; }
+  .tx a { color: inherit; text-decoration: underline; text-decoration-color: var(--color-border-line); text-underline-offset: 2px; }
+  .tx a:hover { text-decoration-color: currentColor; }
+  .tx tbody tr.clickable { cursor: pointer; }
+  .tx tbody tr.clickable:hover td { background: color-mix(in srgb, var(--color-fg) 5%, transparent); }
+  .tx [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+  .tx [data-dash-source-state=empty] { color: transparent; }
+  .tx .fail { display: flex; align-items: center; justify-content: center; gap: var(--cds-gap-xs); min-height: 6rem; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .tx .fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+</style>
+
+<div class="tx">
+  <section id="overview">
+    <h1>GBOGEB title taxonomy</h1>
+    <p class="lead tx-takeaway" data-source="conformance stats">—</p>
+    <p class="muted">Grammar <code>type(scope qualifier): subject</code>, e.g. <code>fix(jade devops N12): census fails closed</code>. Levels: type family › type, family › scope › qualifier; prefix = type(scope).</p>
+  </section>
+
+  <div class="tx-bar">
+    <label>Repository <select id="f-repo" class="tx-repo" data-source="pulse"></select></label>
+    <span class="tx-seg" role="group" aria-label="Kind">
+      <button type="button" data-kind="all">PRs + issues</button>
+      <button type="button" data-kind="pr">PRs</button>
+      <button type="button" data-kind="issue">Issues</button>
+    </span>
+    <label>Sort <select id="f-sort">
+      <option value="n-desc">Most first</option><option value="n-asc">Fewest first</option>
+      <option value="az">Name A → Z</option><option value="za">Name Z → A</option></select></label>
+    <label>Show <select id="f-top">
+      <option value="0">All</option><option value="5">Top 5</option><option value="10">Top 10</option>
+      <option value="20">Top 20</option><option value="50">Top 50</option></select></label>
+    <button type="button" class="tx-chip tx-range" hidden></button>
+    <button type="button" class="tx-chip tx-pick" hidden></button>
+    <span class="muted tx-pulse" data-source="pulse">—</span>
+  </div>
+
+  <article class="tx-card" id="spread">
+    <header><div class="row"><h2>Spread and frequency</h2>
+      <label class="muted">Level <select id="f-dlevel">
+        <option value="family">Family</option><option value="scope">Scope</option><option value="prefix">Prefix type(scope)</option>
+        <option value="family_prefix">Family prefix</option><option value="type">Type</option><option value="qualifier_class">Qualifier class</option></select></label></div>
+      <span class="muted">How titles spread over the keys of one level. Histogram: how many keys have that many titles. Click a bar to keep only that range everywhere; shift-click to extend it; this is how you drop the tail.</span></header>
+    <div class="tx-stats" id="c-lstats">
+      <div><span class="muted">Distinct keys</span><b class="tx-s" data-s="keys" data-source="levelstats" data-field="keys">—</b></div>
+      <div><span class="muted">Titles</span><b class="tx-s" data-s="total" data-source="levelstats" data-field="total">—</b></div>
+      <div><span class="muted">Mean per key</span><b class="tx-s" data-s="mean" data-source="levelstats" data-field="mean">—</b></div>
+      <div><span class="muted">Median per key</span><b class="tx-s" data-s="median" data-source="levelstats" data-field="median">—</b></div>
+      <div><span class="muted">90th percentile</span><b class="tx-s" data-s="p90" data-source="levelstats" data-field="p90">—</b></div>
+      <div><span class="muted">Largest key</span><b class="tx-s" data-s="max" data-source="levelstats" data-field="max">—</b></div>
+      <div><span class="muted">Top-5 share</span><b class="tx-s" data-s="top5_share" data-source="levelstats" data-field="top5_share">—</b></div>
+      <div><span class="muted">Tail share (keys under 5)</span><b class="tx-s" data-s="tail_share" data-source="levelstats" data-field="tail_share">—</b></div>
+      <div><span class="muted">Gini (0 even, 1 one key)</span><b class="tx-s" data-s="gini" data-source="levelstats" data-field="gini">—</b></div>
+    </div>
+    <div class="tx-chart" id="c-hist" data-source="stats" style="min-height:12rem"></div>
+  </article>
+
+  <article class="tx-card" id="map">
+    <header><h2>Family › scope › type map</h2><span class="muted">Width is title count. Click a block to zoom in and list its titles below; click the left column to zoom out.</span></header>
+    <div class="tx-chart" id="c-icicle" data-source="stats keywords" style="min-height:22rem"></div>
+  </article>
+
+  <div class="tx-tiles" id="tiles">
+    <div class="tx-tile"><div class="muted">Titles</div><div class="v tx-k" data-k="n" data-source="conformance" data-field="n">—</div></div>
+    <div class="tx-tile"><div class="muted">Explicit type(scope) prefix</div><div class="v tx-k" data-k="explicit_rate" data-source="conformance" data-field="explicit_rate">—</div></div>
+    <div class="tx-tile"><div class="muted">Lint clean (no warning or error)</div><div class="v tx-k" data-k="clean_rate" data-source="conformance" data-field="clean_rate">—</div></div>
+    <div class="tx-tile"><div class="muted">Resolved to type + family</div><div class="v tx-k" data-k="resolved_rate" data-source="conformance" data-field="resolved_rate">—</div></div>
+  </div>
+
+  <div class="tx-grid">
+    <article class="tx-card" id="families">
+      <header><h2>Families</h2><span class="muted">Count per family (scope cluster). Arrow: last 30 days vs the 30 before.</span></header>
+      <div class="tx-chart" id="c-family" data-source="stats"></div>
+    </article>
+    <article class="tx-card" id="types">
+      <header><h2>Types</h2><span class="muted">Count per type, grouped by type family.</span></header>
+      <div class="tx-chart" id="c-type" data-source="stats typemap"></div>
+    </article>
+  </div>
+
+  <article class="tx-card" id="matrix">
+    <header><h2>Type × family</h2><span class="muted">Each cell is a family prefix such as fix(gogreen). Darker is more.</span></header>
+    <div class="tx-chart" id="c-matrix" data-source="stats" style="overflow-x:auto"></div>
+  </article>
+
+  <div class="tx-grid">
+    <article class="tx-card" id="peers">
+      <header><div class="row"><h2>Peers inside a family</h2><label class="muted">Family <select id="f-family" class="tx-fam" data-source="keywords"></select></label></div>
+        <span class="muted">Scopes at the same level within the chosen family.</span></header>
+      <div class="tx-chart" id="c-peers" data-source="stats keywords"></div>
+    </article>
+    <article class="tx-card" id="trend">
+      <header><h2>Running totals by family</h2><span class="muted">Cumulative titles per month, top 6 families.</span></header>
+      <div class="tx-chart" id="c-trend" data-source="series"></div>
+    </article>
+  </div>
+
+  <article class="tx-card" id="by-repo">
+    <header><h2>Families per repository</h2><span class="muted">Same kind filter; rows are repositories, columns are families.</span></header>
+    <div class="tx-scroll" id="c-repo" data-source="stats"></div>
+  </article>
+
+  <article class="tx-card" id="prefixes">
+    <header><div class="row"><h2>Prefix leaderboard</h2><input id="q-prefix" class="tx-search" type="search" placeholder="Filter, e.g. fix( or gogreen" aria-label="Filter prefixes"></div>
+      <span class="muted">Every type(scope) combination with state, 30-day trend and median days to close.</span></header>
+    <div class="tx-scroll">
+      <table class="tx-t-prefix" data-source="stats" data-row-key="id">
+        <thead><tr><th data-field="key">Prefix</th><th class="num" data-field="n">n</th><th class="num" data-field="share">Share</th><th class="num" data-field="open">Open</th><th class="num" data-field="merged">Merged</th><th class="num" data-field="closed">Closed</th><th class="num" data-field="n_30d">30 d</th><th class="num" data-field="trend_30d">Δ 30 d</th><th class="num" data-field="median_days_to_close">Median days</th><th data-field="last_seen">Last</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="tx-card" id="titles">
+    <header><div class="row"><h2 class="tx-titles-h">Titles</h2><input id="q-titles" class="tx-search" type="search" placeholder="Search titles" aria-label="Search titles"></div>
+      <span class="muted tx-titles-note">Every PR and issue for the chosen repository and kind. Click any bar, cell or prefix above to narrow it. Numbers open GitHub.</span></header>
+    <div class="tx-scroll">
+      <table class="tx-t-titles" data-source="titles" data-row-key="id">
+        <thead><tr><th data-field="number">#</th><th data-field="repo">Repo</th><th data-field="kind">Kind</th><th data-field="state">State</th><th data-field="title">Title</th><th data-field="prefix">Prefix</th><th data-field="confidence">Confidence</th><th data-field="created">Created</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="tx-card" id="keywords">
+    <header><h2>Keyword inventory</h2><span class="muted">Every canonical scope, its aliases and the spellings seen in explicit prefixes. Italic aliases match only inside type(scope) or a label, never free text.</span></header>
+    <div class="tx-scroll">
+      <table class="tx-t-kw" data-source="keywords" data-row-key="scope">
+        <thead><tr><th data-field="family">Family</th><th data-field="scope">Scope</th><th data-field="aliases">Aliases</th><th data-field="seen">Spellings seen</th><th class="num" data-field="n_explicit">Explicit</th><th data-field="repos">Repos</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </article>
+
+  <div class="tx-grid">
+    <article class="tx-card" id="unmapped">
+      <header><h2>Not in the vocabulary yet</h2><span class="muted">Explicit scopes and types that map to nothing. Add each to a family, or rename the titles.</span></header>
+      <div class="tx-scroll">
+        <table class="tx-t-un" data-source="unmapped" data-row-key="id">
+          <thead><tr><th data-field="what">What</th><th data-field="token">Token</th><th class="num" data-field="n">n</th><th data-field="repos">Repos</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </article>
+    <article class="tx-card" id="lint">
+      <header><h2>Lint findings</h2><span class="muted">Titles hit per rule, all repositories.</span></header>
+      <div class="tx-scroll">
+        <table class="tx-t-lint" data-source="lint" data-row-key="code">
+          <thead><tr><th data-field="code">Code</th><th data-field="severity">Severity</th><th data-field="message">Rule</th><th class="num" data-field="n">Titles</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+
+  <article class="tx-card" id="plan">
+    <header><div class="row"><h2>Issue alignment plan (dry run)</h2><input id="q-plan" class="tx-search" type="search" placeholder="Filter issues" aria-label="Filter plan"></div>
+      <span class="muted">Open issues re-expressed in the PR vocabulary. Nothing has been changed on GitHub. Bot-authored titles keep their title and get labels only.</span></header>
+    <div class="tx-scroll">
+      <table class="tx-t-plan" data-source="plan" data-row-key="id">
+        <thead><tr><th data-field="id">Issue</th><th data-field="confidence">Confidence</th><th data-field="title">Current title</th><th data-field="new_title">Proposed title</th><th data-field="add_labels">Labels to add</th><th data-field="evidence">Evidence</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </article>
+</div>
+
+<script>
+dash.calc('levelstats', {
+  inputs: ['stats'],
+  title: 'Spread per level',
+  description: 'Per repository, kind and level: distinct keys, titles, mean, median, 90th percentile and largest count per key, share of the top 5 keys, share in keys under 5 titles, and the Gini coefficient of counts.',
+  fn: (stats) => {
+    const groups = d3.groups(stats, (s) => `${s.repo}|${s.kind}|${s.level}`);
+    return groups.map(([id, g]) => {
+      const v = g.map((s) => s.n).sort((a, b) => a - b), total = d3.sum(v), k = v.length;
+      const gini = k && total ? (2 * d3.sum(v, (x, i) => (i + 1) * x)) / (k * total) - (k + 1) / k : 0;
+      return { id, keys: k, total, mean: total / k, median: d3.median(v), p90: d3.quantileSorted(v, 0.9), max: v[k - 1],
+        top5_share: d3.sum(v.slice(-5)) / total, tail_share: d3.sum(v.filter((x) => x < 5)) / total, gini };
+    });
+  },
+});
+</script>
+
+<script>
+(() => {
+  const fmt = d3.format(','), pct = d3.format('.1%');
+  const gh = (r) => `https://github.com/GBOGEB/${r.repo}/${r.kind === 'pr' ? 'pull' : 'issues'}/${r.number}`;
+  const kindLabel = { all: 'PRs and issues', pr: 'PRs', issue: 'issues' };
+  const P = () => ({ repo: dash.params().repo || 'ALL', kind: dash.params().kind || 'all' });
+  const ok = (id) => dash.data(id).status === 'ok';
+  const rows = (id) => (ok(id) ? dash.data(id).data : []);
+  const num = (v) => (v === '' || v == null ? null : Number(v));
+  const fail = (el, id) => { el.replaceChildren(); if (dash.data(id).status === 'error') { const d = document.createElement('div'); d.className = 'fail'; d.textContent = 'Failed to load'; el.append(d); } };
+
+  // filters
+  const repoSel = document.getElementById('f-repo');
+  repoSel.addEventListener('change', () => dash.setParams({ repo: repoSel.value }));
+  document.querySelectorAll('.tx-seg button').forEach((b) => b.addEventListener('click', () => dash.setParams({ kind: b.dataset.kind })));
+  const famSel = document.getElementById('f-family');
+  famSel.addEventListener('change', () => dash.setParams({ family: famSel.value }));
+  ['q-prefix', 'q-plan', 'q-titles'].forEach((id) => document.getElementById(id).addEventListener('input', () => window.__txDraw && window.__txDraw()));
+  const sortSel = document.getElementById('f-sort'), topSel = document.getElementById('f-top'), dlevelSel = document.getElementById('f-dlevel');
+  sortSel.addEventListener('change', () => dash.setParams({ sort: sortSel.value }));
+  topSel.addEventListener('change', () => dash.setParams({ top: Number(topSel.value) }));
+  dlevelSel.addEventListener('change', () => dash.setParams({ dlevel: dlevelSel.value, nmin: null, nmax: null }));
+  const rangeChip = document.querySelector('.tx-range'), pickChip = document.querySelector('.tx-pick');
+  rangeChip.addEventListener('click', () => dash.setParams({ nmin: null, nmax: null }));
+  pickChip.addEventListener('click', () => dash.setParams({ plevel: null, pkey: null }));
+  const pick = (level, key, scroll = true) => { dash.setParams({ plevel: level, pkey: key }); if (scroll) document.getElementById('titles').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+
+  // shared ordering for every ranked list: count range (histogram), sort, top-N
+  const order = (list, level) => {
+    const p = dash.params(), dl = p.dlevel || 'family';
+    let out = list.slice();
+    if (level === dl && p.nmin != null) out = out.filter((s) => s.n >= p.nmin && (p.nmax == null || s.n <= p.nmax));
+    const sort = p.sort || 'n-desc';
+    out.sort(sort === 'n-asc' ? (a, b) => a.n - b.n : sort === 'az' ? (a, b) => d3.ascending(a.key, b.key) : sort === 'za' ? (a, b) => d3.descending(a.key, b.key) : (a, b) => b.n - a.n);
+    const top = Number(p.top || 0);
+    return top ? out.slice(0, top) : out;
+  };
+
+  const tip = document.createElement('div'); tip.className = 'tx-tip'; tip.hidden = true;
+  const showTip = (box, ev, lines) => { if (tip.parentNode !== box) box.append(tip); tip.replaceChildren(...lines.map((l, i) => { const d = document.createElement('div'); d.textContent = l; if (i === 0) d.style.color = 'var(--cds-text-secondary)'; return d; })); tip.hidden = false; const r = box.getBoundingClientRect(); let x = ev.clientX - r.left + 12; if (x + tip.offsetWidth > r.width) x = ev.clientX - r.left - tip.offsetWidth - 12; tip.style.left = Math.max(0, x) + 'px'; tip.style.top = (ev.clientY - r.top + 12) + 'px'; };
+  const hideTip = () => { tip.hidden = true; };
+
+  function hbars(el, data, opts) {
+    el.replaceChildren();
+    if (!data.length) return;
+    const W = el.clientWidth || 400, bh = 22, gap = 6;
+    const svg = d3.select(el).append('svg').attr('width', '100%');
+    const probe = svg.append('text').attr('font-size', 12).style('font-family', 'var(--font-anthropic-sans)');
+    let lw = 0; data.forEach((d) => { probe.text(d.label); lw = Math.max(lw, probe.node().getComputedTextLength()); });
+    probe.remove();
+    lw = Math.min(lw + 10, W * 0.45);
+    const rw = 92, H = data.length * (bh + gap);
+    svg.attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
+    const x = d3.scaleLinear([0, d3.max(data, (d) => d.n) || 1], [0, Math.max(10, W - lw - rw)]);
+    const g = svg.selectAll('g').data(data).join('g').attr('transform', (d, i) => `translate(0,${i * (bh + gap)})`);
+    g.append('text').attr('x', lw - 8).attr('y', bh / 2).attr('dy', '0.35em').attr('text-anchor', 'end').attr('font-size', 12).attr('fill', 'var(--color-fg)').text((d) => d.label);
+    g.append('rect').attr('x', lw).attr('height', bh).attr('rx', 4).attr('width', (d) => Math.max(2, x(d.n))).attr('fill', (d) => d.color || dash.colors[0])
+      .on('mousemove', (ev, d) => showTip(el, ev, d.tip)).on('mouseleave', hideTip)
+      .style('cursor', opts && opts.onClick ? 'pointer' : null).on('click', (ev, d) => opts && opts.onClick && opts.onClick(d));
+    g.append('text').attr('x', (d) => lw + Math.max(2, x(d.n)) + 6).attr('y', bh / 2).attr('dy', '0.35em').attr('font-size', 12).attr('fill', 'var(--color-fg-muted)')
+      .text((d) => fmt(d.n) + (d.trend ? (d.trend > 0 ? ' ▲' : ' ▼') + Math.abs(d.trend) : ''));
+  }
+
+  function table(tbody, data, cols, key) {
+    tbody.replaceChildren(...data.map((r) => {
+      const tr = document.createElement('tr'); tr.dataset.key = r[key];
+      cols.forEach((c) => { const td = document.createElement('td'); if (c.num) td.className = 'num'; const v = c.f ? c.f(r) : r[c.k]; if (c.link) { const a = document.createElement('a'); a.href = c.link(r); a.target = '_blank'; a.rel = 'noopener'; a.textContent = v; td.append(a); } else if (c.code) { const code = document.createElement('code'); code.textContent = v; td.append(code); } else if (c.pill) { const s = document.createElement('span'); s.className = 'pill ' + v; s.textContent = v; td.append(s); } else td.textContent = v == null ? '' : v; tr.append(td); });
+      return tr;
+    }));
+  }
+  // sortable headers
+  document.querySelectorAll('.tx table').forEach((t) => t.querySelectorAll('th').forEach((th, i) => th.addEventListener('click', () => {
+    const tb = t.tBodies[0], dir = th.getAttribute('aria-sort') === 'descending' ? 1 : -1;
+    t.querySelectorAll('th').forEach((h) => h.removeAttribute('aria-sort'));
+    th.setAttribute('aria-sort', dir === 1 ? 'ascending' : 'descending');
+    const val = (tr) => { const s = tr.children[i].textContent.replace(/,/g, ''); const n = parseFloat(s); return isNaN(n) || th.className !== 'num' ? s : n; };
+    [...tb.rows].sort((a, b) => (val(a) > val(b) ? dir : val(a) < val(b) ? -dir : 0)).forEach((r) => tb.append(r));
+  })));
+
+  function draw() {
+    const { repo, kind } = P();
+    document.querySelectorAll('.tx-seg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.kind === kind)));
+
+    // pulse + repo options
+    const pulse = rows('pulse');
+    if (ok('pulse')) {
+      const opts = [new Option('All repositories', 'ALL')].concat(pulse.slice().sort((a, b) => (num(b.prs) + num(b.issues)) - (num(a.prs) + num(a.issues))).map((r) => new Option(`${r.repo} (${fmt(num(r.prs) + num(r.issues))})`, r.repo)));
+      repoSel.replaceChildren(...opts); repoSel.value = repo;
+      const one = pulse.find((r) => r.repo === repo);
+      document.querySelector('.tx-pulse').textContent = one ? `${repo} @ ${String(one.head_sha).slice(0, 10)} · pulse ${String(one.fetched_at).slice(0, 16).replace('T', ' ')} UTC` : `${pulse.length} repositories · pulse ${String(pulse[0] && pulse[0].fetched_at).slice(0, 16).replace('T', ' ')} UTC`;
+    }
+
+    // tiles
+    const conf = rows('conformance').find((c) => c.id === `${repo}|${kind}|ALL`);
+    document.querySelectorAll('.tx-k').forEach((el) => {
+      el.dataset.where = `id=${encodeURIComponent(`${repo}|${kind}|ALL`)}`;
+      el.textContent = conf ? (el.dataset.k === 'n' ? fmt(num(conf.n)) : pct(num(conf[el.dataset.k]))) : '—';
+    });
+
+    const st = rows('stats').filter((s) => s.repo === repo && s.kind === kind);
+    const lvl = (l) => st.filter((s) => s.level === l).sort((a, b) => num(b.n) - num(a.n));
+
+    // takeaway
+    const fams = lvl('family').filter((s) => s.key !== '?');
+    const unres = lvl('family').find((s) => s.key === '?');
+    const tk = document.querySelector('.tx-takeaway');
+    if (conf && fams.length) {
+      tk.textContent = `${fmt(num(conf.n))} ${kindLabel[kind]} in ${repo === 'ALL' ? 'all repositories' : repo}: ${pct(num(conf.explicit_rate))} carry an explicit type(scope) prefix. Largest family is ${fams[0].key} (${pct(num(fams[0].share))}); ${unres ? fmt(num(unres.n)) : 0} titles still map to no family.`;
+    } else tk.textContent = '—';
+
+    // families
+    const cf = document.getElementById('c-family');
+    if (!ok('stats')) fail(cf, 'stats'); else hbars(cf, order(lvl('family'), 'family').map((s) => ({ label: s.key === '?' ? '(none)' : s.key, n: num(s.n), trend: num(s.trend_30d), color: s.key === '?' ? 'var(--cds-chart-muted)' : dash.colors[0], tip: [s.key, `${fmt(num(s.n))} titles · ${pct(num(s.share))}`, `last 30 d ${num(s.n_30d)}, prior 30 d ${num(s.n_prev_30d)}`, 'click to list titles'], key: s.key })), { onClick: (d) => { if (d.key !== '?') dash.setParams({ family: d.key }); pick('family', d.key); } });
+
+    // types coloured by type family
+    const ct = document.getElementById('c-type');
+    const tfOrder = lvl('type_family').map((s) => s.key);
+    const typeFam = {}; (rows('typemap')).forEach((t) => { typeFam[t.type] = t.family; });
+    if (!ok('stats')) fail(ct, 'stats'); else hbars(ct, order(lvl('type'), 'type').map((s) => ({ key: s.key, label: s.key === '?' ? '(none)' : s.key, n: num(s.n), trend: num(s.trend_30d), color: s.key === '?' ? 'var(--cds-chart-muted)' : dash.colors[Math.max(0, tfOrder.indexOf(typeFam[s.key] || '?')) % 8], tip: [`${s.key} · ${typeFam[s.key] || 'unresolved'}`, `${fmt(num(s.n))} titles · ${pct(num(s.share))}`, `median ${s.median_days_to_close ?? '–'} days to close`] })), { onClick: (d) => pick('type', d.key) });
+
+    // matrix
+    const cm = document.getElementById('c-matrix');
+    if (!ok('stats')) fail(cm, 'stats'); else {
+      cm.replaceChildren();
+      const cells = lvl('family_prefix').map((s) => { const m = /^([^(]*)\((.*)\)$/.exec(s.key); return { t: m[1], f: m[2], n: num(s.n) }; });
+      const types = order(lvl('type'), 'type').map((s) => s.key), famsK = order(lvl('family'), 'family').map((s) => s.key);
+      const cw = 52, ch = 24, left = 130, top = 28;
+      const W = left + types.length * cw, H = top + famsK.length * ch;
+      const svg = d3.select(cm).append('svg').attr('width', Math.max(W, 10)).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
+      const max = d3.max(cells, (c) => c.n) || 1;
+      const col = d3.scaleSqrt([0, max], [0.06, 1]);
+      svg.selectAll('text.c').data(types).join('text').attr('x', (d, i) => left + i * cw + cw / 2).attr('y', 16).attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text((d) => (d === '?' ? '(none)' : d));
+      svg.selectAll('text.r').data(famsK).join('text').attr('x', left - 8).attr('y', (d, i) => top + i * ch + ch / 2).attr('dy', '0.35em').attr('text-anchor', 'end').attr('font-size', 11).attr('fill', 'var(--color-fg)').text((d) => (d === '?' ? '(none)' : d));
+      const g = svg.append('g');
+      cells.forEach((c) => {
+        const i = types.indexOf(c.t), j = famsK.indexOf(c.f); if (i < 0 || j < 0) return;
+        g.append('rect').attr('x', left + i * cw + 1).attr('y', top + j * ch + 1).attr('width', cw - 2).attr('height', ch - 2).attr('rx', 3).attr('fill', dash.colors[0]).attr('fill-opacity', col(c.n))
+          .style('cursor', 'pointer').on('click', () => pick('family_prefix', `${c.t}(${c.f})`))
+          .on('mousemove', (ev) => showTip(cm, ev, [`${c.t}(${c.f})`, `${fmt(c.n)} titles`, 'click to list titles'])).on('mouseleave', hideTip);
+        g.append('text').attr('x', left + i * cw + cw / 2).attr('y', top + j * ch + ch / 2).attr('dy', '0.35em').attr('text-anchor', 'middle').attr('font-size', 10).attr('pointer-events', 'none').attr('fill', col(c.n) > 0.55 ? 'var(--color-bg)' : 'var(--color-fg)').text(fmt(c.n));
+      });
+    }
+
+    // peers in a family
+    const kw = rows('keywords');
+    const famList = [...new Set(kw.map((k) => k.family))];
+    const fam = dash.params().family || famList[0];
+    if (ok('keywords')) { famSel.replaceChildren(...famList.map((f) => new Option(f, f))); famSel.value = fam; }
+    const cp = document.getElementById('c-peers');
+    if (!ok('stats') || !ok('keywords')) fail(cp, ok('stats') ? 'keywords' : 'stats'); else {
+      const members = new Set(kw.filter((k) => k.family === fam).map((k) => k.scope));
+      hbars(cp, order(lvl('scope').filter((s) => members.has(s.key)), 'scope').map((s) => ({ key: s.key, label: s.key, n: num(s.n), trend: num(s.trend_30d), tip: [`${fam} › ${s.key}`, `${fmt(num(s.n))} titles · open ${num(s.open)} · merged ${num(s.merged)}`, `first ${s.first_seen}, last ${s.last_seen}`] })), { onClick: (d) => pick('scope', d.key) });
+      if (!cp.childNodes.length) { const d = document.createElement('div'); d.className = 'muted'; d.textContent = `No ${kindLabel[kind]} in ${fam} for this repository.`; cp.append(d); }
+    }
+
+    // running totals
+    const cr = document.getElementById('c-trend');
+    if (!ok('series')) fail(cr, 'series'); else {
+      cr.replaceChildren();
+      const top6 = fams.slice(0, 6).map((s) => s.key);
+      const ser = rows('series').filter((s) => s.repo === repo && s.kind === kind && s.level === 'family' && top6.includes(s.key));
+      const months = [...new Set(ser.map((s) => s.month))].sort();
+      if (months.length) {
+        const W = cr.clientWidth || 400, H = 240, m = { l: 44, r: 96, t: 8, b: 24 };
+        const parse = d3.utcParse('%Y-%m');
+        const x = d3.scaleUtc(d3.extent(months, parse), [m.l, W - m.r]);
+        const lines = top6.map((f) => { let last = 0; const pts = months.map((mo) => { const r = ser.find((s) => s.key === f && s.month === mo); if (r) last = num(r.cum_n); return { d: parse(mo), v: last, mo }; }); return { f, pts }; });
+        const y = d3.scaleLinear([0, d3.max(lines, (l) => d3.max(l.pts, (p) => p.v)) || 1], [H - m.b, m.t]).nice();
+        const svg = d3.select(cr).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
+        svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(Math.max(2, Math.floor(W / 110))).tickFormat(d3.utcFormat('%b %y'))).attr('font-size', null).attr('font-family', null).call((g) => g.selectAll('text').attr('fill', 'var(--color-fg-muted)')).call((g) => g.selectAll('line,path').attr('stroke', 'var(--cds-chart-axis)'));
+        svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d3.format('~s'))).attr('font-size', null).attr('font-family', null).call((g) => g.select('.domain').remove()).call((g) => g.selectAll('text').attr('fill', 'var(--color-fg-muted)')).call((g) => g.selectAll('line').attr('x2', W - m.l - m.r).attr('stroke', 'var(--cds-chart-grid)'));
+        const line = d3.line().x((p) => x(p.d)).y((p) => y(p.v));
+        let lastY = [];
+        lines.forEach((l, i) => {
+          svg.append('path').attr('d', line(l.pts)).attr('fill', 'none').attr('stroke', dash.colors[i]).attr('stroke-width', 2).attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round');
+          const end = l.pts[l.pts.length - 1]; let ly = y(end.v); while (lastY.some((v) => Math.abs(v - ly) < 13)) ly -= 13; lastY.push(ly);
+          svg.append('text').attr('x', W - m.r + 6).attr('y', ly).attr('dy', '0.35em').attr('font-size', 11).attr('fill', dash.colors[i]).text(`${l.f} ${fmt(end.v)}`);
+        });
+        svg.append('rect').attr('x', m.l).attr('y', m.t).attr('width', W - m.l - m.r).attr('height', H - m.t - m.b).attr('fill', 'transparent')
+          .on('mousemove', (ev) => { const [px] = d3.pointer(ev); const d = x.invert(px); const mo = d3.utcFormat('%Y-%m')(d); const idx = months.findIndex((q) => q >= mo); const k = idx < 0 ? months.length - 1 : idx; showTip(cr, ev, [d3.utcFormat('%B %Y')(parse(months[k]))].concat(lines.map((l) => `${l.f}: ${fmt(l.pts[k].v)}`))); })
+          .on('mouseleave', hideTip);
+      }
+    }
+
+    // families per repo (matrix table)
+    const crp = document.getElementById('c-repo');
+    if (!ok('stats')) fail(crp, 'stats'); else {
+      const all = rows('stats').filter((s) => s.kind === kind && s.level === 'family' && s.repo !== 'ALL');
+      const famCols = order(rows('stats').filter((s) => s.repo === 'ALL' && s.kind === kind && s.level === 'family'), 'family').map((s) => s.key);
+      const repos = d3.rollups(all, (v) => d3.sum(v, (s) => num(s.n)), (s) => s.repo).sort((a, b) => b[1] - a[1]);
+      const t = document.createElement('table');
+      const hr = document.createElement('tr'); ['Repository', 'Total'].concat(famCols.map((f) => (f === '?' ? '(none)' : f))).forEach((h, i) => { const th = document.createElement('th'); th.textContent = h; if (i) th.className = 'num'; hr.append(th); });
+      const th = document.createElement('thead'); th.append(hr); t.append(th);
+      const tb = document.createElement('tbody');
+      const max = d3.max(all, (s) => num(s.n)) || 1;
+      repos.forEach(([r, tot]) => {
+        const tr = document.createElement('tr'); if (r === repo) tr.style.fontWeight = 'var(--cds-font-weight-medium)';
+        const td0 = document.createElement('td'); td0.textContent = r; tr.append(td0);
+        const td1 = document.createElement('td'); td1.className = 'num'; td1.textContent = fmt(tot); tr.append(td1);
+        famCols.forEach((f) => { const s = all.find((x) => x.repo === r && x.key === f); const td = document.createElement('td'); td.className = 'num'; if (s) { td.textContent = fmt(num(s.n)); td.style.background = `color-mix(in srgb, ${dash.colors[0]} ${Math.round(8 + 60 * Math.sqrt(num(s.n) / max))}%, transparent)`; } tr.append(td); });
+        tr.style.cursor = 'pointer'; tr.addEventListener('click', () => dash.setParams({ repo: r }));
+        tb.append(tr);
+      });
+      t.append(tb); crp.replaceChildren(t);
+    }
+
+    // prefix leaderboard
+    const q = document.getElementById('q-prefix').value.trim().toLowerCase();
+    const prefTb = document.querySelector('.tx-t-prefix tbody');
+    table(prefTb, order(lvl('prefix'), 'prefix').filter((s) => !q || s.key.toLowerCase().includes(q)), [
+      { k: 'key', code: true }, { f: (r) => fmt(num(r.n)), num: true }, { f: (r) => pct(num(r.share)), num: true }, { k: 'open', num: true }, { k: 'merged', num: true }, { k: 'closed', num: true }, { k: 'n_30d', num: true }, { f: (r) => (num(r.trend_30d) > 0 ? '+' : '') + r.trend_30d, num: true }, { f: (r) => (r.median_days_to_close === '' ? '–' : r.median_days_to_close), num: true }, { k: 'last_seen' }], 'id');
+
+    [...prefTb.rows].forEach((tr) => { tr.className = 'clickable'; tr.addEventListener('click', () => pick('prefix', tr.dataset.key.split('|').pop())); });
+
+    // keywords
+    table(document.querySelector('.tx-t-kw tbody'), kw, [{ k: 'family' }, { k: 'scope', code: true }, { k: 'aliases' }, { k: 'seen' }, { k: 'n_explicit', num: true }, { k: 'repos' }], 'scope');
+    table(document.querySelector('.tx-t-un tbody'), rows('unmapped'), [{ k: 'what' }, { k: 'token', code: true }, { k: 'n', num: true }, { k: 'repos' }], 'id');
+    table(document.querySelector('.tx-t-lint tbody'), rows('lint'), [{ k: 'code' }, { k: 'severity' }, { k: 'message' }, { k: 'n', num: true }], 'code');
+
+    // plan
+    const qp = document.getElementById('q-plan').value.trim().toLowerCase();
+    table(document.querySelector('.tx-t-plan tbody'), rows('plan').filter((p) => (repo === 'ALL' || p.repo === repo) && (!qp || (p.title + ' ' + p.new_title).toLowerCase().includes(qp))), [
+      { k: 'id', link: (r) => `https://github.com/GBOGEB/${r.repo}/issues/${r.number}` }, { k: 'confidence', pill: true }, { k: 'title' }, { f: (r) => r.new_title || '(keep)', code: true }, { k: 'add_labels' }, { k: 'evidence' }], 'id');
+
+    drawExtras(repo, kind, lvl, kw);
+  }
+
+  // controls state, spread stats, histogram, icicle map, titles drill-down
+  function drawExtras(repo, kind, lvl, kw) {
+    const p = dash.params(), dl = p.dlevel || 'family';
+    sortSel.value = p.sort || 'n-desc'; topSel.value = String(p.top || 0); dlevelSel.value = dl;
+    rangeChip.hidden = p.nmin == null;
+    rangeChip.textContent = p.nmin == null ? '' : `${dl}: ${p.nmin}${p.nmax == null ? '+' : p.nmax === p.nmin ? '' : '–' + p.nmax} titles per key ×`;
+    pickChip.hidden = !p.pkey;
+    pickChip.textContent = p.pkey ? `${p.plevel} = ${p.pkey} ×` : '';
+
+    // spread stats
+    const lsId = `${repo}|${kind}|${dl}`;
+    const ls = rows('levelstats').find((r) => r.id === lsId);
+    const f2 = d3.format(',.1f');
+    document.querySelectorAll('.tx-s').forEach((el) => {
+      el.dataset.where = `id=${encodeURIComponent(lsId)}`;
+      const k = el.dataset.s, v = ls ? ls[k] : null;
+      el.textContent = v == null ? '—' : /share|gini/.test(k) ? (k === 'gini' ? d3.format('.2f')(v) : pct(v)) : /mean|median|p90/.test(k) ? f2(v) : fmt(v);
+    });
+
+    // histogram: number of keys per count bin (log-ish bins), click to keep a range
+    const ch = document.getElementById('c-hist');
+    if (!ok('stats')) fail(ch, 'stats'); else {
+      ch.replaceChildren();
+      const vals = lvl(dl).map((s) => s.n);
+      const edges = [1, 2, 3, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000];
+      const bins = [];
+      for (let i = 0; i < edges.length - 1; i++) {
+        const lo = edges[i], hi = edges[i + 1] - 1, ks = vals.filter((v) => v >= lo && v <= hi);
+        if (lo <= (d3.max(vals) || 0)) bins.push({ lo, hi, keys: ks.length, titles: d3.sum(ks), label: lo === hi ? `${lo}` : `${lo}–${hi}` });
+      }
+      if (bins.length) {
+        const W = ch.clientWidth || 400, H = 200, m = { l: 40, r: 8, t: 18, b: 34 };
+        const x = d3.scaleBand(bins.map((b) => b.label), [m.l, W - m.r]).padding(0.18);
+        const y = d3.scaleLinear([0, d3.max(bins, (b) => b.keys) || 1], [H - m.b, m.t]).nice();
+        const svg = d3.select(ch).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
+        svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d3.format('~s'))).attr('font-size', null).attr('font-family', null).call((g) => g.select('.domain').remove()).call((g) => g.selectAll('text').attr('fill', 'var(--color-fg-muted)')).call((g) => g.selectAll('line').attr('x2', W - m.l - m.r).attr('stroke', 'var(--cds-chart-grid)'));
+        svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickSizeOuter(0)).attr('font-size', null).attr('font-family', null).call((g) => g.selectAll('text').attr('fill', 'var(--color-fg-muted)')).call((g) => g.selectAll('line,path').attr('stroke', 'var(--cds-chart-axis)'));
+        svg.append('text').attr('x', W - m.r).attr('y', H - 4).attr('text-anchor', 'end').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text('titles per key');
+        svg.append('text').attr('x', m.l).attr('y', 10).attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text('keys');
+        const inRange = (b) => p.nmin == null || (b.lo >= p.nmin && (p.nmax == null || b.hi <= p.nmax));
+        svg.selectAll('rect.b').data(bins).join('rect').attr('class', 'b').attr('x', (b) => x(b.label)).attr('width', x.bandwidth())
+          .attr('y', (b) => y(b.keys)).attr('height', (b) => Math.max(0, y(0) - y(b.keys))).attr('rx', 4)
+          .attr('fill', (b) => (inRange(b) ? dash.colors[0] : 'var(--cds-chart-muted)')).style('cursor', 'pointer')
+          .on('mousemove', (ev, b) => showTip(ch, ev, [`${b.label} titles per key`, `${fmt(b.keys)} keys hold ${fmt(b.titles)} titles`, 'click: keep this range · shift-click: extend']))
+          .on('mouseleave', hideTip)
+          .on('click', (ev, b) => {
+            if (ev.shiftKey && p.nmin != null) dash.setParams({ nmin: Math.min(p.nmin, b.lo), nmax: Math.max(p.nmax ?? b.hi, b.hi) });
+            else if (p.nmin === b.lo && p.nmax === b.hi) dash.setParams({ nmin: null, nmax: null });
+            else dash.setParams({ nmin: b.lo, nmax: b.hi });
+          });
+        svg.selectAll('text.v').data(bins).join('text').attr('class', 'v').attr('x', (b) => x(b.label) + x.bandwidth() / 2).attr('y', (b) => y(b.keys) - 4).attr('text-anchor', 'middle').attr('font-size', 10).attr('fill', 'var(--color-fg-muted)').attr('pointer-events', 'none').text((b) => (b.keys ? fmt(b.keys) : ''));
+      }
+    }
+
+    // icicle: family > scope > type, zoomable
+    const ci = document.getElementById('c-icicle');
+    if (!ok('stats') || !ok('keywords')) fail(ci, ok('stats') ? 'keywords' : 'stats'); else {
+      ci.replaceChildren();
+      const famOf = {}; kw.forEach((k) => { famOf[k.scope] = k.family; });
+      const kids = d3.groups(lvl('prefix').map((s) => { const m = /^([^(]*)\((.*)\)$/.exec(s.key); return { t: m[1], sc: m[2], n: s.n }; }),
+        (d) => famOf[d.sc] || (d.sc.startsWith('~') ? 'unmapped' : '(none)'), (d) => d.sc);
+      const data = { name: 'all', children: kids.map(([f, scs]) => ({ name: f, level: 'family', children: scs.map(([sc, ts]) => ({ name: sc, level: 'scope', children: ts.map((t) => ({ name: t.t, level: 'prefix', key: `${t.t}(${t.sc})`, value: t.n })) })) })) };
+      const root = d3.partition().size([1, 1])(d3.hierarchy(data).sum((d) => d.value || 0).sort((a, b) => b.value - a.value));
+      const W = ci.clientWidth || 400, H = 340;
+      const svg = d3.select(ci).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
+      let focus = root;
+      const nodes = root.descendants().filter((d) => d.depth > 0);
+      const famIdx = new Map(root.children ? root.children.map((c, i) => [c.data.name, i]) : []);
+      const colorOf = (d) => { let a = d; while (a.depth > 1) a = a.parent; return dash.colors[(famIdx.get(a.data.name) || 0) % 8]; };
+      const cell = svg.selectAll('g').data(nodes).join('g');
+      const rect = cell.append('rect').attr('rx', 3).attr('fill', colorOf).attr('fill-opacity', (d) => 1 - (d.depth - 1) * 0.28).style('cursor', 'pointer');
+      const label = cell.append('text').attr('font-size', 11).attr('dy', '0.35em').attr('pointer-events', 'none').attr('fill', 'var(--color-bg)');
+      const base = () => (focus === root ? 1 : focus.depth);   // left column: the zoomed block itself
+      const layout = () => {
+        const x0 = focus.x0, x1 = focus.x1, b = base();
+        const cols = 3, cw = W / cols;
+        cell.attr('display', (d) => (d.depth >= b && d.depth < b + cols && d.x1 > x0 && d.x0 < x1 ? null : 'none'));
+        const pos = (d) => ({ x: (d.depth - b) * cw, y: ((Math.max(d.x0, x0) - x0) / (x1 - x0)) * H, h: ((Math.min(d.x1, x1) - Math.max(d.x0, x0)) / (x1 - x0)) * H });
+        rect.each(function (d) { const q = pos(d); d3.select(this).attr('x', q.x + 1).attr('y', q.y + 0.5).attr('width', cw - 2).attr('height', Math.max(0, q.h - 1)); });
+        label.each(function (d) { const q = pos(d); d3.select(this).attr('x', q.x + 6).attr('y', q.y + q.h / 2).text(q.h > 13 ? `${d.data.name} ${fmt(d.value)}` : ''); });
+      };
+      rect.on('mousemove', (ev, d) => showTip(ci, ev, [d.ancestors().reverse().slice(1).map((a) => a.data.name).join(' › '), `${fmt(d.value)} titles · ${pct(d.value / root.value)}`, d.children ? 'click to zoom and list titles' : 'click to list titles']))
+        .on('mouseleave', hideTip)
+        .on('click', (ev, d) => {
+          const zoomOut = focus !== root && d === focus;
+          if (zoomOut) focus = focus.parent || root; else if (d.children) focus = d;
+          layout();
+          if (zoomOut) { if (focus === root) dash.setParams({ plevel: null, pkey: null }); else pick(focus.data.level, focus.data.name, false); }
+          else pick(d.data.level, d.data.level === 'prefix' ? d.data.key : d.data.name, !d.children);
+        });
+      layout();
+    }
+
+    // titles drill-down with GitHub links
+    const tq = document.getElementById('q-titles').value.trim().toLowerCase();
+    const typeFam = {}; rows('typemap').forEach((t) => { typeFam[t.type] = t.family; });
+    const match = (r) => {
+      if (!p.pkey) return true;
+      switch (p.plevel) {
+        case 'family': return r.family === p.pkey;
+        case 'scope': return r.scope === p.pkey;
+        case 'type': return r.type === p.pkey;
+        case 'prefix': return r.prefix === p.pkey;
+        case 'family_prefix': return `${r.type}(${r.family})` === p.pkey;
+        case 'type_family': return typeFam[r.type] === p.pkey;
+        default: return true;
+      }
+    };
+    const all = rows('titles').filter((r) => (repo === 'ALL' || r.repo === repo) && (kind === 'all' || r.kind === kind) && match(r) && (!tq || r.title.toLowerCase().includes(tq)))
+      .sort((a, b) => d3.descending(a.created, b.created));
+    const cap = 500, shown = all.slice(0, cap);
+    document.querySelector('.tx-titles-h').textContent = p.pkey ? `Titles in ${p.pkey}` : 'Titles';
+    document.querySelector('.tx-titles-note').textContent = `${fmt(all.length)} ${kindLabel[kind]}${all.length > cap ? `, newest ${cap} shown (search to narrow)` : ''}. Numbers open GitHub. Click any bar, cell, block or prefix above to narrow the list.`;
+    table(document.querySelector('.tx-t-titles tbody'), shown, [
+      { f: (r) => `#${r.number}`, link: gh }, { k: 'repo' }, { k: 'kind' }, { k: 'state' }, { k: 'title', link: gh }, { k: 'prefix', code: true }, { k: 'confidence', pill: true }, { k: 'created' }], 'id');
+  }
+  window.__txDraw = draw;
+  dash.onData(draw);
+})();
+</script>
