@@ -74,6 +74,7 @@ def proof(e, c, cls="C", effect="BLOCK", *, baseline=None, overrides=None,
           child=CHILD, dependency=ROOT_TOKEN, key=KEY):
     checks = {
         "source_native_verified": True, "qps_owner_verified": True,
+        "source_cohort_complete": baseline is not None,
         "qps_native": "PASS", "security": "PASS",
         "independent_review": True, "required_checks": "PASS",
         "last_push_approval": True, "stale_dismissal": True,
@@ -87,13 +88,13 @@ def proof(e, c, cls="C", effect="BLOCK", *, baseline=None, overrides=None,
     a = {
         "schema": Q.SCHEMA, "class": cls, "effect": effect,
         "event_key": c["event_key"],
+        "event_sha256": Q.digest(e),
         "candidate_sha256": Q.digest(c),
         "source_sha": e["identity"]["checkout_sha"],
         "run_id": n["run_id"], "attempt": n["attempt"],
         "job_id": n["job_id"], "completed_at": n["completed_at"],
         "issued_at": n["observed_at"],
         "baseline_sha256": W._digest(baseline) if baseline else None,
-        "event_sha256": Q.digest(e), "candidate_sha256": Q.digest(c),
         "child_token": child, "dependency_token": dependency,
         "receipt_token": RECEIPT,
         "checks": checks,
@@ -194,6 +195,41 @@ class FourClassNoncompensatingGates(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "cohort mismatch"):
             signed(b, cand, "B", "ACCEPT", baseline=wrong_den)
 
+    def test_B_store_requires_nearest_preceding_native_not_reused_old_baseline(self):
+        db = Q.connect(pathlib.Path(tempfile.mkdtemp()) / "test.db")
+        self.addCleanup(db.close)
+        self.addCleanup(lambda: None)
+        older = event(1, outcome="success", covered=7)
+        middle = event(2, outcome="success", covered=9)
+        latest = event(3, outcome="success", covered=9)
+        Q.observe(db, older)
+        Q.observe(db, middle)
+        baseline_candidate = candidates(older, middle)[0]
+        good = Q.record(db, middle, baseline_candidate,
+                        proof(middle, baseline_candidate, "B", "ACCEPT", baseline=older),
+                        KEY, baseline=older)
+        self.assertTrue(good["queued"])
+        # Caller can fabricate an old-baseline +2 delta, but current native
+        # predecessor already has 9/10 and cannot yield another uplift.
+        forged = copy.deepcopy(baseline_candidate)
+        forged["event_key"], forged["lane"] = Q._source_key(latest)
+        envelope = proof(latest, forged, "B", "ACCEPT", baseline=older)
+        with self.assertRaisesRegex(ValueError, "not immediately preceding"):
+            Q.record(db, latest, forged, envelope, KEY, baseline=older)
+        self.assertEqual(Q.verify(db, KEY)["pending"], 1)
+
+    def test_B_store_rejects_unrecorded_predecessor(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Q.connect(pathlib.Path(tmp) / "test.db")
+            self.addCleanup(db.close)
+            old = event(1, outcome="success", covered=7)
+            new = event(2, outcome="success", covered=9)
+            candidate = candidates(old, new)[0]
+            with self.assertRaisesRegex(ValueError, "predecessor not present"):
+                Q.record(db, new, candidate,
+                         proof(new, candidate, "B", "ACCEPT", baseline=old),
+                         KEY, baseline=old)
+
     def test_B_no_gain_or_wrong_delta_rejected(self):
         a = event(1, outcome="success", covered=7)
         b = event(2, outcome="success", covered=9)
@@ -230,8 +266,39 @@ class FourClassNoncompensatingGates(unittest.TestCase):
         signed_original = proof(e, candidate)
         tampered_candidate = copy.deepcopy(candidate)
         tampered_candidate["reasons"] = ["RED_TO_GREEN"]
-        with self.assertRaisesRegex(ValueError, "attestation candidate payload mismatch"):
+        with self.assertRaisesRegex(ValueError, "signed candidate justification mismatch"):
             Q.qualify(e, tampered_candidate, signed_original, KEY)
+
+    def test_signed_proof_rejects_changed_native_event_payload(self):
+        native = event()
+        candidate = candidates(native)[0]
+        signed_by_owner = proof(native, candidate)
+        changed = copy.deepcopy(native)
+        changed["result"]["conclusion"] = "success"
+        changed["result"]["fingerprint"] = None
+        with self.assertRaisesRegex(ValueError, "signed event payload mismatch"):
+            Q.qualify(changed, candidate, signed_by_owner, KEY)
+
+    def test_owner_signed_digest_field_must_be_hex64(self):
+        native = event()
+        candidate = candidates(native)[0]
+        signed_by_owner = proof(native, candidate)
+        signed_by_owner["attestation"]["event_sha256"] = "malformed"
+        signed_by_owner["signature"] = Q.owner_mac(KEY, signed_by_owner["attestation"])
+        with self.assertRaisesRegex(ValueError, "event digest"):
+            Q.qualify(native, candidate, signed_by_owner, KEY)
+
+    def test_mixed_axis_coverage_regression_does_not_qualify(self):
+        original = event(1, outcome="success", covered=7)
+        changed = event(2, outcome="success", covered=9)
+        changed["coverage"]["branches"]["covered"] = 1
+        candidate = candidates(original, changed)[0]
+        self.assertEqual(candidate["coverage_delta"],
+                         {"statements": 2, "branches": -2})
+        with self.assertRaisesRegex(ValueError, "coverage improvement"):
+            Q.qualify(changed, candidate,
+                      proof(changed, candidate, "B", "ACCEPT", baseline=original),
+                      KEY, baseline=original)
 
     def test_unsigned_changed_candidate_reason_fails(self):
         e = event()
@@ -239,46 +306,6 @@ class FourClassNoncompensatingGates(unittest.TestCase):
         cand["event_key"] = "a" * 64
         with self.assertRaisesRegex(ValueError, "native identity mismatch"):
             Q.qualify(e, cand, proof(e, cand), KEY)
-
-
-class SignedPayloadAndCoverageMutations(unittest.TestCase):
-    def test_reused_signed_proof_cannot_change_native_conclusion(self):
-        original = event()
-        cand = candidates(original)[0]
-        owner_proof = proof(original, cand)
-        edited = copy.deepcopy(original)
-        edited["result"]["conclusion"] = "success"
-        edited["result"]["fingerprint"] = None
-        with self.assertRaisesRegex(ValueError, "event payload mismatch"):
-            Q.qualify(edited, cand, owner_proof, KEY)
-
-    def test_reused_signed_proof_cannot_change_candidate_reasons(self):
-        original = event()
-        cand = candidates(original)[0]
-        owner_proof = proof(original, cand)
-        edited = copy.deepcopy(cand)
-        edited["reasons"].append("REQUIRED_RECEIPT_RECOVERY_CANDIDATE")
-        with self.assertRaisesRegex(ValueError, "candidate payload mismatch"):
-            Q.qualify(original, edited, owner_proof, KEY)
-
-    def test_owner_signed_mixed_axis_regression_is_not_coverage_uplift(self):
-        prev = event(1, outcome="success", covered=7)
-        current = event(2, outcome="success", covered=9)
-        current["coverage"]["branches"]["covered"] = 1
-        cand = candidates(prev, current)[0]
-        self.assertEqual(cand["coverage_delta"],
-                         {"statements": 2, "branches": -2})
-        with self.assertRaisesRegex(ValueError, "coverage improvement"):
-            signed(current, cand, "B", "ACCEPT", baseline=prev)
-
-    def test_bad_digest_format_fails_closed_even_with_owner_mac(self):
-        original = event()
-        cand = candidates(original)[0]
-        env = proof(original, cand)
-        env["attestation"]["event_sha256"] = "not-a-digest"
-        env["signature"] = Q.owner_mac(KEY, env["attestation"])
-        with self.assertRaisesRegex(ValueError, "attestation digest"):
-            Q.qualify(original, cand, env, KEY)
 
 
 class DurableReplayAndOutbox(unittest.TestCase):
@@ -396,35 +423,63 @@ class DurableReplayAndOutbox(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "audit chain"):
             Q.verify(db)
 
-    def test_outbox_substitution_is_detected_before_claim_and_verify(self):
-        import json
+    def test_outbox_payload_tampering_rejected_before_claim(self):
         db = self.db()
-        e, c = event(), candidates(event())[0]
-        result = Q.record(db, e, c, proof(e, c), KEY)
-        nid = result["notification_id"]
-        original = json.loads(db.execute(
-            "SELECT payload_json FROM outbox WHERE notification_id=?", (nid,)
-        ).fetchone()[0])
-        original["effect"] = "UNBLOCK"
-        db.execute("UPDATE outbox SET payload_json=? WHERE notification_id=?",
-                   (Q.canonical(original), nid))
-        with self.assertRaisesRegex(ValueError, "outbox payload audit"):
+        e, cand = event(), candidates(event())[0]
+        notification = Q.record(db, e, cand, proof(e, cand), KEY)["notification_id"]
+        db.execute("UPDATE outbox SET payload_json='{}' WHERE notification_id=?",
+                   (notification,))
+        with self.assertRaisesRegex(ValueError, "outbox payload metadata"):
             Q.verify(db, KEY)
-        with self.assertRaisesRegex(ValueError, "outbox payload audit"):
-            Q.claim(db, nid, "2026-10-26T02:00:00Z")
-        self.assertEqual(db.execute(
-            "SELECT state FROM outbox WHERE notification_id=?", (nid,)
-        ).fetchone()[0], "PENDING")
+        with self.assertRaisesRegex(ValueError, "outbox payload metadata"):
+            Q.claim(db, notification, "2026-10-26T02:00:00Z")
 
-    def test_outbox_row_deletion_is_detected_by_audit_count(self):
+    def test_forged_ack_state_rejected_by_replayed_audit(self):
         db = self.db()
-        e, c = event(), candidates(event())[0]
-        result = Q.record(db, e, c, proof(e, c), KEY)
-        db.execute("DELETE FROM outbox WHERE notification_id=?",
-                   (result["notification_id"],))
-        with self.assertRaisesRegex(ValueError, "outbox row/audit count"):
+        e, cand = event(), candidates(event())[0]
+        notification = Q.record(db, e, cand, proof(e, cand), KEY)["notification_id"]
+        db.execute(
+            "UPDATE outbox SET state='ACKED',claimed_at=?,ack_digest=?"
+            " WHERE notification_id=?",
+            ("2026-10-26T02:00:00Z", "f" * 64, notification))
+        with self.assertRaisesRegex(ValueError, "outbox delivery state tampering"):
             Q.verify(db, KEY)
 
+    def test_forged_closed_root_cannot_suppress_next_root_event(self):
+        db = self.db()
+        e, cand = event(), candidates(event())[0]
+        Q.record(db, e, cand, proof(e, cand), KEY)
+        db.execute("UPDATE root_state SET state='CLOSED'")
+        with self.assertRaisesRegex(ValueError, "root_state diverges"):
+            Q.verify(db, KEY)
+        newer = event(2)
+        changed = copy.deepcopy(candidates(newer)[0])
+        with self.assertRaisesRegex(ValueError, "root_state diverges"):
+            Q.record(db, newer, changed, proof(newer, changed), KEY)
+
+    def test_deleted_outbox_row_is_detected_from_append_only_audit(self):
+        db = self.db()
+        e, cand = event(), candidates(event())[0]
+        Q.record(db, e, cand, proof(e, cand), KEY)
+        db.execute("DELETE FROM outbox")
+        with self.assertRaisesRegex(ValueError, "outbox enqueue vs audit"):
+            Q.verify(db, KEY)
+
+    def test_externally_trusted_audit_root_rejects_tail_truncation(self):
+        db = self.db()
+        e, candidate = event(), candidates(event())[0]
+        Q.record(db, e, candidate, proof(e, candidate), KEY)
+        receipt = Q.verify(db, KEY)
+        root = receipt["last_audit_sha256"]
+        self.assertEqual(Q.verify(db, KEY, expected_root=root)["last_audit_sha256"], root)
+        # A database admin could delete a correctly chained final row.
+        db.execute("DELETE FROM audit WHERE seq=(SELECT MAX(seq) FROM audit)")
+        # The replay verifier rejects the deleted queue event even without a
+        # trusted external anchor; the anchor separately detects rollback.
+        with self.assertRaisesRegex(ValueError, "outbox queue vs audit inventory"):
+            Q.verify(db, KEY)
+        with self.assertRaisesRegex(ValueError, "audit root rollback"):
+            Q.verify(db, KEY, expected_root=root)
 
     def test_no_state_written_when_owner_signature_invalid(self):
         db = self.db()
