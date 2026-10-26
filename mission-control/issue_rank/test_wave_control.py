@@ -143,5 +143,58 @@ class WaveControl(unittest.TestCase):
         self.assertIn("MISSING_LEDGER_RECEIPT", r["control"]["notes"])
 
 
+    def test_forged_receipt_is_withheld_not_comparable(self):
+        rows = self.four()
+        rows[2]["row_sha256"] = "this-is-not-a-digest"
+        result = summarize(rows)
+        self.assertEqual(result["status"], "WITHHELD_UNMATCHED")
+        self.assertIn("INVALID_LEDGER_RECEIPT", result["control"]["notes"])
+        self.assertEqual(result["comparison"]["delta"], {})
+
+    def test_broken_previous_receipt_link_is_withheld(self):
+        rows = self.four()
+        rows[2]["prev_sha256"] = "f" * 64
+        result = summarize(rows)
+        self.assertEqual(result["status"], "WITHHELD_UNMATCHED")
+        self.assertIn("LEDGER_LINK_MISMATCH", result["control"]["notes"])
+
+    def test_invalid_source_head_fails_closed(self):
+        rows = self.four()
+        rows[1]["telemetry"]["heads"]["GBOGEB/public"] = "not-a-commit"
+        with self.assertRaisesRegex(ValueError, "source head"):
+            summarize(rows)
+
+    def test_fractional_count_is_not_a_valid_item_denominator(self):
+        rows = self.four()
+        rows[2]["telemetry"]["scopes"]["USER"]["open_issues"] = 8.5
+        with self.assertRaisesRegex(ValueError, "noninteger count"):
+            summarize(rows)
+
+    def test_impossible_subsets_do_not_pass_control(self):
+        rows = self.four()
+        rows[0]["telemetry"]["scopes"]["USER"]["prs_red"] = 99
+        with self.assertRaisesRegex(ValueError, "subset exceeds"):
+            summarize(rows)
+        rows = self.four()
+        rows[0]["telemetry"]["scopes"]["USER"]["tasks_done"] = 99
+        with self.assertRaisesRegex(ValueError, "tasks done exceeds"):
+            summarize(rows)
+
+    def test_last_or_mixed_flow_window_cannot_claim_sustained_burn(self):
+        rows = self.four()
+        for i, row in enumerate(rows):
+            from datetime import datetime, timedelta, timezone
+            row["telemetry"]["fetched_at"] = (
+                datetime(2026, 8, 1, tzinfo=timezone.utc)
+                + timedelta(days=15 * i)).isoformat()
+            flow = row["telemetry"]["scopes"]["USER"]["flow"]
+            flow["net_burn_per_day"] = {"est": 2.0, "lo": .5, "hi": 4.0}
+        rows[-1]["telemetry"]["scopes"]["USER"]["flow"].pop("window_days")
+        self.assertFalse(summarize(rows)["control"]["sustained_positive_burn_observed"])
+        rows[-1]["telemetry"]["scopes"]["USER"]["flow"]["window_days"] = 7
+        self.assertFalse(summarize(rows)["control"]["sustained_positive_burn_observed"])
+
+
+
 if __name__ == "__main__":
     unittest.main()
