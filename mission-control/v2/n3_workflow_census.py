@@ -6,11 +6,17 @@ native CI proof. Do not upgrade workflows/queued jobs to release admission.
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
-import math
 import re
 from datetime import datetime
 from pathlib import Path
+
+# Nearest-rank percentile is owned by gogreen/bd_queue_wave.py; import, never copy.
+_BD_QUEUE_WAVE = Path(__file__).resolve().parents[1] / 'gogreen' / 'bd_queue_wave.py'
+_spec = importlib.util.spec_from_file_location('n3_workflow_census_bd_queue_wave', _BD_QUEUE_WAVE)
+bd_queue_wave = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(bd_queue_wave)
 
 SHA = re.compile(r'[0-9a-f]{40}\Z')
 RUN_STATUS = {'queued', 'pending', 'waiting', 'requested', 'in_progress', 'completed'}
@@ -51,7 +57,7 @@ def metric(num, den):
 
 def p95(values):
     # Nearest rank is descriptive only; do not imply independent observations.
-    return sorted(values)[math.ceil(.95 * len(values))-1] if values else None
+    return bd_queue_wave.percentile(values, .95)
 
 
 def project(snapshot):
