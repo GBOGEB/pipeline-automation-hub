@@ -2,15 +2,15 @@
 
 Grammar: `<type>(<scope>[,<scope>][ <qualifier>...])[!]: <subject>`, e.g. `fix(jade devops N12): census fails closed`.
 
-Pulse 2026-10-26T08:31:05Z, vocabulary sha256 `54a274e662c9`.
+Pulse 2026-10-26T09:06:51Z, vocabulary sha256 `54a274e662c9`.
 
 ## Types
 
 | type | family | aliases | spellings seen |
 |---|---|---|---|
-| `feat` | change | feature, features, add, new, enhancement, integrate, integration, ui | `feat` 610, `integrate` 3, `ui` 1 |
+| `feat` | change | feature, features, add, new, enhancement, integrate, integration, ui | `feat` 612, `integrate` 3, `ui` 1 |
 | `fix` | defect | bugfix, hotfix, bug, patch, repair, hardening, harden, fix-forward | `fix` 586, `Fix` 5, `repair` 3, `FIX` 2, `hardening` 1 |
-| `docs` | knowledge | doc, documentation, readme | `docs` 221, `Docs` 3 |
+| `docs` | knowledge | doc, documentation, readme | `docs` 222, `Docs` 3 |
 | `ci` | pipeline | workflow, workflows, gha, actions, cd, infra | `ci` 261, `CI` 50, `infra` 1 |
 | `build` | pipeline | deps, dependencies, release, packaging | `deps` 73, `release` 29, `build` 18, `Deps` 2, `Release` 1 |
 | `test` | quality | tests, testing, qa, canary, testflight | `test` 193, `Test` 24, `qa` 3, `testflight` 1, `canary` 1 |
@@ -127,11 +127,11 @@ Aliases in *italics* only match inside an explicit `type(scope)` or a label, nev
 | `release` | *release*, releases, versioning | `release` 9 | ABACUS 3, gg_MATH 3, cryoplant-project 2, document-organization-system 1 |
 | `infra` | infra, docker, devcontainer, codespaces, *mcp* | `mcp` 2, `docker` 2 | ABACUS 2, CODEX 2 |
 
-### issue burndown (`issue-burndown`), 111 explicit
+### issue burndown (`issue-burndown`), 113 explicit
 
 | scope | aliases | spellings seen | by repo |
 |---|---|---|---|
-| `issue-burndown` | bd, burndown, issue-bd, triway, issue-rank, issue-expedition | `bd` 10, `BD (as type)` 6, `issue-rank` 5, `issue expedition` 2, `bd-ldab` 1, `burndown` 1, `bd-queue` 1, `BD-REX-CONTROL (as type)` 1 | ABACUS 11, pipeline-automation-hub 11, cryoplant-project 3, CODEX 2 |
+| `issue-burndown` | bd, burndown, issue-bd, triway, issue-rank, issue-expedition | `bd` 10, `issue-rank` 7, `BD (as type)` 6, `issue expedition` 2, `bd-ldab` 1, `burndown` 1, `bd-queue` 1, `BD-REX-CONTROL (as type)` 1 | pipeline-automation-hub 13, ABACUS 11, cryoplant-project 3, CODEX 2 |
 | `cbd` | cbd, char-bd, charter-bd, bdq | `cbd` 64, `CBD` 6, `bdq` 2, `char-bd` 1, `CBD (as type)` 1, `cbd wave5` 1, `cbd-n3` 1, `cbd W+3` 1, `cbd W+2` 1, `cbd W31/A` 1, `cbd W31/B` 1, `cbd W31/C` 1, `cbd W31/D` 1, `cbd W31/E` 1, `cbd W51-C1/C2/C3` 1 | ABACUS 76, pipeline-automation-hub 4, cryoplant-project 3, CODEX 1 |
 
 ### physics (`physics`), 19 explicit
@@ -332,6 +332,7 @@ Aliases in *italics* only match inside an explicit `type(scope)` or a label, nev
 | `workstation` | 1 | pipeline-automation-hub 1 |
 | `portability` | 1 | pipeline-automation-hub 1 |
 | `master` | 1 | pipeline-automation-hub 1 |
+| `ops` | 1 | pipeline-automation-hub 1 |
 
 ## Unknown types
 
@@ -348,13 +349,13 @@ Aliases in *italics* only match inside an explicit `type(scope)` or a label, nev
 
 | code | severity | rule | n |
 |---|---|---|---|
-| T001 | error | no type(scope): prefix | 4085 |
+| T001 | error | no type(scope): prefix | 4087 |
 | T002 | error | unknown type | 34 |
 | T003 | info | type alias, use the canonical type | 262 |
 | T004 | warning | missing scope | 246 |
-| T005 | warning | scope not in vocabulary | 149 |
-| T006 | info | scope alias, use the canonical scope | 608 |
+| T005 | warning | scope not in vocabulary | 150 |
+| T006 | info | scope alias, use the canonical scope | 610 |
 | T007 | warning | scope used as type (e.g. 'MissionControl: ...') | 806 |
 | T008 | info | bracket tag outside the prefix, move it into the scope as a qualifier | 235 |
-| T009 | info | subject longer than 100 characters | 60 |
+| T009 | info | subject longer than 100 characters | 63 |
 | T011 | info | freeform lead label (e.g. 'W327: ...'), rewrite as type(scope qualifier): | 1909 |

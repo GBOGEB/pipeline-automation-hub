@@ -1,7 +1,7 @@
 {
  "schema": "gbogeb.title-taxonomy.manifest/1.0",
  "pulse": {
-  "fetched_at": "2026-10-26T08:31:05Z",
+  "fetched_at": "2026-10-26T09:06:51Z",
   "owner": "GBOGEB",
   "repos": {
    "ABACUS": "c9ec9f95b82add1228187d755e7c6761bfcaaacc",
@@ -25,14 +25,15 @@
    "gpt_session_toolkit": "c026fdbe8f588ca2f493f30b7d4c231c2f3c7cb4",
    "orchestration-sandbox": "b1526e6c0e1359f9082afdf678ed0a9efe787771",
    "pipeline-automation-hub": "d065dddf661f0c4577cd746f9b8fdae4a4246eec",
-   "qps_deck": "23276d00a4abf8b81c713cd89f0806f3642aef99"
+   "qps_deck": "23276d00a4abf8b81c713cd89f0806f3642aef99",
+   "skills-introduction-to-github": "8578b799735b622c06f62902d14d8ce82cffc80a"
   }
  },
  "source": {
   "data/raw.json.gz": {
-   "sha256": "73ea56dd88414a0a849fc298f78a6cab5db8438ae798e6d5420a4963625bfe13",
-   "bytes": 383642,
-   "rows": 7273
+   "sha256": "4188c8142a7b6747fb18bef11b81310295db25c6608a75f5fa922197171eecb3",
+   "bytes": 391178,
+   "rows": 7278
   },
   "vocabulary.json": {
    "sha256": "54a274e662c988c15c1366d38021fcec6984c5a0b7fef8592faf8fd7623affbd"
@@ -40,83 +41,92 @@
  },
  "outputs": {
   "out/census.json": {
-   "sha256": "f2a2ff19d2a68f7001dc4823f994d26d5afbc8dc5faff0e69d58424ff4420f43",
-   "bytes": 6637266
+   "sha256": "4a7f773c5abc3f7a00fca2b62233845ad5431a4e30cf886b67c88298bea0719d",
+   "bytes": 6658000
   },
   "out/rows.csv": {
-   "sha256": "beb20de284ce5884cff5aec93c7b764f2d2059e9ce0aeb55e0c497f82f39756f",
-   "bytes": 1674211
+   "sha256": "bf06b570ba133e81cdf835decae3913a29648cea010796a3e85c51bb8d3dc6d5",
+   "bytes": 1675822
   },
   "out/stats.csv": {
-   "sha256": "9449f359e9f7678e4e792f9f865ace4a0ca4389670e69630ef9914d8b6ddc2cd",
-   "bytes": 1635216
+   "sha256": "205dc1b0fe69bab77beda789afb425b4aaaa79a92cb26ca676de20fa5e85a25e",
+   "bytes": 1640445
   },
   "out/timeseries.csv": {
-   "sha256": "2059991fcbfa04a20d3fbbd2568a22b5045d39be6ae294a6c0c880120b2976ac",
-   "bytes": 1150246
+   "sha256": "dc8030059b3d2720c2a1d05df548b17786a4107293bcf298f5f87d5a046cac5b",
+   "bytes": 1154419
   },
   "out/conformance.csv": {
-   "sha256": "44d582c86f5102f82d0fed7c8d51a14c7b94e5371187d3c3d4dac8ed165f8270",
-   "bytes": 17752
+   "sha256": "5d66eb0533389ee4e7b94744b5d885d96fc8d71ab714811c583d6d2ef03f483f",
+   "bytes": 18515
   },
   "out/keywords.md": {
-   "sha256": "1fcef1e92971ae1af25285bc73222a6aa0dbc9776ff860934821baa1dfb06a59",
-   "bytes": 22034
+   "sha256": "c5fe84a9506110f3d0036c78bbd182b815bff848f8c8a7f5779e9428c49a3138",
+   "bytes": 22076
   },
   "out/issue_plan.json": {
-   "sha256": "ca1e134e954ab9ece03c3222869c7e06c64b385d80f84293c5e1189584169800",
+   "sha256": "20c84973f07cd8090f45b9fda0e9790c05907a6b8740d9e2f61d3b69baad0d61",
    "bytes": 75088
   },
   "out/issue_plan.md": {
    "sha256": "b8040774bdac7acf2a8de12970dd475eb2310e09e8fac201823efe68e32ccb1d",
    "bytes": 30178
+  },
+  "out/edges.csv": {
+   "sha256": "e7a269e038beb3a5c5c1ead09b6cdc39be1b25c2fc6fef6ed873c3a2fafbc59a",
+   "bytes": 115743
   }
  },
  "dashboard": {
   "url": "https://claude.ai/artifact/RARdwhuvVk2emp2iCRRhDw",
   "page": {
-   "dash/index.html": "83ef6554357f60c18d11a9ae2a49da3d9e156bc895fc1203e56a150764feee5b"
+   "dash/index.html": "edb2d7e84180f878fecdeeba46a919be044c091067dcd8025ac91e63b6d966ad"
   },
   "datasets": {
    "titles": {
     "file": "out/dash/titles.json",
-    "sha256": "aefb1bc087c79b6fd3779b26d127be11ca00a1e13bb25d0dcc10e6dbcc700aa6",
-    "blob": "/_blob/83981b5249474349f35ccf4a9d95def3"
+    "sha256": "4bc935dbcafb2e695429c706cf6106685213783b0cf8751022586de3785bd63d",
+    "blob": "/_blob/fbcbef426440b9c48a5dc3dd02b77b48"
+   },
+   "edges": {
+    "file": "out/dash/edges.json",
+    "sha256": "c145200f8554e886c64146ddd02bbc74964f97f91838efe8b0bdec3028b55034",
+    "blob": "/_blob/3e269f045b5f3f7b0b6f0bf3b8df2c50"
    },
    "stats": {
     "file": "out/dash/stats.json",
-    "sha256": "c6cf8dcc040afd2cd8159f6eb7bacf2249a4374ed2f18a2718bf3f9a440d1fe2",
-    "blob": "/_blob/804e4f9ade88f60bacddd103aad0f6c9"
+    "sha256": "ea5e7b931621d89ef354b7fd5363753553d1247263ca9088bbd6845f65bd9785",
+    "blob": "/_blob/e74f4dd763b87418baf659fe03700f92"
    },
    "series": {
     "file": "out/dash/series.json",
-    "sha256": "c2e99dabbf999886b31797da4b302d06e6234014c2865ef6da6da99230a6a437",
-    "blob": "/_blob/0547070053f0365af00ec621efb375f9"
+    "sha256": "ff0d0502ae0488636b729c1e527b82a6b8c979caf2f9a94664bf07faf7ef6609",
+    "blob": "/_blob/dac3a8e378f194857dce71c674b26847"
    },
    "conformance": {
     "file": "out/dash/conformance.json",
-    "sha256": "74a92dda8d30a9aecb4c3a895bf2b790839299c63cc0edafc0dc99ffa2ebac69",
-    "blob": "/_blob/55d280450f8315b9643191f427571eea"
+    "sha256": "5ee3143262664d2067b876f61382be3ecd6d82389f7ea7dc200214a1e348cb41",
+    "blob": "/_blob/23471b114b3ca24f4980ed4bed01eab4"
    },
    "pulse": {
     "file": "out/dash/pulse.json",
-    "sha256": "83c18b0d37e87be6ade3e2bc0baf4e7b46d5fe767d874fd5cd81908b784931c6",
-    "blob": "/_blob/2bb507c6daab72c53c6951f96e71a615"
+    "sha256": "a1066060c1afc096ff8e4f0caa778598e05638c66dcffd7e7d365b96c254ebf1",
+    "blob": "/_blob/4fcbd91cdc755e6af3e1021dbb140b30"
    },
    "keywords": {
     "file": "out/dash/keywords.json",
-    "sha256": "759c922f6126125c54e87b50380b6f80d295e2c195cc7b19fbd0641a89f3d2b4",
-    "blob": "/_blob/ab9ff7734f8bd477f99992f2e80ba348"
+    "sha256": "50fddabfc74be788987b504ed5ea588768f2e05ee18d914c8eb48e5ec7c3f273",
+    "blob": "/_blob/dc38001fa5af6bf0a0bb02594c607ed7"
    },
    "unmapped": {
     "file": "out/dash/unmapped.json",
-    "sha256": "a540226cfa507864ac0f7327a086206246ef1be67e1aaadc925f0b4cfb4bdb61",
-    "blob": "/_blob/e51bc4e2130e2340e79df76152b64f31"
+    "sha256": "823549245b2960e3f7e11be9fdb72d07320b798d52f228a123f2c0277ec312b5",
+    "blob": "/_blob/885af4a7e3e22b00260c737db71c3e80"
    },
    "lint": {
     "file": "out/dash/lint.json",
-    "sha256": "23d7304fe331d32ad61e9b0edc2cf9377ce8e6f88e3f42331d4192d3d2b6af28",
-    "blob": "/_blob/16ba5e1088c6beb59ecb034e326f0f03"
+    "sha256": "be5ddbcfe4ac6e8d388c515780e02817c8c5d63756136377554a0bf5d9859eda",
+    "blob": "/_blob/57fcbe5eed0e1c8a5a9ffbfd53f2c891"
    },
    "typemap": {
     "file": "out/dash/typemap.json",

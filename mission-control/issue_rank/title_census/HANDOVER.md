@@ -2,7 +2,7 @@
 
 > **In pipeline-automation-hub** this handover lives in `mission-control/issue_rank/title_census/`. There `out/` is `outputs/` (large files gzipped), the scripts are in `reference/title_taxonomy_src.zip`, and the reconciliation into the owner `../title_taxonomy.py` is in `RECONCILIATION.md`. See `README.md`.
 
-Session date 2026-10-26. Owner GBOGEB. Status: working tool and census; one small set of GitHub issue edits applied; landed as artefacts only (no code path) in a draft PR stacked on #927. It overlaps open draft PRs pipeline-automation-hub #925 and #927 (see "Overlap").
+Session date 2026-10-26. Owner GBOGEB. Status: working tool and census; one small set of GitHub issue edits applied; landed as artefacts only (no code path) in draft PR #934 stacked on #927. It overlaps open draft PRs pipeline-automation-hub #925 and #927 (see "Overlap").
 
 ## What it does
 
@@ -31,6 +31,8 @@ Lint rules T001 to T011 (`taxonomy.py` `LINT_RULES`): no prefix, unknown type, t
 | File | Role |
 |---|---|
 | `vocabulary.json` | The vocabulary: 12 types, 26 families, scopes and aliases (`=alias` = only inside an explicit prefix or label, never free text), qualifier patterns, type keywords, label map, `generic` families that lose to domain families in free-text inference |
+| `graph.py` | PR / issue crosswalk edges: `closes` (PR -> issue, both sides, cross-repo), `parent` (sub-issues), `mentions` (`#123`, `Repo#123`, `PR123` in titles, resolved inside the pulse). Counts only: PageRank / betweenness stay with `issue_rank.py` |
+| `test_graph.py` | 4 edge tests |
 | `taxonomy.py` | `Vocabulary`, `parse_title`, `lint`, `classify_own`, `classify_all` (recursive issue inheritance), `suggest_title` (lossless: never drops a label token or ID), `levels` |
 | `test_taxonomy.py` | 18 unit tests (`python -m unittest test_taxonomy`) |
 | `fetch.py` | Read-only GraphQL fetch via `gh`; one pulse, each repo's default-branch head SHA recorded (AGENTS.md L6); `--resume` reuses `data/repos/*.json` |
@@ -39,7 +41,7 @@ Lint rules T001 to T011 (`taxonomy.py` `LINT_RULES`): no prefix, unknown type, t
 | `apply_issues.py` | Applies the issue plan with `gh issue edit`; dry run unless `--apply`; adds labels only, never removes; re-reads each issue and skips it if its title or state changed since the pulse |
 | `manifest.py` | `MANIFEST.json` with sha256 of every artefact; `--check` regenerates everything from `data/raw.json.gz` and fails on any difference |
 | `dash/index.html` | The dashboard page (d3 only; the dashboard host allows no other script) |
-| `data/raw.json.gz` | The pulse (source of truth, 7,273 rows, 22 repos, 2026-10-26T08:31:05Z) |
+| `data/raw.json.gz` | The pulse (source of truth, 7,278 rows, 23 repos, 2026-10-26T09:06:51Z; issues and PRs carry repo-qualified closing and parent references) |
 | `out/` | Generated outputs (reproducible from the pulse; `manifest.py --check` proves it) |
 | `out/apply_log.txt` | Log of the GitHub edits made on 2026-10-26 |
 
@@ -56,14 +58,14 @@ python apply_issues.py --min-confidence strong                   # dry run; add 
 
 Windows: `unset GITHUB_TOKEN GH_TOKEN` (or the PowerShell equivalent) before `gh`; set `PYTHONIOENCODING=utf-8` for console output with emoji titles.
 
-## Results at the 08:31 pulse
+## Results at the 09:06 pulse
 
 | | PRs | Issues | All |
 |---|---|---|---|
-| Titles | 6,648 | 625 | 7,273 |
+| Titles | 6,652 | 626 | 7,278 |
 | Explicit `type(scope)` prefix | 35.0% | 3.5% | 32.3% |
-| Lint clean | 29.3% | 3.2% | 27.1% |
-| Resolved to type + family | 68.8% | 63.8% | 68.4% |
+| Lint clean | 29.4% | 3.2% | 27.1% |
+| Resolved to type + family | 68.8% | 63.7% | 68.4% |
 
 Largest families: qps, ci-ops, governance, dmaic, cryo-eng, mission-control, mip-3p. The user's five named families are all present: handover, gogreen, jade-devops, watch, p-process.
 
@@ -78,6 +80,10 @@ Not applied: the remaining 156 open issues whose classification is inferred or n
 
 https://claude.ai/artifact/RARdwhuvVk2emp2iCRRhDw (private until shared). Data are attached files, not live: refresh by re-running the scripts, uploading each changed `out/dash/*.json` to the artifact, and pointing its dataset at the new blob (`out/dash/blobs.json` holds current blob ids). Cards: conformance tiles; sort / top-N / histogram range filters; spread stats (keys, mean, median, P90, max, top-5 share, tail share, Gini) as a `levelstats` calculation; count histogram; zoomable family › scope › type map; families; types; type × family matrix; peers in a family; running totals; families per repo; prefix leaderboard; titles drill-down with GitHub links; keyword inventory; unmapped tokens; lint; issue plan with links.
 
+## Crosswalk and dependency graph
+
+634 links at the 09:06 pulse: 335 `closes`, 295 `mentions`, 4 `parent`; 2 cross-repo; 388 inside one family. `out/edges.csv` and the dashboard `edges` dataset carry each end's family and scope. The dashboard adds a per-family crosswalk (PRs, issues, issues closed by a PR, link rate, PRs that close issues, links inside / to / from other families), a family-to-family link matrix, a force-directed graph per family (PR circles, issue squares, nodes open GitHub) and the link list.
+
 ## Overlap with pipeline-automation-hub #925 / #927 (read before landing)
 
 Two draft PRs opened earlier the same morning build a title taxonomy inside `mission-control/issue_rank/`:
@@ -88,7 +94,7 @@ This work should not land as a second parser. What it adds that #927 lacks, to b
 
 | This work | #927 equivalent | Reconcile by |
 |---|---|---|
-| `vocabulary.json` families/scopes/aliases calibrated on 7,273 real titles, incl. cryoplant, ABACUS DMAIC, CODEX scopes | `TOPIC_FAMILIES`, `TECHNICAL_CLUSTERS`, `PROGRAMS` dicts | load the JSON or port the aliases into #927's dicts |
+| `vocabulary.json` families/scopes/aliases calibrated on 7,278 real titles, incl. cryoplant, ABACUS DMAIC, CODEX scopes | `TOPIC_FAMILIES`, `TECHNICAL_CLUSTERS`, `PROGRAMS` dicts | load the JSON or port the aliases into #927's dicts |
 | lead-label parsing (`W327:`, `CBD W4:`, `RFI-QPS-CC-01:`, `MissionControl:`) | `_frontmatter` | add the cases and their tests |
 | lossless `suggest_title` + `apply_issues.py` (snapshot-guarded) | none (#927 forbids renames) | separate, owner-approved tool |
 | census levels, 30-day trend, median days to close, Gini/tail stats, dashboard | `summary()` rollups per repo / JADE / USER | add the metrics to `summary()`, render from its output |
@@ -98,5 +104,6 @@ This work should not land as a second parser. What it adds that #927 lacks, to b
 
 - Verified on the workstation's Python 3.12 only; code avoids 3.12-only syntax but CI on the repo's declared runtime has not run. Treat as unverified until it does.
 - Keyword inference is heuristic: `inferred` rows are guesses; only `explicit` and `strong` were applied.
-- Dashboard data are a static copy from the 08:31 pulse.
+- Dashboard data are a static copy from the 09:06 pulse.
+- Links come only from GitHub closing references, sub-issue parents and references written in titles. References in PR and issue bodies, timeline cross-references and commits are not read yet, so the graph undercounts.
 - 9% of titles still map to no family; see `out/keywords.md` "Unmapped" and the dashboard table.

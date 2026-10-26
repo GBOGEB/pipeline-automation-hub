@@ -28,7 +28,7 @@
 | atlas | `metrics` | 59 | TECHNICAL_CLUSTERS[telemetry] | `mcw`, `kpi-metrics` |
 | mycelium | `mycelium` | 40 | TOPIC_FAMILIES[mycelium] | - |
 | mycelium | `mesh` | 31 | TOPIC_FAMILIES[federation] | - |
-| governance | `governance` | 138 | TECHNICAL_CLUSTERS[governance] | `gov`, `branch-hygiene`, `policy`, `house_style`, `house-style`, `licence`, `license`, `branches`, `branch` |
+| governance | `governance` | 139 | TECHNICAL_CLUSTERS[governance] | `gov`, `branch-hygiene`, `policy`, `house_style`, `house-style`, `licence`, `license`, `branches`, `branch` |
 | governance | `security` | 34 | TECHNICAL_CLUSTERS[security] | `supply-chain`, `secrets` |
 | governance | `first-pass-closure` | 21 | TECHNICAL_CLUSTERS[governance] | `first-pass-closure`, `w305`, `gate`, `gates` |
 | governance | `control` | 242 | TECHNICAL_CLUSTERS[governance] | `control`, `cp.close` |
@@ -39,7 +39,7 @@
 | ci-ops | `dashboard` | 48 | TECHNICAL_CLUSTERS[telemetry] | `health-check` |
 | ci-ops | `release` | 101 | TECHNICAL_CLUSTERS[release] | `releases`, `versioning` |
 | ci-ops | `infra` | 12 | **not covered** | `infra`, `docker`, `devcontainer`, `codespaces`, `mcp` |
-| issue-burndown | `issue-burndown` | 144 | **not covered** | `burndown`, `issue-bd`, `triway`, `issue-rank`, `issue-expedition` |
+| issue-burndown | `issue-burndown` | 146 | **not covered** | `burndown`, `issue-bd`, `triway`, `issue-rank`, `issue-expedition` |
 | issue-burndown | `cbd` | 115 | PROGRAMS[CBD] | `char-bd`, `charter-bd`, `bdq` |
 | physics | `physics` | 40 | **not covered** | `physics`, `physics-pin`, `coolprop`, `thermo`, `math` |
 | fleet | `fleet` | 236 | **not covered** | `fleet`, `gm-fleet`, `gm`, `fed`, `delta-1`, `orchestration` |

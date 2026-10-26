@@ -16,11 +16,12 @@ Nothing below is implemented in `title_taxonomy.py` by this PR.
 | Evidence source per field: `title`, `lead`, `label`, `branch`, `pr#N`, `keyword`, `parent#N`, `children`, and confidence `explicit` / `strong` / `inferred` / `none` | `classification` (`EXPLICIT_ACTION` / `CODES_ONLY` / `UNCLASSIFIED`), recursive family candidates | Keep the owner's rule: linked candidates never overwrite. Add closing-PR evidence (`closedByPullRequestsReferences`) as a candidate source |
 | Lint T001–T011 | `lint` warnings | Map codes one to one; T007 (scope used as type) and T011 (freeform lead label) are the most frequent in the census |
 | Per level: n, share, rank, open/closed/merged, 30-day trend, median days to close, monthly running totals; spread stats (keys, mean, median, P90, max, top-5 share, tail share, Gini) | `summary()` per repo / JADE / USER | Add these metrics to `summary()` output and render the dashboard from it |
+| PR / issue crosswalk edges (`closes` from both sides incl. cross-repo, `parent`, title `mentions`), per-family crosswalk and family-to-family link counts | `build_graph()` and `associated_families()` (typed reference graph, max two hops) | Feed `closingIssuesReferences` / `closedByPullRequestsReferences` with repo names into `build_graph()`; keep PageRank / betweenness there; add the per-family crosswalk counts to `summary()` |
 | Lossless retitle suggestion and snapshot-guarded `apply_issues.py` | none: #927 forbids renames | Keep it out of the owner; any future rename tool needs its own owner decision |
 
 ## Census numbers this rests on
 
-Pulse 2026-10-26T08:31:05Z, 22 repos, 6,648 PRs and 625 issues. Explicit `type(scope)` prefix:
+Pulse 2026-10-26T09:06:51Z, 23 repos, 6,652 PRs and 626 issues. Explicit `type(scope)` prefix:
 PRs 35.0%, issues 3.5%. Resolved to a type and family by any evidence: 68.4%. See `outputs/keywords.md`
 and the dashboard for per-repo and per-family figures.
 
@@ -59,7 +60,7 @@ lower-casing and folding `_` and spaces to `-`). "Titles" is how many census tit
 | atlas | `metrics` | 59 | TECHNICAL_CLUSTERS[telemetry] | `mcw`, `kpi-metrics` |
 | mycelium | `mycelium` | 40 | TOPIC_FAMILIES[mycelium] | - |
 | mycelium | `mesh` | 31 | TOPIC_FAMILIES[federation] | - |
-| governance | `governance` | 138 | TECHNICAL_CLUSTERS[governance] | `gov`, `branch-hygiene`, `policy`, `house_style`, `house-style`, `licence`, `license`, `branches`, `branch` |
+| governance | `governance` | 139 | TECHNICAL_CLUSTERS[governance] | `gov`, `branch-hygiene`, `policy`, `house_style`, `house-style`, `licence`, `license`, `branches`, `branch` |
 | governance | `security` | 34 | TECHNICAL_CLUSTERS[security] | `supply-chain`, `secrets` |
 | governance | `first-pass-closure` | 21 | TECHNICAL_CLUSTERS[governance] | `first-pass-closure`, `w305`, `gate`, `gates` |
 | governance | `control` | 242 | TECHNICAL_CLUSTERS[governance] | `control`, `cp.close` |
@@ -70,7 +71,7 @@ lower-casing and folding `_` and spaces to `-`). "Titles" is how many census tit
 | ci-ops | `dashboard` | 48 | TECHNICAL_CLUSTERS[telemetry] | `health-check` |
 | ci-ops | `release` | 101 | TECHNICAL_CLUSTERS[release] | `releases`, `versioning` |
 | ci-ops | `infra` | 12 | **not covered** | `infra`, `docker`, `devcontainer`, `codespaces`, `mcp` |
-| issue-burndown | `issue-burndown` | 144 | **not covered** | `burndown`, `issue-bd`, `triway`, `issue-rank`, `issue-expedition` |
+| issue-burndown | `issue-burndown` | 146 | **not covered** | `burndown`, `issue-bd`, `triway`, `issue-rank`, `issue-expedition` |
 | issue-burndown | `cbd` | 115 | PROGRAMS[CBD] | `char-bd`, `charter-bd`, `bdq` |
 | physics | `physics` | 40 | **not covered** | `physics`, `physics-pin`, `coolprop`, `thermo`, `math` |
 | fleet | `fleet` | 236 | **not covered** | `fleet`, `gm-fleet`, `gm`, `fed`, `delta-1`, `orchestration` |

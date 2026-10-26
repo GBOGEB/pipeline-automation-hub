@@ -154,6 +154,43 @@
     </div>
   </article>
 
+  <section class="tx-graph-sec" id="crosswalk" style="display:grid;gap:var(--cds-gap-md)">
+    <header><h2>PR ↔ issue crosswalk and dependency graph</h2>
+      <span class="muted">Edges are GitHub closing references (PR closes issue, from both sides), sub-issue parents, and #123 / Repo#123 / PR123 mentions in titles that resolve inside this snapshot. Counts only; ranking metrics stay with issue_rank.</span></header>
+    <article class="tx-card" id="xw">
+      <header><h2>Crosswalk per family</h2><span class="muted">For the chosen repository: PRs and issues per family, how many issues a PR closes, and where the links go. Click a row to graph that family.</span></header>
+      <div class="tx-scroll">
+        <table class="tx-t-xw" data-source="crosswalk" data-row-key="id">
+          <thead><tr><th data-field="family">Family</th><th class="num" data-field="prs">PRs</th><th class="num" data-field="issues">Issues</th><th class="num" data-field="open_issues">Open issues</th><th class="num" data-field="issues_closed_by_pr">Issues with a closing PR</th><th class="num" data-field="link_rate">Issue link rate</th><th class="num" data-field="prs_closing">PRs that close issues</th><th class="num" data-field="edges">Edges</th><th class="num" data-field="internal">Inside family</th><th class="num" data-field="outgoing">To other families</th><th class="num" data-field="incoming">From other families</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </article>
+    <div class="tx-grid">
+      <article class="tx-card" id="flow">
+        <header><h2>Family to family links</h2><span class="muted">Rows: family of the source (the PR, parent or mentioning title). Columns: family of the target. Diagonal = links inside one family.</span></header>
+        <div class="tx-chart" id="c-flow" data-source="flow" style="overflow-x:auto"></div>
+      </article>
+      <article class="tx-card" id="graph">
+        <header><div class="row"><h2>Dependency graph</h2>
+          <label class="muted">Group <select id="f-gfam" data-source="crosswalk"></select></label></div>
+          <div class="row"><span class="muted">Filled: in the group; faded: linked from outside it. Circle = PR, square = issue. Drag to rearrange; click a node to open it on GitHub.</span>
+          <span class="tx-etypes"><label class="muted"><input type="checkbox" id="e-closes" checked> closes</label> <label class="muted"><input type="checkbox" id="e-parent" checked> parent</label> <label class="muted"><input type="checkbox" id="e-mentions" checked> mentions</label></span></div></header>
+        <div class="tx-chart" id="c-graph" data-source="edges titles" style="min-height:26rem"></div>
+      </article>
+    </div>
+    <article class="tx-card" id="edges">
+      <header><div class="row"><h2 class="tx-edges-h">Links in the group</h2><input id="q-edges" class="tx-search" type="search" placeholder="Search links" aria-label="Search links"></div>
+        <span class="muted tx-edges-note">Every edge with at least one end in the group.</span></header>
+      <div class="tx-scroll">
+        <table class="tx-t-edges" data-source="edges" data-row-key="id">
+          <thead><tr><th data-field="src">From</th><th data-field="type">Link</th><th data-field="dst">To</th><th data-field="src_family">From family</th><th data-field="dst_family">To family</th><th data-field="cross_repo">Cross-repo</th><th>From title</th><th>To title</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </article>
+  </section>
+
   <article class="tx-card" id="keywords">
     <header><h2>Keyword inventory</h2><span class="muted">Every canonical scope, its aliases and the spellings seen in explicit prefixes. Italic aliases match only inside type(scope) or a label, never free text.</span></header>
     <div class="tx-scroll">
@@ -210,6 +247,48 @@ dash.calc('levelstats', {
       return { id, keys: k, total, mean: total / k, median: d3.median(v), p90: d3.quantileSorted(v, 0.9), max: v[k - 1],
         top5_share: d3.sum(v.slice(-5)) / total, tail_share: d3.sum(v.filter((x) => x < 5)) / total, gini };
     });
+  },
+});
+
+dash.calc('crosswalk', {
+  inputs: ['titles', 'edges'],
+  title: 'PR and issue crosswalk per family',
+  description: 'Per repository (and ALL) and family: PRs, issues, open issues, issues with a closing PR, the share of issues linked that way, PRs that close issues, and edges inside the family, to other families and from other families. An edge counts for a repository when either end is in it.',
+  fn: (titles, edges) => {
+    const out = new Map();
+    const get = (repo, family) => {
+      const id = `${repo}|${family}`;
+      if (!out.has(id)) out.set(id, { id, repo, family, prs: 0, issues: 0, open_issues: 0, issues_closed_by_pr: 0, prs_closing: 0, edges: 0, internal: 0, outgoing: 0, incoming: 0 });
+      return out.get(id);
+    };
+    const closedIssues = new Set(edges.filter((e) => e.type === 'closes').map((e) => e.dst));
+    const closingPrs = new Set(edges.filter((e) => e.type === 'closes').map((e) => e.src));
+    titles.forEach((t) => [t.repo, 'ALL'].forEach((repo) => {
+      const g = get(repo, t.family);
+      if (t.kind === 'pr') { g.prs += 1; if (closingPrs.has(t.id)) g.prs_closing += 1; }
+      else { g.issues += 1; if (t.state === 'open') g.open_issues += 1; if (closedIssues.has(t.id)) g.issues_closed_by_pr += 1; }
+    }));
+    edges.forEach((e) => [...new Set([e.src_repo, e.dst_repo, 'ALL'])].forEach((repo) => {
+      if (e.same_family) { const g = get(repo, e.src_family); g.edges += 1; g.internal += 1; return; }
+      const a = get(repo, e.src_family), b = get(repo, e.dst_family);
+      a.edges += 1; a.outgoing += 1; b.edges += 1; b.incoming += 1;
+    }));
+    return [...out.values()].map((g) => ({ ...g, link_rate: g.issues ? g.issues_closed_by_pr / g.issues : null }));
+  },
+});
+
+dash.calc('flow', {
+  inputs: ['edges'],
+  title: 'Family to family link counts',
+  description: 'Edges counted by source family and target family, per repository (an edge counts where either end lives) and ALL, split by link type.',
+  fn: (edges) => {
+    const out = new Map();
+    edges.forEach((e) => [...new Set([e.src_repo, e.dst_repo, 'ALL'])].forEach((repo) => {
+      const id = `${repo}|${e.src_family}|${e.dst_family}`;
+      if (!out.has(id)) out.set(id, { id, repo, src_family: e.src_family, dst_family: e.dst_family, n: 0, closes: 0, parent: 0, mentions: 0 });
+      const f = out.get(id); f.n += 1; f[e.type] += 1;
+    }));
+    return [...out.values()];
   },
 });
 </script>
@@ -439,6 +518,113 @@ dash.calc('levelstats', {
       { k: 'id', link: (r) => `https://github.com/GBOGEB/${r.repo}/issues/${r.number}` }, { k: 'confidence', pill: true }, { k: 'title' }, { f: (r) => r.new_title || '(keep)', code: true }, { k: 'add_labels' }, { k: 'evidence' }], 'id');
 
     drawExtras(repo, kind, lvl, kw);
+    drawCrosswalk(repo);
+  }
+
+  // ---- crosswalk, flow matrix, dependency graph, edge list ----
+  const gfamSel = document.getElementById('f-gfam');
+  gfamSel.addEventListener('change', () => dash.setParams({ gfam: gfamSel.value }));
+  ['e-closes', 'e-parent', 'e-mentions', 'q-edges'].forEach((id) => document.getElementById(id).addEventListener('input', () => drawCrosswalk(P().repo)));
+  let sim = null;
+
+  function drawCrosswalk(repo) {
+    const xw = rows('crosswalk').filter((r) => r.repo === repo).sort((a, b) => (b.edges - a.edges) || (b.prs + b.issues - a.prs - a.issues));
+    const gfam = dash.params().gfam || (xw[0] && xw[0].family) || '*';
+    if (ok('crosswalk')) {
+      gfamSel.replaceChildren(new Option('All families (most linked)', '*'), ...xw.filter((r) => r.edges).map((r) => new Option(`${r.family === '?' ? '(none)' : r.family} · ${fmt(r.edges)} links`, r.family)));
+      gfamSel.value = gfam;
+    }
+    const xtb = document.querySelector('.tx-t-xw tbody');
+    table(xtb, xw, [{ f: (r) => (r.family === '?' ? '(none)' : r.family) }, { k: 'prs', num: true }, { k: 'issues', num: true }, { k: 'open_issues', num: true },
+      { k: 'issues_closed_by_pr', num: true }, { f: (r) => (r.link_rate == null ? '–' : pct(r.link_rate)), num: true }, { k: 'prs_closing', num: true },
+      { k: 'edges', num: true }, { k: 'internal', num: true }, { k: 'outgoing', num: true }, { k: 'incoming', num: true }], 'id');
+    [...xtb.rows].forEach((tr) => { tr.className = 'clickable'; if (tr.dataset.key.split('|')[1] === gfam) tr.style.fontWeight = 'var(--cds-font-weight-medium)'; tr.addEventListener('click', () => { dash.setParams({ gfam: tr.dataset.key.split('|')[1] }); document.getElementById('graph').scrollIntoView({ behavior: 'smooth', block: 'start' }); }); });
+
+    // flow matrix
+    const cf = document.getElementById('c-flow');
+    if (!ok('flow')) fail(cf, 'flow'); else {
+      cf.replaceChildren();
+      const fl = rows('flow').filter((f) => f.repo === repo);
+      const tot = new Map(); fl.forEach((f) => { tot.set(f.src_family, (tot.get(f.src_family) || 0) + f.n); tot.set(f.dst_family, (tot.get(f.dst_family) || 0) + f.n); });
+      const fams = [...tot.keys()].sort((a, b) => tot.get(b) - tot.get(a)).slice(0, 18);
+      if (fams.length) {
+        const cw = 34, ch = 22, left = 128, top = 96, W = left + fams.length * cw, H = top + fams.length * ch;
+        const svg = d3.select(cf).append('svg').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
+        const max = d3.max(fl, (f) => f.n) || 1, op = d3.scaleSqrt([0, max], [0.08, 1]);
+        const name = (f) => (f === '?' ? '(none)' : f);
+        svg.selectAll('text.c').data(fams).join('text').attr('transform', (d, i) => `translate(${left + i * cw + cw / 2},${top - 6}) rotate(-50)`).attr('font-size', 10).attr('fill', 'var(--color-fg-muted)').text(name);
+        svg.selectAll('text.r').data(fams).join('text').attr('x', left - 6).attr('y', (d, i) => top + i * ch + ch / 2).attr('dy', '0.35em').attr('text-anchor', 'end').attr('font-size', 11).attr('fill', 'var(--color-fg)').text(name);
+        fl.forEach((f) => {
+          const i = fams.indexOf(f.dst_family), j = fams.indexOf(f.src_family); if (i < 0 || j < 0) return;
+          svg.append('rect').attr('x', left + i * cw + 1).attr('y', top + j * ch + 1).attr('width', cw - 2).attr('height', ch - 2).attr('rx', 3)
+            .attr('fill', i === j ? dash.colors[1] : dash.colors[0]).attr('fill-opacity', op(f.n)).style('cursor', 'pointer')
+            .on('mousemove', (ev) => showTip(cf, ev, [`${name(f.src_family)} → ${name(f.dst_family)}`, `${fmt(f.n)} links: ${f.closes} closes, ${f.parent} parent, ${f.mentions} mentions`, 'click to graph the source family']))
+            .on('mouseleave', hideTip).on('click', () => dash.setParams({ gfam: f.src_family }));
+          svg.append('text').attr('x', left + i * cw + cw / 2).attr('y', top + j * ch + ch / 2).attr('dy', '0.35em').attr('text-anchor', 'middle').attr('font-size', 10).attr('pointer-events', 'none')
+            .attr('fill', op(f.n) > 0.6 ? 'var(--color-bg)' : 'var(--color-fg)').text(fmt(f.n));
+        });
+      } else { const d = document.createElement('div'); d.className = 'muted'; d.textContent = 'No links for this repository.'; cf.append(d); }
+    }
+
+    // graph
+    const cg = document.getElementById('c-graph');
+    if (!ok('edges') || !ok('titles')) { fail(cg, ok('edges') ? 'titles' : 'edges'); return; }
+    const types = new Set(['closes', 'parent', 'mentions'].filter((t) => document.getElementById('e-' + t).checked));
+    const node = new Map(rows('titles').map((t) => [t.id, t]));
+    const inRepo = (e) => repo === 'ALL' || e.src_repo === repo || e.dst_repo === repo;
+    const inGroup = (id) => gfam === '*' || (node.get(id) && node.get(id).family === gfam);
+    let es = rows('edges').filter((e) => types.has(e.type) && inRepo(e) && (inGroup(e.src) || inGroup(e.dst)));
+    const deg = new Map(); es.forEach((e) => { deg.set(e.src, (deg.get(e.src) || 0) + 1); deg.set(e.dst, (deg.get(e.dst) || 0) + 1); });
+    const CAP = 320;
+    let ids = [...deg.keys()];
+    const capped = ids.length > CAP;
+    if (capped) { ids = ids.sort((a, b) => deg.get(b) - deg.get(a)).slice(0, CAP); const keep = new Set(ids); es = es.filter((e) => keep.has(e.src) && keep.has(e.dst)); }
+    const nodes = ids.map((id) => ({ id, t: node.get(id), deg: deg.get(id), inside: inGroup(id) }));
+    const links = es.map((e) => ({ source: e.src, target: e.dst, type: e.type }));
+
+    // edge list
+    const qe = document.getElementById('q-edges').value.trim().toLowerCase();
+    const label = (id) => { const t = node.get(id); return t ? `${t.repo}#${t.number}` : id; };
+    const ghE = (id) => { const t = node.get(id); return t ? gh(t) : '#'; };
+    const ttl = (id) => (node.get(id) ? node.get(id).title : '');
+    const list = es.filter((e) => !qe || (ttl(e.src) + ' ' + ttl(e.dst) + ' ' + e.src + ' ' + e.dst).toLowerCase().includes(qe));
+    document.querySelector('.tx-edges-h').textContent = gfam === '*' ? 'Links (most linked items)' : `Links touching ${gfam === '?' ? '(none)' : gfam}`;
+    document.querySelector('.tx-edges-note').textContent = `${fmt(list.length)} links${capped ? `; graph and list limited to the ${CAP} most linked items` : ''}. Item numbers open GitHub.`;
+    table(document.querySelector('.tx-t-edges tbody'), list.slice(0, 600), [
+      { f: (e) => label(e.src), link: (e) => ghE(e.src) }, { k: 'type' }, { f: (e) => label(e.dst), link: (e) => ghE(e.dst) },
+      { f: (e) => (e.src_family === '?' ? '(none)' : e.src_family) }, { f: (e) => (e.dst_family === '?' ? '(none)' : e.dst_family) },
+      { f: (e) => (e.cross_repo ? 'yes' : '') }, { f: (e) => ttl(e.src) }, { f: (e) => ttl(e.dst) }], 'id');
+
+    if (sim) sim.stop();
+    cg.replaceChildren();
+    if (!nodes.length) { const d = document.createElement('div'); d.className = 'muted'; d.textContent = 'No links of the chosen types for this group.'; cg.append(d); return; }
+    const W = cg.clientWidth || 600, H = 460;
+    const svg = d3.select(cg).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
+    const ecol = { closes: dash.colors[0], parent: dash.colors[2], mentions: 'var(--cds-chart-muted)' };
+    const link = svg.append('g').selectAll('line').data(links).join('line').attr('stroke', (d) => ecol[d.type]).attr('stroke-width', (d) => (d.type === 'mentions' ? 1 : 1.6)).attr('stroke-opacity', 0.7)
+      .attr('stroke-dasharray', (d) => (d.type === 'mentions' ? '3 3' : null));
+    const r = (d) => 4 + Math.sqrt(d.deg) * 2.2;
+    const g = svg.append('g').selectAll('a').data(nodes).join('a').attr('href', (d) => (d.t ? gh(d.t) : null)).attr('target', '_blank').attr('rel', 'noopener');
+    g.append('path').attr('d', (d) => d3.symbol(d.t && d.t.kind === 'pr' ? d3.symbolCircle : d3.symbolSquare, Math.PI * r(d) * r(d))())
+      .attr('fill', (d) => (d.t && d.t.kind === 'pr' ? dash.colors[0] : dash.colors[1])).attr('fill-opacity', (d) => (d.inside ? 0.95 : 0.3))
+      .attr('stroke', 'var(--color-bg)').attr('stroke-width', 1);
+    g.on('mousemove', (ev, d) => showTip(cg, ev, [d.t ? `${d.t.repo}#${d.t.number} · ${d.t.kind} · ${d.t.state}` : d.id, d.t ? d.t.title.slice(0, 90) : '', d.t ? `${d.t.prefix} · ${d.deg} links${d.inside ? '' : ' · outside the group'}` : ''])).on('mouseleave', hideTip);
+    const big = nodes.filter((d) => d.deg >= 3).length <= 25;
+    g.filter((d) => d.deg >= 3 && big).append('text').attr('x', (d) => r(d) + 3).attr('dy', '0.35em').attr('font-size', 10).attr('fill', 'var(--color-fg-muted)').attr('pointer-events', 'none').text((d) => (d.t ? `#${d.t.number}` : ''));
+    sim = d3.forceSimulation(nodes).force('link', d3.forceLink(links).id((d) => d.id).distance(40).strength(0.6))
+      .force('charge', d3.forceManyBody().strength(-60)).force('center', d3.forceCenter(W / 2, H / 2)).force('collide', d3.forceCollide().radius((d) => r(d) + 2))
+      .force('x', d3.forceX(W / 2).strength(0.05)).force('y', d3.forceY(H / 2).strength(0.08));
+    const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+    sim.on('tick', () => {
+      nodes.forEach((d) => { d.x = clamp(d.x, 10, W - 10); d.y = clamp(d.y, 10, H - 10); });
+      link.attr('x1', (d) => d.source.x).attr('y1', (d) => d.source.y).attr('x2', (d) => d.target.x).attr('y2', (d) => d.target.y);
+      g.attr('transform', (d) => `translate(${d.x},${d.y})`);
+    });
+    g.call(d3.drag().clickDistance(4)
+      .on('start', (ev, d) => { if (!ev.active) sim.alphaTarget(0.2).restart(); d.fx = d.x; d.fy = d.y; })
+      .on('drag', (ev, d) => { d.fx = ev.x; d.fy = ev.y; })
+      .on('end', (ev, d) => { if (!ev.active) sim.alphaTarget(0); d.fx = null; d.fy = null; }));
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { sim.stop(); for (let i = 0; i < 200; i++) sim.tick(); sim.on('tick')(); }
   }
 
   // controls state, spread stats, histogram, icicle map, titles drill-down
