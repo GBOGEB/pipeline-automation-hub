@@ -729,7 +729,7 @@ def rank(snap: dict, now: float | None = None) -> dict:
         items.append({
             "key": k, "repo": n["repo"], "number": n["number"], "type": n["type"],
             "title": n.get("title"), "url": n.get("url"), "private": n.get("private"),
-            "title_taxonomy": tt.parse_title(n.get("title"), n["type"]),
+            "title_taxonomy": tt.parse_title(n.get("title"), n["type"], n.get("labels")),
             "created_at": n.get("created_at"), "updated_at": n.get("updated_at"),
             "age_days": round((now - _ts(n["created_at"])) / 86400, 1),
             "idle_days": round((now - _ts(n["updated_at"])) / 86400, 1),
@@ -960,6 +960,7 @@ def redact(model: dict) -> dict:
         if i.get("private"):
             i["title_taxonomy"] = {"schema": tt.SCHEMA, "family": "REDACTED_PRIVATE",
                                    "path": "REDACTED_PRIVATE", "programmes": [], "codes": [],
+                                   "topic_families": [], "technical_clusters": [],
                                    "classification": "UNCLASSIFIED", "lint": [],
                                    "related_families": []}
             for f in ("title", "url"):
@@ -982,7 +983,8 @@ def redact(model: dict) -> dict:
 
 CSV_COLS = ("rank_global", "rank_repo", "key", "type", "lane", "score", "progress", "pressure",
             "open_blockers", "linked_prs", "age_days", "idle_days", "action", "title",
-            "family", "prefix_path", "prefix_codes", "related_family_candidates")
+            "family", "prefix_path", "prefix_codes", "topic_families", "technical_clusters",
+            "related_family_candidates")
 
 
 def to_csv(model: dict) -> str:
@@ -1004,6 +1006,8 @@ def to_csv(model: dict) -> str:
                 return title_tax.get("path", "")
             if name == "prefix_codes":
                 return ";".join(title_tax.get("codes", []))
+            if name in ("topic_families", "technical_clusters"):
+                return ";".join(title_tax.get(name, []))
             if name == "related_family_candidates":
                 return ";".join(r["family"] for r in title_tax.get("related_families", []))
             return i.get(name)
@@ -1063,6 +1067,16 @@ def render_html(model: dict, delta: dict | None = None) -> str:
         f'<tr><td>{esc(path)}</td><td class="num">{count["Issue"]}</td>'
         f'<td class="num">{count["PullRequest"]}</td><td class="num">{count["total"]}</td></tr>'
         for path, count in leaf_clusters)
+    technical_rows = "".join(
+        f'<tr><td>{esc(scope)}</td><td>{esc(name)}</td><td class="num">{value["Issue"]}</td>'
+        f'<td class="num">{value["PullRequest"]}</td><td class="num">{value["total"]}</td></tr>'
+        for scope, roll in model["rollups"].items()
+        for name, value in roll["title_taxonomy"]["technical_clusters_nonexclusive"].items())
+    topic_rows = "".join(
+        f'<tr><td>{esc(scope)}</td><td>{esc(name)}</td><td class="num">{value["Issue"]}</td>'
+        f'<td class="num">{value["PullRequest"]}</td><td class="num">{value["total"]}</td></tr>'
+        for scope, roll in model["rollups"].items()
+        for name, value in roll["title_taxonomy"]["topic_families_nonexclusive"].items())
     roots = "".join(
         f'<tr><td>{link(g["root"])}</td><td>{"open" if g["open_root"] else "closed/stub"}</td>'
         f'<td class="num">{g["descendants"]}</td><td class="num">{g["longest"]}</td></tr>'
@@ -1105,6 +1119,10 @@ ticked boxes are not verified DoD · heads: {heads}</p>
 <div class="wrap"><table><tr><th>scope</th><th>family</th><th>issues</th><th>PRs</th><th>total</th></tr>{taxonomy_rows}</table></div>
 <h2>Nested clusters · USER leaf paths (non-additive ancestry)</h2>
 <div class="wrap"><table><tr><th>prefix path</th><th>issues</th><th>PRs</th><th>total</th></tr>{cluster_rows}</table></div>
+<h2>Topic families · overlapping title / label associations</h2>
+<div class="wrap"><table><tr><th>scope</th><th>topic</th><th>issues</th><th>PRs</th><th>matches</th></tr>{topic_rows}</table></div>
+<h2>Technical clusters · overlapping title / label associations</h2>
+<div class="wrap"><table><tr><th>scope</th><th>cluster</th><th>issues</th><th>PRs</th><th>matches</th></tr>{technical_rows}</table></div>
 <h2>Ranked (composite)</h2><p class="muted">score = {formula}</p>
 <div class="wrap">{table([i["key"] for i in model["items"]], 60)}</div>
 <h2>Nearly finished / close candidates</h2><div class="wrap">{table(nearly, 30)}</div>
