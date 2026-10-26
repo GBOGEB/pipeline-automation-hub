@@ -125,6 +125,16 @@ class Project(unittest.TestCase):
         # strata: W43/a [5], W41/b [4], W41/a [3, 2, 1]; one per stratum per round
         self.assertEqual([r["id"] for r in M.stratified(runs)], [5, 4, 3, 2, 1])
 
+    def test_repo_estimate_scales_each_workflow_by_its_own_coverage(self):
+        b = ".github/workflows/b.yml"
+        runs = [run(1), run(2), run(3), run(4), run(5, path=b, name="B")]
+        doc = self.doc(runs, {1: [job(1)], 5: [job(5, conclusion="failure")]})
+        t = doc["repos"][0]["totals"]
+        self.assertEqual(t["est_total_minutes"], 4 + 1)  # gate: 1 / 0.25, B: 1 / 1.0
+        self.assertEqual((t["est_job_runs"], t["est_failed_job_minutes"], t["est_job_failure_rate"]), (5, 1, 20.0))
+        self.assertEqual(t["est_unsampled_runs"], 0)
+        self.assertEqual(doc["fleet"]["totals"]["est_total_minutes"], 5)
+
     def test_rerun_rate(self):
         r2 = dict(run(2), run_attempt=2)
         t = self.doc([run(1), r2], {1: [job(1)]})["repos"][0]["totals"]

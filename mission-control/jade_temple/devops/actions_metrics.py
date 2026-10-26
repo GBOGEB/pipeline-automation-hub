@@ -380,6 +380,26 @@ def group(rows: list, key: str) -> dict:
     return dict(sorted(out.items(), key=lambda kv: -kv[1]["total_minutes"]))
 
 
+def stratified_estimate(rows: list) -> dict:
+    """Repo-level ESTIMATES from per-workflow samples (each workflow scaled by its own coverage).
+
+    The job sample is stratified by workflow, so one repo-wide coverage ratio would over-weight
+    rarely-run workflows. Workflows with no job list read add nothing; their runs are counted in
+    `est_unsampled_runs`.
+    """
+    ws = [w for w in rows if w.get("job_coverage")]
+    if not ws:
+        return {"est_total_minutes": None, "est_job_runs": None, "est_failed_job_minutes": None,
+                "est_job_failure_rate": None, "est_unsampled_runs": sum(w["workflow_runs"] for w in rows)}
+    jr = sum(w["job_runs"] / w["job_coverage"] for w in ws)
+    failed = sum((w["job_failure_rate"] or 0) / 100 * w["job_runs"] / w["job_coverage"] for w in ws)
+    return {"est_total_minutes": round(sum(w["total_minutes"] / w["job_coverage"] for w in ws)),
+            "est_job_runs": round(jr),
+            "est_failed_job_minutes": round(sum(w["failed_job_minutes"] / w["job_coverage"] for w in ws)),
+            "est_job_failure_rate": pct(failed, jr),
+            "est_unsampled_runs": sum(w["workflow_runs"] for w in rows if not w.get("job_coverage"))}
+
+
 def repo_metrics(repo: str, runs: list, jobs_by_run: dict, head: dict, census_sha: str | None) -> dict:
     by_wf = defaultdict(list)
     for r in runs:
@@ -392,7 +412,7 @@ def repo_metrics(repo: str, runs: list, jobs_by_run: dict, head: dict, census_sh
                      "class": wf_class(name, path), "band": band(a["avg_job_run_s"]),
                      "dominant_event": next(iter(a["events"]), None), **a, "weekly": weekly(rs, jobs_by_run)})
     rows.sort(key=lambda w: (-(w["total_minutes"] or 0), -w["workflow_runs"], w["workflow"]))
-    total = aggregate(runs, jobs_by_run)
+    total = {**aggregate(runs, jobs_by_run), **stratified_estimate(rows)}
     return {"repo": repo, "branch": head.get("branch"), "visibility": head.get("visibility"),
             "head_sha": head.get("head_sha"), "census_head_sha": census_sha,
             "same_pulse": None if census_sha is None else census_sha == head.get("head_sha"),
@@ -419,9 +439,14 @@ def project(cache: Path, repos: list, since: date, until: date, heads: dict, cen
         "method": {"failed_conclusions": sorted(FAILED), "skipped_jobs": "excluded from job runs, minutes and timings",
                    "total_minutes": "sum of per-job ceil(run seconds / 60), the billing rounding",
                    "bands": [label for _, label in BANDS], "classes": [label for label, _ in CLASSES] + ["OTHER"],
-                   "job_tier_basis": "OBSERVED over job_coverage; est_total_minutes = total_minutes / job_coverage",
+                   "job_tier_basis": "OBSERVED over job_coverage; est_* = sum over workflows of observed / that "
+                                     "workflow's job_coverage (stratified estimator), ESTIMATE not observation",
                    "job_sample": STRATA_DOC},
-        "fleet": {"totals": aggregate(all_runs, all_jobs), "weekly": weekly(all_runs, all_jobs),
+        "fleet": {"totals": {**aggregate(all_runs, all_jobs), **{
+                      k: (sum(r["totals"][k] for r in out if r["totals"][k] is not None)
+                          if any(r["totals"][k] is not None for r in out) else None)
+                      for k in ("est_total_minutes", "est_job_runs", "est_failed_job_minutes", "est_unsampled_runs")}},
+                  "weekly": weekly(all_runs, all_jobs),
                   "by_class": group(wf_rows, "class"), "by_band": group(wf_rows, "band"),
                   "by_event": group(wf_rows, "dominant_event")},
         "repos": out,
