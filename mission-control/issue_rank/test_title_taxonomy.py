@@ -32,6 +32,8 @@ class TitleParsing(unittest.TestCase):
                          "metrics")
         self.assertEqual(tax.parse_title("metrics: #123 reference")["path"],
                          "metrics")
+        self.assertEqual(tax.parse_title("feat(jade N+4 W51-C0): pulse")["path"],
+                         "feat/JADE/N+4/W51/C0")
     def test_issue_brackets_waves_and_safety(self):
         i = tax.parse_title("[U14] Main red since 2026-10-18: import networkx")
         self.assertEqual(i["path"], "UNCLASSIFIED/U14")
