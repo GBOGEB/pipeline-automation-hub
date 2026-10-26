@@ -1,3 +1,4 @@
+import contextlib, io
 import json, pathlib, sys, tempfile, unittest
 from datetime import datetime, timezone
 
@@ -151,7 +152,7 @@ class Probes(unittest.TestCase):
     def test_states_and_unset(self):
         self.assertEqual(tc.probe("", Fake({})), "UNSET")
         url = tc.API + "/repos/" + tc.PROBE_REPO
-        for status, want in ((200, "VALID"), (401, "INVALID"), (403, "FORBIDDEN"), (404, "NOT_SELECTED"), (500, "HTTP_500")):
+        for status, want in ((200, "VALID"), (401, "INVALID"), (403, "FORBIDDEN"), (404, "NOT_SELECTED"), (500, "HTTP_OTHER")):
             fake = Fake({url: (status, b"{}", None)})
             self.assertEqual(tc.probe(SECRET_VALUE, fake), want)
             self.assertEqual(fake.calls, [(url, SECRET_VALUE)])
@@ -286,6 +287,37 @@ class Main(unittest.TestCase):
         code, receipt, _ = self.run_main({"GH_TOKEN": "public", "PROBE_READ": SECRET_VALUE},
                                          dict(routes, **{probe_url: (401, b"{}", None)}))
         self.assertEqual((code, receipt["probes"]["READ"]), (1, "INVALID"))
+
+    def test_owner_findings_become_annotations_without_values(self):
+        probe_url = tc.API + "/repos/" + tc.PROBE_REPO
+        routes = world([run(1, "2026-10-23T10:30:00Z", "success")])
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            code, receipt, _ = self.run_main({"GH_TOKEN": "public", "PROBE_READ": SECRET_VALUE, "GITHUB_ACTIONS": "true"},
+                                             dict(routes, **{probe_url: (404, b"{}", None)}))
+        lines = [l for l in out.getvalue().splitlines() if l.startswith("::")]
+        self.assertEqual(code, 1)
+        self.assertTrue(any(l.startswith("::error title=token census: READ::") and "NOT_SELECTED" in l for l in lines))
+        self.assertEqual(sum(l.startswith("::error title=token census: READ::") for l in lines), 1)  # one per secret
+        self.assertTrue(all("\n" not in l and SECRET_VALUE not in l for l in lines))
+        self.assertEqual(tc.annotations(dict(receipt, tokens=[], lanes=[])), [])
+        quiet = io.StringIO()
+        with contextlib.redirect_stdout(quiet):  # offline (no GITHUB_ACTIONS): no annotations
+            self.run_main({"GH_TOKEN": "public", "PROBE_READ": SECRET_VALUE},
+                          dict(routes, **{probe_url: (404, b"{}", None)}))
+        self.assertNotIn("::error", quiet.getvalue())
+
+    def test_annotations_stay_below_the_per_step_limit(self):
+        lanes = [{"secret": "S%02d" % i, "token": 1, "repo": "o/r", "workflow": "w%d.yml" % i, "action": "OWNER",
+                  "why": "re-save"} for i in range(13)]
+        lanes += [{"secret": "S00", "token": 1, "repo": "o/r", "workflow": "t%d.yml" % i, "action": "THREAD",
+                   "why": "other"} for i in range(12)]
+        out = tc.annotations({"tokens": [{"id": 1, "name": "t", "probes": {}}], "lanes": lanes})
+        errors = [l for l in out if l.startswith("::error")]
+        warnings = [l for l in out if l.startswith("::warning")]
+        self.assertEqual((len(errors), len(warnings)), (10, 10))
+        self.assertIn("4 more findings", errors[-1])
+        self.assertIn("3 more findings", warnings[-1])
 
     def test_local_run_without_probe_env_is_not_probed(self):
         code, receipt, text = self.run_main({"GH_TOKEN": "public"}, world([run(1, "2026-10-23T10:30:00Z", "success")]))

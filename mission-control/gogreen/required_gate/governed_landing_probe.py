@@ -234,7 +234,7 @@ def main(argv=None):
                   "reason_class": type(exc).__name__,
                   "authority_transfer": False, "formal_engineering_credit_delta": 0}
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    args.out.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({"schema": SCHEMA, "pr": args.pr, "readiness": "HOLD",
                       "merge_allowed": False, "evidence_path": str(args.out)}))
     return 0
