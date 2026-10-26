@@ -244,13 +244,19 @@ def fold(events, cursor=None):
         _require(len(seen) < 100000, "cursor exceeds reviewed observation budget")
         seen[key] = payload
         prev = state["lanes"].get(lane)
-        if prev is not None and (
-            _utc(n["completed_at"]) <= _utc(prev["completed_at"])
-            or _utc(n["observed_at"]) <= _utc(prev["observed_at"])
-        ):
-            # Late older-source completions cannot roll back a newer lane, even
-            # when GitHub reveals them after the later completion was observed.
-            continue
+        if prev is not None:
+            # Native completion time, not poll/observation time, orders
+            # terminal evidence. Several jobs can share one poll timestamp.
+            current_complete = _utc(n["completed_at"])
+            previous_complete = _utc(prev["completed_at"])
+            current_native = (n["run_id"], n["attempt"], n["job_id"])
+            previous_native = tuple(prev.get("native_order", (-1, -1, -1)))
+            if (current_complete < previous_complete or
+                    (current_complete == previous_complete and
+                     current_native <= previous_native)):
+                # Seen is still updated, but older native evidence cannot
+                # roll back the latest lane or reissue an alert.
+                continue
         if r["conclusion"] in ("skipped", "cancelled"):
             # Not a verified regression or recovery and not a stability wave.
             continue
@@ -289,7 +295,7 @@ def fold(events, cursor=None):
                            "coverage_delta": coverage_delta, "admission": "HOLD"})
         state["lanes"][lane] = {
             "observed_at": n["observed_at"], "completed_at": n["completed_at"],
-            "native_key": key,
+            "native_key": key, "native_order": [n["run_id"], n["attempt"], n["job_id"]],
             "checkout_sha": i["checkout_sha"], "cohort": cohort,
             "signature": signature, "conclusion": r["conclusion"],
             "fingerprint": r["fingerprint"], "veto": list(veto),
@@ -360,6 +366,15 @@ def main(argv=None):
                     fh.flush()
                     os.fsync(fh.fileno())
                 os.replace(tmp, args.cursor)
+                # A file fsync alone does not make rename durable on POSIX.
+                # Refuse to report persisted success until parent directory
+                # metadata is synced; Windows has different directory APIs.
+                if os.name == "posix":
+                    directory_fd = os.open(args.cursor.parent, os.O_RDONLY)
+                    try:
+                        os.fsync(directory_fd)
+                    finally:
+                        os.close(directory_fd)
             finally:
                 if os.path.exists(tmp):
                     os.unlink(tmp)

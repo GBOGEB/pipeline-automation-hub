@@ -48,7 +48,8 @@ def project(records):
     Unqualified legacy pulses are excluded with explicit aggregate gap counts.
     """
     _fail(type(records) is not list, "source records must be a list")
-    events, gaps = [], {"MISSING_NATIVE_COMPLETION": 0, "MISSING_NATIVE_IDENTITY": 0}
+    events, gaps = [], {"MISSING_NATIVE_COMPLETION": 0, "MISSING_NATIVE_IDENTITY": 0,
+                        "NATIVE_AFTER_PULSE": 0}
     for record in records:
         _fail(type(record) is not dict
               or record.get("schema") != source.LEDGER_SCHEMA
@@ -79,8 +80,11 @@ def project(records):
             if completed is None:
                 gaps["MISSING_NATIVE_COMPLETION"] += 1
                 continue
-            _fail(decision._utc(completed) > decision._utc(stamp),
-                  "native completion after observation")
+            if decision._utc(completed) > decision._utc(stamp):
+                # An older immutable pulse may have been sampled before a job
+                # completed. Retain the gap but never poison all later pulses.
+                gaps["NATIVE_AFTER_PULSE"] += 1
+                continue
             state = "failure" if finding["state"] == "RED" else "success"
             fprint = finding.get("fingerprint")
             event = {
@@ -122,26 +126,95 @@ def project(records):
     }
 
 
+
+def select_batch(events, cursor=None, limit=2000, byte_limit=4_000_000):
+    """Bounded incremental consumer snapshot, never a second source ledger.
+
+    The existing watch_decision cursor is the sole processed-identity record.
+    Source records are not removed, rewritten or marked accepted here.
+    """
+    _fail(type(limit) is not int or not 1 <= limit <= 2000, "consumer batch limit")
+    prior = decision._cursor(cursor if cursor is not None else decision.empty_cursor())
+    unique = {}
+    for event in events:
+        decision.validate(event)
+        n, i = event["native"], event["identity"]
+        lane = event["repository"] + "::" + event["lane"] + "::" + i["kind"]
+        key = decision._digest([lane, i["checkout_sha"], n["run_id"],
+                                n["attempt"], n["job_id"]])
+        evidence_hash = decision._native_payload(event)
+        if key in prior["seen"]:
+            _fail(prior["seen"][key] != evidence_hash, "cursor native collision")
+            continue
+        if key in unique:
+            _fail(decision._native_payload(unique[key]) != evidence_hash,
+                  "source native collision")
+            continue
+        unique[key] = event
+    def order(e):
+        n = e["native"]
+        return (decision._utc(n["completed_at"]), n["run_id"],
+                n["attempt"], n["job_id"], e["repository"], e["lane"])
+    pending = sorted(unique.values(), key=order)
+    chosen, total_bytes = [], 0
+    for event in pending:
+        size = len(decision._canonical(event).encode("ascii")) + 1
+        _fail(size > byte_limit, "single terminal event exceeds consumer budget")
+        if len(chosen) == limit or total_bytes + size > byte_limit:
+            break
+        chosen.append(event)
+        total_bytes += size
+    return chosen, {
+        "eligible_distinct_unseen": len(pending),
+        "deferred_for_next_cursor": len(pending) - len(chosen),
+        "already_seen_or_repeated": len(events) - len(pending),
+        "selected_bytes": total_bytes,
+        "consumer_cursor_advanced": False,
+    }
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description="Offline public source-ledger watch adapter")
     p.add_argument("--ledger", type=Path, default=source.LEDGER)
     p.add_argument("--output", type=Path, help="opt-in, public-only JSONL snapshot")
+    p.add_argument("--cursor", type=Path, help="existing watch_decision cursor for incremental batches")
+    p.add_argument("--limit", type=int, default=2000, help="max distinct native events (1..2000)")
     a = p.parse_args(argv)
     records, _ = source.read_ledger(a.ledger)  # validates ordinal, canonical bytes and SHA256 chain
     events, report = project(records)
     if a.output:
-        payload = "".join(decision._canonical(x) + "\n" for x in events).encode("ascii")
-        a.output.parent.mkdir(parents=True, exist_ok=True)
-        fd, tmp = tempfile.mkstemp(prefix=".watch_feed_", dir=a.output.parent)
-        try:
-            with os.fdopen(fd, "wb") as file:
-                file.write(payload)
-                file.flush()
-                os.fsync(file.fileno())
-            os.replace(tmp, a.output)
-        finally:
-            if os.path.exists(tmp):
-                os.unlink(tmp)
+        cursor = (json.loads(a.cursor.read_text(encoding="utf-8"))
+                  if a.cursor and a.cursor.exists() else decision.empty_cursor())
+        selected, info = select_batch(events, cursor=cursor, limit=a.limit)
+        report.update(info)
+        report["events_projected_before_cursor"] = report["events_exported"]
+        report["events_exported"] = len(selected)
+        report["output_written"] = bool(selected)
+        report["export_state"] = ("BOUNDED_PUBLIC_EVENTS" if selected else
+                                  "NO_NEW_NATIVE_EVENTS_NO_CONSUMER_FILE")
+        if selected:
+            payload = "".join(decision._canonical(x) + "\n" for x in selected).encode("ascii")
+            a.output.parent.mkdir(parents=True, exist_ok=True)
+            fd, tmp = tempfile.mkstemp(prefix=".watch_feed_", dir=a.output.parent)
+            try:
+                with os.fdopen(fd, "wb") as file:
+                    file.write(payload)
+                    file.flush()
+                    os.fsync(file.fileno())
+                os.replace(tmp, a.output)
+                if os.name == "posix":
+                    directory_fd = os.open(a.output.parent, os.O_RDONLY)
+                    try:
+                        os.fsync(directory_fd)
+                    finally:
+                        os.close(directory_fd)
+            finally:
+                if os.path.exists(tmp):
+                    os.unlink(tmp)
+        elif a.output.exists():
+            # The output is explicitly transient, never the canonical ledger;
+            # leave no stale previous batch masquerading as a new result.
+            a.output.unlink()
     print(decision._canonical(report))
     return 0
 

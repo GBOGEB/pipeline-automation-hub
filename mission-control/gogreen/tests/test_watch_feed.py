@@ -76,9 +76,12 @@ class PublicAdapter(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "restricted/private"):
             F.project([row])
 
-    def test_native_job_completion_must_precede_observation(self):
-        with self.assertRaisesRegex(ValueError, "native completion after"):
-            F.project([rec(stamp=T1, complete=T2)])
+    def test_raced_native_clock_is_quarantined_without_poisoning_later_pulses(self):
+        invalid = rec(stamp=T1, complete=T2)
+        next_valid = rec(stamp="2026-10-26T01:20:00Z", complete=T2)
+        events, report = F.project([invalid, next_valid])
+        self.assertEqual(report["gaps"]["NATIVE_AFTER_PULSE"], 1)
+        self.assertEqual(len(events), 1)
 
     def test_source_sha_mismatch_is_not_a_candidate(self):
         row = rec()
@@ -106,6 +109,48 @@ class PublicAdapter(unittest.TestCase):
         row["schema"] = "foreign.metric.producer"
         with self.assertRaisesRegex(ValueError, "noncanonical"):
             F.project([row])
+
+    def test_empty_native_export_does_not_write_unusable_jsonl(self):
+        import contextlib
+        import io
+        with tempfile.TemporaryDirectory() as tmp:
+            p = pathlib.Path(tmp) / "pulse.jsonl"
+            out = pathlib.Path(tmp) / "public.jsonl"
+            p.write_text(F.source.line(rec(complete=None)) + "\n", encoding="ascii")
+            with contextlib.redirect_stdout(io.StringIO()) as stdout:
+                self.assertEqual(F.main(["--ledger", str(p), "--output", str(out)]), 0)
+            self.assertFalse(out.exists())
+            self.assertIn("NO_NEW_NATIVE_EVENTS_NO_CONSUMER_FILE", stdout.getvalue())
+
+    def test_incremental_batch_limits_and_existing_cursor(self):
+        one = rec()
+        two = rec(complete="2026-10-26T01:11:00Z")
+        two["pulse"]["findings"][0]["run_id"] = 1078
+        two["pulse"]["findings"][0]["job_id"] = 2078
+        events, _ = F.project([one, two])
+        selected, report = F.select_batch(events, limit=1)
+        self.assertEqual(len(selected), 1)
+        self.assertEqual(report["deferred_for_next_cursor"], 1)
+        cursor, _ = F.decision.fold(selected)
+        remaining, report2 = F.select_batch(events, cursor=cursor, limit=1)
+        self.assertEqual(len(remaining), 1)
+        self.assertEqual(report2["deferred_for_next_cursor"], 0)
+        cursor2, _ = F.decision.fold(remaining, cursor)
+        exhausted, report3 = F.select_batch(events, cursor=cursor2, limit=1)
+        self.assertEqual(exhausted, [])
+        self.assertEqual(report3["eligible_distinct_unseen"], 0)
+
+    def test_cursor_cannot_silently_overwrite_changed_native_payload(self):
+        e = F.project([rec()])[0][0]
+        cursor, _ = F.decision.fold([e])
+        altered = copy.deepcopy(e)
+        altered["result"]["fingerprint"] = "FP_FICTIONAL_ALTERED"
+        with self.assertRaisesRegex(ValueError, "cursor native collision"):
+            F.select_batch([altered], cursor=cursor)
+
+    def test_batch_rejects_invalid_limit(self):
+        with self.assertRaisesRegex(ValueError, "batch limit"):
+            F.select_batch(F.project([rec()])[0], limit=2001)
 
     def test_native_ledger_cli_verifies_chain_before_export(self):
         with tempfile.TemporaryDirectory() as tmp:
