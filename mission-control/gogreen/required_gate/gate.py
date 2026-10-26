@@ -18,7 +18,15 @@ blocking; EXCLUDED ones are listed with their reason; a workflow missing from th
 reported as UNLISTED (observed), never silently omitted. Until ADMISSION.json exists on the
 base branch the bootstrap policy is the two N+8 incumbents.
 
-Read-only GETs. Requiring THIS single check is the owner's branch-protection decision.
+Each gate's verdict comes from its LATEST run on the head (by start time, so a re-run beats
+an older run), and the deciding run is linked in the error line and the job summary; the
+full JSON report goes only to --out.
+
+The aggregator makes read-only GETs. `recheck` (driven by gogreen-required-gate-recheck.yml
+on `workflow_run: completed` of the enforced gates) makes the one write: it re-runs the latest
+FAILED aggregator run on the same head SHA, so a re-run gate turns this check green on its
+own. `recheck-names` prints/writes the workflow names that trigger it (kept in sync by a test).
+Requiring THIS single check is the owner's branch-protection decision.
 """
 from __future__ import annotations
 
@@ -33,10 +41,11 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-import yaml
-
 GUARDED = (".github/workflows/code-purple-method-atlas.yml", ".github/workflows/live-lossless-qa.yml")
 SELF = ".github/workflows/gogreen-required-gate.yml"
+RECHECK = ".github/workflows/gogreen-required-gate-recheck.yml"
+RECHECK_BEGIN, RECHECK_END = "# BEGIN recheck-names", "# END recheck-names"
+RECHECK_MAX_ATTEMPT = 10  # never re-run an aggregator run that already has this many attempts
 ADMISSION = "mission-control/gogreen/required_gate/ADMISSION.json"
 ADMISSION_SCHEMA = "gogreen.required_gate.admission.v1"
 PASS, FAIL, NA, WAIT = "PASS", "FAIL", "NOT_APPLICABLE", "WAITING"
@@ -70,6 +79,7 @@ def ordered_match(value: str, patterns: list) -> bool:
 
 def triggers(workflow_file: Path) -> dict:
     """Pull-request trigger semantics of one workflow, read from its own YAML."""
+    import yaml  # lazy: `recheck` runs on the bare runner python without third-party installs
     try:
         data = yaml.safe_load(Path(workflow_file).read_text(encoding="utf-8"))
     except (OSError, yaml.YAMLError) as e:
@@ -126,14 +136,36 @@ def fires_for_base(t: dict, base_ref: str | None) -> str | None:
     return None
 
 
+def run_order(r: dict) -> tuple:
+    """Latest = started last. A re-run keeps its run id and created_at but gets a new
+    run_started_at, so it beats an older run; created_at, attempt and id only break ties."""
+    created = r.get("created_at") or ""
+    return (r.get("run_started_at") or created, created, r.get("run_attempt") or 0, r.get("id") or 0)
+
+
+def latest_run(runs: list) -> dict | None:
+    return max(runs, key=run_order) if runs else None
+
+
 def verdict(runs: list) -> str:
     """runs = this workflow's pull_request runs on the exact head SHA (any attempts)."""
-    if not runs:
-        return WAIT
-    latest = max(runs, key=lambda r: (r.get("run_attempt") or 0, r.get("created_at") or "", r.get("id") or 0))
-    if latest.get("status") != "completed":
+    latest = latest_run(runs)
+    if latest is None or latest.get("status") != "completed":
         return WAIT
     return PASS if latest.get("conclusion") == "success" else FAIL
+
+
+def run_ref(run: dict | None, repo: str) -> dict | None:
+    """The deciding run, small enough for an error line: id, attempt, outcome and a link
+    to that exact attempt."""
+    if not run:
+        return None
+    rid, attempt = run.get("id"), run.get("run_attempt")
+    url = run.get("html_url") or (f"https://github.com/{repo}/actions/runs/{rid}" if rid else None)
+    if url and attempt:
+        url = f"{url}/attempts/{int(attempt)}"
+    return {"id": rid, "attempt": attempt, "status": run.get("status"), "conclusion": run.get("conclusion"),
+            "started_at": run.get("run_started_at") or run.get("created_at"), "url": url}
 
 
 class Reader:
@@ -142,15 +174,28 @@ class Reader:
         self.opener = opener or urllib.request.urlopen
         self.requests = 0
 
-    def get(self, path):
-        if not path.startswith(f"/repos/{self.repo}/") or ".." in path.split("?")[0].split("/"):
-            raise ValueError("unapproved read path")
+    def _headers(self):
         h = {"Accept": "application/vnd.github+json", "User-Agent": "gogreen-required-gate/2"}
         if self.token:
             h["Authorization"] = "Bearer " + self.token
+        return h
+
+    def get(self, path):
+        if not path.startswith(f"/repos/{self.repo}/") or ".." in path.split("?")[0].split("/"):
+            raise ValueError("unapproved read path")
         self.requests += 1
-        with self.opener(urllib.request.Request("https://api.github.com" + path, headers=h), timeout=20) as r:
+        with self.opener(urllib.request.Request("https://api.github.com" + path, headers=self._headers()),
+                         timeout=20) as r:
             return json.load(r)
+
+    def rerun(self, run_id) -> None:
+        """The only write: re-run one workflow run (recheck). No other POST path exists."""
+        path = f"/repos/{self.repo}/actions/runs/{int(run_id)}/rerun"
+        self.requests += 1
+        req = urllib.request.Request("https://api.github.com" + path, data=b"{}", method="POST",
+                                     headers=dict(self._headers(), **{"Content-Type": "application/json"}))
+        with self.opener(req, timeout=20) as r:
+            r.read()
 
 
 def changed_files(reader, pr):
@@ -251,23 +296,26 @@ def evaluate(reader, root, pr, sha, deadline_s, poll_s=30, clock=time.monotonic,
     for wf in sorted(p for p, d in policy["entries"].items() if d == ENFORCED and p not in universe):
         report["gates"].append({"workflow": wf, "disposition": ENFORCED, "matched_files": [], "state": NA,
                                 "reason": "workflow file absent in PR head"})
-    pending = {g["workflow"]: g for g in report["gates"] if g["state"] == WAIT}
+    # Every applicable enforced gate is re-read on every poll, not only the pending ones: a
+    # gate that failed and is re-run while we wait goes back to WAITING and its new run decides.
+    applicable = [g for g in report["gates"] if g["state"] == WAIT]
     watched = [g for g in report["observed"] if g["state"] == WAIT]
     start, by = clock(), {}
     while True:
         by = head_runs_by_workflow(reader, sha)
-        for wf, g in list(pending.items()):
-            g["state"] = verdict(by.get(wf, []))
-            if g["state"] != WAIT:
-                pending.pop(wf)
-        if not pending or clock() - start >= deadline_s:
+        for g in applicable:
+            runs = by.get(g["workflow"], [])
+            g["state"], g["run"] = verdict(runs), run_ref(latest_run(runs), reader.repo)
+        if not any(g["state"] == WAIT for g in applicable) or clock() - start >= deadline_s:
             break
         sleep(poll_s)
-    for g in pending.values():
-        g["state"] = FAIL
-        g["reason"] = "no terminal run on exact head before deadline"
+    for g in applicable:
+        if g["state"] == WAIT:
+            g["state"] = FAIL
+            g["reason"] = "no terminal run on exact head before deadline"
     for g in watched:  # snapshot only: observed gates never extend the wait or block
-        g["state"] = verdict(by.get(g["workflow"], []))
+        runs = by.get(g["workflow"], [])
+        g["state"], g["run"] = verdict(runs), run_ref(latest_run(runs), reader.repo)
     report["coverage"] = {
         "workflows_in_head": len(universe),
         "enforced": len(report["gates"]), "enforced_applicable": sum(bool(g["matched_files"]) for g in report["gates"]),
@@ -277,23 +325,161 @@ def evaluate(reader, root, pr, sha, deadline_s, poll_s=30, clock=time.monotonic,
     return report
 
 
+def run_link(ref: dict | None) -> str:
+    """Markdown link to the deciding run attempt, or an em dash when there is none."""
+    if not ref or not ref.get("url"):
+        return "—"
+    label = f"run {ref['id']}" + (f" attempt {ref['attempt']}" if ref.get("attempt") else "")
+    return f"[{label}]({ref['url']})"
+
+
+def fail_line(g: dict) -> str:
+    """One `::error` annotation per failing enforced gate: name, why, and the link."""
+    ref = g.get("run") or {}
+    why = g.get("reason") or ref.get("conclusion") or ""
+    tail = " — ".join(x for x in (why, ref.get("url") or "") if x)
+    return f"::error title=GOGREEN enforced gate {g['state']}::{g.get('name') or g['workflow']}" + (
+        f" — {tail}" if tail else "")
+
+
 def summary_markdown(rep: dict) -> str:
     c = rep["coverage"]
     lines = [f"### GOGREEN required gate: **{rep['verdict']}**",
              f"Policy: `{rep['policy_source']}` · {rep['changed_files']} changed file(s) · "
              f"{c['workflows_in_head']} workflows: {c['enforced']} enforced ({c['enforced_applicable']} applicable), "
              f"{c['observed']} observed ({c['observed_applicable']} applicable, {c['unlisted']} unlisted), "
-             f"{c['excluded']} excluded.", "", "| Disposition | Workflow | State | Matched |", "|---|---|---|---:|"]
+             f"{c['excluded']} excluded.", "", "| Disposition | Workflow | State | Matched | Deciding run |",
+             "|---|---|---|---:|---|"]
     for g in rep["gates"] + rep["observed"]:
         if g["matched_files"] or g["disposition"] == ENFORCED:
             lines.append(f"| {g['disposition']}{' (unlisted)' if g.get('unlisted') else ''} | "
-                         f"{g.get('name') or g['workflow']} | {g['state']} | {len(g['matched_files'])} |")
+                         f"{g.get('name') or g['workflow']} | {g['state']} | {len(g['matched_files'])} | "
+                         f"{run_link(g.get('run'))} |")
     lines += ["", "_Only ENFORCED rows decide the verdict. `merge_authorized=false`: a PASS is one observation, "
               "not an admission._"]
     return "\n".join(lines) + "\n"
 
 
+def recheck_names(root: Path, policy: dict) -> list:
+    """Workflow names (what `workflow_run.workflows` matches) of the ENFORCED gates that can
+    run on a PR. GitHub names an unnamed workflow by its file path."""
+    names = set()
+    for rel in sorted(p for p, d in policy["entries"].items() if d == ENFORCED and p not in (SELF, RECHECK)):
+        f = Path(root) / rel
+        if f.is_file():
+            t = triggers(f)
+            if t.get("pull_request"):
+                names.add(str(t.get("name") or rel))
+    return sorted(names)
+
+
+def declared_recheck_names(text: str) -> list:
+    """The generated list between the markers of the recheck workflow (one quoted name per line)."""
+    lines = text.splitlines()
+    try:
+        a = next(i for i, x in enumerate(lines) if x.strip() == RECHECK_BEGIN)
+        b = next(i for i, x in enumerate(lines) if x.strip() == RECHECK_END and i > a)
+    except StopIteration:
+        raise ValueError(f"{RECHECK}: missing {RECHECK_BEGIN!r} / {RECHECK_END!r} markers") from None
+    out = []
+    for x in lines[a + 1:b]:
+        s = x.strip()
+        if not s.startswith("- "):
+            raise ValueError(f"{RECHECK}: unexpected line inside the generated block: {s[:80]!r}")
+        out.append(json.loads(s[2:]))
+    return out
+
+
+def render_recheck_names(text: str, names: list) -> str:
+    """Rewrite only the generated block; every other byte of the workflow is kept."""
+    lines = text.splitlines(keepends=True)
+    a = next(i for i, x in enumerate(lines) if x.strip() == RECHECK_BEGIN)
+    b = next(i for i, x in enumerate(lines) if x.strip() == RECHECK_END and i > a)
+    indent = lines[a][:len(lines[a]) - len(lines[a].lstrip())]
+    body = [f"{indent}- {json.dumps(n, ensure_ascii=False)}\n" for n in names]
+    return "".join(lines[:a + 1] + body + lines[b:])
+
+
+def recheck(reader, sha: str, conclusion: str = "success", dry_run: bool = False) -> dict:
+    """Re-run the latest FAILED aggregator run on `sha` after an enforced gate succeeded there.
+    Nothing happens when the gate did not succeed, the aggregator never ran on this head, is
+    still running (it re-reads every poll), already passed, or hit RECHECK_MAX_ATTEMPT."""
+    if not re.fullmatch(r"[0-9a-f]{40}", sha or ""):
+        raise ValueError("invalid head SHA")
+    out = {"schema": "gogreen.required_gate.recheck.v1", "head_sha": sha, "action": "none",
+           "trigger_conclusion": conclusion, "aggregator_run": None}
+    if conclusion != "success":
+        out["reason"] = f"triggering gate concluded {conclusion}; a re-run aggregator would stay red"
+        return out
+    wf = SELF.rsplit("/", 1)[1]
+    data = reader.get(f"/repos/{reader.repo}/actions/workflows/{wf}/runs"
+                      f"?head_sha={sha}&event=pull_request&per_page=100")
+    run = latest_run(data.get("workflow_runs") or [])
+    out["aggregator_run"] = run_ref(run, reader.repo)
+    if run is None:
+        out["reason"] = "no aggregator run on this head"
+    elif run.get("status") != "completed":
+        out["reason"] = "latest aggregator run is still in progress; it re-reads every poll"
+    elif run.get("conclusion") != "failure":
+        out["reason"] = f"latest aggregator run concluded {run.get('conclusion')}; nothing to re-run"
+    elif (run.get("run_attempt") or 1) >= RECHECK_MAX_ATTEMPT:
+        out["reason"] = f"latest aggregator run is at attempt {run.get('run_attempt')} (cap {RECHECK_MAX_ATTEMPT})"
+    else:
+        if not dry_run:
+            reader.rerun(run["id"])
+        out["action"] = "dry-run" if dry_run else "rerun"
+        out["reason"] = "latest aggregator run failed; re-run so it re-reads the gates on this head"
+    return out
+
+
+def main_recheck(argv) -> int:
+    ap = argparse.ArgumentParser(prog="gate.py recheck")
+    ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY"))
+    ap.add_argument("--sha", required=True, help="head SHA of the gate run that completed")
+    ap.add_argument("--conclusion", default="success", help="conclusion of the gate run that completed")
+    ap.add_argument("--dry-run", action="store_true", help="decide, but do not re-run")
+    a = ap.parse_args(argv)
+    if not a.repo:
+        raise SystemExit("--repo or GITHUB_REPOSITORY is required")
+    reader = Reader(a.repo)
+    out = recheck(reader, a.sha, a.conclusion, a.dry_run)
+    ref = out["aggregator_run"]
+    line = f"recheck {out['action']}: {out['reason']}" + (f" ({ref['url']})" if ref and ref.get("url") else "")
+    print(line)
+    if os.environ.get("GITHUB_STEP_SUMMARY"):
+        with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8", newline="\n") as fh:
+            fh.write(f"### GOGREEN required gate re-check: **{out['action']}**\n"
+                     f"Head `{a.sha}` · {out['reason']} · aggregator {run_link(ref)}\n")
+    return 0
+
+
+def main_recheck_names(argv) -> int:
+    ap = argparse.ArgumentParser(prog="gate.py recheck-names")
+    ap.add_argument("--root", type=Path, default=Path("."))
+    ap.add_argument("--policy", choices=("head", "bootstrap"), default="head")
+    ap.add_argument("--write", action="store_true", help=f"rewrite the generated block in {RECHECK}")
+    ap.add_argument("--check", action="store_true", help=f"exit 1 when {RECHECK} is out of sync")
+    a = ap.parse_args(argv)
+    names = recheck_names(a.root, load_policy(None, None, a.root, a.policy))
+    wf = a.root / RECHECK
+    if a.write:
+        text = wf.read_text(encoding="utf-8")
+        wf.write_text(render_recheck_names(text, names), encoding="utf-8", newline="\n")
+    if a.check and declared_recheck_names(wf.read_text(encoding="utf-8")) != names:
+        print(f"{RECHECK} is out of sync; run: python mission-control/gogreen/required_gate/gate.py "
+              "recheck-names --write",
+              file=sys.stderr)
+        return 1
+    print("\n".join(names))
+    return 0
+
+
 def main(argv=None):
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv[:1] == ["recheck"]:
+        return main_recheck(argv[1:])
+    if argv[:1] == ["recheck-names"]:
+        return main_recheck_names(argv[1:])
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY"))
     ap.add_argument("--pr", type=int, required=True)
@@ -313,17 +499,22 @@ def main(argv=None):
     rep = evaluate(reader, a.root, a.pr, a.sha, a.deadline_min * 60, policy=policy, base_ref=a.base_ref)
     rep["requests"] = reader.requests
     text = json.dumps(rep, indent=2, sort_keys=True)
-    if a.out:
+    if a.out:  # the full report lives in --out (uploaded as an artifact), not in the log
         a.out.write_text(text + "\n", encoding="utf-8", newline="\n")
-    print(text)
+        print(f"full report: {a.out}")
+    else:
+        print(text)
     for g in rep["gates"]:
-        print(f"{g['workflow']}: {g['state']}" + (f" ({len(g['matched_files'])} matched)" if g["matched_files"] else ""))
+        url = (g.get("run") or {}).get("url")
+        print(f"{g['workflow']}: {g['state']}" + (f" ({len(g['matched_files'])} matched)" if g["matched_files"] else "")
+              + (f" {url}" if url else ""))
         if g["state"] == FAIL:
-            print(f"::error title=GOGREEN enforced gate {g['state']}::{g.get('name') or g['workflow']}"
-                  f"{' — ' + g['reason'] if g.get('reason') else ''}")
+            print(fail_line(g))
     for g in rep["observed"]:
         if g["state"] == FAIL and g["matched_files"]:
-            print(f"::warning title=GOGREEN observed (not blocking) {g['state']}::{g.get('name') or g['workflow']}")
+            url = (g.get("run") or {}).get("url")
+            print(f"::warning title=GOGREEN observed (not blocking) {g['state']}::{g.get('name') or g['workflow']}"
+                  + (f" — {url}" if url else ""))
     if os.environ.get("GITHUB_STEP_SUMMARY"):
         with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8", newline="\n") as fh:
             fh.write(summary_markdown(rep))
