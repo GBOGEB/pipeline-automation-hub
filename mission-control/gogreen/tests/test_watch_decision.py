@@ -190,5 +190,51 @@ class ReplayAndStability(unittest.TestCase):
             W.validate(bad)
 
 
+
+class CursorPersistence(unittest.TestCase):
+    def test_cli_dry_run_and_opt_in_restart_replay(self):
+        import contextlib
+        import io
+        import json
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as folder:
+            source = pathlib.Path(folder) / "source.jsonl"
+            cursor = pathlib.Path(folder) / "watch_cursor.json"
+            source.write_text(json.dumps(terminal(1)) + "\n", encoding="utf-8")
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                self.assertEqual(W.main(["--events", str(source), "--cursor", str(cursor)]), 0)
+            self.assertFalse(cursor.exists(), "default must be a read-only dry run")
+            self.assertEqual(json.loads(out.getvalue())["new_native_identities"], 1)
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                self.assertEqual(W.main(["--events", str(source), "--cursor", str(cursor),
+                                         "--write-cursor"]), 0)
+            self.assertTrue(cursor.exists())
+            first = cursor.read_bytes()
+            self.assertEqual(json.loads(out.getvalue())["new_native_identities"], 1)
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                self.assertEqual(W.main(["--events", str(source), "--cursor", str(cursor),
+                                         "--write-cursor"]), 0)
+            self.assertEqual(cursor.read_bytes(), first)
+            self.assertEqual(json.loads(out.getvalue())["new_native_identities"], 0)
+            self.assertEqual(json.loads(out.getvalue())["notifications"], [])
+
+    def test_source_private_row_rejected_before_cursor_mutation(self):
+        import json
+        import tempfile
+        with tempfile.TemporaryDirectory() as folder:
+            source = pathlib.Path(folder) / "source.jsonl"
+            cursor = pathlib.Path(folder) / "watch_cursor.json"
+            bad = terminal()
+            bad["repository"] = "GBOGEB/cryoplant-project"
+            source.write_text(json.dumps(bad) + "\n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "restricted"):
+                W.main(["--events", str(source), "--cursor", str(cursor),
+                        "--write-cursor"])
+            self.assertFalse(cursor.exists())
+
 if __name__ == "__main__":
     unittest.main()
