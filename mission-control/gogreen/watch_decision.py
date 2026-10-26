@@ -307,6 +307,58 @@ def fold(events, cursor=None):
     return state, alerts
 
 
+from contextlib import contextmanager
+
+
+@contextmanager
+def cursor_writer_lock(lock_path):
+    """Process-released single-writer lock; crash leaves no blocking lease.
+
+    Reuse the lock inode across writers. Never unlink while lock owners may be
+    waiting: unlink/recreate can let two processes lock different inodes.
+    The old exclusive-create marker format is read as a harmless lock file.
+    """
+    import os
+    lock_path = str(lock_path)
+    flags = os.O_CREAT | os.O_RDWR | getattr(os, "O_CLOEXEC", 0)
+    if os.name == "posix":
+        flags |= getattr(os, "O_NOFOLLOW", 0)
+    fd = os.open(lock_path, flags, 0o600)
+    acquired = False
+    try:
+        if os.name == "posix":
+            import fcntl
+            try:
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError as exc:
+                raise ValueError("WATCH_HOLD:cursor single-writer lock held") from exc
+        elif os.name == "nt":
+            import msvcrt
+            # Windows byte-range lock requires one byte in the file.
+            if os.fstat(fd).st_size == 0:
+                os.write(fd, b"\0")
+                os.fsync(fd)
+            os.lseek(fd, 0, os.SEEK_SET)
+            try:
+                msvcrt.locking(fd, msvcrt.LK_NBLCK, 1)
+            except OSError as exc:
+                raise ValueError("WATCH_HOLD:cursor single-writer lock held") from exc
+        else:
+            raise ValueError("WATCH_HOLD:unsupported cursor lock platform")
+        acquired = True
+        yield
+    finally:
+        if acquired:
+            if os.name == "posix":
+                import fcntl
+                fcntl.flock(fd, fcntl.LOCK_UN)
+            else:
+                import msvcrt
+                os.lseek(fd, 0, os.SEEK_SET)
+                msvcrt.locking(fd, msvcrt.LK_UNLCK, 1)
+        os.close(fd)
+
+
 def main(argv=None):
     """Offline opt-in cursor persistence; never contacts GitHub or sends alerts.
 
@@ -350,12 +402,7 @@ def main(argv=None):
     if args.write_cursor:
         args.cursor.parent.mkdir(parents=True, exist_ok=True)
         lock = args.cursor.with_name(args.cursor.name + ".lock")
-        try:
-            fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
-        except FileExistsError as exc:
-            raise ValueError("WATCH_HOLD:cursor single-writer lock held") from exc
-        try:
-            os.close(fd)
+        with cursor_writer_lock(lock):
             current = args.cursor.read_bytes() if args.cursor.exists() else None
             _require(current == prior_raw, "cursor changed during evaluation")
             payload = (_canonical(cursor) + "\n").encode("ascii")
@@ -378,8 +425,6 @@ def main(argv=None):
             finally:
                 if os.path.exists(tmp):
                     os.unlink(tmp)
-        finally:
-            os.unlink(lock)
     print(_canonical(result))
     return 0
 
