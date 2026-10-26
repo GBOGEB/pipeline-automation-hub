@@ -39,5 +39,5 @@ jobs:
         run: |
           set -euo pipefail
           python -m pip install --disable-pip-version-check coverage==7.13.3
-          python -m coverage run --include=issue_rank.py -m unittest -v test_issue_rank
+          python -m coverage run --include=issue_rank.py,title_taxonomy.py -m unittest discover -v -p 'test_*.py'
           python -m coverage report --fail-under=80
