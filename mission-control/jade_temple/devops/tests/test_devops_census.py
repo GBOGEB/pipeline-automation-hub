@@ -677,5 +677,32 @@ class CommittedCensusN10(CommittedCensus):
         self.assertEqual(self.previous["digest_sha256"],
                          "fb1aa7de748a1a94c0581e37907b14233a300116bb22b8442893bf081d3e79f4")
 
+
+class CommittedCensusN12(CommittedCensus):
+    """N12: the first pulse taken after the fetch failed closed on unread blobs (#872)."""
+
+    ITER, PREV = "N12", "N11"
+
+    def test_baseline_is_the_n11_pulse(self):
+        b = self.census["sources"]["baseline"]
+        self.assertEqual((b["kind"], b["iteration"], b["digest_sha256"]),
+                         ("census", "N11", self.previous["digest_sha256"]))
+        n11 = {r["repo"]: r["head_sha"] for r in self.previous["repos"]}
+        for r in self.census["repos"]:
+            self.assertEqual(r["delta"]["baseline_sha"], n11.get(r["repo"]), r["repo"])
+
+    def test_n11_snapshot_is_unchanged(self):
+        self.assertEqual(self.previous["digest_sha256"],
+                         "35bf393ddcd6b4886b43d384e956f3540bae7e0ee3f4925b178bf49b637b806b")
+
+    def test_every_repo_reachable_with_no_unread_files(self):
+        # An unread blob is not evidence of absence: N12 is committed only when every wanted blob was read.
+        self.assertEqual(C.unread_errors(self.census), [])
+        self.assertEqual(self.census["fleet"]["reachable"], len(self.census["repos"]))
+        self.assertEqual(self.census["fleet"]["totals"]["tests_unread_files"], 0)
+        for r in self.census["repos"]:
+            self.assertTrue(r["reachable"], r["repo"])
+            self.assertEqual((r["blobs_unread"], r["tests"]["unread_files"]), (0, 0), r["repo"])
+
 if __name__ == "__main__":
     unittest.main()
