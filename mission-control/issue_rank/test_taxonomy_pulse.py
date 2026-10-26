@@ -32,7 +32,7 @@ def item(repo, number, title, kind="Issue", private=None):
 
 def model(items=None, at=TIME, heads=None):
     return {
-        "schema": pulse.RANK_SCHEMA, "fetched_at": at,
+        "schema": "jade.issue-rank.v1", "fetched_at": at,
         "heads": copy.deepcopy(HEADS if heads is None else heads),
         "items": copy.deepcopy(items if items is not None else [
             item(HUB, 1, "fix(jade devops): census fails closed when blobs are missing", "PullRequest"),
@@ -43,6 +43,13 @@ def model(items=None, at=TIME, heads=None):
 
 
 class PulseIdentity(unittest.TestCase):
+    def test_v2_source_model_schema_is_accepted_without_v1_alias(self):
+        m = model()
+        m["schema"] = "jade.issue-rank.v2"
+        result = pulse.build(m, parser_sha="a" * 40)
+        self.assertEqual(result["taxonomy_schema"], tax.SCHEMA)
+        self.assertEqual(result["formal_credit_delta"], 0)
+
     def test_public_denominators_composites_and_overlap(self):
         r = pulse.build(model(), parser_sha="c" * 40)
         self.assertEqual(r["population"], {"total": 2, "issues": 1, "prs": 1})
