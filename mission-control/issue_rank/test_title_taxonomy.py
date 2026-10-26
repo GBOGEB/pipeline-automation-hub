@@ -96,6 +96,26 @@ class TitleParsing(unittest.TestCase):
         self.assertNotIn("ci", false_positive["technical_clusters"])
         self.assertEqual(false_positive["path"], "docs")
 
+    def test_fail_closed_variants_and_negative_boundaries(self):
+        positive = (
+            "fix(jade devops): census fails closed when blobs are missing",
+            "fix(jade devops): fails-closed on absent source",
+            "fix(jade devops): fail_closed when source is absent",
+            "fix(jade devops): fails_closed on unknown evidence",
+            "fix(jade devops): fail-closed on missing hash",
+        )
+        for title in positive:
+            with self.subTest(title=title):
+                obj = tax.parse_title(title, "PullRequest")
+                self.assertIn("fail-closed", obj["technical_clusters"])
+        for title in (
+            "fix(jade devops): closed ticket after review",
+            "fix(jade devops): fails open in advisory dry run",
+            "docs: failover validation checklist",
+        ):
+            with self.subTest(title=title):
+                self.assertNotIn("fail-closed", tax.parse_title(title)["technical_clusters"])
+
     def test_nonexclusive_semantic_counts_do_not_inflate_items(self):
         items = [{"type": "Issue", "title": "fix(watch): signed payload and outbox"},
                  {"type": "PullRequest", "title": "feat(jade devops): census with coverage"},
