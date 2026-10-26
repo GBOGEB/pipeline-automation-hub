@@ -249,8 +249,8 @@ def pin_file_docks(git, hub_sha):
 
 def observe(reader, roots, previous, git, now=None):
     """One pulse record (N0 when previous is None); appended by append(), never rewritten."""
-    at = (now or datetime.now(timezone.utc)).replace(microsecond=0)
-    stamp = at.strftime('%Y-%m-%dT%H:%M:%SZ')
+    # Capture after the native job API reads: a job can complete during the
+    # multi-repository collection. Explicit fixture clocks remain deterministic.
     before = {f['id']: f for f in previous['pulse']['findings']} if previous else {}
     heads, findings, provenance, eligible = {}, [], {}, 0
     for repo in bd.PUBLIC_REPOS:
@@ -260,6 +260,10 @@ def observe(reader, roots, previous, git, now=None):
         provenance[repo] = seen['provenance']
         eligible += seen['eligible']
     sd.positive(eligible, 'no completed job on any observed head')
+    at = now if now is not None else datetime.now(timezone.utc)
+    stamp = (at.replace(microsecond=0).strftime('%Y-%m-%dT%H:%M:%SZ')
+             if now is not None else
+             at.isoformat(timespec='microseconds').replace('+00:00', 'Z'))
     hub_sha = heads['GBOGEB/pipeline-automation-hub']
     n = previous['n'] + 1 if previous else 0
     pulse = {'n': n, 'observed_at': stamp, 'source_heads': heads, 'eligible': eligible,
