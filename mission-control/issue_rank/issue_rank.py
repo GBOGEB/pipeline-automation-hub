@@ -26,6 +26,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import html
+import importlib.util
 import json
 import math
 import re
@@ -44,81 +45,43 @@ JADE_REPOS = ("cryoplant-project", "ABACUS", "CODEX", "pipeline-automation-hub")
 HERE = Path(__file__).resolve().parent
 DEFAULT_OUT = HERE / "out"
 
-# ---------------------------------------------------------------- checklists
+# ---------------------------------------------------------------- parsers (owned by triway)
 
-CHECK = re.compile(r"^\s*(?:[-*+]|\d+[.)])\s+\[([ xX~-])\]\s+(.*\S)\s*$")
-BULLET = re.compile(r"^\s{0,3}(?:[-*+]|\d+[.)])\s+(.*\S)\s*$")
-HEADING = re.compile(r"^\s*(?:#{1,6}\s+(.+?)\s*#*\s*$|\*\*(.+?)\*\*:?\s*$|__(.+?)__:?\s*$)")
-SECTION_KINDS = (
-    ("DOV", re.compile(r"\bdov\b|definition of (verification|validation)|verification|validation|evidence|proof", re.I)),
-    ("DOD", re.compile(r"\bdod\b|definition of done|acceptance|exit criteria|closure|close when|done when"
-                       r"|victory|predicate|required (outputs?|disposition|return)|success criteria", re.I)),
-    ("STEPS", re.compile(r"\bsteps?\b|tasks?|todo|to-do|plan|checklist|work items?|deliverables?"
-                         r"|next actions?|allowed work", re.I)),
-)
+# The checklist and reference parsers belong to the triway burndown (AGENTS.md L4).
+# This module only maps their output onto the shapes the graph and lanes use.
+TRIWAY_PATH = HERE.parent / "qps-triage-ultra" / "issue-expedition" / "triway_burndown.py"
 
 
-def section_kind(title: str) -> str:
-    for kind, rx in SECTION_KINDS:
-        if rx.search(title):
-            return kind
-    return "OTHER"
+def _load_triway():
+    spec = importlib.util.spec_from_file_location("triway_burndown", TRIWAY_PATH)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+triway = _load_triway()
+SECTION = {"DoV": "DOV", "DoD": "DOD", "STEPS": "STEPS", "OTHER": "OTHER"}
 
 
 def parse_checklist(body: str | None) -> dict:
-    """Checkbox items grouped by the nearest heading's kind (DOV / DOD / STEPS / OTHER).
+    """``triway.checklist()`` as counts per section (DOV / DOD / STEPS / OTHER).
 
-    ``[x]`` is done, ``[ ]`` open, ``[~]`` / ``[-]`` dropped (not counted). An
-    inline label such as ``- [ ] DoD: ...`` overrides the heading kind. Plain
-    bullets under a DOV / DOD / STEPS heading are declared criteria without a
-    tick state: counted as ``untracked``, never as done.
+    Withdrawn items (``[~]``, ``[-]``, struck through) are not counted. Declared
+    criteria without a checkbox are ``untracked``, never done. ``next_open`` is
+    the first open item, taking sections in the order DOD, DOV, STEPS, OTHER.
     """
-    sections: dict[str, dict] = {k: {"done": 0, "total": 0, "untracked": 0}
-                                 for k in ("DOV", "DOD", "STEPS", "OTHER")}
-    declared = {"DOV": False, "DOD": False}
-    items: list[dict] = []
-    untracked: list[dict] = []
-    kind = "OTHER"
-    in_code = False
-    for line in (body or "").splitlines():
-        if line.lstrip().startswith("```"):
-            in_code = not in_code
-            continue
-        if in_code:
-            continue
-        m = CHECK.match(line)
-        if not m:
-            h = HEADING.match(line)
-            b = BULLET.match(line)
-            if h:
-                title = next(g for g in h.groups() if g)
-                kind = section_kind(title)
-                for k, rx in SECTION_KINDS[:2]:
-                    if rx.search(title):
-                        declared[k] = True
-            elif b and kind != "OTHER":
-                sections[kind]["untracked"] += 1
-                untracked.append({"kind": kind, "text": b.group(1)[:200]})
-            elif re.search(r"\b(DoD|definition of done)\b", line, re.I):
-                declared["DOD"] = True
-            elif re.search(r"\b(DoV|definition of verification)\b", line, re.I):
-                declared["DOV"] = True
-            continue
-        mark, text = m.group(1), m.group(2)
-        if mark in "~-":
-            continue
-        own = kind
-        label = re.match(r"\W*(DoV|DoD)\b", text, re.I)
-        if label:
-            own = label.group(1).upper()
-            declared[own] = True
-        done = mark in "xX"
-        sections[own]["total"] += 1
-        sections[own]["done"] += int(done)
-        items.append({"kind": own, "done": done, "text": text[:200]})
-    done = sum(s["done"] for s in sections.values())
-    total = sum(s["total"] for s in sections.values())
-    n_untracked = sum(s["untracked"] for s in sections.values())
+    tw = triway.checklist(body or "")
+    sections, items, untracked = {}, [], []
+    for name in ("DoV", "DoD", "STEPS", "OTHER"):
+        sec, kind = tw[name], SECTION[name]
+        prog = sec["progress"] or {"checked": 0, "total": 0}
+        sections[kind] = {"done": prog["checked"], "total": prog["total"], "untracked": sec["untracked"]}
+        items += [{"kind": kind, "done": x["checked_in_issue"], "text": x["text"][:200]}
+                  for x in sec["items"] if not x.get("withdrawn")]
+        untracked += [{"kind": kind, "text": x["text"][:200]} for x in sec["declared"]]
+    done = sum(x["done"] for x in sections.values())
+    total = sum(x["total"] for x in sections.values())
+    n_untracked = sum(x["untracked"] for x in sections.values())
     if total == 0:
         state = "UNTRACKED_CRITERIA" if n_untracked else "NO_CHECKLIST"
     elif done == 0:
@@ -127,11 +90,16 @@ def parse_checklist(body: str | None) -> dict:
         state = "ALL_TICKED"
     else:
         state = "IN_PROGRESS"
-    nxt = next((i for i in items if not i["done"]), None) or (untracked[0] if untracked else None)
+    order = {"DOD": 0, "DOV": 1, "STEPS": 2, "OTHER": 3}
+    nxt = (min((i for i in items if not i["done"]), key=lambda i: order[i["kind"]], default=None)
+           or (untracked[0] if untracked else None))
+
+    def declared(name):
+        sec = tw[name]
+        return bool(sec["heading_seen"] or sec["items"] or sec["declared"])
     return {"done": done, "total": total, "ratio": round(done / total, 4) if total else None,
             "untracked": n_untracked, "state": state, "sections": sections,
-            "dod_declared": declared["DOD"] or sections["DOD"]["total"] + sections["DOD"]["untracked"] > 0,
-            "dov_declared": declared["DOV"] or sections["DOV"]["total"] + sections["DOV"]["untracked"] > 0,
+            "dod_declared": declared("DoD"), "dov_declared": declared("DoV"),
             "next_open": nxt["text"] if nxt else None, "items": items, "untracked_items": untracked}
 
 
@@ -142,86 +110,36 @@ def progress_text(cl: dict) -> str:
     tail = f" +{cl['untracked']} untracked" if cl["untracked"] else ""
     return f"{cl['done']}/{cl['total']} ({', '.join(parts)}){tail}"
 
-# ---------------------------------------------------------------- references
 
-REF = re.compile(
-    r"(?:https?://github\.com/(?P<uo>[\w.-]+)/(?P<ur>[\w.-]+)/(?:issues|pull)/(?P<un>\d+))"
-    r"|(?:(?<![\w/])(?P<o>[\w.-]+)/(?P<r>[\w.-]+)#(?P<n>\d+))"
-    r"|(?:(?<![\w/])(?P<al>(?i:qps|abacus|codex|hub|pah|mission\s+control))"
-    r"(?:\s+(?i:pr|issue|parent|child|root|owner|lane))?\s*#(?P<an>\d+)\b)"
-    r"|(?:(?<![\w/&#])#(?P<b>\d+)\b)")
-# Shorthand used across the federation, e.g. "QPS parent #1920" or "ABACUS PR #2470".
-ALIASES = {"qps": "cryoplant-project", "abacus": "ABACUS", "codex": "CODEX",
-           "hub": "pipeline-automation-hub", "pah": "pipeline-automation-hub",
-           "mission control": "pipeline-automation-hub"}
-NEGATED = re.compile(r"\b(not|no longer|never|unrelated|instead of)\b[^.;:]*$", re.I)
-TYPED = (
-    ("CLOSES", re.compile(r"\b(close[sd]?|fix(e[sd])?|resolve[sd]?)\s*:?\s*$", re.I)),
-    ("DEPENDS_ON", re.compile(r"\b(blocked\s+by|depends\s+on|dependency|requires|waits?\s+(on|for)|needs)\b", re.I)),
-    ("BLOCKS", re.compile(r"\b(blocks|blocking|unblocks|prerequisite\s+(for|of)|enables)\b", re.I)),
-    ("PARENT", re.compile(r"\b(parent|epic|tracked\s+(in|by)|part\s+of|child\s+of|umbrella)\b", re.I)),
-    ("SUPERSEDES", re.compile(r"\b(supersed\w*|replac\w*|successor|duplicate\s+of|dup\s+of)\b", re.I)),
-)
+# triway reference kinds -> graph edge kinds. SUPERSEDED_BY is stored reversed, as
+# SUPERSEDES from the successor, the way BLOCKS is stored as DEPENDS_ON.
+KIND = {"DECLARED_BLOCKER_CANDIDATE": "DEPENDS_ON", "DECLARED_BLOCKS_CANDIDATE": "BLOCKS",
+        "DECLARED_PARENT_CANDIDATE": "PARENT", "DECLARED_CHILD_CANDIDATE": "CHILD",
+        "DECLARED_PREDECESSOR": "SUPERSEDES", "DECLARED_SUCCESSOR": "SUPERSEDED_BY",
+        "DECLARED_DUPLICATE_OF": "DUPLICATE_OF", "TEXT_ASSOCIATION": "MENTION",
+        "PR_CLOSURE_CLAIM": "CLOSES", "PR_ASSOCIATION": "MENTION"}
 # Weight of each edge type in the PageRank walk; the dependency family also
 # drives unblock pressure.
 EDGE_WEIGHT = {"CHILD": 1.0, "DEPENDS_ON": 1.0, "BLOCKS": 1.0, "CLOSES": 1.0, "PARENT": 0.6,
-               "SUPERSEDES": 0.5, "MENTION": 0.3, "XREF": 0.3}
+               "SUPERSEDES": 0.5, "DUPLICATE_OF": 0.5, "MENTION": 0.3, "XREF": 0.3}
 
 
 def key(repo: str, number: int) -> str:
     return f"{repo}#{number}"
 
 
-def extract_refs(text: str | None, home: str, owner: str = OWNER) -> list[dict]:
-    """References in ``text`` typed by the words just before them on the same line.
+def extract_refs(text: str | None, home: str, owner: str = OWNER, pr: bool = False) -> list[dict]:
+    """``triway.references()`` with graph edge kinds.
 
-    ``home`` is ``owner/repo``; bare ``#N`` resolves there. Checklist items that
-    reference another item make it a CHILD (this item waits on it).
+    ``home`` is ``owner/repo``; bare ``#N`` resolves there. ``pr`` selects the PR
+    reading (closing claims become CLOSES). triway reads GBOGEB references only,
+    so another owner fails closed.
     """
-    out, seen = [], set()
-    in_code = False
-    for line in (text or "").splitlines():
-        if line.lstrip().startswith("```"):
-            in_code = not in_code
-            continue
-        if in_code:
-            continue
-        line = re.sub(r"`[^`]*`", "", line)
-        check = CHECK.match(line)
-        last = 0
-        for m in REF.finditer(line):
-            if m.group("un"):
-                repo, n = f"{m.group('uo')}/{m.group('ur')}", int(m.group("un"))
-            elif m.group("n"):
-                repo, n = f"{m.group('o')}/{m.group('r')}", int(m.group("n"))
-            elif m.group("an"):
-                alias = re.sub(r"\s+", " ", m.group("al").lower())
-                repo, n = f"{owner}/{ALIASES[alias]}", int(m.group("an"))
-            else:
-                repo, n = home, int(m.group("b"))
-            if repo.split("/")[0].lower() != owner.lower():
-                continue
-            # The typing window ends at the '#', so "QPS parent #1920" sees "parent";
-            # a keyword binds to the next reference only.
-            end = m.start("an") - 1 if m.group("an") else m.start()
-            before = line[max(last, end - 48):end]
-            last = m.end()
-            kind = "MENTION"
-            for name, rx in TYPED:
-                hit = rx.search(before)
-                if hit:
-                    kind = "MENTION" if NEGATED.search(before[:hit.start()]) else name
-                    break
-            # Only live [ ] / [x] items make a CHILD; a dropped [~] / [-] item stays a mention.
-            live = check is not None and check.group(1) not in "~-"
-            if live and kind == "MENTION":
-                kind = "CHILD"
-            k = (repo, n, kind)
-            if k not in seen:
-                seen.add(k)
-                out.append({"repo": repo, "number": n, "kind": kind,
-                            "ticked": (check.group(1) in "xX") if live else None})
-    return out
+    if owner != OWNER:
+        raise ValueError(f"triway parses GBOGEB references only, not {owner!r}")
+    return [{"repo": r["repo"], "number": r["number"], "kind": KIND.get(r["kind"], "MENTION"),
+             "ticked": r.get("ticked")}
+            for r in triway.references(text or "", home, pr=pr)]
 
 # ---------------------------------------------------------------- fetch
 
@@ -438,7 +356,7 @@ def build_graph(snap: dict) -> dict:
     for k, it in list(nodes.items()):
         texts = [it.get("body")] + list(it.get("comments") or [])
         for i, text in enumerate(texts):
-            for ref in extract_refs(text, it["repo"], snap["owner"]):
+            for ref in extract_refs(text, it["repo"], snap["owner"], pr=it["type"] == "PullRequest"):
                 t = stub(ref["repo"], ref["number"])
                 kind = ref["kind"]
                 if i and kind == "CHILD":  # comment checklists are status notes, not the plan
@@ -447,6 +365,8 @@ def build_graph(snap: dict) -> dict:
                     add(k, t, "CLOSES")
                 elif kind == "BLOCKS":  # this blocks ref -> ref depends on this
                     add(t, k, "DEPENDS_ON", origin=k)
+                elif kind == "SUPERSEDED_BY":  # ref replaces this -> ref supersedes this
+                    add(t, k, "SUPERSEDES", origin=k)
                 else:
                     add(k, t, kind, ticked=ref["ticked"] if kind == "CHILD" else None)
         for c in it.get("closes") or []:

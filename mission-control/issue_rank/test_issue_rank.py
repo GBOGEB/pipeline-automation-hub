@@ -91,13 +91,17 @@ class Refs(unittest.TestCase):
 
     def test_forms_and_foreign_owner(self):
         got = self.refs("see #5, GBOGEB/ABACUS#7, https://github.com/GBOGEB/CODEX/pull/9 and other/x#1")
-        self.assertEqual(got, [(HUB, 5, "MENTION"), ("GBOGEB/ABACUS", 7, "MENTION"),
-                               ("GBOGEB/CODEX", 9, "MENTION")])
+        self.assertEqual(sorted(got), [("GBOGEB/ABACUS", 7, "MENTION"), ("GBOGEB/CODEX", 9, "MENTION"),
+                                       (HUB, 5, "MENTION")])
+        with self.assertRaises(ValueError):  # triway reads GBOGEB references only
+            ir.extract_refs("#1", "other/x", owner="other")
 
     def test_typed_keywords(self):
         self.assertEqual(self.refs("Blocked by #3")[0][2], "DEPENDS_ON")
         self.assertEqual(self.refs("This blocks #4")[0][2], "BLOCKS")
-        self.assertEqual(self.refs("Closes #5")[0][2], "CLOSES")
+        self.assertEqual(self.refs("Closes #5")[0][2], "MENTION")  # a closing claim needs a PR body
+        self.assertEqual(ir.extract_refs("Closes #5", HUB, pr=True)[0]["kind"], "CLOSES")
+        self.assertEqual(self.refs("Superseded by #8"), [(HUB, 8, "SUPERSEDED_BY")])
         self.assertEqual(self.refs("Parent: #6")[0][2], "PARENT")
         self.assertEqual(self.refs("Supersedes #7")[0][2], "SUPERSEDES")
 
@@ -129,6 +133,11 @@ class Graph(unittest.TestCase):
         self.assertNotIn(f"{HUB}#77", g["nodes"])
         self.assertEqual([(e["source"], e["target"], e["kind"]) for e in g["edges"]],
                          [(f"{HUB}#2", f"{HUB}#1", "DEPENDS_ON")])
+
+    def test_superseded_by_is_stored_reversed(self):
+        g = ir.build_graph(snapshot([issue(HUB, 1, "Superseded by #2"), issue(HUB, 2)]))
+        self.assertEqual([(e["source"], e["target"], e["kind"]) for e in g["edges"]],
+                         [(HUB + "#2", HUB + "#1", "SUPERSEDES")])
 
     def test_unblock_pressure_is_transitive_and_open_only(self):
         snap = snapshot([issue(HUB, 1), issue(HUB, 2, "depends on #1"), issue(HUB, 3, "depends on #2"),

@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'mission-control/issue_rank/**'
+      - 'mission-control/qps-triage-ultra/issue-expedition/triway_burndown.py'
       - '.github/workflows/issue-rank.yml'
   workflow_dispatch: {}
 permissions:

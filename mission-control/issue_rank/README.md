@@ -35,18 +35,23 @@ snapshot digest in the ledger.
 
 ## Per-item progress (DoV / DoD / steps)
 
-The parser reads the issue body (comments are status notes, not the plan):
+Parsing belongs to the triway burndown: `parse_checklist()` here maps
+`triway_burndown.checklist()` (in `qps-triage-ultra/issue-expedition/`) onto counts per
+section, and its plan file holds the vocabulary. In short, the parser reads the issue
+body (comments are status notes, not the plan):
 
-- `- [x]` is done, `- [ ]` is open, `- [~]` / `- [-]` are dropped and not counted.
-- The nearest heading sets the kind: **DOV** (DoV, verification, validation, evidence,
-  proof), **DOD** (DoD, definition of done, acceptance, exit criteria, closure, done
-  when, victory, predicate, required outputs/disposition/return), **STEPS** (steps,
-  tasks, todo, plan, checklist, deliverables, next actions). An inline `- [ ] DoD: …`
-  overrides the heading.
-- Plain bullets under a DOV / DOD / STEPS heading are **declared but untracked**
-  criteria. They are counted as `untracked`, never as done.
+- `- [x]` is done, `- [ ]` is open; `- [~]`, `- [-]` and fully struck items are
+  withdrawn and not counted.
+- The nearest heading sets the section: **DOD** (DoD, definition of done, done when,
+  acceptance, exit criteria, closure predicate, ...), **DOV** (DoV, verification,
+  validation, required proof, ...), **STEPS** (steps, tasks, to-do, checklist,
+  deliverables, plan, ...). An inline `- [ ] DoD: …` overrides the heading. Status
+  headings such as "evidence" are not DoV.
+- Plain bullets and prose paragraphs under a DOD / DOV / STEPS heading are **declared
+  but untracked** criteria. They are counted as `untracked`, never as done.
 - A live checklist item that references another issue (`- [ ] #123`, `- [x] #123`) makes
-  that issue a CHILD; a dropped one (`- [~] #123`) stays a MENTION. A tick that disagrees with the child's state is reported as checklist drift.
+  that issue a CHILD; a withdrawn one (`- [~] #123`) stays a MENTION. A tick that
+  disagrees with the child's state is reported as checklist drift.
 
 Progress reads like `4/7 (DOV 1/2, DOD 2/3, STEPS 1/2) +3 untracked`. The checklist
 state is one of `NO_CHECKLIST`, `UNTRACKED_CRITERIA`, `NOT_STARTED`, `IN_PROGRESS` or
@@ -68,18 +73,29 @@ Blocked by #MMM
 ## Edges
 
 References come from issue and PR bodies, the last five comments, PR closing
-references and the timeline (cross-references, connected PRs). Forms:
-`https://github.com/O/R/issues/N`, `O/R#N`, federation shorthand (`QPS #N`,
-`ABACUS PR #N`, `CODEX #N`, `hub #N`) and bare `#N` (home repository). Code spans
-and fences are skipped.
+references and the timeline (cross-references, connected PRs). `extract_refs()` maps
+`triway_burndown.references()`, which reads GBOGEB references only: issue and pull URLs,
+`GBOGEB/R#N`, federation shorthand (`QPS #N`, `ABACUS PR #N`, `hub #N`, `Mission
+Control #N`), chained `/#N`, and bare `#N` (home repository). Fences, comments and
+code spans are skipped.
 
-The words just before a reference on the same line type it: `CLOSES`, `DEPENDS_ON`
-(blocked by, depends on, requires, waits on, needs), `BLOCKS` (stored reversed, as
-DEPENDS_ON), `PARENT` (parent, epic, tracked in, part of, child of), `SUPERSEDES`,
-otherwise `MENTION`. A negation (`not part of #N`) keeps it a MENTION. Every
-referenced item outside the snapshot is resolved for its state and creation time;
-references to nothing (`#1` used as list numbering) are dropped. A blocker whose state
-is unknown counts as open (fail closed).
+The words just before a reference type it, and a keyword binds to the next reference
+only:
+
+| triway kind | Edge here |
+|---|---|
+| `PR_CLOSURE_CLAIM` (PR bodies only) | `CLOSES` |
+| `DECLARED_BLOCKER_CANDIDATE` | `DEPENDS_ON` |
+| `DECLARED_BLOCKS_CANDIDATE` | `BLOCKS`, stored reversed as `DEPENDS_ON` |
+| `DECLARED_PARENT_CANDIDATE` / `DECLARED_CHILD_CANDIDATE` | `PARENT` / `CHILD` |
+| `DECLARED_PREDECESSOR` / `DECLARED_SUCCESSOR` | `SUPERSEDES` / stored reversed as `SUPERSEDES` |
+| `DECLARED_DUPLICATE_OF` | `DUPLICATE_OF` |
+| `TEXT_ASSOCIATION`, `PR_ASSOCIATION` | `MENTION` |
+
+A negation (`not part of #N`) keeps it a MENTION. Every referenced item outside the
+snapshot is resolved for its state and creation time; references to nothing (`#1` used
+as list numbering) are dropped. A blocker whose state is unknown counts as open (fail
+closed).
 
 ## Score and lanes
 
@@ -124,12 +140,10 @@ new and gone items, new and removed links, new PR→issue dependencies, checklis
 
 ## Reuse and ownership
 
-- **Overlap with #906.** `qps-triage-ultra/issue-expedition/triway_burndown.py` owns the
-  oldest / newest / connected orderings and the DoD/DoV checklist parser. Owner decision
-  (2026-10-26): the checklist and reference parsers here (STEPS, untracked criteria,
-  federation aliases, negation, typed edges) move into `triway_burndown.py` in their own
-  PR, and this module then imports them instead of keeping `parse_checklist()` and
-  `extract_refs()`. The graph metrics, lanes, rollups and ledger stay here.
+- **Parsers.** `qps-triage-ultra/issue-expedition/triway_burndown.py` (#906, #928) owns the
+  checklist and reference parsers and the oldest / newest / connected orderings. This
+  module loads it with `importlib` and keeps only thin adapters; fix parsing there. The
+  graph metrics, lanes, rollups and ledger are owned here.
 - gg_MATH (`GBOGEB/gg_MATH`) has `kernels/bradley_terry.py` (pairwise ranking),
   `kernels/spectral_graph.py` (Laplacian, Dirichlet energy) and
   `mission/federation/n5_repo_graph_math.py` (typed graph, spectral gap; at most 64
