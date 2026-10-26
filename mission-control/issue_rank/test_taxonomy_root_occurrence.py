@@ -72,6 +72,8 @@ class RootReceipt(unittest.TestCase):
         r=root.calculate(payload([event(1,"QUEUED",steps=0)]))
         self.assertEqual(r["currently_red_observed"],0)
         self.assertEqual(r["root_closure_credit"],0)
+        with self.assertRaisesRegex(ValueError,"QUEUED_WITH_EXECUTION"):
+            root.calculate(payload([event(1,"QUEUED",steps=1)]))
 
     def test_bad_schema_source_head_fingerprint_and_ids(self):
         a=payload([event(1,"RED")])
