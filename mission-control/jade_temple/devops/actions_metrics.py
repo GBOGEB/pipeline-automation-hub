@@ -236,7 +236,7 @@ def fetch(cache: Path, repos: list, since: date, until: date, job_budget: int, r
                 stale = not p.exists() or day >= today - timedelta(days=1) or any(
                     r["status"] != "completed" for r in json.loads(p.read_text(encoding="utf-8")))
                 if stale:
-                    p.write_text(json.dumps(fetch_runs_day(rd, repo, day), sort_keys=True), encoding="utf-8")
+                    p.write_text(json.dumps(fetch_runs_day(rd, repo, day), sort_keys=True), encoding="utf-8", newline="\n")
                     fetched_days += 1
                 day += timedelta(days=1)
         except (urllib.error.URLError, ValueError) as exc:  # one unreadable repo is UNKNOWN, not a fleet abort
@@ -250,7 +250,7 @@ def fetch(cache: Path, repos: list, since: date, until: date, job_budget: int, r
         def one(r):
             jobs, _ = rd.pages(f"/repos/{repo}/actions/runs/{r['id']}/jobs?filter=all", "jobs")
             (d / "jobs" / f"{r['id']}-{r['run_attempt']}.json").write_text(
-                json.dumps([slim(j, JOB_KEYS) for j in jobs], sort_keys=True), encoding="utf-8")
+                json.dumps([slim(j, JOB_KEYS) for j in jobs], sort_keys=True), encoding="utf-8", newline="\n")
 
         errors = 0
         with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as ex:
@@ -435,7 +435,7 @@ def project(cache: Path, repos: list, since: date, until: date, heads: dict, cen
     doc = {
         "schema": SCHEMA, "observed_at_utc": observed_at,
         "period": {"since": since.isoformat(), "until": until.isoformat()},
-        "roster": {"source": str(ROSTER.relative_to(ROOT)).replace("\\", "/"), "repos": repos},
+        "roster": {"source": ROSTER.relative_to(ROOT).as_posix(), "repos": repos},
         "method": {"failed_conclusions": sorted(FAILED), "skipped_jobs": "excluded from job runs, minutes and timings",
                    "total_minutes": "sum of per-job ceil(run seconds / 60), the billing rounding",
                    "bands": [label for _, label in BANDS], "classes": [label for label, _ in CLASSES] + ["OTHER"],
@@ -506,7 +506,7 @@ def main(argv=None) -> int:
     text = json.dumps(doc, indent=1, sort_keys=True, ensure_ascii=True) + "\n"
     if a.out:
         a.out.parent.mkdir(parents=True, exist_ok=True)
-        a.out.write_text(text, encoding="utf-8")
+        a.out.write_text(text, encoding="utf-8", newline="\n")
     else:
         sys.stdout.write(text)
     if a.csv:

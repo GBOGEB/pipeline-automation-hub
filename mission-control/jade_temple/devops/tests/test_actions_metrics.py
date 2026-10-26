@@ -42,9 +42,9 @@ class Project(unittest.TestCase):
         d = Path(tmp.name) / REPO.replace("/", "__")
         (d / "runs").mkdir(parents=True)
         (d / "jobs").mkdir()
-        (d / "runs" / "2026-10-05.json").write_text(json.dumps(runs), encoding="utf-8")
+        (d / "runs" / "2026-10-05.json").write_text(json.dumps(runs), encoding="utf-8", newline="\n")
         for rid, js in jobs.items():
-            (d / "jobs" / f"{rid}-1.json").write_text(json.dumps(js), encoding="utf-8")
+            (d / "jobs" / f"{rid}-1.json").write_text(json.dumps(js), encoding="utf-8", newline="\n")
         return Path(tmp.name)
 
     def doc(self, runs, jobs, census=None):
