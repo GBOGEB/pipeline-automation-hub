@@ -92,6 +92,7 @@ def proof(e, c, cls="C", effect="BLOCK", *, baseline=None, overrides=None,
         "job_id": n["job_id"], "completed_at": n["completed_at"],
         "issued_at": n["observed_at"],
         "baseline_sha256": W._digest(baseline) if baseline else None,
+        "event_sha256": Q.digest(e), "candidate_sha256": Q.digest(c),
         "child_token": child, "dependency_token": dependency,
         "receipt_token": RECEIPT,
         "checks": checks,
@@ -230,6 +231,46 @@ class FourClassNoncompensatingGates(unittest.TestCase):
             Q.qualify(e, cand, proof(e, cand), KEY)
 
 
+class SignedPayloadAndCoverageMutations(unittest.TestCase):
+    def test_reused_signed_proof_cannot_change_native_conclusion(self):
+        original = event()
+        cand = candidates(original)[0]
+        owner_proof = proof(original, cand)
+        edited = copy.deepcopy(original)
+        edited["result"]["conclusion"] = "success"
+        edited["result"]["fingerprint"] = None
+        with self.assertRaisesRegex(ValueError, "event payload mismatch"):
+            Q.qualify(edited, cand, owner_proof, KEY)
+
+    def test_reused_signed_proof_cannot_change_candidate_reasons(self):
+        original = event()
+        cand = candidates(original)[0]
+        owner_proof = proof(original, cand)
+        edited = copy.deepcopy(cand)
+        edited["reasons"].append("REQUIRED_RECEIPT_RECOVERY_CANDIDATE")
+        with self.assertRaisesRegex(ValueError, "candidate payload mismatch"):
+            Q.qualify(original, edited, owner_proof, KEY)
+
+    def test_owner_signed_mixed_axis_regression_is_not_coverage_uplift(self):
+        prev = event(1, outcome="success", covered=7)
+        current = event(2, outcome="success", covered=9)
+        current["coverage"]["branches"]["covered"] = 1
+        cand = candidates(prev, current)[0]
+        self.assertEqual(cand["coverage_delta"],
+                         {"statements": 2, "branches": -2})
+        with self.assertRaisesRegex(ValueError, "coverage improvement"):
+            signed(current, cand, "B", "ACCEPT", baseline=prev)
+
+    def test_bad_digest_format_fails_closed_even_with_owner_mac(self):
+        original = event()
+        cand = candidates(original)[0]
+        env = proof(original, cand)
+        env["attestation"]["event_sha256"] = "not-a-digest"
+        env["signature"] = Q.owner_mac(KEY, env["attestation"])
+        with self.assertRaisesRegex(ValueError, "attestation digest"):
+            Q.qualify(original, cand, env, KEY)
+
+
 class DurableReplayAndOutbox(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -344,6 +385,36 @@ class DurableReplayAndOutbox(unittest.TestCase):
         db.execute("UPDATE audit SET entry_sha256=? WHERE seq=1", ("f" * 64,))
         with self.assertRaisesRegex(ValueError, "audit chain"):
             Q.verify(db)
+
+    def test_outbox_substitution_is_detected_before_claim_and_verify(self):
+        import json
+        db = self.db()
+        e, c = event(), candidates(event())[0]
+        result = Q.record(db, e, c, proof(e, c), KEY)
+        nid = result["notification_id"]
+        original = json.loads(db.execute(
+            "SELECT payload_json FROM outbox WHERE notification_id=?", (nid,)
+        ).fetchone()[0])
+        original["effect"] = "UNBLOCK"
+        db.execute("UPDATE outbox SET payload_json=? WHERE notification_id=?",
+                   (Q.canonical(original), nid))
+        with self.assertRaisesRegex(ValueError, "outbox payload audit"):
+            Q.verify(db, KEY)
+        with self.assertRaisesRegex(ValueError, "outbox payload audit"):
+            Q.claim(db, nid, "2026-10-26T02:00:00Z")
+        self.assertEqual(db.execute(
+            "SELECT state FROM outbox WHERE notification_id=?", (nid,)
+        ).fetchone()[0], "PENDING")
+
+    def test_outbox_row_deletion_is_detected_by_audit_count(self):
+        db = self.db()
+        e, c = event(), candidates(event())[0]
+        result = Q.record(db, e, c, proof(e, c), KEY)
+        db.execute("DELETE FROM outbox WHERE notification_id=?",
+                   (result["notification_id"],))
+        with self.assertRaisesRegex(ValueError, "outbox row/audit count"):
+            Q.verify(db, KEY)
+
 
     def test_no_state_written_when_owner_signature_invalid(self):
         db = self.db()
