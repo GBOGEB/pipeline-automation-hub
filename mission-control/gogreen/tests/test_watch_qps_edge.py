@@ -74,6 +74,7 @@ def proof(e, c, cls="C", effect="BLOCK", *, baseline=None, overrides=None,
           child=CHILD, dependency=ROOT_TOKEN, key=KEY):
     checks = {
         "source_native_verified": True, "qps_owner_verified": True,
+        "source_cohort_complete": baseline is not None,
         "qps_native": "PASS", "security": "PASS",
         "independent_review": True, "required_checks": "PASS",
         "last_push_approval": True, "stale_dismissal": True,
@@ -192,6 +193,41 @@ class FourClassNoncompensatingGates(unittest.TestCase):
         wrong_den = event(1, outcome="success", covered=7, denominator=12)
         with self.assertRaisesRegex(ValueError, "cohort mismatch"):
             signed(b, cand, "B", "ACCEPT", baseline=wrong_den)
+
+    def test_B_store_requires_nearest_preceding_native_not_reused_old_baseline(self):
+        db = Q.connect(pathlib.Path(tempfile.mkdtemp()) / "test.db")
+        self.addCleanup(db.close)
+        self.addCleanup(lambda: None)
+        older = event(1, outcome="success", covered=7)
+        middle = event(2, outcome="success", covered=9)
+        latest = event(3, outcome="success", covered=9)
+        Q.observe(db, older)
+        Q.observe(db, middle)
+        baseline_candidate = candidates(older, middle)[0]
+        good = Q.record(db, middle, baseline_candidate,
+                        proof(middle, baseline_candidate, "B", "ACCEPT", baseline=older),
+                        KEY, baseline=older)
+        self.assertTrue(good["queued"])
+        # Caller can fabricate an old-baseline +2 delta, but current native
+        # predecessor already has 9/10 and cannot yield another uplift.
+        forged = copy.deepcopy(baseline_candidate)
+        forged["event_key"], forged["lane"] = Q._source_key(latest)
+        envelope = proof(latest, forged, "B", "ACCEPT", baseline=older)
+        with self.assertRaisesRegex(ValueError, "not immediately preceding"):
+            Q.record(db, latest, forged, envelope, KEY, baseline=older)
+        self.assertEqual(Q.verify(db, KEY)["pending"], 1)
+
+    def test_B_store_rejects_unrecorded_predecessor(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db = Q.connect(pathlib.Path(tmp) / "test.db")
+            self.addCleanup(db.close)
+            old = event(1, outcome="success", covered=7)
+            new = event(2, outcome="success", covered=9)
+            candidate = candidates(old, new)[0]
+            with self.assertRaisesRegex(ValueError, "predecessor not present"):
+                Q.record(db, new, candidate,
+                         proof(new, candidate, "B", "ACCEPT", baseline=old),
+                         KEY, baseline=old)
 
     def test_B_no_gain_or_wrong_delta_rejected(self):
         a = event(1, outcome="success", covered=7)
