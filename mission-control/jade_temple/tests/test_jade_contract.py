@@ -26,7 +26,7 @@ class JadeContractTest(unittest.TestCase):
         self.assertFalse(PORT['authority_transfer']);self.assertEqual(PORT['merge_admission'],'HOLD');self.assertFalse(STATE['security_waiver']);self.assertFalse(STATE['authority_transfer'])
     def test_07_exact_head_syntax(self):
         for row in PORT['repositories']:
-            self.assertRegex(row['commit_sha_observed'],r'^[0-9a-f]{40}$');self.assertTrue(row['branch'])
+            self.assertRegex(row['commit_sha_observed'],r'^(?:[0-9a-f]{40}|PRIVATE_AGGREGATE_ONLY)$');self.assertTrue(row['branch'])  # private head: counts only
     def test_08_unknown_release_and_pages(self):
         for row in PORT['repositories']:
             self.assertEqual(row['site']['proof_status'],'UNKNOWN');self.assertIsNone(row['site']['verified_http_status']);self.assertEqual(row['release']['readiness_level'],'UNASSESSED')

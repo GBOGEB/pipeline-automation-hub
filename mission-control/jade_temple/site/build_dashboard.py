@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Offline deterministic JADE read-only dashboard built solely from the dated snapshot."""
 from pathlib import Path
-import json, sys, re, hashlib
+import json, sys, re, hashlib, importlib.util
 ROOT=Path(__file__).resolve().parents[1]
+_pb=importlib.util.spec_from_file_location('jade_private_boundary',ROOT/'tools/private_boundary.py');PB=importlib.util.module_from_spec(_pb);_pb.loader.exec_module(PB)
 DATA=ROOT/'data'/'TOP21_PORTFOLIO.json'
 TEMPLATE=ROOT/'site'/'template.html'
 OUTPUT=ROOT/'site'/'index.html'
@@ -12,7 +13,7 @@ def generate():
     assert d['merge_admission']=='HOLD' and d['authority_transfer'] is False
     assert len(d['repositories'])==21
     assert len({x['repo'] for x in d['repositories']})==21
-    assert all(re.fullmatch(r'[0-9a-f]{40}',x['commit_sha_observed']) for x in d['repositories'])
+    assert all((re.fullmatch(r'[0-9a-f]{40}',x['commit_sha_observed']) or x['commit_sha_observed']==PB.MARK) for x in d['repositories'])
     assert sum(x['n11_historical']['files'] for x in d['repositories'])==26836
     assert sum(x['n11_historical']['root_files'] for x in d['repositories'])==880
     assert sum(x['n11_historical']['root_review_candidates'] for x in d['repositories'])==706

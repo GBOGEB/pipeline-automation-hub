@@ -11,8 +11,13 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
+
+_pb = importlib.util.spec_from_file_location("jade_private_boundary", Path(__file__).resolve().parent / "private_boundary.py")
+PB = importlib.util.module_from_spec(_pb)
+_pb.loader.exec_module(PB)
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "data" / "RED_TRACE_FEDERATION_N8.json"
@@ -80,6 +85,7 @@ def assemble(reports: dict) -> dict:
     data = {"schema": "jade.temple.redtrace_federation.v1", "iteration": "N+8",
             "observed_at_utc": max(r["observed_at_utc"] for r in repos), "repositories": repos, "totals": tot,
             "authority": {"merge_authorized": False, "root_closure_credit": None, "admission": "HOLD"}}
+    data = PB.project(data)  # private repos: counts only, sealed after projection
     data["digest_sha256"] = hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()
     return data
 

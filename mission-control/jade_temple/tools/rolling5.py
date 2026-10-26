@@ -14,12 +14,16 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import importlib.util
 import io
 import json
 import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+_pb = importlib.util.spec_from_file_location("jade_private_boundary", ROOT / "tools" / "private_boundary.py")
+PB = importlib.util.module_from_spec(_pb)
+_pb.loader.exec_module(PB)
 POLICY = "data/ROLLING5_POLICY.json"
 LEDGER = "data/ROLLING5_PULSES.json"
 OUT_JSON = "site/rolling5.json"
@@ -284,6 +288,11 @@ def source_red(latest: dict[str, dict], edges: list[dict], policy: dict) -> dict
 # --- Projection -----------------------------------------------------------
 
 def project(root: Path = ROOT) -> dict:
+    """The model with private repos projected to counts only (tools/private_boundary.py)."""
+    return PB.project(_project(root))
+
+
+def _project(root: Path = ROOT) -> dict:
     policy = load(root, POLICY)
     ledger = load(root, LEDGER)
     roster = load(root, policy["roster_source"])["repositories"]

@@ -1,3 +1,26 @@
+# JADE N+11 RE-CENSUS + PRIVATE BOUNDARY — CP.HANDOFF CHECKPOINT (2026-10-26, newest)
+
+**Entry:** [N11 census reading](devops/DEVOPS_CENSUS_N11_READING.md) · [private boundary](tools/private_boundary.py) · [BD queue](data/BD_QUEUE.csv) · [J09 CODEX receipt](data/J09_CODEX_MAIN_20261026.json). Earlier checkpoints follow below, unchanged.
+
+1. **Pulse.** One pulse at hub master `e4b901a`: DevOps census N11 `2026-10-25T23:31:24Z` (digest `35bf393d`, 21/21 reachable, API token) and scale-dock real pulse N2 `23:34:27Z` (red 13, recovered 0, eligible 150; stop `HOLD_INCOMPARABLE_OR_NEW_STATE`; red per pulse N0–N2 = 4 → 15 → 13). 7 of 21 heads changed since N10.
+2. **Private boundary (#864).** `tools/private_boundary.py` projects every private repo (list owned by `gogreen/token_census/REGISTRY.json`) to counts and statuses in every JADE producer: links, commit SHAs, private blob OIDs, run/issue/PR ids become `PRIVATE_AGGREGATE_ONLY`. Recorded receipts purged and re-sealed (red-trace → census N9/N10 → objects → `CICD_DAG_POLICY`, rolling-5 ledger). `tools/private_boundary.py --check` and `tests/test_private_boundary.py` keep every committed JSON a fixed point and forbid links into a private repo. N11 was sealed after projection.
+3. **PRs of this wave.**
+   - #864 private boundary (all lanes green except `first-pass-closure`, receipt not yet written).
+   - #867 this branch: census N11, CICD DAG re-pinned to N11, census CI checks N11, BD queue + this checkpoint. Stacked on #864.
+   - #854 launcher scale-dock tile + pulse N2 (master's #855/#863 now own the access section; duplicate dropped).
+   - #865 J03 atlas links — merged. #866 (another session) covers the same J03 links and is now redundant.
+4. **BD queue.** J01 DONE_NONATOMIC (N11). J03 PARTIAL (owner: docs/ publication scope; re-probe after next publish). J09 DONE_OBSERVED (CODEX main `cb3b0d26`, Pages on head, federation return UNKNOWN, 1 red). Others unchanged; J04/J08 owner-blocked.
+5. **MC TODO surface.** `v2/adoption/MC_S2_A4_DASHBOARD_TODO_SURFACE_20260927_v1.json` validates and is current with its source blob `1b83bb91`. All 4 TODOs wait on an external return or an owner (GM-I-C WIF Drive receipt, LM-11 runtime admission, M01 licensed HEPAK receipt); MC-EVO-02 still names MC-A1 as next although A1–A4 artefacts exist — the source register needs an owner update, not this surface.
+6. **Unknowns (not zero).** Federation return CODEX → hub on the exact head; hosted J03 links after publish; private QPS receipts (aggregate only).
+7. **Not done / next admissible action.**
+   - Write FPC receipts (`scripts/fpc_receipt.py --pr N --write`) for #864, #867, #854 once each is green.
+   - Merge order: #864 → #867 (rebase) → #854. Generated JADE outputs (cicd_dag, site) resolve by regeneration, never by hand.
+   - Outside JADE, private cryoplant links/SHAs remain in gogreen, federation-atlas, issue-expedition and grand-missions; git history keeps the purged rows (owner call).
+   - `kit/readback.py` `check_tally()` reads only the first page of check runs.
+8. **REX.** (a) A "seen in a public row" exemption for commit SHAs let a private head through; only content-hashed blob OIDs may be shared across repos. (b) The GBOGEB account un-drafts PRs and merges master into them within minutes; re-read PR state before and after every push.
+
+---
+
 # JADE N+9 DEVOPS LIFECYCLE — CP.HANDOFF CHECKPOINT (2026-10-23, newest)
 
 **Entry:** [architecture + adoption waves](devops/DEPLOY_PRODUCTION_ARCHITECTURE_N9.md) · [generated census reading](devops/DEVOPS_CENSUS_N9_READING.md) · [census tool README](devops/README.md). Earlier receivers below are preserved unchanged.
