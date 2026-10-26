@@ -72,7 +72,10 @@ def check(page, viewport: tuple[int, int], screenshot: Path) -> None:
           .map(el => ({width: el.clientWidth, scroll: el.scrollWidth}))
     })""")
     assert sizing["content"] <= sizing["viewport"] + 1, sizing
-    assert any(t["scroll"] > t["width"] for t in sizing["tables"]), sizing
+    # Desktop tables may fit naturally. Narrow mobile must scroll INSIDE
+    # the table wrapper, never overflow the document viewport.
+    if width <= 390:
+        assert any(t["scroll"] > t["width"] for t in sizing["tables"]), sizing
     page.screenshot(path=str(screenshot), full_page=True)
 
 
