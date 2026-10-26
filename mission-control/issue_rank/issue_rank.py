@@ -212,9 +212,12 @@ def extract_refs(text: str | None, home: str, owner: str = OWNER) -> list[dict]:
                 if hit:
                     kind = "MENTION" if NEGATED.search(before[:hit.start()]) else name
                     break
-            # Only live [ ] / [x] items make a CHILD; a dropped [~] / [-] item stays a mention.
+            # Only live [ ] / [x] items make a CHILD. A dropped [~] / [-] item is withdrawn:
+            # every reference in it stays a mention, whatever keyword precedes it.
             live = check is not None and check.group(1) not in "~-"
-            if live and kind == "MENTION":
+            if check is not None and not live:
+                kind = "MENTION"
+            elif live and kind == "MENTION":
                 kind = "CHILD"
             k = (repo, n, kind)
             if k not in seen:

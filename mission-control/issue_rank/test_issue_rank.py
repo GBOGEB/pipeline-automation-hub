@@ -117,6 +117,8 @@ class Refs(unittest.TestCase):
     def test_dropped_checklist_ref_is_not_a_child(self):
         r = ir.extract_refs("- [~] #13 obsolete\n- [-] #14", HUB)
         self.assertEqual([(x["number"], x["kind"], x["ticked"]) for x in r], [(13, "MENTION", None), (14, "MENTION", None)])
+        r = ir.extract_refs("- [~] depends on #15\n- [-] closes #16\n- [~] blocks #17", HUB)
+        self.assertEqual([(x["number"], x["kind"]) for x in r], [(15, "MENTION"), (16, "MENTION"), (17, "MENTION")])
 
     def test_code_is_ignored(self):
         self.assertEqual(self.refs("`#99` and\n```\n#98\n```"), [])
