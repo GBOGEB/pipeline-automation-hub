@@ -1,11 +1,14 @@
 """Contract tests for issue_rank on synthetic snapshots (no network, no private data)."""
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import issue_rank as ir  # noqa: E402
@@ -88,13 +91,17 @@ class Refs(unittest.TestCase):
 
     def test_forms_and_foreign_owner(self):
         got = self.refs("see #5, GBOGEB/ABACUS#7, https://github.com/GBOGEB/CODEX/pull/9 and other/x#1")
-        self.assertEqual(got, [(HUB, 5, "MENTION"), ("GBOGEB/ABACUS", 7, "MENTION"),
-                               ("GBOGEB/CODEX", 9, "MENTION")])
+        self.assertEqual(sorted(got), [("GBOGEB/ABACUS", 7, "MENTION"), ("GBOGEB/CODEX", 9, "MENTION"),
+                                       (HUB, 5, "MENTION")])
+        with self.assertRaises(ValueError):  # triway reads GBOGEB references only
+            ir.extract_refs("#1", "other/x", owner="other")
 
     def test_typed_keywords(self):
         self.assertEqual(self.refs("Blocked by #3")[0][2], "DEPENDS_ON")
         self.assertEqual(self.refs("This blocks #4")[0][2], "BLOCKS")
-        self.assertEqual(self.refs("Closes #5")[0][2], "CLOSES")
+        self.assertEqual(self.refs("Closes #5")[0][2], "MENTION")  # a closing claim needs a PR body
+        self.assertEqual(ir.extract_refs("Closes #5", HUB, pr=True)[0]["kind"], "CLOSES")
+        self.assertEqual(self.refs("Superseded by #8"), [(HUB, 8, "SUPERSEDED_BY")])
         self.assertEqual(self.refs("Parent: #6")[0][2], "PARENT")
         self.assertEqual(self.refs("Supersedes #7")[0][2], "SUPERSEDES")
 
@@ -111,6 +118,17 @@ class Refs(unittest.TestCase):
         r = ir.extract_refs("- [x] #11 done\n- [ ] #12 open", HUB)
         self.assertEqual([(x["number"], x["kind"], x["ticked"]) for x in r], [(11, "CHILD", True), (12, "CHILD", False)])
 
+    def test_dropped_checklist_ref_is_not_a_child(self):
+        r = ir.extract_refs("- [~] #13 obsolete\n- [-] #14", HUB)
+        self.assertEqual([(x["number"], x["kind"], x["ticked"]) for x in r], [(13, "MENTION", None), (14, "MENTION", None)])
+        r = ir.extract_refs("- [~] depends on #15\n- [-] closes #16\n- [~] blocks #17", HUB)
+        self.assertEqual([(x["number"], x["kind"]) for x in r], [(15, "MENTION"), (16, "MENTION"), (17, "MENTION")])
+        r = ir.extract_refs("- [ ] ~~depends on #19~~\n- [~] superseded by #18", HUB)
+        self.assertEqual([(x["number"], x["kind"]) for x in r], [(18, "MENTION"), (19, "MENTION")])
+        self.assertEqual(ir.extract_refs("- [-] closes #16", HUB, pr=True)[0]["kind"], "MENTION")
+        g = ir.build_graph(snapshot([issue(HUB, 1, "- [~] depends on #2"), issue(HUB, 2)]))
+        self.assertEqual({e["kind"] for e in g["edges"]}, {"MENTION"})  # no blocker, no pressure
+
     def test_code_is_ignored(self):
         self.assertEqual(self.refs("`#99` and\n```\n#98\n```"), [])
 
@@ -122,6 +140,11 @@ class Graph(unittest.TestCase):
         self.assertNotIn(f"{HUB}#77", g["nodes"])
         self.assertEqual([(e["source"], e["target"], e["kind"]) for e in g["edges"]],
                          [(f"{HUB}#2", f"{HUB}#1", "DEPENDS_ON")])
+
+    def test_superseded_by_is_stored_reversed(self):
+        g = ir.build_graph(snapshot([issue(HUB, 1, "Superseded by #2"), issue(HUB, 2)]))
+        self.assertEqual([(e["source"], e["target"], e["kind"]) for e in g["edges"]],
+                         [(HUB + "#2", HUB + "#1", "SUPERSEDES")])
 
     def test_unblock_pressure_is_transitive_and_open_only(self):
         snap = snapshot([issue(HUB, 1), issue(HUB, 2, "depends on #1"), issue(HUB, 3, "depends on #2"),
@@ -186,6 +209,12 @@ class Rank(unittest.TestCase):
         self.assertEqual(lane["pipeline-automation-hub#11"], "MERGE_READY")
         self.assertEqual(lane["cryoplant-project#7"], "NOT_STARTED")
 
+    def test_approved_pr_with_pending_checks_is_not_merge_ready(self):
+        for checks in ("PENDING", "EXPECTED", None):
+            with self.subTest(checks=checks):
+                m = ir.rank(snapshot([pr(HUB, 20, checks=checks, review="APPROVED")]))
+                self.assertEqual(m["items"][0]["lane"], "AWAIT_CHECKS")
+
     def test_scores_ranks_and_authority(self):
         self.assertEqual([i["rank_global"] for i in self.m["items"]], list(range(1, len(self.m["items"]) + 1)))
         self.assertEqual(self.by[f"{HUB}#3"]["pressure"], 2)
@@ -249,6 +278,51 @@ class Telemetry(unittest.TestCase):
                 ir.verify_ledger(path)
 
 
+
+    def test_taxonomy_pulse_output_is_hashed_by_existing_single_writer(self):
+        current = ir.rank(fixture())
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp)
+            hashes = ir.write_outputs(out, current, {"baseline": True},
+                                      parser_sha="c" * 40)
+            self.assertIn("taxonomy_pulse.json", hashes)
+            self.assertIn("taxonomy_pulse.csv", hashes)
+            pulse = json.loads((out / "taxonomy_pulse.json").read_text(encoding="utf-8"))
+            self.assertEqual(pulse["schema"], "jade.taxonomy-pulse.v1")
+            self.assertEqual(pulse["parser_sha"], "c" * 40)
+            self.assertEqual(pulse["population"]["total"], 7)
+            self.assertNotIn(QPS, pulse["source_heads"])
+            self.assertNotIn(QPS, pulse["rollups"])
+            self.assertEqual(len(pulse["history_points"]), 1)
+            self.assertEqual(pulse["history_points"][0]["wave"], "N0")
+            self.assertIn("N0", (out / "taxonomy_pulse.csv").read_text())
+
+    def test_two_pulses_share_existing_ledger_and_do_not_claim_closed(self):
+        old = ir.rank(fixture())
+        newer_snapshot = fixture()
+        newer_snapshot["fetched_at"] = "2026-10-27T00:00:00Z"
+        newer_snapshot["repos"][HUB]["issues"][0]["title"] = "fix(watch): census fails closed"
+        now = ir.rank(newer_snapshot)
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp)
+            hashes = ir.write_outputs(out, now, ir.diff(old, now),
+                                      previous_model=old, parser_sha="c" * 40,
+                                      previous_parser_sha="c" * 40)
+            pulse = json.loads((out / "taxonomy_pulse.json").read_text())
+            self.assertEqual([p["wave"] for p in pulse["history_points"]], ["N", "N+1"])
+            self.assertTrue(pulse["delta"]["comparable"])
+            self.assertTrue(pulse["delta"]["parser_identity_comparable"])
+            self.assertIsNone(pulse["delta"]["verified_closed"])
+            self.assertEqual(pulse["formal_credit_delta"], 0)
+            csv_data = (out / "taxonomy_pulse.csv").read_text()
+            self.assertIn(",N,", csv_data)
+            self.assertIn(",N+1,", csv_data)
+            ledger = out / "ledger.jsonl"
+            row = ir.append_ledger(ledger, {"outputs": hashes})
+            self.assertEqual(row["outputs"]["taxonomy_pulse.json"], hashes["taxonomy_pulse.json"])
+            self.assertEqual(ir.verify_ledger(ledger), 1)
+
+
 class FakeGh:
     """Serves canned GraphQL pages keyed by the query's root field."""
 
@@ -291,6 +365,21 @@ class Fetch(unittest.TestCase):
         m = ir.rank(snap)
         self.assertEqual(m["items"][0]["linked_prs"][0]["pr"], "GBOGEB/r#9")
         self.assertNotIn("GBOGEB/r#50", {e["target"] for e in m["edges"]})
+
+    def test_redacted_run_persists_no_raw_snapshot(self):
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(ir, "Gh", FakeGh), \
+                contextlib.redirect_stdout(io.StringIO()):
+            out = Path(d) / "jade"
+            out.mkdir()
+            (out / "snapshot.json").write_text("{\"stale\": \"raw private body\"}", encoding="utf-8")
+            self.assertEqual(ir.main(["run", "--repos", "r", "--out", d, "--redact-private"]), 0)
+            self.assertFalse((out / "snapshot.json").exists())
+            self.assertTrue((out / "issue_rank.json").exists())
+            self.assertEqual(ir.verify_ledger(out / "ledger.jsonl"), 1)
+            # A plain run persists its snapshot. Own scope directory: a second pulse in the
+            # same directory within the same second fails the taxonomy series' strict order.
+            ir.main(["run", "--scope", "user", "--repos", "r", "--out", d])
+            self.assertTrue((Path(d) / "user" / "snapshot.json").exists())
 
 
 if __name__ == "__main__":
