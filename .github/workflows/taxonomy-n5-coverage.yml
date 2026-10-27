@@ -1,0 +1,59 @@
+name: Taxonomy N5 Coverage Zero-File Front
+on:
+  pull_request:
+    paths:
+      - 'mission-control/issue_rank/test_taxonomy_coverage_n5.py'
+      - '.github/workflows/taxonomy-n5-coverage.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: taxonomy-n5-coverage-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  coverage:
+    name: N5 source/branch coverage (py${{ matrix.python }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11','3.12']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Exact head before execution
+        env:
+          EXPECTED: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: N5 coverage and regression cohort
+        working-directory: mission-control/issue_rank
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check coverage==7.13.3
+          python -m coverage run --branch --source=title_taxonomy,taxonomy_pulse,taxonomy_explorer -m unittest -v test_title_taxonomy test_taxonomy_pulse test_taxonomy_explorer test_taxonomy_coverage_n5
+          python -m coverage report --fail-under=90
+          python -m coverage json -o coverage-n5.json
+          python - <<'PY'
+          import json
+          d=json.load(open('coverage-n5.json'))
+          files=d['files']
+          assert len(files)==3, ('COVERAGE_COHORT_DRIFT',sorted(files))
+          zero=[p for p,v in files.items() if v['summary']['covered_lines']==0]
+          assert not zero, ('ZERO_COVERED_FILES',zero)
+          below=[(p,v['summary']['percent_covered']) for p,v in files.items()
+                 if v['summary']['percent_covered']<90]
+          assert not below, ('PER_FILE_COVERAGE_BELOW_90',below)
+          assert d['totals']['percent_covered']>=90, d['totals']
+          print('N5_COVERAGE_RECEIPT',json.dumps({
+              'files':sorted(files),'zero_covered_files':0,'per_file_floor':90,
+              'percent_covered':d['totals']['percent_covered'],
+              'line_count':d['totals']['num_statements'],
+              'covered_lines':d['totals']['covered_lines'],
+              'branch_coverage':True,'formal_credit_delta':0},sort_keys=True))
+          PY

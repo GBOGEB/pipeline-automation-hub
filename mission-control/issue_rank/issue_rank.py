@@ -778,7 +778,13 @@ def linked_prs(k: str, nodes: dict, edges: list[dict]) -> list[dict]:
 
 
 def _approved(p: dict) -> bool:
-    return p.get("review") == "APPROVED" or p.get("review_decision") == "APPROVED" or (p.get("approvals") or 0) > 0
+    """Aggregate review denial outranks a historical per-review approval count."""
+    decision = p.get("review_decision")
+    if decision is None:
+        decision = p.get("review")
+    if decision is not None:
+        return decision == "APPROVED"
+    return (p.get("approvals") or 0) > 0
 
 
 def classify(item: dict) -> tuple[str, str]:
@@ -1452,9 +1458,17 @@ def redact(model: dict, delta: dict | None = None, private_repos=None):
             i["checklist"]["next_open"] = None
             if i["action"].startswith(("next:", "start:")):
                 i["action"] = i["action"].split(":")[0] + ": <private>"
+    # Prove private HEAD validity before removing identifiers from public output.
+    # The projection mark is not a replacement for the original source receipt.
+    redacted_heads = []
     for r, h in m["heads"].items():
         if r in priv:
+            original = model["heads"][r].get("head_sha")
+            if not isinstance(original, str) or not re.fullmatch(r"[0-9a-fA-F]{40}", original):
+                raise ValueError("INVALID_SOURCE_HEAD_BEFORE_REDACTION:" + r)
             h["head_sha"] = None
+            redacted_heads.append(r)
+    m["privacy_projection"] = {"validated_then_redacted_heads": sorted(redacted_heads)}
     jade, focus = set(jade_roster()), {f"{m['owner']}/{r}" for r in FOCUS_REPOS}
     for scope, roll in m["rollups"].items():
         members = (set(m["heads"]) if scope == "USER" else jade if scope == "JADE"
@@ -1691,10 +1705,14 @@ def _fmt_pct(x):
 
 def write_outputs(out: Path, model: dict, delta: dict, *,
                   previous_model: dict | None = None, parser_sha: str | None = None,
-                  previous_parser_sha: str | None = None) -> dict[str, str]:
-    """Write taxonomy pulse through the existing single-writer output manifest."""
+                  previous_parser_sha: str | None = None, pulse_model: dict | None = None) -> dict[str, str]:
+    """Write taxonomy pulse through the existing single-writer output manifest.
+
+    ``pulse_model`` is the unredacted model: taxonomy_pulse validates source
+    identities and heads first, then drops private material itself (public=True).
+    """
     out.mkdir(parents=True, exist_ok=True)
-    pulse = tp.build(model, previous_model, public=True, parser_sha=parser_sha,
+    pulse = tp.build(pulse_model or model, previous_model, public=True, parser_sha=parser_sha,
                      previous_parser_sha=previous_parser_sha)
     files = {"issue_rank.json": canonical(model), "issue_rank.csv": to_csv(model).encode("utf-8"),
              "issue_rank.html": render_html(model, delta).encode("utf-8"), "delta.json": canonical(delta),
@@ -1753,6 +1771,8 @@ def main(argv=None) -> int:
     r.add_argument("--prev", type=Path, help="previous issue_rank.json, for the delta")
     r.add_argument("--out", type=Path, default=DEFAULT_OUT)
     for p in (sub.choices["run"], r):
+        p.add_argument("--parser-sha", help="exact parser source SHA for taxonomy attribution")
+        p.add_argument("--previous-parser-sha", help="previous parser source SHA")
         p.add_argument("--redact-private", action="store_true")
         p.add_argument("--draws", type=int, default=MC_DRAWS, help="Monte Carlo draws (0 disables)")
         p.add_argument("--overlay", type=Path, action="append", default=None,
@@ -1793,7 +1813,20 @@ def main(argv=None) -> int:
             delta["taxonomy_moves"] = [d for d in delta["taxonomy_moves"]
                                        if d["key"] not in private_refs]
         model, delta = redact(model, delta)
-    digests = write_outputs(out, model, delta)
+    # A repeated source observation at the exact same instant is not N+1.
+    # Preserve the strict monotonicity invariant in taxonomy_pulse.build;
+    # do not fabricate an additional history point for an idempotent rerun.
+    pulse_previous = prev
+    if prev is not None:
+        old_time = datetime.fromisoformat(prev["fetched_at"].replace("Z", "+00:00"))
+        new_time = datetime.fromisoformat(model["fetched_at"].replace("Z", "+00:00"))
+        if old_time == new_time:
+            pulse_previous = None
+        elif old_time > new_time:
+            raise ValueError("PULSE_TIMESTAMP_REVERSED")
+    digests = write_outputs(
+        out, model, delta, previous_model=pulse_previous,
+        parser_sha=args.parser_sha, previous_parser_sha=args.previous_parser_sha)
     if args.cmd == "run":
         row = append_ledger(out / "ledger.jsonl", {
             "snapshot_sha256": sha256(canonical(snap)), "outputs": digests,

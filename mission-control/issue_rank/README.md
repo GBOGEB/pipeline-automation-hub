@@ -230,6 +230,28 @@ of `jade_temple/tools/private_boundary.py`.
 `overlay.json` holds owner-declared priorities with provenance (the D+14 lanes for the
 public repositories). `out/overlay_private.json` (gitignored) holds the private ones.
 
+## Burndown slices (`burndown_apply.py`)
+
+Reads a pulse directory and writes `burndown_slices.json` (`jade.issue-burndown.slices.v1`).
+Dry-run unless `--apply` is given.
+
+- **verify:** every open checklist item that references a closed child, with the child's
+  evidence (merge SHA, check rollup on the merge commit, review decision, close reason).
+  Classes: `TICK_READY` (a bare reference whose children all merged or completed),
+  `VERIFY` (children closed, the item asks for more), `WITHDRAW_CANDIDATE` (a child closed
+  unmerged or not planned), `WAIT` (a child still open).
+- **checkbox:** for the top `TRACK_DOD` issues, turn each declared DoD / DoV / STEPS bullet
+  into `- [ ]`, ticking nothing. `--skip` leaves out issues whose bullets are options or
+  dispositions rather than criteria.
+- `--apply tick|checkbox|all [--only KEY ...]` edits issue bodies: it re-reads the live
+  body, refuses if it changed since the snapshot, and appends a sha256-chained row per
+  edit to `edits.jsonl`. Issue edits are owner decisions; apply only with the owner's
+  go-ahead.
+
+```bash
+python mission-control/issue_rank/burndown_apply.py --pulse mission-control/issue_rank/out/jade --skip GBOGEB/cryoplant-project#1738
+```
+
 ## Reuse and ownership
 
 - **Parsers and owners (#906, #907, #927, #928).** `qps-triage-ultra/issue-expedition/triway_burndown.py`

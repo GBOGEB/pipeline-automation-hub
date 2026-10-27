@@ -32,6 +32,28 @@ class HostedTests(unittest.TestCase):
   with patch.object(hosted.urllib.request,'urlopen',lambda req,timeout:Response(URL+'jade/burndown.html',b'z'*(hosted.MAX_BYTES+1))):
    with self.assertRaisesRegex(ValueError,'JADE_HOSTED_TOO_LARGE'):
     hosted.fetch_hosted(URL,'jade/burndown.html')
+ def test_same_origin_redirect_to_wrong_page_is_rejected(self):
+  from unittest.mock import patch
+  class Response:
+   status=200
+   def __enter__(self):return self
+   def __exit__(self,*args):return False
+   def geturl(self):return URL+'jade/green.html'
+   def read(self,n):return b'plausible-body'
+  with patch.object(hosted.urllib.request,'urlopen',lambda req,timeout:Response()):
+   with self.assertRaisesRegex(ValueError,'JADE_BAD_HOSTED_STATUS_OR_REDIRECT'):
+    hosted.fetch_hosted(URL,'jade/burndown.html')
+ def test_same_origin_redirect_with_query_is_rejected(self):
+  from unittest.mock import patch
+  class Response:
+   status=200
+   def __enter__(self):return self
+   def __exit__(self,*args):return False
+   def geturl(self):return URL+'jade/burndown.html?unexpected=1'
+   def read(self,n):return b'plausible-body'
+  with patch.object(hosted.urllib.request,'urlopen',lambda req,timeout:Response()):
+   with self.assertRaisesRegex(ValueError,'JADE_BAD_HOSTED_STATUS_OR_REDIRECT'):
+    hosted.fetch_hosted(URL,'jade/burndown.html')
  def test_unknown_asset_name_denied_before_get(self):
   with self.assertRaisesRegex(ValueError,'JADE_INVALID_RELATIVE_ASSET'):
    hosted.fetch_hosted(URL,'jade/../../secret')
