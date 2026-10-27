@@ -274,6 +274,103 @@ def plan(tasks, snapshot=None, policy=None, *, now=None):
     }
 
 
+
+def plan_slow_burn(tasks, snapshot=None, policy=None, *, now=None,
+                   max_waves=8, max_per_wave=3, queue_limit=12):
+    """Stage long-horizon disjoint local scouts, never remote jobs or mutations.
+
+    This is a *projection* using the canonical broker's DAG, path-conflict and
+    GOGREEN regime contracts. A later stage requires separately verified
+    predecessor completion; mere inclusion in an earlier stage is not proof.
+    """
+    _integer(max_waves, "max_waves", 1, 12)
+    _integer(max_per_wave, "max_per_wave", 1, 4)
+    _integer(queue_limit, "queue_limit", 0, 100)
+    base = plan(tasks, snapshot, policy, now=now)
+    rows = {x["id"]: x for x in base["tasks"]}
+    remote = base["remote"]
+    # Unknown/partial, congested, stale or overloaded runner evidence
+    # cannot be translated into remote slots, even if a local DAG exists.
+    qualified = (remote["status"] == "OBSERVED"
+                 and remote["regime"] in ("RECOVERING", "STABLE")
+                 and remote["queued"] <= queue_limit
+                 and remote["advisory_dispatch_slots"] > 0)
+    advisory_remote = min(remote["advisory_dispatch_slots"], max_per_wave) if qualified else 0
+    remaining = set(rows)
+    projected = set()
+    waves = []
+    holds = {}
+    for ordinal in range(1, max_waves + 1):
+        eligible = {key for key in remaining
+                    if set(rows[key]["needs"]) <= projected}
+        if not eligible:
+            break
+        selected = []
+        for key in _fair_order(eligible, rows):
+            row = rows[key]
+            if row["write_paths"]:
+                holds[key] = "WRITE_REQUIRES_SOURCE_OWNER_AND_PATH_LEASE"
+                continue
+            if any(conflicts(row, rows[other]) for other in selected):
+                holds[key] = "PATH_CONFLICT_WITH_SCOUT"
+                continue
+            if len(selected) == max_per_wave:
+                break
+            selected.append(key)
+        if not selected:
+            break
+        waves.append({
+            "index": ordinal,
+            "task_ids": selected,
+            "status": "STAGED_NOT_LAUNCHED" if ordinal == 1 else "CONDITIONAL_PREDECESSOR_PROOF",
+            "required_before_run": [
+                "EXACT_HEAD_SOURCE_AND_NEGATIVE_TESTS",
+                "INDEPENDENT_PREDECESSOR_RECEIPTS" if ordinal > 1 else "SOURCE_READ_PERMISSION",
+                "CAPACITY_AND_QUEUE_RECHECK",
+            ],
+            "remote_dispatch_slots_advisory_only": advisory_remote if ordinal == 1 else 0,
+        })
+        projected.update(selected)
+        remaining.difference_update(selected)
+    for key in sorted(remaining):
+        if key not in holds:
+            holds[key] = ("DEPENDENCY_NOT_PROVEN" if rows[key]["needs"]
+                          else "WAVE_BUDGET_EXHAUSTED")
+    return {
+        "schema": "atlas.local-broker.slow-burn-plan.v1",
+        "source": "mission-control/federation-atlas/orchestration/broker.py",
+        "generated_at": base["generated_at"],
+        "requested_waves": max_waves,
+        "waves": waves,
+        "packet_count": sum(len(w["task_ids"]) for w in waves),
+        "held": [{"task_id": k, "reason": holds[k]} for k in sorted(holds)],
+        "remote_observation_status": remote["status"],
+        "remote_queue_depth": remote["queued"],
+        "remote_advisory_slots": advisory_remote,
+        "launches": 0,
+        "verified_root_closures": None,
+        "matched_coverage_delta_pp": None,
+        "dispatch_authorized": False,
+        "merge_authorized": False,
+        "authority_transfer": False,
+        "feedback_triggers": [
+            "TERMINAL_FIRST_RED_OR_GOVERNANCE_FAILURE",
+            "QUEUE_THRESHOLD_OR_AGE_REGRESSION",
+            "SOURCE_SHA_OR_DENOMINATOR_DRIFT",
+            "PREDECESSOR_RECEIPT_OR_PATH_LEASE_RETURN",
+            "ELIGIBLE_INDEPENDENT_REVIEW_RETURN",
+        ],
+        "mip_dmaic": {
+            "DEFINE": "one canonical source owner per root; non-overlapping scouts",
+            "MEASURE": "queue, proof yield, source SHA, coverage opportunity and zero-covered assets",
+            "ANALYZE": "root recurrence and blocked predecessor before new fan-out",
+            "IMPROVE": "bounded disjoint source repairs after native first-red proof",
+            "CONTROL": "exact-main independent recurrence proof, never a staged scout",
+            "MIP": "modernize evidence; innovate bounded experiments; perpetuate qualified controls",
+        },
+    }
+
+
 def _required_paths(contract, root):
     for relative in contract.get("required_paths", []):
         target = (root / relative).resolve()
