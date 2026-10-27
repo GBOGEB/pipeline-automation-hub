@@ -246,6 +246,23 @@ class MonteCarlo(unittest.TestCase):
         self.assertEqual(m["method"]["monte_carlo"]["draws"], 0)
 
 
+class AdmissionRegression(unittest.TestCase):
+    def test_review_denial_overrides_historical_approvals(self):
+        for decision in ("CHANGES_REQUESTED", "REVIEW_REQUIRED"):
+            self.assertFalse(ir._approved({"review_decision": decision, "approvals": 5}))
+        self.assertTrue(ir._approved({"review_decision": "APPROVED", "approvals": 1}))
+
+    def test_explicit_p4_is_not_imputed(self):
+        n = {"repo": HUB, "number": 100, "labels": ["P4"], "title": "low priority"}
+        self.assertEqual(ir.priority_of(n), (0.0, "LABEL_OR_TITLE"))
+
+    def test_checked_issue_with_open_blocker_stays_blocked(self):
+        item = {"type": "Issue", "checklist": {"state": "ALL_TICKED"},
+                "linked_prs": [], "open_blockers": [f"{HUB}#101"],
+                "chain": {"below": 1}, "parked": False, "deadlock": None}
+        self.assertEqual(ir.classify(item)[0], "BLOCKED")
+
+
 class Privacy(unittest.TestCase):
     def test_redacted_model_and_delta_are_boundary_fixed_points(self):
         before = ir.rank(fixture(), draws=0)
