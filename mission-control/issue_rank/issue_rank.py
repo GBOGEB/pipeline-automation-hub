@@ -1467,6 +1467,32 @@ def redact(model: dict, delta: dict | None = None, private_repos=None):
         roll["title_taxonomy"] = tt.summary(visible)
         roll["title_taxonomy"]["private_items_excluded"] = sum(
             1 for i in m["items"] if i["repo"] in members and i["repo"] in priv)
+    # Export only aggregate private counts. Individual pseudonyms still expose
+    # timestamps, rank intervals and graph fingerprints across repeated pulses.
+    # Strip private rows and cross-references *before* the boundary fixed point.
+    def private_key(value):
+        return (isinstance(value, str) and "#" in value
+                and value.split("#", 1)[0] in priv)
+
+    def private_row(value):
+        return (isinstance(value, dict) and
+                (value.get("repo") in priv or
+                 any(private_key(value.get(k)) for k in ("key", "source", "target", "pr"))))
+
+    def export_public(value):
+        if isinstance(value, dict):
+            return {k: export_public(v) for k, v in value.items()
+                    if not private_key(k)}
+        if isinstance(value, list):
+            return [export_public(v) for v in value
+                    if not private_key(v) and not private_row(v)]
+        if isinstance(value, str) and any(r + "#PRIVATE-" in value for r in priv):
+            return "<private aggregate>"
+        return value
+
+    out = export_public(out)
+    if out.get("delta") is not None:
+        out["delta"]["private_item_movement"] = "UNKNOWN_AGGREGATE_ONLY"
     boundary = pb.Boundary(sorted(priv))
     out = boundary.project(out)
     if boundary.project(out) != out:
