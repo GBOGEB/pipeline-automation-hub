@@ -1822,7 +1822,22 @@ def main(argv=None) -> int:
         last = out / "issue_rank.json"
         prev = json.loads(last.read_text(encoding="utf-8")) if last.exists() else None
     model = rank(snap, overlay=load_overlay(args.overlay), draws=args.draws)
-    delta = diff(prev, model)
+    if args.redact_private:
+        def comparable_public(m):
+            if m is None:
+                return None
+            private = {r for r, h in m["heads"].items() if h.get("private")}
+            is_private = lambda k: isinstance(k, str) and k.split("#", 1)[0] in private
+            return {**m,
+                    "items": [i for i in m["items"] if i["repo"] not in private],
+                    "edges": [e for e in m["edges"] if not is_private(e["source"])
+                              and not is_private(e["target"])]}
+        # A prior redacted pulse has no stable private identity. Compare public
+        # items only rather than falsely marking all private rows new or gone.
+        delta = diff(comparable_public(prev), comparable_public(model))
+        delta["private_item_movement"] = "UNKNOWN_AGGREGATE_ONLY"
+    else:
+        delta = diff(prev, model)
     full = model
     if prev and any(h.get("private") and not h.get("head_sha") for h in prev.get("heads", {}).values()):
         prev = None  # a redacted previous model cannot be source-validated: no taxonomy comparison
