@@ -135,6 +135,50 @@ class WaveControl(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "invalid numeric"):
             summarize(rows)
 
+    def test_reject_malformed_source_sha(self):
+        rows = self.four()
+        rows[-1]["telemetry"]["heads"]["GBOGEB/public"] = "not-a-sha"
+        with self.assertRaisesRegex(ValueError, "source head"):
+            summarize(rows)
+
+    def test_reject_malformed_receipt_shape(self):
+        rows = self.four()
+        rows[-1]["row_sha256"] = "bad"
+        with self.assertRaisesRegex(ValueError, "ledger receipt"):
+            summarize(rows)
+
+    def test_reject_mismatched_previous_receipt(self):
+        rows = self.four()
+        rows[2]["prev_sha256"] = "ff" * 32
+        with self.assertRaisesRegex(ValueError, "previous ledger receipt"):
+            summarize(rows)
+
+    def test_reject_fractional_count(self):
+        rows = self.four()
+        rows[1]["telemetry"]["scopes"]["USER"]["open_issues"] = 4.5
+        with self.assertRaisesRegex(ValueError, "fractional count"):
+            summarize(rows)
+
+    def test_reject_count_subset_larger_than_total(self):
+        rows = self.four()
+        rows[1]["telemetry"]["scopes"]["USER"]["prs_red"] = 3
+        with self.assertRaisesRegex(ValueError, "impossible count subset"):
+            summarize(rows)
+
+    def test_no_positive_burn_from_mixed_or_missing_final_flow(self):
+        rows = self.four()
+        for i, row in enumerate(rows):
+            row["telemetry"]["fetched_at"] = (
+                datetime(2026, 8, 1, tzinfo=timezone.utc)
+                + timedelta(days=i * 15)).isoformat()
+            row["telemetry"]["scopes"]["USER"]["flow"].update(
+                {"window_days": 14, "status": "BURNING_DOWN",
+                 "net_burn_per_day": {"est": 2.0, "lo": .5, "hi": 4.0}})
+        rows[-1]["telemetry"]["scopes"]["USER"]["flow"]["window_days"] = 7
+        result = summarize(rows)
+        self.assertFalse(result["control"]["sustained_positive_burn_observed"])
+        self.assertIn("MISSING_OR_MIXED_FINAL_14D_FLOW", result["control"]["notes"])
+
     def test_missing_receipt_is_withheld(self):
         rows = self.four()
         rows[2].pop("row_sha256")
