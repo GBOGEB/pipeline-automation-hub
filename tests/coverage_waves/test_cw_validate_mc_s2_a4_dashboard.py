@@ -257,7 +257,7 @@ def _run(mod, b):
 
 def test_valid_synthetic_bundle_passes_and_hashes_status_file(mod, git):
     assert _run(mod, _bundle(mod)) == []
-    assert git.calls == [(["git", "hash-object", str(Path(STATUS_REL))], mod.ROOT, True)]
+    assert git.calls == [(["git", "hash-object", STATUS_REL], mod.ROOT, True)]
 
 
 def test_root_resolves_to_repository(mod):
