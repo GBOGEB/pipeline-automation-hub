@@ -204,7 +204,7 @@ class Stale(unittest.TestCase):
         snap["inputs"][first] = "0" * 40
         with tempfile.TemporaryDirectory() as tmp:
             fake = Path(tmp) / "launcher.json"
-            fake.write_text(bl.dump(snap), encoding="utf-8")
+            fake.write_text(bl.dump(snap), encoding="utf-8", newline="\n")
             with mock.patch.object(bl, "SNAPSHOT", fake):
                 problems = bl.check(bl.git("rev-parse", "HEAD^{commit}").strip())
         self.assertTrue(any(first in p for p in problems), problems)
@@ -258,8 +258,8 @@ class Stale(unittest.TestCase):
         snap["source_sha"], snap["source_date"] = "f" * 40, "2000-01-01T00:00:00+00:00"
         with tempfile.TemporaryDirectory() as tmp:
             fake, page = Path(tmp) / "launcher.json", Path(tmp) / "index.html"
-            fake.write_text(bl.dump(snap), encoding="utf-8")
-            page.write_text(bl.render(snap), encoding="utf-8")
+            fake.write_text(bl.dump(snap), encoding="utf-8", newline="\n")
+            page.write_text(bl.render(snap), encoding="utf-8", newline="\n")
             with mock.patch.object(bl, "SNAPSHOT", fake), mock.patch.object(bl, "PAGE", page):
                 self.assertEqual(bl.check(bl.git("rev-parse", "HEAD^{commit}").strip()), [])
 

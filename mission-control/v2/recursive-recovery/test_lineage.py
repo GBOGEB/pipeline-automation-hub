@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from lineage import build, digest, git_blob, is_dag, load_canonical, yaml_mission
+from lineage import build, digest, git_blob, is_dag, load_canonical, validate_successor, yaml_mission
 
 
 class MissionRecoveryTests(unittest.TestCase):
@@ -15,6 +15,33 @@ class MissionRecoveryTests(unittest.TestCase):
 
     def test_exact_blob_sources(self):
         self.assertEqual(len(self.spec["internal"]), 15)
+
+    def test_successor_retains_byte_exact_frozen_predecessor(self):
+        here = Path(__file__).resolve().parent
+        original = (here / "N12_SOURCE_ATLAS.json").read_bytes()
+        self.assertEqual(git_blob(original), self.spec["successor_of"]["blob_sha"])
+        self.assertEqual(self.spec["source_refresh_evidence"]["changed_internal_blobs"], 1)
+        self.assertEqual(self.spec["source_refresh_evidence"]["unchanged_internal_blobs"], 14)
+        validate_successor(self.spec, original)
+
+    def test_predecessor_tampering_rejected(self):
+        original = (Path(__file__).resolve().parent / "N12_SOURCE_ATLAS.json").read_bytes()
+        with self.assertRaisesRegex(ValueError, "FROZEN_ATLAS_IDENTITY_DRIFT"):
+            validate_successor(self.spec, original + b" ")
+
+    def test_unrelated_successor_rewriting_rejected(self):
+        original = (Path(__file__).resolve().parent / "N12_SOURCE_ATLAS.json").read_bytes()
+        forged = copy.deepcopy(self.spec)
+        next(x for x in forged["internal"] if x["id"] == "gm_registry")["blob_sha"] = "0" * 40
+        with self.assertRaisesRegex(ValueError, "UNAUTHORIZED_FROZEN_SOURCE_REWRITE"):
+            validate_successor(forged, original)
+
+    def test_breadth_history_downgrade_rejected(self):
+        original = (Path(__file__).resolve().parent / "N12_SOURCE_ATLAS.json").read_bytes()
+        forged = copy.deepcopy(self.spec)
+        next(x for x in forged["internal"] if x["id"] == "breadth")["previous_frozen_blob_sha"] = "0" * 40
+        with self.assertRaisesRegex(ValueError, "FROZEN_BREADTH_SUCCESSOR_INVALID"):
+            validate_successor(forged, original)
 
     def test_git_blob_identity(self):
         self.assertEqual(git_blob(b"test\n"), "9daeafb9864cf43055ae93beb0afd6c7d144bfa4")

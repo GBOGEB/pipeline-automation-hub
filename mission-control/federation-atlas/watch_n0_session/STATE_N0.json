@@ -1,0 +1,72 @@
+{
+ "handover": "CODE_PURPLE_WATCH_RESTART_20261026_N0",
+ "historical_cutoff": "2026-10-26T00:43+01:00",
+ "observed_at": "2026-10-26T00:25Z",
+ "default_heads": {
+  "ABACUS": {
+   "sha": "6ebebbc2aee8c400ecec7a8b9ee76fff80153c17",
+   "delta": "unchanged"
+  },
+  "pipeline-automation-hub": {
+   "sha": "57f08d221bc68f4e691591336ee49c71014fdbb0",
+   "delta": "+1 (#865)"
+  },
+  "CODEX": {
+   "sha": "cb3b0d269bcd0ff9e96982cfc8276aa4bc187acf",
+   "delta": "unchanged"
+  },
+  "cryoplant-project": {
+   "sha": "PRIVATE_AGGREGATE_ONLY",
+   "delta": "UNKNOWN"
+  },
+  "gg_MATH": {
+   "sha": "61ce59f754d23e010958927a731432672abf7621",
+   "delta": "unchanged"
+  }
+ },
+ "disposition": {
+  "MERGE_ADMISSION": "HOLD",
+  "formal_engineering_credit_delta": 0,
+  "stability": "0/3 (no source-changing comparable waves)",
+  "QPS_OWNER_ACCEPTANCE": "WITHHELD",
+  "SECURITY_WAIVER": "NONE",
+  "PC3": "2/5",
+  "M": "PARTIAL/HOLD/HOLD",
+  "PCA_BT": "NOT ASSESSABLE",
+  "capacity": "UNKNOWN"
+ },
+ "stable_hold_candidates": [
+  "R-PAH-CROSS-REPO-TOKEN-401"
+ ],
+ "discrepancies": [
+  "Handover anchor e4b901 for PAH omits #865, merged 00:39 CET, 4 min before the stated 00:43 cutoff",
+  "#530/#531/#533 have been MERGED since 2026-10-15; canonical authority is their code paths and workflows, not open PRs",
+  "#867 head moved fd34589 -> 6699196; handover's #867 RED rows are stale",
+  "The seven overlapping scheduled watches are not Claude scheduled tasks (only bnb-dashboard-pull exists here); they cannot be reconciled from this session",
+  "#867 head moved fd34589 -> 6699196 before merge; the handover's #867 RED rows are stale"
+ ],
+ "schema": "code_purple_watch_state/v0",
+ "master_after_n0": {
+  "sha": "516b905821bc1dcb299cd454a10c8c0b0f8adce3",
+  "merged_after_n0": [
+   "#867",
+   "#854",
+   "#871"
+  ],
+  "observed_at": "2026-10-26T00:35Z"
+ },
+ "canonical_prs_merged": {
+  "530": "2026-10-15T10:19:58Z",
+  "531": "2026-10-15T10:19:30Z",
+  "533": "2026-10-15T10:29:05Z"
+ },
+ "private_repos_projection": "cryoplant-project is RESTRICTED_OWNER_RETURN (mission-control/v2/handoff/CENSUS_PULL_ROUTING_V2.md): no private rows in this public session state; head shown as PRIVATE_AGGREGATE_ONLY only.",
+ "related_checkpoints": [
+  "mission-control/jade_temple/DROPIN_NEXT_CHAT.md",
+  "handover/session/LOSSLESS_HANDOVER_CODE_PURPLE_WATCH_N0_20261026.md"
+ ],
+ "ledger_privacy_enforcement": {
+  "EVIDENCE_LEDGER_N0.jsonl": "NOT covered by private_boundary.py --check (it scans jade_temple/data and site JSON only). Rule: append public-repo rows only; never append cryoplant-project or other private-repo rows. Enforcement belongs in the owner module in its own PR.",
+  "status": "MANUAL_RULE_ONLY"
+ }
+}

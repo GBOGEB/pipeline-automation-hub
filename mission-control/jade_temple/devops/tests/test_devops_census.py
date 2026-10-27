@@ -131,7 +131,7 @@ class EndToEnd(unittest.TestCase):
             {"rank": 1, "repo": "demo/service", "branch": "main", "cohort_lane": "CORE", "role": "demo",
              "commit_sha_observed": cls.base},
             {"rank": 2, "repo": "demo/missing", "branch": "main", "cohort_lane": "SUPPORT", "role": "absent",
-             "commit_sha_observed": None}]}), encoding="utf-8")
+             "commit_sha_observed": None}]}), encoding="utf-8", newline="\n")
         cls.cache = cls.tmp / "cache"
         cls.cache.mkdir()
         cls.fetch = C.fetch_repo(cls.cache, "demo/service", "main", cls.base, url=cls.url)
@@ -354,7 +354,7 @@ class EndToEnd(unittest.TestCase):
         row = {"rank": 1, "repo": "demo/service", "branch": "main", "cohort_lane": "CORE", "role": "demo",
                "commit_sha_observed": self.head}
         roster = out / "roster.json"
-        roster.write_text(json.dumps({"repositories": [row]}), encoding="utf-8")
+        roster.write_text(json.dumps({"repositories": [row]}), encoding="utf-8", newline="\n")
         cache.mkdir()
         shutil.copytree(C.cache_dir(self.cache, "demo/service"), C.cache_dir(cache, "demo/service"))
         with redirect_stdout(buf):
@@ -380,10 +380,10 @@ class EndToEnd(unittest.TestCase):
         with redirect_stdout(io.StringIO()):
             self.assertEqual(C.main(["report", "--census", str(out / "c.json"), "--out", str(md)]), 0)
             self.assertEqual(C.main(["report", "--census", str(out / "c.json"), "--out", str(md), "--check"]), 0)
-            md.write_text(md.read_text(encoding="utf-8") + "drift\n", encoding="utf-8")
+            md.write_text(md.read_text(encoding="utf-8") + "drift\n", encoding="utf-8", newline="\n")
             self.assertEqual(C.main(["report", "--census", str(out / "c.json"), "--out", str(md), "--check"]), 1)
         c["iteration"] = "tampered"
-        (out / "c.json").write_text(json.dumps(c), encoding="utf-8")
+        (out / "c.json").write_text(json.dumps(c), encoding="utf-8", newline="\n")
         with redirect_stdout(io.StringIO()):
             self.assertEqual(C.main(["check", "--census", str(out / "c.json"), "--objects", str(out / "o.json")]), 1)
 
@@ -471,6 +471,27 @@ class ContentAnalysis(unittest.TestCase):
         self.assertEqual((t["archived_test_files"], t["archived_py_modules"]), (2, 1))
         for live in ("src/archive_tools.py", "tools/recovery.py", "qps/recovered_state.py"):
             self.assertIsNone(C.ARCHIVED.search(live), live)
+
+    def test_provenance_backed_snapshots_are_archived_and_bare_names_are_not(self):
+        # A3: tender_library/abacus_snapshot/ is a byte-identical copy of another repository, recorded in
+        # tender_library/PROVENANCE.csv. A "_snapshot" name without a PROVENANCE.csv stays live code.
+        paths = ["tender_library/PROVENANCE.csv", "tender_library/abacus_snapshot/qplant/calc.py",
+                 "vendor/x_snapshot/PROVENANCE.csv", "vendor/x_snapshot/tool.py",
+                 "codex/A10_snapshot_publication/publish.py", "triage/w86_child_snapshot/scripts/check.py",
+                 "src/snapshot_tools.py"]
+        self.assertEqual(C.snapshot_prefixes(paths), ["tender_library/abacus_snapshot/", "vendor/x_snapshot/"])
+        sc = {"snapshot_prefixes": C.snapshot_prefixes(paths),
+              "test_files": [["tender_library/abacus_snapshot/tests/test_calc.py", "1" * 40, "python", 0]],
+              "modules": [[p, "2" * 40, "m", 3, 0, False, "none", 0, []] for p in paths if p.endswith(".py")]}
+        t = C.tests_summary(sc)
+        self.assertEqual((t["archived_py_modules"], t["live_py_modules"], t["live_py_untested"]), (2, 3, 3))
+        self.assertEqual((t["archived_test_files"], t["live_zero_case_files"]), (1, 0))
+        self.assertEqual(t["snapshot_prefixes"], ["tender_library/abacus_snapshot/", "vendor/x_snapshot/"])
+        for live in ("codex/A10_snapshot_publication/publish.py", "triage/w86_child_snapshot/scripts/check.py",
+                     "src/snapshot_tools.py"):
+            self.assertFalse(C.is_archived(sc, live), live)
+        self.assertTrue(C.is_archived({}, "a/recovered/b.py"))
+        self.assertEqual(C.snapshot_prefixes(["PROVENANCE.csv", "top_snapshot/a.py"]), ["top_snapshot/"])
 
     def test_floors_health_and_commit_types(self):
         self.assertEqual(C.toml_floor("[tool.coverage.report]\nfail_under = 85\n"), 85.0)

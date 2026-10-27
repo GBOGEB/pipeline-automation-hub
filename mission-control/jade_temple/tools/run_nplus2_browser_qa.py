@@ -54,6 +54,6 @@ with sync_playwright() as pw:
         'horizontal_overflow':False,'screenshot':f'qa/nplus2/{name}.png'}
   page.close()
  browser.close()
-(OUT/'receipt.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n',encoding='utf-8')
+(OUT/'receipt.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n',encoding='utf-8',newline="\n")
 print(json.dumps({'status':'PASS','viewports':len(receipt['viewports']),
      'sha256':hashlib.sha256((SITE/'burndown.html').read_bytes()).hexdigest()},sort_keys=True))

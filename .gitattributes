@@ -1,0 +1,10 @@
+# Line endings are part of the bytes the JADE and p-process checks hash.
+# Keep every text file LF in the index and the working tree on every platform.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.pdf binary
+*.zip binary
+*.woff2 binary
+*.ttf binary
+.logs/** -text

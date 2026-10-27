@@ -17,11 +17,11 @@ WF = ("name: U\non:\n  pull_request:\n    paths: ['pkg/**']\njobs:\n  t:\n    ru
 def make_repo(d):
     root = Path(d)
     (root / ".github" / "workflows").mkdir(parents=True)
-    (root / ".github" / "workflows" / "unit.yml").write_text(WF)
+    (root / ".github" / "workflows" / "unit.yml").write_text(WF, encoding="utf-8", newline="\n")
     (root / "pkg").mkdir()
-    (root / "pkg" / "core.py").write_text("X = 1\n")
+    (root / "pkg" / "core.py").write_text("X = 1\n", encoding="utf-8", newline="\n")
     (root / "pkg" / "test_core.py").write_text("import unittest\nimport core\nclass T(unittest.TestCase):\n"
-                                               "    def test_a(self):\n        pass\n")
+                                               "    def test_a(self):\n        pass\n", encoding="utf-8", newline="\n")
     subprocess.run(["git", "init", "-q", str(root)], check=True)
     subprocess.run(["git", "-C", str(root), "add", "-A"], check=True)
     return root
@@ -40,13 +40,13 @@ class Spine(unittest.TestCase):
         self.traces.mkdir()
         (self.traces / "red_trace.json").write_text(json.dumps({
             "workflows": [lane(".github/workflows/unit.yml", 5)], "counts": {"STABLE_GREEN": 1},
-            "currently_red": [], "currently_red_stale": [], "shared_break_roots": [], "digest_sha256": "m"}))
+            "currently_red": [], "currently_red_stale": [], "shared_break_roots": [], "digest_sha256": "m"}), encoding="utf-8", newline="\n")
         (self.traces / "red_trace_pr.json").write_text(json.dumps({
             "repository": "o/r", "base": "main", "workflows": [], "counts": {}, "window": {"merged_prs": 2},
             "merge_timing": {}, "merged_with_red": [{"pr": 2, "workflows": [".github/workflows/unit.yml"]}],
             "merged_with_pending": [], "digest_sha256": "p",
             "merge_matrix": [{"pr": 1, "merged_at": "2026-10-19T01:00:00Z", "at_merge": {".github/workflows/unit.yml": "success"}},
-                             {"pr": 2, "merged_at": "2026-10-19T02:00:00Z", "at_merge": {".github/workflows/unit.yml": "failure"}}]}))
+                             {"pr": 2, "merged_at": "2026-10-19T02:00:00Z", "at_merge": {".github/workflows/unit.yml": "failure"}}]}), encoding="utf-8", newline="\n")
 
     def tearDown(self):
         self.tmp.cleanup()
@@ -78,16 +78,16 @@ class Spine(unittest.TestCase):
 
     def test_hub_ledger_ratchet_is_respected(self):
         prev = Path(self.tmp.name) / "ADMISSION.json"
-        prev.write_text(json.dumps({"entries": [{"path": ".github/workflows/unit.yml", "disposition": "ENFORCED"}]}))
+        prev.write_text(json.dumps({"entries": [{"path": ".github/workflows/unit.yml", "disposition": "ENFORCED"}]}), encoding="utf-8", newline="\n")
         r = f.repo_row({"repo": "o/r", "root": str(self.root), "ledger": str(prev)}, None, 5)
         self.assertEqual(r["proposed_admission"]["counts"], {"ENFORCED": 1})  # incumbent kept without evidence
 
     def test_cli_writes_outputs(self):
         spec = Path(self.tmp.name) / "spec.json"
-        spec.write_text(json.dumps([{"repo": "o/r", "root": str(self.root), "trace_dir": str(self.traces)}]))
+        spec.write_text(json.dumps([{"repo": "o/r", "root": str(self.root), "trace_dir": str(self.traces)}]), encoding="utf-8", newline="\n")
         out = Path(self.tmp.name) / "out"
         doc = f.main(["--spec", str(spec), "--backtest-limit", "0", "--out", str(out)])
-        self.assertTrue((out / "federation.md").read_text().startswith("### GOGREEN federation spine"))
+        self.assertTrue((out / "federation.md").read_text(encoding="utf-8").startswith("### GOGREEN federation spine"))
         self.assertFalse(doc["authority"]["enforced_anywhere_but_hub"])
 
 

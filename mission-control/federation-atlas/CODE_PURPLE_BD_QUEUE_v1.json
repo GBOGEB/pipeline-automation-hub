@@ -580,7 +580,9 @@
       "links": [
         "https://github.com/GBOGEB/pipeline-automation-hub/issues/336",
         "https://github.com/GBOGEB/pipeline-automation-hub/issues/304",
-        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38250379852"
+        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38250379852",
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/880",
+        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40252128567"
       ],
       "depends_on": [],
       "done_when": "Owner/admin ruleset makes first-pass-closure a required status (#336) and a red check provably blocks merge.",
@@ -597,6 +599,12 @@
           "state": "UNKNOWN_NEEDS_READER",
           "flow": "RETURN_OWNER",
           "evidence": "Hub master protected=false at 4136710496894daa7ffd4c920f64a38b9dfd401b; owner/admin #336 red-block/green-admit required-status canary unproved."
+        },
+        {
+          "at": "W1.C1.I3.S1",
+          "state": "UNKNOWN_NEEDS_READER",
+          "flow": "RETURN_OWNER",
+          "evidence": "Recurrence (occurrence, not a new root): hub #880 head 524c024d264df5d2ca71e693b95761c62a826978 marked ready 2026-10-26T01:01:05Z and merged 01:02:42Z as 2c2079327aec7b350f172146e5e50de4373cd926 while First-Pass Closure Gate run 40252128567 job 121346125131 was FAIL (receipt reason MISSING_RECEIPT: PR body held only the FPC_RECEIPT_V1 PENDING placeholder) and the Codex exact-head review was still Running. The other 19 checks passed. Same pattern for #865, #867, #854 and #871 is recorded in #876. #336 required-status canary still unproved."
         }
       ]
     },

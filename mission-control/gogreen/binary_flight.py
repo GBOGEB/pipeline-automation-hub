@@ -251,7 +251,7 @@ def main():
     opts=a.parse_args()
     result=survey(opts.archives)
     opts.out.parent.mkdir(parents=True,exist_ok=True)
-    opts.out.write_text(json.dumps(result,indent=2,sort_keys=True)+"\n",encoding="utf-8")
+    opts.out.write_text(json.dumps(result,indent=2,sort_keys=True)+"\n",encoding="utf-8",newline="\n")
     print(json.dumps({"counts":result["counts"],"errors":len(result["errors"]),"runtime_seconds":result["runtime_seconds"]}))
 
 if __name__=="__main__":main()

@@ -95,7 +95,7 @@ def main() -> None:
                        "SIX_SIGMA_SCENARIO_NO_CERTIFICATION","HEPAK_QPS_LINK",
                        "SIPOC","NO_JS_ERRORS","NO_GLOBAL_OVERFLOW"]
     receipt["result"]="PASS_BROWSER_VISUAL_NOT_ENGINEERING_ADMISSION"
-    (out/"qa_receipt.json").write_text(json.dumps(receipt,indent=2)+"\n",encoding="utf-8")
+    (out/"qa_receipt.json").write_text(json.dumps(receipt,indent=2)+"\n",encoding="utf-8",newline="\n")
     print(json.dumps({"result":receipt["result"],"viewport_count":len(receipt["viewports"]),
                       "checks":len(receipt["checks"])}))
 

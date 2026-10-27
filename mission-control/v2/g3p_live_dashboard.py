@@ -121,15 +121,15 @@ def export(paths, out_dir):
     snapshot = load_snapshot(paths)
     payload = {key: value for key, value in snapshot.items()
                if key != 'feeder_observed_at_utc'}
-    (out / 'g3p-lineage.html').write_text(render_html(payload) + '\n', encoding='utf-8')
-    (out / 'g3p-lineage.json').write_text(json.dumps(payload, indent=2, sort_keys=True) + '\n', encoding='utf-8')
-    (out / 'g3p-lineage.mmd').write_text(mermaid({**payload,'schema':'missioncontrol.g3p.wave_lineage.v1'}), encoding='utf-8')
+    (out / 'g3p-lineage.html').write_text(render_html(payload) + '\n', encoding='utf-8', newline="\n")
+    (out / 'g3p-lineage.json').write_text(json.dumps(payload, indent=2, sort_keys=True) + '\n', encoding='utf-8', newline="\n")
+    (out / 'g3p-lineage.mmd').write_text(mermaid({**payload,'schema':'missioncontrol.g3p.wave_lineage.v1'}), encoding='utf-8', newline="\n")
     files = ['g3p-lineage.html', 'g3p-lineage.json', 'g3p-lineage.mmd']
     hashes = {name: hashlib.sha256((out/name).read_bytes()).hexdigest() for name in files}
     manifest = {'schema':'missioncontrol.g3p.live_static_manifest.v1',
                 'revision': payload['revision'], 'source_inputs': payload['source_inputs'],
                 'outputs_sha256': hashes, 'merge_admission':'HOLD', 'authority_transfer':False}
-    (out / 'g3p-manifest.json').write_text(json.dumps(manifest, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+    (out / 'g3p-manifest.json').write_text(json.dumps(manifest, indent=2, sort_keys=True) + '\n', encoding='utf-8', newline="\n")
     return manifest
 
 

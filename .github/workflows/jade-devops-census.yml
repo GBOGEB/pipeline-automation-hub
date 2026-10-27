@@ -59,8 +59,8 @@ jobs:
           from pathlib import Path
           log = (Path(os.environ["RUNNER_TEMP"]) / "devops-tests.log").read_text()
           ran = [int(n) for n in re.findall(r"^Ran (\d+) tests in ", log, re.M)]
-          if not ran or ran[-1] < 76:
-              raise SystemExit("DEVOPS_TEST_POPULATION_FIRST_RED: need >= 76 executed tests")
+          if not ran or ran[-1] < 89:
+              raise SystemExit("DEVOPS_TEST_POPULATION_FIRST_RED: need >= 89 executed tests")
           if re.search(r"skipped=\d+", log):
               raise SystemExit("DEVOPS_TEST_SKIP_FIRST_RED: no skipped tests on the hosted runner")
           subprocess.run(["python", "-m", "coverage", "json", "-q", "-o", os.environ["RUNNER_TEMP"] + "/devops-coverage.json"], check=True)
@@ -76,6 +76,14 @@ jobs:
           print(json.dumps({"tests": ran[-1], "statements": [t["covered_lines"], t["num_statements"]],
                             "branches": [t["covered_branches"], t["num_branches"]], "merge_admission": "HOLD"}))
           PY
+      - name: Actions usage + performance metrics projection (offline)
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/jade_temple/devops/tests -p 'test_actions_metrics.py' -v \
+            2>&1 | tee "$RUNNER_TEMP/actions-metrics-tests.log"
+          ran=$(grep -oP '^Ran \K[0-9]+' "$RUNNER_TEMP/actions-metrics-tests.log" | tail -1 || true)
+          test "${ran:-0}" -ge 9 || { echo "ACTIONS_METRICS_TEST_POPULATION_FIRST_RED: ran ${ran:-0} < 9"; exit 1; }
+          ! grep -qE 'skipped=[0-9]+' "$RUNNER_TEMP/actions-metrics-tests.log"
       - name: Committed census invariants and deploy contract lint
         run: |
           set -euo pipefail

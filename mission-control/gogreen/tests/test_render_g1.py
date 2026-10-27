@@ -17,7 +17,7 @@ DIGEST = "b" * 64
 
 
 def report():
-    return provider.build(json.loads(INPUT.read_text()))
+    return provider.build(json.loads(INPUT.read_text(encoding="utf-8")))
 
 
 class G1HtmlTests(unittest.TestCase):

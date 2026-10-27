@@ -278,11 +278,14 @@ def emit(intake: dict, output: Path) -> dict:
                 "scout_packets.json": json.dumps(plan, indent=2, sort_keys=True) + "\n",
                 "federation_hooks.json": json.dumps(hooks, indent=2, sort_keys=True) + "\n",
                 "summary.md": summary}
-    for name, content in payloads.items():
-        (output / name).write_text(content, encoding="utf-8")
+    # Hash the bytes that land on disk: write_text() would turn "\n" into CRLF on
+    # Windows, and the manifest would then pin bytes no file holds.
+    blobs = {name: content.encode("utf-8") for name, content in payloads.items()}
+    for name, blob in blobs.items():
+        (output / name).write_bytes(blob)
     manifest = {"schema": "gogreen.manifest.v1", "authority_transfer": False,
-                "sha256": {k: hashlib.sha256(payloads[k].encode("utf-8")).hexdigest() for k in sorted(payloads)}}
-    (output / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+                "sha256": {k: hashlib.sha256(blobs[k]).hexdigest() for k in sorted(blobs)}}
+    (output / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     return evidence
 
 

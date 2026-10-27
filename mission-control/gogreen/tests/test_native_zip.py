@@ -185,5 +185,48 @@ class G1ZipTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "expansion budget"):
             V.verify(edited, binding(edited))
 
+
+    def test_valid_outer_and_inner_hashes_do_not_excuse_malformed_json(self):
+        raw = fixture()
+        with zipfile.ZipFile(io.BytesIO(raw)) as z:
+            m = json.loads(z.read("manifest.json"))
+            p = json.loads(z.read("execution_provenance.json"))
+        invalid = b'{"open":'
+        m["sha256"]["scout_packets.json"] = hashlib.sha256(invalid).hexdigest()
+        manifest = json.dumps(m).encode()
+        p["manifest_file_sha256"] = hashlib.sha256(manifest).hexdigest()
+        changed = rewrite(raw, {"scout_packets.json": invalid, "manifest.json": manifest,
+                                "execution_provenance.json": json.dumps(p).encode()})
+        with self.assertRaisesRegex(ValueError, "malformed JSON member"):
+            V.verify(changed, binding(changed))
+
+    def test_wrong_producer_identity_rejected_after_all_digests_rebound(self):
+        raw = fixture()
+        with zipfile.ZipFile(io.BytesIO(raw)) as z:
+            m = json.loads(z.read("manifest.json"))
+            p = json.loads(z.read("execution_provenance.json"))
+        rogue = json.dumps({"source_sha": "0" * 40}).encode()
+        m["sha256"]["scout_packets.json"] = hashlib.sha256(rogue).hexdigest()
+        manifest = json.dumps(m).encode()
+        p["manifest_file_sha256"] = hashlib.sha256(manifest).hexdigest()
+        changed = rewrite(raw, {"scout_packets.json": rogue, "manifest.json": manifest,
+                                "execution_provenance.json": json.dumps(p).encode()})
+        with self.assertRaisesRegex(ValueError, "conflicting producer binding"):
+            V.verify(changed, binding(changed))
+
+    def test_json_scalar_member_is_not_a_semantic_receipt(self):
+        raw = fixture()
+        with zipfile.ZipFile(io.BytesIO(raw)) as z:
+            m = json.loads(z.read("manifest.json"))
+            p = json.loads(z.read("execution_provenance.json"))
+        scalar = b"null"
+        m["sha256"]["scout_packets.json"] = hashlib.sha256(scalar).hexdigest()
+        manifest = json.dumps(m).encode()
+        p["manifest_file_sha256"] = hashlib.sha256(manifest).hexdigest()
+        changed = rewrite(raw, {"scout_packets.json": scalar, "manifest.json": manifest,
+                                "execution_provenance.json": json.dumps(p).encode()})
+        with self.assertRaisesRegex(ValueError, "not an object"):
+            V.verify(changed, binding(changed))
+
 if __name__ == "__main__":
     unittest.main()

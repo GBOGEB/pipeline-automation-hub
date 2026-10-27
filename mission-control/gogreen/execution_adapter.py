@@ -512,7 +512,7 @@ def run(args):
     assert verify_receipt(receipt)
     output = encoded(receipt)
     (out / "execution_receipt.json").write_bytes(output)
-    (out / "execution_receipt.sha256").write_text(digest(output) + "\n", encoding="ascii")
+    (out / "execution_receipt.sha256").write_text(digest(output) + "\n", encoding="ascii", newline="\n")
     print(json.dumps({"result": "ACTUAL_LOCAL_PILOT_PASS", "source_sha": source_sha,
                       **result}, sort_keys=True))
     return receipt

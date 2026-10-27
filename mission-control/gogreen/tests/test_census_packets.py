@@ -18,8 +18,8 @@ class W32CensusPacketTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         sample=HERE/"samples"
-        cls.g0=json.loads((sample/"fleet_g0.json").read_text())
-        cls.g1=json.loads((sample/"fleet_g1.json").read_text())
+        cls.g0=json.loads((sample/"fleet_g0.json").read_text(encoding="utf-8"))
+        cls.g1=json.loads((sample/"fleet_g1.json").read_text(encoding="utf-8"))
 
     def r(self):
         return rollup(copy.deepcopy(self.g0),copy.deepcopy(self.g1),source_sha=HEAD,
@@ -106,7 +106,7 @@ class W32CensusPacketTests(unittest.TestCase):
             report=self.r()
             m=cp.emit(report,out,exact_head=HEAD)
             self.assertEqual(cp.verify(out,exact_head=HEAD),m)
-            x=json.loads((out/"empty-push.json").read_text())
+            x=json.loads((out/"empty-push.json").read_text(encoding="utf-8"))
             self.assertEqual(x["merge_admission"],"HOLD")
             self.assertIsNone(x["cross_repo_coverage_gain"])
 
@@ -114,7 +114,7 @@ class W32CensusPacketTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             out=Path(t)
             cp.emit(self.r(),out,exact_head=HEAD)
-            (out/"pull-plan.json").write_text("not JSON")
+            (out/"pull-plan.json").write_text("not JSON", encoding="utf-8", newline="\n")
             with self.assertRaisesRegex(ValueError,"PACKET_MEMBER_SHA256_MISMATCH"):
                 cp.verify(out,exact_head=HEAD)
 
@@ -122,11 +122,11 @@ class W32CensusPacketTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t:
             out=Path(t)
             cp.emit(self.r(),out,exact_head=HEAD)
-            forged=json.loads((out/"empty-push.json").read_text())
+            forged=json.loads((out/"empty-push.json").read_text(encoding="utf-8"))
             forged["emissions"]=[{"fake":True}]
             raw=cp.serialize(forged)
             (out/"empty-push.json").write_bytes(raw)
-            m=json.loads((out/"manifest.json").read_text())
+            m=json.loads((out/"manifest.json").read_text(encoding="utf-8"))
             m["files_sha256"]["empty-push.json"]=cp.sha(raw)
             (out/"manifest.json").write_bytes(cp.serialize(m))
             with self.assertRaisesRegex(ValueError,"FABRICATED_PUSH_EMISSION"):

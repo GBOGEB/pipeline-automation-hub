@@ -349,7 +349,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n",
-                        encoding="utf-8")
+                        encoding="utf-8", newline="\n")
     print(json.dumps({"wave_status": report["wave_status"],
                       "terminal_evidenced_pulses":
                       report["terminal_evidenced_pulses"],

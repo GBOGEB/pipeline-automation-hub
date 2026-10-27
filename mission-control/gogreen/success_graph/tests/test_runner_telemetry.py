@@ -20,8 +20,8 @@ SHA = "a" * 40
 
 class NativeGreenProof(unittest.TestCase):
     def setUp(self):
-        self.raw = json.loads(INPUT.read_text())
-        self.registry = json.loads(REGISTRY.read_text())
+        self.raw = json.loads(INPUT.read_text(encoding="utf-8"))
+        self.registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
 
     def invalid(self):
         with self.assertRaises((ValueError, AssertionError, KeyError, TypeError)):
@@ -111,10 +111,10 @@ class NativeGreenProof(unittest.TestCase):
             r = m.build(self.raw, self.registry, SHA, Path(path))
             for name, expected in r["manifest"]["files"].items():
                 self.assertEqual(m.digest((Path(path) / name).read_bytes()), expected)
-            page = (Path(path) / "index.html").read_text()
+            page = (Path(path) / "index.html").read_text(encoding="utf-8")
             self.assertIn("GoGREEN / GREEN-to-GREENER", page)
             self.assertIn("Current-head matches", page)
-            self.assertIn("HOLD", (Path(path) / "sipoc_dag.json").read_text())
+            self.assertIn("HOLD", (Path(path) / "sipoc_dag.json").read_text(encoding="utf-8"))
             self.assertFalse(r["manifest"]["artifact_bytes_verified_external"])
 
     def test_html_injection_escaped(self):
@@ -303,9 +303,9 @@ class NativeGreenProof(unittest.TestCase):
             with patch.object(sys, "argv", argv), contextlib.redirect_stdout(stdout):
                 runpy.run_path(str(BASE / "runner_telemetry.py"), run_name="__main__")
             self.assertEqual(json.loads(stdout.getvalue())["selected_green_runs"], 24)
-            self.assertEqual(json.loads((dst / "metrics.json").read_text())
+            self.assertEqual(json.loads((dst / "metrics.json").read_text(encoding="utf-8"))
                              ["top21_head_discovered"], 21)
-            manifest = json.loads((dst / "manifest.json").read_text())
+            manifest = json.loads((dst / "manifest.json").read_text(encoding="utf-8"))
             for name, checksum in manifest["files"].items():
                 self.assertEqual(checksum, m.digest((dst / name).read_bytes()))
 

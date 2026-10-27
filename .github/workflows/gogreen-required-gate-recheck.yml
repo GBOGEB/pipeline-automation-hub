@@ -1,0 +1,130 @@
+name: GOGREEN Required Gate Re-check
+
+# When an ENFORCED gate finishes green on a PR head, re-run the latest FAILED
+# "GOGREEN required gate" run on that same head, so re-running a red gate turns the required
+# check green without a manual aggregator re-run (issue #886).
+#
+# workflow_run always runs this file from the default branch, so it is privileged: it checks
+# out github.sha (the default-branch commit) and asserts HEAD equals it, never the PR head;
+# event values reach the script only through env, and the script validates the head SHA.
+# The only write is POST /actions/runs/{id}/rerun on an aggregator run (actions: write).
+#
+# The names list below is generated from ADMISSION.json (ENFORCED) and kept in sync by
+# test_gate.py: python mission-control/gogreen/required_gate/gate.py recheck-names --write
+on:
+  workflow_run:
+    types: [completed]
+    workflows:
+      # BEGIN recheck-names
+      - "BD Workflow Frequency Telemetry"
+      - "CODE PURPLE CP.CLOSE W10 lossless handover qualification"
+      - "CODE PURPLE Disjoint Live Census (read-only)"
+      - "CODE PURPLE Live Lossless QA"
+      - "CODE PURPLE M3 Lossless Stabilization"
+      - "CODE PURPLE Method Atlas (read-only)"
+      - "CODE PURPLE Mycelium History Testflight"
+      - "CP.CLOSE GitHub Handover QA"
+      - "CP.FED W4 canonical handover and public CENSUS QA"
+      - "Dependency SPINE Peer Source Census (HUB)"
+      - "Excel Schedule Engine"
+      - "First-Pass Closure Proof"
+      - "Fleet Open-Issue Convergence"
+      - "G3P Live Ledger QA"
+      - "GM DAB Flake8 Propagation Control"
+      - "GM DMAIC Evolution Control"
+      - "GM Top7 Depth3 Mission Control"
+      - "GM-FLEET-02B Closeout"
+      - "GM-FLEET-03 Capacity Gate"
+      - "GM-FLEET-03 F01 Pilot"
+      - "GM-FLEET-03 F03 Pilot"
+      - "GM-FLEET-03 Ring1 Recon"
+      - "GM-FLEET-03 Ring2 Recon"
+      - "GM-FLEET-04 Ring2 Scout A"
+      - "GM-FLEET-04 Ring2 Scout B"
+      - "GM-IV ACTIVE_8 Governor Readiness"
+      - "GM-IV Evidence Economics"
+      - "GM-IV Forward Gate Safety"
+      - "GM-IV PILOT_2_OF_8 Final Recensus"
+      - "GM-IV PILOT_2_OF_8 Governor"
+      - "GM-IV Runtime Capability Capacity Proof v2"
+      - "GOGREEN G0 Positive Evidence Testflight"
+      - "GOGREEN G1/G3 Coverage and Bounded Scaling Proof"
+      - "GOGREEN G4 MissionControl-Wide Bounded Census"
+      - "GOGREEN G4 Wave Metrics"
+      - "GoGREEN G12 read-only incubation and native preview"
+      - "Golden Thread Replay"
+      - "JADE_CASTE N+3 eight-point MIP qualification (read-only)"
+      - "LM-10 W260 BD-260.5 TRIAGE"
+      - "Level 1 MIP"
+      - "MC-S2 A3 Validator Enforcement"
+      - "MC-S2 A4 Dashboard TODO Surface"
+      - "Mission Control M3 graph and portal contract"
+      - "Mission Control W4 SPINE control-plane (read-only)"
+      - "Mission Control v2 Contract"
+      - "MissionControl Crew Capability System"
+      - "MissionControl Crew Frontier PCA BT"
+      - "MissionControl Crew PC3 Conditional BT"
+      - "MissionControl Historian Register Control"
+      - "MissionControl Makeover Navigator (read-only QA)"
+      - "MissionControl Measured Crew Allocation"
+      - "MissionControl Repeat Stable Acceptance"
+      - "MissionControl Temporal 3PR MIP Control Surface"
+      - "MissionControl Temporal 3PSTAR MIP Burndown"
+      - "MissionControl Temporal Effect Diagnostics"
+      - "MissionControl gg_MATH convergence read-only bridge"
+      - "P process (Code Purple x EVERRED) offline tests"
+      - "QPS Metric Census Federation N-pulse"
+      - "QPS Repo Function Topology"
+      - "QPS TRIAGE ULTRA Federation Control"
+      - "QPS TRIAGE W3 Measured Analytics"
+      - "QPS Triage Web DoV"
+      - "Runner Fanout MIP Control"
+      - "W3-11 Non-Origin Math Consumer"
+      - "W3-13 Measured Fleet Telemetry"
+      - "W3-14 Measured PCA"
+      - "W3-16 M03 W0 Recon"
+      - "Zero-Test Gate Guard"
+      # END recheck-names
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gogreen-required-gate-recheck-${{ github.event.workflow_run.head_sha }}
+  cancel-in-progress: true
+
+jobs:
+  recheck:
+    name: Re-run failed GOGREEN required gate
+    if: github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Assert checkout is the default-branch commit
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          if [ "$actual" != "$EXPECTED_SHA" ]; then
+            echo "::error::checked out $actual, expected $EXPECTED_SHA"
+            exit 1
+          fi
+      - name: Re-run the latest failed aggregator run on this head
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          GATE_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          GATE_RUN_URL: ${{ github.event.workflow_run.html_url }}
+        run: |
+          set -euo pipefail
+          echo "triggered by $GATE_RUN_URL"
+          python3 mission-control/gogreen/required_gate/gate.py recheck \
+            --sha "$HEAD_SHA" --conclusion "$GATE_CONCLUSION"

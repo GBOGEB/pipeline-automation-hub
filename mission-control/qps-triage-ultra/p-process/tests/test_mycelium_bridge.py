@@ -9,7 +9,7 @@ P=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location("p_mycelium_bridge",P/"mycelium_bridge.py")
 m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 SITE=P/"site"
-load=lambda path:json.loads((SITE/path).read_text())
+load=lambda path:json.loads((SITE/path).read_text(encoding="utf-8"))
 SHA="a"*40
 
 class MyceliumCandidate(unittest.TestCase):

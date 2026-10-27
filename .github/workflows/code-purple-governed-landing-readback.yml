@@ -1,0 +1,72 @@
+name: CODE PURPLE Governed Landing Readback (advisory HOLD only)
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/required_gate/governed_landing_probe.py'
+      - 'mission-control/gogreen/tests/test_governed_landing_probe.py'
+      - '.github/workflows/code-purple-governed-landing-readback.yml'
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Hub PR to inspect with READ-ONLY native GitHub GET"
+        type: number
+        required: true
+
+permissions:
+  contents: read
+  pull-requests: read
+  checks: read
+
+concurrency:
+  group: cp-governed-readback-${{ github.event.pull_request.number || inputs.pr_number }}-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  readback:
+    name: Exact-source governance evidence and negative contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Checkout exact workflow head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12'
+      - name: Contract tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/gogreen/tests -p 'test_governed_landing_probe.py' -v
+      - name: Read hub metadata without merge or dispatch
+        shell: bash
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/required_gate/governed_landing_probe.py \
+            --pr "$PR_NUMBER" --out "$RUNNER_TEMP/governed-admission-readback.json"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          doc=json.loads((Path(os.environ['RUNNER_TEMP'])/'governed-admission-readback.json').read_text())
+          assert doc['merge_allowed'] is False
+          assert doc['readiness']=='HOLD'
+          assert doc['formal_engineering_credit_delta']==0
+          assert doc['source_quality'] in ('AUTHENTICATED_GITHUB_GET_PARTIAL_THREAD_AND_CANARY',
+                                           'UNKNOWN_ACCESS_OR_RUNTIME')
+          print('GOVERNED_READBACK_HOLD_IS_CORRECT=PASS')
+          PY
+      - name: Upload read-only evidence, not a merge approval
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: governed-readback-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/governed-admission-readback.json
+          if-no-files-found: warn
+          retention-days: 21
