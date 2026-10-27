@@ -11,6 +11,7 @@ import argparse
 from datetime import datetime
 import json
 import math
+import re
 from pathlib import Path
 
 SCHEMA = "issue-rank-wave-control/v1"
@@ -19,6 +20,9 @@ METRICS = ("open_issues", "open_prs", "tasks_done", "tasks_total",
            "dov_declared", "measurable", "prs_red", "prs_unreviewed",
            "stale_21d", "actionable", "parked", "deadlocked")
 PERCENT = frozenset(("checklist_coverage", "dod_declared", "dov_declared", "measurable"))
+COUNTS = frozenset(METRICS) - PERCENT
+SHA40 = re.compile(r"[0-9a-f]{40}\\Z", re.I)
+SHA64 = re.compile(r"[0-9a-f]{64}\\Z", re.I)
 
 
 def _time(value):
@@ -38,6 +42,8 @@ def _numeric(value, field):
         raise ValueError("invalid numeric telemetry: " + field)
     if value < 0 or (field in PERCENT and value > 1):
         raise ValueError("out-of-range telemetry: " + field)
+    if field in COUNTS and not float(value).is_integer():
+        raise ValueError("fractional count telemetry: " + field)
     return value
 
 
@@ -53,6 +59,11 @@ def _scope(row, scope):
     values = {k: _numeric(metrics[k], k) for k in METRICS if k in metrics}
     if "open_issues" not in values or "open_prs" not in values:
         raise ValueError("open item denominator absent")
+    for part, whole in (("tasks_done", "tasks_total"), ("prs_red", "open_prs"),
+                        ("prs_unreviewed", "open_prs"), ("deadlocked", "open_issues"),
+                        ("parked", "open_issues"), ("actionable", "open_issues")):
+        if part in values and whole in values and values[part] > values[whole]:
+            raise ValueError("impossible count subset: " + part)
     flow = metrics.get("flow") or {}
     burn = flow.get("net_burn_per_day") or {}
     if burn:
@@ -82,11 +93,21 @@ def summarize(rows, scope="USER", j=3):
                 "authority": "ADVISORY_ONLY", "merge_admission": "HOLD"}
     window = rows[-j - 1:]
     summaries, times, memberships, versions = [], [], [], []
+    prev_receipt = None
     for index, row in enumerate(window):
         if type(row.get("seq")) is not int:
             raise ValueError("ledger seq missing")
         if index and row["seq"] != window[index - 1]["seq"] + 1:
             raise ValueError("non-contiguous ledger sequence")
+        receipt = row.get("row_sha256")
+        previous = row.get("prev_sha256")
+        if not isinstance(receipt, str) or not SHA64.fullmatch(receipt):
+            raise ValueError("invalid 64-hex ledger receipt")
+        if previous is not None and (not isinstance(previous, str) or not SHA64.fullmatch(previous)):
+            raise ValueError("invalid previous receipt shape")
+        if index and previous is not None and previous != prev_receipt:
+            raise ValueError("mismatched previous ledger receipt link")
+        prev_receipt = receipt
         tele = row.get("telemetry") or {}
         t = _time(tele.get("fetched_at"))
         if times and t <= times[-1]:
@@ -95,6 +116,9 @@ def summarize(rows, scope="USER", j=3):
         heads = tele.get("heads")
         if not isinstance(heads, dict) or not heads:
             raise ValueError("head census missing")
+        if any(not isinstance(k, str) or not k.startswith("GBOGEB/") or
+               not isinstance(v, str) or not SHA40.fullmatch(v) for k, v in heads.items()):
+            raise ValueError("invalid 40-hex source head provenance")
         memberships.append(frozenset(heads))
         method = tele.get("method") or {}
         versions.append(method.get("version"))
@@ -151,9 +175,14 @@ def summarize(rows, scope="USER", j=3):
         fd = (_scope(a, scope)[2]).get("window_days")
         if not isinstance(fd, (int, float)) or fd <= 0 or (later - earlier).total_seconds() < fd * 86400:
             independent_windows = False
+    flows = [_scope(r, scope)[2] for r in window]
     burns = [_scope(r, scope)[3] for r in window]
-    evidence_burn = (independent_windows and all(
-        b.get("lo", -math.inf) > 0 for b in burns))
+    valid_final_flow = all(f.get("window_days") == 14 and f.get("status") == "BURNING_DOWN"
+                           and b and b.get("lo", -math.inf) > 0
+                           for f, b in zip(flows, burns))
+    evidence_burn = independent_windows and valid_final_flow
+    if not valid_final_flow:
+        reasons.append("MISSING_OR_MIXED_FINAL_14D_FLOW")
     if not independent_windows:
         reasons.append("OVERLAPPING_OR_UNKNOWN_FLOW_WINDOWS")
     return {
