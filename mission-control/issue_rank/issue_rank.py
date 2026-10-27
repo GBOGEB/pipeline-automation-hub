@@ -698,7 +698,7 @@ def mycelium(nodes: dict, edges: list[dict]) -> dict[str, dict]:
 
 # ---------------------------------------------------------------- ranking
 
-PRIORITY = (("P0", 1.0), ("P1", 0.66), ("P2", 0.33), ("P3", 0.1))
+PRIORITY = (("P0", 1.0), ("P1", 0.66), ("P2", 0.33), ("P3", 0.1), ("P4", 0.0))
 # Urgency: what an item asks for on its own. An unknown part is imputed at the
 # scope mean, never 0; ``coverage`` is the share of weight actually observed.
 WEIGHTS = {"priority": 0.35, "nearness": 0.20, "pr_ready": 0.15, "age": 0.15, "idle": 0.15}
@@ -737,7 +737,7 @@ NEXT_STEP = {
 
 
 def priority_of(node: dict, overlay: dict | None = None) -> tuple[float | None, str | None]:
-    """(value, basis): an owner overlay first, then P0..P3 in labels or title. Unknown is None."""
+    """(value, basis): an owner overlay first, then P0..P4 in labels or title. Unknown is None."""
     o = (overlay or {}).get(key(node["repo"], node["number"])) or {}
     if o.get("priority") in dict(PRIORITY):
         return dict(PRIORITY)[o["priority"]], "OVERLAY"
@@ -778,7 +778,11 @@ def linked_prs(k: str, nodes: dict, edges: list[dict]) -> list[dict]:
 
 
 def _approved(p: dict) -> bool:
-    return p.get("review") == "APPROVED" or p.get("review_decision") == "APPROVED" or (p.get("approvals") or 0) > 0
+    """Explicit aggregate review denial overrides historical approvals."""
+    decision = p.get("review_decision")
+    if decision is None:
+        decision = p.get("review")
+    return decision == "APPROVED" if decision is not None else (p.get("approvals") or 0) > 0
 
 
 def classify(item: dict) -> tuple[str, str]:
@@ -801,7 +805,7 @@ def classify(item: dict) -> tuple[str, str]:
         return "PARKED", "parked intent: leave it until a wake trigger fires"
     if item.get("deadlock"):
         return "DEADLOCK", f"dependency cycle with {', '.join(item['deadlock'][:3])}: drop or re-plan one edge"
-    if item["open_blockers"] and cl["state"] != "ALL_TICKED":
+    if item["open_blockers"]:
         return "BLOCKED", (f"unblock first: {', '.join(item['open_blockers'][:3])}"
                            f" (blocker chain {item['chain']['below']})")
     if cl["state"] == "ALL_TICKED":
