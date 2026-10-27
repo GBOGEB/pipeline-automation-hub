@@ -1,0 +1,801 @@
+{
+  "schema": "gbogeb.title-taxonomy.vocabulary/1.0",
+  "grammar": "<type>(<scope>[,<scope>][ <qualifier>...])[!]: <subject>",
+  "levels": [
+    "type_family  e.g. defect",
+    "type         e.g. fix",
+    "family       e.g. jade-devops (the cluster a scope belongs to)",
+    "scope        e.g. census",
+    "qualifier    e.g. N12 (wave / pulse / step markers)",
+    "prefix       type(scope) concatenated, e.g. fix(census)"
+  ],
+  "types": {
+    "feat": {
+      "family": "change",
+      "aliases": [
+        "feature",
+        "features",
+        "add",
+        "new",
+        "enhancement",
+        "integrate",
+        "integration",
+        "ui"
+      ]
+    },
+    "fix": {
+      "family": "defect",
+      "aliases": [
+        "bugfix",
+        "hotfix",
+        "bug",
+        "patch",
+        "repair",
+        "hardening",
+        "harden",
+        "fix-forward"
+      ]
+    },
+    "docs": {
+      "family": "knowledge",
+      "aliases": [
+        "doc",
+        "documentation",
+        "readme"
+      ]
+    },
+    "ci": {
+      "family": "pipeline",
+      "aliases": [
+        "workflow",
+        "workflows",
+        "gha",
+        "actions",
+        "cd",
+        "infra"
+      ]
+    },
+    "build": {
+      "family": "pipeline",
+      "aliases": [
+        "deps",
+        "dependencies",
+        "release",
+        "packaging"
+      ]
+    },
+    "test": {
+      "family": "quality",
+      "aliases": [
+        "tests",
+        "testing",
+        "qa",
+        "canary",
+        "testflight"
+      ]
+    },
+    "refactor": {
+      "family": "quality",
+      "aliases": [
+        "refactoring",
+        "restructure",
+        "migration",
+        "assimilate"
+      ]
+    },
+    "perf": {
+      "family": "quality",
+      "aliases": [
+        "performance"
+      ]
+    },
+    "style": {
+      "family": "quality",
+      "aliases": [
+        "format",
+        "lint"
+      ]
+    },
+    "chore": {
+      "family": "maintenance",
+      "aliases": [
+        "housekeeping",
+        "maint",
+        "cleanup",
+        "governance",
+        "gov",
+        "govern",
+        "revive",
+        "sync",
+        "merge"
+      ]
+    },
+    "revert": {
+      "family": "maintenance",
+      "aliases": []
+    },
+    "plan": {
+      "family": "planning",
+      "aliases": [
+        "program",
+        "epic",
+        "tracker",
+        "rfi",
+        "wave",
+        "mission",
+        "triage"
+      ]
+    }
+  },
+  "families": {
+    "handover": {
+      "label": "handover",
+      "scopes": {
+        "handover": [
+          "handover",
+          "handoff",
+          "hand-off",
+          "=checkpoint",
+          "session-close",
+          "=closeout",
+          "=close-out"
+        ]
+      }
+    },
+    "gogreen": {
+      "label": "gogreen",
+      "scopes": {
+        "gogreen": [
+          "gogreen",
+          "go-green",
+          "gogreen-federation",
+          "=green"
+        ],
+        "gogreen-launcher": [
+          "gogreen-launcher",
+          "=launcher"
+        ],
+        "scale-dock": [
+          "scale-dock",
+          "scale_dock",
+          "scaledock",
+          "=dock"
+        ],
+        "depth": [
+          "=depth"
+        ]
+      }
+    },
+    "jade-devops": {
+      "label": "jade devops",
+      "scopes": {
+        "jade-devops": [
+          "jade devops",
+          "jade-devops",
+          "jade",
+          "jade-temple",
+          "jade_temple",
+          "jade waves",
+          "jade-waves",
+          "devops"
+        ],
+        "census": [
+          "census",
+          "token-census",
+          "devops-census",
+          "fleet-census"
+        ],
+        "cicd-dag": [
+          "cicd-dag",
+          "cicd_dag",
+          "=dag",
+          "=regen",
+          "sipoc"
+        ],
+        "rolling5": [
+          "rolling5",
+          "rolling-5",
+          "nirvana",
+          "focus5",
+          "golden-thread"
+        ]
+      }
+    },
+    "watch": {
+      "label": "watch",
+      "scopes": {
+        "watch": [
+          "watch",
+          "watch-vnext",
+          "watcher",
+          "owner-edge"
+        ],
+        "flightdeck": [
+          "flightdeck",
+          "flight-deck"
+        ],
+        "outbox": [
+          "outbox"
+        ]
+      }
+    },
+    "p-process": {
+      "label": "p-process",
+      "scopes": {
+        "p-process": [
+          "p-process",
+          "pprocess",
+          "p_process",
+          "p-decide",
+          "p_decide"
+        ],
+        "everred": [
+          "everred",
+          "ever-red",
+          "=red-trace"
+        ]
+      }
+    },
+    "mission-control": {
+      "label": "mission control",
+      "scopes": {
+        "mission-control": [
+          "mission-control",
+          "mission control",
+          "missioncontrol",
+          "mc",
+          "mcc"
+        ],
+        "g3": [
+          "g3a",
+          "g3c",
+          "g3p",
+          "g3-engine",
+          "g3_engine"
+        ]
+      }
+    },
+    "code-purple": {
+      "label": "code purple",
+      "scopes": {
+        "code-purple": [
+          "code-purple",
+          "code purple",
+          "codepurple",
+          "=cp",
+          "=purple",
+          "cpq"
+        ]
+      }
+    },
+    "qps": {
+      "label": "qps",
+      "scopes": {
+        "qps": [
+          "qps",
+          "qps triage",
+          "qps-triage",
+          "qps_deck",
+          "qps-deck",
+          "cool-down",
+          "cooldown"
+        ],
+        "qplant": [
+          "qplant",
+          "cryoplant",
+          "=cryo"
+        ],
+        "keb": [
+          "keb",
+          "knowledge-exchange-bridge"
+        ],
+        "triage": [
+          "=triage",
+          "qps-triage-ultra",
+          "lm-11"
+        ],
+        "cost": [
+          "cost",
+          "qps-cost",
+          "cost-control"
+        ]
+      }
+    },
+    "atlas": {
+      "label": "atlas",
+      "scopes": {
+        "atlas": [
+          "atlas",
+          "metric-atlas",
+          "federation-atlas",
+          "method-atlas"
+        ],
+        "metrics": [
+          "metrics",
+          "mcw",
+          "kpi-metrics"
+        ]
+      }
+    },
+    "mycelium": {
+      "label": "mycelium",
+      "scopes": {
+        "mycelium": [
+          "mycelium"
+        ],
+        "mesh": [
+          "mesh"
+        ]
+      }
+    },
+    "governance": {
+      "label": "governance",
+      "scopes": {
+        "governance": [
+          "governance",
+          "=gov",
+          "branch-hygiene",
+          "=policy",
+          "house_style",
+          "house-style",
+          "licence",
+          "license",
+          "branches",
+          "branch"
+        ],
+        "security": [
+          "security",
+          "codeql",
+          "supply-chain",
+          "=secrets"
+        ],
+        "first-pass-closure": [
+          "first-pass-closure",
+          "fpc",
+          "w305",
+          "=gate",
+          "=gates"
+        ],
+        "control": [
+          "control",
+          "=cp.close"
+        ],
+        "evidence": [
+          "evidence",
+          "receipt",
+          "receipts",
+          "attestation",
+          "=proof"
+        ]
+      },
+      "generic": true
+    },
+    "deps": {
+      "label": "dependencies",
+      "scopes": {
+        "deps": [
+          "deps",
+          "deps-pip",
+          "deps-npm",
+          "deps-actions",
+          "dependabot",
+          "dependencies",
+          "=pip",
+          "=npm"
+        ]
+      }
+    },
+    "ci-ops": {
+      "label": "ci / ops",
+      "scopes": {
+        "ci": [
+          "ci",
+          "=actions",
+          "=workflows",
+          "=runner",
+          "=runners",
+          "=runtime",
+          "runner-economics",
+          "runtime-health",
+          "py310",
+          "py-matrix"
+        ],
+        "pages": [
+          "=pages",
+          "=site",
+          "browser-qa"
+        ],
+        "dashboard": [
+          "dashboard",
+          "health-check"
+        ],
+        "release": [
+          "=release",
+          "releases",
+          "versioning"
+        ],
+        "infra": [
+          "infra",
+          "docker",
+          "devcontainer",
+          "codespaces",
+          "=mcp"
+        ]
+      },
+      "generic": true
+    },
+    "issue-burndown": {
+      "label": "issue burndown",
+      "scopes": {
+        "issue-burndown": [
+          "bd",
+          "burndown",
+          "issue-bd",
+          "triway",
+          "issue-rank",
+          "issue-expedition"
+        ],
+        "cbd": [
+          "cbd",
+          "char-bd",
+          "charter-bd",
+          "bdq"
+        ]
+      }
+    },
+    "physics": {
+      "label": "physics",
+      "scopes": {
+        "physics": [
+          "physics",
+          "physics-pin",
+          "coolprop",
+          "=thermo",
+          "math",
+          "gg-math"
+        ]
+      }
+    },
+    "fleet": {
+      "label": "fleet / federation",
+      "scopes": {
+        "fleet": [
+          "fleet",
+          "gm-fleet",
+          "=gm",
+          "federation",
+          "=fed",
+          "delta-1",
+          "orchestration"
+        ]
+      }
+    },
+    "dmaic": {
+      "label": "dmaic",
+      "scopes": {
+        "dmaic": [
+          "dmaic",
+          "dmaic-c3",
+          "dmaic-v3",
+          "gm14",
+          "gm-top7",
+          "testpilot",
+          "gm-iv",
+          "gm-v",
+          "gm-i"
+        ],
+        "dab": [
+          "dab",
+          "dab-hard",
+          "ldab"
+        ],
+        "sut": [
+          "sut"
+        ],
+        "mcl": [
+          "mcl"
+        ],
+        "g3cs": [
+          "g3cs"
+        ]
+      }
+    },
+    "quality": {
+      "label": "code quality",
+      "scopes": {
+        "coverage": [
+          "coverage",
+          "cov",
+          "cov-p1"
+        ],
+        "lint": [
+          "=lint",
+          "ruff",
+          "flake8",
+          "bandit",
+          "osv",
+          "house-style",
+          "e302",
+          "=style",
+          "semgrep",
+          "safety"
+        ],
+        "tests": [
+          "=tests",
+          "=test",
+          "pytest",
+          "smoke",
+          "testflight",
+          "=quality"
+        ]
+      },
+      "generic": true
+    },
+    "dow-dov": {
+      "label": "dow / dov",
+      "scopes": {
+        "dow": [
+          "dow",
+          "definition-of-work"
+        ],
+        "dov": [
+          "dov",
+          "dod",
+          "definition-of-verification"
+        ]
+      }
+    },
+    "cryo-eng": {
+      "label": "cryo engineering",
+      "scopes": {
+        "lkt": [
+          "lkt"
+        ],
+        "alat": [
+          "alat"
+        ],
+        "pvps": [
+          "pvps"
+        ],
+        "hepak": [
+          "hepak",
+          "helium",
+          "he-4",
+          "he4",
+          "vlp",
+          "qcell",
+          "rfcell",
+          "line-b",
+          "line-s"
+        ],
+        "offer": [
+          "offer",
+          "offer-eval",
+          "=eval",
+          "nego",
+          "bidder",
+          "rfi"
+        ]
+      }
+    },
+    "rtm-adr": {
+      "label": "rtm / adr",
+      "scopes": {
+        "rtm": [
+          "rtm",
+          "qps-rtm",
+          "docx-rtm",
+          "requirements",
+          "traceability"
+        ],
+        "adr": [
+          "adr",
+          "ocd",
+          "ocd-adr"
+        ]
+      }
+    },
+    "pca": {
+      "label": "pca / bt",
+      "scopes": {
+        "pca": [
+          "pca",
+          "pca-engine",
+          "=bt",
+          "kpi",
+          "ariana"
+        ]
+      }
+    },
+    "mip-3p": {
+      "label": "mip / 3p",
+      "scopes": {
+        "mip": [
+          "mip",
+          "3pr",
+          "3p",
+          "3pc",
+          "3pstar",
+          "3p*"
+        ]
+      }
+    },
+    "historian": {
+      "label": "historian / lineage",
+      "scopes": {
+        "historian": [
+          "historian",
+          "rex"
+        ],
+        "lineage": [
+          "lineage",
+          "provenance",
+          "temporal"
+        ]
+      }
+    },
+    "knowledge": {
+      "label": "knowledge / docs",
+      "scopes": {
+        "docs": [
+          "=docs",
+          "=readme",
+          "slides",
+          "index.html",
+          "glossary",
+          "claude-md",
+          "book"
+        ],
+        "gistau": [
+          "gistau",
+          "gistau-ch15"
+        ],
+        "semantic": [
+          "semantic",
+          "ssot",
+          "taxonomy"
+        ],
+        "office": [
+          "excel",
+          "xlsx",
+          "pptx",
+          "docx",
+          "word",
+          "=html",
+          "presentation-engine"
+        ]
+      },
+      "generic": true
+    },
+    "minerva": {
+      "label": "minerva p&id",
+      "scopes": {
+        "minerva": [
+          "minerva",
+          "minerva-pid",
+          "minerva_pid",
+          "p-id"
+        ]
+      }
+    }
+  },
+  "qualifiers": [
+    {
+      "class": "wave",
+      "pattern": "^W\\d+[A-Z0-9]*(-[A-Z0-9.]+)*$"
+    },
+    {
+      "class": "pulse",
+      "pattern": "^N(\\+)?\\d+([\\-–]N?\\+?\\d+)?$"
+    },
+    {
+      "class": "jade-step",
+      "pattern": "^J\\d+$"
+    },
+    {
+      "class": "gate-phase",
+      "pattern": "^G\\d+[A-Z]{0,2}$"
+    },
+    {
+      "class": "user-ticket",
+      "pattern": "^U\\d+$"
+    },
+    {
+      "class": "priority-phase",
+      "pattern": "^P\\d+[A-Z0-9.]*$"
+    },
+    {
+      "class": "fleet-step",
+      "pattern": "^F\\d+$"
+    },
+    {
+      "class": "round",
+      "pattern": "^R\\d+$"
+    },
+    {
+      "class": "version",
+      "pattern": "^(v\\d+(\\.\\d+)*|\\d+\\.\\d+(\\.\\d+)*)$"
+    },
+    {
+      "class": "program",
+      "pattern": "^(GM|LM|HM|CPQ|COV|MC)-?\\d+[A-Z]?$"
+    },
+    {
+      "class": "ticket",
+      "pattern": "^[A-Z]{2,6}-\\d{1,4}[A-Z]?$"
+    },
+    {
+      "class": "pr-ref",
+      "pattern": "^(PR-?|#)\\d+$"
+    },
+    {
+      "class": "rank",
+      "pattern": "^rank\\d+$"
+    }
+  ],
+  "type_keywords": [
+    [
+      "fix",
+      "\\b(ci failure|fail(s|ed|ing|ure|ures)?|broken|bugs?|errors?|regression|crash(es)?|red|repair|fix(es|ed)?|stale|missing|wrong|incorrect)\\b"
+    ],
+    [
+      "revert",
+      "\\brevert(s|ed)?\\b"
+    ],
+    [
+      "test",
+      "\\b(tests?|testing|repeat pass|acceptance|qa|verify|verification|validate|validation|probe|proof)\\b"
+    ],
+    [
+      "docs",
+      "\\b(docs?|readme|guide|handbook|write-?up|documentation|explainer)\\b"
+    ],
+    [
+      "ci",
+      "\\b(workflows?|pipelines?|runners?|actions|required (check|status))\\b"
+    ],
+    [
+      "refactor",
+      "\\b(refactor\\w*|restructur\\w*|renam\\w*|consolidat\\w*|migrat\\w*|dedup\\w*)"
+    ],
+    [
+      "perf",
+      "\\b(perf|performance|faster|latency|speed ?up)\\b"
+    ],
+    [
+      "chore",
+      "\\b(housekeeping|cleanup|clean up|bump|void|duplicate|accidental|placeholder|archive|purge|rotate|close #\\d+)\\b"
+    ],
+    [
+      "plan",
+      "\\b(tracker|epic|waves?|plan|roadmap|backlog|rfi|decide|intake|phase \\d+|program|mission|triage|lane|register)\\b"
+    ],
+    [
+      "feat",
+      "\\b(add(s|ed)?|introduce[sd]?|implement\\w*|new|support|enable[sd]?|launch\\w*)\\b"
+    ]
+  ],
+  "notes": {
+    "explicit_only": "An alias starting with '=' matches only inside an explicit type(scope) prefix or a label, never in free-text keyword inference (too generic).",
+    "qualifiers": "Qualifier patterns match case-insensitively; a token that is a known scope alias stays a scope.",
+    "generic": "Generic (cross-cutting) families lose to domain families when a scope is inferred from free text."
+  },
+  "label_types": {
+    "bug": "fix",
+    "enhancement": "feat",
+    "feature": "feat",
+    "documentation": "docs",
+    "docs": "docs",
+    "dependencies": "build",
+    "ci": "ci",
+    "test": "test",
+    "tests": "test",
+    "refactor": "refactor",
+    "performance": "perf",
+    "chore": "chore",
+    "question": "plan",
+    "epic": "plan",
+    "tracker": "plan",
+    "rfi": "plan"
+  }
+}
