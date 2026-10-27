@@ -99,10 +99,8 @@ class PeerConfidence(unittest.TestCase):
         now=model([row(HUB,1,"fix(watch): status")],
                   at="2026-10-26T13:00:00Z")
         now["heads"][QPS]["private"]=False
-        out=peers.analyze(now,old)
-        self.assertFalse(out["previous_population_comparable"])
-        self.assertEqual(out["peer_delta"],{})
-        self.assertEqual(out["formal_credit_delta"],0)
+        with self.assertRaisesRegex(ValueError,"SOURCE_VISIBILITY_CHANGED"):
+            peers.analyze(now,old)
 
     def test_reverse_pulse_and_bad_model_fail(self):
         old=model([row(HUB,1,"fix: x")],at="2026-10-26T14:00:00Z")
