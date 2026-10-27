@@ -275,8 +275,9 @@ class Privacy(unittest.TestCase):
             self.assertNotIn(leaked, text)
         boundary = ir._boundary().Boundary([QPS])
         self.assertEqual(boundary.project({"model": model, "delta": delta}), {"model": model, "delta": delta})
-        self.assertEqual(len(delta["new_items"]), 1)
-        self.assertTrue(delta["new_items"][0].startswith(f"{QPS}#PRIVATE-"))
+        self.assertEqual(delta["new_items"], [])
+        self.assertFalse(any(i["repo"] == QPS for i in model["items"]))
+        self.assertEqual(delta["private_item_movement"], "UNKNOWN_AGGREGATE_ONLY")
 
 
 class RedactedPulse(unittest.TestCase):
