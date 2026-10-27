@@ -44,7 +44,7 @@ jobs:
             test_taxonomy_root_occurrence test_taxonomy_dmaic_efficacy \
             test_taxonomy_slowburn_crew test_taxonomy_peer_confidence \
             test_taxonomy_successor_audit test_taxonomy_coverage_n15
-          python -m coverage report --fail-under=75
+          python -m coverage report --fail-under=90
           python -m coverage json -o coverage-n15.json
           python - <<'PY'
           import json
@@ -60,8 +60,8 @@ jobs:
           zero=[path for path,v in files.items() if v["summary"]["covered_lines"]==0]
           assert not zero, ("ZERO_COVERED_FILES",zero)
           under=[(path,v["summary"]["percent_covered"]) for path,v in files.items()
-                 if v["summary"]["percent_covered"] < 60]
-          assert not under, ("PER_MODULE_BELOW_60",under)
+                 if v["summary"]["percent_covered"] < 85]
+          assert not under, ("PER_MODULE_BELOW_85",under)
           print("N15_SCOPE_COVERAGE",json.dumps({
             "scope_modules":len(files),"zero_covered_files":len(zero),
             "combined_percent":data["totals"]["percent_covered"],
