@@ -59,8 +59,8 @@ jobs:
           from pathlib import Path
           log = (Path(os.environ["RUNNER_TEMP"]) / "devops-tests.log").read_text()
           ran = [int(n) for n in re.findall(r"^Ran (\d+) tests in ", log, re.M)]
-          if not ran or ran[-1] < 76:
-              raise SystemExit("DEVOPS_TEST_POPULATION_FIRST_RED: need >= 76 executed tests")
+          if not ran or ran[-1] < 89:
+              raise SystemExit("DEVOPS_TEST_POPULATION_FIRST_RED: need >= 89 executed tests")
           if re.search(r"skipped=\d+", log):
               raise SystemExit("DEVOPS_TEST_SKIP_FIRST_RED: no skipped tests on the hosted runner")
           subprocess.run(["python", "-m", "coverage", "json", "-q", "-o", os.environ["RUNNER_TEMP"] + "/devops-coverage.json"], check=True)
