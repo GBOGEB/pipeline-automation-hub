@@ -132,59 +132,13 @@ def key(repo: str, number: int) -> str:
 
 
 def extract_refs(text: str | None, home: str, owner: str = OWNER, pr: bool = False) -> list[dict]:
-    """``triway.references()`` with graph edge kinds.
+    """Map canonical triway parser output to the issue-rank edge vocabulary."""
+    if owner != OWNER:
+        raise ValueError(f"triway parses GBOGEB references only, not {owner!r}")
+    return [{"repo": r["repo"], "number": r["number"],
+             "kind": KIND.get(r["kind"], "MENTION"), "ticked": r.get("ticked")}
+            for r in triway.references(text or "", home, pr=pr)]
 
-    ``home`` is ``owner/repo``; bare ``#N`` resolves there. ``pr`` selects the PR
-    reading (closing claims become CLOSES). triway reads GBOGEB references only,
-    so another owner fails closed.
-    """
-    out, seen = [], set()
-    in_code = False
-    for line in (text or "").splitlines():
-        if line.lstrip().startswith("```"):
-            in_code = not in_code
-            continue
-        if in_code:
-            continue
-        line = re.sub(r"`[^`]*`", "", line)
-        check = CHECK.match(line)
-        last = 0
-        for m in REF.finditer(line):
-            if m.group("un"):
-                repo, n = f"{m.group('uo')}/{m.group('ur')}", int(m.group("un"))
-            elif m.group("n"):
-                repo, n = f"{m.group('o')}/{m.group('r')}", int(m.group("n"))
-            elif m.group("an"):
-                alias = re.sub(r"\s+", " ", m.group("al").lower())
-                repo, n = f"{owner}/{ALIASES[alias]}", int(m.group("an"))
-            else:
-                repo, n = home, int(m.group("b"))
-            if repo.split("/")[0].lower() != owner.lower():
-                continue
-            # The typing window ends at the '#', so "QPS parent #1920" sees "parent";
-            # a keyword binds to the next reference only.
-            end = m.start("an") - 1 if m.group("an") else m.start()
-            before = line[max(last, end - 48):end]
-            last = m.end()
-            kind = "MENTION"
-            for name, rx in TYPED:
-                hit = rx.search(before)
-                if hit:
-                    kind = "MENTION" if NEGATED.search(before[:hit.start()]) else name
-                    break
-            # Only live [ ] / [x] items make a CHILD. A dropped [~] / [-] item is withdrawn:
-            # every reference in it stays a mention, whatever keyword precedes it.
-            live = check is not None and check.group(1) not in "~-"
-            if check is not None and not live:
-                kind = "MENTION"
-            elif live and kind == "MENTION":
-                kind = "CHILD"
-            k = (repo, n, kind)
-            if k not in seen:
-                seen.add(k)
-                out.append({"repo": repo, "number": n, "kind": kind,
-                            "ticked": (check.group(1) in "xX") if live else None})
-    return out
 
 # ---------------------------------------------------------------- fetch
 
