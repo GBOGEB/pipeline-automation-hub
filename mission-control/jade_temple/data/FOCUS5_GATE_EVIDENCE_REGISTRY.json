@@ -38,6 +38,10 @@
       ]
     },
     "GBOGEB/DOCX_RTM_Automation": {
+      "H04": [
+        {"workflow": ".github/workflows/dependency-lock.yml",
+         "proves": "hash-pinned Python lock (--require-hashes, no drift, installed set equals lock) and npm ci from the committed lockfile with no rewrite (DOCX_RTM_Automation#97)"}
+      ],
       "H05": [
         {"workflow": ".github/workflows/python-ci.yml", "proves": "Python pytest suite and recursive alignment lock"}
       ],
