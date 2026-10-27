@@ -1,8 +1,8 @@
-name: Taxonomy N15 Full 11-module Coverage
+name: Taxonomy N15 Full 10-module Coverage
 on:
   pull_request:
     paths:
-      - '.github/workflows/taxonomy-n15-11-module-coverage.yml'
+      - '.github/workflows/taxonomy-n15-10-module-coverage.yml'
       - 'mission-control/issue_rank/test_taxonomy_coverage_n15.py'
   workflow_dispatch: {}
 permissions:
@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   coverage:
-    name: N15 11-module branch frontier (py${{ matrix.python }})
+    name: N15 10-module branch frontier (py${{ matrix.python }})
     runs-on: ubuntu-24.04
     timeout-minutes: 12
     strategy:
@@ -32,15 +32,15 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ matrix.python }}
-      - name: Eleven module source+branch coverage / no zero-covered files
+      - name: Ten module source+branch coverage / no zero-covered files
         working-directory: mission-control/issue_rank
         run: |
           set -euo pipefail
           python -m pip install --disable-pip-version-check coverage==7.13.3
           python -m coverage run --branch \
-            --source=title_taxonomy,taxonomy_pulse,taxonomy_explorer,taxonomy_metadata_plan,taxonomy_admission_audit,taxonomy_public_ingress,taxonomy_root_occurrence,taxonomy_dmaic_efficacy,taxonomy_slowburn_crew,taxonomy_peer_confidence,taxonomy_successor_audit \
+            --source=title_taxonomy,taxonomy_pulse,taxonomy_explorer,taxonomy_metadata_plan,taxonomy_public_ingress,taxonomy_root_occurrence,taxonomy_dmaic_efficacy,taxonomy_slowburn_crew,taxonomy_peer_confidence,taxonomy_successor_audit \
             -m unittest -v test_title_taxonomy test_taxonomy_pulse test_taxonomy_explorer \
-            test_taxonomy_metadata_plan test_taxonomy_admission_audit test_taxonomy_public_ingress \
+            test_taxonomy_metadata_plan test_taxonomy_public_ingress \
             test_taxonomy_root_occurrence test_taxonomy_dmaic_efficacy \
             test_taxonomy_slowburn_crew test_taxonomy_peer_confidence \
             test_taxonomy_successor_audit test_taxonomy_coverage_n15
@@ -51,7 +51,7 @@ jobs:
           data=json.load(open("coverage-n15.json",encoding="utf-8"))
           expected={
               "title_taxonomy.py","taxonomy_pulse.py","taxonomy_explorer.py",
-              "taxonomy_metadata_plan.py","taxonomy_admission_audit.py",
+              "taxonomy_metadata_plan.py",
               "taxonomy_public_ingress.py","taxonomy_root_occurrence.py",
               "taxonomy_dmaic_efficacy.py","taxonomy_slowburn_crew.py",
               "taxonomy_peer_confidence.py","taxonomy_successor_audit.py"}
