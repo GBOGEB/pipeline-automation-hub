@@ -253,7 +253,7 @@ def references(body, repo, pr=False):
                 continue
             target = identity("GBOGEB/" + name, num)
             before = re.split(r"[.!?;]", window[-90:])[-1]
-            join_window = (line[last_end - len(window):m.start("alias")]
+            join_window = (line[last_end:m.start("alias")]
                            if m.group("aliasnum") is not None else window)
             if withdrawn:
                 kind = "PR_ASSOCIATION" if pr else "TEXT_ASSOCIATION"
