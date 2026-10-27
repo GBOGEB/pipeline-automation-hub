@@ -68,14 +68,24 @@ def analyze(current:dict,previous:dict|None=None,*,public=True) -> dict:
     if earlier is not None:
         if pulse._timestamp(earlier["fetched_at"]) >= pulse._timestamp(c["fetched_at"]):
             raise ValueError("REVERSED_PULSE")
-        matched=set(c["heads"])==set(earlier["heads"])
-        old=_report_visible(earlier)
-        for key in sorted(set(now["peers"])|set(old["peers"])):
-            curr=now["peers"].get(key,{"count":0})["count"]
-            prev=old["peers"].get(key,{"count":0})["count"]
-            delta[key]={"current":curr,"previous":prev,
-                        "open_population_delta":curr-prev,
-                        "verified_root_closure":None}
+        # Compare the full source-repository population *before* public
+        # redaction. Otherwise a missing private repository is silently
+        # hidden, yielding a false matched cohort despite source drift.
+        current_sources=current["heads"]
+        previous_sources=previous["heads"]
+        matched=(set(current_sources)==set(previous_sources) and
+                 all(bool(current_sources[k].get("private")) ==
+                     bool(previous_sources[k].get("private"))
+                     for k in current_sources) and
+                 set(c["heads"])==set(earlier["heads"]))
+        if matched:
+            old=_report_visible(earlier)
+            for key in sorted(set(now["peers"])|set(old["peers"])):
+                curr=now["peers"].get(key,{"count":0})["count"]
+                prev=old["peers"].get(key,{"count":0})["count"]
+                delta[key]={"current":curr,"previous":prev,
+                            "open_population_delta":curr-prev,
+                            "verified_root_closure":None}
     result={
         "schema":SCHEMA,"taxonomy_schema":pulse.tax.SCHEMA,
         "source_grade":"NON_ATOMIC_GITHUB_OPEN_ITEMS_HEADS",
@@ -83,6 +93,8 @@ def analyze(current:dict,previous:dict|None=None,*,public=True) -> dict:
         "visibility":"PUBLIC_PROJECTION" if public else "OWNER_PRIVATE_ONLY",
         "current":now,
         "previous_population_comparable":matched if earlier is not None else None,
+        "population_comparison":("SOURCE_AND_VISIBLE_MATCHED" if matched else
+            "WITHHELD_SOURCE_OR_PRIVACY_SCOPE_DRIFT" if earlier is not None else "BASELINE_ONLY"),
         "peer_delta":delta,
         "delta_is_causal":False,
         "count_of_absent_open_items_is_not_closure":True,
