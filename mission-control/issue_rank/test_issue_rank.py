@@ -243,10 +243,7 @@ class Rank(unittest.TestCase):
 
     def test_redact_hides_private_text(self):
         red = ir.redact(self.m)
-        q = next(i for i in red["items"] if i["repo"] == QPS)
-        self.assertEqual(q["key"], f"{QPS}#PRIVATE-001")
-        self.assertIsNone(q["title"])
-        self.assertIsNone(q["number"])
+        self.assertFalse(any(i["repo"] == QPS for i in red["items"]))  # aggregate-only privacy
         self.assertNotIn(f"{QPS}#7", json.dumps(red))
         self.assertIsNone(red["heads"][QPS]["head_sha"])
         self.assertNotIn("secret", json.dumps(red))
