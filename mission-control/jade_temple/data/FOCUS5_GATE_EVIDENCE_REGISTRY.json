@@ -46,6 +46,14 @@
       ]
     },
     "GBOGEB/yaml-grammar": {
+      "H04": [
+        {"workflow": ".github/workflows/build-contract.yml",
+         "proves": "stdlib-only CI path under python -I -S, SHA-pinned actions, stated Python floor 3.11, test-count guard (yaml-grammar#6)"}
+      ],
+      "H06": [
+        {"workflow": ".github/workflows/grammar-user-smoke.yml",
+         "proves": "make comments regenerates byte-identically and Perl YAML::PP parity of the YAML and JSON grammar, with negative controls (yaml-grammar#7)"}
+      ],
       "H05": [
         {"workflow": ".github/workflows/grammar-native-smoke.yml",
          "proves": "native unittest suite over the 211-production fixture on Python 3.11 and 3.12"}
