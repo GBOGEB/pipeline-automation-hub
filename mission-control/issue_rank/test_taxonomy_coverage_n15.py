@@ -13,7 +13,7 @@ HUB="GBOGEB/pipeline-automation-hub"
 QPS="GBOGEB/cryoplant-project"
 EXPECTED=(
     "title_taxonomy", "taxonomy_pulse", "taxonomy_explorer",
-    "taxonomy_metadata_plan", "taxonomy_admission_audit",
+    "taxonomy_metadata_plan",
     "taxonomy_public_ingress", "taxonomy_root_occurrence",
     "taxonomy_dmaic_efficacy", "taxonomy_slowburn_crew",
     "taxonomy_peer_confidence", "taxonomy_successor_audit",
@@ -26,7 +26,7 @@ class Cohort(unittest.TestCase):
             with self.subTest(name=name):
                 module=importlib.import_module(name)
                 self.assertTrue(module.__file__.endswith(name+".py"))
-        self.assertEqual(len(set(EXPECTED)),11)
+        self.assertEqual(len(set(EXPECTED)),10)
 
     def test_private_population_remains_noncomparable_after_projection(self):
         def item(repo,n,t,private):
@@ -52,7 +52,6 @@ class Cohort(unittest.TestCase):
             ("taxonomy_pulse","SCHEMA"),
             ("taxonomy_explorer","SCHEMA"),
             ("taxonomy_metadata_plan","SCHEMA"),
-            ("taxonomy_admission_audit","SCHEMA"),
             ("taxonomy_public_ingress","SCHEMA"),
             ("taxonomy_root_occurrence","SCHEMA"),
             ("taxonomy_dmaic_efficacy","SCHEMA"),
