@@ -29,22 +29,29 @@ if it returns 401). Each scope writes to `out/<scope>/`: `snapshot.json`, `issue
 
 `out/` is gitignored. This repository is public and `cryoplant-project` is private, so
 snapshots and rankings never get committed. `--redact-private` strips titles, URLs and
-free-text actions of private items before anything is written.
+free-text actions of private items before anything is written, and does not persist
+`snapshot.json` (raw bodies and comments): it deletes any earlier copy and keeps only the
+snapshot digest in the ledger.
 
 ## Per-item progress (DoV / DoD / steps)
 
-The parser reads the issue body (comments are status notes, not the plan):
+Parsing belongs to the triway burndown: `parse_checklist()` here maps
+`triway_burndown.checklist()` (in `qps-triage-ultra/issue-expedition/`) onto counts per
+section, and its plan file holds the vocabulary. In short, the parser reads the issue
+body (comments are status notes, not the plan):
 
-- `- [x]` is done, `- [ ]` is open, `- [~]` / `- [-]` are dropped and not counted.
-- The nearest heading sets the kind: **DOV** (DoV, verification, validation, evidence,
-  proof), **DOD** (DoD, definition of done, acceptance, exit criteria, closure, done
-  when, victory, predicate, required outputs/disposition/return), **STEPS** (steps,
-  tasks, todo, plan, checklist, deliverables, next actions). An inline `- [ ] DoD: …`
-  overrides the heading.
-- Plain bullets under a DOV / DOD / STEPS heading are **declared but untracked**
-  criteria. They are counted as `untracked`, never as done.
-- A checklist item that references another issue (`- [ ] #123`) makes that issue a
-  CHILD. A tick that disagrees with the child's state is reported as checklist drift.
+- `- [x]` is done, `- [ ]` is open; `- [~]`, `- [-]` and fully struck items are
+  withdrawn and not counted.
+- The nearest heading sets the section: **DOD** (DoD, definition of done, done when,
+  acceptance, exit criteria, closure predicate, ...), **DOV** (DoV, verification,
+  validation, required proof, ...), **STEPS** (steps, tasks, to-do, checklist,
+  deliverables, plan, ...). An inline `- [ ] DoD: …` overrides the heading. Status
+  headings such as "evidence" are not DoV.
+- Plain bullets and prose paragraphs under a DOD / DOV / STEPS heading are **declared
+  but untracked** criteria. They are counted as `untracked`, never as done.
+- A live checklist item that references another issue (`- [ ] #123`, `- [x] #123`) makes
+  that issue a CHILD; a withdrawn one (`- [~] #123`) stays a MENTION. A tick that
+  disagrees with the child's state is reported as checklist drift.
 
 Progress reads like `4/7 (DOV 1/2, DOD 2/3, STEPS 1/2) +3 untracked`. The checklist
 state is one of `NO_CHECKLIST`, `UNTRACKED_CRITERIA`, `NOT_STARTED`, `IN_PROGRESS` or
@@ -66,18 +73,29 @@ Blocked by #MMM
 ## Edges
 
 References come from issue and PR bodies, the last five comments, PR closing
-references and the timeline (cross-references, connected PRs). Forms:
-`https://github.com/O/R/issues/N`, `O/R#N`, federation shorthand (`QPS #N`,
-`ABACUS PR #N`, `CODEX #N`, `hub #N`) and bare `#N` (home repository). Code spans
-and fences are skipped.
+references and the timeline (cross-references, connected PRs). `extract_refs()` maps
+`triway_burndown.references()`, which reads GBOGEB references only: issue and pull URLs,
+`GBOGEB/R#N`, federation shorthand (`QPS #N`, `ABACUS PR #N`, `hub #N`, `Mission
+Control #N`), chained `/#N`, and bare `#N` (home repository). Fences, comments and
+code spans are skipped.
 
-The words just before a reference on the same line type it: `CLOSES`, `DEPENDS_ON`
-(blocked by, depends on, requires, waits on, needs), `BLOCKS` (stored reversed, as
-DEPENDS_ON), `PARENT` (parent, epic, tracked in, part of, child of), `SUPERSEDES`,
-otherwise `MENTION`. A negation (`not part of #N`) keeps it a MENTION. Every
-referenced item outside the snapshot is resolved for its state and creation time;
-references to nothing (`#1` used as list numbering) are dropped. A blocker whose state
-is unknown counts as open (fail closed).
+The words just before a reference type it, and a keyword binds to the next reference
+only:
+
+| triway kind | Edge here |
+|---|---|
+| `PR_CLOSURE_CLAIM` (PR bodies only) | `CLOSES` |
+| `DECLARED_BLOCKER_CANDIDATE` | `DEPENDS_ON` |
+| `DECLARED_BLOCKS_CANDIDATE` | `BLOCKS`, stored reversed as `DEPENDS_ON` |
+| `DECLARED_PARENT_CANDIDATE` / `DECLARED_CHILD_CANDIDATE` | `PARENT` / `CHILD` |
+| `DECLARED_PREDECESSOR` / `DECLARED_SUCCESSOR` | `SUPERSEDES` / stored reversed as `SUPERSEDES` |
+| `DECLARED_DUPLICATE_OF` | `DUPLICATE_OF` |
+| `TEXT_ASSOCIATION`, `PR_ASSOCIATION` | `MENTION` |
+
+A negation (`not part of #N`) keeps it a MENTION. Every referenced item outside the
+snapshot is resolved for its state and creation time; references to nothing (`#1` used
+as list numbering) are dropped. A blocker whose state is unknown counts as open (fail
+closed).
 
 ## Score and lanes
 
@@ -99,7 +117,8 @@ score = 0.25·pressure + 0.20·nearness + 0.15·priority + 0.15·centrality
 `score_parts` is stored per item so every rank can be explained. The lane gives the
 next action, checked in this order:
 
-- PRs: `FIX_RED`, `IN_FLIGHT` (draft), `REVIEW` (not approved), `MERGE_READY`.
+- PRs: `FIX_RED`, `IN_FLIGHT` (draft), `REVIEW` (not approved), `AWAIT_CHECKS` (approved,
+  checks not all green yet), `MERGE_READY` (approved and every check green).
 - Issues: `BLOCKED`, `CLOSE_CANDIDATE`, `FIX_RED`, `BOTTLENECK` (two or more open
   waiters), `NEARLY_DONE` (70% or more ticked), `TRACK_DOD`, `DEFINE_DOD`,
   `NOT_STARTED`, `IN_PROGRESS`.
@@ -146,9 +165,36 @@ rollups and the delta counts. `delta.json` lists what moved since the previous p
 new and gone items, new and removed links, new PR→issue dependencies, checklist moves
 (`2/5 → 3/5`) and lane moves.
 
+## Burndown slices (`burndown_apply.py`)
+
+Reads a pulse directory and writes `burndown_slices.json` (`jade.issue-burndown.slices.v1`).
+Dry-run unless `--apply` is given.
+
+- **verify:** every open checklist item that references a closed child, with the child's
+  evidence (merge SHA, check rollup on the merge commit, review decision, close reason).
+  Classes: `TICK_READY` (a bare reference whose children all merged or completed),
+  `VERIFY` (children closed, the item asks for more), `WITHDRAW_CANDIDATE` (a child closed
+  unmerged or not planned), `WAIT` (a child still open).
+- **checkbox:** for the top `TRACK_DOD` issues, turn each declared DoD / DoV / STEPS bullet
+  into `- [ ]`, ticking nothing. `--skip` leaves out issues whose bullets are options or
+  dispositions rather than criteria.
+- `--apply tick|checkbox|all [--only KEY ...]` edits issue bodies: it re-reads the live
+  body, refuses if it changed since the snapshot, and appends a sha256-chained row per
+  edit to `edits.jsonl`. Issue edits are owner decisions; apply only with the owner's
+  go-ahead.
+
+```bash
+python mission-control/issue_rank/burndown_apply.py --pulse mission-control/issue_rank/out/jade --skip GBOGEB/cryoplant-project#1738
+```
+
 ## Reuse and ownership
 
-- **Reconciled merged owners (#906 and #907):** triway keeps its standalone five-repo issue-only census and DoV/DoD projection. This module owns USER/JADE graph ranking, PR/issue edges, lanes and ledger. Both consume the same title-vocabulary provider in this directory. Neither merge event establishes governance admission.
+- **Parsers and owners (#906, #907, #927, #928).** `qps-triage-ultra/issue-expedition/triway_burndown.py`
+  owns the checklist and reference parsers, its standalone five-repo issue census and the
+  oldest / newest / connected orderings. This module loads it with `importlib` and keeps
+  only thin adapters; fix parsing there. This module owns USER / JADE graph ranking,
+  PR / issue edges, lanes and the ledger. Both consume the title-vocabulary provider
+  `title_taxonomy.py` in this directory. Neither merge establishes governance admission.
 - gg_MATH (`GBOGEB/gg_MATH`) has `kernels/bradley_terry.py` (pairwise ranking),
   `kernels/spectral_graph.py` (Laplacian, Dirichlet energy) and
   `mission/federation/n5_repo_graph_math.py` (typed graph, spectral gap; at most 64
