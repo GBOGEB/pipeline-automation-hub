@@ -184,7 +184,7 @@ def checklist(body):
             continuation = row
             prose = False
         elif section != "OTHER" and line.strip():
-            if continuation is not None and re.match(r"^ {2,}\\S", line):
+            if continuation is not None and re.match(r"^ {2,}\S", line):
                 continuation["text"] = (continuation["text"] + " " + line.strip())[:300]
                 continue
             b = BULLET.match(line)
