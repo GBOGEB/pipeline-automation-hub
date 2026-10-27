@@ -4,6 +4,8 @@ Synthetic snapshots only (no network, no private data).
 """
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 import random
 import sys
@@ -258,6 +260,22 @@ class Privacy(unittest.TestCase):
         self.assertEqual(boundary.project({"model": model, "delta": delta}), {"model": model, "delta": delta})
         self.assertEqual(len(delta["new_items"]), 1)
         self.assertTrue(delta["new_items"][0].startswith(f"{QPS}#PRIVATE-"))
+
+
+class RedactedPulse(unittest.TestCase):
+    def test_redacted_run_with_private_repo_writes_taxonomy_pulse_without_leaks(self):
+        with tempfile.TemporaryDirectory() as d:
+            snap = Path(d) / "snap.json"
+            snap.write_bytes(ir.canonical(fixture()))
+            out = Path(d) / "pub"
+            args = ["rank", "--snapshot", str(snap), "--out", str(out), "--redact-private", "--draws", "3"]
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(ir.main(args), 0)
+                self.assertEqual(ir.main(args + ["--prev", str(out / "issue_rank.json")]), 0)  # redacted prev
+            text = "".join(p.read_text(encoding="utf-8") for p in sorted(out.iterdir()))
+            self.assertTrue((out / "taxonomy_pulse.json").exists())
+            for leaked in (f"{QPS}#7", "secret", "confidential", "b" * 40):
+                self.assertNotIn(leaked, text)
 
 
 class Delta(unittest.TestCase):

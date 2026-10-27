@@ -1705,10 +1705,14 @@ def _fmt_pct(x):
 
 def write_outputs(out: Path, model: dict, delta: dict, *,
                   previous_model: dict | None = None, parser_sha: str | None = None,
-                  previous_parser_sha: str | None = None) -> dict[str, str]:
-    """Write taxonomy pulse through the existing single-writer output manifest."""
+                  previous_parser_sha: str | None = None, pulse_model: dict | None = None) -> dict[str, str]:
+    """Write taxonomy pulse through the existing single-writer output manifest.
+
+    ``pulse_model`` is the unredacted model: taxonomy_pulse validates source
+    identities and heads first, then drops private material itself (public=True).
+    """
     out.mkdir(parents=True, exist_ok=True)
-    pulse = tp.build(model, previous_model, public=True, parser_sha=parser_sha,
+    pulse = tp.build(pulse_model or model, previous_model, public=True, parser_sha=parser_sha,
                      previous_parser_sha=previous_parser_sha)
     files = {"issue_rank.json": canonical(model), "issue_rank.csv": to_csv(model).encode("utf-8"),
              "issue_rank.html": render_html(model, delta).encode("utf-8"), "delta.json": canonical(delta),
