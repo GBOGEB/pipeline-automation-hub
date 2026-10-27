@@ -102,6 +102,11 @@ def run(*,lane,head,waves,queue_depth,budget_seconds=600,gap_seconds=5,
                 sleep(min(gap_seconds,max(0,budget_seconds-(clock()-started)-30)))
         if receipt["status"] is None:
             receipt["status"]="PASS_ALL_BOUNDED_WAVES"
+    # A zero-wave backpressure receipt must never be mistaken for GREEN.
+    receipt["terminal_native_proof"]=(receipt["status"]=="PASS_ALL_BOUNDED_WAVES"
+                                     and receipt["waves_executed"]==waves
+                                     and all(e["exit_code"]==0 and e["executed_steps"]>0
+                                             for e in receipt["test_invocations"]))
     receipt["receipt_sha256"]=hashlib.sha256(json.dumps(
         receipt,sort_keys=True,separators=(",",":")).encode()).hexdigest()
     return receipt
@@ -124,7 +129,9 @@ def main(argv=None):
     opts.out.write_text(json.dumps(result,sort_keys=True,indent=2)+"\n",encoding="utf-8")
     print("CREW_SLOWBURN",result["status"],"waves",result["waves_executed"],
           "receipt",result["receipt_sha256"])
-    return 1 if result["status"]=="FIRST_RED_STOP" else 0
+    # A queued, budget-exhausted or RED run is NOT a successful CI proof.
+    # Keep the receipt visible, but make the workflow terminal result non-green.
+    return 0 if result["terminal_native_proof"] else 1
 
 
 if __name__=="__main__":
