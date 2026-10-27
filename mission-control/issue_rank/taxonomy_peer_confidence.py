@@ -60,6 +60,15 @@ def _report_visible(projection:dict) -> dict:
 
 
 def analyze(current:dict,previous:dict|None=None,*,public=True) -> dict:
+    # Never expose a previously-private source because a subsequent model
+    # labels the same repository public. Require independent owner review.
+    if previous is not None:
+        old_sources=previous.get("heads",{})
+        new_sources=current.get("heads",{})
+        if isinstance(old_sources,dict) and isinstance(new_sources,dict):
+            for repo in old_sources.keys() & new_sources.keys():
+                if bool(old_sources[repo].get("private")) != bool(new_sources[repo].get("private")):
+                    raise ValueError("SOURCE_VISIBILITY_CHANGED_REQUIRES_OWNER_REVIEW")
     c=pulse.visible(current,public=public)
     now=_report_visible(c)
     earlier=pulse.visible(previous,public=public) if previous is not None else None
