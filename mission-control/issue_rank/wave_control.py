@@ -21,8 +21,8 @@ METRICS = ("open_issues", "open_prs", "tasks_done", "tasks_total",
            "stale_21d", "actionable", "parked", "deadlocked")
 PERCENT = frozenset(("checklist_coverage", "dod_declared", "dov_declared", "measurable"))
 COUNTS = frozenset(METRICS) - PERCENT
-SHA40 = re.compile(r"[0-9a-f]{40}\\Z", re.I)
-SHA64 = re.compile(r"[0-9a-f]{64}\\Z", re.I)
+SHA40 = re.compile(r"[0-9a-f]{40}\Z", re.I)
+SHA64 = re.compile(r"[0-9a-f]{64}\Z", re.I)
 
 
 def _time(value):
