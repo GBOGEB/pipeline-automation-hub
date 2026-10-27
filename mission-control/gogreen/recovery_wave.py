@@ -178,7 +178,7 @@ def emit(report, out):
     raw = (json.dumps(report, sort_keys=True, indent=2) + "\n").encode()
     digest = hashlib.sha256(raw).hexdigest()
     (out / "recovery_wave.json").write_bytes(raw)
-    (out / "recovery_wave.sha256").write_text(digest + "\n", encoding="ascii")
+    (out / "recovery_wave.sha256").write_text(digest + "\n", encoding="ascii", newline="\n")
     lines = [
         "# CODE PURPLE root recovery: revision pulses", "",
         "| Revision | PR | Terminal workflow PASS | Failed | Cancelled | Attributed roots PASS |",
@@ -194,7 +194,7 @@ def emit(report, out):
                   "Fleet coverage, independent review, effective protection and QPS admission: HOLD/UNKNOWN.",
                   "No PCA or Bradley-Terry inference is supported.",
                   "SHA-256: " + digest, ""])
-    (out / "recovery_wave.md").write_text("\n".join(lines), encoding="utf-8")
+    (out / "recovery_wave.md").write_text("\n".join(lines), encoding="utf-8", newline="\n")
     return digest
 
 
@@ -203,7 +203,7 @@ def main():
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
-    report = rollup(json.loads(args.input.read_text()))
+    report = rollup(json.loads(args.input.read_text(encoding="utf-8")))
     emit(report, args.out)
     print(json.dumps({"pulse_count": len(report["waves"]),
                       "source_root_recoveries": report["last_comparison"]["repaired_first_reds_on_pr_head"],

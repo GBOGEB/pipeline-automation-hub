@@ -83,7 +83,7 @@ def main():
     result = inspect(json.loads(args.ledger.read_text(encoding='utf-8')))
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
-        args.out.write_text(json.dumps(result, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+        args.out.write_text(json.dumps(result, indent=2, sort_keys=True) + '\n', encoding='utf-8', newline="\n")
     print(json.dumps(result, sort_keys=True))
     return 1 if result['issue_count'] else 0
 

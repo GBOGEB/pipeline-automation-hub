@@ -74,6 +74,10 @@ th{position:sticky;top:0;background:var(--surface-2);font-weight:600}
 .launch small{font:11px var(--mono);color:var(--muted);word-break:break-all}
 .grp{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 6px}
 .prov td:nth-child(2),.prov td:nth-child(3){font-family:var(--mono);font-size:12px;word-break:break-all}
+.cmd{margin:0;padding:8px 10px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;font:12px/1.5 var(--mono);white-space:pre-wrap;word-break:break-all;user-select:all}
+.cat td:first-child{width:45%}.cat small{display:block;font:11px var(--mono);color:var(--muted);word-break:break-all}
+.cat td:last-child{white-space:nowrap}.cat td:last-child a{margin-right:10px}
+.cat .copy{min-height:32px;padding:0 10px;margin-top:4px;font-size:12px}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
@@ -86,7 +90,7 @@ th{position:sticky;top:0;background:var(--surface-2);font-weight:600}
   <div class="pulse" id="pulse"></div>
 </header>
 <nav aria-label="Sections"><div class="in">
-  <a href="#metrics">Metrics</a><a href="#launcher">Launcher</a><a href="#provenance">Provenance</a>
+  <a href="#metrics">Metrics</a><a href="#launcher">Launcher</a><a href="#access">How to access</a><a href="#ops">Operational tools</a><a href="#catalog">All pages</a><a href="#provenance">Provenance</a>
   <span class="grow"></span>
   <label for="q" class="skip">Filter</label>
   <input id="q" type="search" placeholder="Filter tiles and pages" autocomplete="off">
@@ -95,6 +99,60 @@ th{position:sticky;top:0;background:var(--surface-2);font-weight:600}
 <main>
   <section id="metrics" aria-labelledby="h-metrics"><h2 id="h-metrics">Metrics</h2><div class="grid" id="tiles"></div></section>
   <section id="launcher" aria-labelledby="h-launcher"><h2 id="h-launcher">Launcher</h2><div id="pages"></div></section>
+  <section id="access" aria-labelledby="h-access"><h2 id="h-access">How to access</h2>
+    <div class="grid">
+      <article class="card" data-tone="green"><h3>Local / File Explorer</h3>
+        <p class="cap">Clone once, then open this page from the clone. Its relative links open the sibling pages from your disk.</p>
+        <pre class="cmd" id="acc-clone"></pre>
+        <p class="cap">This page inside the clone:</p><pre class="cmd" id="acc-self"></pre>
+        <p class="cap">In Windows File Explorer, go to that folder and double-click <code>index.html</code>. Or, from the clone root:</p>
+        <pre class="cmd" id="acc-open"></pre>
+        <div id="acc-local" hidden><p class="cap">You opened this page from disk. Its folder:</p><pre class="cmd" id="acc-dir"></pre>
+          <p class="cap">Clone root:</p><pre class="cmd" id="acc-root"></pre></div>
+      </article>
+      <article class="card" data-tone="blue"><h3>GitHub</h3>
+        <div class="links" id="acc-gh"></div>
+        <p class="cap">github.com shows HTML files as source code, not as a page. To see a page rendered, open it from a local clone or through the Pages site.</p>
+      </article>
+      <article class="card" data-tone="blue"><h3>GitHub Pages site</h3>
+        <div class="links" id="acc-pages"></div>
+        <p class="cap" id="acc-pages-note"></p>
+      </article>
+    </div>
+  </section>
+  <section id="ops" aria-labelledby="h-ops"><h2 id="h-ops">Operational tools</h2>
+    <p class="cap">Everyday PowerShell 7 commands, run from the clone root. Each one reads only, unless the card says otherwise. Every <code>gh</code> call runs with <code>GITHUB_TOKEN</code>/<code>GH_TOKEN</code> stripped, so the keyring login is used (REX-011).</p>
+    <div class="grid">
+      <article class="card" data-tone="green"><h3>Draft PR pass</h3>
+        <p class="cap">Lists every open draft PR with its class: LIVE, THREAD-P1, CONFLICT, RED, OUTDATED, THREAD or CLEAN. Shows unresolved Codex, Copilot and CodeQL threads with priority. Never pushes, comments or resolves.</p>
+        <pre class="cmd">pwsh -NoProfile -File tools\workstation\Invoke-DraftPrPass.ps1 -ShowThreads</pre>
+        <p class="cap">One repo, ready PRs too:</p>
+        <pre class="cmd">pwsh -NoProfile -File tools\workstation\Invoke-DraftPrPass.ps1 -Repo pipeline-automation-hub -IncludeReady</pre>
+      </article>
+      <article class="card" data-tone="green"><h3>Workspace audit</h3>
+        <p class="cap">Finds stale tokens, unpushed branches (PUSH-ME) and removable worktrees. <code>-Apply</code> removes clean, landed worktrees only.</p>
+        <pre class="cmd">pwsh -NoProfile -File tools\workstation\Invoke-WorkspaceAudit.ps1</pre>
+      </article>
+      <article class="card" data-tone="blue"><h3>Pinned outputs</h3>
+        <p class="cap">After any change to a DAG-pinned file, commit the change, then regenerate in order and commit the outputs (REX-008).</p>
+        <pre class="cmd">python mission-control\jade_temple\tools\regen.py --write</pre>
+        <pre class="cmd">python mission-control\jade_temple\tools\regen.py --check</pre>
+      </article>
+      <article class="card" data-tone="blue"><h3>Before you touch a PR branch</h3>
+        <p class="cap">The main checkout fetches master only. Ask the remote for the branch head, and leave the PR alone if another session is live on it (REX-009).</p>
+        <pre class="cmd">Remove-Item Env:GITHUB_TOKEN,Env:GH_TOKEN -ErrorAction SilentlyContinue; git fetch origin &lt;branch&gt;; gh pr view &lt;N&gt; --json headRefOid,updatedAt</pre>
+        <pre class="cmd">python scripts\preflight_overlap.py &lt;terms&gt;</pre>
+      </article>
+      <article class="card" data-tone="blue"><h3>Known fixes (REX)</h3>
+        <p class="cap">Repeated issues, each with the fix that worked: <code>mission-control/qps-triage-ultra/crew/REX_LEARNING_LEDGER_v1.json</code> (<code>known_fix</code>) and its checklist <code>crew/measured/REX_REUSE_CHECKLIST_v1.json</code>.</p>
+        <pre class="cmd">python mission-control\qps-triage-ultra\crew\measured\validate_rex_reuse.py</pre>
+      </article>
+    </div>
+  </section>
+  <section id="catalog" aria-labelledby="h-catalog"><h2 id="h-catalog">All pages</h2>
+    <p class="cap" id="cat-cap"></p>
+    <div id="cat"></div>
+  </section>
   <section id="provenance" aria-labelledby="h-prov"><h2 id="h-prov">Provenance</h2>
     <p class="cap">Each input is read once, at the commit shown above. Owner modules keep their metric definitions; this page only reads them.</p>
     <div class="tbl" style="max-height:none"><table class="prov"><thead><tr><th>Tile</th><th>Input</th><th>Blob OID</th><th>Owner</th><th>Schema</th></tr></thead><tbody id="prov"></tbody></table></div>
@@ -138,6 +196,42 @@ function tile(t){
   if(t.input)h+='<a href="'+esc(blob(t.input))+'" rel="noopener noreferrer">source @ '+esc(t.input_oid.slice(0,7))+'</a>';
   return h+'</div></article>';
 }
+// Clone root and its separator, set by access() when the page is opened from a clone on disk.
+let ROOT=null, SEP="\\";
+const link=(href,text)=>'<a href="'+esc(href)+'" rel="noopener noreferrer">'+esc(text)+'</a>';
+function access(){
+  const win=D.self_path.replace(/\//g,"\\"), dir=win.replace(/\\[^\\]*$/,"");
+  $("#acc-clone").textContent="git clone "+D.repo_url+".git\ncd pipeline-automation-hub";
+  $("#acc-self").textContent=win;
+  $("#acc-open").textContent="start "+win+"\nexplorer "+dir;
+  if(location.protocol==="file:"){
+    // Windows file URLs look like /C:/Users/...; show them with drive letter and backslashes.
+    let p=decodeURIComponent(location.pathname);
+    if(/^\/[A-Za-z]:\//.test(p))p=p.slice(1).replace(/\//g,"\\");
+    const sep=p.includes("\\")?"\\":"/", here=p.slice(0,p.lastIndexOf(sep)), tail=sep+dir.split("\\").join(sep);
+    $("#acc-dir").textContent=here;
+    if(here.endsWith(tail)){ROOT=here.slice(0,-tail.length);SEP=sep;}
+    $("#acc-root").textContent=ROOT===null?"(this copy is not inside a clone of the repo)":ROOT;
+    $("#acc-local").hidden=false;
+  }
+  $("#acc-gh").innerHTML=link(D.repo_url,"Repository")+link(blob(D.self_path),"This page's source @ "+D.source_sha.slice(0,7));
+  const s=D.pages_site;
+  if(s){
+    $("#acc-pages").innerHTML=link(s.url,s.url);
+    $("#acc-pages-note").textContent="Verified "+s.verified_on+" with "+s.verified_by+": "+s.observed+". "+s.scope;
+  }else{$("#acc-pages-note").textContent="No verified Pages site recorded.";}
+}
+function catalog(){
+  const c=D.catalog||[], groups=[...new Set(c.map(e=>e.group))];
+  $("#cat-cap").textContent=c.length+" committed HTML pages at "+D.source_sha.slice(0,7)+", grouped by directory. Open uses a relative link (works from a local clone); GitHub shows the source and History the commits up to the read-at commit."+
+    (ROOT===null?" Open this page from a clone to see each page's path for File Explorer.":" Local path is the file in this clone, for File Explorer.")+" Some entries are templates or layouts that only render after a build.";
+  const local=e=>ROOT+SEP+e.path.split("/").join(SEP);
+  $("#cat").innerHTML=groups.map(g=>'<div data-grp><div class="grp">'+esc(g)+'</div><div class="tbl" style="max-height:none"><table class="cat"><thead><tr><th scope="col">Page</th><th scope="col">Path</th>'+(ROOT===null?"":'<th scope="col">Local path</th>')+'<th scope="col">Links</th></tr></thead><tbody>'+
+    c.filter(e=>e.group===g).map(e=>'<tr data-q="'+esc((e.title+" "+e.path).toLowerCase())+'"><td>'+esc(e.title)+'</td><td><small>'+esc(e.path)+'</small></td>'+
+      (ROOT===null?"":'<td><small>'+esc(local(e))+'</small><button type="button" class="copy" data-copy="'+esc(local(e))+'">Copy</button></td>')+
+      '<td><a href="'+esc(e.href)+'">Open</a>'+link(e.github,"GitHub")+link(D.repo_url+"/commits/"+D.source_sha+"/"+e.path,"History")+'</td></tr>').join("")+
+    '</tbody></table></div></div>').join("");
+}
 function render(){
   $("#rule").textContent=D.rule;
   $("#pulse").textContent="read at "+D.source_sha+" · "+D.source_date+" · computes_metrics="+D.computes_metrics+" · missing_fields="+D.missing_fields.length;
@@ -145,11 +239,20 @@ function render(){
   const groups=[...new Set(D.pages.map(p=>p.group))];
   $("#pages").innerHTML=groups.map(g=>'<div class="grp">'+esc(g)+'</div><div class="launch">'+D.pages.filter(p=>p.group===g).map(p=>
     '<a href="'+esc(p.href)+'" data-q="'+esc((p.title+" "+p.path).toLowerCase())+'"><b>'+esc(p.title)+'</b><small>'+esc(p.path)+'</small></a>').join("")+'</div>').join("");
+  access();
+  catalog();
   $("#prov").innerHTML=D.tiles.filter(t=>t.input).map(t=>'<tr><td>'+esc(t.label)+'</td><td><a href="'+esc(blob(t.input))+'" rel="noopener noreferrer">'+esc(t.input)+'</a></td><td>'+esc(t.input_oid)+'</td><td>'+esc(t.owner)+'</td><td>'+val(t.schema)+'</td></tr>').join("");
 }
 render();
 $("#q").addEventListener("input",e=>{const q=e.target.value.trim().toLowerCase();
-  document.querySelectorAll("[data-q]").forEach(n=>{n.hidden=q!==""&&!n.dataset.q.includes(q);});});
+  document.querySelectorAll("[data-q]").forEach(n=>{n.hidden=q!==""&&!n.dataset.q.includes(q);});
+  document.querySelectorAll("[data-grp]").forEach(g=>{g.hidden=!g.querySelector("tr[data-q]:not([hidden])");});});
+// Copy a local path; where the clipboard API is unavailable (file:// in some browsers), select the text instead.
+document.addEventListener("click",e=>{const b=e.target.closest("[data-copy]");if(!b)return;
+  const select=()=>{const r=document.createRange();r.selectNodeContents(b.previousElementSibling);
+    const sel=getSelection();sel.removeAllRanges();sel.addRange(r);b.textContent="Selected: Ctrl+C";};
+  if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(b.dataset.copy).then(()=>{b.textContent="Copied";},select);
+  else select();});
 $("#theme").addEventListener("click",e=>{const r=document.documentElement;
   const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;
   r.dataset.theme=dark?"light":"dark";e.currentTarget.setAttribute("aria-pressed",String(!dark));});

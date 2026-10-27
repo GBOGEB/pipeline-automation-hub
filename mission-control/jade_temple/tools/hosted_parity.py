@@ -116,7 +116,9 @@ def fetch_hosted(url: str, rel: str) -> bytes:
     req=urllib.request.Request(endpoint,headers={"Cache-Control":"no-cache","User-Agent":"JADE-CASTE-READONLY-PROOF/2"})
     with urllib.request.urlopen(req, timeout=14) as response:
         served=urllib.parse.urlsplit(response.geturl())
-        if served.scheme!="https" or served.netloc!="gbogeb.github.io" or response.status!=200:
+        if (served.scheme!="https" or served.netloc!="gbogeb.github.io" or response.status!=200
+                or served.path!=urllib.parse.urlsplit(endpoint).path or served.query or served.fragment
+                or served.username or served.password):
             raise ValueError("JADE_BAD_HOSTED_STATUS_OR_REDIRECT")
         b=response.read(MAX_BYTES+1)
         if len(b)>MAX_BYTES:
@@ -169,6 +171,6 @@ def main():
     p.add_argument("--wait",type=float,default=5)
     a=p.parse_args()
     data=verify(Path(a.expected_dir),a.base_url,a.head,repeat=a.repeat,attempts=a.attempts,wait=a.wait)
-    Path(a.receipt).write_text(json.dumps(data,sort_keys=True,indent=2)+"\n",encoding="utf-8")
+    Path(a.receipt).write_text(json.dumps(data,sort_keys=True,indent=2)+"\n",encoding="utf-8",newline="\n")
     print(json.dumps({"status":"PASS","head":data["head"],"members":data["members_verified"],"rounds":len(data["observations"])}))
 if __name__=="__main__":main()

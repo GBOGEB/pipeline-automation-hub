@@ -71,10 +71,10 @@ def main() -> None:
     p.add_argument("--observations", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)
     a = p.parse_args()
-    result = bridge(json.loads(a.crosswalk.read_text()),
-                    json.loads(a.heads.read_text()),
-                    json.loads(a.observations.read_text()))
-    a.out.write_text(json.dumps(result, sort_keys=True, indent=2) + "\n")
+    result = bridge(json.loads(a.crosswalk.read_text(encoding="utf-8")),
+                    json.loads(a.heads.read_text(encoding="utf-8")),
+                    json.loads(a.observations.read_text(encoding="utf-8")))
+    a.out.write_text(json.dumps(result, sort_keys=True, indent=2) + "\n", encoding="utf-8", newline="\n")
 
 
 if __name__ == "__main__":

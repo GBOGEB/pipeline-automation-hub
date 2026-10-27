@@ -54,5 +54,5 @@ try:
     page.close()
    browser.close()
 finally:pass
-(OUT/'receipt.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n',encoding='utf-8')
+(OUT/'receipt.json').write_text(json.dumps(receipt,sort_keys=True,indent=2)+'\n',encoding='utf-8',newline="\n")
 print(json.dumps({'status':'PASS','viewports':len(receipt['viewports']),'source_sha256':hashlib.sha256((SITE/'green.html').read_bytes()).hexdigest()},indent=2))

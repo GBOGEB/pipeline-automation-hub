@@ -23,8 +23,8 @@ class CloseoutTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,needle or "CP_CLOSE_FAIL_CLOSED"):
             cp_close.validate(inp)
     def test_canonical_closeout_operator_alias_compatible(self):
-        profile=json.loads((Path(__file__).resolve().parents[1]/"CHAT_CLOSEOUT_PROFILE_V1.json").read_text())
-        ext=json.loads((Path(__file__).resolve().parent/"CP_CLOSE_GITHUB_v1.json").read_text())
+        profile=json.loads((Path(__file__).resolve().parents[1]/"CHAT_CLOSEOUT_PROFILE_V1.json").read_text(encoding="utf-8"))
+        ext=json.loads((Path(__file__).resolve().parent/"CP_CLOSE_GITHUB_v1.json").read_text(encoding="utf-8"))
         self.assertEqual(profile["moniker"],"CP.CLOSEOUT_ALIAS_OF_CP.CLOSE")
         self.assertEqual(profile["status"],"OPTIONAL_REPORTING_ANNEX_NOT_CANONICAL")
         self.assertEqual(ext["name"],"CP.CLOSE")
@@ -93,7 +93,7 @@ class CloseoutTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as x:
             p=Path(x)/"messages.json"
             p.write_text(json.dumps({"schema":"missioncontrol.user_supplied_messages.v1","declared_complete":False,
-                 "messages":[{"role":"user","text":"Plan a closeout"},{"role":"assistant","text":"Plan"},{"role":"user","text":"Ship the PR"}]}))
+                 "messages":[{"role":"user","text":"Plan a closeout"},{"role":"assistant","text":"Plan"},{"role":"user","text":"Ship the PR"}]}), encoding="utf-8", newline="\n")
             a=cp_close.prompt_stats(p)
             self.assertEqual((a["sample_user_prompts"],a["sample_assistant_messages"]), (2,1))
             self.assertIsNone(a["full_chat_total_prompts"])
@@ -103,7 +103,7 @@ class CloseoutTests(unittest.TestCase):
             p=Path(x)/"messages.json"
             p.write_text(json.dumps({"schema":"missioncontrol.user_supplied_messages.v1","messages":[
                 {"role":"user","text":"one","created_at":"2026-10-17T09:00:00Z"},
-                {"role":"assistant","text":"two","created_at":"2026-10-17T10:30:00Z"}]}))
+                {"role":"assistant","text":"two","created_at":"2026-10-17T10:30:00Z"}]}), encoding="utf-8", newline="\n")
             self.assertEqual(cp_close.prompt_stats(p)["duration_hours"],1.5)
     def test_deterministic_render_and_manifest(self):
         with tempfile.TemporaryDirectory() as d:
@@ -119,7 +119,7 @@ class CloseoutTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             out=Path(d)/"out"
             cp_close.build(INTAKE,QUEUE,out)
-            (out/"STATE.json").write_text("{}")
+            (out/"STATE.json").write_text("{}", encoding="utf-8", newline="\n")
             with self.assertRaisesRegex(ValueError,"drift"):
                 cp_close.build(INTAKE,QUEUE,out,check=True)
     def test_zip_no_path_escape_and_crc(self):
@@ -141,7 +141,7 @@ class CloseoutTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             out=Path(d)/"out"
             cp_close.build(INTAKE,QUEUE,out)
-            narrative=(out/"LOSSLESS_HANDOVER.md").read_text()
+            narrative=(out/"LOSSLESS_HANDOVER.md").read_text(encoding="utf-8")
             for action in self.base["actions"]:
                 self.assertIn(action["id"],narrative)
             for intent in self.base["intents"]:

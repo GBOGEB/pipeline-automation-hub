@@ -13,7 +13,7 @@ import incremental as mod
 class IncrementalContract(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.docs=[json.loads((ROOT/'samples'/n).read_text()) for n in ('fleet_g0.json','fleet_g1_snapshot.json','fleet_g2_snapshot.json')]
+        cls.docs=[json.loads((ROOT/'samples'/n).read_text(encoding="utf-8")) for n in ('fleet_g0.json','fleet_g1_snapshot.json','fleet_g2_snapshot.json')]
 
     def docs_copy(self):return copy.deepcopy(self.docs)
 

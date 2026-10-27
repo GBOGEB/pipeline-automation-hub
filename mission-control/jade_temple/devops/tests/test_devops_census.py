@@ -16,6 +16,7 @@ import unittest
 import uuid
 from contextlib import redirect_stdout
 from pathlib import Path
+from urllib.parse import urlparse
 
 HERE = Path(__file__).resolve().parents[1]
 JADE = HERE.parent
@@ -130,7 +131,7 @@ class EndToEnd(unittest.TestCase):
             {"rank": 1, "repo": "demo/service", "branch": "main", "cohort_lane": "CORE", "role": "demo",
              "commit_sha_observed": cls.base},
             {"rank": 2, "repo": "demo/missing", "branch": "main", "cohort_lane": "SUPPORT", "role": "absent",
-             "commit_sha_observed": None}]}), encoding="utf-8")
+             "commit_sha_observed": None}]}), encoding="utf-8", newline="\n")
         cls.cache = cls.tmp / "cache"
         cls.cache.mkdir()
         cls.fetch = C.fetch_repo(cls.cache, "demo/service", "main", cls.base, url=cls.url)
@@ -140,7 +141,7 @@ class EndToEnd(unittest.TestCase):
         def fake_get(url):
             if url.endswith("site-manifest.json"):
                 return 200, json.dumps({"source_git_sha": cls.head}).encode()
-            if "api.github.com" in url:
+            if urlparse(url).hostname == "api.github.com":
                 if url.endswith("/branches/main"):
                     return 200, b'{"protected": true}'
                 if url.endswith("/environments"):
@@ -353,7 +354,7 @@ class EndToEnd(unittest.TestCase):
         row = {"rank": 1, "repo": "demo/service", "branch": "main", "cohort_lane": "CORE", "role": "demo",
                "commit_sha_observed": self.head}
         roster = out / "roster.json"
-        roster.write_text(json.dumps({"repositories": [row]}), encoding="utf-8")
+        roster.write_text(json.dumps({"repositories": [row]}), encoding="utf-8", newline="\n")
         cache.mkdir()
         shutil.copytree(C.cache_dir(self.cache, "demo/service"), C.cache_dir(cache, "demo/service"))
         with redirect_stdout(buf):
@@ -379,10 +380,10 @@ class EndToEnd(unittest.TestCase):
         with redirect_stdout(io.StringIO()):
             self.assertEqual(C.main(["report", "--census", str(out / "c.json"), "--out", str(md)]), 0)
             self.assertEqual(C.main(["report", "--census", str(out / "c.json"), "--out", str(md), "--check"]), 0)
-            md.write_text(md.read_text(encoding="utf-8") + "drift\n", encoding="utf-8")
+            md.write_text(md.read_text(encoding="utf-8") + "drift\n", encoding="utf-8", newline="\n")
             self.assertEqual(C.main(["report", "--census", str(out / "c.json"), "--out", str(md), "--check"]), 1)
         c["iteration"] = "tampered"
-        (out / "c.json").write_text(json.dumps(c), encoding="utf-8")
+        (out / "c.json").write_text(json.dumps(c), encoding="utf-8", newline="\n")
         with redirect_stdout(io.StringIO()):
             self.assertEqual(C.main(["check", "--census", str(out / "c.json"), "--objects", str(out / "o.json")]), 1)
 
@@ -449,6 +450,48 @@ class ContentAnalysis(unittest.TestCase):
         refs = {"tests/test_x.py": ({"pkg.a"}, {"tools/b.py"}), "tests/test_y.py": (set(), set())}
         m = C.map_tests(mods, refs)
         self.assertEqual(m, {"pkg/a.py": ("import", 1), "tools/b.py": ("path", 1), "c.py": ("none", 0)})
+
+    def test_src_prefixed_import_maps_to_the_module(self):
+        # tests import `src.golden_thread` while module_parts strips src/ (census N+10 false 'untested').
+        mods = {"src/golden_thread.py": C.module_parts("src/golden_thread.py"), "src/other.py": ("other",)}
+        m = C.map_tests(mods, {"tests/test_g.py": ({"src.golden_thread", "src.golden_thread.replay"}, set())})
+        self.assertEqual(m, {"src/golden_thread.py": ("import", 1), "src/other.py": ("none", 0)})
+
+    def test_archived_copies_are_counted_apart_from_live_code(self):
+        sc = {"test_files": [["tests/test_a.py", "1" * 40, "python", 3],
+                             ["triage/w366/x/recovered/history/test_all.py", "2" * 40, "python", 0],
+                             ["triage/w367/archive_incubator/p/selfsmoke_test.py", "3" * 40, "python", 0],
+                             ["tests/test_empty.py", "4" * 40, "python", 0]],
+              "modules": [["src/live.py", "5" * 40, "live", 3, 0, False, "none", 0, []],
+                          ["src/done.py", "6" * 40, "done", 3, 0, True, "import", 1, []],
+                          ["docs/a.zip.d/gen.py", "7" * 40, "gen", 9, 0, False, "none", 0, []]]}
+        t = C.tests_summary(sc)
+        self.assertEqual((t["files"], t["zero_case_files"], t["py_modules"], t["py_untested"]), (4, 3, 3, 2))
+        self.assertEqual((t["live_zero_case_files"], t["live_py_modules"], t["live_py_untested"]), (1, 2, 1))
+        self.assertEqual((t["archived_test_files"], t["archived_py_modules"]), (2, 1))
+        for live in ("src/archive_tools.py", "tools/recovery.py", "qps/recovered_state.py"):
+            self.assertIsNone(C.ARCHIVED.search(live), live)
+
+    def test_provenance_backed_snapshots_are_archived_and_bare_names_are_not(self):
+        # A3: tender_library/abacus_snapshot/ is a byte-identical copy of another repository, recorded in
+        # tender_library/PROVENANCE.csv. A "_snapshot" name without a PROVENANCE.csv stays live code.
+        paths = ["tender_library/PROVENANCE.csv", "tender_library/abacus_snapshot/qplant/calc.py",
+                 "vendor/x_snapshot/PROVENANCE.csv", "vendor/x_snapshot/tool.py",
+                 "codex/A10_snapshot_publication/publish.py", "triage/w86_child_snapshot/scripts/check.py",
+                 "src/snapshot_tools.py"]
+        self.assertEqual(C.snapshot_prefixes(paths), ["tender_library/abacus_snapshot/", "vendor/x_snapshot/"])
+        sc = {"snapshot_prefixes": C.snapshot_prefixes(paths),
+              "test_files": [["tender_library/abacus_snapshot/tests/test_calc.py", "1" * 40, "python", 0]],
+              "modules": [[p, "2" * 40, "m", 3, 0, False, "none", 0, []] for p in paths if p.endswith(".py")]}
+        t = C.tests_summary(sc)
+        self.assertEqual((t["archived_py_modules"], t["live_py_modules"], t["live_py_untested"]), (2, 3, 3))
+        self.assertEqual((t["archived_test_files"], t["live_zero_case_files"]), (1, 0))
+        self.assertEqual(t["snapshot_prefixes"], ["tender_library/abacus_snapshot/", "vendor/x_snapshot/"])
+        for live in ("codex/A10_snapshot_publication/publish.py", "triage/w86_child_snapshot/scripts/check.py",
+                     "src/snapshot_tools.py"):
+            self.assertFalse(C.is_archived(sc, live), live)
+        self.assertTrue(C.is_archived({}, "a/recovered/b.py"))
+        self.assertEqual(C.snapshot_prefixes(["PROVENANCE.csv", "top_snapshot/a.py"]), ["top_snapshot/"])
 
     def test_floors_health_and_commit_types(self):
         self.assertEqual(C.toml_floor("[tool.coverage.report]\nfail_under = 85\n"), 85.0)
@@ -585,8 +628,8 @@ class CommittedCensus(unittest.TestCase):
         want = [r["repo"] for r in sorted(roster["repositories"], key=lambda r: r["rank"])]
         self.assertEqual([r["repo"] for r in self.census["repos"]], want)
         for r in self.census["repos"]:
-            if r["reachable"]:
-                self.assertRegex(r["head_sha"], r"^[0-9a-f]{40}$")
+            if r["reachable"]:  # a private repo's head is PB.MARK (counts only)
+                self.assertRegex(r["head_sha"], r"^(?:[0-9a-f]{40}|" + C.PB.MARK + ")$")
                 self.assertEqual(r["oid"], "jade:repo:" + r["repo"])
 
     def test_fleet_totals_reconcile(self):
@@ -625,8 +668,10 @@ class CommittedCensusN10(CommittedCensus):
             self.assertEqual(r["delta"]["baseline_sha"], n9.get(r["repo"]), r["repo"])
 
     def test_n9_snapshot_is_unchanged(self):
+        # Re-sealed once (2026-10-25) when the private repo was projected to counts only
+        # (tools/private_boundary.py); unchanged since.
         self.assertEqual(self.previous["digest_sha256"],
-                         "1b3a1c5272145d62fa11b171def677186931c32af85adaa8e03fda90879d3bfd")
+                         "fb1aa7de748a1a94c0581e37907b14233a300116bb22b8442893bf081d3e79f4")
 
 if __name__ == "__main__":
     unittest.main()

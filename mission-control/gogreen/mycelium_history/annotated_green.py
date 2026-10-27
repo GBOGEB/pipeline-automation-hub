@@ -368,7 +368,7 @@ def main():
         data["numeric_job_id"] = None
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(data, sort_keys=True,
-                                         indent=2) + "\n", encoding="utf-8")
+                                         indent=2) + "\n", encoding="utf-8", newline="\n")
     validate(data, args.source_sha)
     summary = [{**{"kind": x["kind"], "PR": x["pr"],
                     "availability": x["availability"]},

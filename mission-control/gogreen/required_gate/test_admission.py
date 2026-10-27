@@ -33,7 +33,7 @@ def repo(d, extra=None):
     }
     files.update(extra or {})
     for k, v in files.items():
-        (w / k).write_text(v)
+        (w / k).write_text(v, encoding="utf-8", newline="\n")
     return Path(d)
 
 

@@ -153,19 +153,19 @@ class LiveLosslessTests(unittest.TestCase):
     def test_sha_manifest_matches_four_page_assets(self):
         with tempfile.TemporaryDirectory() as d:
             out=Path(d)/"generated";mod.build(out)
-            m=json.loads((out/"manifest.json").read_text())
+            m=json.loads((out/"manifest.json").read_text(encoding="utf-8"))
             self.assertEqual(len(m["files_sha256"]),4)
             for rel,expected in m["files_sha256"].items():
                 self.assertEqual(hashlib.sha256((out/rel).read_bytes()).hexdigest(),expected)
     def test_generated_artifact_drift_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             out=Path(d)/"generated";mod.build(out)
-            (out/"snapshot.json").write_text("{}")
+            (out/"snapshot.json").write_text("{}", encoding="utf-8", newline="\n")
             with self.assertRaisesRegex(ValueError,"byte drift"):mod.build(out,check=True)
     def test_extra_file_makes_check_fail(self):
         with tempfile.TemporaryDirectory() as d:
             out=Path(d)/"generated";mod.build(out)
-            (out/"unapproved.txt").write_text("PRIVATE")
+            (out/"unapproved.txt").write_text("PRIVATE", encoding="utf-8", newline="\n")
             with self.assertRaisesRegex(ValueError,"extra"):mod.build(out,check=True)
     def test_unsafe_frozen_original_change_rejected(self):
         prior=mod.FROZEN
@@ -173,7 +173,7 @@ class LiveLosslessTests(unittest.TestCase):
             temp=Path(d);temp.mkdir(exist_ok=True)
             for name in ("MANIFEST.json","STATE.json","CHAT_STATS.json","INTENT_ACTION_LEDGER.json","BD_QUEUE_READONLY.json","LOSSLESS_HANDOVER.md","NEXT_CHAT_DROPIN.md","START_HERE.md","TODO_BD_QUEUE.csv"):
                 (temp/name).write_bytes((prior/name).read_bytes())
-            (temp/"STATE.json").write_text("{}")
+            (temp/"STATE.json").write_text("{}", encoding="utf-8", newline="\n")
             try:
                 mod.FROZEN=temp
                 with self.assertRaisesRegex(ValueError,"SHA256 mismatch"):mod.validate_frozen()
@@ -188,11 +188,11 @@ class LiveLosslessTests(unittest.TestCase):
         self.assertEqual(p["summary"]["native_closeout_tests"]["k"],34)
         self.assertEqual(p["provenance"]["native_run"]["head_sha"],self.obs["main_sha"])
     def test_page_has_all_five_selections_and_openable_details(self):
-        html=(mod.HERE/"index.html").read_text()
+        html=(mod.HERE/"index.html").read_text(encoding="utf-8")
         for x in ("panel-overview","panel-intents","panel-actions","panel-evidence","panel-monikers","intent-cards","subrequest-cards","bd-cards","moniker-cards","role=\"tab\""):
             self.assertIn(x,html)
     def test_client_no_nonowned_API_endpoint_or_secret(self):
-        js=(mod.HERE/"app.js").read_text()
+        js=(mod.HERE/"app.js").read_text(encoding="utf-8")
         self.assertIn("https://api.github.com/repos/GBOGEB/pipeline-automation-hub",js)
         self.assertNotIn("GITHUB_TOKEN",js)
         self.assertIn("Promise.allSettled",js)

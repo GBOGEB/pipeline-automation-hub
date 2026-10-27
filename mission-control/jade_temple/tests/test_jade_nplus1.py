@@ -9,7 +9,7 @@ class J1ContractTests(unittest.TestCase):
  def load(self,name):return json.loads((DATA/name).read_text(encoding='utf-8'))
  def test_population_and_exact_ids(self):
   d=self.load('REPO_READINESS_NPLUS1.json');r=d['rows'];self.assertEqual(len(r),21);self.assertEqual(len({x['repo'] for x in r}),21)
-  self.assertTrue(all(re.fullmatch(r'[0-9a-f]{40}',x['head_readback']) for x in r))
+  self.assertTrue(all(re.fullmatch(r'[0-9a-f]{40}',x['head_readback']) or x['head_readback']==jade.PB.MARK for x in r))  # private head: counts only
  def test_census_not_live_coverage(self):
   m=self.load('GLOBAL_METRICS_NPLUS1.json');self.assertIsNone(m['kpis']['eligible_exact_head_release_ci']);self.assertIsNone(m['kpis']['governed_point_releases']);self.assertEqual(m['release_admission'],'HOLD')
  def test_no_fabricated_pages_qualifications(self):

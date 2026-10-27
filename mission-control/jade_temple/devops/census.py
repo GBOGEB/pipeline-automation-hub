@@ -22,6 +22,7 @@ from __future__ import annotations
 import argparse
 import ast
 import hashlib
+import importlib.util
 import json
 import os
 import re
@@ -39,6 +40,10 @@ ROOT = HERE.parent  # mission-control/jade_temple
 sys.path.insert(0, str(HERE))
 import lifecycle as L  # noqa: E402
 import workflows as W  # noqa: E402
+
+_pb = importlib.util.spec_from_file_location("jade_private_boundary", ROOT / "tools" / "private_boundary.py")
+PB = importlib.util.module_from_spec(_pb)
+_pb.loader.exec_module(PB)
 
 SCHEMA = "jade.devops.census.v1"
 OBJ_SCHEMA = "jade.devops.objects.v1"
@@ -137,6 +142,12 @@ KIND_STAGE = {kind: stage for _, stage, kind in RULES}
 KIND_STAGE.update({"workflow": "S9_CONTROL", "test_file": "S3_TEST"})
 VENDORED = _r(r"(^|/)(node_modules|vendor|third_party|third-party|\.venv|venv|site-packages|dist|build|\.git|"
               r"__pycache__|\.tox|\.mypy_cache)/")
+# Archived copies (recovered snapshots, unpacked .zip.d / .tar.gz.d payloads, archive incubators) are still read
+# and counted, but never feed the live-code test probes: an archived test file is not a test the repo runs.
+ARCHIVED = _r(r"(^|/)(archive|archives|archived|archive_incubator|recovered|attic)/|\.(zip|tar|tgz|tar\.gz)\.d/")
+# A3: a copied snapshot of another repository's files (e.g. tender_library/abacus_snapshot/) is archived too, but
+# only when a PROVENANCE.csv beside it or inside it records where the copy came from; the name alone is not enough.
+SNAPSHOT_DIR = _r(r"(^|/)([^/]+_snapshot)/")
 FIXTURE = _r(r"(^|/)(tests?|__tests__|spec|fixtures?|testdata|test-data|examples?|samples?|__snapshots__|"
              r"benchmarks?|docs/examples)/")
 SRC_EXT = {".py": "python", ".js": "js", ".mjs": "js", ".cjs": "js", ".ts": "ts", ".tsx": "ts", ".jsx": "js",
@@ -258,7 +269,7 @@ def refresh_tags(gitdir: Path) -> bool:
     if p.returncode != 0:
         out.unlink(missing_ok=True)
         return False
-    out.write_text(p.stdout.decode("utf-8", errors="replace"), encoding="utf-8")
+    out.write_text(p.stdout.decode("utf-8", errors="replace"), encoding="utf-8", newline="\n")
     return True
 
 
@@ -392,8 +403,10 @@ def map_tests(modules: dict, test_refs: dict) -> dict:
     """modules: path -> parts; test_refs: test path -> (imports, strings). Returns path -> (via, n_refs)."""
     by_suffix: dict[tuple, set] = {}
     for path, parts in modules.items():
-        for k in range(1, len(parts) + 1):
-            by_suffix.setdefault(parts[-k:], set()).add(path)
+        # The stripped parts (src/x.py -> x) and the full path (src.x), so `import src.x` maps too.
+        for name in {parts, tuple(path[:-3].split("/"))}:
+            for k in range(1, len(name) + 1):
+                by_suffix.setdefault(name[-k:], set()).add(path)
     hits: dict[str, dict] = {p: {} for p in modules}
     for tpath, (imports, strings) in sorted(test_refs.items()):
         for name in imports:
@@ -419,6 +432,23 @@ def toml_floor(text: str) -> float | None:
 
 def healthcheck_in(text: str) -> bool:
     return bool(re.search(r"(?mi)^\s*HEALTHCHECK\s|^\s*healthcheck\s*:|livenessProbe|readinessProbe", text))
+
+
+def snapshot_prefixes(paths) -> list[str]:
+    """`<dir>_snapshot/` prefixes that have a PROVENANCE.csv beside the directory or inside it."""
+    paths = set(paths)
+    out = set()
+    for path in paths:
+        for m in SNAPSHOT_DIR.finditer(path):
+            prefix = path[:m.end()]
+            parent = prefix[:-1].rpartition("/")[0]
+            if (parent + "/PROVENANCE.csv" if parent else "PROVENANCE.csv") in paths or prefix + "PROVENANCE.csv" in paths:
+                out.add(prefix)
+    return sorted(out)
+
+
+def is_archived(sc: dict, path: str) -> bool:
+    return bool(ARCHIVED.search(path)) or any(path.startswith(p) for p in sc.get("snapshot_prefixes", ()))
 
 
 def scan_commit(g: Git, repo: str, sha: str, blobs: dict | None = None) -> dict:
@@ -494,6 +524,7 @@ def scan_commit(g: Git, repo: str, sha: str, blobs: dict | None = None) -> dict:
                         info["symbols"][:30] if info else None])
     test_files.sort()
     return {"sha": sha, "rows": len(rows), "unread": unread, "evidence": evidence, "kinds": kinds, "src": src,
+            "snapshot_prefixes": snapshot_prefixes(p for _m, t, _o, p in rows if t == "blob"),
             "test_files": test_files, "modules": modules, "workflows": sorted(wf_recs, key=lambda w: w["path"]),
             "coverage_config_floor": max(cov_cfg) if cov_cfg else None, "healthcheck": health,
             "pinned_requirements": pinned_req, "declared_version": declared_version, "blobs": blobs}
@@ -582,7 +613,14 @@ def tests_summary(sc: dict) -> dict:
             "zero_case_files": sum(1 for t in known if t[3] == 0), "by_lang": dict(sorted(by_lang.items())),
             "py_modules": len(mods), "py_tested": sum(1 for m in mods if m[5]),
             "py_untested": sum(1 for m in mods if not m[5]),
-            "py_tested_via": dict(sorted(Counter(m[6] for m in mods).items()))}
+            "py_tested_via": dict(sorted(Counter(m[6] for m in mods).items())),
+            # Live code only: the inputs of test.fail_closed and test.controlled.
+            "live_zero_case_files": sum(1 for t in known if t[3] == 0 and not is_archived(sc, t[0])),
+            "live_py_modules": sum(1 for m in mods if not is_archived(sc, m[0])),
+            "live_py_untested": sum(1 for m in mods if not m[5] and not is_archived(sc, m[0])),
+            "archived_test_files": sum(1 for t in tf if is_archived(sc, t[0])),
+            "archived_py_modules": sum(1 for m in mods if is_archived(sc, m[0])),
+            "snapshot_prefixes": sc.get("snapshot_prefixes", [])}
 
 
 def tag_info(cache: Path, repo: str) -> dict:
@@ -798,7 +836,7 @@ def repo_record(row: dict, g: Git | None, cache: Path, rt_idx: dict, pages: dict
     rt_out = None
     if rt:
         rt_out = dict(rt, first_red_roots=[dict(x, blob_oid=wf_oid.get(x["path"])) for x in rt["first_red_roots"]])
-    untested = sorted((m for m in sc["modules"] if not m[5]), key=lambda m: (-(m[3] or 0), m[0]))[:UNTESTED_CAP]
+    untested = sorted((m for m in sc["modules"] if not m[5] and not is_archived(sc, m[0])), key=lambda m: (-(m[3] or 0), m[0]))[:UNTESTED_CAP]
     known_tests = [t for t in sc["test_files"] if t[3] is not None]
     rec = dict(base, reachable=True, error=None, head_sha=head, tree_oid=meta["tree"], commit_date=meta["date"],
                blobs_unread=sc["unread"], tree_entries=sc["rows"],
@@ -810,7 +848,7 @@ def repo_record(row: dict, g: Git | None, cache: Path, rt_idx: dict, pages: dict
                workflows=[{k: v for k, v in w.items() if k != "sig"} for w in sc["workflows"]],
                tests=tests,
                zero_test={"zero_case_files": [{"path": t[0], "blob_oid": t[1], "lang": t[2]} for t in known_tests
-                                              if t[3] == 0][:UNTESTED_CAP],
+                                              if t[3] == 0 and not is_archived(sc, t[0])][:UNTESTED_CAP],
                           "untested_modules_top": [{"path": m[0], "blob_oid": m[1], "oid": f"jade:py:{name}:{m[2]}",
                                                     "symbols": m[3], "methods": m[4], "names": (m[8] or [])[:12]}
                                                    for m in untested],
@@ -967,11 +1005,13 @@ def scan(cache: Path, roster_path: Path, observed_at: str, probe_pages_on=True, 
         "fleet": fleet_summary(repos, contracts),
         "repos": repos,
     }
-    census["digest_sha256"] = hashlib.sha256(canonical(census)).hexdigest()
-    obj = {"schema": OBJ_SCHEMA, "census_digest_sha256": census["digest_sha256"], "observed_at_utc": observed_at,
+    obj = {"schema": OBJ_SCHEMA, "observed_at_utc": observed_at,
            "columns": {"py_modules": ["path", "blob_oid", "dotted", "symbols", "methods", "tested", "via", "test_refs"],
                        "test_files": ["path", "blob_oid", "lang", "cases"]},
            "repos": objects}
+    census, obj = PB.project_many(census, obj)  # private repos: counts only, sealed after projection
+    census["digest_sha256"] = hashlib.sha256(canonical(census)).hexdigest()
+    obj = {"schema": obj.pop("schema"), "census_digest_sha256": census["digest_sha256"], **obj}
     return census, obj
 
 
@@ -998,8 +1038,12 @@ def check(census: dict, objects: dict | None = None) -> list[str]:
             if any(v["state"] != L.UNKNOWN for v in r["probes"].values()):
                 errs.append(f"{tag}: unreachable repo claims a probe")
             continue
+        private = PB.boundary().names_private(tag)  # private ids are PB.MARK (counts only)
+
+        def oid(v, private=private):
+            return bool(SHA40.match(v or "")) or (private and v == PB.MARK)
         for k in ("head_sha", "tree_oid"):
-            if not SHA40.match(r.get(k) or ""):
+            if not oid(r.get(k)):
                 errs.append(f"{tag}: {k}")
         for pid, p in r["probes"].items():
             if p["state"] not in L.STATES:
@@ -1011,10 +1055,10 @@ def check(census: dict, objects: dict | None = None) -> list[str]:
             errs.append(f"{tag}: stage scores do not follow from probes")
         for st, items in r["evidence"].items():
             for e in items:
-                if not SHA40.match(e["blob_oid"] or ""):
+                if not oid(e["blob_oid"]):
                     errs.append(f"{tag}: evidence blob_oid {e['path']}")
         for w in r["workflows"]:
-            if w["blob_oid"] and not SHA40.match(w["blob_oid"]):
+            if w["blob_oid"] and not oid(w["blob_oid"]):
                 errs.append(f"{tag}: workflow blob_oid {w['path']}")
         t = r["tests"]
         if t["py_tested"] + t["py_untested"] != t["py_modules"]:
@@ -1170,7 +1214,9 @@ def pulse_section(prev: dict, cur: dict) -> list[str]:
 
 # --------------------------------------------------------------------------- CLI
 def write_json(path: Path, data) -> None:
-    path.write_text(json.dumps(data, indent=1, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
+    # LF on every OS: the CICD DAG pins these bytes.
+    path.write_text(json.dumps(data, indent=1, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8",
+                    newline="\n")
 
 
 def main(argv=None) -> int:

@@ -117,6 +117,17 @@ class GreenSpineTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "mismatch"):
                 spine.verify_output(a)
 
+    def test_manifest_pins_the_bytes_on_disk(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d)
+            spine.emit(fixture(), path)
+            manifest = json.loads((path / "manifest.json").read_text(encoding="utf-8"))
+            for name in spine.OUTPUTS:
+                data = (path / name).read_bytes()
+                self.assertNotIn(b"\r", data, name)
+                self.assertEqual(manifest["sha256"][name], hashlib.sha256(data).hexdigest(), name)
+            self.assertNotIn(b"\r", (path / "manifest.json").read_bytes())
+
     def test_rehashed_forged_child_acceptance_still_rejected(self):
         with tempfile.TemporaryDirectory() as d:
             path = Path(d)
@@ -124,11 +135,11 @@ class GreenSpineTests(unittest.TestCase):
             hook_path = path / "federation_hooks.json"
             hooks = json.loads(hook_path.read_text(encoding="utf-8"))
             hooks["child_acceptance"] = "ACCEPT"
-            hook_path.write_text(json.dumps(hooks, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            hook_path.write_text(json.dumps(hooks, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
             manifest_path = path / "manifest.json"
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
             manifest["sha256"]["federation_hooks.json"] = hashlib.sha256(hook_path.read_bytes()).hexdigest()
-            manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
             with self.assertRaisesRegex(ValueError, "admission boundary"):
                 spine.verify_output(path)
 

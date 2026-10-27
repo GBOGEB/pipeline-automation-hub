@@ -5,12 +5,14 @@ No GitHub mutation, CI dispatch, false success or bypass is possible here.
 """
 from __future__ import annotations
 import hashlib
+import importlib.util
 import json
 import re
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
-SHA40=re.compile(r'^[0-9a-f]{40}$')
+_pb=importlib.util.spec_from_file_location('jade_private_boundary',ROOT/'tools/private_boundary.py');PB=importlib.util.module_from_spec(_pb);_pb.loader.exec_module(PB)
+SHA40=re.compile(r'^(?:[0-9a-f]{40}|'+PB.MARK+')$')  # a private repo's head is PB.MARK (counts only)
 GATES=('source_integrity','native_tests','matched_coverage','security','independent_review',
        'required_checks','blocked_red_canary','hosted_parity','owner_release')
 POINTS=tuple('J%02d'%i for i in range(1,9))

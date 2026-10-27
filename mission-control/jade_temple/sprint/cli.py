@@ -144,7 +144,7 @@ def run_one(job,root,out,cache,head,inputs,ttl_hours,no_cache,started_plan):
             code=None
         dur=round(time.monotonic()-start,3)
         logfile=out/(job["id"]+".log")
-        logfile.write_text(log[-200000:],encoding="utf-8")
+        logfile.write_text(log[-200000:],encoding="utf-8",newline="\n")
         result={"id":job["id"],"pool":job["pool"],"status":status,
                 "exit_code":code,"queue_wait_seconds":queued_for,
                 "duration_seconds":dur,"log_sha256":sha(logfile.read_bytes()),

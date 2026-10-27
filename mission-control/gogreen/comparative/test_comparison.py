@@ -86,10 +86,10 @@ def validate(d):
     return True
 
 class Compare(unittest.TestCase):
-    def setUp(self): self.d=json.loads(DATA.read_text())
+    def setUp(self): self.d=json.loads(DATA.read_text(encoding="utf-8"))
     def test_valid(self):self.assertTrue(validate(self.d))
     def test_markup(self):
-        s=HTML.read_text()
+        s=HTML.read_text(encoding="utf-8")
         self.assertIn('id="data"',s)
         self.assertIn("textContent",s)
         self.assertNotIn("innerHTML",s)
@@ -160,7 +160,7 @@ class Compare(unittest.TestCase):
         self.assertEqual(self.d["portfolio"]["closed_unmerged"],1)
 
     def test_standalone_html_native_dashboard_and_denominators(self):
-        s=HTML.read_text()
+        s=HTML.read_text(encoding="utf-8")
         self.assertIn('id="k-runs"',s)
         self.assertIn('id="k-runner"',s)
         self.assertIn('id="k-top21"',s)
@@ -210,7 +210,7 @@ class Compare(unittest.TestCase):
         with self.assertRaises(AssertionError):validate(self.d)
 
     def test_qps_html_root_surface_and_sipoc(self):
-        h=HTML.read_text()
+        h=HTML.read_text(encoding="utf-8")
         for marker in ('id="q-runs"','id="q-root-rows"','id="q-firstred"',
                        'id="q-coverage"','QPS first-red conversion'):
             self.assertIn(marker,h)

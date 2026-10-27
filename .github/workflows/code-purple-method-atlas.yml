@@ -323,8 +323,8 @@ jobs:
           python "$SRC/flightdeck.py" build --fleet "$FLEET" \
             --snapshot "$SRC/head_snapshot.json" --contract "$SRC/flightdeck_contract.json" \
             --out "$OUT" --exact-git-sha "$EXACT_SHA"
-          # The HTML links to four binary derivatives. Generate them in the
-          # same source-bound producer or the published navigation would break.
+          # The HTML names four binary derivatives as plain text (pages_portal.py
+          # never publishes binaries). Generate them here so they ride in the run artifact.
           python -m pip install --disable-pip-version-check \
             python-docx==1.2.0 openpyxl==3.1.5 reportlab==4.4.3
           npm install --no-save --no-package-lock --prefix "$RUNNER_TEMP/flightdeck-npm" 'pptxgenjs@3.12.0'
@@ -712,7 +712,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Download exact-run Atlas artifact
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: code-purple-method-atlas-${{ github.sha }}
           path: ./atlas-artifact

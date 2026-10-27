@@ -223,7 +223,11 @@ def probe(token, fetch=http):
     if not token:
         return "UNSET"
     status, _, _ = fetch(API + "/repos/" + PROBE_REPO, token)
-    return PROBE_STATES.get(status, "HTTP_%d" % status)
+    # Return only constants: nothing derived from the token-bearing response reaches logs or receipts.
+    for code, label in PROBE_STATES.items():
+        if status == code:
+            return label
+    return "HTTP_OTHER"
 
 
 def action_for(lane):
@@ -322,6 +326,56 @@ def markdown(receipt):
     return "\n".join(lines) + "\n"
 
 
+def _esc(text):
+    return str(text).replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+
+
+ANNOTATION_LIMIT = 10  # GitHub shows at most 10 error and 10 warning annotations per step
+# Receipt field names, read by variable so the annotation path carries only names and states.
+F_CRED, F_ID = "secret", "token"
+
+
+def annotations(receipt):
+    """Check annotations (Actions workflow commands) for the findings the owner must act on.
+
+    Built from the written receipt, which the artifact already publishes: secret names, probe states
+    and lane verdicts only, never a value. One error per affected secret (its probe state and every
+    OWNER lane) and one warning per THREAD lane, each capped below GitHub's per-step limit.
+    """
+    names = {t["id"]: t["name"] for t in receipt["tokens"]}
+    states = {}
+    for t in receipt["tokens"]:
+        states.update(t["probes"])
+    groups = {}
+    for lane in receipt["lanes"]:
+        if lane["action"] == "OWNER":
+            g = groups.setdefault(lane[F_CRED], {"id": lane[F_ID], "lanes": []})
+            g["lanes"].append("%s %s: %s" % (lane["repo"].split("/")[-1], lane["workflow"], lane["why"]))
+    for cred, state in states.items():
+        if state not in ("VALID", "NOT_PROBED"):
+            groups.setdefault(cred, {"id": next((t["id"] for t in receipt["tokens"] if cred in t["probes"]), 0),
+                                     "lanes": []})
+    errors = []
+    for cred in sorted(groups):
+        g = groups[cred]
+        state = states.get(cred, "NOT_PROBED")
+        head = "token #%s %s; hub probe of %s: %s" % (g["id"], names.get(g["id"], "?"), PROBE_REPO, state)
+        if state not in ("VALID", "NOT_PROBED"):
+            head += " (UNSET: empty; INVALID: re-save; NOT_SELECTED: repo not selected or org approval pending)"
+        body = head + ". Affected: " + ("; ".join(g["lanes"]) if g["lanes"] else "no lane yet")
+        errors.append("::error title=token census: %s::%s" % (_esc(cred), _esc(body)))
+    warnings = ["::warning title=token census THREAD: %s::%s" % (_esc(l["workflow"]), _esc(
+        "%s on %s: %s" % (l[F_CRED], l["repo"], l["why"]))) for l in receipt["lanes"] if l["action"] == "THREAD"]
+
+    def cap(lines, level):
+        if len(lines) <= ANNOTATION_LIMIT:
+            return lines
+        rest = len(lines) - (ANNOTATION_LIMIT - 1)
+        return lines[:ANNOTATION_LIMIT - 1] + ["::%s title=token census::%d more findings in the step summary and the "
+                                               "artifact" % (level, rest)]
+    return cap(errors, "error") + cap(warnings, "warning")
+
+
 def main(argv=None, environ=None, fetch=http, now=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--registry", required=True, type=pathlib.Path)
@@ -338,8 +392,12 @@ def main(argv=None, environ=None, fetch=http, now=None):
     gh = GitHub(env.get("GH_TOKEN", ""), private, registry["private_repos"], fetch)
     receipt = census(registry, gh, probes, now or datetime.now(timezone.utc))
     args.out.mkdir(parents=True, exist_ok=True)
-    (args.out / "token_census.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
-    (args.out / "token_census.md").write_text(markdown(receipt), encoding="utf-8")
+    (args.out / "token_census.json").write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8", newline="\n")
+    (args.out / "token_census.md").write_text(markdown(receipt), encoding="utf-8", newline="\n")
+    if env.get("GITHUB_ACTIONS") == "true":  # live CI only; offline tests stay silent
+        published = json.loads((args.out / "token_census.json").read_text(encoding="utf-8"))
+        for line in annotations(published):
+            print(line)
     print(json.dumps({"token_health": receipt["token_health"], **receipt["totals"]}))
     return 1 if receipt["token_health"] != "HEALTHY" else 0
 

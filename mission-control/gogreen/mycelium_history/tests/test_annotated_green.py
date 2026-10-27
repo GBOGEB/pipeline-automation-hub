@@ -567,7 +567,7 @@ class NPlusThreeCLINativeReceiptTests(unittest.TestCase):
                          env={"GITHUB_TOKEN":"local-fixture-token",
                               "GITHUB_RUN_ID":"1234567","GITHUB_RUN_ATTEMPT":"2"},
                          fetch=fetch)
-            d=json.loads(path.read_text())
+            d=json.loads(path.read_text(encoding="utf-8"))
             self.assertEqual((d["run_id"],d["run_attempt"]),(1234567,2))
             self.assertEqual(d["hub_source_sha"],A)
             self.assertEqual((d["source_bound_breadth"]["complete_check_cohorts_observed"],
@@ -581,7 +581,7 @@ class NPlusThreeCLINativeReceiptTests(unittest.TestCase):
         d["hub_source_sha"]=A
         with tempfile.TemporaryDirectory() as directory:
             path=Path(directory)/"w10.json"
-            path.write_text(json.dumps(d))
+            path.write_text(json.dumps(d), encoding="utf-8", newline="\n")
             result=self.invoke(["--output",str(path),"--source-sha",A,"--validate"])
             self.assertIn('"admission": "HOLD"',result)
 
@@ -591,7 +591,7 @@ class NPlusThreeCLINativeReceiptTests(unittest.TestCase):
             path=Path(directory)/"w10.json"
             self.invoke(["--output",str(path),"--source-sha",A],
                         env={"GITHUB_TOKEN":"local-fixture-token"},fetch=fetch)
-            d=json.loads(path.read_text())
+            d=json.loads(path.read_text(encoding="utf-8"))
             self.assertIsNone(d["run_id"])
             self.assertIsNone(d["run_attempt"])
             self.assertIsNone(d["numeric_job_id"])
@@ -613,7 +613,7 @@ class NPlusThreeCLINativeReceiptTests(unittest.TestCase):
     def test_cli_validate_rejects_non_json_native_receipt(self):
         with tempfile.TemporaryDirectory() as directory:
             path=Path(directory)/"w10.json"
-            path.write_text("{broken_json")
+            path.write_text("{broken_json", encoding="utf-8", newline="\n")
             with self.assertRaises(json.JSONDecodeError):
                 self.invoke(["--output",str(path),"--source-sha",A,"--validate"])
 
@@ -624,7 +624,7 @@ class NPlusThreeCLINativeReceiptTests(unittest.TestCase):
         d["qps_owner_accepted"]=True
         with tempfile.TemporaryDirectory() as directory:
             path=Path(directory)/"w10.json"
-            path.write_text(json.dumps(d))
+            path.write_text(json.dumps(d), encoding="utf-8", newline="\n")
             with self.assertRaisesRegex(ValueError,"false admission"):
                 self.invoke(["--output",str(path),"--source-sha",A,"--validate"])
 
@@ -643,7 +643,7 @@ class NPlusThreeCLINativeReceiptTests(unittest.TestCase):
             path=Path(directory)/"w10.json"
             self.invoke(["--output",str(path),"--source-sha",A],
                         env={"GITHUB_TOKEN":"local-fixture-token"},fetch=fetch)
-            d=json.loads(path.read_text())
+            d=json.loads(path.read_text(encoding="utf-8"))
             self.assertFalse(d["main_head_unchanged_during_capture"])
             self.assertFalse(d["source_bound_breadth"]["main_stable"])
             self.assertEqual(d["admission"],"HOLD")

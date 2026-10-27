@@ -70,6 +70,86 @@
       "preventive_controls": ["runner_id_gt_0", "steps_executed_gt_0", "do_not_patch_application_before_runner_assignment", "runtime_receipt"],
       "learning_signal": "A workflow object is not execution evidence until a real runner is assigned and at least one step executes.",
       "recurrence_metric": "zero_step_run_count"
+    },
+    {
+      "rex_id": "REX-007",
+      "title": "CRLF bytes from Windows text writers drift pinned blob OIDs",
+      "source_class": "OBSERVED_REPEATED_PATTERN",
+      "event_sha_or_receipt": ["GBOGEB/pipeline-automation-hub#877", "GBOGEB/pipeline-automation-hub#902", "GBOGEB/pipeline-automation-hub#868"],
+      "affected_competencies": ["build_repair", "runtime_execution", "evidence_provenance"],
+      "primary_roles": ["S05", "U08"],
+      "preventive_controls": ["gitattributes_eol_lf", "write_text_newline_lf", "bound_oid_equals_head_blob_test"],
+      "known_fix": "Open every text writer with newline=\"\\n\" and encoding=\"utf-8\" (Path.write_text turns \\n into \\r\\n on Windows). .gitattributes keeps * text=auto eol=lf. Strip CR from a file that was already written (sed -i 's/\\r$//') before you commit it.",
+      "learning_signal": "When a pinned output disagrees with its git blob only on Windows, the line endings are wrong. The content did not change.",
+      "recurrence_metric": "crlf_oid_drift_count",
+      "recurrence_level": "RECURRING",
+      "preventive_action_effective": true,
+      "accepted_by": null,
+      "closed_at": null
+    },
+    {
+      "rex_id": "REX-008",
+      "title": "pinned generated outputs stale after a pinned-source change",
+      "source_class": "OBSERVED_REPEATED_PATTERN",
+      "event_sha_or_receipt": ["GBOGEB/pipeline-automation-hub#868", "GBOGEB/pipeline-automation-hub#919"],
+      "affected_competencies": ["build_repair", "evidence_provenance", "operations_control"],
+      "primary_roles": ["S05", "U08", "U06"],
+      "preventive_controls": ["regen_entrypoint_in_dependency_order", "commit_inputs_before_launcher_build", "regen_check_in_ci"],
+      "known_fix": "Commit the source change first. Then run python mission-control/jade_temple/tools/regen.py --write, which regenerates the DAG, the page and the launcher in order, and commit the result. The launcher reads blob OIDs at a commit, so a launcher built before its inputs are committed is stale. Verify with regen.py --check.",
+      "learning_signal": "A change to any DAG-pinned file takes two commits: the source change, then the regenerated outputs.",
+      "recurrence_metric": "stale_pinned_output_count",
+      "recurrence_level": "PERSISTENT",
+      "preventive_action_effective": true,
+      "accepted_by": null,
+      "closed_at": null
+    },
+    {
+      "rex_id": "REX-009",
+      "title": "second session on a live PR branch duplicates the fix",
+      "source_class": "OBSERVED_REPEATED_PATTERN",
+      "event_sha_or_receipt": ["GBOGEB/pipeline-automation-hub#842@80c4792c (duplicate fix rejected as non-fast-forward, 2026-10-26)", "GBOGEB/pipeline-automation-hub#787"],
+      "affected_competencies": ["operations_control", "planning"],
+      "primary_roles": ["U02", "U04", "U07"],
+      "preventive_controls": ["fetch_pr_branch_before_acting", "live_worktree_detection", "one_session_per_worktree"],
+      "known_fix": "Before you edit a PR branch, run git fetch origin <branch> and compare the result with gh pr view --json headRefOid. The main checkout fetches master only, so origin/<branch> can be hours old. Also run tools/workstation/Invoke-DraftPrPass.ps1. If it classes the PR as LIVE, or the head is less than 30 minutes old, leave the PR to that session.",
+      "learning_signal": "A stale remote-tracking ref hides a live session. Ask the remote, not the local ref.",
+      "recurrence_metric": "duplicate_fix_count",
+      "recurrence_level": "RECURRING",
+      "preventive_action_effective": null,
+      "accepted_by": null,
+      "closed_at": null
+    },
+    {
+      "rex_id": "REX-010",
+      "title": "addressed bot review threads left unresolved keep first-pass-closure red",
+      "source_class": "OBSERVED_REPEATED_PATTERN",
+      "event_sha_or_receipt": ["GBOGEB/pipeline-automation-hub#842@80c4792c", "GBOGEB/pipeline-automation-hub#843@787ab625", "GBOGEB/pipeline-automation-hub#847@2e8032ea"],
+      "affected_competencies": ["evidence_provenance", "operations_control"],
+      "primary_roles": ["U01", "U06", "U08"],
+      "preventive_controls": ["verify_thread_against_head", "reply_with_fixing_sha_and_line", "resolve_after_reply", "rereview_new_head"],
+      "known_fix": "Check each unresolved Codex, Copilot or CodeQL thread against the current head. If it is fixed, reply with the fixing SHA and file:line, then resolve the thread (addPullRequestReviewThreadReply, then resolveReviewThread). If it is not fixed, fix it and push. Codex re-reviews the new head and can raise new findings, so run the pass again until it reports 0.",
+      "learning_signal": "An outdated thread is still open. First-pass closure counts open threads, not fixed code.",
+      "recurrence_metric": "unresolved_addressed_thread_count",
+      "recurrence_level": "PERSISTENT",
+      "preventive_action_effective": true,
+      "accepted_by": null,
+      "closed_at": null
+    },
+    {
+      "rex_id": "REX-011",
+      "title": "stale GITHUB_TOKEN in an inherited shell returns 401 from gh",
+      "source_class": "OBSERVED_REPEATED_PATTERN",
+      "event_sha_or_receipt": ["tools/workstation/Invoke-WorkspaceAudit.ps1@5bcb7769 (lesson L8)"],
+      "affected_competencies": ["runtime_execution", "operations_control"],
+      "primary_roles": ["S03", "S05"],
+      "preventive_controls": ["strip_token_env_for_gh_child_process", "token_scope_audit"],
+      "known_fix": "Run gh with the token variables removed so the keyring login is used. In bash: unset GITHUB_TOKEN GH_TOKEN. In PowerShell: Remove-Item Env:GITHUB_TOKEN,Env:GH_TOKEN -ErrorAction SilentlyContinue. Then remove the User or Machine value and restart the parent app. Never print the token.",
+      "learning_signal": "On this workstation, a 401 from gh means a stale environment variable until shown otherwise. Check that before you suspect a permission problem.",
+      "recurrence_metric": "stale_token_401_count",
+      "recurrence_level": "RECURRING",
+      "preventive_action_effective": true,
+      "accepted_by": null,
+      "closed_at": null
     }
   ],
   "learning_loop": [
@@ -100,6 +180,7 @@
     "after_count",
     "preventive_action_effective",
     "accepted_by",
-    "closed_at"
+    "closed_at",
+    "known_fix"
   ]
 }

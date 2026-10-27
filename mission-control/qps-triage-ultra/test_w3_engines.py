@@ -148,5 +148,50 @@ class ObservedBT(unittest.TestCase):
         self.assertEqual(self.run_main(short)[0], 2)
 
 
+class ReceiptSync(unittest.TestCase):
+    """The committed receipts must equal engine output on the committed inputs (N+12 root)."""
+
+    def setUp(self):
+        import w3_receipt_sync as sync
+        self.sync = sync
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        for name in ("w3_fleet_telemetry.json", "w3_bt_observations.json",
+                     "w3_measured_analytics_receipt.json", "w3_observed_bt_receipt.json"):
+            (self.root / name).write_text((HERE / name).read_text(encoding="utf-8"), encoding="utf-8")
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_committed_receipts_are_current(self):
+        rep = self.sync.check(HERE)
+        self.assertEqual({k: v["state"] for k, v in rep.items()},
+                         {k: "CURRENT" for k in self.sync.PAIRS}, rep)
+
+    def test_input_change_without_regeneration_is_stale(self):
+        tel = json.loads((self.root / "w3_fleet_telemetry.json").read_text())
+        tel["rows"] = tel["rows"][:3]  # exactly the 2026-09-12 shape
+        (self.root / "w3_fleet_telemetry.json").write_text(json.dumps(tel))
+        rep = self.sync.check(self.root)
+        self.assertEqual(rep["w3_measured_analytics_receipt.json"]["state"], "STALE")
+        self.assertIn("$.row_count: committed=5 engine=3", rep["w3_measured_analytics_receipt.json"]["diff"])
+        self.assertEqual(self.sync.main(["--root", str(self.root), "--check"]), 1)
+
+    def test_write_restores_and_keeps_provenance(self):
+        obs = json.loads((self.root / "w3_bt_observations.json").read_text())
+        obs["current_frontier"]["pairs"] = []
+        (self.root / "w3_bt_observations.json").write_text(json.dumps(obs))
+        self.assertEqual(self.sync.check(self.root)["w3_observed_bt_receipt.json"]["state"], "STALE")
+        self.sync.write(self.root, None)
+        self.assertEqual(self.sync.main(["--root", str(self.root), "--check"]), 0)
+        r = json.loads((self.root / "w3_observed_bt_receipt.json").read_text())
+        self.assertEqual(r["ci_proof"]["run_id"], 39984340926)  # provenance kept, not engine output
+        self.assertEqual(r["w3_15"], "WITHHELD_NO_VALID_CURRENT_FRONTIER_PAIRWISE_OUTCOMES")
+
+    def test_float_canon_tolerates_last_ulp_only(self):
+        self.assertEqual(self.sync.canon(0.1 + 0.2), self.sync.canon(0.3))
+        self.assertNotEqual(self.sync.canon(0.7597), self.sync.canon(0.8584))
+
+
 if __name__ == "__main__":
     unittest.main()

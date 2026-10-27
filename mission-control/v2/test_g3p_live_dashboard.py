@@ -60,9 +60,9 @@ class LiveDashboardTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             files=copies(tmp)
             before=live.load_snapshot(files)
-            o=json.loads(files[1].read_text())
+            o=json.loads(files[1].read_text(encoding="utf-8"))
             o.setdefault('notes',[]).append('NEW_OBSERVATION_WHILE_HISTORY_PRESERVED_IN_GIT')
-            files[1].write_text(json.dumps(o))
+            files[1].write_text(json.dumps(o), encoding="utf-8", newline="\n")
             after=live.load_snapshot(files)
             self.assertNotEqual(before['revision'],after['revision'])
             self.assertEqual(after['metrics']['pulses'],6)
@@ -72,25 +72,25 @@ class LiveDashboardTests(unittest.TestCase):
     def test_broken_chain_no_new_valid_revision(self):
         with tempfile.TemporaryDirectory() as tmp:
             files=copies(tmp)
-            o=json.loads(files[1].read_text())
+            o=json.loads(files[1].read_text(encoding="utf-8"))
             o['receipts'][0]['merge_admission']='PASS'
-            files[1].write_text(json.dumps(o))
+            files[1].write_text(json.dumps(o), encoding="utf-8", newline="\n")
             with self.assertRaises(ValueError): live.load_snapshot(files)
 
     def test_null_mission_is_a_structural_validation_error(self):
         with tempfile.TemporaryDirectory() as tmp:
             files=copies(tmp)
-            o=json.loads(files[0].read_text())
+            o=json.loads(files[0].read_text(encoding="utf-8"))
             o['mission']=None
-            files[0].write_text(json.dumps(o))
+            files[0].write_text(json.dumps(o), encoding="utf-8", newline="\n")
             with self.assertRaisesRegex(ValueError,'invalid source ledger structure'):
                 live.load_snapshot(files)
 
     def test_wrong_cross_wave_position(self):
         with tempfile.TemporaryDirectory() as tmp:
             files=copies(tmp)
-            o=json.loads(files[1].read_text());o['start_ordinal']=4
-            files[1].write_text(json.dumps(o))
+            o=json.loads(files[1].read_text(encoding="utf-8"));o['start_ordinal']=4
+            files[1].write_text(json.dumps(o), encoding="utf-8", newline="\n")
             with self.assertRaises(ValueError):live.load_snapshot(files)
 
     def test_no_untrusted_or_external_scripts(self):
@@ -133,16 +133,16 @@ class LiveDashboardTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             man=live.export(PATHS,d)
             first_hashes=man['outputs_sha256']
-            j=json.loads((Path(d)/'g3p-lineage.json').read_text())
+            j=json.loads((Path(d)/'g3p-lineage.json').read_text(encoding="utf-8"))
             self.assertNotIn('feeder_observed_at_utc',j)
             man=live.export(PATHS,d)
             self.assertEqual(man['outputs_sha256'],first_hashes)
-            self.assertEqual(man['outputs_sha256'],json.loads((Path(d)/'g3p-manifest.json').read_text())['outputs_sha256'])
+            self.assertEqual(man['outputs_sha256'],json.loads((Path(d)/'g3p-manifest.json').read_text(encoding="utf-8"))['outputs_sha256'])
             for file,digest in man['outputs_sha256'].items():
                 self.assertEqual(hashlib.sha256((Path(d)/file).read_bytes()).hexdigest(),digest)
-            j=json.loads((Path(d)/'g3p-lineage.json').read_text())
+            j=json.loads((Path(d)/'g3p-lineage.json').read_text(encoding="utf-8"))
             self.assertEqual((j['metrics']['pulses'],j['metrics']['edge_count']),(6,5))
-            self.assertEqual((Path(d)/'g3p-lineage.mmd').read_text().count('-.->'),1)
+            self.assertEqual((Path(d)/'g3p-lineage.mmd').read_text(encoding="utf-8").count('-.->'),1)
 
     def test_no_exposed_interface_bind(self):
         with self.assertRaisesRegex(ValueError,'external network binding disabled'):
@@ -151,7 +151,7 @@ class LiveDashboardTests(unittest.TestCase):
     def test_bad_initial_ledger_prevents_server_start(self):
         with tempfile.TemporaryDirectory() as d:
             files=copies(d)
-            files[0].write_text('{')
+            files[0].write_text('{', encoding="utf-8", newline="\n")
             with self.assertRaises(json.JSONDecodeError):live.create_server(files,port=0)
 
     def test_readonly_health_html_alias_and_404(self):
@@ -179,7 +179,7 @@ class LiveDashboardTests(unittest.TestCase):
             with patch.object(sys,'argv',args),contextlib.redirect_stdout(io.StringIO()) as out:
                 live.main()
             self.assertIn('revision',out.getvalue())
-            self.assertIn('outputs_sha256',json.loads((Path(d)/'g3p-manifest.json').read_text()))
+            self.assertIn('outputs_sha256',json.loads((Path(d)/'g3p-manifest.json').read_text(encoding="utf-8")))
 
     def test_cli_missing_output_or_serve_fails(self):
         args=['g3p_live_dashboard.py','--ledgers',*(str(p) for p in PATHS)]
@@ -229,9 +229,9 @@ class LiveDashboardTests(unittest.TestCase):
             try:
                 with urlopen(f'http://127.0.0.1:{server.server_port}/api/events',timeout=10) as event_source:
                     event_source.readline();event_source.readline();event_source.readline()
-                    o=json.loads(files[1].read_text())
+                    o=json.loads(files[1].read_text(encoding="utf-8"))
                     o['mission']=None
-                    files[1].write_text(json.dumps(o))
+                    files[1].write_text(json.dumps(o), encoding="utf-8", newline="\n")
                     received=False
                     for _ in range(14):
                         line=event_source.readline().decode().strip()
@@ -247,9 +247,9 @@ class LiveDashboardTests(unittest.TestCase):
             th=threading.Thread(target=server.serve_forever,daemon=True)
             th.start()
             try:
-                o=json.loads(files[0].read_text())
+                o=json.loads(files[0].read_text(encoding="utf-8"))
                 o['mission']=None
-                files[0].write_text(json.dumps(o))
+                files[0].write_text(json.dumps(o), encoding="utf-8", newline="\n")
                 for path, expected in (('/api/lineage',409),('/health',503)):
                     with self.subTest(path=path):
                         with self.assertRaises(HTTPError) as error:
@@ -269,9 +269,9 @@ class LiveDashboardTests(unittest.TestCase):
                     self.assertEqual(event_source.readline().decode().strip(),'event: revision')
                     previous = json.loads(event_source.readline().decode()[6:])['revision']
                     event_source.readline()  # blank line
-                    o = json.loads(files[1].read_text())
+                    o = json.loads(files[1].read_text(encoding="utf-8"))
                     o.setdefault('notes',[]).append('VALID_LOCAL_FEED_REVISION_TEST')
-                    files[1].write_text(json.dumps(o))
+                    files[1].write_text(json.dumps(o), encoding="utf-8", newline="\n")
                     event_type=None
                     revision=None
                     # Bounded SSE reader. Server checks input every 2 s.
@@ -323,14 +323,14 @@ class LiveDashboardTests(unittest.TestCase):
                     second=req.readline().decode().strip()
                     self.assertEqual(first,'event: revision')
                     self.assertEqual(json.loads(second[6:])['revision'],initial['revision'])
-                o=json.loads(files[1].read_text());o.setdefault('notes',[]).append('REVISION_UPDATED')
-                files[1].write_text(json.dumps(o))
+                o=json.loads(files[1].read_text(encoding="utf-8"));o.setdefault('notes',[]).append('REVISION_UPDATED')
+                files[1].write_text(json.dumps(o), encoding="utf-8", newline="\n")
                 with urlopen(base+'/api/lineage',timeout=3) as req:
                     after=json.load(req)
                 self.assertNotEqual(initial['revision'],after['revision'])
                 self.assertEqual(after['metrics']['pulses'],6)
                 o['receipts'][0]['authority_transfer']=True
-                files[1].write_text(json.dumps(o))
+                files[1].write_text(json.dumps(o), encoding="utf-8", newline="\n")
                 with self.assertRaises(HTTPError) as err:
                     urlopen(base+'/api/lineage',timeout=3)
                 self.assertEqual(err.exception.code,409)

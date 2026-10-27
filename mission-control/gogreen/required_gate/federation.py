@@ -33,7 +33,7 @@ SCHEMA = "gogreen.federation_spine.v1"
 
 
 def load(p):
-    return json.loads(Path(p).read_text()) if p and Path(p).exists() else None
+    return json.loads(Path(p).read_text(encoding="utf-8")) if p and Path(p).exists() else None
 
 
 def repo_row(spec: dict, files_by_pr: dict | None, limit: int, audit_fn=dp.load_audit) -> dict:
@@ -145,7 +145,7 @@ def main(argv=None):
     ap.add_argument("--backtest-limit", type=int, default=30, help="merged PRs per repo replayed (1 files read each)")
     ap.add_argument("--out", type=Path, required=True)
     a = ap.parse_args(argv)
-    specs = json.loads(a.spec.read_text())
+    specs = json.loads(a.spec.read_text(encoding="utf-8"))
     rows = []
     for spec in specs:
         files = None
@@ -164,8 +164,8 @@ def main(argv=None):
            "authority": {"merge_authorized": False, "enforced_anywhere_but_hub": False, "actor": "AGENT"}}
     doc["digest_sha256"] = hashlib.sha256(json.dumps(doc, sort_keys=True).encode()).hexdigest()
     a.out.mkdir(parents=True, exist_ok=True)
-    (a.out / "federation.json").write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n")
-    (a.out / "federation.md").write_text(markdown(doc))
+    (a.out / "federation.json").write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    (a.out / "federation.md").write_text(markdown(doc), encoding="utf-8", newline="\n")
     print(json.dumps(doc["totals"], sort_keys=True))
     return doc
 

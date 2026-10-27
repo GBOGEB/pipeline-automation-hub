@@ -83,7 +83,7 @@ def main() -> None:
                "hosted_parity": None,
                "status": "PASS", "viewports": reports}
     (out / "receipt.json").write_text(
-        json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     print("JADE_GATE12_BROWSER_QA_PASS", len(reports))
 
 

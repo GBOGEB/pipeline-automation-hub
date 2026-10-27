@@ -92,7 +92,7 @@ class N11WorkflowContractTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             sample = root / "probe.py"
-            sample.write_text("value = 1\nif value:\n    value += 1\n", encoding="utf-8")
+            sample.write_text("value = 1\nif value:\n    value += 1\n", encoding="utf-8", newline="\n")
             output = root / "probe.json"
             env = dict(__import__("os").environ)
             env["COVERAGE_FILE"] = str(root / ".coverage")
