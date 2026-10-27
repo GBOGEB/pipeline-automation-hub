@@ -161,12 +161,14 @@ def checklist(body):
     declared = {k: [] for k in steps}
     headed = dict.fromkeys(steps, False)
     section, basis, prose = "OTHER", None, False
+    continuation = None
     for line in _source_lines(body):
         h = HEADING.match(line)
         if h:
             section, basis = _section(next(g for g in h.groups() if g))
             headed[section] = True
             prose = False
+            continuation = None
             continue
         m = ITEM.match(line)
         if m:
@@ -179,16 +181,23 @@ def checklist(body):
             if m.group(1) in "~-" or STRUCK.fullmatch(text):  # dropped: never counted
                 row["withdrawn"] = True
             steps[own].append(row)
+            continuation = row
             prose = False
         elif section != "OTHER" and line.strip():
+            if continuation is not None and re.match(r"^ {2,}\\S", line):
+                continuation["text"] = (continuation["text"] + " " + line.strip())[:300]
+                continue
             b = BULLET.match(line)
             if b:
                 declared[section].append({"text": b.group(1)[:300], "form": "BULLET"})
+                continuation = declared[section][-1]
             elif not prose and not META.match(line):  # one prose criterion per paragraph
                 declared[section].append({"text": line.strip()[:300], "form": "PROSE"})
+                continuation = None
             prose = not b
         else:
             prose = False
+            continuation = None
 
     def summary(rows):
         live = [x for x in rows if not x.get("withdrawn")]
