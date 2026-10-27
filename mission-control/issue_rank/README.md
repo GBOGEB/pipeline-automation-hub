@@ -38,11 +38,14 @@ snapshot digest in the ledger.
 The parser reads the issue body (comments are status notes, not the plan):
 
 - `- [x]` is done, `- [ ]` is open, `- [~]` / `- [-]` are dropped and not counted.
-- The nearest heading sets the kind: **DOV** (DoV, verification, validation, evidence,
-  proof), **DOD** (DoD, definition of done, acceptance, exit criteria, closure, done
-  when, victory, predicate, required outputs/disposition/return), **STEPS** (steps,
-  tasks, todo, plan, checklist, deliverables, next actions). An inline `- [ ] DoD: …`
-  overrides the heading.
+- The nearest heading sets the kind: **DOV** (DoV, definition of verification,
+  verification, validation, required proof, proof required, evidence required, how to
+  verify), **DOD** (DoD, definition of done, done when, acceptance, exit criteria,
+  closure predicate, closure rule, closure criteria, victory predicate, required
+  outputs/disposition/return), **STEPS** (steps, tasks, todo, plan, checklist,
+  deliverables, next actions). An inline `- [ ] DoD: …` overrides the heading.
+  Bare status headings like `Evidence`, `Proof` or `Closure` do **not** establish
+  DoV/DoD; this avoids turning descriptive status notes into verification plans.
 - Plain bullets under a DOV / DOD / STEPS heading are **declared but untracked**
   criteria. They are counted as `untracked`, never as done.
 - A live checklist item that references another issue (`- [ ] #123`, `- [x] #123`) makes
