@@ -101,7 +101,7 @@ def summarize(rows, scope="USER", j=3):
             raise ValueError("non-contiguous ledger sequence")
         receipt = row.get("row_sha256")
         previous = row.get("prev_sha256")
-        if not isinstance(receipt, str) or not SHA64.fullmatch(receipt):
+        if receipt is not None and (not isinstance(receipt, str) or not SHA64.fullmatch(receipt)):
             raise ValueError("invalid 64-hex ledger receipt")
         if previous is not None and (not isinstance(previous, str) or not SHA64.fullmatch(previous)):
             raise ValueError("invalid previous receipt shape")
