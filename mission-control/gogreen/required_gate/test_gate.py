@@ -1,6 +1,7 @@
 """Offline controls for the GOGREEN required-gate aggregator (v2: ledger-driven)."""
 import base64
 import contextlib
+import hashlib
 import io
 import itertools
 import json
@@ -9,6 +10,7 @@ import sys
 import tempfile
 import unittest
 import urllib.error
+import zipfile
 from pathlib import Path
 from unittest import mock
 
@@ -574,6 +576,92 @@ class RecheckReceiptRelevance(unittest.TestCase):
             self.assertEqual(json.loads(out.getvalue())["decision"], g.RECHECK_UNKNOWN)
 
 
+
+
+class RecheckArtifactBoundary(unittest.TestCase):
+    """Offline negative matrix for the ZIP trust boundary; no GitHub calls or POST."""
+
+    RUN_ID = 123
+    ATTEMPT = 2
+    PR = 42
+    PATH = ".github/workflows/failing.yml"
+
+    def report(self):
+        return {"schema": "gogreen.required_gate.v2", "head_sha": SHA,
+                "pr": self.PR, "verdict": g.FAIL, "merge_authorized": False,
+                "gates": [{"workflow": self.PATH, "state": g.FAIL}]}
+
+    def create(self, report=None, name="required-gate.json", extra=False):
+        target = self.report() if report is None else report
+        out = io.BytesIO()
+        with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED) as z:
+            z.writestr(name, json.dumps(target))
+            if extra:
+                z.writestr("unexpected.txt", "extra")
+        archive = out.getvalue()
+        md = {"id": 331, "name": f"gogreen-required-gate-{self.PR}-{self.ATTEMPT}",
+              "expired": False,
+              "url": f"https://api.github.com/repos/{REPO}/actions/artifacts/331",
+              "digest": "sha256:" + hashlib.sha256(archive).hexdigest(),
+              "workflow_run": {"id": self.RUN_ID, "head_sha": SHA}}
+        return md, archive
+
+    def verify(self, metadata, archive):
+        return g.verify_recheck_artifact(
+            metadata, archive, repo=REPO, run_id=self.RUN_ID,
+            attempt=self.ATTEMPT, pr=self.PR, sha=SHA)
+
+    def test_valid_verified_receipt_is_still_not_merge_authority(self):
+        md, archive = self.create()
+        receipt = self.verify(md, archive)
+        self.assertEqual(receipt["decision"], "VERIFIED_FAILED_RECEIPT")
+        self.assertEqual(receipt["archive_sha256"], hashlib.sha256(archive).hexdigest())
+        self.assertIs(receipt["merge_authorized"], False)
+        self.assertEqual(
+            g.receipt_recheck_relevance(receipt["report"], sha=SHA,
+                                        workflow_path=self.PATH)["decision"],
+            g.RECHECK_ELIGIBLE)
+
+    def test_artifact_provenance_and_digest_tamper_negative_matrix(self):
+        md, archive = self.create()
+        cases = [
+            {**md, "expired": True},
+            {**md, "name": "gogreen-required-gate-42-1"},
+            {**md, "url": "https://api.github.com/repos/other/repo/actions/artifacts/331"},
+            {**md, "id": 332},
+            {**md, "digest": "sha256:" + "0" * 64},
+            {**md, "digest": None},
+            {**md, "workflow_run": {"id": 124, "head_sha": SHA}},
+            {**md, "workflow_run": {"id": 123, "head_sha": BASE}},
+            {**md, "workflow_run": {}},
+            {},
+        ]
+        for idx, bad in enumerate(cases):
+            with self.subTest(case=idx):
+                self.assertEqual(self.verify(bad, archive)["decision"], g.RECHECK_UNKNOWN)
+        self.assertEqual(self.verify(md, archive[:-1] + b"X")["decision"], g.RECHECK_UNKNOWN)
+        self.assertEqual(self.verify(md, b"X" * (g.MAX_RECHECK_RECEIPT_ZIP + 1))["decision"], g.RECHECK_UNKNOWN)
+
+    def test_zip_members_and_receipt_content_fail_closed(self):
+        for report in (
+            {**self.report(), "pr": 43},
+            {**self.report(), "head_sha": BASE},
+            {**self.report(), "merge_authorized": True},
+            {**self.report(), "verdict": g.PASS},
+            {**self.report(), "gates": "not-an-array"},
+            {"schema": "unexpected"},
+        ):
+            md, archive = self.create(report)
+            with self.subTest(report=report):
+                self.assertEqual(self.verify(md, archive)["decision"], g.RECHECK_UNKNOWN)
+        for opt in ({"name": "../required-gate.json"}, {"extra": True}):
+            md, archive = self.create(**opt)
+            with self.subTest(option=opt):
+                self.assertEqual(self.verify(md, archive)["decision"], g.RECHECK_UNKNOWN)
+        malformed = b"not a zip archive"
+        md, _ = self.create()
+        md["digest"] = "sha256:" + hashlib.sha256(malformed).hexdigest()
+        self.assertEqual(self.verify(md, malformed)["decision"], g.RECHECK_UNKNOWN)
 
 class RecheckWorkflow(unittest.TestCase):
     WF = ROOT / g.RECHECK
