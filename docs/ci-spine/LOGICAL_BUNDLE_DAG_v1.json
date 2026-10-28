@@ -1,0 +1,444 @@
+{
+  "schema": "gbo.ci-spine.logical-bundle-dag.v1",
+  "record_type": "design_only_not_live_workflow_or_authority",
+  "source": {
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "master_sha": "ca623ab83793df6edd245942884ad5428a5fe079"
+  },
+  "warning": "Logical grouping only. Not all existing 182 workflows run on each PR; actual triggers, DAG, checks, event and enforcement come from existing canonical JADE workflows parser, ADMISSION, and GitHub at exact SHA.",
+  "nodes": [
+    {
+      "id": "ci-spine:bundle:B00",
+      "short_id": "B00",
+      "name": "source",
+      "devops_stage": "S1_CODE",
+      "policy": "required_if_applicable",
+      "description": "Pinned source identity, lint and trust",
+      "example_workflow": ".github/workflows/actions-pin-ratchet.yml",
+      "sipoc": {
+        "supplier": [
+          "repository-source",
+          "prior-bundle-evidence"
+        ],
+        "input": [
+          "commit and workflow blob OIDs"
+        ],
+        "process": [
+          "Pinned source identity, lint and trust"
+        ],
+        "output": [
+          "source_head_sha",
+          "lint_receipt"
+        ],
+        "customer": [
+          "downstream owner",
+          "Mission Control"
+        ]
+      },
+      "source_binding_required": true,
+      "source_class": "PROPOSED_DESIGN"
+    },
+    {
+      "id": "ci-spine:bundle:B01",
+      "short_id": "B01",
+      "name": "unit-contract",
+      "devops_stage": "S3_TEST",
+      "policy": "required_if_applicable",
+      "description": "Unit tests, schema, negatives, zero-test floor",
+      "example_workflow": ".github/workflows/zero-test-gate-guard.yml",
+      "sipoc": {
+        "supplier": [
+          "repository-source",
+          "prior-bundle-evidence"
+        ],
+        "input": [
+          "test population and source"
+        ],
+        "process": [
+          "Unit tests, schema, negatives, zero-test floor"
+        ],
+        "output": [
+          "test_results",
+          "coverage",
+          "negative_matrix"
+        ],
+        "customer": [
+          "downstream owner",
+          "Mission Control"
+        ]
+      },
+      "source_binding_required": true,
+      "source_class": "PROPOSED_DESIGN"
+    },
+    {
+      "id": "ci-spine:bundle:B02",
+      "short_id": "B02",
+      "name": "dependencies",
+      "devops_stage": "S2_BUILD",
+      "policy": "producer",
+      "description": "Pinned runtime and cache/wheelhouse restore",
+      "example_workflow": ".github/workflows/jade-reusable-ci.yml",
+      "sipoc": {
+        "supplier": [
+          "repository-source",
+          "prior-bundle-evidence"
+        ],
+        "input": [
+          "toolchain",
+          "lockfile",
+          "OS/ABI/cache key"
+        ],
+        "process": [
+          "Pinned runtime and cache/wheelhouse restore"
+        ],
+        "output": [
+          "dependency_manifest",
+          "cache_receipt"
+        ],
+        "customer": [
+          "downstream owner",
+          "Mission Control"
+        ]
+      },
+      "source_binding_required": false,
+      "source_class": "PROPOSED_DESIGN"
+    },
+    {
+      "id": "ci-spine:bundle:B03",
+      "short_id": "B03",
+      "name": "domain",
+      "devops_stage": "S3_TEST",
+      "policy": "ledger_driven",
+      "description": "QPS/JADE/CREW/GoGREEN/Taxonomy/GM path-specific tests",
+      "example_workflow": ".github/workflows/jade-devops-census.yml",
+      "sipoc": {
+        "supplier": [
+          "repository-source",
+          "prior-bundle-evidence"
+        ],
+        "input": [
+          "changed paths",
+          "eligible suites",
+          "dependency_manifest"
+        ],
+        "process": [
+          "QPS/JADE/CREW/GoGREEN/Taxonomy/GM path-specific tests"
+        ],
+        "output": [
+          "domain_receipts"
+        ],
+        "customer": [
+          "downstream owner",
+          "Mission Control"
+        ]
+      },
+      "source_binding_required": true,
+      "source_class": "PROPOSED_DESIGN"
+    },
+    {
+      "id": "ci-spine:bundle:B04",
+      "short_id": "B04",
+      "name": "integration",
+      "devops_stage": "S3_TEST",
+      "policy": "ledger_driven",
+      "description": "Cross-module and cross-repository exact-head integration",
+      "example_workflow": ".github/workflows/federation-exact-head-receipts.yml",
+      "sipoc": {
+        "supplier": [
+          "repository-source",
+          "prior-bundle-evidence"
+        ],
+        "input": [
+          "sources and verified domain artifacts"
+        ],
+        "process": [
+          "Cross-module and cross-repository exact-head integration"
+        ],
+        "output": [
+          "integration_receipts"
+        ],
+        "customer": [
+          "downstream owner",
+          "Mission Control"
+        ]
+      },
+      "source_binding_required": true,
+      "source_class": "PROPOSED_DESIGN"
+    },
+    {
+      "id": "ci-spine:bundle:B05",
+      "short_id": "B05",
+      "name": "browser",
+      "devops_stage": "S3_TEST",
+      "policy": "path_scoped",
+      "description": "Playwright, visual and no-network verification",
+      "example_workflow": ".github/workflows/jade-temple-readonly-qa.yml",
+      "sipoc": {
+        "supplier": [
+          "repository-source",
+          "prior-bundle-evidence"
+        ],
+        "input": [
+          "frozen HTML/build artifacts",
+          "Playwright"
+        ],
+        "process": [
+          "Playwright, visual and no-network verification"
+        ],
+        "output": [
+          "browser_receipts"
+        ],
+        "customer": [
+          "downstream owner",
+          "Mission Control"
+        ]
+      },
+      "source_binding_required": true,
+      "source_class": "PROPOSED_DESIGN"
+    },
+    {
+      "id": "ci-spine:bundle:B06",
+      "short_id": "B06",
+      "name": "secure",
+      "devops_stage": "S4_SECURE",
+      "policy": "policy_driven",
+      "description": "Immutable action pins, security and provenance checks",
+      "example_workflow": ".github/workflows/actions-pin-ratchet.yml",
+      "sipoc": {
+        "supplier": [
+          "repository-source",
+          "prior-bundle-evidence"
+        ],
+        "input": [
+          "actions/dependencies/source artifacts"
+        ],
+        "process": [
+          "Immutable action pins, security and provenance checks"
+        ],
+        "output": [
+          "security_receipts"
+        ],
+        "customer": [
+          "downstream owner",
+          "Mission Control"
+        ]
+      },
+      "source_binding_required": true,
+      "source_class": "PROPOSED_DESIGN"
+    },
+    {
+      "id": "ci-spine:bundle:B07",
+      "short_id": "B07",
+      "name": "fanin",
+      "devops_stage": "S3_TEST",
+      "policy": "noncompensating_required",
+      "description": "Aggregate only eligible exact-head successful required predicates",
+      "example_workflow": ".github/workflows/gogreen-required-gate.yml",
+      "sipoc": {
+        "supplier": [
+          "repository-source",
+          "prior-bundle-evidence"
+        ],
+        "input": [
+          "verified B00..B06 current-head receipts"
+        ],
+        "process": [
+          "Aggregate only eligible exact-head successful required predicates"
+        ],
+        "output": [
+          "HOLD_or_eligible"
+        ],
+        "customer": [
+          "downstream owner",
+          "Mission Control"
+        ]
+      },
+      "source_binding_required": true,
+      "source_class": "PROPOSED_DESIGN"
+    },
+    {
+      "id": "ci-spine:bundle:B08",
+      "short_id": "B08",
+      "name": "delivery",
+      "devops_stage": "S5_RELEASE/S6_DEPLOY",
+      "policy": "separately_governed",
+      "description": "Promote one digest-bound build and verify served artifact",
+      "example_workflow": ".github/workflows/jade-reusable-deploy.yml",
+      "sipoc": {
+        "supplier": [
+          "repository-source",
+          "prior-bundle-evidence"
+        ],
+        "input": [
+          "qualified build+review+approval"
+        ],
+        "process": [
+          "Promote one digest-bound build and verify served artifact"
+        ],
+        "output": [
+          "deploy_receipt"
+        ],
+        "customer": [
+          "downstream owner",
+          "Mission Control"
+        ]
+      },
+      "source_binding_required": true,
+      "source_class": "PROPOSED_DESIGN"
+    },
+    {
+      "id": "ci-spine:bundle:B09",
+      "short_id": "B09",
+      "name": "control",
+      "devops_stage": "S9_CONTROL",
+      "policy": "scheduled_readonly",
+      "description": "Measure run/job rates, red roots, latency and maturity; feedback to next pulse",
+      "example_workflow": ".github/workflows/gogreen-red-trace.yml",
+      "sipoc": {
+        "supplier": [
+          "repository-source",
+          "prior-bundle-evidence"
+        ],
+        "input": [
+          "live GitHub readback",
+          " receipts"
+        ],
+        "process": [
+          "Measure run/job rates, red roots, latency and maturity; feedback to next pulse"
+        ],
+        "output": [
+          "history",
+          "burndown",
+          "next_pulse_issues"
+        ],
+        "customer": [
+          "S0 next pulse"
+        ]
+      },
+      "source_binding_required": true,
+      "source_class": "PROPOSED_DESIGN"
+    }
+  ],
+  "edges": [
+    {
+      "from": "ci-spine:bundle:B00",
+      "to": "ci-spine:bundle:B01",
+      "kind": "FEEDFORWARD",
+      "eligible_only": true
+    },
+    {
+      "from": "ci-spine:bundle:B00",
+      "to": "ci-spine:bundle:B02",
+      "kind": "FEEDFORWARD",
+      "eligible_only": true
+    },
+    {
+      "from": "ci-spine:bundle:B01",
+      "to": "ci-spine:bundle:B03",
+      "kind": "FEEDFORWARD",
+      "eligible_only": true
+    },
+    {
+      "from": "ci-spine:bundle:B02",
+      "to": "ci-spine:bundle:B03",
+      "kind": "FEEDFORWARD",
+      "eligible_only": true
+    },
+    {
+      "from": "ci-spine:bundle:B01",
+      "to": "ci-spine:bundle:B04",
+      "kind": "FEEDFORWARD",
+      "eligible_only": true
+    },
+    {
+      "from": "ci-spine:bundle:B02",
+      "to": "ci-spine:bundle:B04",
+      "kind": "FEEDFORWARD",
+      "eligible_only": true
+    },
+    {
+      "from": "ci-spine:bundle:B01",
+      "to": "ci-spine:bundle:B05",
+      "kind": "FEEDFORWARD",
+      "eligible_only": true
+    },
+    {
+      "from": "ci-spine:bundle:B02",
+      "to": "ci-spine:bundle:B05",
+      "kind": "FEEDFORWARD",
+      "eligible_only": true
+    },
+    {
+      "from": "ci-spine:bundle:B00",
+      "to": "ci-spine:bundle:B06",
+      "kind": "FEEDFORWARD",
+      "eligible_only": true
+    },
+    {
+      "from": "ci-spine:bundle:B03",
+      "to": "ci-spine:bundle:B07",
+      "kind": "FEEDFORWARD",
+      "eligible_only": true
+    },
+    {
+      "from": "ci-spine:bundle:B04",
+      "to": "ci-spine:bundle:B07",
+      "kind": "FEEDFORWARD",
+      "eligible_only": true
+    },
+    {
+      "from": "ci-spine:bundle:B05",
+      "to": "ci-spine:bundle:B07",
+      "kind": "FEEDFORWARD",
+      "eligible_only": true
+    },
+    {
+      "from": "ci-spine:bundle:B06",
+      "to": "ci-spine:bundle:B07",
+      "kind": "FEEDFORWARD",
+      "eligible_only": true
+    },
+    {
+      "from": "ci-spine:bundle:B07",
+      "to": "ci-spine:bundle:B08",
+      "kind": "FEEDFORWARD",
+      "eligible_only": true
+    },
+    {
+      "from": "ci-spine:bundle:B07",
+      "to": "ci-spine:bundle:B09",
+      "kind": "FEEDFORWARD",
+      "eligible_only": true
+    },
+    {
+      "from": "ci-spine:bundle:B08",
+      "to": "ci-spine:bundle:B09",
+      "kind": "FEEDFORWARD",
+      "eligible_only": true
+    },
+    {
+      "from": "ci-spine:bundle:B09",
+      "to": "ci-spine:bundle:B00",
+      "kind": "FEEDBACK_NEXT_PULSE",
+      "eligible_only": false
+    }
+  ],
+  "join_contract": {
+    "bundle": "B07",
+    "predicate": "All source-bound, eligible required checks PASS for exact PR head, with valid nonzero test population where a test is expected. NOT_APPLICABLE must be justified by path or event policy. UNKNOWN, DEFER, SKIP and FAIL cannot compensate one another.",
+    "owner": "mission-control/gogreen/required_gate/gate.py"
+  },
+  "execution": {
+    "parallel_with_bounded_capacity": [
+      "B01",
+      "B02"
+    ],
+    "after_both": [
+      "B03",
+      "B04",
+      "B05"
+    ],
+    "fanout_scheduler": "max-parallel and resource budgets, not unbounded asyncio",
+    "feedback": "B09 feeds next pulse B00, not same-pulse cycle"
+  }
+}
