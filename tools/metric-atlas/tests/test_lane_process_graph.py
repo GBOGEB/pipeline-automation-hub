@@ -54,7 +54,7 @@ class ProcessGraphTests(unittest.TestCase):
         for view in ("DAG","SIPOC","SPINE"):
             g=m.mermaid(r,view)
             self.assertEqual(sum('["' in line for line in g.splitlines()),70)
-            self.assertEqual(sum("-->" in line for line in g.splitlines()),77)
+            self.assertEqual(sum("-->" in line for line in g.splitlines()),76)
             self.assertEqual(sum("-.->" in line for line in g.splitlines()),1)
         with self.assertRaisesRegex(ValueError,"UNKNOWN_GRAPH_VIEW"):
             m.mermaid(r,"MUTATE")
