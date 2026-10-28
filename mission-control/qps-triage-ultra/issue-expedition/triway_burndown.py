@@ -113,7 +113,7 @@ def _clause_tail(text):
                 # "e.g. rollout" continues; "etc. See" starts a new sentence.
                 # Honorifics such as "Dr. Smith" continue before proper names.
                 if following and (following[0].islower() or
-                                  abbreviation in ("dr", "mr", "mrs", "ms") and following[0].isupper()):
+                                  abbreviation in ("dr", "mr", "mrs", "ms", "e.g", "i.e") and following[0].isupper()):
                     continue
         start = match.end()
     return text[start:]
@@ -291,7 +291,10 @@ def references(body, repo, pr=False):
             elif pr:
                 verbs = list(CLAIM.finditer(before))
                 claim = verbs[-1] if verbs and len(before) - verbs[-1].end() <= 40 else None
-                scope_start = verbs[-2].end() if len(verbs) > 1 else 0
+                scope_start = (verbs[-2].end() if len(verbs) > 1
+                               and re.search(r"\b(?:but|however|instead)\b",
+                                             before[verbs[-2].end():claim.start()] if claim else "")
+                               else 0)
                 kind = ("PR_CLOSURE_CLAIM" if claim and not NEGATED.search(before[scope_start:claim.start()])
                         else "PR_ASSOCIATION")
                 if last_kind == "PR_CLOSURE_CLAIM" and JOINER.fullmatch(join_window):
@@ -307,7 +310,10 @@ def references(body, repo, pr=False):
                     # Nearest keyword wins; equal-position ties retain canonical KINDS priority.
                     candidates.sort(key=lambda row: (row[0], row[1]))
                     _, _, label, hit = candidates[-1]
-                    previous_start = candidates[-2][0] if len(candidates) > 1 else 0
+                    previous_start = (candidates[-2][3].end() if len(candidates) > 1
+                                      and re.search(r"\b(?:but|however|instead)\b",
+                                                    before[candidates[-2][3].end():hit.start()])
+                                      else 0)
                     kind = ("TEXT_ASSOCIATION" if NEGATED.search(before[previous_start:hit.start()])
                             else label)
                 if item and item.group(1) in "xX " and kind == "TEXT_ASSOCIATION":
