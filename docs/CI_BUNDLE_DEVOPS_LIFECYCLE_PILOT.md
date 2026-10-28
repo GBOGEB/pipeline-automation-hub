@@ -4,6 +4,17 @@
 **Base:** master, initial source SHA `6f7cf145c4ebf585dbb341ba5863e77098ad36b0`.
 **Owners:** JADE `workflows.py` supplies the parser and job DAG, `actions_metrics.py` owns runtime measures, GOGREEN `required_gate/ADMISSION.json` owns enforcement, `rolling5.py` historical pulses and `title_taxonomy.py` title interpretation. No duplicate metric owner is created.
 
+
+## Semantic reconciliation with merged #992
+
+The existing [merged #992 CI spine](ci-spine/README.md) owns a frozen **B00–B09 logical design**, its 17 machine edges (16 feedforward, one next-pulse feedback), full workflow/test-file source index and existing JADE/GOGREEN metric owners. The B00–B12 definitions in this pilot are a separate `jade.devops.ci_candidate` **candidate overlay**. Their short IDs have **no name-based equivalence** to #992's `ci-spine:bundle` IDs.
+
+The [source-verified, lossless crosswalk](ci-spine/BUNDLE_B00_B09_TO_CANDIDATE_B00_B12_V1.json) records all 10 old labels/stages, exact frozen head `ca623ab...`, actual tree OID, anchor workflow blob OIDs, observed triggers, original ADMISSION dispositions, candidate overlaps, explicit coverage gaps and consumer migration holds. It preserves the old B07 **required fan-in**, which must never be confused with candidate B07 **scientific math**. Original B02 dependencies/cache lacks a dedicated candidate equivalent; original B09 next-pulse feedback is not yet represented by candidate planning edges. No approval is inferred.
+
+The older source index reports `git_tree_oid` equal to the source **commit** SHA; GitHub's actual Git **tree** is `b1f0a6eb264ff6a409b9203fc6e7fc6773a3a4ad`. This historical #992 P2 discrepancy is exposed, not corrected by modifying an unrelated owner. An additional #992 review discrepancy between the README's old B06 dependencies and its machine DAG remains explicitly unresolved for the owner.
+
+Other already active consumers: [#1010 RF wave](https://github.com/GBOGEB/pipeline-automation-hub/pull/1010) uses old B00–B09; [#996 authority spine](https://github.com/GBOGEB/pipeline-automation-hub/pull/996) has distinct binding ownership. This PR makes no changes to either. Until an owner approves migrations, old machine IDs, old dependency edges, actual workflow/check names and GOGREEN admission policy are unchanged.
+
 ## Lifecycle phases and execution lanes
 
 | Phase | Lane | DevOps stage(s) | Crew / worker | Deliverable | DoD / verification |
