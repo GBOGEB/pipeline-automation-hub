@@ -122,6 +122,10 @@ class ParserN2(unittest.TestCase):
   got=self.refs("- [~] depends on #15\n- [-] blocks #17\n- [~] superseded by #18\n- [ ] ~~depends on #19~~",home=A)
   self.assertEqual({k for _,k in got},{"TEXT_ASSOCIATION"})
   self.assertEqual(self.refs("- [-] closes #16",home=A,pr=True),[(A+"#16","PR_ASSOCIATION")])
+ def test_negation_and_relation_scoped_to_current_clause(self):
+  self.assertEqual(self.refs("Not urgent. Blocked by #2"),[(B+"#2","DECLARED_BLOCKER_CANDIDATE")])
+  self.assertEqual(self.refs("This blocks nothing. See #2"),[(B+"#2","TEXT_ASSOCIATION")])
+  self.assertEqual(self.refs("Does not fix #12",pr=True),[(B+"#12","PR_ASSOCIATION")])
  def test_alias_relation_does_not_leak_across_sentence(self):
   self.assertEqual(self.refs("blocked by ABACUS #1. See CODEX #2"),[(A+"#1","DECLARED_BLOCKER_CANDIDATE"),("GBOGEB/CODEX#2","TEXT_ASSOCIATION")])
  def test_blockquote_continuation_is_one_criterion(self):
