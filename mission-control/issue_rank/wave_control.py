@@ -146,14 +146,23 @@ def summarize(rows, scope="USER", j=3):
                type(d.get("scope_added_net")) is int for d in deltas):
             matched_ticked = sum(d["tasks_ticked_net"] for d in deltas)
             scope_added = sum(d["scope_added_net"] for d in deltas)
-    independent_windows = True
-    for earlier, later, a in zip(times, times[1:], window):
-        fd = (_scope(a, scope)[2]).get("window_days")
-        if not isinstance(fd, (int, float)) or fd <= 0 or (later - earlier).total_seconds() < fd * 86400:
+    flows = [_scope(r, scope)[2] for r in window]
+    window_days = [f.get("window_days") for f in flows]
+    # Never infer independent observations from unequal or unknown windows.
+    independent_windows = (
+        all(type(fd) in (int, float) and math.isfinite(fd) and fd > 0 for fd in window_days)
+        and len(set(window_days)) == 1
+    )
+    for earlier, later, fd in zip(times, times[1:], window_days):
+        if not independent_windows or (later - earlier).total_seconds() < fd * 86400:
             independent_windows = False
     burns = [_scope(r, scope)[3] for r in window]
-    evidence_burn = (independent_windows and all(
-        b.get("lo", -math.inf) > 0 for b in burns))
+    valid_final_flow = all(f.get("window_days") == 14 and f.get("status") == "BURNING_DOWN"
+                           and b and b.get("lo", -math.inf) > 0
+                           for f, b in zip(flows, burns))
+    evidence_burn = independent_windows and valid_final_flow
+    if not valid_final_flow:
+        reasons.append("MISSING_OR_MIXED_FINAL_14D_FLOW")
     if not independent_windows:
         reasons.append("OVERLAPPING_OR_UNKNOWN_FLOW_WINDOWS")
     return {
