@@ -400,6 +400,75 @@ def render_recheck_names(text: str, names: list) -> str:
     return "".join(lines[:a + 1] + body + lines[b:])
 
 
+
+# A *receipt-derived proposal*, deliberately separate from live retry authority.
+# The privileged workflow does not yet download or trust unverified PR-run artifacts.
+RECHECK_ELIGIBLE = "RECHECK_ELIGIBLE"
+RECHECK_ALREADY_SATISFIED = "ALREADY_SATISFIED"
+RECHECK_UNKNOWN = "UNKNOWN"
+
+
+def receipt_recheck_relevance(report: dict, *, sha: str, workflow_path: str) -> dict:
+    """Classify whether a matching failed aggregator receipt implicates one workflow.
+
+    This is advisory and has NO write path. A future consumer must independently bind
+    artifact bytes to the exact aggregator run, attempt, repository, PR and head SHA,
+    and validate its digest before it may use ALREADY_SATISFIED to suppress work.
+    UNKNOWN deliberately cannot suppress a re-check.
+    """
+    out = {"schema": "gogreen.required_gate.receipt_relevance.v1",
+           "head_sha": sha, "workflow": workflow_path,
+           "decision": RECHECK_UNKNOWN, "merge_authorized": False}
+    if not re.fullmatch(r"[0-9a-f]{40}", sha or ""):
+        out["reason"] = "invalid exact head SHA"
+        return out
+    if not isinstance(report, dict) or report.get("schema") != "gogreen.required_gate.v2":
+        out["reason"] = "missing or unrecognized aggregator report"
+        return out
+    if report.get("head_sha") != sha or report.get("merge_authorized") is not False:
+        out["reason"] = "report source/authority binding mismatch"
+        return out
+    if report.get("verdict") != FAIL:
+        out["reason"] = "report is not a failed aggregator observation"
+        return out
+    if not isinstance(workflow_path, str) or not re.fullmatch(
+            r"\.github/workflows/[A-Za-z0-9_.-]+\.ya?ml", workflow_path):
+        out["reason"] = "invalid or ambiguous workflow path"
+        return out
+    gates = report.get("gates")
+    if not isinstance(gates, list) or any(not isinstance(g, dict) for g in gates):
+        out["reason"] = "missing or malformed enforced-gate population"
+        return out
+    matches = [g for g in gates if g.get("workflow") == workflow_path]
+    if len(matches) != 1:
+        out["reason"] = "enforced workflow absent or duplicated in receipt"
+        return out
+    state = matches[0].get("state")
+    if state in (FAIL, WAIT):
+        out["decision"] = RECHECK_ELIGIBLE
+        out["reason"] = "the original failed report still requires this gate to be re-read"
+    elif state in (PASS, NA):
+        out["decision"] = RECHECK_ALREADY_SATISFIED
+        out["reason"] = "this gate did not contribute to the original failed verdict"
+    else:
+        out["reason"] = "unknown prior enforced gate state"
+    return out
+
+
+def main_recheck_receipt(argv) -> int:
+    """Offline, non-authoritative preflight for an already downloaded JSON receipt."""
+    ap = argparse.ArgumentParser(prog="gate.py recheck-receipt")
+    ap.add_argument("--report", type=Path, required=True)
+    ap.add_argument("--sha", required=True)
+    ap.add_argument("--workflow", required=True)
+    a = ap.parse_args(argv)
+    result = receipt_recheck_relevance(
+        json.loads(a.report.read_text(encoding="utf-8")),
+        sha=a.sha, workflow_path=a.workflow)
+    print(json.dumps(result, sort_keys=True))
+    return 0 if result["decision"] != RECHECK_UNKNOWN else 2
+
+
 def recheck(reader, sha: str, conclusion: str = "success", dry_run: bool = False) -> dict:
     """Re-run the latest FAILED aggregator run on `sha` after an enforced gate succeeded there.
     Nothing happens when the gate did not succeed, the aggregator never ran on this head, is
@@ -480,6 +549,8 @@ def main(argv=None):
         return main_recheck(argv[1:])
     if argv[:1] == ["recheck-names"]:
         return main_recheck_names(argv[1:])
+    if argv[:1] == ["recheck-receipt"]:
+        return main_recheck_receipt(argv[1:])
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", default=os.environ.get("GITHUB_REPOSITORY"))
     ap.add_argument("--pr", type=int, required=True)
