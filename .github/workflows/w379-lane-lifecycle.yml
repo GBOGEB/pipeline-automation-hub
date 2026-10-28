@@ -1,0 +1,59 @@
+name: W379 Lane Lifecycle Evidence Matrix
+on:
+  pull_request:
+    paths:
+      - 'tools/metric-atlas/metric_atlas/lane_lifecycle.py'
+      - 'tools/metric-atlas/tests/test_lane_lifecycle.py'
+      - 'tools/metric-atlas/tests/w379_empty_snapshot.json'
+      - 'tools/metric-atlas/docs/LANE_LIFECYCLE_W379.md'
+      - '.github/workflows/w379-lane-lifecycle.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  lane-stage-matrix:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11','3.12']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Exact-head identity
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$HEAD"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Coverage and negative tests
+        env:
+          PYTHONPATH: tools/metric-atlas
+        run: |
+          python -m pip install --disable-pip-version-check coverage==7.10.7
+          python -m coverage run --branch --include='*/metric_atlas/lane_lifecycle.py' -m unittest discover -s tools/metric-atlas/tests -p test_lane_lifecycle.py -v
+          python -m coverage report --include='*/metric_atlas/lane_lifecycle.py' --fail-under=85
+      - name: Negative tests under optimized Python
+        env:
+          PYTHONPATH: tools/metric-atlas
+        run: python -O -m unittest discover -s tools/metric-atlas/tests -p test_lane_lifecycle.py -v
+      - name: Deterministic 70-cell no-credit matrix
+        env:
+          PYTHONPATH: tools/metric-atlas
+        run: |
+          python -m metric_atlas.lane_lifecycle --snapshot tools/metric-atlas/tests/w379_empty_snapshot.json --out "$RUNNER_TEMP/w379"
+          python - <<'PY'
+          import hashlib,json,os,pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/'w379'
+          m=json.loads((p/'manifest.json').read_text())
+          r=json.loads((p/'lane-stage.json').read_text())
+          assert len(r['cells'])==70 and r['counts']['UNKNOWN']==70
+          assert r['merge_admission']=='HOLD' and r['authority_transfer'] is False
+          assert not r['real_lane_maturity_verified']
+          assert all(c['maturity_level'] is None for c in r['cells'])
+          assert all(hashlib.sha256((p/f).read_bytes()).hexdigest()==h for f,h in m['files_sha256'].items())
+          PY
