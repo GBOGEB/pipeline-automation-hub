@@ -1,0 +1,841 @@
+{
+  "authority_transfer": false,
+  "bd_targets": [
+    {
+      "evidence": "DECLARED_SCENARIO_NOT_NATIVE",
+      "head_sha": null,
+      "kind": "ISSUE",
+      "number": 2163,
+      "repo": "GBOGEB/cryoplant-project",
+      "topic": "publishing.r07.oid"
+    },
+    {
+      "evidence": "DECLARED_SCENARIO_NOT_NATIVE",
+      "head_sha": null,
+      "kind": "ISSUE",
+      "number": 604,
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "topic": "issue.rank.wave"
+    },
+    {
+      "evidence": "DECLARED_SCENARIO_NOT_NATIVE",
+      "head_sha": "a0678181e1ca0c36ec4c700c992938aa7aaac411",
+      "kind": "PR",
+      "number": 942,
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "topic": "issue.rank.wave"
+    },
+    {
+      "evidence": "DECLARED_SCENARIO_NOT_NATIVE",
+      "head_sha": "a320fc24929dee0291ce18f26aa92ccd004f1703",
+      "kind": "PR",
+      "number": 946,
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "topic": "ci.first-red.recovery"
+    },
+    {
+      "evidence": "DECLARED_SCENARIO_NOT_NATIVE",
+      "head_sha": "c7f2c61d5304bdcdbf67e178325e2e38100fc951",
+      "kind": "PR",
+      "number": 2506,
+      "repo": "GBOGEB/ABACUS",
+      "topic": "abacus.coverage.frontier"
+    }
+  ],
+  "existing_cron": [
+    {
+      "evidence": "READ_ONLY_METADATA",
+      "expression": "19 * * * *",
+      "observed_repo": "GBOGEB/pipeline-automation-hub",
+      "path": ".github/workflows/code-purple-live-census.yml"
+    },
+    {
+      "evidence": "READ_ONLY_METADATA",
+      "expression": "41 */3 * * *",
+      "observed_repo": "GBOGEB/pipeline-automation-hub",
+      "path": ".github/workflows/gogreen-red-trace.yml"
+    },
+    {
+      "evidence": "READ_ONLY_METADATA",
+      "expression": "13 4 * * *",
+      "observed_repo": "GBOGEB/pipeline-automation-hub",
+      "path": ".github/workflows/jade-crew-slowburn.yml"
+    }
+  ],
+  "max_parallel_readers": 2,
+  "merge_admission": "HOLD",
+  "mode": "TWO_WAVE_DECLARED_READ_ONLY",
+  "native_runners_launched": 0,
+  "schema": "qps.topic-wave-scale.plan.v1",
+  "source_writers": 0,
+  "waves": [
+    {
+      "authority_transfer": false,
+      "cohort": "W378-P1-6-topic-W1",
+      "edges": [
+        {
+          "from": "S.ELEC",
+          "relation": "DEPENDS",
+          "to": "P.RECON"
+        },
+        {
+          "from": "P.RECON",
+          "relation": "PRODUCES",
+          "to": "O.CROSS"
+        },
+        {
+          "from": "O.CROSS",
+          "relation": "CONSUMES",
+          "to": "C.HUB"
+        },
+        {
+          "from": "S.TOPIC",
+          "relation": "DEPENDS",
+          "to": "I.PR_CHANGES"
+        },
+        {
+          "from": "I.PR_CHANGES",
+          "relation": "DEPENDS",
+          "to": "P.DELTA"
+        },
+        {
+          "from": "P.DELTA",
+          "relation": "PRODUCES",
+          "to": "O.WAVE"
+        },
+        {
+          "from": "O.WAVE",
+          "relation": "CONSUMES",
+          "to": "C.QPS"
+        },
+        {
+          "from": "S.R07",
+          "relation": "DEPENDS",
+          "to": "P.OID"
+        },
+        {
+          "from": "P.OID",
+          "relation": "PRODUCES",
+          "to": "O.GRAPH"
+        },
+        {
+          "from": "O.GRAPH",
+          "relation": "CONSUMES",
+          "to": "C.HUB"
+        },
+        {
+          "from": "O.CROSS",
+          "relation": "REVIEW",
+          "to": "G.AUTH"
+        },
+        {
+          "from": "O.WAVE",
+          "relation": "REVIEW",
+          "to": "G.CI"
+        },
+        {
+          "from": "O.GRAPH",
+          "relation": "REVIEW",
+          "to": "G.CI"
+        },
+        {
+          "from": "G.CI",
+          "relation": "NEXT_PULSE",
+          "to": "P.DELTA"
+        },
+        {
+          "from": "S.ISSUE",
+          "relation": "DEPENDS",
+          "to": "P.TRIAGE"
+        },
+        {
+          "from": "P.TRIAGE",
+          "relation": "PRODUCES",
+          "to": "O.TRIAGE"
+        },
+        {
+          "from": "O.TRIAGE",
+          "relation": "REVIEW",
+          "to": "G.CI"
+        },
+        {
+          "from": "S.RED",
+          "relation": "PRODUCES",
+          "to": "O.RED"
+        },
+        {
+          "from": "O.RED",
+          "relation": "REVIEW",
+          "to": "G.CI"
+        },
+        {
+          "from": "S.ABACUS",
+          "relation": "REVIEW",
+          "to": "G.CI"
+        }
+      ],
+      "max_readers": 2,
+      "merge_admission": "HOLD",
+      "method_version": "1.0.0",
+      "mode": "READ_ONLY_DECLARED_PILOT",
+      "nodes": [
+        {
+          "blob_oid": "f0b1bf3a72b8b7030f580c6e5871c8790fc26de1",
+          "function": "W376 electrical feeder SSOT",
+          "head_sha": "a012927aae08e2c37d58a5e89547320211cf47e8",
+          "id": "S.ELEC",
+          "kind": "SOURCE",
+          "owner": "GBOGEB/cryoplant-project",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": "754156c5308d8c12f1b35a36b0868219fd220b32",
+          "function": "W377 topic packet producer",
+          "head_sha": "824b44c83fff76017bb5fe0ac384936f8eedee30",
+          "id": "S.TOPIC",
+          "kind": "SOURCE",
+          "owner": "GBOGEB/pipeline-automation-hub",
+          "state": "PASS"
+        },
+        {
+          "blob_oid": "34c3a114cefa2332ebe451255adf3653b89b9290",
+          "function": "PUB-R07 registry",
+          "head_sha": "9f19a8a2fe7bc3292e37b1efc374ec313a7e1ee9",
+          "id": "S.R07",
+          "kind": "SOURCE",
+          "owner": "GBOGEB/cryoplant-project",
+          "state": "HOLD"
+        },
+        {
+          "blob_oid": null,
+          "function": "Declared PR and BD topic inputs",
+          "head_sha": "824b44c83fff76017bb5fe0ac384936f8eedee30",
+          "id": "I.PR_CHANGES",
+          "kind": "INPUT",
+          "owner": "GBOGEB/pipeline-automation-hub",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "Reconcile source rows",
+          "head_sha": "a012927aae08e2c37d58a5e89547320211cf47e8",
+          "id": "P.RECON",
+          "kind": "PROCESS",
+          "owner": "QPS Electrical",
+          "state": "HOLD"
+        },
+        {
+          "blob_oid": null,
+          "function": "Partial census plan",
+          "head_sha": "824b44c83fff76017bb5fe0ac384936f8eedee30",
+          "id": "P.DELTA",
+          "kind": "PROCESS",
+          "owner": "Metric Atlas",
+          "state": "PASS"
+        },
+        {
+          "blob_oid": null,
+          "function": "OID graph view",
+          "head_sha": "9f19a8a2fe7bc3292e37b1efc374ec313a7e1ee9",
+          "id": "P.OID",
+          "kind": "PROCESS",
+          "owner": "QPS Publication",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "Feeder crosswalk receipt",
+          "head_sha": "a012927aae08e2c37d58a5e89547320211cf47e8",
+          "id": "O.CROSS",
+          "kind": "EVIDENCE",
+          "owner": "QPS Electrical",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "Topic pilot receipt",
+          "head_sha": "824b44c83fff76017bb5fe0ac384936f8eedee30",
+          "id": "O.WAVE",
+          "kind": "EVIDENCE",
+          "owner": "Metric Atlas",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "DAG SIPOC SPINE projection",
+          "head_sha": "824b44c83fff76017bb5fe0ac384936f8eedee30",
+          "id": "O.GRAPH",
+          "kind": "EVIDENCE",
+          "owner": "JADE",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "Hub evidence consumer",
+          "head_sha": "824b44c83fff76017bb5fe0ac384936f8eedee30",
+          "id": "C.HUB",
+          "kind": "CONSUMER",
+          "owner": "GBOGEB/pipeline-automation-hub",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "QPS evidence consumer",
+          "head_sha": "a012927aae08e2c37d58a5e89547320211cf47e8",
+          "id": "C.QPS",
+          "kind": "CONSUMER",
+          "owner": "GBOGEB/cryoplant-project",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "Independent engineering acceptance",
+          "head_sha": null,
+          "id": "G.AUTH",
+          "kind": "CONTROL",
+          "owner": "Engineering owner",
+          "state": "HOLD"
+        },
+        {
+          "blob_oid": null,
+          "function": "Exact-head CI and independent review",
+          "head_sha": null,
+          "id": "G.CI",
+          "kind": "CONTROL",
+          "owner": "GitHub governance",
+          "state": "HOLD"
+        },
+        {
+          "blob_oid": null,
+          "function": "Issue-rank N+j first-class source",
+          "head_sha": "a0678181e1ca0c36ec4c700c992938aa7aaac411",
+          "id": "S.ISSUE",
+          "kind": "SOURCE",
+          "owner": "GBOGEB/pipeline-automation-hub",
+          "state": "HOLD"
+        },
+        {
+          "blob_oid": null,
+          "function": "EVERRED recovery frontier",
+          "head_sha": "a320fc24929dee0291ce18f26aa92ccd004f1703",
+          "id": "S.RED",
+          "kind": "SOURCE",
+          "owner": "GBOGEB/pipeline-automation-hub",
+          "state": "HOLD"
+        },
+        {
+          "blob_oid": null,
+          "function": "ABACUS coverage frontier",
+          "head_sha": "c7f2c61d5304bdcdbf67e178325e2e38100fc951",
+          "id": "S.ABACUS",
+          "kind": "SOURCE",
+          "owner": "GBOGEB/ABACUS",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "PR issue ranking and method",
+          "head_sha": "a0678181e1ca0c36ec4c700c992938aa7aaac411",
+          "id": "P.TRIAGE",
+          "kind": "PROCESS",
+          "owner": "issue_rank",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "Advisory BD issue targets",
+          "head_sha": "a0678181e1ca0c36ec4c700c992938aa7aaac411",
+          "id": "O.TRIAGE",
+          "kind": "EVIDENCE",
+          "owner": "issue_rank",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "Grouped first-red candidate evidence",
+          "head_sha": "a320fc24929dee0291ce18f26aa92ccd004f1703",
+          "id": "O.RED",
+          "kind": "EVIDENCE",
+          "owner": "EVERRED",
+          "state": "UNKNOWN"
+        }
+      ],
+      "observed_at": "2026-10-28T12:40:00Z",
+      "packets": [
+        {
+          "current_head": "a012927aae08e2c37d58a5e89547320211cf47e8",
+          "current_scope_sha256": "0b8695476bfde6ebf721fdb393154eaf07dd826f1d43aeeb31148e2ff1104ad7",
+          "current_source_sha256": "87ef2f3ec3135cea7801f8f645b910d72fd4c897e1fabdc3f75782a5c71173c9",
+          "packet": {
+            "authority_transfer": false,
+            "engineering_approval": false,
+            "evidence_class": "REVIEW_OBSERVATION",
+            "expires_at": "2026-10-29T12:30:00Z",
+            "merge_authorized": false,
+            "observed_at": "2026-10-28T12:30:00Z",
+            "packet_sha256": "6d6ff15b64e35dbb1910fe2e390fa57abda21af047bb6d0ff49fefe97125cda4",
+            "prior_packet_sha256": null,
+            "producer_head": "a012927aae08e2c37d58a5e89547320211cf47e8",
+            "producer_repo": "GBOGEB/cryoplant-project",
+            "receipt_sha256": "115591240a07f8615949c3b5c7bce2ca6d6ebbd109596e91dd1f68220b00073c",
+            "recipients": [
+              "GBOGEB/pipeline-automation-hub"
+            ],
+            "schema": "qps.topic-census.packet.v1",
+            "scope_sha256": "0b8695476bfde6ebf721fdb393154eaf07dd826f1d43aeeb31148e2ff1104ad7",
+            "sequence": 1,
+            "source_mutation": false,
+            "source_sha256": "87ef2f3ec3135cea7801f8f645b910d72fd4c897e1fabdc3f75782a5c71173c9",
+            "topic": "electrical.icd.feeders",
+            "transport": "STAGED_ONLY"
+          },
+          "recipient": "GBOGEB/pipeline-automation-hub"
+        },
+        {
+          "current_head": "824b44c83fff76017bb5fe0ac384936f8eedee30",
+          "current_scope_sha256": "76a32ecba4cefb7d52d5a461701def6a04fa70072c3e3ff5661418cb11e65f64",
+          "current_source_sha256": "35461237537faf821824a9ed0646237c247bed5dfec7c829966ed2c99279750c",
+          "packet": {
+            "authority_transfer": false,
+            "engineering_approval": false,
+            "evidence_class": "REVIEW_OBSERVATION",
+            "expires_at": "2026-10-29T12:30:00Z",
+            "merge_authorized": false,
+            "observed_at": "2026-10-28T12:30:00Z",
+            "packet_sha256": "80121984b0bfe907c1367abd232fc8817c75a365f78b81490760b89abaed1df5",
+            "prior_packet_sha256": null,
+            "producer_head": "824b44c83fff76017bb5fe0ac384936f8eedee30",
+            "producer_repo": "GBOGEB/pipeline-automation-hub",
+            "receipt_sha256": "37493de6f77eb200d3d9d064c50b71a58972ff14496fd7b9ef157d78f1607d0b",
+            "recipients": [
+              "GBOGEB/cryoplant-project"
+            ],
+            "schema": "qps.topic-census.packet.v1",
+            "scope_sha256": "76a32ecba4cefb7d52d5a461701def6a04fa70072c3e3ff5661418cb11e65f64",
+            "sequence": 1,
+            "source_mutation": false,
+            "source_sha256": "2d73d2beda4df1bed3cbfa0bc86ec3b1f55f3a43db638451c9c6395cd5bebf17",
+            "topic": "metrics.census.ack",
+            "transport": "STAGED_ONLY"
+          },
+          "recipient": "GBOGEB/cryoplant-project"
+        },
+        {
+          "current_head": "a012927aae08e2c37d58a5e89547320211cf47e8",
+          "current_scope_sha256": "659525269bf0c6e6982520be32511a2df2b785341e2939fecc3084fbb767e908",
+          "current_source_sha256": "c01d6521d8b1cfc0220b59cd9f4036d4d10cc9a1073624155444276233c0a1e1",
+          "packet": {
+            "authority_transfer": false,
+            "engineering_approval": false,
+            "evidence_class": "REVIEW_OBSERVATION",
+            "expires_at": "2026-10-29T12:30:00Z",
+            "merge_authorized": false,
+            "observed_at": "2026-10-28T12:30:00Z",
+            "packet_sha256": "a7402faf66b555a3e4c53f9c2300fc158cdf144b1c0f8e2b76ef03ee9e7eb723",
+            "prior_packet_sha256": null,
+            "producer_head": "9f19a8a2fe7bc3292e37b1efc374ec313a7e1ee9",
+            "producer_repo": "GBOGEB/cryoplant-project",
+            "receipt_sha256": "0b9446239a98296d2bcaa5c27a2bb37098cd2437e6faa08464055d9282d03786",
+            "recipients": [
+              "GBOGEB/pipeline-automation-hub"
+            ],
+            "schema": "qps.topic-census.packet.v1",
+            "scope_sha256": "659525269bf0c6e6982520be32511a2df2b785341e2939fecc3084fbb767e908",
+            "sequence": 1,
+            "source_mutation": false,
+            "source_sha256": "c01d6521d8b1cfc0220b59cd9f4036d4d10cc9a1073624155444276233c0a1e1",
+            "topic": "publishing.r07.oid",
+            "transport": "STAGED_ONLY"
+          },
+          "recipient": "GBOGEB/pipeline-automation-hub"
+        }
+      ],
+      "schema": "qps.topic-wave.pilot.v1",
+      "source_writers": 0
+    },
+    {
+      "authority_transfer": false,
+      "cohort": "W378-P1-6-topic-W2",
+      "edges": [
+        {
+          "from": "S.ELEC",
+          "relation": "DEPENDS",
+          "to": "P.RECON"
+        },
+        {
+          "from": "P.RECON",
+          "relation": "PRODUCES",
+          "to": "O.CROSS"
+        },
+        {
+          "from": "O.CROSS",
+          "relation": "CONSUMES",
+          "to": "C.HUB"
+        },
+        {
+          "from": "S.TOPIC",
+          "relation": "DEPENDS",
+          "to": "I.PR_CHANGES"
+        },
+        {
+          "from": "I.PR_CHANGES",
+          "relation": "DEPENDS",
+          "to": "P.DELTA"
+        },
+        {
+          "from": "P.DELTA",
+          "relation": "PRODUCES",
+          "to": "O.WAVE"
+        },
+        {
+          "from": "O.WAVE",
+          "relation": "CONSUMES",
+          "to": "C.QPS"
+        },
+        {
+          "from": "S.R07",
+          "relation": "DEPENDS",
+          "to": "P.OID"
+        },
+        {
+          "from": "P.OID",
+          "relation": "PRODUCES",
+          "to": "O.GRAPH"
+        },
+        {
+          "from": "O.GRAPH",
+          "relation": "CONSUMES",
+          "to": "C.HUB"
+        },
+        {
+          "from": "O.CROSS",
+          "relation": "REVIEW",
+          "to": "G.AUTH"
+        },
+        {
+          "from": "O.WAVE",
+          "relation": "REVIEW",
+          "to": "G.CI"
+        },
+        {
+          "from": "O.GRAPH",
+          "relation": "REVIEW",
+          "to": "G.CI"
+        },
+        {
+          "from": "G.CI",
+          "relation": "NEXT_PULSE",
+          "to": "P.DELTA"
+        },
+        {
+          "from": "S.ISSUE",
+          "relation": "DEPENDS",
+          "to": "P.TRIAGE"
+        },
+        {
+          "from": "P.TRIAGE",
+          "relation": "PRODUCES",
+          "to": "O.TRIAGE"
+        },
+        {
+          "from": "O.TRIAGE",
+          "relation": "REVIEW",
+          "to": "G.CI"
+        },
+        {
+          "from": "S.RED",
+          "relation": "PRODUCES",
+          "to": "O.RED"
+        },
+        {
+          "from": "O.RED",
+          "relation": "REVIEW",
+          "to": "G.CI"
+        },
+        {
+          "from": "S.ABACUS",
+          "relation": "REVIEW",
+          "to": "G.CI"
+        }
+      ],
+      "max_readers": 2,
+      "merge_admission": "HOLD",
+      "method_version": "1.0.0",
+      "mode": "READ_ONLY_DECLARED_PILOT",
+      "nodes": [
+        {
+          "blob_oid": "f0b1bf3a72b8b7030f580c6e5871c8790fc26de1",
+          "function": "W376 electrical feeder SSOT",
+          "head_sha": "a012927aae08e2c37d58a5e89547320211cf47e8",
+          "id": "S.ELEC",
+          "kind": "SOURCE",
+          "owner": "GBOGEB/cryoplant-project",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": "754156c5308d8c12f1b35a36b0868219fd220b32",
+          "function": "W377 topic packet producer",
+          "head_sha": "824b44c83fff76017bb5fe0ac384936f8eedee30",
+          "id": "S.TOPIC",
+          "kind": "SOURCE",
+          "owner": "GBOGEB/pipeline-automation-hub",
+          "state": "PASS"
+        },
+        {
+          "blob_oid": "34c3a114cefa2332ebe451255adf3653b89b9290",
+          "function": "PUB-R07 registry",
+          "head_sha": "9f19a8a2fe7bc3292e37b1efc374ec313a7e1ee9",
+          "id": "S.R07",
+          "kind": "SOURCE",
+          "owner": "GBOGEB/cryoplant-project",
+          "state": "HOLD"
+        },
+        {
+          "blob_oid": null,
+          "function": "Declared PR and BD topic inputs",
+          "head_sha": "824b44c83fff76017bb5fe0ac384936f8eedee30",
+          "id": "I.PR_CHANGES",
+          "kind": "INPUT",
+          "owner": "GBOGEB/pipeline-automation-hub",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "Reconcile source rows",
+          "head_sha": "a012927aae08e2c37d58a5e89547320211cf47e8",
+          "id": "P.RECON",
+          "kind": "PROCESS",
+          "owner": "QPS Electrical",
+          "state": "HOLD"
+        },
+        {
+          "blob_oid": null,
+          "function": "Partial census plan",
+          "head_sha": "824b44c83fff76017bb5fe0ac384936f8eedee30",
+          "id": "P.DELTA",
+          "kind": "PROCESS",
+          "owner": "Metric Atlas",
+          "state": "PASS"
+        },
+        {
+          "blob_oid": null,
+          "function": "OID graph view",
+          "head_sha": "9f19a8a2fe7bc3292e37b1efc374ec313a7e1ee9",
+          "id": "P.OID",
+          "kind": "PROCESS",
+          "owner": "QPS Publication",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "Feeder crosswalk receipt",
+          "head_sha": "a012927aae08e2c37d58a5e89547320211cf47e8",
+          "id": "O.CROSS",
+          "kind": "EVIDENCE",
+          "owner": "QPS Electrical",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "Topic pilot receipt",
+          "head_sha": "824b44c83fff76017bb5fe0ac384936f8eedee30",
+          "id": "O.WAVE",
+          "kind": "EVIDENCE",
+          "owner": "Metric Atlas",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "DAG SIPOC SPINE projection",
+          "head_sha": "824b44c83fff76017bb5fe0ac384936f8eedee30",
+          "id": "O.GRAPH",
+          "kind": "EVIDENCE",
+          "owner": "JADE",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "Hub evidence consumer",
+          "head_sha": "824b44c83fff76017bb5fe0ac384936f8eedee30",
+          "id": "C.HUB",
+          "kind": "CONSUMER",
+          "owner": "GBOGEB/pipeline-automation-hub",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "QPS evidence consumer",
+          "head_sha": "a012927aae08e2c37d58a5e89547320211cf47e8",
+          "id": "C.QPS",
+          "kind": "CONSUMER",
+          "owner": "GBOGEB/cryoplant-project",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "Independent engineering acceptance",
+          "head_sha": null,
+          "id": "G.AUTH",
+          "kind": "CONTROL",
+          "owner": "Engineering owner",
+          "state": "HOLD"
+        },
+        {
+          "blob_oid": null,
+          "function": "Exact-head CI and independent review",
+          "head_sha": null,
+          "id": "G.CI",
+          "kind": "CONTROL",
+          "owner": "GitHub governance",
+          "state": "HOLD"
+        },
+        {
+          "blob_oid": null,
+          "function": "Issue-rank N+j first-class source",
+          "head_sha": "a0678181e1ca0c36ec4c700c992938aa7aaac411",
+          "id": "S.ISSUE",
+          "kind": "SOURCE",
+          "owner": "GBOGEB/pipeline-automation-hub",
+          "state": "HOLD"
+        },
+        {
+          "blob_oid": null,
+          "function": "EVERRED recovery frontier",
+          "head_sha": "a320fc24929dee0291ce18f26aa92ccd004f1703",
+          "id": "S.RED",
+          "kind": "SOURCE",
+          "owner": "GBOGEB/pipeline-automation-hub",
+          "state": "HOLD"
+        },
+        {
+          "blob_oid": null,
+          "function": "ABACUS coverage frontier",
+          "head_sha": "c7f2c61d5304bdcdbf67e178325e2e38100fc951",
+          "id": "S.ABACUS",
+          "kind": "SOURCE",
+          "owner": "GBOGEB/ABACUS",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "PR issue ranking and method",
+          "head_sha": "a0678181e1ca0c36ec4c700c992938aa7aaac411",
+          "id": "P.TRIAGE",
+          "kind": "PROCESS",
+          "owner": "issue_rank",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "Advisory BD issue targets",
+          "head_sha": "a0678181e1ca0c36ec4c700c992938aa7aaac411",
+          "id": "O.TRIAGE",
+          "kind": "EVIDENCE",
+          "owner": "issue_rank",
+          "state": "UNKNOWN"
+        },
+        {
+          "blob_oid": null,
+          "function": "Grouped first-red candidate evidence",
+          "head_sha": "a320fc24929dee0291ce18f26aa92ccd004f1703",
+          "id": "O.RED",
+          "kind": "EVIDENCE",
+          "owner": "EVERRED",
+          "state": "UNKNOWN"
+        }
+      ],
+      "observed_at": "2026-10-28T12:40:00Z",
+      "packets": [
+        {
+          "current_head": "a0678181e1ca0c36ec4c700c992938aa7aaac411",
+          "current_scope_sha256": "d807059e02b8f0c979e71a428b3e4b3949463381c67cacef3b9cf65676fcda72",
+          "current_source_sha256": "5e08443dfe0649b3e4b5c85fd8cd642957171bd9670714b033b4484cf6c811b2",
+          "packet": {
+            "authority_transfer": false,
+            "engineering_approval": false,
+            "evidence_class": "REVIEW_OBSERVATION",
+            "expires_at": "2026-10-29T12:30:00Z",
+            "merge_authorized": false,
+            "observed_at": "2026-10-28T12:30:00Z",
+            "packet_sha256": "0b26be20aff90aa71798325bb654cb3106bdb930fd0a554bef2c517ab71ee3b8",
+            "prior_packet_sha256": null,
+            "producer_head": "a0678181e1ca0c36ec4c700c992938aa7aaac411",
+            "producer_repo": "GBOGEB/pipeline-automation-hub",
+            "receipt_sha256": "c2765ad356215fd016313d556ff3a05f3708c96f5185e1d5cb3fdd7f12b04fc5",
+            "recipients": [
+              "GBOGEB/ABACUS"
+            ],
+            "schema": "qps.topic-census.packet.v1",
+            "scope_sha256": "d807059e02b8f0c979e71a428b3e4b3949463381c67cacef3b9cf65676fcda72",
+            "sequence": 1,
+            "source_mutation": false,
+            "source_sha256": "5e08443dfe0649b3e4b5c85fd8cd642957171bd9670714b033b4484cf6c811b2",
+            "topic": "issue.rank.wave",
+            "transport": "STAGED_ONLY"
+          },
+          "recipient": "GBOGEB/ABACUS"
+        },
+        {
+          "current_head": "a320fc24929dee0291ce18f26aa92ccd004f1703",
+          "current_scope_sha256": "be6554c1e3d55bf552f7ff7c9e286dd675452a88e41c40d4bb73b5a9bd6c753e",
+          "current_source_sha256": "11cb85e0c4f3e15c8757a63639d93e591a6651276d30a530a243491a163b661e",
+          "packet": {
+            "authority_transfer": false,
+            "engineering_approval": false,
+            "evidence_class": "REVIEW_OBSERVATION",
+            "expires_at": "2026-10-29T12:30:00Z",
+            "merge_authorized": false,
+            "observed_at": "2026-10-28T12:30:00Z",
+            "packet_sha256": "6f2fbdc143c13eb41fcbce910e846086788ec747dde6b17eb318ad140870d29e",
+            "prior_packet_sha256": null,
+            "producer_head": "a320fc24929dee0291ce18f26aa92ccd004f1703",
+            "producer_repo": "GBOGEB/pipeline-automation-hub",
+            "receipt_sha256": "c8439868746a9f28eb0758bf758d1fb9838760c0223332eb37f703604bd0775a",
+            "recipients": [
+              "GBOGEB/cryoplant-project"
+            ],
+            "schema": "qps.topic-census.packet.v1",
+            "scope_sha256": "be6554c1e3d55bf552f7ff7c9e286dd675452a88e41c40d4bb73b5a9bd6c753e",
+            "sequence": 1,
+            "source_mutation": false,
+            "source_sha256": "11cb85e0c4f3e15c8757a63639d93e591a6651276d30a530a243491a163b661e",
+            "topic": "ci.first-red.recovery",
+            "transport": "STAGED_ONLY"
+          },
+          "recipient": "GBOGEB/cryoplant-project"
+        },
+        {
+          "current_head": "c7f2c61d5304bdcdbf67e178325e2e38100fc951",
+          "current_scope_sha256": "5201f06bc3a0a43e9dbbeef9e3834e642439f0e0a12344f70f568f4a2a760c1a",
+          "current_source_sha256": "12221a67983c55175b970dbba1f34cee1e1b27060ee108ad149a946ace2d8ecb",
+          "packet": {
+            "authority_transfer": false,
+            "engineering_approval": false,
+            "evidence_class": "REVIEW_OBSERVATION",
+            "expires_at": "2026-10-29T12:30:00Z",
+            "merge_authorized": false,
+            "observed_at": "2026-10-28T12:30:00Z",
+            "packet_sha256": "1a60f61788237d6805e556f52d169f7e983ef98baefa919454ad5c04aa322a25",
+            "prior_packet_sha256": null,
+            "producer_head": "c7f2c61d5304bdcdbf67e178325e2e38100fc951",
+            "producer_repo": "GBOGEB/ABACUS",
+            "receipt_sha256": "8a74de48ab09d61568be2ee14e30c4f297f387436fbe575d4a48aef5f3f2c037",
+            "recipients": [
+              "GBOGEB/pipeline-automation-hub"
+            ],
+            "schema": "qps.topic-census.packet.v1",
+            "scope_sha256": "5201f06bc3a0a43e9dbbeef9e3834e642439f0e0a12344f70f568f4a2a760c1a",
+            "sequence": 1,
+            "source_mutation": false,
+            "source_sha256": "12221a67983c55175b970dbba1f34cee1e1b27060ee108ad149a946ace2d8ecb",
+            "topic": "abacus.coverage.frontier",
+            "transport": "STAGED_ONLY"
+          },
+          "recipient": "GBOGEB/pipeline-automation-hub"
+        }
+      ],
+      "schema": "qps.topic-wave.pilot.v1",
+      "source_writers": 0
+    }
+  ]
+}
