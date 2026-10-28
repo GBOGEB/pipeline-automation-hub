@@ -1,0 +1,177 @@
+{
+  "schema": "gbo.ci-spine.workstream-status.advisory.v1",
+  "kind": "frozen_workplan_not_live_issue_or_merge_authority",
+  "observed_at": "2026-10-28T15:54:09Z",
+  "source": {
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "main_head_after_989": "6f7cf145c4ebf585dbb341ba5863e77098ad36b0",
+    "catalog_snapshot_head": "ca623ab83793df6edd245942884ad5428a5fe079"
+  },
+  "semantics": {
+    "MERGED_VERIFIED": "Historical mainline merge readback",
+    "PILOT_UNQUALIFIED": "Implementing on draft only; no independent execution qualification",
+    "DESIGN_ONLY": "Speculative semantics; not executable",
+    "NOT_IMPLEMENTED": "No working asset",
+    "PROPOSED": "Needs owner action",
+    "HOLD": "Never infer permission from other successes"
+  },
+  "items": [
+    {
+      "id": "JQ-00",
+      "lane": "foundation",
+      "stage": "MERGED_VERIFIED",
+      "title": "Baseline CI spine and README badges",
+      "refs": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/989",
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/992"
+      ],
+      "dod": [
+        "Merge #989 and #992 to master",
+        "Preserve original catalogs and governed ownership"
+      ],
+      "dov": [
+        "PR #992 merged at 2026-10-28T15:34:53Z",
+        "#989 merged at 2026-10-28T15:54:09Z"
+      ],
+      "next": "Build using verified source head",
+      "priority": "P0"
+    },
+    {
+      "id": "JQ-01",
+      "lane": "interface",
+      "stage": "PILOT_UNQUALIFIED",
+      "title": "Standalone offline evidence explorer",
+      "refs": [
+        "docs/ci-spine/JACQUARD_CROSSWALK.md"
+      ],
+      "dod": [
+        "Deterministic self-contained HTML",
+        "DAG, catalog, run and SIPOC lenses",
+        "Search, keyboard focus, responsive layout and hash selection"
+      ],
+      "dov": [
+        "Byte-identical renderer --check",
+        "Offline no-network browser QA, desktop and mobile",
+        "No uncontrolled text injection or horizontal overflow"
+      ],
+      "next": "Run static/browser QA, independent reviewer",
+      "priority": "P0"
+    },
+    {
+      "id": "JQ-02",
+      "lane": "dag",
+      "stage": "PILOT_UNQUALIFIED",
+      "title": "Read-only B00-B09 DAG and SIPOC navigation",
+      "refs": [
+        "docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json"
+      ],
+      "dod": [
+        "Show 10 nodes and 17 typed edges",
+        "Separate next-pulse feedback from in-pulse cycles",
+        "Link bundle example to exact snapshot source"
+      ],
+      "dov": [
+        "All edges resolve, forward DAG is acyclic",
+        "No proposal displayed as required admission"
+      ],
+      "next": "Compare with native JADE job DAG",
+      "priority": "P0"
+    },
+    {
+      "id": "JQ-03",
+      "lane": "telemetry",
+      "stage": "PILOT_UNQUALIFIED",
+      "title": "Run and time evidence lens",
+      "refs": [
+        "docs/ci-spine/RUN_TIMING_SAMPLES_20261028.json"
+      ],
+      "dod": [
+        "Display 8 selected GitHub runs with exact run IDs",
+        "Distinguish queue from execution and event from knowledge time"
+      ],
+      "dov": [
+        "All shown times originate in source records",
+        "No 8-run extrapolation, every run links to GitHub"
+      ],
+      "next": "Add longer horizon from canonical actions_metrics.py",
+      "priority": "P1"
+    },
+    {
+      "id": "JQ-04",
+      "lane": "provenance",
+      "stage": "DESIGN_ONLY",
+      "title": "Typed fine-grained source to view pointers",
+      "refs": [
+        "docs/ci-spine/JACQUARD_CROSSWALK.md"
+      ],
+      "dod": [
+        "Pointer schema with explicit precision, source SHA and output SHA",
+        "Model null/unmapped, stale, manual and approximate cases"
+      ],
+      "dov": [
+        "Negative tests stale head, missing output digest, inaccurate PDF coordinates"
+      ],
+      "next": "Implement separate pointer validation and real SVG anchor",
+      "priority": "P1"
+    },
+    {
+      "id": "JQ-05",
+      "lane": "plotly_pdf",
+      "stage": "NOT_IMPLEMENTED",
+      "title": "Real HTML/SVG/Plotly/PDF cross-format explorer",
+      "refs": [
+        "mission-control/federation-atlas/mission_rebuild/w2_plotly.py",
+        "mission-control/jade_temple/site/build_cicd_dag.py"
+      ],
+      "dod": [
+        "Reuse Plotly and existing SVG/PDF engines",
+        "Bidirectional fine-grained pointers with real artifact digests"
+      ],
+      "dov": [
+        "Verify generated binary, exact page/bbox/layer/point anchor",
+        "Visual QA across source and generated published surface"
+      ],
+      "next": "Pilot one owner drawing/one interactive graph after real artifacts available",
+      "priority": "P2"
+    },
+    {
+      "id": "JQ-06",
+      "lane": "crew",
+      "stage": "PROPOSED",
+      "title": "MC research scouting: Jacquard/SyncTeX/Automerge",
+      "refs": [
+        "https://www.inkandswitch.com/jacquard/notebook/",
+        "https://www.inkandswitch.com/patchwork/"
+      ],
+      "dod": [
+        "Reader/DeepReader brief with original references and methods",
+        "Assess license, support maturity, and source compatibility"
+      ],
+      "dov": [
+        "Source + exact version/readback + risk + overlap",
+        "Adopt/modify/reject decision independently reviewed"
+      ],
+      "next": "Route to existing CREW after owner approval; no dispatch yet",
+      "priority": "P2"
+    },
+    {
+      "id": "JQ-07",
+      "lane": "governance",
+      "stage": "HOLD",
+      "title": "Admit any UI or pipeline change to main",
+      "refs": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/886"
+      ],
+      "dod": [
+        "Native exact-head CI, applicable required checks, eligible independent review",
+        "No status context renaming or gate relaxations"
+      ],
+      "dov": [
+        "Checks + FPC at exact head, source/receipt binding, false-green negative tests",
+        "Governed merge only after owner signoff"
+      ],
+      "next": "Review pilot PR after CI",
+      "priority": "P0"
+    }
+  ]
+}
