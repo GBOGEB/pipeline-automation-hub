@@ -201,12 +201,100 @@ def project(matrix: dict, dag: dict, source_sha: str, observation: dict | None =
                           "admission": "HOLD", "feedback": "B09 -> B00 NEXT_PULSE_ONLY"}}
 
 
+
+def replay_until_goal(matrix: dict, dag: dict, source_sha: str, journal: dict,
+                      *, max_waves: int = 8, max_parallel: int = 6,
+                      per_cluster: int = 2, open_stack: int = 0) -> dict:
+    """Bounded evidence-gated RF replay; no actual worker or merge is launched.
+
+    Journal entries represent *externally supplied* execution assertions; shape
+    validation is not independent GitHub authentication. No supplied journal
+    means WAIT rather than an unbounded unsupervised loop or fabricated progress.
+    """
+    if (not isinstance(max_waves, int) or isinstance(max_waves, bool) or
+            not 1 <= max_waves <= 8):
+        raise ValueError("RF replay max_waves must be 1..8")
+    if (not isinstance(journal, dict) or journal.get("schema") != "jade.devops.rf-journal.v1" or
+            journal.get("source_sha") != source_sha or
+            not isinstance(journal.get("waves"), list) or len(journal["waves"]) > max_waves):
+        raise ValueError("missing or stale bounded journal")
+    current = json.loads(json.dumps(matrix))  # never mutate caller's source document
+    history = []
+    state = "WAIT_FOR_WAVE_EVIDENCE"
+    for pulse in range(max_waves):
+        assertion = journal["waves"][pulse] if pulse < len(journal["waves"]) else None
+        observed = assertion.get("observation") if isinstance(assertion, dict) else None
+        current_plan = project(current, dag, source_sha, observed, max_parallel,
+                               per_cluster, open_stack)
+        on = current_plan["matrix"]["on"]
+        entry = {"pulse": pulse + 1, "candidate_ids": [z["id"] for z in on],
+                 "off_actions": current_plan["matrix"]["off"],
+                 "held": current_plan["matrix"]["held"],
+                 "goal": current_plan["goal"], "dispatch_performed": False,
+                 "asserted_completed": [], "asserted_failed": []}
+        history.append(entry)
+        if current_plan["goal"]["action"] == "STOP_EXPERIMENT_FOR_INDEPENDENT_REVIEW":
+            state = "STOP_FOR_INDEPENDENT_REVIEW"
+            break
+        if not on:
+            state = "STALLED_OR_HOLD"
+            break
+        if assertion is None:
+            state = "WAIT_FOR_WAVE_EVIDENCE"
+            break
+        results = assertion.get("results")
+        if not isinstance(results, list):
+            raise ValueError("journal wave must contain explicit results list")
+        seen = set()
+        candidates = {z["id"] for z in on}
+        lane_by_id = {z["id"]: z for z in current["lanes"]}
+        for row in results:
+            if not isinstance(row, dict):
+                raise ValueError("not a result object")
+            name, receipt = row.get("id"), row.get("receipt")
+            if name in seen or name not in candidates or not isinstance(receipt, dict):
+                raise ValueError("duplicate, unexpected or missing execution receipt")
+            seen.add(name)
+            if (receipt.get("head_sha") != source_sha or
+                    not isinstance(receipt.get("run_id"), int) or
+                    isinstance(receipt.get("run_id"), bool) or receipt["run_id"] < 1 or
+                    not isinstance(receipt.get("attempt"), int) or receipt["attempt"] < 1 or
+                    not HEX64.fullmatch(str(receipt.get("digest", ""))) or
+                    receipt.get("result") not in {"success", "failure"}):
+                raise ValueError("malformed or cross-head execution result")
+            lane = lane_by_id[name]
+            if receipt["result"] == "success":
+                if (not isinstance(receipt.get("test_population"), int) or
+                        receipt["test_population"] < 1):
+                    raise ValueError("successful execution must prove nonzero tests")
+                lane["state"] = "DONE"
+                entry["asserted_completed"].append(name)
+            else:
+                lane["state"] = "FAILED"
+                entry["asserted_failed"].append(name)
+            lane["execution_receipt"] = receipt
+        if not seen:
+            state = "WAIT_FOR_WAVE_EVIDENCE"
+            break
+        # Validate all updated DONE ancestors before treating them as planning
+        # dependencies. These receipts remain ASSERTED, not independently proven.
+        validate_matrix(current, dag, source_sha)
+        if pulse + 1 == max_waves:
+            state = "BOUNDED_WAVE_BUDGET_EXHAUSTED"
+    return {"schema": "jade.devops.rf-replay.v1", "source_sha": source_sha,
+            "wave_count": len(history), "state": state, "history": history,
+            "authority": {"dispatch_performed": False, "merge_authorized": False,
+                          "receipt_authenticity": "ASSERTED_NOT_INDEPENDENTLY_VERIFIED",
+                          "admission": "HOLD"}}
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--matrix", type=Path, default=CONTRACT)
     p.add_argument("--bundles", type=Path, default=BUNDLES)
     p.add_argument("--source-sha", required=True)
     p.add_argument("--observation", type=Path)
+    p.add_argument("--journal", type=Path, help="bounded external wave receipts; advisory replay only")
     p.add_argument("--max-parallel", type=int, default=6)
     p.add_argument("--per-cluster", type=int, default=2)
     p.add_argument("--open-stack", type=int, default=0)
@@ -215,8 +303,13 @@ def main(argv=None):
     matrix = json.loads(args.matrix.read_text(encoding="utf-8"))
     dag = json.loads(args.bundles.read_text(encoding="utf-8"))
     observation = json.loads(args.observation.read_text(encoding="utf-8")) if args.observation else None
-    report = project(matrix, dag, args.source_sha, observation,
-                     args.max_parallel, args.per_cluster, args.open_stack)
+    report = (replay_until_goal(matrix, dag, args.source_sha,
+                                json.loads(args.journal.read_text(encoding="utf-8")),
+                                max_parallel=args.max_parallel, per_cluster=args.per_cluster,
+                                open_stack=args.open_stack)
+              if args.journal else
+              project(matrix, dag, args.source_sha, observation,
+                      args.max_parallel, args.per_cluster, args.open_stack))
     data = json.dumps(report, indent=2, sort_keys=True) + "\n"
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
