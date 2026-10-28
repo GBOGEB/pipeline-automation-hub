@@ -1,0 +1,160 @@
+"""Source-bound, negative-first tests for the static Jacquard-inspired CI spine viewer.
+
+No API reads, cache writes or changes to required checks.
+"""
+from __future__ import annotations
+import copy
+import json
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import build_explorer as explorer  # noqa: E402
+
+
+class ExplorerProvenanceTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.sources = explorer.load_sources()
+
+    def project(self, index=None, replacement=None):
+        sources = list(copy.deepcopy(self.sources))
+        if index is not None:
+            sources[index] = replacement
+        return explorer.project(*sources)
+
+    def test_exact_merged_source_boundaries_are_distinct(self):
+        payload = self.project()
+        self.assertEqual(payload["source"]["snapshot_head"],
+                         "ca623ab83793df6edd245942884ad5428a5fe079")
+        self.assertNotEqual(payload["source"]["snapshot_head"],
+                            payload["source"]["main_head_at_readback"])
+        self.assertEqual(payload["source"]["authority"], "ADVISORY_FROZEN_NOT_CURRENT_CI")
+
+    def test_full_nonempty_bounded_populations(self):
+        d = self.project()
+        self.assertEqual((len(d["workflows"]), d["counts"]["test_named_files"],
+                          len(d["nodes"]), len(d["edges"]), len(d["runs"])),
+                         (182, 307, 10, 17, 8))
+        self.assertEqual(d["counts"]["admission_ledger_entries"], 181)
+
+    def test_all_aliases_remain_unapproved(self):
+        d = self.project()
+        self.assertTrue(all(x["alias_approved"] is False for x in d["workflows"]))
+        self.assertIn("UNLISTED", {x["admission_snapshot"] for x in d["workflows"]})
+
+    def test_all_edges_resolve_and_one_feedback_is_next_pulse_only(self):
+        d = self.project()
+        ids = {x["id"] for x in d["nodes"]}
+        self.assertTrue(all(e["from"] in ids and e["to"] in ids for e in d["edges"]))
+        self.assertEqual(sum(e["kind"] == "FEEDBACK_NEXT_PULSE" for e in d["edges"]), 1)
+
+    def test_dag_rejects_dangling_edge(self):
+        d = copy.deepcopy(self.sources[2])
+        d["edges"][0]["to"] = "fake:missing"
+        with self.assertRaisesRegex(ValueError, "EDGE_SET"):
+            self.project(2, d)
+
+    def test_dag_rejects_within_pulse_cycle(self):
+        d = copy.deepcopy(self.sources[2])
+        d["edges"][0]["from"] = "ci-spine:bundle:B08"
+        d["edges"][0]["to"] = "ci-spine:bundle:B00"
+        with self.assertRaisesRegex(ValueError, "DAG_CYCLE"):
+            self.project(2, d)
+
+    def test_dag_rejects_temporal_as_authority(self):
+        d = copy.deepcopy(self.sources[2])
+        feedback = next(e for e in d["edges"] if e["kind"] == "FEEDBACK_NEXT_PULSE")
+        feedback["kind"] = "FEEDFORWARD"
+        with self.assertRaisesRegex(ValueError, "TEMPORAL_BOUNDARY"):
+            self.project(2, d)
+
+    def test_stale_mismatched_source_is_rejected(self):
+        d = copy.deepcopy(self.sources[4])
+        d["source"]["catalog_snapshot_head"] = "f" * 40
+        with self.assertRaisesRegex(ValueError, "SINGLE_SNAPSHOT_SOURCE"):
+            self.project(4, d)
+
+    def test_approved_alias_false_green_is_rejected(self):
+        d = copy.deepcopy(self.sources[0])
+        d["workflows"][0]["alias_approved"] = True
+        with self.assertRaisesRegex(ValueError, "PROPOSED_ALIAS_ONLY"):
+            self.project(0, d)
+
+    def test_bad_blob_oid_rejected(self):
+        d = copy.deepcopy(self.sources[0])
+        d["workflows"][0]["blob_oid"] = "deadbeef"
+        with self.assertRaisesRegex(ValueError, "SOURCE_BLOB_SHAPES"):
+            self.project(0, d)
+
+    def test_negative_job_clock_rejected(self):
+        d = copy.deepcopy(self.sources[3])
+        j = next(j for j in d["runs"][0]["jobs"] if j["started_at"] and j["completed_at"])
+        j["execution_seconds"] = -30
+        with self.assertRaisesRegex(ValueError, "NONNEGATIVE_JOB_CLOCK"):
+            self.project(3, d)
+
+    def test_sample_is_not_misrepresented_as_fleet(self):
+        d = self.project()
+        self.assertEqual({r["run_id"] for r in d["runs"]}.__len__(), 8)
+        self.assertNotIn("fleet_success_rate", d)
+        self.assertTrue(all(r["source_sha"] and r["attempt"] for r in d["runs"]))
+
+    def test_malformed_input_is_not_a_safe_script_string(self):
+        payload = {"source": "</script><script>alert(1)</script>", "other": "&<>", "note": "“quoted”"}
+        safe = explorer.compact_json(payload)
+        self.assertNotIn("</script>", safe)
+        self.assertNotIn("<script>", safe)
+        self.assertEqual(json.loads(safe), payload)
+
+    def test_deterministic_output_matches_committed_html(self):
+        html = explorer.render()
+        self.assertEqual(html, explorer.OUTPUT.read_bytes())
+        self.assertGreater(len(html), 100_000)
+        self.assertNotIn(b"__SPINE_JSON__", html)
+        self.assertIn(b"connect-src 'none'", html)
+        self.assertIn(b"FROZEN", html)
+
+    def test_no_external_scripts_or_dynamic_network(self):
+        s = explorer.OUTPUT.read_text("utf-8")
+        self.assertNotRegex(s, r"<script\b[^>]*\bsrc\s*=")
+        self.assertIn("connect-src 'none'", s)
+        self.assertIn("NO", "NO")  # explicit diagnostic rather than unused test boilerplate
+        self.assertIn("source_head", s)
+        self.assertIn("JACQUARD_CROSSWALK.md", s)
+
+    def test_keyboard_and_lens_navigation_code_present(self):
+        s = explorer.OUTPUT.read_text("utf-8")
+        for term in ('data-lens="graph"', 'data-lens="sipoc"',
+                     'data-lens="catalog"', 'data-lens="timing"', 'data-lens="plan"',
+                     'aria-label="DAG zoom"', 'addEventListener("keydown"',
+                     'hashchange', 'XMLSerializer', 'window.print()'):
+            self.assertIn(term, s)
+
+    def test_pinned_mainline_not_falsely_stamped_current(self):
+        s = explorer.OUTPUT.read_text("utf-8")
+        self.assertIn("ca623ab83793df6edd245942884ad5428a5fe079", s)
+        self.assertIn("6f7cf145c4ebf585dbb341ba5863e77098ad36b0", s)
+        self.assertIn("older than merged PRs", s)
+
+    @unittest.skipUnless(shutil.which("node"), "Node not installed; native browser QA must separately run")
+    def test_inline_javascript_parses_in_node(self):
+        html = explorer.OUTPUT.read_text("utf-8")
+        scripts = re.findall(r"<script(?:\s+[^>]*)?>(.*?)</script>", html, flags=re.S|re.I)
+        self.assertEqual(len(scripts), 2)
+        with tempfile.TemporaryDirectory() as d:
+            js = Path(d) / "explorer.js"
+            js.write_text(scripts[-1], "utf-8")
+            proc = subprocess.run(["node", "--check", str(js)], capture_output=True,
+                                  text=True, timeout=20)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)
