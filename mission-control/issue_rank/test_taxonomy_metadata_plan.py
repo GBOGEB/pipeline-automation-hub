@@ -48,6 +48,18 @@ class Metadata(unittest.TestCase):
         self.assertNotIn("type:fix", p["proposals"][1]["labels_to_consider"])
         self.assertEqual(p["projection_sha256"], planner.propose(m, parser_sha="c"*40)["projection_sha256"])
 
+    def test_v2_redacted_private_head_keeps_public_only_proposals(self):
+        m = source()
+        m["schema"] = "jade.issue-rank.v2"
+        m["heads"][QPS]["head_sha"] = None
+        m["items"] = [i for i in m["items"] if i["repo"] != QPS]
+        proposal = planner.propose(m)
+        self.assertEqual(len(proposal["proposals"]), 2)
+        self.assertNotIn(QPS, json.dumps(proposal))
+        m["heads"][HUB]["head_sha"] = None
+        with self.assertRaisesRegex(ValueError, "SOURCE_SHA_UNVERIFIED"):
+            planner.propose(m)
+
     def test_existing_type_conflict_is_human_review_only(self):
         s = source()
         s["items"][0]["labels"] = ["type:feat"]
