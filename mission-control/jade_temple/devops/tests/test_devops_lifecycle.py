@@ -198,11 +198,11 @@ class RFPulse(unittest.TestCase):
 
     def test_failed_work_enters_off_repair(self):
         p = self.plan([self.s("red", state="FAILED"), self.s("ready")])
-        self.assertEqual(p["off"][0]["mode"], "REPAIR_FIRST_RED")
+        self.assertEqual(next(x for x in p["off"] if x["id"] == "red")["mode"], "REPAIR_FIRST_RED")
         self.assertEqual([s["id"] for s in p["on"]], ["ready"])
 
     def test_capacity_and_invalid_inputs(self):
-        p = self.plan([self.s("a"), self.s("b", cluster="beta")], max_parallel=1)
+        p = self.plan([self.s("a"), self.s("b", cluster="beta")], max_parallel=1, per_cluster=1)
         self.assertEqual(p["held"], [{"id": "b", "reason": "PARALLEL_CAP"}])
         for kw in ({"max_parallel": 0}, {"open_stack": 6}, {"per_cluster": 0}):
             with self.subTest(kw=kw), self.assertRaises(ValueError):
@@ -211,6 +211,30 @@ class RFPulse(unittest.TestCase):
                     self.s("a", touch_paths=["../x"])):
             with self.subTest(row=row), self.assertRaises(ValueError):
                 self.plan([row])
+
+
+    def test_unknown_duplicate_and_invalid_sha(self):
+        with self.assertRaises(ValueError):
+            self.plan([self.s("duplicate"), self.s("duplicate")])
+        with self.assertRaises(ValueError):
+            L.rf_pulse_plan([], source_sha="X" * 40)
+
+    def test_nonready_candidate_never_dispatches(self):
+        p = self.plan([self.s("hold", state="HOLD"), self.s("running", state="RUNNING")])
+        self.assertEqual(p["on"], [])
+        self.assertEqual([x["reason"] for x in p["held"]], ["NOT_READY", "NOT_READY"])
+
+    def test_completed_ancestor_is_not_rescheduled(self):
+        p = self.plan([self.s("complete", state="DONE"), self.s("child",
+                       depends_on=["complete"])])
+        self.assertEqual([x["id"] for x in p["on"]], ["child"])
+        self.assertNotIn("complete", [x["id"] for x in p["off"]])
+
+    def test_missing_t0_is_not_inferred_from_other_worker(self):
+        p = self.plan([self.s("a", t0_ref="receipt"),
+                       self.s("b", cluster="beta", t0_ref="")])
+        self.assertEqual([x["id"] for x in p["on"]], ["a"])
+        self.assertEqual(p["held"], [{"id": "b", "reason": "MISSING_T0_RECEIPT"}])
 
 if __name__ == "__main__":
     unittest.main()
