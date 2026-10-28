@@ -69,7 +69,7 @@ def main() -> int:
     args = ap.parse_args()
     report = inventory(args.root, json.loads(CATALOG.read_text(encoding="utf-8")), args.source_sha)
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps(report, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+    args.out.write_text(json.dumps(report, sort_keys=True, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({k: report[k] for k in ("schema", "source_sha", "workflow_count", "parse_errors", "dag_anomalies", "unclassified", "authority")}, sort_keys=True))
     return 1 if report["parse_errors"] or report["dag_anomalies"] else 0
 
