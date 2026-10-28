@@ -79,7 +79,28 @@ class PeerConfidence(unittest.TestCase):
         now["heads"].pop(QPS)
         out=peers.analyze(now,old)
         self.assertFalse(out["previous_population_comparable"])
+        self.assertEqual(out["population_comparison"],"WITHHELD_SOURCE_OR_PRIVACY_SCOPE_DRIFT")
+        self.assertEqual(out["peer_delta"],{})
         self.assertEqual(out["root_burndown_credit"],0)
+
+    def test_no_private_scope_details_emitted_when_repositories_drift(self):
+        old=model([row(HUB,1,"fix(watch): status")])
+        now=model([row(HUB,1,"fix(watch): status")],
+                  at="2026-10-26T13:00:00Z")
+        now["heads"].pop(QPS)
+        out=peers.analyze(now,old)
+        self.assertFalse(out["previous_population_comparable"])
+        self.assertFalse(out["peer_delta"])
+        self.assertNotIn(QPS,json.dumps(out))
+        self.assertNotIn("TOP-SECRET",json.dumps(out))
+
+    def test_source_privacy_reclassification_blocks_peer_comparison(self):
+        old=model([row(HUB,1,"fix(watch): status")])
+        now=model([row(HUB,1,"fix(watch): status")],
+                  at="2026-10-26T13:00:00Z")
+        now["heads"][QPS]["private"]=False
+        with self.assertRaisesRegex(ValueError,"SOURCE_VISIBILITY_CHANGED"):
+            peers.analyze(now,old)
 
     def test_reverse_pulse_and_bad_model_fail(self):
         old=model([row(HUB,1,"fix: x")],at="2026-10-26T14:00:00Z")
