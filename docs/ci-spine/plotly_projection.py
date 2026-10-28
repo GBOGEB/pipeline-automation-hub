@@ -9,6 +9,7 @@ import argparse
 import hashlib
 import html
 import json
+import re
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -41,6 +42,12 @@ def rows():
     if len({x["run_id"] for x in observed}) != 8:
         raise ValueError("PLOTLY_SAMPLE_POPULATION_FIRST_RED")
     return observed
+
+
+def external_scripts(document: str) -> bool:
+    """Detect active external script tags, not URLs within self-contained JS."""
+    return bool(re.search(r"<script\\b[^>]*\\bsrc\\s*=\\s*['\\\"]?(?:https?:)?//",
+                          document, flags=re.I))
 
 
 def render():
@@ -91,7 +98,10 @@ def render():
     if rendered.count("<body>") != 1:
         raise ValueError("PLOTLY_INVALID_TEMPLATE")
     rendered = rendered.replace("<body>", "<body>"+intro, 1)
-    if "https://cdn.plot.ly" in rendered:
+    # The fully embedded Plotly.js source contains CDN strings as inert code/text.
+    # Only an actual network script dependency is disallowed; substring scanning
+    # of the vendored JS creates an incorrect first-red.
+    if external_scripts(rendered):
         raise ValueError("PLOTLY_EXTERNAL_SCRIPT_FIRST_RED")
     return rendered.encode("utf-8")
 
