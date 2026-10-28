@@ -1,0 +1,86 @@
+name: 'test(ci-spine): provenance explorer QA'
+on:
+  pull_request:
+    paths:
+      - 'docs/ci-spine/**'
+      - '.github/workflows/ci-spine-explorer-qa.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: ci-spine-explorer-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  static:
+    name: Offline source-bound generator and negative tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Assert exact checkout
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Deterministic HTML, false-green and provenance negative matrix
+        run: |
+          set -euo pipefail
+          python docs/ci-spine/build_explorer.py --check
+          python docs/ci-spine/test_explorer.py 2>&1 | tee "$RUNNER_TEMP/ci-spine-tests.log"
+          python - <<'PY'
+          import os,re
+          from pathlib import Path
+          s=(Path(os.environ['RUNNER_TEMP'])/'ci-spine-tests.log').read_text()
+          results=[int(x) for x in re.findall(r'^Ran (\d+) tests in ',s,re.M)]
+          if not results or results[-1] < 18:
+              raise SystemExit('CI_SPINE_TEST_POPULATION_FIRST_RED')
+          print('CI_SPINE_TESTS_EXECUTED='+str(results[-1]))
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: ci-spine-source-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/ci-spine-tests.log
+          if-no-files-found: warn
+          retention-days: 21
+  browser:
+    name: Chromium responsive interaction and provenance QA
+    needs: static
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Install pinned browser QA tooling
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Execute offline and negative browser DoV
+        run: |
+          set -euo pipefail
+          python docs/ci-spine/browser_explorer_qa.py
+          test -s docs/ci-spine/qa/explorer/browser-receipt.json
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: ci-spine-browser-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: docs/ci-spine/qa/explorer/
+          if-no-files-found: warn
+          retention-days: 21
