@@ -11,7 +11,7 @@ def pulse(seq, *, issues=10, prs=2, ticks=1, scope_added=0,
     when = datetime(2026, 10, 1, tzinfo=timezone.utc) + timedelta(days=seq)
     heads = heads or {"GBOGEB/public": "a" * 40}
     return {"schema": "jade.issue-rank.ledger.v1", "seq": seq,
-            "row_sha256": ("ab" * 32), "telemetry": {
+            "row_sha256": ("ab" * 32), "prev_sha256": ("ab" * 32) if seq else None, "telemetry": {
                 "fetched_at": when.isoformat(),
                 "heads": heads,
                 "method": {"version": "issue-rank-method/2.0"},
@@ -178,6 +178,18 @@ class WaveControl(unittest.TestCase):
         result = summarize(rows)
         self.assertFalse(result["control"]["sustained_positive_burn_observed"])
         self.assertIn("MISSING_OR_MIXED_FINAL_14D_FLOW", result["control"]["notes"])
+
+    def test_missing_successor_link_is_rejected(self):
+        rows = self.four()
+        rows[2].pop("prev_sha256")
+        with self.assertRaisesRegex(ValueError, "previous ledger receipt"):
+            summarize(rows)
+
+    def test_private_head_redaction_is_allowed(self):
+        rows = self.four()
+        for row in rows:
+            row["telemetry"]["heads"]["GBOGEB/private"] = None
+        self.assertEqual(summarize(rows)["status"], "COMPARABLE_ADVISORY")
 
     def test_missing_receipt_is_withheld(self):
         rows = self.four()
