@@ -15,7 +15,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import issue_rank as ir  # noqa: E402
-from test_issue_rank import HUB, QPS, fixture, issue, pr, snapshot  # noqa: E402
+from test_issue_rank import HUB, QPS, fixture, issue, pr, snapshot, FakeGh  # noqa: E402
 
 IM = ir.IM
 
@@ -251,6 +251,28 @@ class MonteCarlo(unittest.TestCase):
         m = ir.rank(fixture(), draws=0)
         self.assertIsNone(m["items"][0]["rank_interval"])
         self.assertEqual(m["method"]["monte_carlo"]["draws"], 0)
+
+
+class SourceCompleteness(unittest.TestCase):
+    def test_nested_graphql_relation_limit_is_marked_incomplete(self):
+        raw = FakeGh()(ir.ISSUES_Q, owner="GBOGEB", name="r")["repository"]["issues"]["nodes"][0]
+        raw["subIssues"] = {"nodes": [
+            {"number": i + 100, "state": "OPEN", "createdAt": None,
+             "repository": {"nameWithOwner": HUB}} for i in range(30)]}
+        observed = ir._issue(raw, HUB)
+        self.assertEqual(observed["relation_limits_reached"], ["subIssues"])
+
+    def test_capped_source_withholds_close_candidate_and_telemetry(self):
+        s = fixture()
+        s["repos"][HUB]["issues"][0]["relation_limits_reached"] = ["subIssues"]
+        model = ir.rank(s, draws=0)
+        item = by_key(model)[k(1)]
+        self.assertEqual(item["lane"], "SOURCE_INCOMPLETE")
+        self.assertFalse(item["actionable"])
+        self.assertFalse(model["authority"]["source_relations_complete"])
+        self.assertEqual(model["authority"]["nested_relation_capped_items"], 1)
+        receipt = ir.telemetry(model, s, {"baseline": True})
+        self.assertFalse(receipt["method"]["relations_complete"])
 
 
 class Privacy(unittest.TestCase):

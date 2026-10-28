@@ -149,6 +149,9 @@ def summarize(rows, scope="USER", j=3):
         reasons.append("SCOPE_MEMBERSHIP_DRIFT")
     if len(set(versions)) != 1:
         reasons.append("METHOD_VERSION_DRIFT")
+    if any((r.get("telemetry") or {}).get("method", {}).get("relations_complete") is False
+           for r in window):
+        reasons.append("INCOMPLETE_NESTED_RELATIONS")
     if any(not x.get("row_sha256") for x in summaries):
         reasons.append("MISSING_LEDGER_RECEIPT")
     if reasons:

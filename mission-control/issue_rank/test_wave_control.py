@@ -64,6 +64,15 @@ class WaveControl(unittest.TestCase):
         self.assertEqual(r["comparison"]["delta"], {})
         self.assertIn("SCOPE_MEMBERSHIP_DRIFT", r["control"]["notes"])
 
+    def test_saturated_nested_source_withholds_comparable_burn(self):
+        rows = self.four()
+        rows[2]["telemetry"]["method"]["relations_complete"] = False
+        result = summarize(rows)
+        self.assertEqual(result["status"], "WITHHELD_UNMATCHED")
+        self.assertEqual(result["comparison"]["delta"], {})
+        self.assertIn("INCOMPLETE_NESTED_RELATIONS", result["control"]["notes"])
+        self.assertFalse(result["control"]["sustained_positive_burn_observed"])
+
     def test_head_sha_change_is_allowed_and_counted(self):
         rows = self.four()
         rows[2]["telemetry"]["heads"]["GBOGEB/public"] = "b" * 40

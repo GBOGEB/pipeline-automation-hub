@@ -195,6 +195,10 @@ def extract_refs(text: str | None, home: str, owner: str = OWNER, pr: bool = Fal
 # GitHub's own dependency relations (blockedBy / blocking / parent / sub-issues /
 # closing PRs) are OBSERVED edges; references parsed from text are DECLARED.
 _REL = "number state createdAt repository{nameWithOwner}"
+# The GraphQL query requests bounded nested connections without cursors.
+# An exactly-saturated connection is UNKNOWN, even if no extra row exists.
+_RELATION_PAGE_CAPS = {"subIssues": 30, "blockedBy": 20, "blocking": 20,
+                       "closedByPullRequestsReferences": 10}
 _ISSUE_NODE = """nodes{number title url createdAt updatedAt closedAt state stateReason body author{login}
 labels(first:20){nodes{name}} assignees(first:10){nodes{login}} milestone{title}
 comments(last:5){totalCount nodes{body createdAt}}
@@ -316,6 +320,8 @@ def _issue(node: dict, repo: str) -> dict:
         return [rel(n) for n in ((node.get(field) or {}).get("nodes") or [])]
 
     summary = node.get("subIssuesSummary") or {}
+    capped = sorted(field for field, cap in _RELATION_PAGE_CAPS.items()
+                    if len((node.get(field) or {}).get("nodes") or []) >= cap)
     return {"repo": repo, "number": node["number"], "type": "Issue", "title": node["title"],
             "url": node["url"], "created_at": node["createdAt"], "updated_at": node["updatedAt"],
             "closed_at": node.get("closedAt"), "state": node.get("state") or "OPEN",
@@ -330,7 +336,8 @@ def _issue(node: dict, repo: str) -> dict:
                           "sub_issues": rels("subIssues"), "blocked_by": rels("blockedBy"),
                           "blocking": rels("blocking"), "closed_by": rels("closedByPullRequestsReferences")},
             "sub_issues_summary": {"total": summary.get("total"), "completed": summary.get("completed")}
-            if summary else None}
+            if summary else None,
+            "relation_limits_reached": capped}
 
 
 def _pr(node: dict, repo: str) -> dict:
@@ -1041,6 +1048,7 @@ def rank(snap: dict, now: float | None = None, overlay: dict | None = None,
     g = build_graph(snap)
     nodes, edges = g["nodes"], g["edges"]
     names = sorted(nodes)
+    capped_nodes = [k for k, v in nodes.items() if v.get("relation_limits_reached")]
     now = now if now is not None else _ts(snap["fetched_at"])
     pr = pagerank(names, edges)
     bc = betweenness(names, edges)
@@ -1126,7 +1134,10 @@ def rank(snap: dict, now: float | None = None, overlay: dict | None = None,
         i["rank_interval"] = mc.get(k)
         i["golden_thread"] = lifecycle_thread(i, rolling.golden_thread)
         i["lane"], i["action"] = classify(i)
-        i["actionable"] = i["lane"] not in ("BLOCKED", "DEADLOCK", "PARKED")
+        if nodes[k].get("relation_limits_reached"):
+            i["lane"] = "SOURCE_INCOMPLETE"
+            i["action"] = "paginate capped GitHub dependency connections before closure or ranking"
+        i["actionable"] = i["lane"] not in ("BLOCKED", "DEADLOCK", "PARKED", "SOURCE_INCOMPLETE")
     items.sort(key=lambda i: (-i["score"], i["key"]))
     for r, i in enumerate(items, 1):
         i["rank_global"] = r
@@ -1144,7 +1155,9 @@ def rank(snap: dict, now: float | None = None, overlay: dict | None = None,
     model = {
         "schema": SCHEMA, "owner": owner, "fetched_at": snap["fetched_at"], "window": snap.get("window"),
         "authority": {"advisory_only": True, "closure_authorized": False, "merge_authorized": False,
-                      "dispatch_authorized": False, "ticks_are_not_verified_dod": True},
+                      "dispatch_authorized": False, "ticks_are_not_verified_dod": True,
+                      "source_relations_complete": not capped_nodes,
+                      "nested_relation_capped_items": len(capped_nodes)},
         "method": {"version": METHOD_VERSION, "ordering": "NON_BT_REVERSE_PRESSURE_PAGERANK",
                    "bradley_terry": "WITHHELD_NO_OBSERVED_PAIRWISE_OUTCOMES",
                    "urgency_weights": WEIGHTS, "damping": DAMPING, "soft_weight": SOFT,
@@ -1367,7 +1380,9 @@ def telemetry(model: dict, snap: dict, delta: dict) -> dict:
             "heads": {r: h["head_sha"] for r, h in model["heads"].items()},
             "graph": {k: v for k, v in model["graph"].items() if k not in ("deadlocks", "critical_chain")},
             "method": {"version": model["method"]["version"], "walk": model["method"]["walk"],
-                       "monte_carlo": model["method"]["monte_carlo"]},
+                       "monte_carlo": model["method"]["monte_carlo"],
+                       "relations_complete": model["authority"]["source_relations_complete"],
+                       "relation_capped_items": model["authority"]["nested_relation_capped_items"]},
             "predicate_leaks": len(model.get("predicate_leaks") or []),
             "scopes": {s: {k: v for k, v in r.items() if k not in ("top", "bottlenecks", "nearly_finished",
                                                                     "action_queue", "robust_top", "by_assignee")}
