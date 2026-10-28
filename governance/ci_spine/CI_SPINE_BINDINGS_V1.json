@@ -49,8 +49,7 @@
     "runtime_cost_queue": "mission-control/jade_temple/devops/actions_metrics.py",
     "failure_recovery": "mission-control/gogreen/scale_dock.py",
     "historical_progression": "mission-control/jade_temple/tools/rolling5.py",
-    "dag_sipoc": "mission-control/jade_temple/tools/cicd_dag.py",
-    "workflow_structure": "mission-control/jade_temple/devops/workflows.py"
+    "dag_sipoc": "mission-control/jade_temple/tools/cicd_dag.py"
   },
   "conceptual_edges": [
     [
@@ -73,5 +72,6 @@
       "CI-GOVERN-FPC",
       "CI-OPERATE-PRUNE"
     ]
-  ]
+  ],
+  "workflow_parser_owner": "mission-control/jade_temple/devops/workflows.py"
 }
