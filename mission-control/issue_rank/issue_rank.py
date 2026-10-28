@@ -1523,25 +1523,30 @@ def redact(model: dict, delta: dict | None = None, private_repos=None):
         return value
 
     out = export_public(out)
-    # Derived lineage counts can disclose a private descendant even when the
-    # public root itself is safe. Rebuild public lineage strictly from public
-    # in-scope items and public edges; no private bridge or depth influences it.
+    # Rebuild only from *public* open items, preserving public stub/closed
+    # ancestors already validated by the ranked source lineage. Never bridge
+    # a private hop: a path crossing private evidence restarts at its last
+    # private member, withholding the unsupported upstream ancestry.
     public_model = out["model"]
-    public_nodes = {
-        i["key"]: {"open": True, "stub": False, "number": i["number"],
-                   "created_at": i.get("created_at")}
-        for i in public_model["items"] if not i.get("private")
-    }
-    public_edges = [e for e in public_model["edges"]
-                    if e["source"] in public_nodes and e["target"] in public_nodes]
-    public_threads = lineages(public_nodes, public_edges)
+    public_items = {i["key"]: i for i in public_model["items"]}
+    public_threads = {}
+    for item_key, item in public_items.items():
+        source_path = item.get("lineage") or [item_key]
+        last_private = max(
+            (n for n, node in enumerate(source_path) if private_key(node)),
+            default=-1,
+        )
+        safe_path = [node for node in source_path[last_private + 1:]
+                     if not private_key(node)]
+        public_threads[item_key] = safe_path if safe_path and safe_path[-1] == item_key else [item_key]
     public_roots = defaultdict(list)
-    for key_, thread in public_threads.items():
-        public_roots[thread[0]].append((key_, len(thread)))
-    for item in public_model["items"]:
-        item["lineage"] = public_threads.get(item["key"], [item["key"]])
+    for item_key, thread in public_threads.items():
+        public_roots[thread[0]].append((item_key, len(thread)))
+    for item_key, item in public_items.items():
+        item["lineage"] = public_threads[item_key]
     public_model["views"]["lineage_roots"] = sorted(
-        ({"root": root, "open_root": True, "descendants": len(children),
+        ({"root": root, "open_root": root in public_items,
+          "descendants": len(children),
           "longest": max(length for _, length in children)}
          for root, children in public_roots.items()
          if len(children) > 1 or root not in {key_ for key_, _ in children}),

@@ -299,6 +299,19 @@ class Privacy(unittest.TestCase):
                              for row in public["views"]["lineage_roots"]))
         self.assertTrue(public["privacy_projection"]["public_lineage_recomputed"])
 
+    def test_public_closed_stub_ancestor_is_kept_without_private_influence(self):
+        snap = fixture()
+        snap["repos"][HUB]["issues"][0]["body"] = "see #90"
+        snap["repos"][HUB]["issues"][1]["body"] = "see #90"
+        snap["refs"] = {f"{HUB}#90": {"type": "Issue", "state": "CLOSED",
+                                      "created_at": "2026-08-01T00:00:00Z"}}
+        raw = ir.rank(snap, draws=0)
+        public = ir.redact(raw)
+        self.assertEqual(next(i for i in public["items"] if i["key"] == k(1))["lineage"][0], f"{HUB}#90")
+        self.assertTrue(any(r["root"] == f"{HUB}#90" and not r["open_root"]
+                            for r in public["views"]["lineage_roots"]))
+        self.assertTrue(public["privacy_projection"]["public_lineage_recomputed"])
+
     def test_private_lineage_root_rows_do_not_escape(self):
         snap = fixture()
         snap["repos"][QPS]["issues"].extend([
