@@ -228,5 +228,109 @@ class ReaderNegativeControls(unittest.TestCase):
         self.assertIsNone(M.seconds("2026-10-26T02:00:00Z", "2026-10-26T01:00:00Z"))
         self.assertIsNone(M.band(None))
 
+
+
+class RecheckPressureRF(unittest.TestCase):
+    """Canonical measurement owner: no synthetic passing rates for incomplete samples."""
+
+    @staticmethod
+    def synthetic():
+        return [run(i, name="GOGREEN Required Gate Re-check" if i <= 363 else "Other QA",
+                    event="workflow_run" if i <= 363 else "pull_request",
+                    conclusion="cancelled" if i <= 278 else "success")
+                for i in range(1, 1001)]
+
+    def pressure(self, rows=None, **kw):
+        return M.recheck_pressure(rows if rows is not None else self.synthetic(),
+                                  REPO, SHA, "2026-10-28T16:00:00Z", **kw)
+
+    def test_source_bound_363_over_1000_is_not_job_cost(self):
+        report = self.pressure()
+        self.assertEqual((report["sample_n"], report["recheck_records"],
+                          report["recheck_cancelled"], report["value"]), (1000, 363, 278, 0.363))
+        self.assertEqual(report["coverage"], "COMPLETE")
+        self.assertFalse(report["merge_authorized"])
+
+    def test_missing_population_is_unknown_not_zero_share(self):
+        report = self.pressure(self.synthetic()[:12])
+        self.assertEqual((report["sample_n"], report["coverage"]), (12, "PARTIAL_UNKNOWN"))
+        self.assertIsNone(report["value"])
+
+    def test_empty_population_remains_null(self):
+        report = self.pressure([])
+        self.assertEqual((report["sample_n"], report["coverage"], report["value"]),
+                         (0, "PARTIAL_UNKNOWN", None))
+
+    def test_more_than_1000_records_uses_fixed_recent_cohort(self):
+        rows = self.synthetic()
+        rows.append(run(1001, name="Other QA", event="push", created="2026-10-28T15:00:00Z"))
+        report = self.pressure(rows)
+        self.assertEqual((report["sample_n"], report["expected_n"]), (1000, 1000))
+        self.assertEqual(report["recheck_records"], 362)
+
+    def test_recheck_name_without_workflow_run_event_is_not_a_recheck(self):
+        rows = self.synthetic()
+        rows[0]["event"] = "push"
+        report = self.pressure(rows)
+        self.assertEqual(report["recheck_records"], 362)
+
+    def test_duplicate_ids_are_rejected_not_double_counted(self):
+        rows = self.synthetic()
+        rows.append(rows[0])
+        with self.assertRaisesRegex(ValueError, "duplicate"):
+            self.pressure(rows)
+
+    def test_untrusted_head_and_denominator_are_refused(self):
+        with self.assertRaisesRegex(ValueError, "source_sha"):
+            M.recheck_pressure(self.synthetic(), REPO, "bad", "2026-10-28T16:00:00Z")
+        with self.assertRaisesRegex(ValueError, "denominator"):
+            self.pressure(sample_size=999)
+
+    def test_future_run_is_not_in_historical_snapshot(self):
+        rows = self.synthetic()
+        rows[0]["created_at"] = "2026-10-28T17:00:00Z"
+        with self.assertRaisesRegex(ValueError, "after observation"):
+            self.pressure(rows)
+
+    def test_bad_timestamp_and_boolean_run_id_refused(self):
+        rows = self.synthetic()
+        rows[0]["created_at"] = "not-a-date"
+        with self.assertRaises(ValueError):
+            self.pressure(rows)
+        rows = self.synthetic()
+        rows[0]["id"] = True
+        with self.assertRaises(ValueError):
+            self.pressure(rows)
+
+    def test_replay_order_cannot_change_immutable_receipt(self):
+        one = self.pressure()
+        two = self.pressure(list(reversed(self.synthetic())))
+        self.assertEqual(one, two)
+        self.assertRegex(one["receipt_sha256"], r"^[0-9a-f]{64}$")
+
+    def test_goal_contract_matches_rf_matrix_without_duplicate_metric(self):
+        doc = self.pressure()
+        self.assertEqual(doc["metric"], "recheck_workflow_record_share")
+        self.assertEqual(doc["sample_method"], "last_1000_repo_workflow_runs")
+        self.assertEqual(doc["metric_owner"], "mission-control/jade_temple/devops/actions_metrics.py")
+        self.assertEqual(doc["source_binding"], "collector_repo_head_not_all_historical_run_heads")
+
+    def test_cli_pressure_does_not_probe_network_or_require_token(self):
+        from unittest import mock
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            cache = base / REPO.replace("/", "__") / "runs"
+            cache.mkdir(parents=True)
+            (cache / "2026-10-05.json").write_text(json.dumps([run(1)]), encoding="utf-8")
+            out = base / "pressure.json"
+            with mock.patch.object(M, "token", side_effect=AssertionError("no CLI token expected")):
+                self.assertEqual(M.main(["pressure", "--cache", str(base),
+                    "--since", "2026-10-05", "--until", "2026-10-05",
+                    "--repo", REPO, "--source-sha", SHA, "--out", str(out)]), 0)
+            report = json.loads(out.read_text(encoding="utf-8"))
+            self.assertIsNone(report["value"])
+            self.assertEqual(report["sample_n"], 1)
+
+
 if __name__ == "__main__":
     unittest.main()
