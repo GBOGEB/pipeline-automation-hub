@@ -49,7 +49,14 @@ python -m unittest discover -s mission-control/jade_temple/devops/tests -p 'test
 python mission-control/jade_temple/devops/ci_bundle_inventory.py --source-sha "$(git rev-parse HEAD)" --out /tmp/ci-bundle-inventory.json
 ```
 
-The CLI fails on malformed YAML, dangling job `needs`, or an in-workflow cycle; **unclassified workflows remain UNKNOWN/advisory, not an admission PASS**. The output is local-only and no published data or gate status is silently changed.
+The CLI reads workflow YAML **from the immutable Git tree at `--source-sha`**, not from working-tree files. A wrong/missing object, a nested `--root`, malformed YAML/job, dangling job `needs` or in-workflow cycle is surfaced explicitly; source errors fail closed. A dirty checkout does not contaminate the bound source. **Unclassified workflows remain UNKNOWN/advisory, not an admission PASS**. The output is local-only and no published data or gate status is silently changed.
+
+### First-red readback / overlap disposition (28 October 2026)
+
+- PR #997 JADE portability red was repaired by declaring UTF-8/LF. The review then identified P2 worktree/source misbinding and P2 malformed-job omission; both are repaired by Git-object scanning and job-level parse-error receipts with negative tests.
+- JADE N+9 DevOps census on source `41f187f...` ran **77** scoped tests but required **89** in that same step; the **12** Actions-metrics tests are a separate step with a separate population floor. Existing PR [#977](https://github.com/GBOGEB/pipeline-automation-hub/pull/977) owns that floor correction; PR [#872](https://github.com/GBOGEB/pipeline-automation-hub/pull/872) builds on it with missing-blob safeguards. Neither should be duplicated or downgraded in this branch.
+- FPC is independently FAIL on `MISSING_RECEIPT`; a green proof workflow is not a gate PASS. A valid same-head receipt and clean new-head Codex review are still required before admission.
+- A subsequent N2 branch may run and artifact the full shadow census independently; it must not pretend to change GOGREEN admission classification or the pre-existing 77/89 workflow defect.
 
 ## Next disjoint worker PRs
 
