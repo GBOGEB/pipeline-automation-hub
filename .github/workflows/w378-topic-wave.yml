@@ -57,3 +57,10 @@ jobs:
       - name: Inspect generated checksums and no authority promotion
         run: |
           python -c 'import json,hashlib,os,pathlib; root=pathlib.Path(os.environ["RUNNER_TEMP"])/"w378"; m=json.loads((root/"manifest.json").read_text()); assert m["authority_transfer"] is False and m["merge_admission"]=="HOLD"; assert all(hashlib.sha256((root/p).read_bytes()).hexdigest()==h for p,h in m["files_sha256"].items()); r=json.loads((root/"pilot-receipt.json").read_text()); assert r["metrics"]["source_writers"]==0 and r["metrics"]["native_jobs_dispatched"]==0'
+      - name: Publish source-safe three-topic demo projections for review
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # pinned v4
+        with:
+          name: w378-3topic-demo-${{ matrix.py }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/w378/
+          retention-days: 7
+          if-no-files-found: error
