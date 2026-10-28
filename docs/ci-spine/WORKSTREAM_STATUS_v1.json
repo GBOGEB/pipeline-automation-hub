@@ -13,7 +13,8 @@
     "DESIGN_ONLY": "Speculative semantics; not executable",
     "NOT_IMPLEMENTED": "No working asset",
     "PROPOSED": "Needs owner action",
-    "HOLD": "Never infer permission from other successes"
+    "HOLD": "Never infer permission from other successes",
+    "PARTIAL_PROTOTYPE": "A bounded branch-side companion exists; full cross-format and PDF pointer functionality is unimplemented"
   },
   "items": [
     {
@@ -117,21 +118,21 @@
     {
       "id": "JQ-05",
       "lane": "plotly_pdf",
-      "stage": "NOT_IMPLEMENTED",
-      "title": "Real HTML/SVG/Plotly/PDF cross-format explorer",
+      "stage": "PARTIAL_PROTOTYPE",
+      "title": "Offline Plotly companion; PDF/SVG/trace pointer integration remains future",
       "refs": [
         "mission-control/federation-atlas/mission_rebuild/w2_plotly.py",
         "mission-control/jade_temple/site/build_cicd_dag.py"
       ],
       "dod": [
-        "Reuse Plotly and existing SVG/PDF engines",
-        "Bidirectional fine-grained pointers with real artifact digests"
+        "An optional offline Plotly clock view uses the eight existing run receipts",
+        "Real PDF/SVG/Plotly fine-grained output-to-source pointers remain a separate build-out"
       ],
       "dov": [
-        "Verify generated binary, exact page/bbox/layer/point anchor",
-        "Visual QA across source and generated published surface"
+        "Native Plotly CI artifact must pass active-script offline check and reference exact runs",
+        "PDF page/bbox/layer and Plotly UID/point bindings still require exact output digest and visual QA"
       ],
-      "next": "Pilot one owner drawing/one interactive graph after real artifacts available",
+      "next": "Complete Plotly exact-head CI repair; then pilot one verified PDF/SVG owner drawing and source anchor",
       "priority": "P2"
     },
     {
