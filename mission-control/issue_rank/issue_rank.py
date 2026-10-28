@@ -504,7 +504,9 @@ def dep_edges(edges: list[dict]) -> list[tuple[str, str]]:
             out.append((e["source"], e["target"]))
         elif e["kind"] == "PARENT":  # child -> parent: the parent waits on the child
             out.append((e["target"], e["source"]))
-    return out
+    # Two declarations of one waiter/blocker relationship are one dependency.
+    # Keep source edges for diagnostics, but count unique blockers for pressure.
+    return sorted(set(out))
 
 
 def unblock_pressure(nodes: dict, edges: list[dict]) -> dict[str, int]:
