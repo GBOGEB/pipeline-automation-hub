@@ -1877,7 +1877,10 @@ def main(argv=None) -> int:
         model, delta = redact(model, delta)
     # A repeated source observation at the exact same instant is not N+1.
     # No source-validated taxonomy history is inferred from a redacted old head.
-    pulse_previous = None if redacted_prev else prev
+    # A prior pulse projected by the canonical private boundary still supplies
+    # valid public taxonomy history and a source-validated redaction marker;
+    # unknown private movement remains withheld in delta, never reidentified.
+    pulse_previous = prev
     if prev is not None:
         old_time = datetime.fromisoformat(prev["fetched_at"].replace("Z", "+00:00"))
         new_time = datetime.fromisoformat(model["fetched_at"].replace("Z", "+00:00"))
