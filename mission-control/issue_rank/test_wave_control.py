@@ -194,9 +194,8 @@ class WaveControl(unittest.TestCase):
     def test_missing_receipt_is_withheld(self):
         rows = self.four()
         rows[2].pop("row_sha256")
-        r = summarize(rows)
-        self.assertEqual(r["status"], "WITHHELD_UNMATCHED")
-        self.assertIn("MISSING_LEDGER_RECEIPT", r["control"]["notes"])
+        with self.assertRaisesRegex(ValueError, "previous ledger receipt"):
+            summarize(rows)
 
 
 if __name__ == "__main__":
