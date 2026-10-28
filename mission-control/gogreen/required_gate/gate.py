@@ -32,8 +32,11 @@ from __future__ import annotations
 
 import argparse
 import base64
+import hashlib
+import io
 import json
 import os
+import zipfile
 import re
 import sys
 import time
@@ -452,6 +455,82 @@ def receipt_recheck_relevance(report: dict, *, sha: str, workflow_path: str) -> 
         out["reason"] = "this gate did not contribute to the original failed verdict"
     else:
         out["reason"] = "unknown prior enforced gate state"
+    return out
+
+
+
+MAX_RECHECK_RECEIPT_ZIP = 2 * 1024 * 1024
+
+
+def verify_recheck_artifact(metadata: dict, archive: bytes, *,
+                            repo: str, run_id: int, attempt: int, pr: int, sha: str) -> dict:
+    """Verify one GitHub aggregator artifact with trusted first-party metadata.
+
+    This function makes no network calls and does not authorize a rerun or merge.
+    The caller must obtain metadata from GitHub for the exact aggregator run, not
+    from PR-supplied files. Digest and ZIP validation precede any receipt use.
+    """
+    out = {"schema": "gogreen.required_gate.receipt_artifact.v1",
+           "decision": RECHECK_UNKNOWN, "report": None, "merge_authorized": False}
+    def unknown(reason: str) -> dict:
+        out["reason"] = reason
+        return out
+
+    if not re.fullmatch(r"[0-9a-f]{40}", sha or "") or not re.fullmatch(
+            r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repo or ""):
+        return unknown("invalid repository or exact source SHA")
+    if not all(isinstance(n, int) and not isinstance(n, bool) and n > 0
+               for n in (run_id, attempt, pr)):
+        return unknown("invalid required run, attempt or PR identity")
+    if not isinstance(metadata, dict) or not isinstance(metadata.get("workflow_run"), dict):
+        return unknown("missing GitHub artifact metadata")
+    if metadata.get("expired") is not False:
+        return unknown("expired or unknown artifact availability")
+    artifact_id = metadata.get("id")
+    if not isinstance(artifact_id, int) or isinstance(artifact_id, bool) or artifact_id <= 0:
+        return unknown("invalid artifact identity")
+    expected_url = f"https://api.github.com/repos/{repo}/actions/artifacts/{artifact_id}"
+    if metadata.get("url") != expected_url:
+        return unknown("artifact URL does not bind to expected repository")
+    if metadata.get("name") != f"gogreen-required-gate-{pr}-{attempt}":
+        return unknown("artifact PR/attempt name mismatch")
+    source = metadata["workflow_run"]
+    if source.get("id") != run_id or source.get("head_sha") != sha:
+        return unknown("artifact run id or source SHA mismatch")
+
+    digest = metadata.get("digest")
+    if not isinstance(digest, str) or not re.fullmatch(r"sha256:[0-9a-f]{64}", digest):
+        return unknown("missing or malformed SHA-256 artifact digest")
+    if not isinstance(archive, bytes) or not (0 < len(archive) <= MAX_RECHECK_RECEIPT_ZIP):
+        return unknown("invalid or oversized artifact archive")
+    actual = hashlib.sha256(archive).hexdigest()
+    if actual != digest.split(":", 1)[1]:
+        return unknown("artifact archive digest mismatch")
+
+    try:
+        with zipfile.ZipFile(io.BytesIO(archive)) as zf:
+            members = zf.infolist()
+            if len(members) != 1 or members[0].filename != "required-gate.json":
+                return unknown("unexpected archive paths or members")
+            member = members[0]
+            if member.is_dir() or member.file_size > MAX_RECHECK_RECEIPT_ZIP:
+                return unknown("missing or oversized receipt member")
+            if member.flag_bits & 1:  # no encrypted entries
+                return unknown("encrypted receipt not supported")
+            report = json.loads(zf.read(member).decode("utf-8"))
+    except (ValueError, OSError, UnicodeError, RuntimeError, zipfile.BadZipFile, json.JSONDecodeError):
+        return unknown("corrupt or undecodable receipt archive")
+
+    if not isinstance(report, dict) or report.get("schema") != "gogreen.required_gate.v2":
+        return unknown("wrong receipt schema")
+    if report.get("head_sha") != sha or report.get("pr") != pr:
+        return unknown("receipt PR/source SHA mismatch")
+    if report.get("verdict") != FAIL or report.get("merge_authorized") is not False:
+        return unknown("receipt is not a failed non-authoritative aggregator report")
+    if not isinstance(report.get("gates"), list):
+        return unknown("missing enforced gate population")
+    out.update(decision="VERIFIED_FAILED_RECEIPT", reason="bound and digest-verified source",
+               report=report, archive_sha256=actual, run_id=run_id, attempt=attempt)
     return out
 
 
