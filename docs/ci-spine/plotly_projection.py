@@ -9,7 +9,7 @@ import argparse
 import hashlib
 import html
 import json
-import re
+from html.parser import HTMLParser
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -44,10 +44,21 @@ def rows():
     return observed
 
 
+class _AssetParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.has_script_dependency = False
+
+    def handle_starttag(self, tag, attrs):
+        if tag.lower() == "script" and dict(attrs).get("src"):
+            self.has_script_dependency = True
+
+
 def external_scripts(document: str) -> bool:
-    """Detect active external script tags, not URLs within self-contained JS."""
-    return bool(re.search(r"<script\\b[^>]*\\bsrc\\s*=\\s*['\\\"]?(?:https?:)?//",
-                          document, flags=re.I))
+    """Only parsed script src= tags are dependencies, not embedded JS strings."""
+    parser = _AssetParser()
+    parser.feed(document)
+    return parser.has_script_dependency
 
 
 def render():
