@@ -1,0 +1,58 @@
+name: W378 P1 Six-Topic Two-Wave Fan-In
+on:
+  pull_request:
+    paths:
+      - 'tools/metric-atlas/metric_atlas/topic_wave_scale.py'
+      - 'tools/metric-atlas/tests/test_topic_wave_scale.py'
+      - 'tools/metric-atlas/tests/pilot_6topic.json'
+      - '.github/workflows/w378-topic-wave-scale.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: w378-p1-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  read-only-fanin:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        py: ['3.11', '3.12']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify exact SHA
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # pinned
+        with:
+          python-version: ${{ matrix.py }}
+      - run: python -m pip install --disable-pip-version-check coverage==7.10.7
+      - name: P1 source/issue/CRON negatives with branch coverage
+        env:
+          PYTHONPATH: tools/metric-atlas
+        run: |
+          python -m coverage run --branch --include='*/metric_atlas/topic_wave_scale.py' -m unittest discover -s tools/metric-atlas/tests -p 'test_topic_wave_scale.py' -q
+          python -m coverage report -m --include='*/metric_atlas/topic_wave_scale.py' --fail-under=85
+      - name: Python optimization gate
+        env:
+          PYTHONPATH: tools/metric-atlas
+        run: python -O -m unittest discover -s tools/metric-atlas/tests -p 'test_topic_wave_scale.py' -q
+      - name: Generate offline two-wave fan-in
+        env:
+          PYTHONPATH: tools/metric-atlas
+        run: |
+          python -m metric_atlas.topic_wave_scale --input tools/metric-atlas/tests/pilot_6topic.json --out "$RUNNER_TEMP/w378-p1"
+          python -c 'import json,hashlib,os,pathlib; p=pathlib.Path(os.environ["RUNNER_TEMP"])/"w378-p1"; m=json.loads((p/"manifest.json").read_text()); r=json.loads((p/"fan-in.json").read_text()); assert hashlib.sha256((p/"fan-in.json").read_bytes()).hexdigest()==m["fan_in_sha256"]; assert r["planned_topic_count"]==6 and r["wave_count"]==2 and r["new_cron_jobs_created"]==0 and r["merge_admission"]=="HOLD"'
+      - name: Publish declared two-wave fan-in receipt for review
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # pinned v4
+        with:
+          name: w378-6topic-fanin-${{ matrix.py }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/w378-p1/
+          retention-days: 7
+          if-no-files-found: error
