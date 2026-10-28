@@ -1,0 +1,48 @@
+{
+  "schema": "gogreen.recheck.source_bound_artifact_observation.v1",
+  "source_class": "SOURCE_SUPPORTED_OBSERVATION_NOT_AUTHORITY",
+  "repository": "GBOGEB/pipeline-automation-hub",
+  "source_sha": "cb249a9c1a117dd49cd10dce558d36a6491614d0",
+  "pull_request": 922,
+  "aggregate_run_id": 40704772605,
+  "aggregate_run_attempt": 1,
+  "aggregate_status": "failure",
+  "artifact": {
+    "id": 12823960870,
+    "name": "gogreen-required-gate-922-1",
+    "created_at": "2026-10-28T14:23:22Z",
+    "size_bytes": 7502,
+    "digest": "sha256:85653ebb4928311fee7053edda239287b5db977429cd9429b957d95b33173830",
+    "zip_member": "required-gate.json",
+    "uncompressed_receipt_bytes": 83725,
+    "expired_at_readback": false
+  },
+  "verification": {
+    "downloaded_zip_sha256": "85653ebb4928311fee7053edda239287b5db977429cd9429b957d95b33173830",
+    "matches_github_artifact_digest": true,
+    "only_member_is_required_gate_json": true,
+    "receipt_schema": "gogreen.required_gate.v2",
+    "receipt_source_sha_matches": true,
+    "receipt_pr_matches": true,
+    "receipt_verdict": "FAIL",
+    "receipt_merge_authorized": false
+  },
+  "gate_count": 100,
+  "states": {
+    "FAIL": 2,
+    "PASS": 57,
+    "NOT_APPLICABLE": 41,
+    "WAITING": 0
+  },
+  "failing_workflows": [
+    ".github/workflows/jade-sprint-n3-qualification.yml",
+    ".github/workflows/jade-temple-readonly-qa.yml"
+  ],
+  "meaning": "An observed failed aggregate reported only these 2 failing gate paths; a new success from another already-passing enforced workflow cannot by itself remedy either failure. This observation does not activate selective retries or authorize a merge.",
+  "limitations": [
+    "Sample of one historical failed aggregator run; not a census of all recheck events",
+    "Report parser and ZIP comparison were read-only",
+    "Live recheck workflow remains unchanged; no reduction in events or rerun POSTs has been claimed",
+    "A source-bound report still requires authenticated trusted artifact metadata and exact aggregator identity before production use"
+  ]
+}
