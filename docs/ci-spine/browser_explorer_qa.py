@@ -73,6 +73,21 @@ def run():
                 page.locator("#edge-mode").select_option("feedback")
                 assert page.locator("#dag path[stroke='#d2a85e']").count() >= 1, "temporal edge"
                 page.locator("#edge-mode").select_option("all")
+                if width == 1440:
+                    with page.expect_download() as event:
+                        page.locator("#svg-export").click()
+                    download = event.value
+                    assert download.suggested_filename.startswith("ci-spine-logical-dag-")
+                    destination = QA / download.suggested_filename
+                    download.save_as(str(destination))
+                    vector = destination.read_bytes()
+                    assert vector.startswith(b"<svg") or vector.startswith(b'<svg'), "SVG must be vector XML"
+                    assert b"B00" in vector and b"B09" in vector, "SVG must include all bundle endpoints"
+                    payload["svg_export"] = {
+                        "filename": download.suggested_filename,
+                        "sha256": hashlib.sha256(vector).hexdigest(),
+                        "bytes": len(vector),
+                    }
                 page.screenshot(path=str(QA / ("full-" + str(width) + ".png")), full_page=True)
                 horizontal = page.evaluate("({scroll:document.documentElement.scrollWidth,window:innerWidth})")
                 assert horizontal["scroll"] <= horizontal["window"]+1, "unwanted horizontal page overflow"
