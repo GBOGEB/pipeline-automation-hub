@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 from datetime import datetime, timezone
 import hashlib
+import hmac
 import json
 import re
 from pathlib import Path
@@ -16,6 +17,7 @@ from pathlib import Path
 PACKET_SCHEMA = "qps.topic-census.packet.v1"
 PUB_SCHEMA = "qps.topic-census.publication.v1"
 ACK_SCHEMA = "qps.topic-census.ack.v1"
+ATTEST_SCHEMA = "qps.topic-census.controller-attestation.v1"
 LEDGER_SCHEMA = "qps.topic-census.ledger.v1"
 DECISION_SCHEMA = "qps.topic-census.decision.v1"
 SHA40 = re.compile(r"[0-9a-f]{40}\Z")
@@ -169,9 +171,62 @@ def verify_ack(packet, pub, ack):
     return ack
 
 
+
+def _controller_key(secret):
+    require(type(secret) is bytes and len(secret) >= 32, "CONTROLLER_SECRET_REQUIRED")
+    return secret
+
+
+def attest_ack(packet, pub, ack, *, controller_secret, readback_id, verified_at):
+    """Trusted controller calls ONLY after independently reading remote ACK.
+
+    The secret MUST remain outside Git/review artifacts. Merely claiming a valid
+    ACK never grants reuse; a cryptographic controller assertion is mandatory.
+    """
+    verify_ack(packet, pub, ack)
+    require(ack["verification"] == "CONTROLLER_READBACK_VERIFIED", "UNVERIFIED_ACK_NOT_ATTESTABLE")
+    key = _controller_key(controller_secret)
+    require(isinstance(readback_id, str) and bool(readback_id) and len(readback_id) <= 200,
+            "MISSING_CONTROLLER_READBACK")
+    require(timestamp(verified_at) >= timestamp(ack["ack_at"]), "ATTESTATION_BEFORE_ACK")
+    att = {"schema": ATTEST_SCHEMA, "packet_sha256": packet["packet_sha256"],
+           "publication_sha256": pub["publication_sha256"], "ack_sha256": ack["ack_sha256"],
+           "recipient": ack["recipient"], "recipient_head": ack["recipient_head"],
+           "controller_readback_id": readback_id, "verified_at": verified_at,
+           "authority_transfer": False}
+    att["mac_sha256"] = hmac.new(key, canonical(att).encode("utf-8"), hashlib.sha256).hexdigest()
+    return att
+
+
+def verify_attestation(packet, pub, ack, attestation, *, controller_secret):
+    verify_ack(packet, pub, ack)
+    require(isinstance(attestation, dict) and attestation.get("schema") == ATTEST_SCHEMA,
+            "INVALID_CONTROLLER_ATTESTATION")
+    require(set(attestation) == {"schema", "packet_sha256", "publication_sha256", "ack_sha256",
+                                    "recipient", "recipient_head", "controller_readback_id", "verified_at",
+                                    "authority_transfer", "mac_sha256"}, "ATTESTATION_EXTRA_OR_MISSING_FIELD")
+    require(attestation["packet_sha256"] == packet["packet_sha256"] and
+            attestation["publication_sha256"] == pub["publication_sha256"] and
+            attestation["ack_sha256"] == ack["ack_sha256"] and
+            attestation["recipient"] == ack["recipient"] and
+            attestation["recipient_head"] == ack["recipient_head"] and
+            attestation["authority_transfer"] is False and
+            isinstance(attestation["controller_readback_id"], str) and
+            bool(attestation["controller_readback_id"]), "CROSS_SOURCE_CONTROLLER_ATTESTATION")
+    require(timestamp(attestation["verified_at"]) >= timestamp(ack["ack_at"]),
+            "ATTESTATION_BEFORE_ACK")
+    key = _controller_key(controller_secret)
+    unsigned = {k:v for k,v in attestation.items() if k != "mac_sha256"}
+    mac = hmac.new(key, canonical(unsigned).encode("utf-8"), hashlib.sha256).hexdigest()
+    require(isinstance(attestation["mac_sha256"], str) and
+            hmac.compare_digest(mac,attestation["mac_sha256"]), "INVALID_CONTROLLER_MAC")
+    return attestation
+
+
 def decide(packet, *, recipient, current_head, current_scope_sha256,
            current_source_sha256, at, publication=None, acknowledgments=(),
-           latest_sequence=None, invalidated=False):
+           latest_sequence=None, invalidated=False, controller_attestations=(),
+           controller_secret=None, recipient_head=None):
     """Conservative per-topic recipient decision, never a CI or merge admission."""
     verify_packet(packet)
     require(_repo(recipient) and _sha(current_head, 40), "BAD_CURRENT_HEAD")
@@ -181,6 +236,10 @@ def decide(packet, *, recipient, current_head, current_scope_sha256,
     require(latest_sequence is None or (type(latest_sequence) is int and latest_sequence >= packet["sequence"]),
             "INVALID_LATEST_SEQUENCE")
     require(isinstance(acknowledgments, (list, tuple)), "INVALID_ACK_LIST")
+    require(isinstance(controller_attestations, (list, tuple)), "INVALID_CONTROLLER_ATTESTATION_LIST")
+    require(recipient_head is None or _sha(recipient_head, 40), "INVALID_RECIPIENT_HEAD")
+    require(not controller_attestations or controller_secret is not None,
+            "CONTROLLER_ATTESTATION_WITHOUT_SECRET")
     result = {"schema": DECISION_SCHEMA, "topic": packet["topic"],
               "recipient": recipient, "packet_sha256": packet["packet_sha256"],
               "at": at, "decision": None, "producer_recensus_required": False,
@@ -210,7 +269,12 @@ def decide(packet, *, recipient, current_head, current_scope_sha256,
                 matched.append(a)
         require(len(matched) <= 1 or len({a["ack_sha256"] for a in matched}) == 1,
                 "CONFLICTING_RECIPIENT_ACKS")
-        verified = bool(matched and matched[0]["verification"] == "CONTROLLER_READBACK_VERIFIED")
+        verified = False
+        if matched and recipient_head == matched[0]["recipient_head"] and controller_secret is not None:
+            for att in controller_attestations:
+                verify_attestation(packet, publication, matched[0], att,
+                                   controller_secret=controller_secret)
+                verified = True
         decision = "REUSE_ACKNOWLEDGED_NO_RECENSUS" if verified else "PULL_EXISTING_PACKET_NO_RECENSUS"
         result["recipient_pull_required"] = not verified
     result["decision"] = decision
