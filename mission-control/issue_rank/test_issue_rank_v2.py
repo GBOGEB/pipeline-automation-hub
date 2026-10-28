@@ -288,6 +288,18 @@ class Privacy(unittest.TestCase):
         self.assertEqual(delta["private_item_movement"], "UNKNOWN_AGGREGATE_ONLY")
 
 
+    def test_public_rollup_does_not_export_private_assignee_fingerprint(self):
+        snap = fixture()
+        snap["repos"][QPS]["issues"][0]["assignees"] = ["PRIVATE_ASSIGNEE_CANARY"]
+        snap["repos"][HUB]["issues"][0]["assignees"] = ["public-reviewer"]
+        model = ir.redact(ir.rank(snap, draws=0))
+        text = json.dumps(model)
+        self.assertNotIn("PRIVATE_ASSIGNEE_CANARY", text)
+        self.assertIn("public-reviewer", text)
+        self.assertEqual(model["rollups"][QPS]["by_assignee"], [])
+        self.assertTrue(all(r["assignee"] != "PRIVATE_ASSIGNEE_CANARY"
+                            for r in model["rollups"]["USER"]["by_assignee"]))
+
 class RedactedPulse(unittest.TestCase):
     def test_redacted_run_with_private_repo_writes_taxonomy_pulse_without_leaks(self):
         with tempfile.TemporaryDirectory() as d:
