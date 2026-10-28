@@ -1,0 +1,1010 @@
+{
+  "schema": "jade.devops.ci_bundle_legacy_crosswalk.v1",
+  "status": "LOSSLESS_DESIGN_LINEAGE_CANDIDATES_ONLY",
+  "authority": "MERGED_992_B00_B09_DESIGN_PRECEDES_SHADOW_997",
+  "legacy_source": {
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "pr": 992,
+    "commit_sha": "ca623ab83793df6edd245942884ad5428a5fe079",
+    "actual_git_tree_oid": "b1f0a6eb264ff6a409b9203fc6e7fc6773a3a4ad",
+    "logical_bundle_dag_path": "docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json",
+    "logical_bundle_dag_blob_oid": "7ff3fba10633b1f271e024ce2ccde8121417c9cb",
+    "workflow_index_path": "docs/ci-spine/WORKFLOW_INDEX_20261028.json",
+    "workflow_index_blob_oid": "eb320d53a14a750e4fdbe9df6f692f0e9dcf7508",
+    "workflow_index_tree_oid_claim": "ca623ab83793df6edd245942884ad5428a5fe079",
+    "tree_oid_claim_matches_actual": false,
+    "known_issue": "Merged source index field git_tree_oid holds source commit_sha instead of real tree oid; this crosswalk records actual verified tree without editing historical index."
+  },
+  "candidate_source": {
+    "pr": 997,
+    "namespace": "jade.devops.ci_candidate",
+    "head_at_crosswalk": "8dd0f116fb32d7d539eb7edd54bd20bc0ec505f1",
+    "catalog_path": "mission-control/jade_temple/devops/CI_BUNDLE_CATALOG_V1.json",
+    "catalog_blob_oid": "d6bb63e8834a71f19a7a21d38975f36a6b036748",
+    "catalog_status": "ADVISORY_CANDIDATE_OVERLAY_NOT_CANONICAL"
+  },
+  "identity_rule": "LEGACY_BXX_NEVER_EQUALS_CANDIDATE_BXX_BY_ID",
+  "mapping_type": "MANY_TO_MANY_WITH_EXPLICIT_GAPS_AND_NO_PROMOTION",
+  "all_source_workflow_oids_verified_against_frozen_source": true,
+  "legacy_graph": {
+    "feedforward_edges": [
+      {
+        "from": "ci-spine:bundle:B00",
+        "to": "ci-spine:bundle:B01",
+        "kind": "FEEDFORWARD",
+        "eligible_only": true
+      },
+      {
+        "from": "ci-spine:bundle:B00",
+        "to": "ci-spine:bundle:B02",
+        "kind": "FEEDFORWARD",
+        "eligible_only": true
+      },
+      {
+        "from": "ci-spine:bundle:B01",
+        "to": "ci-spine:bundle:B03",
+        "kind": "FEEDFORWARD",
+        "eligible_only": true
+      },
+      {
+        "from": "ci-spine:bundle:B02",
+        "to": "ci-spine:bundle:B03",
+        "kind": "FEEDFORWARD",
+        "eligible_only": true
+      },
+      {
+        "from": "ci-spine:bundle:B01",
+        "to": "ci-spine:bundle:B04",
+        "kind": "FEEDFORWARD",
+        "eligible_only": true
+      },
+      {
+        "from": "ci-spine:bundle:B02",
+        "to": "ci-spine:bundle:B04",
+        "kind": "FEEDFORWARD",
+        "eligible_only": true
+      },
+      {
+        "from": "ci-spine:bundle:B01",
+        "to": "ci-spine:bundle:B05",
+        "kind": "FEEDFORWARD",
+        "eligible_only": true
+      },
+      {
+        "from": "ci-spine:bundle:B02",
+        "to": "ci-spine:bundle:B05",
+        "kind": "FEEDFORWARD",
+        "eligible_only": true
+      },
+      {
+        "from": "ci-spine:bundle:B00",
+        "to": "ci-spine:bundle:B06",
+        "kind": "FEEDFORWARD",
+        "eligible_only": true
+      },
+      {
+        "from": "ci-spine:bundle:B03",
+        "to": "ci-spine:bundle:B07",
+        "kind": "FEEDFORWARD",
+        "eligible_only": true
+      },
+      {
+        "from": "ci-spine:bundle:B04",
+        "to": "ci-spine:bundle:B07",
+        "kind": "FEEDFORWARD",
+        "eligible_only": true
+      },
+      {
+        "from": "ci-spine:bundle:B05",
+        "to": "ci-spine:bundle:B07",
+        "kind": "FEEDFORWARD",
+        "eligible_only": true
+      },
+      {
+        "from": "ci-spine:bundle:B06",
+        "to": "ci-spine:bundle:B07",
+        "kind": "FEEDFORWARD",
+        "eligible_only": true
+      },
+      {
+        "from": "ci-spine:bundle:B07",
+        "to": "ci-spine:bundle:B08",
+        "kind": "FEEDFORWARD",
+        "eligible_only": true
+      },
+      {
+        "from": "ci-spine:bundle:B07",
+        "to": "ci-spine:bundle:B09",
+        "kind": "FEEDFORWARD",
+        "eligible_only": true
+      },
+      {
+        "from": "ci-spine:bundle:B08",
+        "to": "ci-spine:bundle:B09",
+        "kind": "FEEDFORWARD",
+        "eligible_only": true
+      }
+    ],
+    "temporal_feedback_edges": [
+      {
+        "from": "ci-spine:bundle:B09",
+        "to": "ci-spine:bundle:B00",
+        "kind": "FEEDBACK_NEXT_PULSE",
+        "eligible_only": false
+      }
+    ],
+    "join_contract": {
+      "bundle": "B07",
+      "predicate": "All source-bound, eligible required checks PASS for exact PR head, with valid nonzero test population where a test is expected. NOT_APPLICABLE must be justified by path or event policy. UNKNOWN, DEFER, SKIP and FAIL cannot compensate one another.",
+      "owner": "mission-control/gogreen/required_gate/gate.py"
+    },
+    "source_dag_not_modified": true
+  },
+  "legacy_bundle_count": 10,
+  "candidate_bundle_count": 13,
+  "mapping": [
+    {
+      "legacy_design": {
+        "namespace": "ci-spine:bundle",
+        "id": "B00",
+        "label": "source",
+        "description": "Pinned source identity, lint and trust",
+        "devops_stage": "S1_CODE",
+        "policy": "required_if_applicable",
+        "sipoc": {
+          "supplier": [
+            "repository-source",
+            "prior-bundle-evidence"
+          ],
+          "input": [
+            "commit and workflow blob OIDs"
+          ],
+          "process": [
+            "Pinned source identity, lint and trust"
+          ],
+          "output": [
+            "source_head_sha",
+            "lint_receipt"
+          ],
+          "customer": [
+            "downstream owner",
+            "Mission Control"
+          ]
+        },
+        "representative_workflow": {
+          "path": ".github/workflows/actions-pin-ratchet.yml",
+          "legacy_workflow_name": "Actions pin ratchet",
+          "source_sha": "ca623ab83793df6edd245942884ad5428a5fe079",
+          "source_blob_oid": "da6f7b876eb0f34a22c8052692f3e9b0319ec43b",
+          "triggers_at_source": [
+            "pull_request"
+          ],
+          "admission_disposition_at_source": "ENFORCED",
+          "source_index_proposed_alias": "ci(foundation): actions-pin-ratchet",
+          "alias_approved": false
+        }
+      },
+      "candidate_overlaps": [
+        {
+          "namespace": "jade.devops.ci_candidate",
+          "id": "B00",
+          "label": "source-preflight",
+          "lifecycle_stage": "S2_BUILD",
+          "phase": "P0",
+          "planning_dependencies": [],
+          "relationship": "PARTIAL_SEMANTIC_OVERLAP_NOT_EQUIVALENCE"
+        },
+        {
+          "namespace": "jade.devops.ci_candidate",
+          "id": "B01",
+          "label": "static-quality",
+          "lifecycle_stage": "S1_CODE",
+          "phase": "P1",
+          "planning_dependencies": [
+            "B00"
+          ],
+          "relationship": "PARTIAL_SEMANTIC_OVERLAP_NOT_EQUIVALENCE"
+        }
+      ],
+      "losslessness_gap": [
+        "Old B00 also owns source trust; new B01 static checks are only a partial analytical separation."
+      ],
+      "representative_only": true,
+      "full_affected_workflow_set": "UNKNOWN_PENDING_OWNER_AND_TRIGGER_AUDIT",
+      "consumer_migration": {
+        "approved": false,
+        "workflow_renames": 0,
+        "required_status_renames": 0,
+        "admission_policy_changes": 0,
+        "live_dependency_edges_changed": 0,
+        "affected_consumers_to_review": [
+          "docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json",
+          "#1010 RF wave planning",
+          "existing JADE workflow/job parser",
+          "GOGREEN ADMISSION.json and recheck-name registry",
+          "GitHub native required contexts"
+        ]
+      }
+    },
+    {
+      "legacy_design": {
+        "namespace": "ci-spine:bundle",
+        "id": "B01",
+        "label": "unit-contract",
+        "description": "Unit tests, schema, negatives, zero-test floor",
+        "devops_stage": "S3_TEST",
+        "policy": "required_if_applicable",
+        "sipoc": {
+          "supplier": [
+            "repository-source",
+            "prior-bundle-evidence"
+          ],
+          "input": [
+            "test population and source"
+          ],
+          "process": [
+            "Unit tests, schema, negatives, zero-test floor"
+          ],
+          "output": [
+            "test_results",
+            "coverage",
+            "negative_matrix"
+          ],
+          "customer": [
+            "downstream owner",
+            "Mission Control"
+          ]
+        },
+        "representative_workflow": {
+          "path": ".github/workflows/zero-test-gate-guard.yml",
+          "legacy_workflow_name": "Zero-Test Gate Guard",
+          "source_sha": "ca623ab83793df6edd245942884ad5428a5fe079",
+          "source_blob_oid": "a19c1295232f1aa3730a68f293a72178dc5ef870",
+          "triggers_at_source": [
+            "pull_request",
+            "push",
+            "workflow_dispatch"
+          ],
+          "admission_disposition_at_source": "ENFORCED",
+          "source_index_proposed_alias": "ci(foundation): zero-test-gate-guard",
+          "alias_approved": false
+        }
+      },
+      "candidate_overlaps": [
+        {
+          "namespace": "jade.devops.ci_candidate",
+          "id": "B02",
+          "label": "unit-test",
+          "lifecycle_stage": "S3_TEST",
+          "phase": "P2",
+          "planning_dependencies": [
+            "B00"
+          ],
+          "relationship": "PARTIAL_SEMANTIC_OVERLAP_NOT_EQUIVALENCE"
+        },
+        {
+          "namespace": "jade.devops.ci_candidate",
+          "id": "B03",
+          "label": "contract-test",
+          "lifecycle_stage": "S3_TEST",
+          "phase": "P2",
+          "planning_dependencies": [
+            "B02"
+          ],
+          "relationship": "PARTIAL_SEMANTIC_OVERLAP_NOT_EQUIVALENCE"
+        }
+      ],
+      "losslessness_gap": [
+        "Old B01 unit/contract/negative/zero-test is split into new B02+B03; coverage floors stay with existing test owners."
+      ],
+      "representative_only": true,
+      "full_affected_workflow_set": "UNKNOWN_PENDING_OWNER_AND_TRIGGER_AUDIT",
+      "consumer_migration": {
+        "approved": false,
+        "workflow_renames": 0,
+        "required_status_renames": 0,
+        "admission_policy_changes": 0,
+        "live_dependency_edges_changed": 0,
+        "affected_consumers_to_review": [
+          "docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json",
+          "#1010 RF wave planning",
+          "existing JADE workflow/job parser",
+          "GOGREEN ADMISSION.json and recheck-name registry",
+          "GitHub native required contexts"
+        ]
+      }
+    },
+    {
+      "legacy_design": {
+        "namespace": "ci-spine:bundle",
+        "id": "B02",
+        "label": "dependencies",
+        "description": "Pinned runtime and cache/wheelhouse restore",
+        "devops_stage": "S2_BUILD",
+        "policy": "producer",
+        "sipoc": {
+          "supplier": [
+            "repository-source",
+            "prior-bundle-evidence"
+          ],
+          "input": [
+            "toolchain",
+            "lockfile",
+            "OS/ABI/cache key"
+          ],
+          "process": [
+            "Pinned runtime and cache/wheelhouse restore"
+          ],
+          "output": [
+            "dependency_manifest",
+            "cache_receipt"
+          ],
+          "customer": [
+            "downstream owner",
+            "Mission Control"
+          ]
+        },
+        "representative_workflow": {
+          "path": ".github/workflows/jade-reusable-ci.yml",
+          "legacy_workflow_name": "JADE reusable CI (build once, test fail-closed)",
+          "source_sha": "ca623ab83793df6edd245942884ad5428a5fe079",
+          "source_blob_oid": "3d3d99696702c255e76d4ea5974098eeef49a92b",
+          "triggers_at_source": [
+            "workflow_call"
+          ],
+          "admission_disposition_at_source": "EXCLUDED",
+          "source_index_proposed_alias": "ci(jade): reusable-ci",
+          "alias_approved": false
+        }
+      },
+      "candidate_overlaps": [
+        {
+          "namespace": "jade.devops.ci_candidate",
+          "id": "B10",
+          "label": "build-release-deploy",
+          "lifecycle_stage": "S5_RELEASE",
+          "phase": "P4",
+          "planning_dependencies": [
+            "B02",
+            "B09"
+          ],
+          "relationship": "PARTIAL_SEMANTIC_OVERLAP_NOT_EQUIVALENCE"
+        }
+      ],
+      "losslessness_gap": [
+        "No dedicated cache/dependency node in candidate B00-B12; B10 is a broad delivery overlap and is NOT a replacement for old B02; retain the old B02 producer."
+      ],
+      "representative_only": true,
+      "full_affected_workflow_set": "UNKNOWN_PENDING_OWNER_AND_TRIGGER_AUDIT",
+      "consumer_migration": {
+        "approved": false,
+        "workflow_renames": 0,
+        "required_status_renames": 0,
+        "admission_policy_changes": 0,
+        "live_dependency_edges_changed": 0,
+        "affected_consumers_to_review": [
+          "docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json",
+          "#1010 RF wave planning",
+          "existing JADE workflow/job parser",
+          "GOGREEN ADMISSION.json and recheck-name registry",
+          "GitHub native required contexts"
+        ]
+      }
+    },
+    {
+      "legacy_design": {
+        "namespace": "ci-spine:bundle",
+        "id": "B03",
+        "label": "domain",
+        "description": "QPS/JADE/CREW/GoGREEN/Taxonomy/GM path-specific tests",
+        "devops_stage": "S3_TEST",
+        "policy": "ledger_driven",
+        "sipoc": {
+          "supplier": [
+            "repository-source",
+            "prior-bundle-evidence"
+          ],
+          "input": [
+            "changed paths",
+            "eligible suites",
+            "dependency_manifest"
+          ],
+          "process": [
+            "QPS/JADE/CREW/GoGREEN/Taxonomy/GM path-specific tests"
+          ],
+          "output": [
+            "domain_receipts"
+          ],
+          "customer": [
+            "downstream owner",
+            "Mission Control"
+          ]
+        },
+        "representative_workflow": {
+          "path": ".github/workflows/jade-devops-census.yml",
+          "legacy_workflow_name": "JADE N+9 DevOps census (read-only)",
+          "source_sha": "ca623ab83793df6edd245942884ad5428a5fe079",
+          "source_blob_oid": "691b1fc4b71e92c682d94dbbbf3307462f7c321c",
+          "triggers_at_source": [
+            "pull_request",
+            "push",
+            "schedule",
+            "workflow_dispatch"
+          ],
+          "admission_disposition_at_source": "OBSERVED",
+          "source_index_proposed_alias": "perf(jade): devops-census",
+          "alias_approved": false
+        }
+      },
+      "candidate_overlaps": [
+        {
+          "namespace": "jade.devops.ci_candidate",
+          "id": "B02",
+          "label": "unit-test",
+          "lifecycle_stage": "S3_TEST",
+          "phase": "P2",
+          "planning_dependencies": [
+            "B00"
+          ],
+          "relationship": "PARTIAL_SEMANTIC_OVERLAP_NOT_EQUIVALENCE"
+        },
+        {
+          "namespace": "jade.devops.ci_candidate",
+          "id": "B03",
+          "label": "contract-test",
+          "lifecycle_stage": "S3_TEST",
+          "phase": "P2",
+          "planning_dependencies": [
+            "B02"
+          ],
+          "relationship": "PARTIAL_SEMANTIC_OVERLAP_NOT_EQUIVALENCE"
+        },
+        {
+          "namespace": "jade.devops.ci_candidate",
+          "id": "B04",
+          "label": "integration",
+          "lifecycle_stage": "S3_TEST",
+          "phase": "P3",
+          "planning_dependencies": [
+            "B03"
+          ],
+          "relationship": "PARTIAL_SEMANTIC_OVERLAP_NOT_EQUIVALENCE"
+        },
+        {
+          "namespace": "jade.devops.ci_candidate",
+          "id": "B07",
+          "label": "scientific-math",
+          "lifecycle_stage": "S3_TEST",
+          "phase": "P3",
+          "planning_dependencies": [
+            "B03"
+          ],
+          "relationship": "PARTIAL_SEMANTIC_OVERLAP_NOT_EQUIVALENCE"
+        }
+      ],
+      "losslessness_gap": [
+        "Domain-specific test population cannot be recovered solely from new generic B02/B03/B04/B07 labels; check path eligibility."
+      ],
+      "representative_only": true,
+      "full_affected_workflow_set": "UNKNOWN_PENDING_OWNER_AND_TRIGGER_AUDIT",
+      "consumer_migration": {
+        "approved": false,
+        "workflow_renames": 0,
+        "required_status_renames": 0,
+        "admission_policy_changes": 0,
+        "live_dependency_edges_changed": 0,
+        "affected_consumers_to_review": [
+          "docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json",
+          "#1010 RF wave planning",
+          "existing JADE workflow/job parser",
+          "GOGREEN ADMISSION.json and recheck-name registry",
+          "GitHub native required contexts"
+        ]
+      }
+    },
+    {
+      "legacy_design": {
+        "namespace": "ci-spine:bundle",
+        "id": "B04",
+        "label": "integration",
+        "description": "Cross-module and cross-repository exact-head integration",
+        "devops_stage": "S3_TEST",
+        "policy": "ledger_driven",
+        "sipoc": {
+          "supplier": [
+            "repository-source",
+            "prior-bundle-evidence"
+          ],
+          "input": [
+            "sources and verified domain artifacts"
+          ],
+          "process": [
+            "Cross-module and cross-repository exact-head integration"
+          ],
+          "output": [
+            "integration_receipts"
+          ],
+          "customer": [
+            "downstream owner",
+            "Mission Control"
+          ]
+        },
+        "representative_workflow": {
+          "path": ".github/workflows/federation-exact-head-receipts.yml",
+          "legacy_workflow_name": "federation-exact-head-receipts",
+          "source_sha": "ca623ab83793df6edd245942884ad5428a5fe079",
+          "source_blob_oid": "4f497eafff603e7d756947b34f5093265977c28a",
+          "triggers_at_source": [
+            "pull_request",
+            "workflow_dispatch"
+          ],
+          "admission_disposition_at_source": "OBSERVED",
+          "source_index_proposed_alias": "test(federation): exact-head-receipts",
+          "alias_approved": false
+        }
+      },
+      "candidate_overlaps": [
+        {
+          "namespace": "jade.devops.ci_candidate",
+          "id": "B04",
+          "label": "integration",
+          "lifecycle_stage": "S3_TEST",
+          "phase": "P3",
+          "planning_dependencies": [
+            "B03"
+          ],
+          "relationship": "PARTIAL_SEMANTIC_OVERLAP_NOT_EQUIVALENCE"
+        },
+        {
+          "namespace": "jade.devops.ci_candidate",
+          "id": "B05",
+          "label": "federation-replay",
+          "lifecycle_stage": "S3_TEST",
+          "phase": "P3",
+          "planning_dependencies": [
+            "B03"
+          ],
+          "relationship": "PARTIAL_SEMANTIC_OVERLAP_NOT_EQUIVALENCE"
+        },
+        {
+          "namespace": "jade.devops.ci_candidate",
+          "id": "B06",
+          "label": "async-concurrency",
+          "lifecycle_stage": "S3_TEST",
+          "phase": "P3",
+          "planning_dependencies": [
+            "B02"
+          ],
+          "relationship": "PARTIAL_SEMANTIC_OVERLAP_NOT_EQUIVALENCE"
+        }
+      ],
+      "losslessness_gap": [
+        "The new federation/async nodes are candidate subtypes, not lossless replacements for all old B04 integration receipts."
+      ],
+      "representative_only": true,
+      "full_affected_workflow_set": "UNKNOWN_PENDING_OWNER_AND_TRIGGER_AUDIT",
+      "consumer_migration": {
+        "approved": false,
+        "workflow_renames": 0,
+        "required_status_renames": 0,
+        "admission_policy_changes": 0,
+        "live_dependency_edges_changed": 0,
+        "affected_consumers_to_review": [
+          "docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json",
+          "#1010 RF wave planning",
+          "existing JADE workflow/job parser",
+          "GOGREEN ADMISSION.json and recheck-name registry",
+          "GitHub native required contexts"
+        ]
+      }
+    },
+    {
+      "legacy_design": {
+        "namespace": "ci-spine:bundle",
+        "id": "B05",
+        "label": "browser",
+        "description": "Playwright, visual and no-network verification",
+        "devops_stage": "S3_TEST",
+        "policy": "path_scoped",
+        "sipoc": {
+          "supplier": [
+            "repository-source",
+            "prior-bundle-evidence"
+          ],
+          "input": [
+            "frozen HTML/build artifacts",
+            "Playwright"
+          ],
+          "process": [
+            "Playwright, visual and no-network verification"
+          ],
+          "output": [
+            "browser_receipts"
+          ],
+          "customer": [
+            "downstream owner",
+            "Mission Control"
+          ]
+        },
+        "representative_workflow": {
+          "path": ".github/workflows/jade-temple-readonly-qa.yml",
+          "legacy_workflow_name": "JADE_CASTE N+3 eight-point MIP qualification (read-only)",
+          "source_sha": "ca623ab83793df6edd245942884ad5428a5fe079",
+          "source_blob_oid": "9c16392121259e3fec6b383c9c5b2ae9220e3b5c",
+          "triggers_at_source": [
+            "pull_request",
+            "workflow_dispatch"
+          ],
+          "admission_disposition_at_source": "ENFORCED",
+          "source_index_proposed_alias": "test(jade): temple-readonly-qa",
+          "alias_approved": false
+        }
+      },
+      "candidate_overlaps": [
+        {
+          "namespace": "jade.devops.ci_candidate",
+          "id": "B08",
+          "label": "visual-document",
+          "lifecycle_stage": "S3_TEST",
+          "phase": "P3",
+          "planning_dependencies": [
+            "B04"
+          ],
+          "relationship": "PARTIAL_SEMANTIC_OVERLAP_NOT_EQUIVALENCE"
+        }
+      ],
+      "losslessness_gap": [
+        "New B08 visual/document is a wider domain than old B05 browser; Playwright negative/no-network contract remains old role."
+      ],
+      "representative_only": true,
+      "full_affected_workflow_set": "UNKNOWN_PENDING_OWNER_AND_TRIGGER_AUDIT",
+      "consumer_migration": {
+        "approved": false,
+        "workflow_renames": 0,
+        "required_status_renames": 0,
+        "admission_policy_changes": 0,
+        "live_dependency_edges_changed": 0,
+        "affected_consumers_to_review": [
+          "docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json",
+          "#1010 RF wave planning",
+          "existing JADE workflow/job parser",
+          "GOGREEN ADMISSION.json and recheck-name registry",
+          "GitHub native required contexts"
+        ]
+      }
+    },
+    {
+      "legacy_design": {
+        "namespace": "ci-spine:bundle",
+        "id": "B06",
+        "label": "secure",
+        "description": "Immutable action pins, security and provenance checks",
+        "devops_stage": "S4_SECURE",
+        "policy": "policy_driven",
+        "sipoc": {
+          "supplier": [
+            "repository-source",
+            "prior-bundle-evidence"
+          ],
+          "input": [
+            "actions/dependencies/source artifacts"
+          ],
+          "process": [
+            "Immutable action pins, security and provenance checks"
+          ],
+          "output": [
+            "security_receipts"
+          ],
+          "customer": [
+            "downstream owner",
+            "Mission Control"
+          ]
+        },
+        "representative_workflow": {
+          "path": ".github/workflows/actions-pin-ratchet.yml",
+          "legacy_workflow_name": "Actions pin ratchet",
+          "source_sha": "ca623ab83793df6edd245942884ad5428a5fe079",
+          "source_blob_oid": "da6f7b876eb0f34a22c8052692f3e9b0319ec43b",
+          "triggers_at_source": [
+            "pull_request"
+          ],
+          "admission_disposition_at_source": "ENFORCED",
+          "source_index_proposed_alias": "ci(foundation): actions-pin-ratchet",
+          "alias_approved": false
+        }
+      },
+      "candidate_overlaps": [
+        {
+          "namespace": "jade.devops.ci_candidate",
+          "id": "B09",
+          "label": "security-supply-chain",
+          "lifecycle_stage": "S4_SECURE",
+          "phase": "P1",
+          "planning_dependencies": [
+            "B00"
+          ],
+          "relationship": "PARTIAL_SEMANTIC_OVERLAP_NOT_EQUIVALENCE"
+        }
+      ],
+      "losslessness_gap": [
+        "Old B06 security-source graph and new B09 are related but gate applicability remains in ADMISSION, not labels."
+      ],
+      "representative_only": true,
+      "full_affected_workflow_set": "UNKNOWN_PENDING_OWNER_AND_TRIGGER_AUDIT",
+      "consumer_migration": {
+        "approved": false,
+        "workflow_renames": 0,
+        "required_status_renames": 0,
+        "admission_policy_changes": 0,
+        "live_dependency_edges_changed": 0,
+        "affected_consumers_to_review": [
+          "docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json",
+          "#1010 RF wave planning",
+          "existing JADE workflow/job parser",
+          "GOGREEN ADMISSION.json and recheck-name registry",
+          "GitHub native required contexts"
+        ]
+      }
+    },
+    {
+      "legacy_design": {
+        "namespace": "ci-spine:bundle",
+        "id": "B07",
+        "label": "fanin",
+        "description": "Aggregate only eligible exact-head successful required predicates",
+        "devops_stage": "S3_TEST",
+        "policy": "noncompensating_required",
+        "sipoc": {
+          "supplier": [
+            "repository-source",
+            "prior-bundle-evidence"
+          ],
+          "input": [
+            "verified B00..B06 current-head receipts"
+          ],
+          "process": [
+            "Aggregate only eligible exact-head successful required predicates"
+          ],
+          "output": [
+            "HOLD_or_eligible"
+          ],
+          "customer": [
+            "downstream owner",
+            "Mission Control"
+          ]
+        },
+        "representative_workflow": {
+          "path": ".github/workflows/gogreen-required-gate.yml",
+          "legacy_workflow_name": "GOGREEN Required Gate",
+          "source_sha": "ca623ab83793df6edd245942884ad5428a5fe079",
+          "source_blob_oid": "9c3fe3f8398fb32ab71c0050222972c70860599b",
+          "triggers_at_source": [
+            "pull_request"
+          ],
+          "admission_disposition_at_source": "EXCLUDED",
+          "source_index_proposed_alias": "ci(gogreen): required-gate",
+          "alias_approved": false
+        }
+      },
+      "candidate_overlaps": [
+        {
+          "namespace": "jade.devops.ci_candidate",
+          "id": "B12",
+          "label": "admission-governance",
+          "lifecycle_stage": "S9_CONTROL",
+          "phase": "P6",
+          "planning_dependencies": [
+            "B01",
+            "B02",
+            "B09"
+          ],
+          "relationship": "PARTIAL_SEMANTIC_OVERLAP_NOT_EQUIVALENCE"
+        }
+      ],
+      "losslessness_gap": [
+        "DANGER: old B07 is the noncompensating admission fan-in; new B07 means scientific-math, NOT the same node. New B12 governance is only an advisory visual overlap; its planning needs omit old B03/B04/B05/B06 required fan-in. Never migrate gate authority."
+      ],
+      "representative_only": true,
+      "full_affected_workflow_set": "UNKNOWN_PENDING_OWNER_AND_TRIGGER_AUDIT",
+      "consumer_migration": {
+        "approved": false,
+        "workflow_renames": 0,
+        "required_status_renames": 0,
+        "admission_policy_changes": 0,
+        "live_dependency_edges_changed": 0,
+        "affected_consumers_to_review": [
+          "docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json",
+          "#1010 RF wave planning",
+          "existing JADE workflow/job parser",
+          "GOGREEN ADMISSION.json and recheck-name registry",
+          "GitHub native required contexts"
+        ]
+      }
+    },
+    {
+      "legacy_design": {
+        "namespace": "ci-spine:bundle",
+        "id": "B08",
+        "label": "delivery",
+        "description": "Promote one digest-bound build and verify served artifact",
+        "devops_stage": "S5_RELEASE/S6_DEPLOY",
+        "policy": "separately_governed",
+        "sipoc": {
+          "supplier": [
+            "repository-source",
+            "prior-bundle-evidence"
+          ],
+          "input": [
+            "qualified build+review+approval"
+          ],
+          "process": [
+            "Promote one digest-bound build and verify served artifact"
+          ],
+          "output": [
+            "deploy_receipt"
+          ],
+          "customer": [
+            "downstream owner",
+            "Mission Control"
+          ]
+        },
+        "representative_workflow": {
+          "path": ".github/workflows/jade-reusable-deploy.yml",
+          "legacy_workflow_name": "JADE reusable deploy (promote by digest, verify served result)",
+          "source_sha": "ca623ab83793df6edd245942884ad5428a5fe079",
+          "source_blob_oid": "06ad28aa11f541d08b5af8e23f3c0aa311b1cd93",
+          "triggers_at_source": [
+            "workflow_call"
+          ],
+          "admission_disposition_at_source": "EXCLUDED",
+          "source_index_proposed_alias": "ci(jade): reusable-deploy",
+          "alias_approved": false
+        }
+      },
+      "candidate_overlaps": [
+        {
+          "namespace": "jade.devops.ci_candidate",
+          "id": "B10",
+          "label": "build-release-deploy",
+          "lifecycle_stage": "S5_RELEASE",
+          "phase": "P4",
+          "planning_dependencies": [
+            "B02",
+            "B09"
+          ],
+          "relationship": "PARTIAL_SEMANTIC_OVERLAP_NOT_EQUIVALENCE"
+        }
+      ],
+      "losslessness_gap": [
+        "New B10 combines build/release/deploy while old B08 is delivery AFTER fan-in. New B10 candidate dependency list does not model old B07 prerequisite. No deploy gate change."
+      ],
+      "representative_only": true,
+      "full_affected_workflow_set": "UNKNOWN_PENDING_OWNER_AND_TRIGGER_AUDIT",
+      "consumer_migration": {
+        "approved": false,
+        "workflow_renames": 0,
+        "required_status_renames": 0,
+        "admission_policy_changes": 0,
+        "live_dependency_edges_changed": 0,
+        "affected_consumers_to_review": [
+          "docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json",
+          "#1010 RF wave planning",
+          "existing JADE workflow/job parser",
+          "GOGREEN ADMISSION.json and recheck-name registry",
+          "GitHub native required contexts"
+        ]
+      }
+    },
+    {
+      "legacy_design": {
+        "namespace": "ci-spine:bundle",
+        "id": "B09",
+        "label": "control",
+        "description": "Measure run/job rates, red roots, latency and maturity; feedback to next pulse",
+        "devops_stage": "S9_CONTROL",
+        "policy": "scheduled_readonly",
+        "sipoc": {
+          "supplier": [
+            "repository-source",
+            "prior-bundle-evidence"
+          ],
+          "input": [
+            "live GitHub readback",
+            " receipts"
+          ],
+          "process": [
+            "Measure run/job rates, red roots, latency and maturity; feedback to next pulse"
+          ],
+          "output": [
+            "history",
+            "burndown",
+            "next_pulse_issues"
+          ],
+          "customer": [
+            "S0 next pulse"
+          ]
+        },
+        "representative_workflow": {
+          "path": ".github/workflows/gogreen-red-trace.yml",
+          "legacy_workflow_name": "GOGREEN Red-Trace Ledger (read-only)",
+          "source_sha": "ca623ab83793df6edd245942884ad5428a5fe079",
+          "source_blob_oid": "37c8e62ee4c4af5ea4a8a96bbbbfa47e60b6075b",
+          "triggers_at_source": [
+            "pull_request",
+            "push",
+            "schedule",
+            "workflow_dispatch"
+          ],
+          "admission_disposition_at_source": "OBSERVED",
+          "source_index_proposed_alias": "ci(gogreen): red-trace",
+          "alias_approved": false
+        }
+      },
+      "candidate_overlaps": [
+        {
+          "namespace": "jade.devops.ci_candidate",
+          "id": "B11",
+          "label": "telemetry-census",
+          "lifecycle_stage": "S8_MONITOR",
+          "phase": "P5",
+          "planning_dependencies": [
+            "B00"
+          ],
+          "relationship": "PARTIAL_SEMANTIC_OVERLAP_NOT_EQUIVALENCE"
+        },
+        {
+          "namespace": "jade.devops.ci_candidate",
+          "id": "B12",
+          "label": "admission-governance",
+          "lifecycle_stage": "S9_CONTROL",
+          "phase": "P6",
+          "planning_dependencies": [
+            "B01",
+            "B02",
+            "B09"
+          ],
+          "relationship": "PARTIAL_SEMANTIC_OVERLAP_NOT_EQUIVALENCE"
+        }
+      ],
+      "losslessness_gap": [
+        "Old B09 includes next-pulse feedback edge to old B00. Candidate B11 telemetry and B12 governance do NOT encode that temporal feedback; keep old source DAG/rolling-5 owner."
+      ],
+      "representative_only": true,
+      "full_affected_workflow_set": "UNKNOWN_PENDING_OWNER_AND_TRIGGER_AUDIT",
+      "consumer_migration": {
+        "approved": false,
+        "workflow_renames": 0,
+        "required_status_renames": 0,
+        "admission_policy_changes": 0,
+        "live_dependency_edges_changed": 0,
+        "affected_consumers_to_review": [
+          "docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json",
+          "#1010 RF wave planning",
+          "existing JADE workflow/job parser",
+          "GOGREEN ADMISSION.json and recheck-name registry",
+          "GitHub native required contexts"
+        ]
+      }
+    }
+  ],
+  "unresolved_owner_decisions": [
+    "Approve or reject new candidate B00-B12 namespace; no renumbering of existing B00-B09 legacy IDs.",
+    "Old B02 dependency/cache producer has no dedicated candidate equivalent.",
+    "Old B07 required fan-in must remain canonical; new B12 incomplete dependencies cannot enforce admission.",
+    "Old B08 delivery after fan-in is not represented by new B10 build-delivery dependencies.",
+    "Old B09 next-pulse feedback must not be omitted or converted to a same-pulse cycle.",
+    "Old B06 source design README says B01+B02 precede B06, but original machine DAG contains only B00->B06; source-owner disposition required.",
+    "Upstream source-index git_tree_oid mismatch is a historical owner P2; report but do not silently overwrite #992.",
+    "Full workflow-trigger/consumer migration requires census beyond the ten representative anchors."
+  ],
+  "effects": {
+    "live_workflow_names_changed": 0,
+    "live_job_ids_changed": 0,
+    "required_check_contexts_changed": 0,
+    "admission_json_changed": false,
+    "repo_rulesets_changed": false,
+    "merge_authorized": false,
+    "formal_credit_delta": 0,
+    "owner_approved": false
+  }
+}
