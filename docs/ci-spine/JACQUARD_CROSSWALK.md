@@ -53,7 +53,7 @@ Expected user navigation: choose `B05 Browser` → view prerequisite paths → i
 | JQ-02 | DAG/SIPOC lenses | 10 bundles, 16 intra-pulse edges + 1 next-pulse feedback | no cycle/phantom PASS, all edges resolvable, feedback labelled | IN PROGRESS |
 | JQ-03 | Runtime/receipt lens | eight real run/attempt/job/step samples; queue separate from duration | no invented metrics; view exact GitHub run and timestamp | IN PROGRESS |
 | JQ-04 | Fine-grained anchor contract | typed source/output/precision model; visible unknowns | negative tests for stale SHA, wrong page/bbox, unmapped object | DESIGN ONLY |
-| JQ-05 | PDF/SVG/Plotly bridge | source-bound object→view pointers; compare interactive outputs | source and output digest, layer/point identity, visual QA, owner approval | NOT IMPLEMENTED |
+| JQ-05 | PDF/SVG/Plotly bridge | optional offline Plotly view of existing measured run examples; future object→view pointers | Plotly exact-head CI; PDF/SVG geometry and output digest validation remain separate | PARTIAL PROTOTYPE (Plotly only) |
 | JQ-06 | Mission Control fanout | scoped Read/DeepRead/Doctor provenance scouts using existing CREW roles | source receipts, false-positive review and independent DoV | PROPOSED; no scouts dispatched |
 | JQ-07 | Admission & release | independent protected head checks and reviewer signoff | correct required checks/FPC, no compensation from green badge | HOLD |
 
