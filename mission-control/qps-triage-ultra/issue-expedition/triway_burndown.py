@@ -73,7 +73,7 @@ REF = re.compile(
     r"|/(?:(?i:pr)\s*)?#(?P<chainnum>\d+)"
     r"|(?<![A-Za-z0-9/&])#(?P<localnum>\d+)"
 )
-CLAIM = re.compile(r"\b(?:fix(?:es|ed)?|clos(?:e|es|ed)|resolv(?:e|es|ed))\b.{0,40}\Z", re.I)
+CLAIM = re.compile(r"\b(?:fix(?:es|ed)?|clos(?:e|es|ed)|resolv(?:e|es|ed))\b", re.I)
 # Issue-body reference kinds, first match wins. The words between the previous
 # reference on the line and this one type it, so a keyword binds to the next
 # reference only; a run joined by commas or "and" keeps the kind of its head.
@@ -97,6 +97,21 @@ CODE_SPAN = re.compile(r"(`+)(?!`)([\s\S]+?)(?<!`)\1(?!`)")
 META = re.compile(r"^\s*(?:related|refs?|references|see also|sources?|links?)\s*:", re.I)
 NEGATED = re.compile(r"\b(?:not|no longer|never|unrelated|instead of)\b", re.I)
 JOINER = re.compile(r"[\s,;&+]*(?:(?:and|or)\b[\s,;&+]*)?\Z", re.I)
+_SENTENCE_END = re.compile(r"[!?;]|\.(?=\s|$)")
+_ABBREVIATIONS = frozenset(("e.g", "i.e", "etc", "vs", "dr", "mr", "mrs", "ms", "u.s", "u.k"))
+
+
+def _clause_tail(text):
+    """Preserve dotted versions and abbreviations, split at sentence punctuation."""
+    start = 0
+    for match in _SENTENCE_END.finditer(text):
+        if match.group() == ".":
+            token = re.search(r"([A-Za-z]+(?:\.[A-Za-z]+)*)$", text[:match.start()])
+            if token and token.group(1).lower() in _ABBREVIATIONS:
+                continue
+        start = match.end()
+    return text[start:]
+
 PRIORITY = re.compile(r"(?:^|[/:\s_-])P([0-4])(?:$|[/:\s_-])", re.I)
 
 
@@ -189,7 +204,7 @@ def checklist(body):
                 continue
             b = BULLET.match(line)
             if b:
-                declared[section].append({"text": b.group(1)[:300], "form": "BULLET"})
+                declared[section].append({"text": b.group(1)[:300], "match_text": b.group(1)[:300], "form": "BULLET"})
                 continuation = declared[section][-1]
             elif not prose and not META.match(line):  # one prose criterion per paragraph
                 declared[section].append({"text": line.strip()[:300], "form": "PROSE"})
@@ -262,14 +277,16 @@ def references(body, repo, pr=False):
             if num <= 0:
                 continue
             target = identity("GBOGEB/" + name, num)
-            before = re.split(r"[.!?;]", window[-90:])[-1]
+            before = _clause_tail(window[-90:])
             join_window = (line[previous_end:m.start("alias")]
                            if m.group("aliasnum") is not None else window)
             if withdrawn:
                 kind = "PR_ASSOCIATION" if pr else "TEXT_ASSOCIATION"
             elif pr:
-                claim = CLAIM.search(before)
-                kind = ("PR_CLOSURE_CLAIM" if claim and not NEGATED.search(before[:claim.start()])
+                verbs = list(CLAIM.finditer(before))
+                claim = verbs[-1] if verbs and len(before) - verbs[-1].end() <= 40 else None
+                scope_start = verbs[-2].end() if len(verbs) > 1 else 0
+                kind = ("PR_CLOSURE_CLAIM" if claim and not NEGATED.search(before[scope_start:claim.start()])
                         else "PR_ASSOCIATION")
                 if last_kind == "PR_CLOSURE_CLAIM" and JOINER.fullmatch(join_window):
                     kind = last_kind
@@ -277,11 +294,14 @@ def references(body, repo, pr=False):
                 kind = last_kind
             else:
                 kind = "TEXT_ASSOCIATION"
-                for label, rx in KINDS:
-                    hit = rx.search(before)
-                    if hit:
-                        kind = "TEXT_ASSOCIATION" if NEGATED.search(before[:hit.start()]) else label
-                        break
+                candidates = [(hit.start(), label, hit) for label, rx in KINDS
+                              if (hit := rx.search(before)) is not None]
+                if candidates:
+                    candidates.sort(key=lambda row: row[0])
+                    _, label, hit = candidates[-1]
+                    previous_start = candidates[-2][0] if len(candidates) > 1 else 0
+                    kind = ("TEXT_ASSOCIATION" if NEGATED.search(before[previous_start:hit.start()])
+                            else label)
                 if item and item.group(1) in "xX " and kind == "TEXT_ASSOCIATION":
                     kind = "DECLARED_CHILD_CANDIDATE"  # a live checkbox only; [~] #N stays text
             last_repo, last_kind = name, kind

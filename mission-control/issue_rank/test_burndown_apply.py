@@ -65,6 +65,14 @@ class Checkbox(unittest.TestCase):
         self.assertIn("- [x] already tracked\n", new)
         self.assertEqual(ba.checkbox_body(new), (new, 0))  # idempotent
 
+    def test_wrapped_declared_bullet_is_matchable_and_idempotent(self):
+        src = "## Done when\n- Deploy to staging\n  and run smoke tests\n- owner signs\n"
+        updated, count = ba.checkbox_body(src)
+        self.assertEqual(count, 2)
+        self.assertIn("- [ ] Deploy to staging\n  and run smoke tests", updated)
+        self.assertIn("- [ ] owner signs", updated)
+        self.assertEqual(ba.checkbox_body(updated), (updated, 0))
+
     def test_tick_body_ticks_only_listed_lines(self):
         self.assertEqual(ba.tick_body("- [ ] #1\n- [ ] #2\n", {1}), "- [ ] #1\n- [x] #2\n")
 

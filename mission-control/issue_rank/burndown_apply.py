@@ -132,7 +132,7 @@ def _brief(node: dict | None) -> dict:
 
 def checkbox_body(body: str) -> tuple[str, int]:
     """``body`` with each declared DoD / DoV / STEPS bullet turned into ``- [ ]``."""
-    declared = {x["text"] for sec in tw.checklist(body).values()
+    declared = {x.get("match_text", x["text"]) for sec in tw.checklist(body).values()
                 for x in sec["declared"] if x["form"] == "BULLET"}
     out, n, fence, section = [], 0, None, "OTHER"
     for line in body.splitlines(keepends=True):

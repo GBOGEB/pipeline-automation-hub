@@ -200,6 +200,16 @@ class GoldenThread(unittest.TestCase):
 
 
 class Flow(unittest.TestCase):
+    def test_invalid_flow_window_rejected_before_fetch_or_measurement(self):
+        snap = self.snap()
+        for days in (0, -1, 14.0, True):
+            with self.subTest(days=days):
+                snap["window"]["days"] = days
+                with self.assertRaisesRegex(ValueError, "INVALID_FLOW_WINDOW"):
+                    ir.flow(snap, {HUB})
+                with self.assertRaisesRegex(ValueError, "INVALID_FLOW_WINDOW"):
+                    ir.fetch(None, ["pipeline-automation-hub"], window_days=days)
+
     def snap(self):
         s = snapshot([issue(HUB, i, created="2026-10-20T00:00:00Z") for i in range(1, 4)])
         s["window"] = {"days": 14, "since": "2026-10-12T00:00:00Z"}
@@ -276,6 +286,19 @@ class SourceCompleteness(unittest.TestCase):
 
 
 class Privacy(unittest.TestCase):
+    def test_private_lineage_root_rows_do_not_escape(self):
+        snap = fixture()
+        snap["repos"][QPS]["issues"].extend([
+            issue(QPS, 8, "see #7", created="2026-10-03T00:00:00Z"),
+            issue(QPS, 9, "see #7", created="2026-10-04T00:00:00Z")])
+        raw = ir.rank(snap, draws=0)
+        self.assertTrue(any(row["root"] == f"{QPS}#7"
+                            for row in raw["views"]["lineage_roots"]))
+        public = ir.redact(raw)
+        self.assertFalse(any(str(row.get("root", "")).startswith(QPS + "#")
+                             for row in public["views"]["lineage_roots"]))
+        self.assertNotIn("PRIVATE-", json.dumps(public["views"]["lineage_roots"]))
+
     def test_redacted_model_and_delta_are_boundary_fixed_points(self):
         before = ir.rank(fixture(), draws=0)
         after_snap = fixture()
