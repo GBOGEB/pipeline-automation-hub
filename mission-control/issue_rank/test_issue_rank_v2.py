@@ -141,6 +141,14 @@ class Structure(unittest.TestCase):
                                       issue(HUB, 3)]), draws=0))
         self.assertEqual((by[k(2)]["unblocks_now"], by[k(2)]["pressure"]), (0, 1))
 
+    def test_duplicate_text_and_checkbox_declarations_are_one_blocker(self):
+        # One dependency can be declared via both live checkbox and prose.
+        m = ir.rank(snapshot([issue(HUB, 1, "- [ ] #2\\nblocked by #2"), issue(HUB, 2)]), draws=0)
+        by = by_key(m)
+        self.assertEqual(by[k(1)]["open_blockers"], [k(2)])
+        self.assertEqual(by[k(2)]["unblocks_now"], 1)
+        self.assertNotIn(k(1), m["views"]["action_queue"])
+
     def test_deadlock_is_reported(self):
         m = ir.rank(snapshot([issue(HUB, 1, "depends on #2"), issue(HUB, 2, "depends on #1")]), draws=0)
         by = by_key(m)
