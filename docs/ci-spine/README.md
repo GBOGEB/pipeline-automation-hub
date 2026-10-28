@@ -1,5 +1,25 @@
 # CI Spine: test taxonomy, bundle DAG, clocks and reuse
 
+## Jacquard-inspired review workspace (draft PR #1002)
+
+**Open locally:** [Standalone offline CI Spine Explorer](explorer.html) · [Jacquard research / cross-format pointer deep-read](JACQUARD_CROSSWALK.md) · [DoD/DoV workstream data](WORKSTREAM_STATUS_v1.json) · [Optional Plotly companion source](plotly_projection.py).
+
+GitHub often shows an HTML file as source, not as an executed webpage. Clone the repository and open `docs/ci-spine/explorer.html` in a browser; it embeds the frozen data and makes **zero API/network requests**. The page offers five connected lenses (B00–B09 DAG, SIPOC, all 182 workflow records, eight measured GitHub run clocks, JQ-00..07 DoD/DoV), source links, zoom, selection hash links, SVG export and print-to-PDF.
+
+**Deterministic static QA (Python standard library):**
+
+```bash
+python docs/ci-spine/build_explorer.py --check
+python docs/ci-spine/test_explorer.py
+```
+
+**Browser QA (optional local prerequisite):** `python -m pip install playwright==1.56.0`, `python -m playwright install chromium`, then `python docs/ci-spine/browser_explorer_qa.py`. The scoped PR GitHub Actions job performs the native Chromium 1440/1280/390 checks and stores screenshots/receipt. **Optional Plotly companion:** `python -m pip install plotly==6.5.2`, `python docs/ci-spine/plotly_projection.py --out ci-spine-plotly.html`; the CI job uploads the same self-contained Plotly view as an artifact without committing an 5MB bundle.
+
+**Boundary:** These source indexes are *frozen at* `ca623ab83793df6edd245942884ad5428a5fe079`, prior to the merged #992/#989 changes; the current checked-out branch or live GitHub state can differ. The logical bundle DAG, alias grammar and source pointers are advisory; the existing JADE/GOGREEN modules remain authoritative. This PR does not implement PDF region mappings, edited-comments synchronisation, execution dispatch, or merge admission.
+
+---
+
+
 **Status:** advisory, source-bound pilot; no CI workflow name, required status context, job, gate or branch protection is changed.
 
 **Source:** `GBOGEB/pipeline-automation-hub` at `master` SHA `ca623ab83793df6edd245942884ad5428a5fe079` (2026-10-28). These are a frozen snapshot, not a live or approved CI inventory.
