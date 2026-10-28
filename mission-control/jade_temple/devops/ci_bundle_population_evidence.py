@@ -34,13 +34,14 @@ def observe(log: str | None, source_sha: str, run_id: int) -> dict:
                 state="LOG_PASS" if final.group(1) == "OK" else "LOG_FAIL")
 
 
-def reconcile(named: dict[str, dict]) -> dict:
+def reconcile(named: dict[str, dict], required=("devops", "actions_metrics")) -> dict:
     if not named:
         raise ValueError("EMPTY_COHORTS")
     records = list(named.values())
     matched = len({(r["source_sha"], r["run_id"]) for r in records}) == 1
+    complete = all(group in named for group in required)
     all_good = all(r["state"] == "LOG_PASS" and r["skipped"] == 0 for r in records)
     return {"schema": "jade.devops.ci_population_observation.v1", "cohorts": named,
-            "same_run_claim": matched, "all_logs_good": all_good,
-            "observed_executed_total": sum(r["executed"] for r in records) if matched and all_good else None,
+            "same_run_claim": matched, "all_logs_good": all_good, "complete_groups": complete,
+            "observed_executed_total": sum(r["executed"] for r in records) if matched and all_good and complete else None,
             "authority": "ADVISORY_ONLY", "merge_authorized": False}
