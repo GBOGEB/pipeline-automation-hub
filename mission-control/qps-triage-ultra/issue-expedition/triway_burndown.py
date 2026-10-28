@@ -294,11 +294,13 @@ def references(body, repo, pr=False):
                 kind = last_kind
             else:
                 kind = "TEXT_ASSOCIATION"
-                candidates = [(hit.start(), label, hit) for label, rx in KINDS
+                candidates = [(hit.start(), -i, label, hit)
+                              for i, (label, rx) in enumerate(KINDS)
                               if (hit := rx.search(before)) is not None]
                 if candidates:
-                    candidates.sort(key=lambda row: row[0])
-                    _, label, hit = candidates[-1]
+                    # Nearest keyword wins; equal-position ties retain canonical KINDS priority.
+                    candidates.sort(key=lambda row: (row[0], row[1]))
+                    _, _, label, hit = candidates[-1]
                     previous_start = candidates[-2][0] if len(candidates) > 1 else 0
                     kind = ("TEXT_ASSOCIATION" if NEGATED.search(before[previous_start:hit.start()])
                             else label)
