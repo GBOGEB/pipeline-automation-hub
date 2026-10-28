@@ -263,6 +263,50 @@ class Acknowledgments(unittest.TestCase):
         self.assertEqual(decision(make_packet(),recipient='GBOGEB/ABACUS')['decision'], 'NOT_SUBSCRIBED')
 
 
+
+class TemporalDecisionEvidence(unittest.TestCase):
+    """Pulse T cannot consume otherwise-valid proof first seen at T+1."""
+
+    def test_future_publication_disallowed(self):
+        p=make_packet(); pub=publication(p)
+        with self.assertRaisesRegex(t.ExchangeError, 'FUTURE_PUBLICATION'):
+            decision(p,publication=pub,at='2026-10-28T09:05:00Z')
+
+    def test_future_ack_disallowed_even_without_attestation(self):
+        p=make_packet(); pub=publication(p); a=ack(p,pub)
+        with self.assertRaisesRegex(t.ExchangeError, 'FUTURE_ACK'):
+            decision(p,publication=pub,acknowledgments=[a],at=T1)
+
+    def test_future_controller_readback_disallowed(self):
+        p=make_packet(); pub=publication(p); a=ack(p,pub)
+        att=t.attest_ack(p,pub,a,controller_secret=CONTROLLER_KEY,
+                         readback_id='github-get-43',verified_at='2026-10-28T10:01:00Z')
+        with self.assertRaisesRegex(t.ExchangeError, 'FUTURE_ATTESTATION'):
+            decision(p,publication=pub,acknowledgments=[a],controller_attestations=[att],
+                     controller_secret=CONTROLLER_KEY,recipient_head=B,at=T2)
+
+    def test_valid_exact_time_attestation_reuses_without_recensus(self):
+        p=make_packet(); pub=publication(p); a=ack(p,pub)
+        att=t.attest_ack(p,pub,a,controller_secret=CONTROLLER_KEY,
+                         readback_id='github-get-43',verified_at=T2)
+        out=decision(p,publication=pub,acknowledgments=[a],controller_attestations=[att],
+                     controller_secret=CONTROLLER_KEY,recipient_head=B,at=T2)
+        self.assertEqual(out['decision'],'REUSE_ACKNOWLEDGED_NO_RECENSUS')
+        self.assertFalse(out['producer_recensus_required'])
+        self.assertFalse(out['merge_authorized'])
+
+    def test_mixed_future_attestation_denied(self):
+        p=make_packet(); pub=publication(p); a=ack(p,pub)
+        yes=t.attest_ack(p,pub,a,controller_secret=CONTROLLER_KEY,
+                         readback_id='readback-yes',verified_at=T2)
+        late=t.attest_ack(p,pub,a,controller_secret=CONTROLLER_KEY,
+                         readback_id='readback-later',verified_at='2026-10-28T10:02:00Z')
+        with self.assertRaisesRegex(t.ExchangeError, 'FUTURE_ATTESTATION'):
+            decision(p,publication=pub,acknowledgments=[a],
+                     controller_attestations=[yes,late],
+                     controller_secret=CONTROLLER_KEY,recipient_head=B,at=T2)
+
+
 class TargetedInvalidation(unittest.TestCase):
     def test_source_drift_only_targeted_recensus(self):
         res=decision(make_packet(),current_source_sha256=Z)
