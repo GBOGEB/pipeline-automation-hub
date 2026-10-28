@@ -706,7 +706,7 @@ def mycelium(nodes: dict, edges: list[dict]) -> dict[str, dict]:
 
 # ---------------------------------------------------------------- ranking
 
-PRIORITY = (("P0", 1.0), ("P1", 0.66), ("P2", 0.33), ("P3", 0.1))
+PRIORITY = (("P0", 1.0), ("P1", 0.66), ("P2", 0.33), ("P3", 0.1), ("P4", 0.0))
 # Urgency: what an item asks for on its own. An unknown part is imputed at the
 # scope mean, never 0; ``coverage`` is the share of weight actually observed.
 WEIGHTS = {"priority": 0.35, "nearness": 0.20, "pr_ready": 0.15, "age": 0.15, "idle": 0.15}
@@ -1495,6 +1495,32 @@ def redact(model: dict, delta: dict | None = None, private_repos=None):
         roll["by_assignee"] = _by_assignee(visible)
         roll["title_taxonomy"]["private_items_excluded"] = sum(
             1 for i in m["items"] if i["repo"] in members and i["repo"] in priv)
+    # Export only aggregate private counts. Individual pseudonyms still expose
+    # timestamps, rank intervals and graph fingerprints across repeated pulses.
+    # Strip private rows and cross-references *before* the boundary fixed point.
+    def private_key(value):
+        return (isinstance(value, str) and "#" in value
+                and value.split("#", 1)[0] in priv)
+
+    def private_row(value):
+        return (isinstance(value, dict) and
+                (value.get("repo") in priv or
+                 any(private_key(value.get(k)) for k in ("key", "source", "target", "pr"))))
+
+    def export_public(value):
+        if isinstance(value, dict):
+            return {k: export_public(v) for k, v in value.items()
+                    if not private_key(k)}
+        if isinstance(value, list):
+            return [export_public(v) for v in value
+                    if not private_key(v) and not private_row(v)]
+        if isinstance(value, str) and any(r + "#PRIVATE-" in value for r in priv):
+            return "<private aggregate>"
+        return value
+
+    out = export_public(out)
+    if out.get("delta") is not None:
+        out["delta"]["private_item_movement"] = "UNKNOWN_AGGREGATE_ONLY"
     boundary = pb.Boundary(sorted(priv))
     out = boundary.project(out)
     if boundary.project(out) != out:
@@ -1824,7 +1850,25 @@ def main(argv=None) -> int:
         last = out / "issue_rank.json"
         prev = json.loads(last.read_text(encoding="utf-8")) if last.exists() else None
     model = rank(snap, overlay=load_overlay(args.overlay), draws=args.draws)
-    delta = diff(prev, model)
+    full = model  # validate source heads before public projection in taxonomy_pulse
+    def comparable_public(m):
+        if m is None:
+            return None
+        private = {r for r, h in m["heads"].items() if h.get("private")}
+        is_private = lambda k: isinstance(k, str) and k.split("#", 1)[0] in private
+        return {**m,
+                "items": [i for i in m["items"] if i["repo"] not in private],
+                "edges": [e for e in m["edges"] if not is_private(e["source"])
+                          and not is_private(e["target"])]}
+    redacted_prev = bool(prev and any(
+        h.get("private") and not h.get("head_sha") for h in prev.get("heads", {}).values()))
+    if args.redact_private or redacted_prev:
+        # A public comparison cannot match pulse-local pseudonyms to raw private
+        # identities. Withhold private movement rather than fabricate new/gone.
+        delta = diff(comparable_public(prev), comparable_public(model))
+        delta["private_item_movement"] = "UNKNOWN_AGGREGATE_ONLY"
+    else:
+        delta = diff(prev, model)
     if args.redact_private:
         private_refs = {i["key"] for i in model["items"] if i.get("private")}
         if isinstance(delta.get("taxonomy_moves"), list):
@@ -1832,9 +1876,8 @@ def main(argv=None) -> int:
                                        if d["key"] not in private_refs]
         model, delta = redact(model, delta)
     # A repeated source observation at the exact same instant is not N+1.
-    # Preserve the strict monotonicity invariant in taxonomy_pulse.build;
-    # do not fabricate an additional history point for an idempotent rerun.
-    pulse_previous = prev
+    # No source-validated taxonomy history is inferred from a redacted old head.
+    pulse_previous = None if redacted_prev else prev
     if prev is not None:
         old_time = datetime.fromisoformat(prev["fetched_at"].replace("Z", "+00:00"))
         new_time = datetime.fromisoformat(model["fetched_at"].replace("Z", "+00:00"))
@@ -1843,7 +1886,7 @@ def main(argv=None) -> int:
         elif old_time > new_time:
             raise ValueError("PULSE_TIMESTAMP_REVERSED")
     digests = write_outputs(
-        out, model, delta, previous_model=pulse_previous,
+        out, model, delta, previous_model=pulse_previous, pulse_model=full,
         parser_sha=args.parser_sha, previous_parser_sha=args.previous_parser_sha)
     if args.cmd == "run":
         row = append_ledger(out / "ledger.jsonl", {

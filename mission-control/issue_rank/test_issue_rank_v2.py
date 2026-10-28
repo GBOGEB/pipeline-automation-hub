@@ -287,8 +287,8 @@ class Privacy(unittest.TestCase):
             self.assertNotIn(leaked, text)
         boundary = ir._boundary().Boundary([QPS])
         self.assertEqual(boundary.project({"model": model, "delta": delta}), {"model": model, "delta": delta})
-        self.assertEqual(len(delta["new_items"]), 1)
-        self.assertTrue(delta["new_items"][0].startswith(f"{QPS}#PRIVATE-"))
+        self.assertEqual(delta["new_items"], [])
+        self.assertEqual(delta["private_item_movement"], "UNKNOWN_AGGREGATE_ONLY")
 
 
     def test_public_rollup_does_not_export_private_assignee_fingerprint(self):
@@ -302,6 +302,12 @@ class Privacy(unittest.TestCase):
         self.assertEqual(model["rollups"][QPS]["by_assignee"], [])
         self.assertTrue(all(r["assignee"] != "PRIVATE_ASSIGNEE_CANARY"
                             for r in model["rollups"]["USER"]["by_assignee"]))
+
+    def test_explicit_p4_remains_lowest_priority_not_unknown(self):
+        ranked = ir.rank(snapshot([issue(HUB, 1, labels=["P4"])]), draws=0)
+        low = by_key(ranked)[k(1)]
+        self.assertEqual((low["priority"], low["priority_basis"]), (0.0, "LABEL_OR_TITLE"))
+        self.assertNotIn("priority", low["imputed"])
 
 class RedactedPulse(unittest.TestCase):
     def test_redacted_run_with_private_repo_writes_taxonomy_pulse_without_leaks(self):
@@ -318,6 +324,25 @@ class RedactedPulse(unittest.TestCase):
             for leaked in (f"{QPS}#7", "secret", "confidential", "b" * 40):
                 self.assertNotIn(leaked, text)
 
+
+    def test_two_different_redacted_pulses_do_not_invent_private_new_gone(self):
+        with tempfile.TemporaryDirectory() as d:
+            out = Path(d) / "public"
+            for day in (26, 28):
+                snap = fixture()
+                snap["fetched_at"] = f"2026-10-{day}T00:00:00Z"
+                source = Path(d) / f"source-{day}.json"
+                source.write_bytes(ir.canonical(snap))
+                args = ["rank", "--snapshot", str(source), "--out", str(out),
+                        "--redact-private", "--draws", "0"]
+                if day == 28:
+                    args += ["--prev", str(out / "issue_rank.json")]
+                with contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(ir.main(args), 0)
+            delta = json.loads((out / "delta.json").read_text(encoding="utf-8"))
+            self.assertEqual(delta["new_items"], [])
+            self.assertEqual(delta["gone_items"], [])
+            self.assertEqual(delta["private_item_movement"], "UNKNOWN_AGGREGATE_ONLY")
 
 class Delta(unittest.TestCase):
     def test_progress_scope_and_rooting(self):
