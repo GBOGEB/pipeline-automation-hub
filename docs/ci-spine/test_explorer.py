@@ -16,6 +16,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import build_explorer as explorer  # noqa: E402
+import plotly_projection as plotly_companion  # noqa: E402
 
 
 class ExplorerProvenanceTests(unittest.TestCase):
@@ -125,7 +126,6 @@ class ExplorerProvenanceTests(unittest.TestCase):
         s = explorer.OUTPUT.read_text("utf-8")
         self.assertNotRegex(s, r"<script\b[^>]*\bsrc\s*=")
         self.assertIn("connect-src 'none'", s)
-        self.assertIn("NO", "NO")  # explicit diagnostic rather than unused test boilerplate
         self.assertIn("source_head", s)
         self.assertIn("JACQUARD_CROSSWALK.md", s)
 
@@ -142,6 +142,16 @@ class ExplorerProvenanceTests(unittest.TestCase):
         self.assertIn("ca623ab83793df6edd245942884ad5428a5fe079", s)
         self.assertIn("6f7cf145c4ebf585dbb341ba5863e77098ad36b0", s)
         self.assertIn("older than merged PRs", s)
+
+    def test_plotly_inline_source_url_is_not_active_network_dependency(self):
+        inline = "<html><script>const locationHint='https://cdn.plot.ly/plotly.min.js';</script></html>"
+        self.assertFalse(plotly_companion.external_scripts(inline))
+
+    def test_plotly_external_script_src_fails_closed(self):
+        for doc in ('<script src="https://cdn.plot.ly/plotly.min.js"></script>',
+                    "<script src='plotly.min.js'></script>"):
+            with self.subTest(document=doc):
+                self.assertTrue(plotly_companion.external_scripts(doc))
 
     @unittest.skipUnless(shutil.which("node"), "Node not installed; native browser QA must separately run")
     def test_inline_javascript_parses_in_node(self):
