@@ -184,7 +184,7 @@ def checklist(body):
             continuation = row
             prose = False
         elif section != "OTHER" and line.strip():
-            if continuation is not None and re.match(r"^ {2,}\S", line):
+            if continuation is not None and re.match(r"^ {2,}\S", re.sub(r"^\s*(?:>[ \t]?)+", "", line)):
                 continuation["text"] = (continuation["text"] + " " + line.strip())[:300]
                 continue
             b = BULLET.match(line)
@@ -246,7 +246,8 @@ def references(body, repo, pr=False):
         for m in REF.finditer(line):
             # The typing window ends at the '#', so "QPS parent #1920" sees "parent".
             stop = m.start("aliasnum") - 1 if m.group("aliasnum") is not None else m.start()
-            window = line[last_end:stop]
+            previous_end = last_end
+            window = line[previous_end:stop]
             if m.group("chainnum") is not None:
                 if last_repo is None or m.start() != last_end:
                     continue  # a stray "/#N" with nothing to chain onto
@@ -262,7 +263,7 @@ def references(body, repo, pr=False):
                 continue
             target = identity("GBOGEB/" + name, num)
             before = re.split(r"[.!?;]", window[-90:])[-1]
-            join_window = (line[last_end:m.start("alias")]
+            join_window = (line[previous_end:m.start("alias")]
                            if m.group("aliasnum") is not None else window)
             if withdrawn:
                 kind = "PR_ASSOCIATION" if pr else "TEXT_ASSOCIATION"
