@@ -36,7 +36,7 @@ class LaneStageTests(unittest.TestCase):
         self.assertTrue(p["same_pulse_stages_acyclic"])
         self.assertEqual(len(p["next_pulse_feedback_only"]),1)
         self.assertTrue(all(c["maturity_level"] is None for c in p["cells"]))
-        self.assertEqual(set(M.LANES),"ABCDEFG")
+        self.assertEqual(set(M.LANES),set("ABCDEFG"))
 
     def test_deterministic_and_manifest(self):
         p=M.project(snapshot())
