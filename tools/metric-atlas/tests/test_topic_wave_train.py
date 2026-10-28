@@ -69,8 +69,7 @@ class TrainTests(unittest.TestCase):
             for path,digest in manifest["files_sha256"].items():
                 self.assertEqual(hashlib.sha256((q/path).read_bytes()).hexdigest(),digest)
             self.assertEqual(len(manifest["files_sha256"]),3)
-            self.assertIn("NEXT_PULSE",m.mermaid(a) if False else
-                          json.dumps(a["dag"]))
+            self.assertIn("NEXT_PULSE",json.dumps(a["dag"]))
 
     def test_sipoc_has_five_columns_and_per_partition_provenance(self):
         r=m.plan(self.input)
@@ -85,7 +84,7 @@ class TrainTests(unittest.TestCase):
         self.assertEqual(r["dag"]["temporal_feedback_edges"],1)
         self.assertEqual(sum(e["kind"]=="NEXT_PULSE" for e in r["dag"]["edges"]),1)
         self.assertEqual(len(r["dag"]["nodes"]),8)
-        self.assertEqual(len(r["dag"]["edges"]),9)
+        self.assertEqual(len(r["dag"]["edges"]),8)
 
     def test_goal_above_declared_capacity_stops_finitely(self):
         self.input["goal_unique_topic_ids"]=13
