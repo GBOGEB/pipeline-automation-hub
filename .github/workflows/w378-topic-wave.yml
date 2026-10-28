@@ -2,6 +2,7 @@ name: W378 Topic Wave Graph Pilot
 on:
   pull_request:
     paths:
+      - 'tools/metric-atlas/metric_atlas/topic_exchange.py'
       - 'tools/metric-atlas/metric_atlas/topic_wave.py'
       - 'tools/metric-atlas/tests/test_topic_wave.py'
       - 'tools/metric-atlas/tests/pilot_3topic.json'
