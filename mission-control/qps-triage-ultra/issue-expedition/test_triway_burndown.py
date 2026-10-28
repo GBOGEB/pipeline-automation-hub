@@ -122,4 +122,11 @@ class ParserN2(unittest.TestCase):
   got=self.refs("- [~] depends on #15\n- [-] blocks #17\n- [~] superseded by #18\n- [ ] ~~depends on #19~~",home=A)
   self.assertEqual({k for _,k in got},{"TEXT_ASSOCIATION"})
   self.assertEqual(self.refs("- [-] closes #16",home=A,pr=True),[(A+"#16","PR_ASSOCIATION")])
+ def test_alias_relation_does_not_leak_across_sentence(self):
+  self.assertEqual(self.refs("blocked by ABACUS #1. See CODEX #2"),[(A+"#1","DECLARED_BLOCKER_CANDIDATE"),("GBOGEB/CODEX#2","TEXT_ASSOCIATION")])
+ def test_blockquote_continuation_is_one_criterion(self):
+  c=m.checklist("## DoD\n> - [ ] Implement foo\n>   with native test")
+  self.assertEqual(c["DoD"]["progress"]["total"],1)
+  self.assertEqual(c["DoD"]["untracked"],0)
+  self.assertIn("native test",c["DoD"]["items"][0]["text"])
 if __name__=="__main__":unittest.main()
