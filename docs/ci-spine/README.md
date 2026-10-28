@@ -104,3 +104,24 @@ Suggested scout contract: one reader, one independent deepreader, one method own
 4. **Control:** preserve old check contexts and original governance, exact-head tests, sha-bound receipts, noncompensating required checks, review/thread policy, and a rollback path.
 
 **Pilot execution boundary:** this branch commits documentation and frozen source indexes only. No workflows, tests, dependency versions, cache settings, runners, PR protection, admission policies or branch refs changed.
+
+## Real setup-node capability assessment
+
+The upstream GitHub action advertises four independent features. They are **features of an action**, not proof that this whole repository exercises them. The source scan found `actions/setup-node` in seven existing workflows (four MCEX factorial arms, M3 graph, N11 census, and P-process), pinned to a v4-era commit and Node 20/22. At this SHA none of those seven jobs configured `cache`, `cache-dependency-path`, `registry-url`, `scope`, or NODE_AUTH_TOKEN.
+
+| setup-node feature | Actual Hub state | Qualification or next pilot |
+| --- | --- | --- |
+| Download/select Node and PATH | **Present in seven scoped jobs**; Node versions 20/22 | Prove each runner version and source-head binding; avoid interpreting as global coverage |
+| Cache npm/yarn/pnpm download store | **Not explicitly configured** in inspected workflows | Pilot `cache: yarn` with `cache-dependency-path: app/yarn.lock`; never cache `node_modules` or secrets |
+| Node/npm problem matchers | **Provided automatically wherever setup-node runs**, not a tested cross-repo guarantee | Verify diagnostic annotations on a deliberately failing safe fixture |
+| npm/GitHub Package Registry authentication | **Not configured in the inspected setup-node callers** | Add only for an actual private-package/publishing consumer with least privilege and trusted OIDC/token policy |
+
+Important: `app/yarn.lock` exists and `app/package.json` has `dev`, `build`, `start`, `lint` scripts but no `test` script. This is a JavaScript application-level test-population gap to investigate, not proof that JS tests elsewhere are absent. The package manifest also lists `react` 19.x and `react-dom` 18.x; investigate peer dependency compatibility in a bounded install, without presuming failure.
+
+Upstream [setup-node README](https://github.com/actions/setup-node) says its package cache is the manager's global download store, **not `node_modules`**. Current versions may enable npm caching automatically when packageManager metadata identifies npm, while Yarn caching requires explicit `cache: yarn`. Do not enable cache on privileged workflows without a cache-poisoning threat assessment.
+
+## Evidence attachments and exact-run traceability
+
+- [Eight GitHub run/job/step timing readbacks](RUN_TIMING_SAMPLES_20261028.json), with source head SHA, run attempts, queue, execution and step durations.
+- [Advisory B00-B09 logical DAG/SIPOC machine crosswalk](LOGICAL_BUNDLE_DAG_v1.json), 10 nodes, 16 within-pulse feedforward edges and one explicitly next-pulse feedback edge.
+- File inventories are a source-bound **snapshot**; the actual GitHub Actions engine, canonical JADE parser, `ADMISSION.json` and owners remain authoritative.
