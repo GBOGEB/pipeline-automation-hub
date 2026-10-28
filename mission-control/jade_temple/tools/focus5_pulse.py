@@ -91,6 +91,21 @@ def load_registry(root: Path) -> dict[str, dict[str, list[str]]]:
     return validate_registry(json.loads(path.read_text(encoding="utf-8"))) if path.exists() else {}
 
 
+NOT_STARTED = "not_started"
+
+
+def mark_unstarted_failures(repo: str, latest: dict[str, dict], paths, lookup=gh) -> None:
+    """A failed run whose jobs never ran a step (no runner: billing, spending limit,
+    runner outage) proves nothing about the code: its conclusion becomes not_started,
+    which classifies as UNKNOWN, never FAIL or PASS."""
+    for path in paths:
+        run = latest.get(path)
+        if run and run["conclusion"] == "failure":
+            jobs = lookup(f"repos/{repo}/actions/runs/{run['id']}/jobs?per_page=100")["jobs"]
+            if not any(j.get("steps") for j in jobs):
+                latest[path] = dict(run, conclusion=NOT_STARTED)
+
+
 def classify_run(conclusion: str | None) -> str:
     return {"success": "PASS", "failure": "FAIL"}.get(conclusion or "", "UNKNOWN")
 
@@ -135,6 +150,8 @@ def observe_repo(repo: str, prev_row: dict | None, lookup=gh, declared: dict[str
             latest[run["path"]] = run
     declared = declared or {}
     wf = evidence_workflows(prev_row, repo, lookup) if set(RUN_GATES) - set(declared) else {}
+    evidence_paths = {p for ps in declared.values() for p in ps} | set(wf.values())
+    mark_unstarted_failures(repo, latest, sorted(evidence_paths), lookup)
     for gid in RUN_GATES:
         if gid in declared:
             status, url, why = classify_gate(declared[gid], latest)
