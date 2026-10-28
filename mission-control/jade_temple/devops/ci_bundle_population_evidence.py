@@ -6,7 +6,7 @@ import re
 
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
 RAN = re.compile(r"^Ran ([0-9]+) tests? in [0-9.]+s$", re.M)
-FINISH = re.compile(r"^(OK|FAILED)(?: \\(([^)]*)\\))?\\s*$", re.M)
+FINISH = re.compile(r"^(OK|FAILED)(?: \(([^)]*)\))?\s*$", re.M)
 SKIP = re.compile(r"skipped=([0-9]+)")
 
 
