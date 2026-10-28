@@ -2,6 +2,8 @@ name: W378 P1 Six-Topic Two-Wave Fan-In
 on:
   pull_request:
     paths:
+      - 'tools/metric-atlas/metric_atlas/topic_exchange.py'
+      - 'tools/metric-atlas/metric_atlas/topic_wave.py'
       - 'tools/metric-atlas/metric_atlas/topic_wave_scale.py'
       - 'tools/metric-atlas/tests/test_topic_wave_scale.py'
       - 'tools/metric-atlas/tests/pilot_6topic.json'
