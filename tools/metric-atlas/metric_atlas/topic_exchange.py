@@ -262,9 +262,11 @@ def decide(packet, *, recipient, current_head, current_scope_sha256,
         decision = "STAGED_NOT_DELIVERED"
     else:
         verify_publication(packet, publication)
+        require(timestamp(publication["observed_at"]) <= timestamp(at), "FUTURE_PUBLICATION")
         matched = []
         for a in acknowledgments:
             verify_ack(packet, publication, a)
+            require(timestamp(a["ack_at"]) <= timestamp(at), "FUTURE_ACK")
             if a["recipient"] == recipient:
                 matched.append(a)
         require(len(matched) <= 1 or len({a["ack_sha256"] for a in matched}) == 1,
@@ -274,6 +276,7 @@ def decide(packet, *, recipient, current_head, current_scope_sha256,
             for att in controller_attestations:
                 verify_attestation(packet, publication, matched[0], att,
                                    controller_secret=controller_secret)
+                require(timestamp(att["verified_at"]) <= timestamp(at), "FUTURE_ATTESTATION")
                 verified = True
         decision = "REUSE_ACKNOWLEDGED_NO_RECENSUS" if verified else "PULL_EXISTING_PACKET_NO_RECENSUS"
         result["recipient_pull_required"] = not verified
