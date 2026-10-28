@@ -11,7 +11,7 @@
 | AV-03 | EDG counted as fifth compressor | A: QPS engineering model | Alternative 350 kW route, no added normal load; RFI OPEN |
 | AV-04 | HP4/PFC2/HARMONIC feeder collision | A: QPS source crosswalk | Annex rows 85/92/93 remain conflicts until owner disposition |
 | AV-05 | Source/head/scope drift or expiry | E: Metric Atlas topic exchange | SHA40/SHA64, scope digest, bounded UTC TTL, targeted recensus |
-| AV-06 | Duplicate/forged recipient acknowledgment | E: Metric Atlas topic exchange | Unsubscribed, cross-packet, unsupported and unverified ACK do not credit reuse |
+| AV-06 | Forged/self-declared recipient ACK or compromised receipt | E: Metric Atlas topic exchange | A controller HMAC attestation (32+ byte private secret), bound to exact packet/publication/recipient-head/external readback, is mandatory before reuse |
 | AV-07 | Concurrent writer / replay / chain tampering | E: Metric Atlas topic exchange | Compare-and-swap expected tail, exact replay idempotent, conflicting replay FAIL |
 | AV-08 | Wide PR recensus repeated unchanged | C: GOGREEN first-red owner | Cache by (topic, scope SHA, source SHA, PR head); pull existing packet, not full census |
 | AV-09 | Aggregator RED counted as independent root | C: EVERRED owner | Job/step first-red evidence, deduplicated root; unavailable logs remain UNKNOWN |
@@ -46,9 +46,9 @@ flowchart TD
 
 Packet identity: `topic`, producer repo and **40-hex exact head**, 64-hex *scope content*, *source bytes* and owner receipt digests, strictly increasing sequence and predecessor packet digest, UTC issued/expiry (max seven days), 1-8 distinct subscriber repos, explicit non-authority flags. SHA256 is an *integrity* check, not a cryptographic proof that the sender is authorized.
 
-Staged packet `qps.topic-census.packet.v1` is NOT a sent notification. Publication `qps.topic-census.publication.v1` is independently observed URL+external ID and means **posted**, not receiver read/ACK. ACK `qps.topic-census.ack.v1` must bind the exact packet, publication, recipient, recipient head, external proof URL/ID and a controller-verified readback. The library validates shape/digest, but a controller must verify external origin before setting `CONTROLLER_READBACK_VERIFIED`; do not treat a self-reported flag as authentication.
+Staged packet `qps.topic-census.packet.v1` is NOT a sent notification. Publication `qps.topic-census.publication.v1` is independently observed URL+external ID and means **posted**, not receiver read/ACK. ACK `qps.topic-census.ack.v1` must bind the exact packet, publication, recipient, recipient head, external proof URL/ID and a controller-verified readback. **ACK data alone NEVER authorizes a census skip.** The controller must issue a separate `qps.topic-census.attestation.v1` HMAC-SHA256 receipt using a private 32+ byte secret after independently checking the external readback. `decide()` requires `controller_attestations`, `controller_secret`, and the matching `recipient_head`; a forged MAC, stale recipient head, missing attestation, self-asserted `externally_verified`, or wrong packet yields pull-only. The HMAC key is never committed to Git and is not a substitute for owner approval. Replace compromised controller keys and invalidate dependent attestation receipts.
 
-A consumer with a verified acknowledgment and unchanged source/head/scope/TTL can reuse; unacknowledged consumers pull the *existing packet* without asking its source owner to scan again. A new source or scope digest or expiry triggers **only that topic's** recensus. An unrelated repository-head update with unchanged source/scope requires a cheap head bridge, *not* a full census. CI is a different authority domain: an ACK NEVER substitutes for new exact-head checks or an independent review.
+A consumer with a separately HMAC-attested controller readback, verified acknowledgment and unchanged source/head/scope/TTL can reuse; unacknowledged consumers pull the *existing packet* without asking its source owner to scan again. A new source or scope digest or expiry triggers **only that topic's** recensus. An unrelated repository-head update with unchanged source/scope requires a cheap head bridge, *not* a full census. CI is a different authority domain: an ACK NEVER substitutes for new exact-head checks or an independent review.
 
 Append-only ledger `qps.topic-census.ledger.v1`: events STAGED, PUBLICATION_POSTED, RECIPIENT_ACK, SOURCE_DRIFT and INVALIDATED. Events are hash-linked, exact duplicate replay is a no-op; a conflicting duplicate or stale expected-tail CAS fails. Pure functions only: no scheduler, polling, Web API calls or hidden background actions.
 
@@ -78,7 +78,7 @@ python -m coverage run --branch --include='*/topic_exchange.py' -m unittest disc
 python -m coverage report --include='*/topic_exchange.py' --fail-under=95
 ```
 
-**Local evidence 2026-10-28:** 42/42 source-safe synthetic tests pass; Python -O replay succeeds; 99% branch-aware statement/branch coverage of the *new module only*. GitHub exact-head tests and external recipient ACK remain NOT PROVEN until native readback. Separate from Engineering/SCK CEN acceptance.
+**Verified evidence 2026-10-28 at 7ded677c… then cb7edb8d…:** 51/51 source-safe synthetic tests pass under Python 3.11 and 3.12; optimized `python -O` replay succeeds; 99% branch-aware coverage (210 statements, 30 branches, 1 missed line, 2 partial arcs) of the **new module only** on native GitHub run 40662361400. All 9 observed workflows on that exact head passed. External recipient ACK is **NOT PROVEN**; production census skip credit remains zero. Separate from Engineering/SCK CEN acceptance.
 
 ### Partial-census publication contract
 
