@@ -1,0 +1,75 @@
+name: W380 P2 Bounded Topic Train
+on:
+  pull_request:
+    paths:
+      - 'tools/metric-atlas/metric_atlas/topic_exchange.py'
+      - 'tools/metric-atlas/metric_atlas/topic_wave.py'
+      - 'tools/metric-atlas/metric_atlas/topic_wave_scale.py'
+      - 'tools/metric-atlas/metric_atlas/topic_wave_train.py'
+      - 'tools/metric-atlas/tests/test_topic_wave_train.py'
+      - 'tools/metric-atlas/tests/pilot_6topic.json'
+      - 'tools/metric-atlas/docs/TOPIC_WAVE_TRAIN_W380.md'
+      - '.github/workflows/w380-topic-train.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: w380-p2-train-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  declared-train:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11','3.12']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Source identity equality
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$HEAD"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: ${{ matrix.python }}
+      - name: P2 bounded train, negative tests and source coverage
+        env:
+          PYTHONPATH: tools/metric-atlas
+        run: |
+          python -m pip install --disable-pip-version-check coverage==7.10.7
+          python -m coverage run --branch --include='*/metric_atlas/topic_wave_train.py' -m unittest discover -s tools/metric-atlas/tests -p test_topic_wave_train.py -v
+          python -m coverage report -m --include='*/metric_atlas/topic_wave_train.py' --fail-under=85
+      - name: Optimized Python fail-closed replay
+        env:
+          PYTHONPATH: tools/metric-atlas
+        run: python -O -m unittest discover -s tools/metric-atlas/tests -p test_topic_wave_train.py -v
+      - name: Reproducible 12-topic synthetic train and no-credit checks
+        env:
+          PYTHONPATH: tools/metric-atlas
+        run: |
+          python -m metric_atlas.topic_wave_train --demo-seed-p1 tools/metric-atlas/tests/pilot_6topic.json --out "$RUNNER_TEMP/w380"
+          python - <<'PY'
+          import json,hashlib,pathlib,os
+          p=pathlib.Path(os.environ["RUNNER_TEMP"])/"w380"
+          r=json.loads((p/"train-receipt.json").read_text())
+          m=json.loads((p/"manifest.json").read_text())
+          assert r["topics_unique_declared"]==12
+          assert r["distinct_source_fingerprints"]==6
+          assert r["within_pulse_waves"]==4
+          assert r["real_goal_verified"] is False and r["scale_admission"]=="HOLD"
+          assert r["metrics"]["native_runners_launched"]==0 and r["metrics"]["source_writers"]==0
+          assert r["metrics"]["actual_queue_p95_seconds"] is None
+          assert all(hashlib.sha256((p/f).read_bytes()).hexdigest()==v
+                     for f,v in m["files_sha256"].items())
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: w380-p2-declared-train-${{ matrix.python }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/w380
+          retention-days: 7
+          if-no-files-found: warn
