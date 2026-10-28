@@ -1,0 +1,67 @@
+{
+  "schema": "jade.focus5.gate_evidence_registry.v1",
+  "note": "Declared workflow evidence for the run gates H04-H06, read by tools/focus5_pulse.py. A gate is PASS only when every declared workflow completed with success on the exact head SHA of that pulse; any failure is FAIL; anything else is UNKNOWN. A repo or gate absent here falls back to the workflow that evidenced it in the previous pulse. Each entry states what the workflow proves. Owner gates (H03, H09, H12) and independent gates (H07, H10, H11) are never declared here and never PASS from a workflow run.",
+  "gates": ["H04", "H05", "H06"],
+  "repos": {
+    "GBOGEB/pipeline-automation-hub": {
+      "H05": [
+        {"workflow": ".github/workflows/jade-temple-readonly-qa.yml",
+         "proves": "jade_temple unittest suite under a statement and branch coverage floor"}
+      ],
+      "H06": [
+        {"workflow": ".github/workflows/dependency-spine-peer-census.yml",
+         "proves": "peer source census across the federation (previous-pulse H06 evidence)"}
+      ]
+    },
+    "GBOGEB/cryoplant-project": {
+      "H05": [
+        {"workflow": ".github/workflows/jade-ci.yml", "proves": "core pytest suite, fail-closed, pinned runner"},
+        {"workflow": ".github/workflows/jade-ci-burndown.yml", "proves": "burn-down pytest suite, fail-closed, pinned runner"}
+      ],
+      "H06": [
+        {"workflow": ".github/workflows/qps-canonicalization.yml",
+         "proves": "QPS domain validators and namespace-collision unittests"}
+      ]
+    },
+    "GBOGEB/gg_MATH": {
+      "H04": [
+        {"workflow": ".github/workflows/release-infrastructure-v1.yml",
+         "proves": "install from direct pins plus transitive constraints lock, runtime census against the lock"}
+      ],
+      "H05": [
+        {"workflow": ".github/workflows/release-infrastructure-v1.yml",
+         "proves": "exact-head release gate: compileall, pytest and mission proofs"}
+      ],
+      "H06": [
+        {"workflow": ".github/workflows/m02b-math-smoke.yml",
+         "proves": "independent Bradley-Terry kernel run against its reference test"}
+      ]
+    },
+    "GBOGEB/DOCX_RTM_Automation": {
+      "H04": [
+        {"workflow": ".github/workflows/dependency-lock.yml",
+         "proves": "hash-pinned Python lock (--require-hashes, no drift, installed set equals lock) and npm ci from the committed lockfile with no rewrite (DOCX_RTM_Automation#97)"}
+      ],
+      "H05": [
+        {"workflow": ".github/workflows/python-ci.yml", "proves": "Python pytest suite and recursive alignment lock"}
+      ],
+      "H06": [
+        {"workflow": ".github/workflows/typescript-orchestration-ci.yml", "proves": "TypeScript orchestration build, lint and tests"}
+      ]
+    },
+    "GBOGEB/yaml-grammar": {
+      "H04": [
+        {"workflow": ".github/workflows/build-contract.yml",
+         "proves": "stdlib-only CI path under python -I -S, SHA-pinned actions, stated Python floor 3.11, test-count guard (yaml-grammar#6)"}
+      ],
+      "H06": [
+        {"workflow": ".github/workflows/grammar-user-smoke.yml",
+         "proves": "make comments regenerates byte-identically and Perl YAML::PP parity of the YAML and JSON grammar, with negative controls (yaml-grammar#7)"}
+      ],
+      "H05": [
+        {"workflow": ".github/workflows/grammar-native-smoke.yml",
+         "proves": "native unittest suite over the 211-production fixture on Python 3.11 and 3.12"}
+      ]
+    }
+  }
+}
