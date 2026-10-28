@@ -286,6 +286,19 @@ class SourceCompleteness(unittest.TestCase):
 
 
 class Privacy(unittest.TestCase):
+    def test_private_descendants_do_not_inflate_a_public_lineage_root(self):
+        snap = fixture()
+        snap["repos"][QPS]["issues"][0]["body"] = f"see {HUB}#1"
+        snap["repos"][QPS]["issues"].append(
+            issue(QPS, 8, f"see {HUB}#1", created="2026-10-04T00:00:00Z"))
+        raw = ir.rank(snap, draws=0)
+        self.assertTrue(any(row["root"] == f"{HUB}#1" and row["descendants"] >= 3
+                            for row in raw["views"]["lineage_roots"]))
+        public = ir.redact(raw)
+        self.assertFalse(any(row["root"] == f"{HUB}#1"
+                             for row in public["views"]["lineage_roots"]))
+        self.assertTrue(public["privacy_projection"]["public_lineage_recomputed"])
+
     def test_private_lineage_root_rows_do_not_escape(self):
         snap = fixture()
         snap["repos"][QPS]["issues"].extend([

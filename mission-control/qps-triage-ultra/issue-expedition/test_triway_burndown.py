@@ -130,6 +130,10 @@ class ParserN2(unittest.TestCase):
   self.assertEqual(self.refs("Does not fix #12",pr=True),[(B+"#12","PR_ASSOCIATION")])
  def test_alias_relation_does_not_leak_across_sentence(self):
   self.assertEqual(self.refs("blocked by ABACUS #1. See CODEX #2"),[(A+"#1","DECLARED_BLOCKER_CANDIDATE"),("GBOGEB/CODEX#2","TEXT_ASSOCIATION")])
+ def test_n5_sentence_final_abbreviation_does_not_carry_relation(self):
+  self.assertEqual(self.refs("Blocked by old rollout, etc. See #3"),[(B+"#3","TEXT_ASSOCIATION")])
+  self.assertEqual(self.refs("Fixes old bug, etc. See #12",pr=True),[(B+"#12","PR_ASSOCIATION")])
+  self.assertEqual(self.refs("Blocked by e.g. rollout in #3"),[(B+"#3","DECLARED_BLOCKER_CANDIDATE")])
  def test_n5_dotted_versions_nearest_closure_and_direction(self):
   self.assertEqual(self.refs("Blocked by v2.0 work in #2"),[(B+"#2","DECLARED_BLOCKER_CANDIDATE")])
   self.assertEqual(self.refs("Blocked by e.g. rollout in #3"),[(B+"#3","DECLARED_BLOCKER_CANDIDATE")])

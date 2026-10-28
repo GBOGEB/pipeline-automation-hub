@@ -1523,6 +1523,30 @@ def redact(model: dict, delta: dict | None = None, private_repos=None):
         return value
 
     out = export_public(out)
+    # Derived lineage counts can disclose a private descendant even when the
+    # public root itself is safe. Rebuild public lineage strictly from public
+    # in-scope items and public edges; no private bridge or depth influences it.
+    public_model = out["model"]
+    public_nodes = {
+        i["key"]: {"open": True, "stub": False, "number": i["number"],
+                   "created_at": i.get("created_at")}
+        for i in public_model["items"] if not i.get("private")
+    }
+    public_edges = [e for e in public_model["edges"]
+                    if e["source"] in public_nodes and e["target"] in public_nodes]
+    public_threads = lineages(public_nodes, public_edges)
+    public_roots = defaultdict(list)
+    for key_, thread in public_threads.items():
+        public_roots[thread[0]].append((key_, len(thread)))
+    for item in public_model["items"]:
+        item["lineage"] = public_threads.get(item["key"], [item["key"]])
+    public_model["views"]["lineage_roots"] = sorted(
+        ({"root": root, "open_root": True, "descendants": len(children),
+          "longest": max(length for _, length in children)}
+         for root, children in public_roots.items()
+         if len(children) > 1 or root not in {key_ for key_, _ in children}),
+        key=lambda x: (-x["descendants"], x["root"]))[:25]
+    public_model["privacy_projection"]["public_lineage_recomputed"] = True
     if out.get("delta") is not None:
         out["delta"]["private_item_movement"] = "UNKNOWN_AGGREGATE_ONLY"
     boundary = pb.Boundary(sorted(priv))

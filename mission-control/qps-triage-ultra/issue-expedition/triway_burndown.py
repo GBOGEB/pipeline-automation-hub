@@ -108,7 +108,13 @@ def _clause_tail(text):
         if match.group() == ".":
             token = re.search(r"([A-Za-z]+(?:\.[A-Za-z]+)*)$", text[:match.start()])
             if token and token.group(1).lower() in _ABBREVIATIONS:
-                continue
+                following = text[match.end():].lstrip()
+                abbreviation = token.group(1).lower()
+                # "e.g. rollout" continues; "etc. See" starts a new sentence.
+                # Honorifics such as "Dr. Smith" continue before proper names.
+                if following and (following[0].islower() or
+                                  abbreviation in ("dr", "mr", "mrs", "ms") and following[0].isupper()):
+                    continue
         start = match.end()
     return text[start:]
 
