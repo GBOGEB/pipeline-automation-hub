@@ -494,6 +494,87 @@ class Recheck(unittest.TestCase):
         self.assertTrue(buf.getvalue().startswith("recheck rerun: "))
 
 
+
+class RecheckReceiptRelevance(unittest.TestCase):
+    """P0 proof: a red aggregator receipt can distinguish related from unrelated green events.
+
+    This is NOT live trigger deduplication. Current workflow_run events still create runs.
+    """
+
+    FAILING = ".github/workflows/failing.yml"
+    OTHER = ".github/workflows/other.yml"
+
+    def report(self, state=g.FAIL):
+        return {"schema": "gogreen.required_gate.v2",
+                "head_sha": SHA, "merge_authorized": False, "verdict": g.FAIL,
+                "gates": [{"workflow": self.FAILING, "state": state},
+                          {"workflow": self.OTHER, "state": g.FAIL}]}
+
+    def choose(self, report=None, path=None):
+        return g.receipt_recheck_relevance(
+            self.report() if report is None else report,
+            sha=SHA, workflow_path=path or self.FAILING)
+
+    def test_failed_or_missing_required_gate_qualifies_for_recheck(self):
+        for state in (g.FAIL, g.WAIT):
+            with self.subTest(state=state):
+                choice = self.choose(self.report(state))
+                self.assertEqual(choice["decision"], g.RECHECK_ELIGIBLE)
+                self.assertFalse(choice["merge_authorized"])
+                self.assertEqual(choice["head_sha"], SHA)
+
+    def test_already_passed_or_not_applicable_is_irrelevant_to_other_red(self):
+        for state in (g.PASS, g.NA):
+            with self.subTest(state=state):
+                choice = self.choose(self.report(state))
+                self.assertEqual(choice["decision"], g.RECHECK_ALREADY_SATISFIED)
+                self.assertIn("did not contribute", choice["reason"])
+
+    def test_bad_or_stale_receipt_is_unknown_not_a_permission_to_skip(self):
+        cases = [
+            {}, {"schema": "unexpected"},
+            {**self.report(), "head_sha": BASE},
+            {**self.report(), "merge_authorized": True},
+            {**self.report(), "verdict": g.PASS},
+            {**self.report(), "gates": []},
+            {**self.report(), "gates": [*self.report()["gates"], self.report()["gates"][0]]},
+            {**self.report(), "gates": [{"workflow": self.FAILING, "state": "UNDETERMINED"}]},
+            {**self.report(), "gates": [1, 2, 3]},
+        ]
+        for i, bad in enumerate(cases):
+            with self.subTest(case=i):
+                self.assertEqual(self.choose(bad)["decision"], g.RECHECK_UNKNOWN)
+        self.assertEqual(self.choose(self.report(), path="../../gate.yml")["decision"], g.RECHECK_UNKNOWN)
+        self.assertEqual(
+            g.receipt_recheck_relevance(self.report(), sha=BASE, workflow_path=self.FAILING)["decision"],
+            g.RECHECK_UNKNOWN)
+        self.assertEqual(self.choose(self.report(), path=self.OTHER)["decision"], g.RECHECK_ELIGIBLE)
+
+    def test_observed_gate_not_in_enforced_receipt_is_unknown(self):
+        self.assertEqual(
+            self.choose(self.report(), path=".github/workflows/observed.yml")["decision"],
+            g.RECHECK_UNKNOWN)
+
+    def test_offline_cli_requires_evidence_but_never_calls_github(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "required-gate.json"
+            path.write_text(json.dumps(self.report(g.PASS)), encoding="utf-8", newline="\n")
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                rc = g.main(["recheck-receipt", "--report", str(path),
+                             "--sha", SHA, "--workflow", self.FAILING])
+            self.assertEqual(rc, 0)
+            self.assertEqual(json.loads(out.getvalue())["decision"], g.RECHECK_ALREADY_SATISFIED)
+            path.write_text('{"schema":"unexpected"}', encoding="utf-8", newline="\n")
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                rc = g.main(["recheck-receipt", "--report", str(path),
+                             "--sha", SHA, "--workflow", self.FAILING])
+            self.assertEqual(rc, 2)
+            self.assertEqual(json.loads(out.getvalue())["decision"], g.RECHECK_UNKNOWN)
+
+
+
 class RecheckWorkflow(unittest.TestCase):
     WF = ROOT / g.RECHECK
 
@@ -547,8 +628,8 @@ if __name__ == "__main__":
 
 
 class RecheckStormControl(unittest.TestCase):
-    def test_same_head_burst_is_coalesced_without_weakening_required_gate(self):
-        """Fifty successful enforced gate events must not queue fifty runner jobs."""
+    def test_concurrency_cancels_overlaps_but_does_not_prevent_workflow_run_events(self):
+        """Cancellation reduces overlapping jobs but NOT the number of triggered workflow runs."""
         workflow = yaml.safe_load((ROOT / g.RECHECK).read_text(encoding="utf-8"))
         concurrency = workflow["concurrency"]
         self.assertIn("github.event.workflow_run.head_sha", concurrency["group"])
