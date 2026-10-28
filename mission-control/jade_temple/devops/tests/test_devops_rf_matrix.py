@@ -158,5 +158,83 @@ class RFWaveProjection(unittest.TestCase):
             self.assertEqual(rep["goal"]["status"], "UNKNOWN")
 
 
+class BoundedRecursiveReplay(unittest.TestCase):
+    def journal(self, results=None, observation=None):
+        return {"schema": "jade.devops.rf-journal.v1", "source_sha": SHA,
+                "waves": [{"results": results or [], "observation": observation}]}
+
+    def receipts(self, ids, result="success"):
+        return [{"id": name, "receipt": {"head_sha": SHA, "run_id": i + 100,
+                    "attempt": 1, "result": result, "test_population": 2,
+                    "digest": "f" * 64}} for i, name in enumerate(ids)]
+
+    def first_wave_ids(self):
+        matrix, dag = data()
+        return [x["id"] for x in M.project(matrix, dag, SHA)["matrix"]["on"]]
+
+    def test_missing_wave_assertions_wait_instead_of_infinite_loop(self):
+        matrix, dag = data()
+        r = M.replay_until_goal(matrix, dag, SHA, {"schema": "jade.devops.rf-journal.v1",
+                                "source_sha": SHA, "waves": []})
+        self.assertEqual((r["state"], r["wave_count"]), ("WAIT_FOR_WAVE_EVIDENCE", 1))
+        self.assertFalse(r["authority"]["dispatch_performed"])
+
+    def test_verified_shape_only_unblocks_next_dag_wave_as_assertion(self):
+        matrix, dag = data()
+        journal = self.journal(self.receipts(self.first_wave_ids()))
+        r = M.replay_until_goal(matrix, dag, SHA, journal, max_waves=5)
+        self.assertEqual(r["state"], "WAIT_FOR_WAVE_EVIDENCE")
+        self.assertEqual(r["wave_count"], 2)
+        self.assertEqual(set(r["history"][1]["candidate_ids"]),
+                         {"P2_DOMAIN_SCALE", "P2_BROWSER_SCALE", "P2_INTEGRATION_SCALE"})
+        self.assertEqual(r["authority"]["receipt_authenticity"],
+                         "ASSERTED_NOT_INDEPENDENTLY_VERIFIED")
+
+    def test_failure_routes_doctor_off_without_fake_dependency_completion(self):
+        matrix, dag = data()
+        rows = self.receipts(self.first_wave_ids())
+        red = next(x for x in rows if x["id"] == "P0_RECHECK_DOCTOR")
+        red["receipt"]["result"] = "failure"
+        r = M.replay_until_goal(matrix, dag, SHA, self.journal(rows), max_waves=4)
+        self.assertEqual(r["history"][0]["asserted_failed"], ["P0_RECHECK_DOCTOR"])
+        self.assertIn("REPAIR_FIRST_RED", [z["mode"] for z in r["history"][1]["off_actions"]])
+        self.assertIn("P3_EXACT_HEAD_FANIN", [z["id"] for z in r["history"][1]["held"]])
+        self.assertFalse(r["authority"]["merge_authorized"])
+
+    def test_unexpected_or_duplicate_result_cannot_progress(self):
+        matrix, dag = data()
+        illegal = self.receipts(["P2_INTEGRATION_SCALE"])
+        with self.assertRaisesRegex(ValueError, "unexpected"):
+            M.replay_until_goal(matrix, dag, SHA, self.journal(illegal))
+        rows = self.receipts(self.first_wave_ids()[:1])
+        with self.assertRaisesRegex(ValueError, "duplicate"):
+            M.replay_until_goal(matrix, dag, SHA, self.journal(rows + rows))
+
+    def test_advisory_goal_stops_for_review_without_approving_merge(self):
+        matrix, dag = data()
+        j = self.journal([], sample(0.18))
+        r = M.replay_until_goal(matrix, dag, SHA, j)
+        self.assertEqual((r["state"], r["wave_count"]),
+                         ("STOP_FOR_INDEPENDENT_REVIEW", 1))
+        self.assertFalse(r["authority"]["merge_authorized"])
+
+    def test_unbounded_or_stale_journal_rejected(self):
+        matrix, dag = data()
+        with self.assertRaisesRegex(ValueError, "max_waves"):
+            M.replay_until_goal(matrix, dag, SHA, self.journal([]), max_waves=100)
+        j = self.journal([])
+        j["source_sha"] = "b" * 40
+        with self.assertRaisesRegex(ValueError, "journal"):
+            M.replay_until_goal(matrix, dag, SHA, j)
+
+    def test_max_wave_budget_is_honest_not_success(self):
+        matrix, dag = data()
+        r = M.replay_until_goal(matrix, dag, SHA,
+                                self.journal(self.receipts(self.first_wave_ids())), max_waves=1)
+        self.assertEqual(r["state"], "BOUNDED_WAVE_BUDGET_EXHAUSTED")
+        self.assertFalse(r["authority"]["dispatch_performed"])
+
+
+
 if __name__ == "__main__":
     unittest.main()
