@@ -34,6 +34,7 @@ series.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import concurrent.futures
 import csv
 import importlib.util
@@ -345,6 +346,73 @@ def aggregate(runs: list, jobs_by_run: dict) -> dict:
     }
 
 
+
+# B09 / RF goal observation. This *canonical* Actions Metrics owner computes the
+# run-record share; the RF planner compares the value to a policy threshold but
+# may not recompute it or turn it into merge authority.
+RECHECK_WORKFLOW_NAME = "GOGREEN Required Gate Re-check"
+PRESSURE_SCHEMA = "jade.devops.recheck-pressure.v1"
+PRESSURE_SAMPLE_METHOD = "last_1000_repo_workflow_runs"
+
+
+def recheck_pressure(runs: list[dict], repo: str, source_sha: str,
+                     observed_at: str, sample_size: int = 1000) -> dict:
+    """Project a source-bound, fixed-count run cohort without confusing runs and jobs.
+
+    source_sha is the *collector's* exact repository head for this pulse, not a
+    claim that all historical workflow runs originated at that SHA.
+    The receipt hash is reproducibility evidence, not an independently verified
+    GitHub artifact attestation or merge predicate.
+    """
+    if not isinstance(source_sha, str) or not re.fullmatch(r"[0-9a-f]{40}", source_sha):
+        raise ValueError("pressure requires exact collector source_sha")
+    if not isinstance(repo, str) or "/" not in repo or ".." in repo:
+        raise ValueError("pressure requires owner/repo identity")
+    if not isinstance(sample_size, int) or isinstance(sample_size, bool) or sample_size != 1000:
+        raise ValueError("pressure contract is the last 1000 runs, no silent denominator change")
+    observed = BQ.utc(observed_at)
+    if observed is None or not isinstance(runs, list):
+        raise ValueError("pressure requires UTC observation and run list")
+    ids = set()
+    for rec in runs:
+        if (not isinstance(rec, dict) or not isinstance(rec.get("id"), int) or
+                isinstance(rec.get("id"), bool) or rec["id"] <= 0 or
+                rec["id"] in ids or not isinstance(rec.get("name"), str) or
+                not rec["name"] or BQ.utc(rec.get("created_at")) is None):
+            raise ValueError("duplicate, malformed or missing workflow-run evidence")
+        if BQ.utc(rec["created_at"]) > observed:
+            raise ValueError("workflow run created after observation")
+        ids.add(rec["id"])
+    selected = sorted(runs, key=lambda rec: (BQ.utc(rec["created_at"]), rec["id"]),
+                      reverse=True)[:sample_size]
+    n = len(selected)
+    target = [rec for rec in selected if rec.get("name") == RECHECK_WORKFLOW_NAME and
+              rec.get("event") == "workflow_run"]
+    conclusions = Counter(rec.get("conclusion") or rec.get("status") or "UNKNOWN" for rec in target)
+    # A sub-1000 cohort is incomplete. Report counts, not a 0% success rate.
+    doc = {"schema": PRESSURE_SCHEMA,
+           "metric": "recheck_workflow_record_share",
+           "metric_owner": "mission-control/jade_temple/devops/actions_metrics.py",
+           "repository": repo, "source_sha": source_sha,
+           "source_binding": "collector_repo_head_not_all_historical_run_heads",
+           "observed_at": observed_at,
+           "sample_method": PRESSURE_SAMPLE_METHOD, "sample_n": n,
+           "expected_n": sample_size,
+           "record_type": "SOURCE_BOUND_OBSERVATION_NOT_ADMISSION",
+           "coverage": "COMPLETE" if n == sample_size else "PARTIAL_UNKNOWN",
+           "value": round(len(target) / n, 6) if n == sample_size else None,
+           "recheck_records": len(target),
+           "recheck_cancelled": conclusions.get("cancelled", 0),
+           "recheck_outcomes": dict(sorted(conclusions.items())),
+           "cohort_earliest": selected[-1]["created_at"] if selected else None,
+           "cohort_latest": selected[0]["created_at"] if selected else None,
+           "method_note": "workflow-run records, not executed tests or billable job-minutes",
+           "merge_authorized": False}
+    payload = json.dumps(doc, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode("utf-8")
+    doc["receipt_sha256"] = hashlib.sha256(payload).hexdigest()
+    return doc
+
+
 def iso_week(ts: str) -> str:
     y, w, _ = BQ.utc(ts).isocalendar()
     return f"{y}-W{w:02d}"
@@ -477,7 +545,7 @@ def roster(path: Path = ROSTER) -> list:
 
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("cmd", choices=("fetch", "project"))
+    p.add_argument("cmd", choices=("fetch", "project", "pressure"))
     p.add_argument("--cache", required=True, type=Path)
     p.add_argument("--since", required=True, type=date.fromisoformat)
     p.add_argument("--until", type=date.fromisoformat, default=datetime.now(timezone.utc).date())
@@ -487,7 +555,21 @@ def main(argv=None) -> int:
     p.add_argument("--census", type=Path, default=CENSUS)
     p.add_argument("--out", type=Path)
     p.add_argument("--csv", type=Path)
+    p.add_argument("--source-sha", help="exact collector repository head for pressure observations")
     a = p.parse_args(argv)
+    if a.cmd == "pressure":
+        if not a.repo or len(a.repo) != 1:
+            p.error("pressure requires exactly one --repo")
+        observed = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        doc = recheck_pressure(load_runs(a.cache, a.repo[0], a.since, a.until),
+                               a.repo[0], a.source_sha or "", observed)
+        txt = json.dumps(doc, sort_keys=True, indent=2) + "\n"
+        if a.out:
+            a.out.parent.mkdir(parents=True, exist_ok=True)
+            a.out.write_text(txt, encoding="utf-8", newline="\n")
+        else:
+            sys.stdout.write(txt)
+        return 0
     repos = a.repo or roster(a.roster)
     rd = Reader(token())
     if a.cmd == "fetch":
