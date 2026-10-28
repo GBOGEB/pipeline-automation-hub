@@ -1,10 +1,10 @@
 {
   "schema": "jade.devops.ci_bundle_catalog.v1",
   "version": "0.1.0",
-  "status": "ADVISORY_SHADOW",
+  "status": "ADVISORY_CANDIDATE_OVERLAY_NOT_CANONICAL",
   "effective_branch": "none",
   "merge_authorized": false,
-  "provenance": "Planning catalog only; classifications are evidence candidates, not executed-test counts or check requirements. No branch protection or admission ledger mutation.",
+  "provenance": "Advisory candidate overlay, NOT a replacement for merged #992 B00-B09 design, JADE parser, GOGREEN ledger or governed required checks. Candidate Bxx IDs intentionally occupy a separate namespace; no semantic identity or promotion by number.",
   "lifecycle_stages": [
     "S0_PLAN",
     "S1_CODE",
@@ -301,5 +301,21 @@
       "existing_authority": "GOGREEN required gate and repository rulesets",
       "limitation": "Candidate gating concern; actual required population is base policy"
     }
-  ]
+  ],
+  "namespace": "jade.devops.ci_candidate",
+  "prior_design_owner": {
+    "source_pr": 992,
+    "design_path": "docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json",
+    "source_sha": "ca623ab83793df6edd245942884ad5428a5fe079",
+    "source_blob_oid": "7ff3fba10633b1f271e024ce2ccde8121417c9cb",
+    "prior_bundle_namespace": "ci-spine:bundle",
+    "prior_bundle_ids": "B00..B09"
+  },
+  "reconciliation": {
+    "mapping_path": "docs/ci-spine/BUNDLE_B00_B09_TO_CANDIDATE_B00_B12_V1.json",
+    "relation": "MANY_TO_MANY_CANDIDATES_NO_EQUIVALENCE",
+    "owner_approved": false,
+    "consumer_migration_authorized": false,
+    "legacy_ids_and_edges_untouched": true
+  }
 }
