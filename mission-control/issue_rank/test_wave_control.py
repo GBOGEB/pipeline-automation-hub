@@ -119,6 +119,21 @@ class WaveControl(unittest.TestCase):
         self.assertTrue(r["control"]["sustained_positive_burn_observed"])
         self.assertEqual(r["authority"], "ADVISORY_ONLY")
 
+    def test_mixed_final_windows_cannot_claim_independent_burn(self):
+        rows = self.four()
+        for i, row in enumerate(rows):
+            row["telemetry"]["fetched_at"] = (
+                datetime(2026, 8, 1, tzinfo=timezone.utc)
+                + timedelta(days=i * 15)).isoformat()
+            f = row["telemetry"]["scopes"]["USER"]["flow"]
+            f["status"] = "BURNING_DOWN"
+            f["net_burn_per_day"] = {"est": 2.0, "lo": 0.5, "hi": 4.0}
+        rows[-1]["telemetry"]["scopes"]["USER"]["flow"]["window_days"] = 30
+        result = summarize(rows)
+        self.assertFalse(result["control"]["independent_flow_windows"])
+        self.assertFalse(result["control"]["sustained_positive_burn_observed"])
+        self.assertIn("MISSING_OR_MIXED_FINAL_14D_FLOW", result["control"]["notes"])
+
     def test_invalid_burn_bounds_fail_closed(self):
         rows = self.four()
         rows[1]["telemetry"]["scopes"]["USER"]["flow"]["net_burn_per_day"]["lo"] = 20.0
