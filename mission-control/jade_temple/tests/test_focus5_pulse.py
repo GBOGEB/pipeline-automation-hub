@@ -16,11 +16,15 @@ spec5.loader.exec_module(r5)
 NEW = "c" * 40
 
 
-def fake_github(protected=False, rules=(), runs=(), readme=True, tags=()):
+def fake_github(protected=False, rules=(), runs=(), readme=True, tags=(), started=True):
     calls = []
 
     def lookup(path):
         calls.append(path)
+        if path.startswith("repos/O/R/actions/runs/") and "/jobs" in path:
+            # started: a runner executed steps; not started: billing/spending-limit refusal
+            steps = [{"name": "Run tests", "conclusion": "failure"}] if started else []
+            return {"jobs": [{"conclusion": "failure", "runner_id": 7 if started else 0, "steps": steps}]}
         if path == "repos/O/R":
             return {"default_branch": "main"}
         if path == "repos/O/R/commits/main":
@@ -100,6 +104,20 @@ class Focus5PulseTests(unittest.TestCase):
         for c in ("cancelled", "skipped", None):
             runs = [run(".github/workflows/a.yml", "success"), run(".github/workflows/b.yml", c)]
             self.assertEqual(self.gates(fp.observe_repo("O/R", None, fake_github(runs=runs), declared))["H06"], "UNKNOWN", c)
+
+    def test_failed_run_whose_jobs_never_started_is_unknown_not_fail(self):
+        declared = {"H05": [".github/workflows/a.yml"]}
+        failed = [run(".github/workflows/a.yml", "failure")]
+        refused = fp.observe_repo("O/R", None, fake_github(runs=failed, started=False), declared)
+        g = {x["id"]: x for x in refused["gates"]}
+        self.assertEqual(g["H05"]["status"], "UNKNOWN")
+        self.assertIn("not_started", g["H05"]["reason"])
+        self.assertFalse([b for b in refused["blockers"] if b.startswith("H05")])
+        executed = fp.observe_repo("O/R", None, fake_github(runs=failed, started=True), declared)
+        self.assertEqual(self.gates(executed)["H05"], "FAIL")
+        # previous-pulse fallback evidence gets the same treatment
+        self.assertEqual(self.gates(fp.observe_repo("O/R", PREV, fake_github(
+            runs=[run(".github/workflows/ci.yml", "failure")], started=False)))["H05"], "UNKNOWN")
 
     def test_registry_rejects_owner_gates_and_unstated_evidence(self):
         ok = {"schema": "jade.focus5.gate_evidence_registry.v1",
