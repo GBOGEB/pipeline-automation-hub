@@ -105,7 +105,7 @@ def summarize(rows, scope="USER", j=3):
             raise ValueError("invalid 64-hex ledger receipt")
         if previous is not None and (not isinstance(previous, str) or not SHA64.fullmatch(previous)):
             raise ValueError("invalid previous receipt shape")
-        if index and previous is not None and previous != prev_receipt:
+        if index and previous != prev_receipt:
             raise ValueError("mismatched previous ledger receipt link")
         prev_receipt = receipt
         tele = row.get("telemetry") or {}
@@ -117,7 +117,7 @@ def summarize(rows, scope="USER", j=3):
         if not isinstance(heads, dict) or not heads:
             raise ValueError("head census missing")
         if any(not isinstance(k, str) or not k.startswith("GBOGEB/") or
-               not isinstance(v, str) or not SHA40.fullmatch(v) for k, v in heads.items()):
+               not (v is None or isinstance(v, str) and SHA40.fullmatch(v)) for k, v in heads.items()):
             raise ValueError("invalid 40-hex source head provenance")
         memberships.append(frozenset(heads))
         method = tele.get("method") or {}
