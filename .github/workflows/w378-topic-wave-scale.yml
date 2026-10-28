@@ -49,3 +49,10 @@ jobs:
         run: |
           python -m metric_atlas.topic_wave_scale --input tools/metric-atlas/tests/pilot_6topic.json --out "$RUNNER_TEMP/w378-p1"
           python -c 'import json,hashlib,os,pathlib; p=pathlib.Path(os.environ["RUNNER_TEMP"])/"w378-p1"; m=json.loads((p/"manifest.json").read_text()); r=json.loads((p/"fan-in.json").read_text()); assert hashlib.sha256((p/"fan-in.json").read_bytes()).hexdigest()==m["fan_in_sha256"]; assert r["planned_topic_count"]==6 and r["wave_count"]==2 and r["new_cron_jobs_created"]==0 and r["merge_admission"]=="HOLD"'
+      - name: Publish declared two-wave fan-in receipt for review
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # pinned v4
+        with:
+          name: w378-6topic-fanin-${{ matrix.py }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/w378-p1/
+          retention-days: 7
+          if-no-files-found: error
