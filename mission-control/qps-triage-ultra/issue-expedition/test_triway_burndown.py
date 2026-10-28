@@ -122,6 +122,8 @@ class ParserN2(unittest.TestCase):
   got=self.refs("- [~] depends on #15\n- [-] blocks #17\n- [~] superseded by #18\n- [ ] ~~depends on #19~~",home=A)
   self.assertEqual({k for _,k in got},{"TEXT_ASSOCIATION"})
   self.assertEqual(self.refs("- [-] closes #16",home=A,pr=True),[(A+"#16","PR_ASSOCIATION")])
+ def test_multiline_inline_code_never_declares_edges(self):
+  self.assertEqual(self.refs("`blocked by #3\\nand #4` See #5"),[(B+"#5","TEXT_ASSOCIATION")])
  def test_negation_and_relation_scoped_to_current_clause(self):
   self.assertEqual(self.refs("Not urgent. Blocked by #2"),[(B+"#2","DECLARED_BLOCKER_CANDIDATE")])
   self.assertEqual(self.refs("This blocks nothing. See #2"),[(B+"#2","TEXT_ASSOCIATION")])
