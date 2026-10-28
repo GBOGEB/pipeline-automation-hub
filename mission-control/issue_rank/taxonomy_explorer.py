@@ -16,6 +16,7 @@ from pathlib import Path
 import title_taxonomy as tax
 
 RANK_SCHEMA = "jade.issue-rank.v1"
+RANK_SCHEMAS = frozenset((RANK_SCHEMA, "jade.issue-rank.v2"))
 SCHEMA = "jade.taxonomy-explorer.v1"
 SHA = re.compile(r"^[0-9a-f]{40}$", re.I)
 REPO = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
@@ -91,13 +92,15 @@ def _options(values: set[str], first: str) -> str:
 
 
 def collect(model: dict, *, include_private: bool = False) -> dict:
-    if model.get("schema") != RANK_SCHEMA:
+    if model.get("schema") not in RANK_SCHEMAS:
         raise ValueError("UNSUPPORTED_RANK_MODEL")
     heads = model.get("heads")
     if not isinstance(heads, dict) or not heads:
         raise ValueError("MISSING_SOURCE_HEADS")
     for repo, h in heads.items():
-        if not REPO.fullmatch(repo) or not SHA.fullmatch(str(h.get("head_sha") or "")):
+        if not REPO.fullmatch(repo) or not (SHA.fullmatch(str(h.get("head_sha") or ""))
+                                         or model["schema"] == "jade.issue-rank.v2"
+                                         and h.get("private") is True and h.get("head_sha") is None):
             raise ValueError("INVALID_REPO_OR_HEAD")
     seen, rows, excluded = set(), [], 0
     for item in model.get("items", []):

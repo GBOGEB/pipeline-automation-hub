@@ -504,7 +504,8 @@ def dep_edges(edges: list[dict]) -> list[tuple[str, str]]:
             out.append((e["source"], e["target"]))
         elif e["kind"] == "PARENT":  # child -> parent: the parent waits on the child
             out.append((e["target"], e["source"]))
-    return out
+    # A duplicated declaration is still one blocker relationship.
+    return sorted(set(out))
 
 
 def unblock_pressure(nodes: dict, edges: list[dict]) -> dict[str, int]:
@@ -1475,6 +1476,8 @@ def redact(model: dict, delta: dict | None = None, private_repos=None):
                    else focus if scope == "FOCUS4" else {scope})
         visible = [i for i in m["items"] if i["repo"] in members and i["repo"] not in priv]
         roll["title_taxonomy"] = tt.summary(visible)
+        # A named private assignee is a row-level fingerprint, not an aggregate.
+        roll["by_assignee"] = _by_assignee(visible)
         roll["title_taxonomy"]["private_items_excluded"] = sum(
             1 for i in m["items"] if i["repo"] in members and i["repo"] in priv)
     boundary = pb.Boundary(sorted(priv))

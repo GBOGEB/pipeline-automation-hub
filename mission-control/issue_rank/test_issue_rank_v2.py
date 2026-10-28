@@ -141,6 +141,13 @@ class Structure(unittest.TestCase):
                                       issue(HUB, 3)]), draws=0))
         self.assertEqual((by[k(2)]["unblocks_now"], by[k(2)]["pressure"]), (0, 1))
 
+    def test_duplicate_text_and_checkbox_declarations_are_one_blocker(self):
+        m = ir.rank(snapshot([issue(HUB, 1, "- [ ] #2\nblocked by #2"), issue(HUB, 2)]), draws=0)
+        by = by_key(m)
+        self.assertEqual(by[k(1)]["open_blockers"], [k(2)])
+        self.assertEqual(by[k(2)]["unblocks_now"], 1)
+        self.assertNotIn(k(1), m["views"]["action_queue"])
+
     def test_deadlock_is_reported(self):
         m = ir.rank(snapshot([issue(HUB, 1, "depends on #2"), issue(HUB, 2, "depends on #1")]), draws=0)
         by = by_key(m)
@@ -261,6 +268,18 @@ class Privacy(unittest.TestCase):
         self.assertEqual(len(delta["new_items"]), 1)
         self.assertTrue(delta["new_items"][0].startswith(f"{QPS}#PRIVATE-"))
 
+
+    def test_public_rollup_does_not_export_private_assignee_fingerprint(self):
+        snap = fixture()
+        snap["repos"][QPS]["issues"][0]["assignees"] = ["PRIVATE_ASSIGNEE_CANARY"]
+        snap["repos"][HUB]["issues"][0]["assignees"] = ["public-reviewer"]
+        model = ir.redact(ir.rank(snap, draws=0))
+        text = json.dumps(model)
+        self.assertNotIn("PRIVATE_ASSIGNEE_CANARY", text)
+        self.assertIn("public-reviewer", text)
+        self.assertEqual(model["rollups"][QPS]["by_assignee"], [])
+        self.assertTrue(all(r["assignee"] != "PRIVATE_ASSIGNEE_CANARY"
+                            for r in model["rollups"]["USER"]["by_assignee"]))
 
 class RedactedPulse(unittest.TestCase):
     def test_redacted_run_with_private_repo_writes_taxonomy_pulse_without_leaks(self):
