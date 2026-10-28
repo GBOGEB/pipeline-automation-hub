@@ -12,6 +12,7 @@ import title_taxonomy as taxonomy
 
 SCHEMA = "jade.taxonomy-metadata-proposal.v1"
 RANK_SCHEMA = "jade.issue-rank.v1"
+RANK_SCHEMAS = frozenset((RANK_SCHEMA, "jade.issue-rank.v2"))
 SHA = re.compile(r"^[0-9a-f]{40}$", re.I)
 IDENT = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+#[1-9][0-9]*$")
 TOKEN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
@@ -36,7 +37,7 @@ def _label_names(value: object) -> set[str]:
 
 
 def propose(model: dict, *, allow_private: bool = False, parser_sha: str | None = None) -> dict:
-    if model.get("schema") != RANK_SCHEMA:
+    if model.get("schema") not in RANK_SCHEMAS:
         raise ValueError("RANK_SCHEMA_MISMATCH")
     if parser_sha is not None and not SHA.fullmatch(parser_sha):
         raise ValueError("PARSER_SHA_MISSING_OR_INVALID")
@@ -44,7 +45,9 @@ def propose(model: dict, *, allow_private: bool = False, parser_sha: str | None 
     if not isinstance(heads, dict) or not heads:
         raise ValueError("HEADS_REQUIRED")
     for repo, head in heads.items():
-        if not isinstance(head, dict) or not SHA.fullmatch(str(head.get("head_sha") or "")):
+        if not isinstance(head, dict) or not (SHA.fullmatch(str(head.get("head_sha") or ""))
+                                             or model["schema"] == "jade.issue-rank.v2"
+                                             and head.get("private") is True and head.get("head_sha") is None):
             raise ValueError("SOURCE_SHA_UNVERIFIED")
     items = model.get("items")
     if not isinstance(items, list):
