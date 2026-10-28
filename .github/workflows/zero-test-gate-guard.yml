@@ -7,6 +7,8 @@ on:
       - '.github/workflows/**'
       - '**/test_*.py'
       - 'scripts/zero_test_gate_audit.py'
+      - 'scripts/ci_spine_index.py'
+      - 'governance/ci_spine/**'
   push:
     branches: [master]
     paths:
@@ -29,6 +31,13 @@ jobs:
       - run: python -m pip install --disable-pip-version-check 'PyYAML>=6,<7'
       - name: Audit self-tests
         run: python -m unittest scripts/tests/test_zero_test_gate_audit.py -v
+      - name: CI spine contract and adversarial unit tests
+        run: |
+          set -euo pipefail
+          python -m unittest tests/test_ci_spine_index.py -v
+          python scripts/ci_spine_index.py --check \
+            --source-sha "${{ github.event.pull_request.head.sha || github.sha }}" \
+            --out ci-spine-index.json
       - name: Every unittest gate collects at least one test
         run: |
           set -euo pipefail
@@ -38,5 +47,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: zero-test-gate-audit-${{ github.sha }}
-          path: zero-test-gate-audit.json
+          path: |
+            zero-test-gate-audit.json
+            ci-spine-index.json
           if-no-files-found: ignore
