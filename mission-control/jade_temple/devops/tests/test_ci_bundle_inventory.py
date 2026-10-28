@@ -11,7 +11,7 @@ sys.path.insert(0, str(DEVOPS))
 spec = importlib.util.spec_from_file_location("ci_bundle_inventory", DEVOPS / "ci_bundle_inventory.py")
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
-CATALOG = json.loads((DEVOPS / "CI_BUNDLE_CATALOG_V1.json").read_text())
+CATALOG = json.loads((DEVOPS / "CI_BUNDLE_CATALOG_V1.json").read_text(encoding="utf-8"))
 SHA = "a" * 40
 
 
@@ -21,7 +21,7 @@ class BundleInventory(unittest.TestCase):
         root = Path(temp.name)
         folder = root / ".github/workflows"
         folder.mkdir(parents=True)
-        (folder / "test.yml").write_text(content)
+        (folder / "test.yml").write_text(content, encoding="utf-8", newline="\n")
         self.addCleanup(temp.cleanup)
         return root
 
@@ -41,7 +41,7 @@ class BundleInventory(unittest.TestCase):
         root = self.make("name: Broken\non: push\njobs: {one: {needs: absent, steps: []}}")
         report = module.inventory(root, CATALOG, SHA)
         self.assertEqual(report["dag_anomalies"], 1)
-        (root / ".github/workflows/test.yml").write_text("on: [push\njobs:")
+        (root / ".github/workflows/test.yml").write_text("on: [push\njobs:", encoding="utf-8", newline="\n")
         self.assertEqual(module.inventory(root, CATALOG, SHA)["parse_errors"], 1)
 
     def test_invalid_identity_and_duplicate_bundle_rejected(self):
