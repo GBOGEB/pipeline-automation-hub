@@ -2,6 +2,9 @@ name: W379 Lane Lifecycle Evidence Matrix
 on:
   pull_request:
     paths:
+      - 'mission-control/jade_temple/devops/lifecycle.py'
+      - 'tools/metric-atlas/metric_atlas/topic_exchange.py'
+      - 'tools/metric-atlas/metric_atlas/topic_wave.py'
       - 'tools/metric-atlas/metric_atlas/lane_lifecycle.py'
       - 'tools/metric-atlas/tests/test_lane_lifecycle.py'
       - 'tools/metric-atlas/tests/w379_empty_snapshot.json'
