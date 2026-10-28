@@ -1,0 +1,117 @@
+"""W379 lane-stage crosswalk: positive, negative and fail-closed tests."""
+import copy
+import hashlib
+import json
+import tempfile
+import unittest
+from pathlib import Path
+from metric_atlas import lane_lifecycle as M
+
+SHA = "a"*40
+DIGEST = "b"*64
+NOW = "2026-10-28T14:00:00Z"
+REPO = "GBOGEB/pipeline-automation-hub"
+
+
+def snapshot():
+    return {"schema":M.SCHEMA,"cohort":"w379.p0","observed_at":NOW,
+            "mode":"READ_ONLY_SOURCE_DECLARED","source_heads":{REPO:SHA},
+            "observations":[],"authority_transfer":False,"merge_admission":"HOLD"}
+
+
+def receipt(lane="A",stage="S0_PLAN",result="PASS"):
+    return {"lane":lane,"stage":stage,"repo":REPO,"head_sha":SHA,
+            "receipt_sha256":DIGEST,"result":result,"observed_at":NOW,
+            "evidence_url":"https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/123"}
+
+
+class LaneStageTests(unittest.TestCase):
+    def test_population_and_authoritative_keys(self):
+        p=M.project(snapshot())
+        self.assertEqual(len(p["cells"]),70)
+        self.assertEqual(p["stage_keys"],list(M.OWNER.STAGE_KEYS))
+        self.assertEqual(p["counts"]["UNKNOWN"],70)
+        self.assertFalse(p["real_lane_maturity_verified"])
+        self.assertEqual(p["merge_admission"],"HOLD")
+        self.assertTrue(p["same_pulse_stages_acyclic"])
+        self.assertEqual(len(p["next_pulse_feedback_only"]),1)
+        self.assertTrue(all(c["maturity_level"] is None for c in p["cells"]))
+        self.assertEqual(set(M.LANES),set("ABCDEFG"))
+
+    def test_deterministic_and_manifest(self):
+        p=M.project(snapshot())
+        self.assertEqual(p,M.project(snapshot()))
+        with tempfile.TemporaryDirectory() as d:
+            manifest=M.emit(p,d)
+            for name,hash_ in manifest["files_sha256"].items():
+                self.assertEqual(hashlib.sha256((Path(d)/name).read_bytes()).hexdigest(),hash_)
+            self.assertEqual(len(manifest["files_sha256"]),3)
+            self.assertIn("A Census", (Path(d)/"lane-stage.md").read_text())
+            self.assertEqual(len((Path(d)/"lane-stage.csv").read_text().splitlines()),71)
+
+    def test_observation_never_yields_independently_verified_maturity(self):
+        s=snapshot()
+        s["observations"]=[receipt("A","S0_PLAN","PASS"),receipt("G","S3_TEST","FAIL")]
+        p=M.project(s)
+        self.assertEqual(p["counts"],{"UNKNOWN":68,"OBSERVED_PASS_UNVERIFIED":1,
+                                       "OBSERVED_FAIL_HOLD":1})
+        self.assertTrue(all(c["maturity_level"] is None for c in p["cells"]))
+        self.assertFalse(p["real_lane_maturity_verified"])
+
+    def test_bad_snapshots_fail_closed(self):
+        variants=[
+            lambda s:s.update(authority_transfer=True),
+            lambda s:s.update(merge_admission="PASS"),
+            lambda s:s.update(mode="LIVE_AUTHORIZED"),
+            lambda s:s.update(cohort="bad name"),
+            lambda s:s.update(source_heads={REPO:"z"*40}),
+            lambda s:s.update(observed_at="tomorrow"),
+            lambda s:s.update(foo=0),
+        ]
+        for mutation in variants:
+            with self.subTest(mutation=repr(mutation)):
+                s=snapshot();mutation(s)
+                with self.assertRaises((ValueError,KeyError)):M.project(s)
+
+    def test_bad_evidence_rejected(self):
+        variants=[
+            lambda x:x.update(lane="Z"),
+            lambda x:x.update(stage="S10_MERGE"),
+            lambda x:x.update(repo="Other/repo"),
+            lambda x:x.update(head_sha="c"*40),
+            lambda x:x.update(receipt_sha256="bad"),
+            lambda x:x.update(result="APPROVED"),
+            lambda x:x.update(observed_at="2026-10-29T14:00:00Z"),
+            lambda x:x.update(evidence_url="http://github.com/GBOGEB/pipeline-automation-hub/actions/runs/123"),
+            lambda x:x.update(evidence_url="https://github.com.evil.test/GBOGEB/pipeline-automation-hub/actions/runs/123"),
+            lambda x:x.update(evidence_url="https://github.com/Other/repo/actions/runs/123"),
+            lambda x:x.update(evidence_url="https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/123#fake"),
+            lambda x:x.update(fake=True),
+        ]
+        for mutation in variants:
+            with self.subTest(mutation=repr(mutation)):
+                s=snapshot();r=receipt();mutation(r);s["observations"]=[r]
+                with self.assertRaises((ValueError,KeyError)):M.project(s)
+
+    def test_duplicate_and_capacity_rejected(self):
+        s=snapshot();s["observations"]=[receipt(),receipt()]
+        with self.assertRaisesRegex(ValueError,"DUPLICATE"):M.project(s)
+        s=snapshot();s["observations"]=[receipt()]*71
+        with self.assertRaisesRegex(ValueError,"COUNT"):M.project(s)
+
+    def test_stage_contract_crosswalk_is_complete(self):
+        p=M.project(snapshot())
+        for cell in p["cells"]:
+            self.assertEqual(len(cell["canonical_probe_ids"]),5)
+            self.assertIn(cell["stage"],M.STAGES)
+            self.assertTrue(cell["activity"])
+            self.assertTrue(cell["owner"])
+
+    def test_negative_optimized_python_still_rejects(self):
+        s=snapshot();s["observations"]=[receipt()]
+        s["observations"][0]["receipt_sha256"]="0"
+        with self.assertRaises(ValueError):M.project(s)
+
+
+if __name__=="__main__":
+    unittest.main()
