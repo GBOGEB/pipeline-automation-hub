@@ -1,0 +1,59 @@
+name: W378 Topic Wave Graph Pilot
+on:
+  pull_request:
+    paths:
+      - 'tools/metric-atlas/metric_atlas/topic_wave.py'
+      - 'tools/metric-atlas/tests/test_topic_wave.py'
+      - 'tools/metric-atlas/tests/pilot_3topic.json'
+      - 'tools/metric-atlas/docs/TOPIC_WAVE_W378.md'
+      - '.github/workflows/w378-topic-wave.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: w378-graph-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  bounded-pilot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        py: ['3.11', '3.12']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Exact-head invariant
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # pinned
+        with:
+          python-version: ${{ matrix.py }}
+      - name: Install coverage measurement only
+        run: python -m pip install --disable-pip-version-check coverage==7.10.7
+      - name: Branch-aware source tests and negative paths
+        env:
+          PYTHONPATH: tools/metric-atlas
+        run: |
+          python -m coverage run --branch --include='*/metric_atlas/topic_wave.py' -m unittest discover -s tools/metric-atlas/tests -p 'test_topic_wave.py' -q
+          python -m coverage report -m --include='*/metric_atlas/topic_wave.py' --fail-under=85
+      - name: Optimized Python integrity replay
+        env:
+          PYTHONPATH: tools/metric-atlas
+        run: python -O -m unittest discover -s tools/metric-atlas/tests -p 'test_topic_wave.py' -q
+      - name: Generate 3-topic source-declared local projections
+        env:
+          PYTHONPATH: tools/metric-atlas
+        run: |
+          python -m metric_atlas.topic_wave --input tools/metric-atlas/tests/pilot_3topic.json --out "$RUNNER_TEMP/w378"
+          test -f "$RUNNER_TEMP/w378/pilot-receipt.json"
+          test -f "$RUNNER_TEMP/w378/graph_dag_oid.mmd"
+          test -f "$RUNNER_TEMP/w378/graph_sipoc_sha.mmd"
+          test -f "$RUNNER_TEMP/w378/graph_spine_function.mmd"
+      - name: Inspect generated checksums and no authority promotion
+        run: |
+          python -c 'import json,hashlib,os,pathlib; root=pathlib.Path(os.environ["RUNNER_TEMP"])/"w378"; m=json.loads((root/"manifest.json").read_text()); assert m["authority_transfer"] is False and m["merge_admission"]=="HOLD"; assert all(hashlib.sha256((root/p).read_bytes()).hexdigest()==h for p,h in m["files_sha256"].items()); r=json.loads((root/"pilot-receipt.json").read_text()); assert r["metrics"]["source_writers"]==0 and r["metrics"]["native_jobs_dispatched"]==0'
