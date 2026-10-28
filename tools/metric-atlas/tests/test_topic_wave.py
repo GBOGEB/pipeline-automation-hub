@@ -101,6 +101,7 @@ class GraphTests(unittest.TestCase):
         self.assertIn('<svg id="graph"',body)
         self.assertIn('addEventListener',body)
         self.assertIn('overflow-wrap:anywhere',body)  # long OIDs must not force mobile body scroll
+        self.assertIn('min-width:1100px',body)  # preserve legible graph and contained pan
     def test_html_does_not_expose_restricted_binary(self):
         s=m.render_html(m.pilot(self.p))
         self.assertNotIn('GITHUB_TOKEN',s)
