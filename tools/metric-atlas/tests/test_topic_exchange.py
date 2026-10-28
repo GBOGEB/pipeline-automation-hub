@@ -17,6 +17,7 @@ B = 'b' * 40
 X = '1' * 64
 Y = '2' * 64
 Z = '3' * 64
+CONTROLLER_KEY = b'synthetic-secret-only-not-for-real!'
 T0 = '2026-10-28T09:00:00Z'
 T1 = '2026-10-28T09:10:00Z'
 T2 = '2026-10-28T10:00:00Z'
@@ -144,12 +145,80 @@ class Acknowledgments(unittest.TestCase):
                          'PULL_EXISTING_PACKET_NO_RECENSUS')
 
     def test_verified_ack_skips_topic_recensus(self):
-        p = make_packet(); pub = publication(p)
-        saved = decision(p,publication=pub,acknowledgments=[ack(p,pub)])
+        p = make_packet(); pub = publication(p); a = ack(p,pub)
+        attest = t.attest_ack(p,pub,a,controller_secret=CONTROLLER_KEY,
+                               readback_id='github-get-comment-43',verified_at=T2)
+        saved = decision(p,publication=pub,acknowledgments=[a],
+                         controller_attestations=[attest], controller_secret=CONTROLLER_KEY,
+                         recipient_head=B)
         self.assertEqual(saved['decision'],'REUSE_ACKNOWLEDGED_NO_RECENSUS')
         self.assertFalse(saved['producer_recensus_required'])
         self.assertFalse(saved['recipient_pull_required'])
         self.assertFalse(saved['ci_retest_authorized'])
+
+    def test_claimed_verified_ack_alone_cannot_skip(self):
+        p=make_packet(); pub=publication(p)
+        self.assertEqual(decision(p,publication=pub,acknowledgments=[ack(p,pub)],
+                                  recipient_head=B)['decision'], 'PULL_EXISTING_PACKET_NO_RECENSUS')
+
+    def test_attestation_without_secret_is_rejected(self):
+        p=make_packet(); pub=publication(p); a=ack(p,pub)
+        att=t.attest_ack(p,pub,a,controller_secret=CONTROLLER_KEY,
+                         readback_id='remote-comment-43',verified_at=T2)
+        with self.assertRaisesRegex(t.ExchangeError,'CONTROLLER_ATTESTATION_WITHOUT_SECRET'):
+            decision(p,publication=pub,acknowledgments=[a],controller_attestations=[att],recipient_head=B)
+
+    def test_forged_controller_mac_is_rejected(self):
+        p=make_packet(); pub=publication(p); a=ack(p,pub)
+        att=t.attest_ack(p,pub,a,controller_secret=CONTROLLER_KEY,
+                         readback_id='github-get-43',verified_at=T2)
+        att['mac_sha256']='0'*64
+        with self.assertRaisesRegex(t.ExchangeError,'INVALID_CONTROLLER_MAC'):
+            decision(p,publication=pub,acknowledgments=[a],controller_attestations=[att],
+                     controller_secret=CONTROLLER_KEY,recipient_head=B)
+
+    def test_wrong_controller_key_is_rejected(self):
+        p=make_packet(); pub=publication(p); a=ack(p,pub)
+        att=t.attest_ack(p,pub,a,controller_secret=CONTROLLER_KEY,
+                         readback_id='github-get-43',verified_at=T2)
+        with self.assertRaisesRegex(t.ExchangeError,'INVALID_CONTROLLER_MAC'):
+            decision(p,publication=pub,acknowledgments=[a],controller_attestations=[att],
+                     controller_secret=b'x'*32,recipient_head=B)
+
+    def test_receiver_head_changed_needs_new_ack_not_source_recensus(self):
+        p=make_packet(); pub=publication(p); a=ack(p,pub)
+        att=t.attest_ack(p,pub,a,controller_secret=CONTROLLER_KEY,
+                         readback_id='github-get-43',verified_at=T2)
+        self.assertEqual(decision(p,publication=pub,acknowledgments=[a],
+                          controller_attestations=[att],controller_secret=CONTROLLER_KEY,
+                          recipient_head=A)['decision'],'PULL_EXISTING_PACKET_NO_RECENSUS')
+
+    def test_unverified_ack_cannot_be_attested(self):
+        p=make_packet(); pub=publication(p); a=ack(p,pub,externally_verified=False)
+        with self.assertRaisesRegex(t.ExchangeError,'UNVERIFIED_ACK_NOT_ATTESTABLE'):
+            t.attest_ack(p,pub,a,controller_secret=CONTROLLER_KEY,
+                         readback_id='github-get-43',verified_at=T2)
+
+    def test_short_controller_secret_rejected(self):
+        p=make_packet(); pub=publication(p); a=ack(p,pub)
+        with self.assertRaisesRegex(t.ExchangeError,'CONTROLLER_SECRET_REQUIRED'):
+            t.attest_ack(p,pub,a,controller_secret=b'short',
+                         readback_id='github-get-43',verified_at=T2)
+
+    def test_attestation_cannot_precede_ack(self):
+        p=make_packet(); pub=publication(p); a=ack(p,pub)
+        with self.assertRaisesRegex(t.ExchangeError,'ATTESTATION_BEFORE_ACK'):
+            t.attest_ack(p,pub,a,controller_secret=CONTROLLER_KEY,
+                         readback_id='github-get-43',verified_at=T1)
+
+    def test_attestation_cannot_claim_extra_authority(self):
+        p=make_packet(); pub=publication(p); a=ack(p,pub)
+        att=t.attest_ack(p,pub,a,controller_secret=CONTROLLER_KEY,
+                         readback_id='github-get-43',verified_at=T2)
+        att['merge_authorized']=True
+        with self.assertRaisesRegex(t.ExchangeError,'ATTESTATION_EXTRA_OR_MISSING_FIELD'):
+            decision(p,publication=pub,acknowledgments=[a],controller_attestations=[att],
+                     controller_secret=CONTROLLER_KEY,recipient_head=B)
 
     def test_ack_wrong_packet_or_publication_is_not_transferable(self):
         p = make_packet(); pub = publication(p); a=ack(p,pub)
