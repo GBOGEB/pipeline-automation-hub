@@ -1467,6 +1467,9 @@ def redact(model: dict, delta: dict | None = None, private_repos=None):
                    else focus if scope == "FOCUS4" else {scope})
         visible = [i for i in m["items"] if i["repo"] in members and i["repo"] not in priv]
         roll["title_taxonomy"] = tt.summary(visible)
+        # Per-assignee rows are identifiable, not aggregate-only: rebuild them
+        # from public items before the private-boundary fixed-point projection.
+        roll["by_assignee"] = _by_assignee(visible)
         roll["title_taxonomy"]["private_items_excluded"] = sum(
             1 for i in m["items"] if i["repo"] in members and i["repo"] in priv)
     # Export only aggregate private counts. Individual pseudonyms still expose
