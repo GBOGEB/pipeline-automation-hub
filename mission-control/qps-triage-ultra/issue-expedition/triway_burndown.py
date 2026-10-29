@@ -59,7 +59,7 @@ SECTIONS = (
 INLINE_LABEL = re.compile(r"\W*(DoD|DoV)\b", re.I)
 STRUCK = re.compile(r"~~.+~~")
 COMMENT = re.compile(r"<!--.*?-->", re.S)
-PARKED = re.compile(r"<!--\s*parked-intent:v1\s*(\{.*?\})\s*-->", re.S)
+PARKED = re.compile(r"<!--\s*parked-intent:v1\s*(.*?)\s*-->", re.S)
 # Federation shorthand used across the four repositories, e.g. "QPS parent #1920",
 # "ABACUS #1860/#2471" or "ABACUS#1996/PR#2041".
 ALIASES = {"qps": "cryoplant-project", "abacus": "ABACUS", "codex": "CODEX",
@@ -73,7 +73,7 @@ REF = re.compile(
     r"|/(?:(?i:pr)\s*)?#(?P<chainnum>\d+)"
     r"|(?<![A-Za-z0-9/&])#(?P<localnum>\d+)"
 )
-CLAIM = re.compile(r"\b(?:fix(?:es|ed)?|clos(?:es|ed)?|resolv(?:es|ed)?)\b.{0,40}\Z", re.I)
+CLAIM = re.compile(r"\b(?:fix(?:es|ed)?|clos(?:e|es|ed)|resolv(?:e|es|ed))\b.{0,40}\Z", re.I)
 # Issue-body reference kinds, first match wins. The words between the previous
 # reference on the line and this one type it, so a keyword binds to the next
 # reference only; a run joined by commas or "and" keeps the kind of its head.
@@ -93,7 +93,7 @@ KINDS = (
 )
 QUOTE = re.compile(r"^(?:\s*>)*\s*")
 # A code span opens and closes with backtick runs of equal length (CommonMark).
-CODE_SPAN = re.compile(r"(`+)(?!`)(.+?)(?<!`)\1(?!`)")
+CODE_SPAN = re.compile(r"(`+)(?!`)([\s\S]+?)(?<!`)\1(?!`)")
 META = re.compile(r"^\s*(?:related|refs?|references|see also|sources?|links?)\s*:", re.I)
 NEGATED = re.compile(r"\b(?:not|no longer|never|unrelated|instead of)\b", re.I)
 JOINER = re.compile(r"[\s,;&+]*(?:(?:and|or)\b[\s,;&+]*)?\Z", re.I)
@@ -129,16 +129,20 @@ def _section(title):
 
 
 def _source_lines(body):
-    """Body lines outside HTML comments and fenced code blocks."""
+    """Body lines outside HTML comments and length-aware fenced code blocks."""
     fence = None
     for line in COMMENT.sub("", body).splitlines():
-        mark = QUOTE.sub("", line)[:3]  # a fence may sit inside a blockquote ("> ```")
+        # A blockquote marker may precede a Markdown fence.
+        stripped = QUOTE.sub("", line).lstrip()
+        mark = re.match(r"^(`{3,}|~{3,})(.*)$", stripped)
         if fence:
-            if mark == fence:
+            if (mark and mark.group(1)[0] == fence[0]
+                    and len(mark.group(1)) >= len(fence)
+                    and not mark.group(2).strip()):
                 fence = None
             continue
-        if mark in (chr(96) * 3, "~~~"):
-            fence = mark
+        if mark:
+            fence = mark.group(1)
             continue
         yield line
 
@@ -157,12 +161,14 @@ def checklist(body):
     declared = {k: [] for k in steps}
     headed = dict.fromkeys(steps, False)
     section, basis, prose = "OTHER", None, False
+    continuation = None
     for line in _source_lines(body):
         h = HEADING.match(line)
         if h:
             section, basis = _section(next(g for g in h.groups() if g))
             headed[section] = True
             prose = False
+            continuation = None
             continue
         m = ITEM.match(line)
         if m:
@@ -175,16 +181,23 @@ def checklist(body):
             if m.group(1) in "~-" or STRUCK.fullmatch(text):  # dropped: never counted
                 row["withdrawn"] = True
             steps[own].append(row)
+            continuation = row
             prose = False
         elif section != "OTHER" and line.strip():
+            if continuation is not None and re.match(r"^ {2,}\S", re.sub(r"^\s*(?:>[ \t]?)+", "", line)):
+                continuation["text"] = (continuation["text"] + " " + line.strip())[:300]
+                continue
             b = BULLET.match(line)
             if b:
                 declared[section].append({"text": b.group(1)[:300], "form": "BULLET"})
+                continuation = declared[section][-1]
             elif not prose and not META.match(line):  # one prose criterion per paragraph
                 declared[section].append({"text": line.strip()[:300], "form": "PROSE"})
+                continuation = None
             prose = not b
         else:
             prose = False
+            continuation = None
 
     def summary(rows):
         live = [x for x in rows if not x.get("withdrawn")]
@@ -224,8 +237,8 @@ def references(body, repo, pr=False):
     recorded; a negation before the keyword keeps the reference textual.
     """
     found = {}
-    for raw in _source_lines(body):
-        line = CODE_SPAN.sub("", raw)
+    # Join first so a Markdown inline code span spanning lines cannot yield edges.
+    for line in CODE_SPAN.sub("", "\n".join(_source_lines(body))).splitlines():
         item = ITEM.match(line)
         # A withdrawn item ([~], [-] or fully struck) declares nothing: its references stay textual.
         withdrawn = bool(item) and (item.group(1) in "~-" or bool(STRUCK.fullmatch(item.group(2))))
@@ -233,7 +246,8 @@ def references(body, repo, pr=False):
         for m in REF.finditer(line):
             # The typing window ends at the '#', so "QPS parent #1920" sees "parent".
             stop = m.start("aliasnum") - 1 if m.group("aliasnum") is not None else m.start()
-            window = line[last_end:stop]
+            previous_end = last_end
+            window = line[previous_end:stop]
             if m.group("chainnum") is not None:
                 if last_repo is None or m.start() != last_end:
                     continue  # a stray "/#N" with nothing to chain onto
@@ -248,14 +262,18 @@ def references(body, repo, pr=False):
             if num <= 0:
                 continue
             target = identity("GBOGEB/" + name, num)
-            before = window[-90:]
+            before = re.split(r"[.!?;]", window[-90:])[-1]
+            join_window = (line[previous_end:m.start("alias")]
+                           if m.group("aliasnum") is not None else window)
             if withdrawn:
                 kind = "PR_ASSOCIATION" if pr else "TEXT_ASSOCIATION"
             elif pr:
-                kind = "PR_CLOSURE_CLAIM" if CLAIM.search(before) else "PR_ASSOCIATION"
-                if last_kind == "PR_CLOSURE_CLAIM" and JOINER.fullmatch(window):
+                claim = CLAIM.search(before)
+                kind = ("PR_CLOSURE_CLAIM" if claim and not NEGATED.search(before[:claim.start()])
+                        else "PR_ASSOCIATION")
+                if last_kind == "PR_CLOSURE_CLAIM" and JOINER.fullmatch(join_window):
                     kind = last_kind
-            elif last_kind and JOINER.fullmatch(window):
+            elif last_kind and JOINER.fullmatch(join_window):
                 kind = last_kind
             else:
                 kind = "TEXT_ASSOCIATION"

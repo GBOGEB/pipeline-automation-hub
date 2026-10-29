@@ -4,6 +4,10 @@ on:
     paths:
       - 'mission-control/issue_rank/**'
       - 'mission-control/qps-triage-ultra/issue-expedition/triway_burndown.py'
+      - 'mission-control/jade_temple/tools/rolling5.py'
+      - 'mission-control/jade_temple/tools/private_boundary.py'
+      - 'mission-control/jade_temple/data/TOP21_PORTFOLIO.json'
+      - 'mission-control/gogreen/token_census/REGISTRY.json'
       - 'mission-control/qps-triage-ultra/issue-expedition/test_triway_burndown.py'
       - '.github/workflows/issue-rank.yml'
   workflow_dispatch: {}
@@ -41,8 +45,9 @@ jobs:
         run: |
           set -euo pipefail
           python -m pip install --disable-pip-version-check coverage==7.13.3
-          python -m coverage run --include=issue_rank.py -m unittest -v test_issue_rank test_title_taxonomy test_taxonomy_pulse
-          python -m coverage report --fail-under=80
+          python -m coverage run --branch --include=issue_rank.py,issue_math.py,title_taxonomy.py,taxonomy_pulse.py,wave_control.py -m unittest -v test_issue_rank test_issue_rank_v2 test_issue_rank_n4 test_title_taxonomy test_taxonomy_pulse test_wave_control
+          python -m coverage report --include=issue_rank.py,issue_math.py --show-missing --fail-under=80
+          python -m coverage report --include=issue_rank.py,issue_math.py,title_taxonomy.py,taxonomy_pulse.py,wave_control.py --show-missing
           python -m coverage run --include=burndown_apply.py -m unittest -v test_burndown_apply
           python -m coverage report --fail-under=80
           python -m unittest discover -s ../qps-triage-ultra/issue-expedition -p test_triway_burndown.py -v

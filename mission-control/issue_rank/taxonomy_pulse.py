@@ -20,6 +20,8 @@ import title_taxonomy as tax
 
 SCHEMA = "jade.taxonomy-pulse.v1"
 RANK_SCHEMA = "jade.issue-rank.v1"
+# issue_rank method v2 (jade.issue-rank.v2) keeps every field this reader uses.
+RANK_SCHEMAS = frozenset((RANK_SCHEMA, "jade.issue-rank.v2"))
 JADE_REPOS = {"ABACUS", "CODEX", "cryoplant-project", "pipeline-automation-hub"}
 SHA = re.compile(r"^[0-9a-f]{40}$", re.I)
 
@@ -43,19 +45,43 @@ def _timestamp(value: str) -> datetime:
 
 def visible(model: dict, *, public: bool) -> dict:
     """Validate identity/pins BEFORE removing private material; never emit titles."""
-    if model.get("schema") != RANK_SCHEMA:
+    if model.get("schema") not in RANK_SCHEMAS:
         raise ValueError("RANK_SCHEMA_MISMATCH")
     observed = model.get("fetched_at")
     _timestamp(observed)
     heads = model.get("heads")
     if not isinstance(heads, dict) or not heads:
         raise ValueError("REPO_HEADS_MISSING")
-    for repo, h in heads.items():
-        if not isinstance(h, dict) or not SHA.fullmatch(str(h.get("head_sha") or "")):
-            raise ValueError("INVALID_SOURCE_HEAD:" + str(repo))
     rows = model.get("items")
     if not isinstance(rows, list):
         raise ValueError("ITEMS_MISSING")
+    # A redacted private head may have no visible SHA only after the public
+    # projection erased the original receipt. Never relax validation for a raw
+    # private model, nor for any public repository.
+    projection = model.get("privacy_projection") or {}
+    marked = projection.get("validated_then_redacted_heads") or []
+    for repo, h in heads.items():
+        if not isinstance(h, dict):
+            raise ValueError("INVALID_SOURCE_HEAD:" + str(repo))
+        if SHA.fullmatch(str(h.get("head_sha") or "")):
+            continue
+        private_items = [i for i in rows if isinstance(i, dict) and i.get("repo") == repo]
+        safely_redacted = bool(private_items) and all(
+            i.get("title") is None
+            and str(i.get("key", "")).startswith(str(repo) + "#PRIVATE-")
+            and (i.get("title_taxonomy") or {}).get("family") == "REDACTED_PRIVATE"
+            for i in private_items
+        )
+        marked_valid = (
+            isinstance(marked, list) and repo in marked
+            and all(isinstance(i, dict) and i.get("title") is None
+                    and (i.get("title_taxonomy") or {}).get("family") == "REDACTED_PRIVATE"
+                    for i in private_items)
+        )
+        if not (public and h.get("private") is True
+                and h.get("head_sha") is None
+                and (safely_redacted or marked_valid)):
+            raise ValueError("INVALID_SOURCE_HEAD:" + str(repo))
     seen = set()
     retained = []
     excluded = 0
