@@ -143,6 +143,21 @@ class ExplorerProvenanceTests(unittest.TestCase):
         self.assertIn("6f7cf145c4ebf585dbb341ba5863e77098ad36b0", s)
         self.assertIn("older than merged PRs", s)
 
+    def test_local_workstream_docs_do_not_point_to_old_catalog_commit(self):
+        page = explorer.OUTPUT.read_text("utf-8")
+        self.assertIn('String(x).startsWith("docs/ci-spine/")', page)
+        self.assertIn('detailLink(x.slice("docs/ci-spine/".length),x)', page)
+        # A live checkout-relative document is not a GitHub blob at the
+        # historical test catalog head where that document did not exist.
+        self.assertIn("JACQUARD_CROSSWALK.md", page)
+
+    def test_unknown_queue_time_is_never_rendered_as_zero(self):
+        page = explorer.OUTPUT.read_text("utf-8")
+        self.assertIn("queueKnown=Number.isFinite(job?.queue_seconds)", page)
+        self.assertIn('(queueKnown?q+"s":"UNKNOWN")+" queue', page)
+        self.assertNotIn('time.textContent=q+"s queue', page)
+        self.assertIn('Queue "+(queueKnown?q+" seconds":"UNKNOWN")', page)
+
     def test_plotly_inline_source_url_is_not_active_network_dependency(self):
         inline = "<html><script>const locationHint='https://cdn.plot.ly/plotly.min.js';</script></html>"
         self.assertFalse(plotly_companion.external_scripts(inline))
