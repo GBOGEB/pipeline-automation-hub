@@ -1,6 +1,7 @@
 """Offline controls for the GOGREEN required-gate aggregator (v2: ledger-driven)."""
 import base64
 import contextlib
+import hashlib
 import io
 import itertools
 import json
@@ -9,6 +10,7 @@ import sys
 import tempfile
 import unittest
 import urllib.error
+import zipfile
 from pathlib import Path
 from unittest import mock
 
