@@ -1,0 +1,77 @@
+{
+  "schema": "jade.devops.ci-spine.bindings.v1",
+  "coverage_scope": "anchors_only",
+  "anchors": [
+    {
+      "id": "CI-SOURCE-PIN",
+      "phase": "SOURCE",
+      "path": ".github/workflows/actions-pin-ratchet.yml",
+      "purpose": "immutable action pins"
+    },
+    {
+      "id": "CI-SOURCE-CENSUS",
+      "phase": "SOURCE",
+      "path": ".github/workflows/jade-devops-census.yml",
+      "purpose": "fleet source inventory"
+    },
+    {
+      "id": "CI-TEST-ZERO",
+      "phase": "TEST",
+      "path": ".github/workflows/zero-test-gate-guard.yml",
+      "purpose": "guard against empty collection"
+    },
+    {
+      "id": "CI-TEST-REUSE",
+      "phase": "TEST",
+      "path": ".github/workflows/jade-reusable-ci.yml",
+      "purpose": "test/build exact-SHA reusable CI"
+    },
+    {
+      "id": "CI-EVIDENCE-THREAD",
+      "phase": "EVIDENCE",
+      "path": ".github/workflows/golden-thread.yml",
+      "purpose": "historical ledger replay"
+    },
+    {
+      "id": "CI-GOVERN-FPC",
+      "phase": "GOVERN",
+      "path": ".github/workflows/first-pass-closure-gate.yml",
+      "purpose": "governed exact-head closure"
+    },
+    {
+      "id": "CI-OPERATE-PRUNE",
+      "phase": "OPERATE",
+      "path": ".github/workflows/branch-hygiene.yml",
+      "purpose": "lossless branch custody"
+    }
+  ],
+  "metric_owner_bindings": {
+    "runtime_cost_queue": "mission-control/jade_temple/devops/actions_metrics.py",
+    "failure_recovery": "mission-control/gogreen/scale_dock.py",
+    "historical_progression": "mission-control/jade_temple/tools/rolling5.py",
+    "dag_sipoc": "mission-control/jade_temple/tools/cicd_dag.py"
+  },
+  "conceptual_edges": [
+    [
+      "CI-SOURCE-CENSUS",
+      "CI-TEST-REUSE"
+    ],
+    [
+      "CI-SOURCE-PIN",
+      "CI-TEST-ZERO"
+    ],
+    [
+      "CI-TEST-REUSE",
+      "CI-EVIDENCE-THREAD"
+    ],
+    [
+      "CI-EVIDENCE-THREAD",
+      "CI-GOVERN-FPC"
+    ],
+    [
+      "CI-GOVERN-FPC",
+      "CI-OPERATE-PRUNE"
+    ]
+  ],
+  "workflow_parser_owner": "mission-control/jade_temple/devops/workflows.py"
+}

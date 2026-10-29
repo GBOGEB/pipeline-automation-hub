@@ -1,0 +1,109 @@
+{
+  "schema": "jade.devops.ci-spine.waves.v1",
+  "max_workers": 3,
+  "explanation": "Read-only single-pulse proposal. Dependencies require SHA-matched receipts at future pulse; proposed work never counts as complete.",
+  "tasks": [
+    {
+      "id": "CI-N6-SOURCE",
+      "lane": "SOURCE",
+      "stage": "DISCOVER",
+      "priority": 1,
+      "depends": [],
+      "owns": [
+        "governance/ci_spine/CI_SPINE_BINDINGS_V1.json"
+      ],
+      "purpose": "Revalidate canonical owners and 182-workflow topology from #996"
+    },
+    {
+      "id": "CI-N6-MATRIX",
+      "lane": "TOPOLOGY",
+      "stage": "PREPARE",
+      "priority": 1,
+      "depends": [],
+      "owns": [
+        "docs/ci_spine/matrix"
+      ],
+      "purpose": "Generate versioned SIPOC lane and stage matrix, read only"
+    },
+    {
+      "id": "CI-N6-DELTA",
+      "lane": "EVIDENCE",
+      "stage": "PREPARE",
+      "priority": 1,
+      "depends": [],
+      "owns": [
+        "scripts/ci_spine_delta.py"
+      ],
+      "purpose": "Build deterministic previous/current source-head delta audit"
+    },
+    {
+      "id": "CI-N6-TEST",
+      "lane": "QUALITY",
+      "stage": "VERIFY",
+      "priority": 2,
+      "depends": [
+        "CI-N6-SOURCE",
+        "CI-N6-MATRIX",
+        "CI-N6-DELTA"
+      ],
+      "owns": [
+        "tests/test_ci_spine_delta.py",
+        "tests/test_ci_spine_wave_plan.py"
+      ],
+      "purpose": "Run negative controls and deterministic fixture tests"
+    },
+    {
+      "id": "CI-N6-RUNTIME",
+      "lane": "TELEMETRY",
+      "stage": "VERIFY",
+      "priority": 2,
+      "depends": [
+        "CI-N6-SOURCE"
+      ],
+      "owns": [
+        "mission-control/jade_temple/devops/ACTIONS_METRICS_FOCUS5_READING.md"
+      ],
+      "purpose": "Compare exact SHA and time windows from canonical actions_metrics only"
+    },
+    {
+      "id": "CI-N6-REVIEW",
+      "lane": "GOVERNANCE",
+      "stage": "INTEGRATE",
+      "priority": 3,
+      "depends": [
+        "CI-N6-TEST",
+        "CI-N6-RUNTIME"
+      ],
+      "owns": [
+        "handover/session/CI_SPINE_N6_REVIEW.md"
+      ],
+      "purpose": "Independent reviews, effective required checks, first-red dispositions"
+    },
+    {
+      "id": "CI-N6-PRUNE",
+      "lane": "BRANCH-CUSTODY",
+      "stage": "CONTROL",
+      "priority": 4,
+      "depends": [
+        "CI-N6-REVIEW"
+      ],
+      "owns": [
+        "governance/branch_hygiene/N6_AUDIT.md"
+      ],
+      "purpose": "Fresh read-only branch census, extract delta before any archive/delete"
+    },
+    {
+      "id": "CI-N6-REFEED",
+      "lane": "MISSION-CONTROL",
+      "stage": "CONTROL",
+      "priority": 5,
+      "depends": [
+        "CI-N6-REVIEW"
+      ],
+      "owns": [
+        "mission-control/jade_temple/notes/CI_SPINE_N6_PULSE.md"
+      ],
+      "purpose": "MIP/DMAIC next-pulse synthesis and source-bound DoV"
+    }
+  ]
+}

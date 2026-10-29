@@ -11,6 +11,39 @@ on:
       - '.github/workflows/p-process.yml'
       - 'mission-control/gogreen/scale_dock.py'
       - '.github/workflows/jade-temple-readonly-qa.yml'
+      # every other path the CI/CD DAG binds by blob OID (tests/test_regen.py keeps this list complete)
+      - '.github/workflows/gm-iv-recon4-governor.yml'
+      - '.github/workflows/gm-v-3pstar-mip-control.yml'
+      - '.github/workflows/gm-v-governor-readiness.yml'
+      - '.github/workflows/mission-control-n3-evidence.yml'
+      - '.github/workflows/zero-test-gate-guard.yml'
+      - 'mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json'
+      - 'mission-control/federation-atlas/CODE_PURPLE_BEAMS_DAG_v1.json'
+      - 'mission-control/gogreen/red_trace/README.md'
+      - 'scripts/zero_test_gate_audit.py'
+  # master runs the same checks, so a pinned edit that slips through shows red at its own commit
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/jade_temple/**'
+      - 'mission-control/federation-atlas/pages_portal.py'
+      - 'mission-control/qps-triage-ultra/p-process/**'
+      # the rest of tests/test_portability.py TREES (jade_temple and p-process are above)
+      - 'mission-control/gogreen/**'
+      - 'mission-control/v2/**'
+      - '.github/workflows/p-process.yml'
+      - 'mission-control/gogreen/scale_dock.py'
+      - '.github/workflows/jade-temple-readonly-qa.yml'
+      # every other path the CI/CD DAG binds by blob OID (tests/test_regen.py keeps this list complete)
+      - '.github/workflows/gm-iv-recon4-governor.yml'
+      - '.github/workflows/gm-v-3pstar-mip-control.yml'
+      - '.github/workflows/gm-v-governor-readiness.yml'
+      - '.github/workflows/mission-control-n3-evidence.yml'
+      - '.github/workflows/zero-test-gate-guard.yml'
+      - 'mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json'
+      - 'mission-control/federation-atlas/CODE_PURPLE_BEAMS_DAG_v1.json'
+      - 'mission-control/gogreen/red_trace/README.md'
+      - 'scripts/zero_test_gate_audit.py'
   workflow_dispatch: {}
 permissions:
   contents: read
