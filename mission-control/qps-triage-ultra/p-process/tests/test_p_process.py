@@ -167,8 +167,27 @@ class Rulesets(unittest.TestCase):
     def test_hub_required_checks_are_not_path_filtered(self):
         jobs = build_rulesets.path_filtered_jobs(REPO / ".github/workflows")
         for c in self.man["GBOGEB/pipeline-automation-hub"]["checks"]:
-            self.assertIn(c, jobs, f"{c} is not a PR job in this repo")
-            self.assertFalse(jobs[c], f"{c} is path-filtered: as a required check it would block unrelated PRs")
+            job = build_rulesets.STATUS_PRODUCERS.get(c, (None, c))[1]
+            self.assertIn(job, jobs, f"{c} is not a PR job (or produced by one) in this repo")
+            self.assertFalse(jobs[job], f"{c} is path-filtered: as a required check it would block unrelated PRs")
+
+    def test_required_status_contexts_are_published_by_their_producer(self):
+        for context, (wf, job) in build_rulesets.STATUS_PRODUCERS.items():
+            with self.subTest(context=context):
+                text = (REPO / ".github/workflows" / wf).read_text(encoding="utf-8")
+                d = yaml.safe_load(text)
+                self.assertIn(job, d["jobs"], f"{wf} has no job {job}")
+                self.assertIn("pull_request_target", d.get(True, d.get("on")), "the status must come from the trusted base-side event")
+                self.assertIn(f"context='{context}'", text, f"{wf} does not publish {context}")
+
+    def test_published_ruleset_copies_match_source(self):
+        # The P-process workflow packages site/ as committed; refresh.py is what copies rulesets/ there.
+        for f in sorted((P / "rulesets").glob("*.json")):
+            if f.name == "survey.json":
+                continue
+            with self.subTest(file=f.name):
+                self.assertEqual((P / "site/rulesets" / f.name).read_bytes(), f.read_bytes(),
+                                 f"site/rulesets/{f.name} is stale: copy it (refresh.py) and update site/manifest.json")
 
     def test_path_filter_detection(self):
         tmp = P / "build" / "wf_test"
