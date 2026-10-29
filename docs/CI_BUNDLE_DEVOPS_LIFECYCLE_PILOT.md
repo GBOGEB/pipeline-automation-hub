@@ -4,6 +4,17 @@
 **Base:** master, initial source SHA `6f7cf145c4ebf585dbb341ba5863e77098ad36b0`.
 **Owners:** JADE `workflows.py` supplies the parser and job DAG, `actions_metrics.py` owns runtime measures, GOGREEN `required_gate/ADMISSION.json` owns enforcement, `rolling5.py` historical pulses and `title_taxonomy.py` title interpretation. No duplicate metric owner is created.
 
+
+## Semantic reconciliation with merged #992
+
+The existing [merged #992 CI spine](ci-spine/README.md) owns a frozen **B00–B09 logical design**, its 17 machine edges (16 feedforward, one next-pulse feedback), full workflow/test-file source index and existing JADE/GOGREEN metric owners. The B00–B12 definitions in this pilot are a separate `jade.devops.ci_candidate` **candidate overlay**. Their short IDs have **no name-based equivalence** to #992's `ci-spine:bundle` IDs.
+
+The [source-verified, lossless crosswalk](ci-spine/BUNDLE_B00_B09_TO_CANDIDATE_B00_B12_V1.json) records all 10 old labels/stages, exact frozen head `ca623ab...`, actual tree OID, anchor workflow blob OIDs, observed triggers, original ADMISSION dispositions, candidate overlaps, explicit coverage gaps and consumer migration holds. It preserves the old B07 **required fan-in**, which must never be confused with candidate B07 **scientific math**. Original B02 dependencies/cache lacks a dedicated candidate equivalent; original B09 next-pulse feedback is not yet represented by candidate planning edges. No approval is inferred.
+
+The older source index reports `git_tree_oid` equal to the source **commit** SHA; GitHub's actual Git **tree** is `b1f0a6eb264ff6a409b9203fc6e7fc6773a3a4ad`. This historical #992 P2 discrepancy is exposed, not corrected by modifying an unrelated owner. An additional #992 review discrepancy between the README's old B06 dependencies and its machine DAG remains explicitly unresolved for the owner.
+
+Other already active consumers: [#1010 RF wave](https://github.com/GBOGEB/pipeline-automation-hub/pull/1010) uses old B00–B09; [#996 authority spine](https://github.com/GBOGEB/pipeline-automation-hub/pull/996) has distinct binding ownership. This PR makes no changes to either. Until an owner approves migrations, old machine IDs, old dependency edges, actual workflow/check names and GOGREEN admission policy are unchanged.
+
 ## Lifecycle phases and execution lanes
 
 | Phase | Lane | DevOps stage(s) | Crew / worker | Deliverable | DoD / verification |
@@ -70,3 +81,12 @@ The CLI reads workflow YAML **from the immutable Git tree at `--source-sha`**, n
 ## Explicit hold
 
 No workflow/job renaming, GOGREEN admission ledger update, branch ruleset mutation, new privileged trigger, external dispatch, deployment or merge in this slice. Preserve `validate-ultra-control`, `canonical-self-test-and-mutation`, and `GOGREEN required gate` required check identities. Existing `AGENTS.md` L1/L4/L5/L6/L7 remain binding.
+
+
+## Live wave qualification: 2026-10-29 readback
+
+The N0 implementation is reviewed at exact PR #997 head `3f09ccdaac86ae3e1310e1ab0106a1386e707913`. The GitHub check set has `GOGREEN required gate`, `validate-ultra-control`, `canonical-self-test-and-mutation`, JADE source/test/browser, and FPC proof checks green; the **JADE DevOps census is RED**. Its [run 40729945327](https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40729945327) recorded 77 passing `test_devops_*.py` tests but a mistaken same-step 89 floor. The separate metrics tests did not run, so do not invent a combined live count. The owner correction is existing [#977](https://github.com/GBOGEB/pipeline-automation-hub/pull/977); [#872](https://github.com/GBOGEB/pipeline-automation-hub/pull/872) owns unread-blob fail-closure. No copied repair in N0.
+
+The source-bound N2 [run 40728019289](https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40728019289) separately verified 183 source-SHA workflow YAMLs (includes new shadow workflow), 0 parse errors, 0 malformed-job errors, 0 DAG anomalies, 3 unclassified candidate labels. The archived ZIP has SHA-256 `d02bfa0793c0495d2d7ba94bef00856c7f6a0e7468cc103a889980e63f28def3`. The derived candidate hints are **not** executed-test credit, coverage percentages, or GOGREEN admission. N1 is [#1012](https://github.com/GBOGEB/pipeline-automation-hub/pull/1012), N2 is [#1014](https://github.com/GBOGEB/pipeline-automation-hub/pull/1014), both disjoint draft follow-ups with newer exact-head testflights pending. **MERGE_ADMISSION_HOLD** remains.
+
+**Integration boundary:** PR #997 N0 and merged #992 have distinct bundle ID namespaces. Do not flatten them or treat equal Bxx suffixes as policy equivalence; first obtain owner disposition on the versioned lossless crosswalk. Parent/child branch SHA drift requires requalification before landing N1 or N2.
