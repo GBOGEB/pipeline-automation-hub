@@ -64,5 +64,34 @@ class CanonicalCrosswalk(unittest.TestCase):
             C.crosswalk(None, CATALOG)
 
 
+    def test_old_spine_b07_is_not_candidate_b07(self):
+        row = C.crosswalk("test(ci/B07): scientific uncertainty", CATALOG)
+        self.assertEqual(row["bundle_candidates"], ["B07"])
+        self.assertEqual(row["candidate_namespace"], "jade.devops.ci_candidate")
+        self.assertEqual(row["candidate_urns"], ["jade.devops.ci_candidate:B07"])
+        self.assertEqual(row["legacy_spine_namespace"], "ci-spine:bundle")
+        self.assertFalse(row["legacy_label_equivalent"])
+
+    def test_legacy_spine_catalog_cannot_be_used_as_candidate_catalog(self):
+        legacy = dict(CATALOG, schema="ci-spine.logical_bundle_dag.v1")
+        with self.assertRaisesRegex(ValueError, "CANDIDATE_CATALOG_REQUIRED"):
+            C.crosswalk("test(ci/B07): suspicious match", legacy)
+
+    def test_promoted_catalog_cannot_inherit_advisory_label(self):
+        wrong = dict(CATALOG, merge_authorized=True)
+        with self.assertRaisesRegex(ValueError, "CANDIDATE_CATALOG_NOT_ADVISORY"):
+            C.crosswalk("test(ci/B07): suspicious match", wrong)
+
+    def test_duplicate_candidate_ids_rejected(self):
+        wrong = dict(CATALOG, bundles=CATALOG["bundles"] + [CATALOG["bundles"][7]])
+        with self.assertRaisesRegex(ValueError, "DUPLICATE_OR_INVALID_BUNDLES"):
+            C.crosswalk("test(ci/B07): suspicious match", wrong)
+
+    def test_non_catalog_bundle_list_rejected(self):
+        wrong = dict(CATALOG, bundles=None)
+        with self.assertRaisesRegex(ValueError, "CANDIDATE_BUNDLES_UNAVAILABLE"):
+            C.crosswalk("test(ci/B07): suspicious match", wrong)
+
+
 if __name__ == "__main__":
     unittest.main()
