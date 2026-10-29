@@ -28,6 +28,7 @@ SECRET = re.compile(
     r"sk-proj-[a-z0-9_-]{20,}|authorization\s*:\s*bearer\s+\S+|"
     r"[?&](?:token|access_token|sig|signature|x-amz-signature)=)"
 )
+PRIVATE_LOCATION = re.compile(r"(?i)^(?:file:|smb:|\\\\|[a-z]:[\\/]|/home/|/users/|/mnt/|/private/|~/)")
 PRIVATE_KEYS = {"messages", "message_text", "raw_transcript", "raw_messages",
                 "conversation_text", "password", "api_key", "private_reasoning",
                 "secret", "credential", "access_token"}
@@ -38,18 +39,21 @@ def fail(reason: str) -> None:
 def digest(raw: bytes) -> str:
     return hashlib.sha256(raw).hexdigest()
 
-def validate_metadata_tree(obj: object) -> None:
-    """Forbid raw-message payloads and credential-bearing strings at any depth."""
+def validate_metadata_tree(obj: object, *, public: bool = True) -> None:
+    """Forbid raw messages/credentials and public exposure of local locators."""
     if isinstance(obj, dict):
         for key, value in obj.items():
             if not isinstance(key, str) or key.lower() in PRIVATE_KEYS:
                 fail("raw/private content field")
-            validate_metadata_tree(value)
+            validate_metadata_tree(value, public=public)
     elif isinstance(obj, list):
         for value in obj:
-            validate_metadata_tree(value)
-    elif isinstance(obj, str) and SECRET.search(obj):
-        fail("credential or signed URL")
+            validate_metadata_tree(value, public=public)
+    elif isinstance(obj, str):
+        if SECRET.search(obj):
+            fail("credential or signed URL")
+        if public and PRIVATE_LOCATION.search(obj):
+            fail("private local storage locator in public metadata")
 
 def is_sha(value: object) -> bool:
     return isinstance(value, str) and HEX64.fullmatch(value) is not None
@@ -80,7 +84,7 @@ def validate(obj: dict, *, source_bytes: bytes | None = None,
              public: bool = True) -> dict:
     if not isinstance(obj, dict) or obj.get("schema") != SCHEMA:
         fail("sidecar instance schema")
-    validate_metadata_tree(obj)
+    validate_metadata_tree(obj, public=public)
     required = {"session_alias", "capture_utc", "source_class", "source_locator",
                 "source_sha256", "source_state", "scope", "completeness",
                 "message_count", "artifact_refs", "evidence",
