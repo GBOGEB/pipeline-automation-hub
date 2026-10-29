@@ -96,8 +96,13 @@ def hash_file(wt: Path, rel: str, max_bytes: int) -> dict:
             return {"state": "SIZE_LIMIT", "bytes": size, "sha256": None}
         h = hashlib.sha256()
         with path.open("rb") as handle:
-            for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            remaining = size
+            while remaining:
+                chunk = handle.read(min(1024 * 1024, remaining))
+                if not chunk:
+                    return {"state": "CHANGED_DURING_SCAN", "bytes": size, "sha256": None}
                 h.update(chunk)
+                remaining -= len(chunk)
         if path.stat().st_size != size:
             return {"state": "CHANGED_DURING_SCAN", "bytes": size, "sha256": None}
         return {"state": "HASHED", "bytes": size, "sha256": h.hexdigest()}
