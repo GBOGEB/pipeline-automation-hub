@@ -11,6 +11,7 @@ import argparse
 import json
 import re
 import sys
+from collections import deque
 from pathlib import PurePosixPath, Path
 
 POLICY_SCHEMA = "jade.devops.ci-spine.waves.v1"
@@ -35,7 +36,9 @@ def valid_path(name):
 
 def collision(left, right):
     """Two workers may not own a file/ancestor subtree simultaneously."""
-    x, y = left.rstrip("/"), right.rstrip("/")
+    # Conservative cross-platform overlap: Windows worktrees are case-insensitive.
+    # Case-folding also makes Linux planning safe for Windows downstream workers.
+    x, y = left.rstrip("/").casefold(), right.rstrip("/").casefold()
     if x.endswith("/**"):
         x = x[:-3]
     if y.endswith("/**"):
@@ -44,22 +47,23 @@ def collision(left, right):
 
 
 def cycles(nodes):
-    graph = {x["id"]: x["depends"] for x in nodes}
-    visiting, done = set(), set()
-
-    def dfs(i):
-        if i in visiting:
-            return True
-        if i in done:
-            return False
-        visiting.add(i)
-        if any(dfs(dep) for dep in graph[i]):
-            return True
-        visiting.remove(i)
-        done.add(i)
-        return False
-
-    return any(dfs(i) for i in graph if i not in done)
+    """Iterative Kahn traversal: deterministic O(nodes + edges), no recursion limit."""
+    indegree = {task["id"]: len(task["depends"]) for task in nodes}
+    downstream = {task["id"]: [] for task in nodes}
+    for task in nodes:
+        for prerequisite in task["depends"]:
+            # build() verifies references before calling this function.
+            downstream[prerequisite].append(task["id"])
+    frontier = deque(sorted(tid for tid, degree in indegree.items() if degree == 0))
+    completed = 0
+    while frontier:
+        tid = frontier.popleft()
+        completed += 1
+        for child in sorted(downstream[tid]):
+            indegree[child] -= 1
+            if indegree[child] == 0:
+                frontier.append(child)
+    return completed != len(indegree)
 
 
 def build(index, policy, receipts=None):
