@@ -174,6 +174,29 @@ class WaveContract(unittest.TestCase):
             self.assertEqual(rc, 1)
             self.assertEqual(json.loads(out.read_text())["verdict"], "WAVE_POLICY_FIRST_RED")
 
+    def test_win32_alias_component_rejected_before_worker_allocation(self):
+        # Windows strips trailing dot/space, reserves devices, and uses colon for ADS.
+        bad_paths = (
+            "src/a.py.", "src/a.py ", "src/a.py. ",
+            "src/subfolder./a.py", "src/subfolder /a.py",
+            "SRC/CON", "src/con.txt", "src/PRN.log", "src/COM1.csv",
+            "src/lpt9", "src/a.py:malicious", "src/a|b.py",
+            "src/tab\\tname.py", "src/review\\nname.py",
+        )
+        for candidate in bad_paths:
+            with self.subTest(candidate=candidate):
+                self.assertFalse(M.valid_path(candidate))
+                i, policy = sample()
+                policy["tasks"][0]["owns"] = [candidate]
+                outcome = M.build(i, policy)
+                self.assertEqual(outcome["candidate_workers"], [])
+                self.assertEqual(outcome["authority"]["merge"], "HOLD")
+                self.assertIn("invalid ownership paths", " ".join(outcome["errors"]))
+        for valid in ("src/a.py", "src/reports/R1.2.md",
+                      ".github/workflows/**", "docs/Specification 1.txt"):
+            with self.subTest(valid=valid):
+                self.assertTrue(M.valid_path(valid))
+
     def test_same_lane_and_worker_capacity(self):
         i, p = sample()
         p["tasks"][2]["owns"] = ["src/c.py"]
