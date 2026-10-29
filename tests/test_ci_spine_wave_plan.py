@@ -178,6 +178,7 @@ class WaveContract(unittest.TestCase):
         # Windows strips trailing dot/space, reserves devices, and uses colon for ADS.
         bad_paths = (
             "src/a.py.", "src/a.py ", "src/a.py. ",
+            "src/ a.py", "src/  a.py", " src/a.py", "src/ folder/a.py",
             "src/subfolder./a.py", "src/subfolder /a.py",
             "SRC/CON", "src/con.txt", "src/PRN.log", "src/COM1.csv",
             "src/lpt9", "src/COM\u00b9.txt", "src/COM\u00b2.log",
