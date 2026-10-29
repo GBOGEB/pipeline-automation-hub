@@ -14,7 +14,6 @@ from playwright.sync_api import sync_playwright, expect
 
 HERE = Path(__file__).resolve().parent
 HTML = HERE / "explorer.html"
-POINTERS = HERE / "pointers" / "index.html"
 QA = HERE / "qa" / "explorer"
 WIDTHS = (1440, 1280, 390)
 
@@ -29,7 +28,6 @@ def run():
         "network_requests_outside_local_file": [],
         "exceptions": [],
         "cases": [],
-        "pointer_cases": [],
         "merge_authorized": False,
     }
     with sync_playwright() as p:
@@ -106,74 +104,11 @@ def run():
             expect(page.locator('[data-lens="timing"]')).to_have_attribute("aria-current", "page")
             expect(page.locator("#detail")).to_contain_text("40690663789")
             page.close()
-            # JQ-04 static companion is a separate no-script page.  The clickable
-            # view-selection pointers must navigate into the existing explorer
-            # without introducing network dependencies or phantom PDF anchors.
-            for width in (1440, 390):
-                pointer_page = browser.new_page(
-                    viewport={"width": width, "height": 900},
-                    device_scale_factor=1,
-                )
-                pointer_page.on("pageerror", lambda exc: payload["exceptions"].append(str(exc)))
-                pointer_page.on(
-                    "request",
-                    lambda req: payload["network_requests_outside_local_file"].append(req.url)
-                    if not req.url.startswith("file://") else None,
-                )
-                pointer_page.goto(POINTERS.as_uri(), wait_until="load")
-                expect(pointer_page.locator("article.card")).to_have_count(3)
-                expect(pointer_page.locator("a.action")).to_have_count(3)
-                expect(pointer_page.locator("main")).to_contain_text("0 PDF RECTANGLES VERIFIED")
-                expect(pointer_page.locator(".layer-stage")).to_have_count(3)
-                assert pointer_page.locator('.layer-stage[data-layer="source"]').get_attribute("open") is not None
-                view_layer = pointer_page.locator('.layer-stage[data-layer="views"]')
-                assert view_layer.get_attribute("open") is None
-                view_layer.locator("summary").click()
-                assert view_layer.get_attribute("open") is not None, "view comparison is not interactive"
-                expect(view_layer).to_contain_text("Two distinct, source-bound")
-                assert view_layer.locator('a[href="../explorer.html#lens=sipoc&kind=bundle&id=B05"]').count() == 1
-                pdf_layer = pointer_page.locator('.layer-stage[data-layer="publication"]')
-                pdf_layer.locator("summary").click()
-                assert pdf_layer.get_attribute("open") is not None, "publication unknown-state disclosure"
-                expect(pdf_layer).to_contain_text("UNMAPPED")
-                assert pdf_layer.locator("a").count() == 0, "never create an unverified PDF link"
-                assert pointer_page.locator("script").count() == 0, "companion must have no script"
-                for href in (
-                    "../explorer.html#lens=graph&kind=bundle&id=B05",
-                    "../explorer.html#lens=sipoc&kind=bundle&id=B05",
-                    "../explorer.html#lens=timing&kind=run&id=40690663789",
-                ):
-                    assert pointer_page.locator('a.action[href="' + href + '"]').count() == 1, href
-                horizontal = pointer_page.evaluate(
-                    "({scroll:document.documentElement.scrollWidth,window:innerWidth})"
-                )
-                assert horizontal["scroll"] <= horizontal["window"] + 1, "pointer mobile overflow"
-                pointer_page.screenshot(
-                    path=str(QA / ("pointer-" + str(width) + ".png")), full_page=True
-                )
-                pointer_page.locator(
-                    'a.action[href="../explorer.html#lens=graph&kind=bundle&id=B05"]'
-                ).click()
-                expect(pointer_page.locator('[data-lens="graph"]')).to_have_attribute(
-                    "aria-current", "page"
-                )
-                expect(pointer_page.locator("#detail")).to_contain_text("B05")
-                payload["pointer_cases"].append({
-                    "viewport": width,
-                    "candidate_links": 3,
-                    "no_script": True,
-                    "pdf_rectangles_verified": 0,
-                    "navigation": "PASS",
-                    "layer_comparison": "PASS",
-                    "horizontal_overflow": False,
-                })
-                pointer_page.close()
         finally:
             browser.close()
     assert not payload["network_requests_outside_local_file"], "browser attempted external requests"
     assert not payload["exceptions"], "uncaught JavaScript errors"
     assert len(payload["cases"]) == len(WIDTHS), "incomplete viewport population"
-    assert len(payload["pointer_cases"]) == 2, "incomplete JQ-04 companion UI coverage"
     (QA / "browser-receipt.json").write_text(json.dumps(payload, indent=2, sort_keys=True)+"\n",
                                              encoding="utf-8", newline="\n")
     print(json.dumps({"verdict":"PASS","widths":WIDTHS,

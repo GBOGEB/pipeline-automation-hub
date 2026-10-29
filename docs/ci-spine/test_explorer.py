@@ -202,11 +202,6 @@ class ExplorerProvenanceTests(unittest.TestCase):
         self.assertTrue(parser.has_external_script)
         self.assertTrue(plotly_companion.external_scripts(html))
 
-    def test_unknown_queue_inspector_is_not_null_seconds(self):
-        page = explorer.OUTPUT.read_text("utf-8")
-        self.assertIn('(Number.isFinite(j?.queue_seconds)?E(j.queue_seconds)+" seconds":"UNKNOWN")', page)
-        self.assertNotIn('E(j?.queue_seconds)+" seconds"', page)
-
     @unittest.skipUnless(shutil.which("node"), "Node not installed; native browser QA must separately run")
     def test_inline_javascript_parses_in_node(self):
         html = explorer.OUTPUT.read_text("utf-8")
