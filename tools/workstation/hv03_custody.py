@@ -45,12 +45,11 @@ def sha(raw: bytes) -> str:
     return hashlib.sha256(raw).hexdigest()
 
 def worktrees(repo: Path) -> list[Path]:
-    data = as_text(git(repo, "worktree", "list", "--porcelain"))
+    data = as_text(git(repo, "worktree", "list", "--porcelain", "-z"))
     entries = []
-    for block in data.strip().split("\n\n"):
-        row = next((line[9:] for line in block.splitlines() if line.startswith("worktree ")), None)
-        if row:
-            path = Path(row)
+    for field in data.split("\0"):
+        if field.startswith("worktree "):
+            path = Path(field[9:])
             if not path.is_absolute():
                 raise ValueError("HV03_HOLD: nonabsolute worktree path")
             entries.append(path)
