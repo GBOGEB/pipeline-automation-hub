@@ -53,7 +53,28 @@ class PointerContractTests(unittest.TestCase):
         raw = p.file_bytes(doc["viewer"]["path"])
         self.assertEqual(p.git_blob_oid(raw), doc["viewer"]["blob_oid"])
         self.assertEqual(hashlib.sha256(raw).hexdigest(), doc["viewer"]["sha256"])
-        self.assertEqual(doc["viewer"]["build_workflow_run_id"], 40726398983)
+        self.assertIsNone(doc["viewer"]["build_workflow_run_id"])
+        self.assertEqual(doc["viewer"]["build_receipt_state"], "NATIVE_EXACT_HEAD_RUN_PENDING")
+
+    def test_claimed_commit_must_resolve_to_exact_blobs(self):
+        doc = self.changed(lambda d: (
+            d.__setitem__("source_commit", "f"*40),
+            d["viewer"].__setitem__("head_sha", "f"*40),
+            [r.__setitem__("source_commit", "f"*40) for r in d["pointers"]],
+            [r.__setitem__("output_commit", "f"*40) for r in d["pointers"]],
+        ))
+        with self.assertRaisesRegex(ValueError, "UNRESOLVED_SOURCE_COMMIT"):
+            self.validate(doc)
+
+    def test_unmapped_pdf_link_outside_publication_is_rejected(self):
+        with tempfile.TemporaryDirectory() as temp:
+            nav = Path(temp) / "index.html"
+            nav.write_text(p.NAV.read_text("utf-8") +
+                           '<a href="../fake.pdf#page=1">PDF page</a>',
+                           encoding="utf-8")
+            with mock.patch.object(p, "NAV", nav):
+                with self.assertRaisesRegex(ValueError, "NAV_UNDECLARED_LINK"):
+                    self.validate()
 
     def test_source_file_drift_fails(self):
         self.expect_red("SOURCE_BLOB_STALE", lambda d: d["pointers"][0]["source"].__setitem__("blob_oid", "a"*40))

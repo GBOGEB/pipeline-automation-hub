@@ -24,6 +24,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
+          fetch-depth: 2  # verify pinned viewer parent commit locally
       - name: Assert exact checkout
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -43,7 +44,7 @@ jobs:
           from pathlib import Path
           s=(Path(os.environ['RUNNER_TEMP'])/'ci-spine-tests.log').read_text()
           results=[int(x) for x in re.findall(r'^Ran (\d+) tests in ',s,re.M)]
-          if not results or results[-1] < 20:
+          if not results or results[-1] < 24:
               raise SystemExit('CI_SPINE_TEST_POPULATION_FIRST_RED')
           print('CI_SPINE_TESTS_EXECUTED='+str(results[-1]))
           PY
@@ -56,7 +57,7 @@ jobs:
           from pathlib import Path
           s=(Path(os.environ['RUNNER_TEMP'])/'ci-spine-pointers.log').read_text()
           results=[int(x) for x in re.findall(r'^Ran (\d+) tests in ',s,re.M)]
-          if not results or results[-1] < 19:
+          if not results or results[-1] < 27:
               raise SystemExit('CI_SPINE_POINTER_POPULATION_FIRST_RED')
           print('CI_SPINE_POINTER_TESTS_EXECUTED='+str(results[-1]))
           PY

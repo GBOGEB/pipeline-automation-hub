@@ -13,6 +13,7 @@ from html.parser import HTMLParser
 import json
 from pathlib import Path
 import re
+import subprocess
 from urllib.parse import parse_qs, urlsplit
 
 HERE = Path(__file__).resolve().parent
@@ -43,6 +44,20 @@ def file_bytes(path: str, root: Path = ROOT) -> bytes:
 
 def git_blob_oid(data: bytes) -> str:
     return hashlib.sha1(b"blob " + str(len(data)).encode("ascii") + b"\0" + data).hexdigest()
+
+
+def at_commit(head: str, path: str) -> bytes:
+    """Require claimed head to contain exact immutable path bytes, without shell."""
+    require(bool(SHA40.fullmatch(head)) and path in ALLOWED, "UNTRUSTED_COMMIT_PATH")
+    try:
+        proc = subprocess.run(
+            ["git", "show", f"{head}:{path}"], cwd=ROOT,
+            capture_output=True, check=False, timeout=10,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise ValueError("CI_SPINE_POINTER_FIRST_RED:UNRESOLVED_SOURCE_COMMIT") from exc
+    require(proc.returncode == 0, "UNRESOLVED_SOURCE_COMMIT")
+    return proc.stdout
 
 
 class Anchors(HTMLParser):
@@ -89,8 +104,10 @@ def validate(doc: dict, root: Path = ROOT) -> dict:
             and git_blob_oid(vb) == viewer["blob_oid"], "OUTPUT_BLOB_STALE")
     require(SHA256.fullmatch(str(viewer.get("sha256"))) is not None
             and hashlib.sha256(vb).hexdigest() == viewer["sha256"], "OUTPUT_SHA256_STALE")
-    require(isinstance(viewer.get("build_workflow_run_id"), int)
-            and viewer["build_workflow_run_id"] > 0, "MISSING_RENDER_RECEIPT")
+    require(at_commit(head, viewer["path"]) == vb, "OUTPUT_NOT_AT_CLAIMED_COMMIT")
+    require(viewer.get("build_workflow_run_id") is None
+            and viewer.get("build_receipt_state") == "NATIVE_EXACT_HEAD_RUN_PENDING",
+            "MISSING_OR_FALSE_RENDER_RECEIPT")
     html_text = vb.decode("utf-8")
     anchors = Anchors()
     anchors.feed(html_text)
@@ -108,6 +125,7 @@ def validate(doc: dict, root: Path = ROOT) -> dict:
         raw = file_bytes(path, root)
         require(SHA40.fullmatch(str(source.get("blob_oid"))) is not None
                 and git_blob_oid(raw) == source["blob_oid"], "SOURCE_BLOB_STALE")
+        require(at_commit(head, path) == raw, "SOURCE_NOT_AT_CLAIMED_COMMIT")
         if path not in source_cache:
             source_cache[path] = json.loads(raw)
         obj = json_pointer(source_cache[path], source.get("json_pointer"))
@@ -155,6 +173,14 @@ def validate(doc: dict, root: Path = ROOT) -> dict:
             and b"connect-src 'none'" in nav_bytes, "NAV_REMOTE_EXECUTION")
     require(all(row["output"]["href"] in nav.links for row in rows),
             "NAV_BROKEN_POINTER_LINK")
+    approved_links = {"../explorer.html", "../README.md",
+                      "../JACQUARD_CROSSWALK.md"}
+    approved_links.update(row["output"]["href"] for row in rows)
+    approved_links.update(
+        "https://github.com/" + doc["repository"] + "/blob/" + head + "/" + row["source"]["path"]
+        for row in rows
+    )
+    require(nav.links <= approved_links, "NAV_UNDECLARED_LINK")
     require("FROZEN" in nav_bytes.decode("utf-8")
             and "0 PDF RECTANGLES VERIFIED" in nav_bytes.decode("utf-8"),
             "NAV_FALSE_AUTHORITY")

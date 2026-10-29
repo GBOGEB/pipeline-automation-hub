@@ -2,12 +2,12 @@
 
 > **Stack:** #989 (MERGED) + #992 (MERGED) → [#1002 parent: offline Jacquard-inspired explorer](https://github.com/GBOGEB/pipeline-automation-hub/pull/1002) → **this focused child**. No changes to master, PR protection, admission rules, workflow names, code-generation engines, or PDF sources.
 >
-> **Status:** IMPLEMENTED CANDIDATE / NATIVE DoV PENDING / independent approval HOLD. Distinct from the source catalog SHA `ca623ab83793df6edd245942884ad5428a5fe079`.
+> **Status:** REBOUND CANDIDATE / NEW NATIVE DoV PENDING / independent approval HOLD. Distinct from the source catalog SHA `ca623ab83793df6edd245942884ad5428a5fe079`.
 
 ## What is real, rather than inferred?
 
 - [`POINTER_MAP_v1.json`](POINTER_MAP_v1.json) has **three candidate** source-object → offline-view pointers: logical DAG B05 to graph selection, B05 to its SIPOC view, and the source-bound sampled run `40690663789` to its run-clock view.
-- Both original **source files** are bound to Git blob OIDs at **parent #1002 head** `4cc045d322fb65fef8fb00b2cd93e50bbc52bbd8`. The explorer **HTML binary** is independently bound to Git blob OID and SHA-256 `a7cbae8da2753404241b99a50f999f3f7526f111c30e86c102025d81aa283e0c`, observed by exact-head generator and Chromium QA in Actions run [40726398983](https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40726398983).
+- Both original **source files** are bound to Git blob OIDs at **parent #1002 head** `e866b340b81a1287c8d05b34203d57f28ee4553e`. The explorer **HTML binary** is independently bound to Git blob OID and SHA-256 `feff387326ce03a8c98f7d36f97b9c8fb08c415b148c26e6f125753914010126`, rebuilt from the deterministic generator and awaiting NEW exact-head GitHub Actions and Chromium readback (historic run 40726398983 applied only to the previous bytes).
 - The selected JSON pointers (`/nodes/5` and `/runs/0`) are checked against actual semantic identifiers, not just guessed coordinates. Their output URL hashes are checked against the existing `explorer.html` router and DOM container IDs.
 - [`index.html`](index.html) is a small, **offline, zero-script, source-to-view navigation companion** with three real clickable routes and disclosed provenance. It complements #1002's five-lens GUI; it does not fork the graph/layout or recompute metrics.
 - The **PDF/OCG/page/bbox** placeholder is `UNMAPPED_NO_VERIFIED_BINARY`. There is **no PDF link** and no claim of a working PDF-layer or per-rectangle mapping. The first PDF pilot needs actual owner binaries, a source mapping, normalized coordinate convention, digest, page-range checks and independent visual DoV.
@@ -19,7 +19,7 @@ python docs/ci-spine/pointers/test_pointer_contract.py
 python docs/ci-spine/pointers/pointer_contract.py --out /tmp/ci-spine-pointer-receipt.json
 ```
 
-The existing #1002 path-scoped workflow `test(ci-spine): provenance explorer QA` is extended **in its existing static job**, not by creating a new runner or replacing any gate. It retains its original 20-test explorer QA, browser DoV and Plotly proof, adds **25 pointer tests**, checks the nonzero executed-test count, and uploads a candidate pointer receipt. Tested failure modes: wrong source SHA/blob, mutated HTML binary SHA/digest, invalid or dangling JSON pointer, object/selection mismatch, external URL, wrong hash route, missing DOM anchor, fake PDF rectangle/OCG link, duplicated pointer, external script and misleading green/authority assertions.
+The existing #1002 path-scoped workflow `test(ci-spine): provenance explorer QA` is extended **in its existing static job**, not by creating a new runner or replacing any gate. It retains **24 additive explorer tests**, browser DoV and Plotly proof, adds **27 pointer tests**, checks the nonzero executed-test count, and uploads a candidate pointer receipt. Tested failure modes: wrong source SHA/blob, mutated HTML binary SHA/digest, invalid or dangling JSON pointer, object/selection mismatch, external URL, wrong hash route, missing DOM anchor, fake PDF rectangle/OCG link, duplicated pointer, external script and misleading green/authority assertions.
 
 Receipt values:
 - `verdict=SOURCE_BOUND_VIEW_SELECTION_ONLY`;
