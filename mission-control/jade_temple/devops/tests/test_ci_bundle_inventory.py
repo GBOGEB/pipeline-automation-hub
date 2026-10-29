@@ -102,6 +102,14 @@ class BundleInventory(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "ROOT_MUST_BE_REPOSITORY_TOPLEVEL"):
             module.inventory(root / ".github", CATALOG, sha)
 
+    def test_tree_or_blob_oid_is_not_a_source_commit(self):
+        root, sha = self.make("name: sample\non: push\njobs: {a: {steps: []}}")
+        for oid in (git(root, "rev-parse", "HEAD^{tree}"),
+                    git(root, "rev-parse", "HEAD:.github/workflows/test.yml")):
+            with self.assertRaisesRegex(ValueError, "SOURCE_SHA_MUST_NAME_A_COMMIT"):
+                module.inventory(root, CATALOG, oid)
+        self.assertEqual(module.inventory(root, CATALOG, sha)["source_sha"], sha)
+
     def test_live_repository_shadow_scan_source_bound(self):
         sha = git(REPO, "rev-parse", "HEAD")
         report = module.inventory(REPO, CATALOG, sha)
