@@ -8,7 +8,16 @@ HEAD = "a" * 40
 REQ = a.REQUIRED_CONTEXT
 
 
-def observation(required=False, merged=True, red=True, reviews=None):
+RUN_URL = "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40328204473"
+
+
+def status(ident=40328204473, state="failure", when="2026-10-26T13:10:15Z",
+           creator="github-actions[bot]", context=REQ, url=RUN_URL):
+    return {"id": ident, "context": context, "state": state, "updated_at": when,
+            "creator": {"login": creator}, "target_url": url}
+
+
+def observation(required=False, merged=True, red=True, reviews=None, attested=True):
     rules = [
         {"type": "pull_request", "parameters": {
             "required_approving_review_count": 0, "dismiss_stale_reviews_on_push": True,
@@ -25,10 +34,10 @@ def observation(required=False, merged=True, red=True, reviews=None):
             "ruleset": {"enforcement": "active", "target": "branch", "rules": rules,
                         "conditions": {"ref_name": {"include": ["~DEFAULT_BRANCH"]}},
                         "bypass_actors": []},
-            "workflow_runs": [
-                {"id": 40328204473, "name": REQ, "head_sha": HEAD,
-                 "status": "completed", "conclusion": "failure",
-                 "updated_at": "2026-10-26T13:10:15Z"}] if red else [],
+            "commit_statuses": {"sha": HEAD, "statuses": [status()] if red else []},
+            "effective_policy": {"sources": {
+                "rules_for_branch": [REQ] if required else ["GOGREEN required gate"],
+                "classic_branch_protection": []}} if attested else None,
             "reviews": reviews or []}
 
 
@@ -36,7 +45,7 @@ class AdmissionAudit(unittest.TestCase):
     def test_unrequired_red_before_merge_disproves_effective_fpc(self):
         r = a.audit(observation())
         self.assertEqual(r["merge_observation"], "MERGED_AFTER_UNREQUIRED_FPC_RED")
-        self.assertEqual(r["red_before_merge"][0]["run_id"], 40328204473)
+        self.assertEqual(r["red_before_merge"][0]["status_id"], 40328204473)
         self.assertIn("required_fpc_context", r["missing_controls"])
         self.assertFalse(r["blocked_red_canary_verified"])
         self.assertEqual(r["governed_admission"], "HOLD")
@@ -50,11 +59,46 @@ class AdmissionAudit(unittest.TestCase):
 
     def test_stale_wrong_head_or_late_red_is_not_before_merge(self):
         m = observation()
-        m["workflow_runs"][0]["head_sha"] = "b" * 40
-        self.assertEqual(a.audit(m)["red_before_merge"], [])
+        m["commit_statuses"]["sha"] = "b" * 40
+        with self.assertRaisesRegex(ValueError, "COMMIT_STATUSES_NOT_FOR_PR_HEAD"):
+            a.audit(m)
         m = observation()
-        m["workflow_runs"][0]["updated_at"] = "2026-10-26T13:11:00Z"
+        m["commit_statuses"]["statuses"][0]["updated_at"] = "2026-10-26T13:11:00Z"
         self.assertEqual(a.audit(m)["red_before_merge"], [])
+
+    def test_real_fpc_commit_status_shape_is_consumed(self):
+        # Shape of GET /repos/{r}/commits/{sha}/statuses for the evaluator's post.
+        r = a.audit(observation())
+        self.assertEqual(r["red_before_merge"][0]["state"], "failure")
+        self.assertEqual(r["red_before_merge"][0]["target_url"], RUN_URL)
+
+    def test_red_replaced_by_green_before_merge_is_not_red(self):
+        m = observation()
+        m["commit_statuses"]["statuses"].append(
+            status(ident=2, state="success", when="2026-10-26T13:10:20Z"))
+        r = a.audit(m)
+        self.assertEqual(r["red_before_merge"], [])
+        self.assertEqual(r["merge_observation"], "MERGED_NO_QUALIFYING_RED_RECEIPT")
+
+    def test_unauthenticated_fpc_status_is_ignored(self):
+        for bad in (status(creator="mallory"),
+                    status(url="https://evil.example/actions/runs/1")):
+            m = observation()
+            m["commit_statuses"]["statuses"] = [bad]
+            self.assertEqual(a.audit(m)["red_before_merge"], [])
+
+    def test_unrequired_needs_complete_effective_policy(self):
+        r = a.audit(observation(attested=False))
+        self.assertEqual(r["merge_observation"], "MERGED_AFTER_FPC_RED_REQUIREMENT_UNKNOWN")
+        self.assertFalse(r["effective_policy_attested"])
+        m = observation()
+        del m["effective_policy"]["sources"]["classic_branch_protection"]
+        self.assertEqual(a.audit(m)["merge_observation"],
+                         "MERGED_AFTER_FPC_RED_REQUIREMENT_UNKNOWN")
+        m = observation()
+        m["effective_policy"]["sources"]["classic_branch_protection"] = [REQ]
+        self.assertEqual(a.audit(m)["merge_observation"],
+                         "POSSIBLE_ENFORCEMENT_FAILURE_REQUIRES_MERGE_API_AND_BYPASS_AUDIT")
 
     def test_no_merge_and_no_review_does_not_give_green(self):
         m = observation(merged=False)
@@ -80,6 +124,20 @@ class AdmissionAudit(unittest.TestCase):
         self.assertFalse(r["blocked_red_canary_verified"])
         self.assertNotIn("main_targeted", r["missing_controls"])
 
+    def test_canary_consistency_requires_eligible_approval(self):
+        m = observation(required=True, merged=False)
+        rules = m["ruleset"]["rules"]
+        rules[0]["parameters"].update(required_approving_review_count=1,
+                                      require_last_push_approval=True)
+        rules[1]["parameters"]["strict_required_status_checks_policy"] = True
+        m["canary"] = {"head_sha": HEAD, "merge_api_rejected": True,
+                       "required_check_failed": True}
+        r = a.audit(m)
+        self.assertEqual(r["missing_controls"], [])
+        self.assertFalse(r["blocked_red_canary_claim_consistent"])
+        m["reviews"] = [{"state": "APPROVED", "user": "reviewer2", "commit_id": HEAD}]
+        self.assertTrue(a.audit(m)["blocked_red_canary_claim_consistent"])
+
     def test_fail_closed_unknown_schema_shas_rules_review_and_times(self):
         m = observation()
         m["schema"] = "fake"
@@ -94,7 +152,8 @@ class AdmissionAudit(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "REVIEW_LIST_NOT_RETURNED"):
             a.audit(m)
         m = observation()
-        m["workflow_runs"].append(copy.deepcopy(m["workflow_runs"][0]))
+        m["commit_statuses"]["statuses"].append(
+            copy.deepcopy(m["commit_statuses"]["statuses"][0]))
         with self.assertRaisesRegex(ValueError, "DUPLICATE_OR_INVALID"):
             a.audit(m)
 
