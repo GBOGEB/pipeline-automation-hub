@@ -39,7 +39,7 @@ def valid_path(name):
     for component in p.parts:
         if (component in (".", "..") or component.rstrip(" .") != component
                 or any(ord(c) < 32 or c in '<>:"|\\' for c in component)
-                or re.fullmatch(r"(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\..*)?",
+                or re.fullmatch(r"(?:con|conin\$|conout\$|prn|aux|nul|com[1-9\u00b9\u00b2\u00b3]|lpt[1-9\u00b9\u00b2\u00b3])(?:\..*)?",
                                 component, re.IGNORECASE)):
             return False
     return True
