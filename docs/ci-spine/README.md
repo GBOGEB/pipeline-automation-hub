@@ -13,7 +13,7 @@ python docs/ci-spine/build_explorer.py --check
 python docs/ci-spine/test_explorer.py
 ```
 
-**Browser QA (optional local prerequisite):** `python -m pip install playwright==1.56.0`, `python -m playwright install chromium`, then `python docs/ci-spine/browser_explorer_qa.py`. The scoped PR GitHub Actions job performs the native Chromium 1440/1280/390 checks and stores screenshots/receipt. **Optional Plotly companion:** `python -m pip install plotly==6.5.2`, `python docs/ci-spine/plotly_projection.py --out ci-spine-plotly.html`; the CI job uploads the same self-contained Plotly view as an artifact without committing an 5MB bundle.
+**Browser QA (optional local prerequisite):** `python -m pip install playwright==1.56.0`, `python -m playwright install chromium`, then `python docs/ci-spine/browser_explorer_qa.py`. The scoped PR GitHub Actions job performs the native Chromium 1440/1280/390 checks and stores screenshots/receipt. **Optional Plotly companion:** `python -m pip install plotly==6.5.2`, `python docs/ci-spine/plotly_projection.py --out ci-spine-plotly.html` (the explorer link is computed relative to `--out`; add `--bundle-explorer` to copy `explorer.html` beside the chart instead); the CI job uploads the chart with its bundled explorer as an artifact without committing an 5MB bundle.
 
 **Boundary:** These source indexes are *frozen at* `ca623ab83793df6edd245942884ad5428a5fe079`, prior to the merged #992/#989 changes; the current checked-out branch or live GitHub state can differ. The logical bundle DAG, alias grammar and source pointers are advisory; the existing JADE/GOGREEN modules remain authoritative. This PR does not implement PDF region mappings, edited-comments synchronisation, execution dispatch, or merge admission.
 

@@ -48,23 +48,33 @@ class PointerContractTests(unittest.TestCase):
 
     def test_exact_blob_and_sha256_from_qualified_head(self):
         doc = self.doc
-        self.assertEqual(doc["viewer"]["head_sha"], doc["source_commit"])
-        self.assertNotEqual(doc["catalog_snapshot_commit"], doc["source_commit"])
+        for field in p.MUTABLE_COMMIT_FIELDS:
+            self.assertNotIn(field, doc)
+            self.assertNotIn(field, doc["viewer"])
+        self.assertEqual(p.tree_blob(doc["viewer"]["path"]), doc["viewer"]["blob_oid"])
         raw = p.file_bytes(doc["viewer"]["path"])
         self.assertEqual(p.git_blob_oid(raw), doc["viewer"]["blob_oid"])
         self.assertEqual(hashlib.sha256(raw).hexdigest(), doc["viewer"]["sha256"])
         self.assertIsNone(doc["viewer"]["build_workflow_run_id"])
         self.assertEqual(doc["viewer"]["build_receipt_state"], "NATIVE_EXACT_HEAD_RUN_PENDING")
 
-    def test_claimed_commit_must_resolve_to_exact_blobs(self):
-        doc = self.changed(lambda d: (
-            d.__setitem__("source_commit", "f"*40),
-            d["viewer"].__setitem__("head_sha", "f"*40),
-            [r.__setitem__("source_commit", "f"*40) for r in d["pointers"]],
-            [r.__setitem__("output_commit", "f"*40) for r in d["pointers"]],
-        ))
-        with self.assertRaisesRegex(ValueError, "UNRESOLVED_SOURCE_COMMIT"):
-            self.validate(doc)
+    def test_pinned_bytes_must_be_committed_at_checkout(self):
+        # Matching working-tree bytes are not enough: the checked-out HEAD tree must hold them.
+        with mock.patch.object(p, "tree_blob", return_value="0"*40):
+            with self.assertRaisesRegex(ValueError, "OUTPUT_NOT_AT_CHECKOUT"):
+                self.validate()
+        viewer = self.doc["viewer"]
+        with mock.patch.object(p, "tree_blob",
+                               side_effect=lambda path: viewer["blob_oid"]
+                               if path == viewer["path"] else "0"*40):
+            with self.assertRaisesRegex(ValueError, "SOURCE_NOT_AT_CHECKOUT"):
+                self.validate()
+
+    def test_unresolvable_checkout_fails_closed(self):
+        failed = mock.Mock(returncode=128, stdout=b"")
+        with mock.patch.object(p.subprocess, "run", return_value=failed):
+            with self.assertRaisesRegex(ValueError, "UNRESOLVED_CHECKOUT"):
+                self.validate()
 
     def test_unmapped_pdf_link_outside_publication_is_rejected(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -82,8 +92,62 @@ class PointerContractTests(unittest.TestCase):
     def test_render_binary_drift_fails(self):
         self.expect_red("OUTPUT_SHA256_STALE", lambda d: d["viewer"].__setitem__("sha256", "a"*64))
 
-    def test_source_commit_switch_fails(self):
-        self.expect_red("HEAD_IDENTITY", lambda d: d.__setitem__("source_commit", "f"*40))
+    def test_mutable_commit_binding_is_rejected(self):
+        # A branch SHA is orphaned by rebase or squash merge, so it can never be the binding.
+        self.expect_red("MUTABLE_COMMIT_BINDING", lambda d: d.__setitem__("source_commit", "f"*40))
+        self.expect_red("MUTABLE_COMMIT_BINDING", lambda d: d["viewer"].__setitem__("head_sha", "f"*40))
+        self.expect_red("MUTABLE_COMMIT_BINDING", lambda d: d["pointers"][2].__setitem__("output_commit", "f"*40))
+        self.expect_red("HEAD_IDENTITY", lambda d: d.__setitem__("catalog_snapshot_commit", "main"))
+
+    def test_lens_must_match_object_kind(self):
+        # Lens, DOM id and href changed together still route to fallback B05, not the run.
+        def to_sipoc(d):
+            out = d["pointers"][2]["output"]
+            out.update(lens="sipoc", dom_id="sipoc-body",
+                       href="../explorer.html#lens=sipoc&kind=run&id=" + str(out["selection_id"]))
+        self.expect_red("LENS_KIND_MISMATCH", to_sipoc)
+
+        def bundle_to_timing(d):
+            out = d["pointers"][0]["output"]
+            out.update(lens="timing", dom_id="timing-rows",
+                       href="../explorer.html#lens=timing&kind=bundle&id=B05")
+        self.expect_red("LENS_KIND_MISMATCH", bundle_to_timing)
+
+    def test_atlas_cannot_display_stale_provenance(self):
+        stale = ("a7cbae8da2753404241b99a50f999f3f7526f111c30e86c102025d81aa283e0c",
+                 "build run 40726398983", "e866b340b81a1287c8d05b34203d57f28ee4553e")
+        for extra in stale:
+            with self.subTest(extra=extra), tempfile.TemporaryDirectory() as temp:
+                nav = Path(temp) / "index.html"
+                nav.write_text(p.NAV.read_text("utf-8").replace(
+                    "</main>", "<p>" + extra + "</p></main>"), encoding="utf-8")
+                with mock.patch.object(p, "NAV", nav):
+                    with self.assertRaisesRegex(ValueError, "NAV_STALE_PROVENANCE"):
+                        self.validate()
+
+    def test_atlas_displays_current_viewer_digest(self):
+        shown = p.nav_bindings(p.NAV.read_text("utf-8"))
+        self.assertEqual(shown, p.declared_bindings(self.doc))
+        self.assertIn(self.doc["viewer"]["sha256"], shown["sha256"])
+
+    def test_rebind_moves_only_content_identities(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            for path in p.ALLOWED:
+                destination = root / path
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(p.ROOT / path, destination)
+            target = root / "docs/ci-spine/explorer.html"
+            target.write_bytes(target.read_bytes() + b"\n<!-- rebuilt -->")
+            doc, nav = p.rebind(self.doc, p.NAV.read_text("utf-8"), root)
+        new_sha = hashlib.sha256(p.ROOT.joinpath("docs/ci-spine/explorer.html").read_bytes()
+                                 + b"\n<!-- rebuilt -->").hexdigest()
+        self.assertEqual(doc["viewer"]["sha256"], new_sha)
+        self.assertNotIn(self.doc["viewer"]["sha256"], nav)
+        self.assertIn(new_sha, nav)
+        self.assertEqual([r["output"]["href"] for r in doc["pointers"]],
+                         [r["output"]["href"] for r in self.doc["pointers"]])
+        self.assertEqual({r["output"]["sha256"] for r in doc["pointers"]}, {new_sha})
 
     def test_target_digest_is_not_independently_guessed(self):
         self.expect_red("MISMATCHED_OUTPUT", lambda d: d["pointers"][1]["output"].__setitem__("sha256", "f"*64))

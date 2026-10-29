@@ -106,6 +106,40 @@ def run():
             expect(page.locator('[data-lens="timing"]')).to_have_attribute("aria-current", "page")
             expect(page.locator("#detail")).to_contain_text("40690663789")
             page.close()
+            # Router hardening: malformed ids fall back safely, Back restores the
+            # fragment-less initial view, and keyboard activation keeps focus.
+            page = browser.new_page()
+            page.on("pageerror", lambda exc: payload["exceptions"].append(str(exc)))
+            for bad in ("constructor", "__proto__", "toString"):
+                page.goto(HTML.as_uri() + "#lens=sipoc&kind=bundle&id=" + bad)
+                page.reload()
+                expect(page.locator('[data-lens="sipoc"]')).to_have_attribute("aria-current", "page")
+                expect(page.locator("#view-subtitle")).to_have_text("bundle · B05")
+            page.goto("about:blank")
+            page.goto(HTML.as_uri())
+            page.locator('[data-lens="timing"]').click()
+            expect(page.locator('[data-lens="timing"]')).to_have_attribute("aria-current", "page")
+            page.go_back()
+            expect(page.locator('[data-lens="graph"]')).to_have_attribute("aria-current", "page")
+            expect(page.locator("#view-subtitle")).to_have_text("bundle · B05")
+            page.go_forward()
+            expect(page.locator('[data-lens="timing"]')).to_have_attribute("aria-current", "page")
+            page.locator('[data-lens="graph"]').click()
+            node = page.locator('[data-focus-key="graph:bundle:B06"]')
+            node.focus()
+            page.keyboard.press("Enter")
+            expect(page.locator("#view-subtitle")).to_have_text("bundle · B06")
+            assert page.evaluate("document.activeElement.dataset.focusKey") == "graph:bundle:B06", \
+                "keyboard focus lost after graph redraw"
+            nav_b07 = page.locator('[data-focus-key="nav:bundle:B07"]')
+            nav_b07.focus()
+            page.keyboard.press(" ")
+            expect(page.locator("#view-subtitle")).to_have_text("bundle · B07")
+            assert page.evaluate("document.activeElement.dataset.focusKey") == "nav:bundle:B07", \
+                "keyboard focus lost after navigator redraw"
+            payload["router_cases"] = ["malformed_id_fallback", "back_forward_initial_view",
+                                       "graph_enter_keeps_focus", "nav_space_keeps_focus"]
+            page.close()
             # JQ-04 static companion is a separate no-script page.  The clickable
             # view-selection pointers must navigate into the existing explorer
             # without introducing network dependencies or phantom PDF anchors.

@@ -2,14 +2,12 @@
   "schema": "gbo.ci-spine.pointer-map.v1",
   "kind": "frozen_advisory_source_to_view_mappings_no_execution",
   "repository": "GBOGEB/pipeline-automation-hub",
-  "source_commit": "e866b340b81a1287c8d05b34203d57f28ee4553e",
   "catalog_snapshot_commit": "ca623ab83793df6edd245942884ad5428a5fe079",
   "viewer": {
     "path": "docs/ci-spine/explorer.html",
-    "blob_oid": "be4927d7ccd2f75acfad851b80807d1ad42bef67",
-    "sha256": "feff387326ce03a8c98f7d36f97b9c8fb08c415b148c26e6f125753914010126",
+    "blob_oid": "5a7fad43ae064a43b7eecd223a3c218312bbcd74",
+    "sha256": "77331c5e6220a65b75d1d5192787f663b3556085dc74ee291738f465e4f26c71",
     "build_workflow_run_id": null,
-    "head_sha": "e866b340b81a1287c8d05b34203d57f28ee4553e",
     "authority": "FROZEN_ADVISORY",
     "build_receipt_state": "NATIVE_EXACT_HEAD_RUN_PENDING"
   },
@@ -24,8 +22,8 @@
       },
       "output": {
         "path": "docs/ci-spine/explorer.html",
-        "blob_oid": "be4927d7ccd2f75acfad851b80807d1ad42bef67",
-        "sha256": "feff387326ce03a8c98f7d36f97b9c8fb08c415b148c26e6f125753914010126",
+        "blob_oid": "5a7fad43ae064a43b7eecd223a3c218312bbcd74",
+        "sha256": "77331c5e6220a65b75d1d5192787f663b3556085dc74ee291738f465e4f26c71",
         "dom_id": "dag",
         "lens": "graph",
         "kind": "bundle",
@@ -35,9 +33,7 @@
       "precision": "VIEW_SELECTION",
       "claim": "B05 logical bundle selected on the DAG viewer; this is not an SVG element bbox or exact output geometry",
       "state": "CANDIDATE_PENDING_NATIVE_DOV",
-      "authority": "ADVISORY",
-      "source_commit": "e866b340b81a1287c8d05b34203d57f28ee4553e",
-      "output_commit": "e866b340b81a1287c8d05b34203d57f28ee4553e"
+      "authority": "ADVISORY"
     },
     {
       "id": "JQ4-B05-SIPOC",
@@ -49,8 +45,8 @@
       },
       "output": {
         "path": "docs/ci-spine/explorer.html",
-        "blob_oid": "be4927d7ccd2f75acfad851b80807d1ad42bef67",
-        "sha256": "feff387326ce03a8c98f7d36f97b9c8fb08c415b148c26e6f125753914010126",
+        "blob_oid": "5a7fad43ae064a43b7eecd223a3c218312bbcd74",
+        "sha256": "77331c5e6220a65b75d1d5192787f663b3556085dc74ee291738f465e4f26c71",
         "dom_id": "sipoc-body",
         "lens": "sipoc",
         "kind": "bundle",
@@ -60,9 +56,7 @@
       "precision": "VIEW_SELECTION",
       "claim": "B05 SIPOC panel selection, not a line-level or PDF source-location map",
       "state": "CANDIDATE_PENDING_NATIVE_DOV",
-      "authority": "ADVISORY",
-      "source_commit": "e866b340b81a1287c8d05b34203d57f28ee4553e",
-      "output_commit": "e866b340b81a1287c8d05b34203d57f28ee4553e"
+      "authority": "ADVISORY"
     },
     {
       "id": "JQ4-RUN-40690663789",
@@ -74,8 +68,8 @@
       },
       "output": {
         "path": "docs/ci-spine/explorer.html",
-        "blob_oid": "be4927d7ccd2f75acfad851b80807d1ad42bef67",
-        "sha256": "feff387326ce03a8c98f7d36f97b9c8fb08c415b148c26e6f125753914010126",
+        "blob_oid": "5a7fad43ae064a43b7eecd223a3c218312bbcd74",
+        "sha256": "77331c5e6220a65b75d1d5192787f663b3556085dc74ee291738f465e4f26c71",
         "dom_id": "timing-rows",
         "lens": "timing",
         "kind": "run",
@@ -85,9 +79,7 @@
       "precision": "VIEW_SELECTION",
       "claim": "Exact recorded run ID selection with sampled job timing, not release or full-fleet performance",
       "state": "CANDIDATE_PENDING_NATIVE_DOV",
-      "authority": "ADVISORY",
-      "source_commit": "e866b340b81a1287c8d05b34203d57f28ee4553e",
-      "output_commit": "e866b340b81a1287c8d05b34203d57f28ee4553e"
+      "authority": "ADVISORY"
     }
   ],
   "pending": [
@@ -104,7 +96,7 @@
   ],
   "notes": [
     "Do not elevate candidate pointers to engineering or merge authority.",
-    "Source commit is the PR #1002 head where the referenced files exist, not the older catalog snapshot SHA.",
+    "Pointers bind content (git blob OIDs and the viewer SHA-256), validated against the checked-out HEAD tree. A branch commit SHA is not recorded: rebases and squash merges orphan it.",
     "No PDF rectangle, native layer, inline edit or mirrored-comment precision is inferred."
   ]
 }

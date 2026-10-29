@@ -9,11 +9,14 @@ import argparse
 import hashlib
 import html
 import json
+import os
+import shutil
 from html.parser import HTMLParser
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 DATA = HERE / "RUN_TIMING_SAMPLES_20261028.json"
+EXPLORER = HERE / "explorer.html"
 HEAD = "ca623ab83793df6edd245942884ad5428a5fe079"
 
 
@@ -61,7 +64,16 @@ def external_scripts(document: str) -> bool:
     return parser.has_script_dependency
 
 
-def render():
+def explorer_href(out: Path) -> str:
+    """Link to the explorer from where the chart is written, never an assumed sibling."""
+    try:
+        rel = os.path.relpath(EXPLORER.resolve(), out.resolve().parent)
+    except ValueError as exc:  # different Windows drive: no relative path exists
+        raise ValueError("PLOTLY_EXPLORER_UNREACHABLE_FIRST_RED: use --bundle-explorer") from exc
+    return Path(rel).as_posix()
+
+
+def render(explorer="explorer.html"):
     try:
         from plotly import graph_objects as go
         from plotly.io import to_html
@@ -102,8 +114,8 @@ def render():
              'color:#dbeae6;max-width:1100px;margin:auto"><b>FROZEN / READ-ONLY / NO '
              'ADMISSION AUTHORITY</b><p>Eight selected runs on 2026-10-28, not a representative '
              'fleet time series. Representative longest completed job per run; queue and '
-             'execution are distinct. Navigate the <a href="explorer.html">offline DAG/SIPOC'
-             ' explorer</a> for source and DoD/DoV. Snapshot: <code>'+HEAD+
+             'execution are distinct. Navigate the <a href="'+html.escape(explorer, quote=True)+
+             '">offline DAG/SIPOC explorer</a> for source and DoD/DoV. Snapshot: <code>'+HEAD+
              '</code>. No API calls.</p><details><summary>Open source run attempts</summary>'
              '<ul>'+links+'</ul></details></section>')
     if rendered.count("<body>") != 1:
@@ -120,9 +132,17 @@ def render():
 def main(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--bundle-explorer", action="store_true",
+                        help="copy explorer.html beside the chart (for a standalone artifact)")
     args = parser.parse_args(argv)
-    out = render()
     args.out.parent.mkdir(parents=True, exist_ok=True)
+    if args.bundle_explorer:
+        if args.out.resolve().parent != HERE.resolve():
+            shutil.copyfile(EXPLORER, args.out.parent / EXPLORER.name)
+        href = EXPLORER.name
+    else:
+        href = explorer_href(args.out)
+    out = render(href)
     args.out.write_bytes(out)
     if b"ci-spine-sampled-jobs" not in out or b"FROZEN" not in out:
         raise ValueError("PLOTLY_OUTPUT_INVALID")

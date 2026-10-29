@@ -7,7 +7,7 @@
 ## What is real, rather than inferred?
 
 - [`POINTER_MAP_v1.json`](POINTER_MAP_v1.json) has **three candidate** source-object → offline-view pointers: logical DAG B05 to graph selection, B05 to its SIPOC view, and the source-bound sampled run `40690663789` to its run-clock view.
-- Both original **source files** are bound to Git blob OIDs at **parent #1002 head** `e866b340b81a1287c8d05b34203d57f28ee4553e`. The explorer **HTML binary** is independently bound to Git blob OID and SHA-256 `feff387326ce03a8c98f7d36f97b9c8fb08c415b148c26e6f125753914010126`, rebuilt from the deterministic generator and awaiting NEW exact-head GitHub Actions and Chromium readback (historic run 40726398983 applied only to the previous bytes).
+- Both original **source files** and the explorer **HTML binary** are bound by content: Git blob OIDs plus the viewer SHA-256 `77331c5e6220a65b75d1d5192787f663b3556085dc74ee291738f465e4f26c71`. The validator requires each pinned blob to be the one committed at the checked-out `HEAD` (CI asserts that equals the PR head SHA) and reports that head in its receipt. No branch commit SHA is recorded, because a rebase or squash merge orphans it; a new exact-head GitHub Actions and Chromium readback is still pending for these bytes.
 - The selected JSON pointers (`/nodes/5` and `/runs/0`) are checked against actual semantic identifiers, not just guessed coordinates. Their output URL hashes are checked against the existing `explorer.html` router and DOM container IDs.
 - [`index.html`](index.html) is a small, **offline, zero-script, source-to-view navigation companion** with three real clickable routes and disclosed provenance. It complements #1002's five-lens GUI; it does not fork the graph/layout or recompute metrics.
 - The **PDF/OCG/page/bbox** placeholder is `UNMAPPED_NO_VERIFIED_BINARY`. There is **no PDF link** and no claim of a working PDF-layer or per-rectangle mapping. The first PDF pilot needs actual owner binaries, a source mapping, normalized coordinate convention, digest, page-range checks and independent visual DoV.
@@ -19,7 +19,7 @@ python docs/ci-spine/pointers/test_pointer_contract.py
 python docs/ci-spine/pointers/pointer_contract.py --out /tmp/ci-spine-pointer-receipt.json
 ```
 
-The existing #1002 path-scoped workflow `test(ci-spine): provenance explorer QA` is extended **in its existing static job**, not by creating a new runner or replacing any gate. It retains **24 additive explorer tests**, browser DoV and Plotly proof, adds **27 pointer tests**, checks the nonzero executed-test count, and uploads a candidate pointer receipt. Tested failure modes: wrong source SHA/blob, mutated HTML binary SHA/digest, invalid or dangling JSON pointer, object/selection mismatch, external URL, wrong hash route, missing DOM anchor, fake PDF rectangle/OCG link, duplicated pointer, external script and misleading green/authority assertions.
+The existing #1002 path-scoped workflow `test(ci-spine): provenance explorer QA` is extended **in its existing static job**, not by creating a new runner or replacing any gate. It retains **24 additive explorer tests**, browser DoV and Plotly proof, adds **32 pointer tests**, checks the nonzero executed-test count, and uploads a candidate pointer receipt. Tested failure modes: uncommitted or wrong source blob, mutable commit binding, lens/kind mismatch, stale atlas digest, mutated HTML binary SHA/digest, invalid or dangling JSON pointer, object/selection mismatch, external URL, wrong hash route, missing DOM anchor, fake PDF rectangle/OCG link, duplicated pointer, external script and misleading green/authority assertions.
 
 Receipt values:
 - `verdict=SOURCE_BOUND_VIEW_SELECTION_ONLY`;
@@ -27,7 +27,7 @@ Receipt values:
 - `pdf_rectangles_verified=0`;
 - `merge_authorized=false`.
 
-The immutable **view binary is parent #1002's exact head**. When the parent explorer changes, this pilot must rebind its SHA-256 and blob OID from a newly verified build before it can qualify again. No automatic rebinding or fabricated mapping to newer PDFs.
+When the parent explorer changes, rebuild it (`build_explorer.py --write`), run `pointer_contract.py --rebind` to re-pin only the content digests in the manifest and atlas, commit, and validate again at the new head. Rebinding never changes routes, claims or states, and the atlas may display no digest, blob OID or run number that the manifest does not declare (`NAV_STALE_PROVENANCE`).
 
 ## Chaperone: DoD / DoV / next step by workstream
 
@@ -58,6 +58,6 @@ Ink & Switch's [Jacquard entries 01–03](https://www.inkandswitch.com/jacquard/
 ### Follow-through gates
 
 1. **Parent #1002:** resolve CodeQL first red, qualify First-Pass Closure (skipped on inspected head), independently review. `merge_admission=HOLD` regardless of existing passing static/browser/Plotly checks.
-2. **Child JQ-04:** run the new 22-test suite on an exact branch head, inspect log/receipt and linked UI, verify that intentional wrong input fails. No status context renaming.
+2. **Child JQ-04:** run the pointer suite on an exact branch head, inspect log/receipt and linked UI, verify that intentional wrong input fails. No status context renaming.
 3. **Controlled change of viewer:** after parent #1002 changes, regenerate exact HTML, obtain new SHA-256 and blob OID from the same head, then rebind this map and rerun tests. Old link remains historical, not live.
 4. **Further branch (separate):** one physically provided owner PDF + explicit source-to-rect mapping, failure cases for re-pagination, wrong OCG, coordinate transform, missing PDF, drift and misleading mirrored comments. Avoid introducing arbitrary file watchers or shell execution into the HTML GUI.

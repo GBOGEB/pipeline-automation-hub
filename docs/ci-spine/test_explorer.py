@@ -202,6 +202,31 @@ class ExplorerProvenanceTests(unittest.TestCase):
         self.assertTrue(parser.has_external_script)
         self.assertTrue(plotly_companion.external_scripts(html))
 
+    def test_hash_router_rejects_inherited_ids_and_restores_defaults(self):
+        page = explorer.OUTPUT.read_text("utf-8")
+        self.assertIn("const byId = Object.assign(Object.create(null),", page)
+        self.assertIn('k==="bundle"&&Object.hasOwn(byId,id)', page)
+        self.assertNotIn('k==="bundle"&&byId[id]', page)
+        restore = page[page.index("function restore(){"):page.index("function setSelected(")]
+        self.assertLess(restore.index("lens=DEFAULT_LENS;selected={...DEFAULT_SELECTED};"),
+                        restore.index('if(["graph"'))
+
+    def test_redraw_restores_keyboard_focus_by_stable_key(self):
+        page = explorer.OUTPUT.read_text("utf-8")
+        self.assertIn('b.dataset.focusKey="nav:"+kind+":"+id;', page)
+        self.assertIn('"data-focus-key":"graph:bundle:"+n.short_id', page)
+        refresh = page[page.index("function refresh("):page.index("function navItem(")]
+        self.assertIn("const focusKey=document.activeElement?.dataset?.focusKey;", refresh)
+        self.assertIn("t.focus({preventScroll:true})", refresh)
+
+    def test_plotly_explorer_link_resolves_from_output_location(self):
+        repo = HERE.parents[1]
+        self.assertEqual(plotly_companion.explorer_href(repo / "ci-spine-plotly.html"),
+                         "docs/ci-spine/explorer.html")
+        self.assertEqual(plotly_companion.explorer_href(HERE / "chart.html"), "explorer.html")
+        self.assertEqual(plotly_companion.explorer_href(HERE / "qa" / "plotly" / "c.html"),
+                         "../../explorer.html")
+
     def test_unknown_queue_inspector_is_not_null_seconds(self):
         page = explorer.OUTPUT.read_text("utf-8")
         self.assertIn('(Number.isFinite(j?.queue_seconds)?E(j.queue_seconds)+" seconds":"UNKNOWN")', page)

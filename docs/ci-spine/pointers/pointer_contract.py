@@ -28,6 +28,12 @@ ALLOWED = {
     "docs/ci-spine/explorer.html",
 }
 VIEWS = {"graph": "dag", "sipoc": "sipoc-body", "timing": "timing-rows"}
+# The explorer router only shows a bundle on graph/SIPOC and a run on timing; any
+# other lens silently falls back to bundle B05, so it is not a pointer to the object.
+KIND_LENSES = {"bundle": {"graph", "sipoc"}, "run": {"timing"}}
+# A branch commit SHA is not a stable binding: rebases and squash merges orphan it.
+# Pointers bind content (git blob OIDs) and are checked against the checked-out tree.
+MUTABLE_COMMIT_FIELDS = ("source_commit", "head_sha", "output_commit")
 
 
 def require(ok: bool, code: str) -> None:
@@ -46,18 +52,27 @@ def git_blob_oid(data: bytes) -> str:
     return hashlib.sha1(b"blob " + str(len(data)).encode("ascii") + b"\0" + data).hexdigest()
 
 
-def at_commit(head: str, path: str) -> bytes:
-    """Require claimed head to contain exact immutable path bytes, without shell."""
-    require(bool(SHA40.fullmatch(head)) and path in ALLOWED, "UNTRUSTED_COMMIT_PATH")
+def git_out(*args: str) -> str:
+    """Run a read-only git query without a shell; any failure is a first red."""
     try:
-        proc = subprocess.run(
-            ["git", "show", f"{head}:{path}"], cwd=ROOT,
-            capture_output=True, check=False, timeout=10,
-        )
+        proc = subprocess.run(["git", *args], cwd=ROOT, capture_output=True,
+                              check=False, timeout=10)
     except (OSError, subprocess.TimeoutExpired) as exc:
-        raise ValueError("CI_SPINE_POINTER_FIRST_RED:UNRESOLVED_SOURCE_COMMIT") from exc
-    require(proc.returncode == 0, "UNRESOLVED_SOURCE_COMMIT")
-    return proc.stdout
+        raise ValueError("CI_SPINE_POINTER_FIRST_RED:UNRESOLVED_CHECKOUT") from exc
+    require(proc.returncode == 0, "UNRESOLVED_CHECKOUT")
+    return proc.stdout.decode("ascii").strip()
+
+
+def checkout_head() -> str:
+    head = git_out("rev-parse", "--verify", "HEAD")
+    require(SHA40.fullmatch(head) is not None, "UNRESOLVED_CHECKOUT")
+    return head
+
+
+def tree_blob(path: str) -> str:
+    """Blob OID committed at the checked-out HEAD for an allowlisted path."""
+    require(path in ALLOWED, "UNTRUSTED_COMMIT_PATH")
+    return git_out("rev-parse", "--verify", "HEAD:" + path)
 
 
 class Anchors(HTMLParser):
@@ -91,12 +106,13 @@ def json_pointer(doc, ptr: str):
 def validate(doc: dict, root: Path = ROOT) -> dict:
     require(isinstance(doc, dict) and doc.get("schema") == "gbo.ci-spine.pointer-map.v1",
             "SCHEMA")
-    head = doc.get("source_commit")
     frozen = doc.get("catalog_snapshot_commit")
     viewer = doc.get("viewer") or {}
-    require(isinstance(head, str) and SHA40.fullmatch(head) is not None
-            and isinstance(frozen, str) and SHA40.fullmatch(frozen) is not None
-            and frozen != head and viewer.get("head_sha") == head, "HEAD_IDENTITY")
+    rows = doc.get("pointers")
+    require(isinstance(frozen, str) and SHA40.fullmatch(frozen) is not None, "HEAD_IDENTITY")
+    require(not any(k in d for d in [doc, viewer, *(rows if isinstance(rows, list) else [])]
+                    for k in MUTABLE_COMMIT_FIELDS), "MUTABLE_COMMIT_BINDING")
+    head = checkout_head()
     require(doc.get("repository") == "GBOGEB/pipeline-automation-hub"
             and viewer.get("authority") == "FROZEN_ADVISORY", "NO_APPROVAL_AUTHORITY")
     vb = file_bytes(viewer.get("path"), root)
@@ -104,7 +120,7 @@ def validate(doc: dict, root: Path = ROOT) -> dict:
             and git_blob_oid(vb) == viewer["blob_oid"], "OUTPUT_BLOB_STALE")
     require(SHA256.fullmatch(str(viewer.get("sha256"))) is not None
             and hashlib.sha256(vb).hexdigest() == viewer["sha256"], "OUTPUT_SHA256_STALE")
-    require(at_commit(head, viewer["path"]) == vb, "OUTPUT_NOT_AT_CLAIMED_COMMIT")
+    require(tree_blob(viewer["path"]) == viewer["blob_oid"], "OUTPUT_NOT_AT_CHECKOUT")
     require(viewer.get("build_workflow_run_id") is None
             and viewer.get("build_receipt_state") == "NATIVE_EXACT_HEAD_RUN_PENDING",
             "MISSING_OR_FALSE_RENDER_RECEIPT")
@@ -114,7 +130,6 @@ def validate(doc: dict, root: Path = ROOT) -> dict:
     require(all(x in anchors.ids for x in VIEWS.values()), "MISSING_HTML_ANCHORS")
     require("function restore()" in html_text and "function setSelected(" in html_text,
             "MISSING_ROUTING_CONTRACT")
-    rows = doc.get("pointers")
     require(isinstance(rows, list) and len(rows) == 3, "POINTER_POPULATION")
     require(len({r["id"] for r in rows}) == len(rows), "DUPLICATE_POINTER")
     source_cache = {}
@@ -125,7 +140,7 @@ def validate(doc: dict, root: Path = ROOT) -> dict:
         raw = file_bytes(path, root)
         require(SHA40.fullmatch(str(source.get("blob_oid"))) is not None
                 and git_blob_oid(raw) == source["blob_oid"], "SOURCE_BLOB_STALE")
-        require(at_commit(head, path) == raw, "SOURCE_NOT_AT_CLAIMED_COMMIT")
+        require(tree_blob(path) == source["blob_oid"], "SOURCE_NOT_AT_CHECKOUT")
         if path not in source_cache:
             source_cache[path] = json.loads(raw)
         obj = json_pointer(source_cache[path], source.get("json_pointer"))
@@ -142,14 +157,13 @@ def validate(doc: dict, root: Path = ROOT) -> dict:
         require(row.get("state") == "CANDIDATE_PENDING_NATIVE_DOV"
                 and row.get("authority") == "ADVISORY"
                 and row.get("precision") == "VIEW_SELECTION", "CLAIMED_EXACTNESS_OR_AUTHORITY")
-        require(row.get("source_commit") == head and row.get("output_commit") == head,
-                "ROW_COMMIT_DRIFT")
         require(target.get("path") == viewer["path"]
                 and target.get("blob_oid") == viewer["blob_oid"]
                 and target.get("sha256") == viewer["sha256"], "MISMATCHED_OUTPUT")
         lens = target.get("lens")
         require(lens in VIEWS and target.get("dom_id") == VIEWS[lens]
                 and target["dom_id"] in anchors.ids, "MISSING_VIEW_ANCHOR")
+        require(lens in KIND_LENSES.get(target.get("kind"), ()), "LENS_KIND_MISMATCH")
         href = target.get("href")
         require(isinstance(href, str), "NO_NAVIGATION")
         url = urlsplit(href)
@@ -176,11 +190,10 @@ def validate(doc: dict, root: Path = ROOT) -> dict:
     approved_links = {"../explorer.html", "../README.md",
                       "../JACQUARD_CROSSWALK.md"}
     approved_links.update(row["output"]["href"] for row in rows)
-    approved_links.update(
-        "https://github.com/" + doc["repository"] + "/blob/" + head + "/" + row["source"]["path"]
-        for row in rows
-    )
+    approved_links.update(source_href(row["source"]["path"]) for row in rows)
     require(nav.links <= approved_links, "NAV_UNDECLARED_LINK")
+    require(nav_bindings(nav_bytes.decode("utf-8")) == declared_bindings(doc),
+            "NAV_STALE_PROVENANCE")
     require("FROZEN" in nav_bytes.decode("utf-8")
             and "0 PDF RECTANGLES VERIFIED" in nav_bytes.decode("utf-8"),
             "NAV_FALSE_AUTHORITY")
@@ -199,12 +212,65 @@ def validate(doc: dict, root: Path = ROOT) -> dict:
             "unknown_pdf_pointers": len(pending), "merge_authorized": False}
 
 
+def source_href(path: str) -> str:
+    """Atlas source links stay local, so they exist wherever the atlas is opened."""
+    return "../" + path.rsplit("/", 1)[-1]
+
+
+def nav_bindings(text: str) -> dict:
+    """Every digest, blob OID and run number the atlas displays."""
+    return {"sha256": set(re.findall(r"\b[0-9a-f]{64}\b", text)),
+            "oid": set(re.findall(r"\b[0-9a-f]{40}\b", text)),
+            "run": set(re.findall(r"\b[0-9]{9,}\b", text))}
+
+
+def declared_bindings(doc: dict) -> dict:
+    """The only values the atlas may display; anything else is stale metadata."""
+    build = doc["viewer"].get("build_workflow_run_id")
+    return {"sha256": {doc["viewer"]["sha256"]},
+            "oid": {r["source"]["blob_oid"] for r in doc["pointers"]}
+                   | {doc["catalog_snapshot_commit"]},
+            "run": {str(r["output"]["selection_id"]) for r in doc["pointers"]
+                    if r["output"]["kind"] == "run"} | ({str(build)} if build else set())}
+
+
+def rebind(doc: dict, nav_text: str, root: Path = ROOT):
+    """Re-pin content digests from current bytes after a deterministic explorer rebuild.
+
+    Only content identities move. Routes, claims and states are unchanged, and the
+    result must still pass validate() at the committed head before it qualifies.
+    """
+    doc = json.loads(json.dumps(doc))
+    viewer = doc["viewer"]
+    vb = file_bytes(viewer["path"], root)
+    moved = {viewer["sha256"]: hashlib.sha256(vb).hexdigest(),
+             viewer["blob_oid"]: git_blob_oid(vb)}
+    viewer["blob_oid"], viewer["sha256"] = git_blob_oid(vb), hashlib.sha256(vb).hexdigest()
+    for row in doc["pointers"]:
+        new_oid = git_blob_oid(file_bytes(row["source"]["path"], root))
+        moved[row["source"]["blob_oid"]] = new_oid
+        row["source"]["blob_oid"] = new_oid
+        row["output"]["blob_oid"], row["output"]["sha256"] = viewer["blob_oid"], viewer["sha256"]
+    for before, after in moved.items():
+        nav_text = nav_text.replace(before, after)
+    return doc, nav_text
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--manifest", type=Path, default=MANIFEST)
     ap.add_argument("--out", type=Path)
+    ap.add_argument("--rebind", action="store_true",
+                    help="re-pin manifest and atlas digests from current bytes (no validation)")
     a = ap.parse_args(argv)
-    report = validate(json.loads(a.manifest.read_text("utf-8")))
+    doc = json.loads(a.manifest.read_text("utf-8"))
+    if a.rebind:
+        doc, nav_text = rebind(doc, NAV.read_text("utf-8"))
+        a.manifest.write_text(json.dumps(doc, indent=2) + "\n", encoding="utf-8", newline="\n")
+        NAV.write_text(nav_text, encoding="utf-8", newline="\n")
+        print("CI_SPINE_POINTER_REBOUND: commit, then validate at the new head")
+        return 0
+    report = validate(doc)
     if a.out is not None:
         a.out.parent.mkdir(parents=True, exist_ok=True)
         a.out.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n",

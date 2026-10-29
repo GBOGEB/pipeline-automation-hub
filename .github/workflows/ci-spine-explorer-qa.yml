@@ -24,7 +24,6 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
-          fetch-depth: 2  # verify pinned viewer parent commit locally
       - name: Assert exact checkout
         env:
           EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -125,12 +124,13 @@ jobs:
         run: |
           set -euo pipefail
           python -m pip install --disable-pip-version-check plotly==6.5.2
-          python docs/ci-spine/plotly_projection.py --out "$RUNNER_TEMP/ci-spine-plotly.html"
-          test -s "$RUNNER_TEMP/ci-spine-plotly.html"
+          python docs/ci-spine/plotly_projection.py --bundle-explorer --out "$RUNNER_TEMP/ci-spine-plotly/ci-spine-plotly.html"
+          test -s "$RUNNER_TEMP/ci-spine-plotly/ci-spine-plotly.html"
+          test -s "$RUNNER_TEMP/ci-spine-plotly/explorer.html"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: ci-spine-plotly-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
-          path: ${{ runner.temp }}/ci-spine-plotly.html
+          path: ${{ runner.temp }}/ci-spine-plotly/
           if-no-files-found: warn
           retention-days: 21
