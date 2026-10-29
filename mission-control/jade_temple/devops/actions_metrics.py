@@ -355,14 +355,29 @@ PRESSURE_SCHEMA = "jade.devops.recheck-pressure.v1"
 PRESSURE_SAMPLE_METHOD = "last_1000_repo_workflow_runs"
 
 
+def missing_run_days(cache: Path, repo: str, since: date, until: date) -> list[str]:
+    """Days in [since, until] that have no cached runs file (an incomplete source window)."""
+    out, day = [], since
+    while day <= until:
+        if not (repo_dir(cache, repo) / "runs" / f"{day}.json").is_file():
+            out.append(day.isoformat())
+        day += timedelta(days=1)
+    return out
+
+
 def recheck_pressure(runs: list[dict], repo: str, source_sha: str,
-                     observed_at: str, sample_size: int = 1000) -> dict:
+                     observed_at: str, sample_size: int = 1000,
+                     missing_days: list[str] | None = None) -> dict:
     """Project a source-bound, fixed-count run cohort without confusing runs and jobs.
 
     source_sha is the *collector's* exact repository head for this pulse, not a
     claim that all historical workflow runs originated at that SHA.
     The receipt hash is reproducibility evidence, not an independently verified
     GitHub artifact attestation or merge predicate.
+
+    Only completed runs enter the cohort. Any missing source-window day
+    (missing_days) keeps the observation PARTIAL_UNKNOWN with a null value, so
+    an interrupted fetch cannot yield a stale "last 1000" cohort.
     """
     if not isinstance(source_sha, str) or not re.fullmatch(r"[0-9a-f]{40}", source_sha):
         raise ValueError("pressure requires exact collector source_sha")
@@ -383,9 +398,17 @@ def recheck_pressure(runs: list[dict], repo: str, source_sha: str,
         if BQ.utc(rec["created_at"]) > observed:
             raise ValueError("workflow run created after observation")
         ids.add(rec["id"])
-    selected = sorted(runs, key=lambda rec: (BQ.utc(rec["created_at"]), rec["id"]),
+    missing = sorted(set(missing_days or []))
+    completed = [rec for rec in runs if rec.get("status") == "completed"]
+    selected = sorted(completed, key=lambda rec: (BQ.utc(rec["created_at"]), rec["id"]),
                       reverse=True)[:sample_size]
     n = len(selected)
+    complete = n == sample_size and not missing
+    # Canonical cohort identity: the fields this metric reads, per selected run.
+    cohort = [[rec["id"], rec.get("run_attempt"), rec["created_at"], rec["name"],
+               rec.get("event"), rec.get("conclusion")] for rec in selected]
+    cohort_sha = hashlib.sha256(json.dumps(cohort, separators=(",", ":"), ensure_ascii=True)
+                                .encode("utf-8")).hexdigest()
     target = [rec for rec in selected if rec.get("name") == RECHECK_WORKFLOW_NAME and
               rec.get("event") == "workflow_run"]
     conclusions = Counter(rec.get("conclusion") or rec.get("status") or "UNKNOWN" for rec in target)
@@ -399,8 +422,11 @@ def recheck_pressure(runs: list[dict], repo: str, source_sha: str,
            "sample_method": PRESSURE_SAMPLE_METHOD, "sample_n": n,
            "expected_n": sample_size,
            "record_type": "SOURCE_BOUND_OBSERVATION_NOT_ADMISSION",
-           "coverage": "COMPLETE" if n == sample_size else "PARTIAL_UNKNOWN",
-           "value": round(len(target) / n, 6) if n == sample_size else None,
+           "coverage": "COMPLETE" if complete else "PARTIAL_UNKNOWN",
+           "value": round(len(target) / n, 6) if complete else None,
+           "missing_source_days": missing,
+           "excluded_incomplete_runs": len(runs) - len(completed),
+           "cohort_sha256": cohort_sha,
            "recheck_records": len(target),
            "recheck_cancelled": conclusions.get("cancelled", 0),
            "recheck_outcomes": dict(sorted(conclusions.items())),
@@ -562,7 +588,8 @@ def main(argv=None) -> int:
             p.error("pressure requires exactly one --repo")
         observed = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         doc = recheck_pressure(load_runs(a.cache, a.repo[0], a.since, a.until),
-                               a.repo[0], a.source_sha or "", observed)
+                               a.repo[0], a.source_sha or "", observed,
+                               missing_days=missing_run_days(a.cache, a.repo[0], a.since, a.until))
         txt = json.dumps(doc, sort_keys=True, indent=2) + "\n"
         if a.out:
             a.out.parent.mkdir(parents=True, exist_ok=True)

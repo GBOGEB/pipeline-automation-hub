@@ -330,6 +330,50 @@ class RecheckPressureRF(unittest.TestCase):
             report = json.loads(out.read_text(encoding="utf-8"))
             self.assertIsNone(report["value"])
             self.assertEqual(report["sample_n"], 1)
+    def test_queued_and_in_progress_runs_are_not_in_cohort(self):
+        rows = self.synthetic()
+        rows.append(dict(run(2001, name="GOGREEN Required Gate Re-check", event="workflow_run",
+                             conclusion=None, created="2026-10-28T15:00:00Z"), status="in_progress"))
+        rows.append(dict(run(2002, name="Other QA", conclusion=None,
+                             created="2026-10-28T15:01:00Z"), status="queued"))
+        report = self.pressure(rows)
+        self.assertEqual((report["sample_n"], report["recheck_records"], report["value"]),
+                         (1000, 363, 0.363))
+        self.assertEqual(report["excluded_incomplete_runs"], 2)
+        self.assertNotIn("in_progress", report["recheck_outcomes"])
+
+    def test_missing_source_day_keeps_full_cohort_unknown(self):
+        report = self.pressure(missing_days=["2026-10-27"])
+        self.assertEqual((report["sample_n"], report["coverage"]), (1000, "PARTIAL_UNKNOWN"))
+        self.assertIsNone(report["value"])
+        self.assertEqual(report["missing_source_days"], ["2026-10-27"])
+
+    def test_receipt_binds_cohort_identity_not_only_aggregates(self):
+        one = self.pressure()
+        rows = self.synthetic()
+        # Same boundaries and same outcome totals, different run identities.
+        for rec in rows[1:-1]:
+            rec["id"] += 5000
+        two = self.pressure(rows)
+        for key in ("sample_n", "recheck_records", "recheck_cancelled", "cohort_earliest",
+                    "cohort_latest", "value"):
+            self.assertEqual(one[key], two[key])
+        self.assertNotEqual(one["cohort_sha256"], two["cohort_sha256"])
+        self.assertNotEqual(one["receipt_sha256"], two["receipt_sha256"])
+
+    def test_cli_pressure_flags_missing_cache_day(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            cache = base / REPO.replace("/", "__") / "runs"
+            cache.mkdir(parents=True)
+            (cache / "2026-10-05.json").write_text(json.dumps([run(1)]), encoding="utf-8", newline="\n")
+            out = base / "pressure.json"
+            self.assertEqual(M.main(["pressure", "--cache", str(base),
+                "--since", "2026-10-04", "--until", "2026-10-05",
+                "--repo", REPO, "--source-sha", SHA, "--out", str(out)]), 0)
+            report = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(report["missing_source_days"], ["2026-10-04"])
+            self.assertEqual(report["coverage"], "PARTIAL_UNKNOWN")
 
 
 if __name__ == "__main__":

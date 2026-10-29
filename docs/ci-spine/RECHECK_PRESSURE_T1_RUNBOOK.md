@@ -31,7 +31,7 @@ To evaluate the target with RF N+1, pass the actual `pressure` JSON as `--observ
 
 ## Negative evidence and ownership
 
-12 focused tests prove fixed denominator, 363/1,000, cancellation identity, duplicate exclusion, future timestamp rejection, malformed source, name/event semantics, order-independent SHA, partial/empty unknown, and no-token CLI projection. Existing Actions Metrics tests and their job clock/cost functions remain authoritative and unchanged outside this scoped addition.
+16 focused tests prove fixed denominator, 363/1,000, cancellation identity, duplicate exclusion, future timestamp rejection, malformed source, name/event semantics, order-independent SHA, partial/empty unknown, completed-runs-only cohort, missing source-day cache files kept unknown, a receipt hash bound to the cohort's run identities (`cohort_sha256`), and no-token CLI projection. Existing Actions Metrics tests and their job clock/cost functions remain authoritative and unchanged outside this scoped addition.
 
 ## DoV and wave progression
 
