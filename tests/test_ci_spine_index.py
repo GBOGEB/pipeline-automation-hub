@@ -96,20 +96,26 @@ class Contract(unittest.TestCase):
         self.assertIn("  push:", qa)
         pr = qa.split("  pull_request:", 1)[1].split("  push:", 1)[0]
         push = qa.split("  push:", 1)[1].split("  workflow_dispatch:", 1)[0]
-        mandatory = (".github/workflows/**",
-                     "mission-control/jade_temple/devops/workflows.py",
-                     "mission-control/jade_temple/devops/actions_metrics.py",
-                     "mission-control/jade_temple/tools/cicd_dag.py",
-                     "mission-control/jade_temple/tools/rolling5.py",
-                     "mission-control/gogreen/scale_dock.py", "AGENTS.md")
-        anchors = json.loads((ROOT / "governance/ci_spine/CI_SPINE_BINDINGS_V1.json").read_text())["anchors"]
+        contract = json.loads((ROOT / "governance/ci_spine/CI_SPINE_BINDINGS_V1.json").read_text())
+        anchors = contract["anchors"]
+        owners = contract["metric_owner_bindings"]
+        self.assertIsInstance(owners, dict)
+        self.assertTrue(owners)
+        # Bind to the current contract, not a fixed tuple. A newly declared
+        # canonical owner must appear in both trigger sets or this fails.
+        required = {".github/workflows/**", "AGENTS.md", contract["workflow_parser_owner"],
+                    *owners.values()}
+        self.assertTrue(all(isinstance(path, str) and path for path in required))
         for block in (pr, push):
             patterns = re.findall(r"^\s+- '([^']+)'$", block, re.M)
-            for path in mandatory:
-                self.assertIn(path, patterns)
+            self.assertIn(".github/workflows/**", patterns)
+            for path in sorted(required):
+                self.assertTrue(any(fnmatch.fnmatchcase(path, pattern) for pattern in patterns),
+                                "uncovered canonical source: " + path)
             for anchor in anchors:
-                self.assertTrue(any(fnmatch.fnmatchcase(anchor["path"], p) for p in patterns),
-                                anchor["path"])
+                self.assertTrue(any(fnmatch.fnmatchcase(anchor["path"], pattern)
+                                    for pattern in patterns), anchor["path"])
+
 
     def test_injected_identity_cannot_escape(self):
         for p in ("/etc/passwd", "../escape.yml", ".github/workflows/../../x.yml",
