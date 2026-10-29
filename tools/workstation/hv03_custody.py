@@ -101,6 +101,42 @@ def hash_file(wt: Path, rel: str, max_bytes: int) -> dict:
     except OSError:
         return {"state": "UNREADABLE", "bytes": None, "sha256": None}
 
+def staged_index(wt: Path, max_bytes: int) -> dict[str, list[dict]]:
+    """Record staged blobs, including conflicts, without writing or modifying index."""
+    result: dict[str, list[dict]] = {}
+    for raw in git(wt, "ls-files", "--stage", "-z").split(b"\0"):
+        if not raw:
+            continue
+        try:
+            head, name = raw.split(b"\t", 1)
+            mode, oid, stage = as_text(head).split(" ")
+            if not re.fullmatch("[0-9a-f]{40,64}", oid) or not stage.isdecimal():
+                raise ValueError("invalid staged blob")
+            rel = as_text(name)
+            result.setdefault(rel, []).append({"mode": mode, "oid": oid, "stage": int(stage)})
+        except ValueError as exc:
+            raise ValueError("HV03_HOLD: invalid index entry") from exc
+    for entries in result.values():
+        for entry in entries:
+            # Exact Git object ID is the nonmutable index receipt. SHA-256
+            # of index bytes is only collected for relevant staged files below.
+            entry["index_sha256"] = None
+            entry["index_sha_state"] = "NOT_REQUESTED"
+    return result
+
+def hash_index_stage(wt: Path, entry: dict, max_bytes: int) -> dict:
+    size_raw = git(wt, "cat-file", "-s", entry["oid"])
+    try:
+        size = int(size_raw.strip())
+    except ValueError as exc:
+        raise ValueError("HV03_HOLD: staged object size") from exc
+    if size > max_bytes:
+        return {"index_sha_state": "SIZE_LIMIT", "index_sha256": None}
+    raw = git(wt, "cat-file", "blob", entry["oid"])
+    if len(raw) != size:
+        return {"index_sha_state": "SIZE_CHANGED", "index_sha256": None}
+    return {"index_sha_state": "HASHED", "index_sha256": sha(raw)}
+
 def owners(path: str, rules: list[dict]) -> dict:
     matches = [r for r in rules if fnmatch.fnmatchcase(path, r["glob"])]
     if len(matches) > 1:
@@ -140,12 +176,12 @@ def scan(repo: Path, *, rules: list[dict] | None = None,
             outputs.append({"path": str(wt), "state": "MISSING_WORKTREE"})
             continue
         head = as_text(git(wt, "rev-parse", "HEAD")).strip()
-        branch = as_text(git(wt, "symbolic-ref", "-q", "--short", "HEAD")).strip() if False else None
         # Detached HEAD makes symbolic-ref fail, so use a tolerant local rev-parse.
         branch_probe = subprocess.run(["git", "-C", str(wt), "symbolic-ref", "-q",
                                        "--short", "HEAD"], capture_output=True, check=False)
         branch = as_text(branch_probe.stdout).strip() if branch_probe.returncode == 0 else None
         changed = paths_status(wt)
+        index = staged_index(wt, max_bytes)
         found = {r["path"] for r in changed}
         binary_paths = [as_text(raw) for raw in
                         git(wt, "ls-files", "-z").split(b"\0") if raw and
@@ -154,7 +190,11 @@ def scan(repo: Path, *, rules: list[dict] | None = None,
         records = []
         for record in changed:
             rel = record["path"]
+            stages = [dict(row) for row in index.get(rel, [])] if record["status"][0] not in (" ", "?") else []
+            for stage in stages:
+                stage.update(hash_index_stage(wt, stage, max_bytes))
             records.append({**record, "kind": "DIRTY_OR_UNTRACKED",
+                            "staged_index": stages,
                             **hash_file(wt, rel, max_bytes),
                             **owners(rel, rules or [])})
         for rel in sorted(set(binary_paths)):
