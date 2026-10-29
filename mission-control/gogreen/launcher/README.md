@@ -46,7 +46,7 @@ Paths are under `mission-control/`.
 
 The **Dashboards** section, first on the page, lists the dashboards to start from across repositories:
 BnB (Bread and Butter), the cryoplant QPS dashboard launcher, the Master Input repo ledger, the CODE BNB
-cockpits, EVERRED, the G3P live ledger and the issue-rank title census. They are declared in
+cockpits, EVERRED, the G3P live ledger and the issue-rank title census artifact. They are declared in
 `sources.json` `hub`:
 
 - An entry with only a `path` is in this repository. The build reads it at the build commit (a missing
@@ -55,8 +55,10 @@ cockpits, EVERRED, the G3P live ledger and the issue-rank title census. They are
 - An entry with `repo`, `ref` and `path` is in another repository (cryoplant-project is private). It is
   declared, not probed: GitHub source and history links only, and it opens from a local clone of that
   repository. Its Pages site returned 404 for these paths, so no Pages URL is given.
-- An entry with a `url` (the BnB claude.ai artifact) is linked as written. The artifact is private to its
-  owner unless shared, and the `bnb-dashboard-pull` scheduled task republishes it each weekday.
+- The BnB `url` entry links to the claude.ai artifact as written. It is private to its owner unless
+  shared, and the `bnb-dashboard-pull` scheduled task republishes it each weekday.
+- The issue-rank title census links to its hosted claude.ai artifact, documented in
+  `mission-control/issue_rank/title_census/README.md`; it is private until shared.
 
 `hub.verified` records when and how the cross-repo entries were checked. Re-check them and update it
 when a target moves.

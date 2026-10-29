@@ -200,8 +200,11 @@ class Hub(unittest.TestCase):
     def test_requested_dashboards_are_listed(self):
         keys = " ".join((e.get("path") or e.get("url")) for e in self.hub["entries"])
         for want in ("claude.ai/artifact/", "QPS_DASHBOARD_LAUNCHER_CURRENT.html", "master_input_cleanup/repo_ledger.html",
-                     "code_bnb/", "everred/index.html", "G3P_LIVE_LEDGER.html", "issue_rank/title_census/dashboard"):
+                     "code_bnb/", "everred/index.html", "G3P_LIVE_LEDGER.html",
+                     "claude.ai/artifact/RARdwhuvVk2emp2iCRRhDw"):
             self.assertIn(want, keys)
+        title_census = next(e for e in self.hub["entries"] if e.get("url") == "https://claude.ai/artifact/RARdwhuvVk2emp2iCRRhDw")
+        self.assertIn("private until shared", title_census["note"])
 
     def test_missing_in_repo_entry_fails_the_build(self):
         sha = bl.git("rev-parse", "HEAD^{commit}").strip()
