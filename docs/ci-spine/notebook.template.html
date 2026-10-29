@@ -39,11 +39,11 @@ h1{margin:4px 0 6px;font-size:clamp(23px,2.8vw,38px);font-weight:690;letter-spac
 .maphead h2{font-size:16px;margin:0}.maphead p{font-size:12px;color:var(--muted);margin:4px 0 0}
 #map{display:block;width:100%;height:min(59vh,555px);min-height:330px;background:radial-gradient(circle at 50% 50%,#1a344c,#0a192a 70%);border:1px solid #2c4962;border-radius:12px;touch-action:none}
 #map:focus-visible{outline:3px solid #80d8d0}.gridline{stroke:#26405a;stroke-width:1;opacity:.22}.edge{stroke:#779db3;stroke-width:1.8;fill:none;opacity:.55}
-.edge.feedback{stroke-dasharray:6 6;stroke:#efbd6c;opacity:.9}.edge.inactive{opacity:.09}
+.edge.feedback{stroke-dasharray:6 6;stroke:#efbd6c;opacity:.9}.edge.inactive{opacity:.18}
 .gnode{cursor:pointer;outline:none}.gnode rect{fill:#19344b;stroke:#49738a;stroke-width:1.5}.gnode .code{fill:var(--accent);font-size:14px;font-weight:750}
 .gnode .name{fill:#e3eff5;font-size:11px}.gnode .stage{fill:#9cbac9;font-size:10px}
 .gnode.selected rect,.gnode:focus rect{stroke:var(--accent);stroke-width:3;fill:#23516a}
-.gnode.muted{opacity:.18}.gnode:hover rect{stroke:var(--amber)}
+.gnode.muted{opacity:.38}.gnode:hover rect{stroke:var(--amber)}
 .legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin:10px 0 0}
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:6px}
 .dot.amber{background:var(--amber)}.dot.violet{background:var(--violet)}
@@ -118,7 +118,7 @@ code{font-size:.94em}.no-data{color:var(--amber)}
       <div class="tools"><button class="squarebtn" id="zoom-out" title="Zoom out" aria-label="Zoom out">−</button><span class="scale" id="scale">100%</span><button class="squarebtn" id="zoom-in" title="Zoom in" aria-label="Zoom in">+</button><button class="squarebtn" id="reset" title="Reset graph" aria-label="Reset graph">Reset</button></div>
     </div>
     <section class="scene" id="view-graph" role="tabpanel">
-      <div class="maphead"><div><h2>Governed dependency spine</h2><p>Solid edges are within-pulse prerequisites. Dashed return is a next-pulse hypothesis, not a runnable cycle.</p></div><span class="pill">10 bundles / 17 edges</span></div>
+      <div class="maphead"><div><h2>Governed dependency spine</h2><p>Choose a node to trace all upstream prerequisites. Drag to pan, zoom with +/−. Dashed feedback is next-pulse only.</p></div><span class="pill">10 bundles / 17 edges</span></div>
       <svg id="map" viewBox="0 0 970 740" tabindex="0" aria-label="Interactive CI bundle DAG; select nodes to inspect source pointers">
         <defs><marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0L7,3.5L0,7Z" fill="#7ba3b7"></path></marker></defs>
         <g id="map-content"></g>
@@ -208,7 +208,15 @@ function draw(){const root=$("map-content");root.replaceChildren();root.setAttri
 for(let gx=0;gx<=970;gx+=55)root.append(svg("line",{x1:gx,y1:0,x2:gx,y2:740,class:"gridline"}));
 for(let gy=0;gy<=740;gy+=55)root.append(svg("line",{x1:0,y1:gy,x2:970,y2:gy,class:"gridline"}));
 const active="ci-spine:bundle:"+selected;
-const near=new Set([active]);D.edges.forEach(e=>{if(e.from===active||e.to===active){near.add(e.from);near.add(e.to);}});
+// Jacquard-style upstream trace: retain the complete prerequisite ancestry,
+// but show only immediate downstream consumers. Temporal feedback is excluded.
+const near=new Set([active]);
+let changed=true;
+while(changed){changed=false;D.edges.forEach(e=>{
+ if(e.kind!=="FEEDFORWARD")return;
+ if(near.has(e.to)&&!near.has(e.from)){near.add(e.from);changed=true;}
+});}
+D.edges.forEach(e=>{if(e.kind==="FEEDFORWARD"&&e.from===active)near.add(e.to);});
 D.edges.forEach(e=>{const from=e.from.slice(-3),to=e.to.slice(-3),feedback=e.kind==="FEEDBACK_NEXT_PULSE";const cls="edge"+(feedback?" feedback":"")+(!near.has(e.from)&&!near.has(e.to)?" inactive":"");
 const p=svg("path",{d:edgePath(from,to,feedback),class:cls,"marker-end":"url(#arr)"});
 p.append(svg("title",{}));p.lastChild.textContent=from+" → "+to+" · "+e.kind;root.append(p);});
