@@ -321,7 +321,7 @@ class RecheckPressureRF(unittest.TestCase):
             base = Path(td)
             cache = base / REPO.replace("/", "__") / "runs"
             cache.mkdir(parents=True)
-            (cache / "2026-10-05.json").write_text(json.dumps([run(1)]), encoding="utf-8")
+            (cache / "2026-10-05.json").write_text(json.dumps([run(1)]), encoding="utf-8", newline="\n")
             out = base / "pressure.json"
             with mock.patch.object(M, "token", side_effect=AssertionError("no CLI token expected")):
                 self.assertEqual(M.main(["pressure", "--cache", str(base),
