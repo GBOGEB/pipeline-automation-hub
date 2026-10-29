@@ -83,20 +83,25 @@ th{position:sticky;top:0;background:var(--surface-2);font-weight:600}
 </style>
 </head>
 <body>
-<a class="skip" href="#metrics">Skip to metrics</a>
+<a class="skip" href="#hub">Skip to dashboards</a>
 <header>
   <h1>Go<span>Green</span> launcher</h1>
   <p class="sub" id="rule"></p>
   <div class="pulse" id="pulse"></div>
 </header>
 <nav aria-label="Sections"><div class="in">
-  <a href="#metrics">Metrics</a><a href="#launcher">Launcher</a><a href="#access">How to access</a><a href="#ops">Operational tools</a><a href="#catalog">All pages</a><a href="#provenance">Provenance</a>
+  <a href="#hub">Dashboards</a><a href="#metrics">Metrics</a><a href="#launcher">Launcher</a><a href="#access">How to access</a><a href="#ops">Operational tools</a><a href="#catalog">All pages</a><a href="#provenance">Provenance</a>
   <span class="grow"></span>
   <label for="q" class="skip">Filter</label>
   <input id="q" type="search" placeholder="Filter tiles and pages" autocomplete="off">
   <button id="theme" type="button" aria-pressed="false">Theme</button>
 </div></nav>
 <main>
+  <section id="hub" aria-labelledby="h-hub"><h2 id="h-hub">Dashboards</h2>
+    <p class="cap" id="hub-cap"></p>
+    <div id="hub-list"></div>
+    <p class="cap" id="hub-ver"></p>
+  </section>
   <section id="metrics" aria-labelledby="h-metrics"><h2 id="h-metrics">Metrics</h2><div class="grid" id="tiles"></div></section>
   <section id="launcher" aria-labelledby="h-launcher"><h2 id="h-launcher">Launcher</h2><div id="pages"></div></section>
   <section id="access" aria-labelledby="h-access"><h2 id="h-access">How to access</h2>
@@ -232,6 +237,18 @@ function catalog(){
       '<td><a href="'+esc(e.href)+'">Open</a>'+link(e.github,"GitHub")+link(D.repo_url+"/commits/"+D.source_sha+"/"+e.path,"History")+'</td></tr>').join("")+
     '</tbody></table></div></div>').join("");
 }
+function hubList(){
+  const h=D.hub, groups=[...new Set(h.entries.map(e=>e.group))];
+  $("#hub-cap").textContent=h.note+" Pages in other repositories open from a local clone of that repository; github.com shows their source.";
+  const where=e=>e.url?new URL(e.url).host:(e.repo||"this repository");
+  const links=e=>e.url?link(e.url,"Open"):e.repo
+    ?link("https://github.com/"+e.repo+"/blob/"+e.ref+"/"+e.path,"GitHub")+link("https://github.com/"+e.repo+"/commits/"+e.ref+"/"+e.path,"History")
+    :'<a href="'+esc(e.href)+'">Open</a>'+link(blob(e.path),"GitHub")+link(D.repo_url+"/commits/"+D.source_sha+"/"+e.path,"History");
+  $("#hub-list").innerHTML=groups.map(g=>'<div data-grp><div class="grp">'+esc(g)+'</div><div class="tbl" style="max-height:none"><table class="cat"><thead><tr><th scope="col">Dashboard</th><th scope="col">Where</th><th scope="col">Links</th></tr></thead><tbody>'+
+    h.entries.filter(e=>e.group===g).map(e=>'<tr data-q="'+esc((e.title+" "+g+" "+(e.path||e.url)).toLowerCase())+'"><td>'+esc(e.title)+(e.note?'<small>'+esc(e.note)+'</small>':"")+'</td><td><small>'+esc(where(e))+(e.path?" · "+esc(e.path):"")+'</small></td><td>'+links(e)+'</td></tr>').join("")+
+    '</tbody></table></div></div>').join("");
+  $("#hub-ver").textContent="Cross-repository entries checked "+h.verified.on+" with "+h.verified.by+": "+h.verified.observed+".";
+}
 function render(){
   $("#rule").textContent=D.rule;
   $("#pulse").textContent="read at "+D.source_sha+" · "+D.source_date+" · computes_metrics="+D.computes_metrics+" · missing_fields="+D.missing_fields.length;
@@ -239,6 +256,7 @@ function render(){
   const groups=[...new Set(D.pages.map(p=>p.group))];
   $("#pages").innerHTML=groups.map(g=>'<div class="grp">'+esc(g)+'</div><div class="launch">'+D.pages.filter(p=>p.group===g).map(p=>
     '<a href="'+esc(p.href)+'" data-q="'+esc((p.title+" "+p.path).toLowerCase())+'"><b>'+esc(p.title)+'</b><small>'+esc(p.path)+'</small></a>').join("")+'</div>').join("");
+  hubList();
   access();
   catalog();
   $("#prov").innerHTML=D.tiles.filter(t=>t.input).map(t=>'<tr><td>'+esc(t.label)+'</td><td><a href="'+esc(blob(t.input))+'" rel="noopener noreferrer">'+esc(t.input)+'</a></td><td>'+esc(t.input_oid)+'</td><td>'+esc(t.owner)+'</td><td>'+val(t.schema)+'</td></tr>').join("");

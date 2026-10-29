@@ -9,6 +9,21 @@
     "observed": "status built, build_type workflow, source master:/docs, public, https_enforced",
     "scope": "Site root only. Which committed pages the Pages workflow publishes, and at which URLs, is not verified, so no per-page Pages URL is given (never infer a published URL from committed HTML)."
   },
+  "hub": {
+    "note": "Dashboards to start from, across repositories. Entries with only a path are in this repository: the build reads each one at the build commit (a missing file fails the build) and records its title. Entries with a repo or url are declared, not probed: they record where and when they were checked, like pages_site.",
+    "verified": {"on": "2026-10-29", "by": "gh api repos/GBOGEB/cryoplant-project/contents/<path>?ref=main at c747f63b (title read from each file); Artifact read of the BnB artifact", "observed": "all cryoplant paths present on main c747f63b; https://gbogeb.github.io/cryoplant-project/QPS_DASHBOARD_LAUNCHER_CURRENT.html returned 404, so no Pages URL is given; the BnB artifact is private to its owner"},
+    "entries": [
+      {"group": "BnB (Bread and Butter)", "title": "BnB · Bread & Butter dashboard", "url": "https://claude.ai/artifact/EArR4uVDAnujnC7Cv5qLUD", "note": "claude.ai artifact, private to its owner unless shared. Republished each weekday by the bnb-dashboard-pull scheduled task (bnb_pull.py, bnb-history.json)."},
+      {"group": "BnB (Bread and Butter)", "repo": "GBOGEB/cryoplant-project", "ref": "main", "path": "qps/engineering_hub/code_bnb/n3/dist/CODE_BNB_DAILY_N3.html", "title": "CODE_BNB · QPS Bread & Butter N+3 daily cockpit"},
+      {"group": "BnB (Bread and Butter)", "repo": "GBOGEB/cryoplant-project", "ref": "main", "path": "qps/engineering_hub/code_bnb/n11/N11_CONVERGENCE_DASHBOARD.html", "title": "QPS Bread & Butter N11 — Source, Review and Release Convergence"},
+      {"group": "cryoplant-project", "repo": "GBOGEB/cryoplant-project", "ref": "main", "path": "docs/QPS_DASHBOARD_LAUNCHER_CURRENT.html", "title": "QPS Dashboard Launcher — CURRENT"},
+      {"group": "Master Input repo ledger", "repo": "GBOGEB/cryoplant-project", "ref": "main", "path": "mission_control/master_input_cleanup/index.html", "title": "Master_Input Repo Ledger (index)", "note": "Assimilation, pruning, smoke and incubation of Master_Input assets into the main model."},
+      {"group": "Master Input repo ledger", "repo": "GBOGEB/cryoplant-project", "ref": "main", "path": "mission_control/master_input_cleanup/repo_ledger.html", "title": "Master_Input Repo Ledger"},
+      {"group": "EVERRED and ledgers (this repo)", "path": "mission-control/qps-triage-ultra/p-process/site/everred/index.html"},
+      {"group": "EVERRED and ledgers (this repo)", "path": "mission-control/federation-atlas/G3P_LIVE_LEDGER.html"},
+      {"group": "EVERRED and ledgers (this repo)", "path": "mission-control/issue_rank/title_census/dashboard/index.html", "title": "Issue-rank title census dashboard"}
+    ]
+  },
   "pages": [
     {"group": "GoGreen", "path": "mission-control/jade_temple/site/green.html"},
     {"group": "GoGreen", "path": "mission-control/gogreen/comparative/index.html"},
