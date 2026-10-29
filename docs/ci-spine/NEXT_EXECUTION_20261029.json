@@ -32,57 +32,79 @@
     {
       "pr": 997,
       "sha": "2b0b2622725592edbaa9d0905a4295dc1cbb4d1f",
-      "base": "master"
+      "base": "master",
+      "branch": "refactor/ci-bundle-inventory-lifecycle-pilot-20261028",
+      "state": "OPEN"
     },
     {
       "pr": 1012,
       "sha": "2cd0a37920e6024454e385ac37eec1fa3f356e26",
-      "base": "refactor/ci-bundle-inventory-lifecycle-pilot-20261028"
+      "base": "refactor/ci-bundle-inventory-lifecycle-pilot-20261028",
+      "branch": "refactor/ci-n1-title-crosswalk-20261028",
+      "state": "OPEN"
     },
     {
       "pr": 996,
       "sha": "cb782597008c953a97d04cab8b431e6cab1ac974",
-      "base": "master"
+      "base": "master",
+      "branch": "feat/ci-spine-authority-index-20261028",
+      "state": "OPEN"
     },
     {
       "pr": 1001,
       "sha": "39e3d4ca82d6560fdefc594a516a26b0d65cd185",
-      "base": "master"
+      "base": "master",
+      "branch": "feat/ci-spine-disjoint-wave-controller-20261028",
+      "state": "OPEN"
     },
     {
       "pr": 1006,
       "sha": "6827ad91eae632e66ea2b0890d423e706c6de1b3",
-      "base": "master"
+      "base": "master",
+      "branch": "feat/ci-spine-source-delta-audit-20261028",
+      "state": "OPEN"
     },
     {
       "pr": 1016,
       "sha": "b1d93dbc83c7469246b9388f52b40592d419585c",
-      "base": "master"
+      "base": "master",
+      "branch": "feat/ci-spine-w4-readonly-consumer-20261029",
+      "state": "OPEN"
     },
     {
       "pr": 1002,
       "sha": "4cc045d322fb65fef8fb00b2cd93e50bbc52bbd8",
-      "base": "master"
+      "base": "master",
+      "branch": "feat/ci-spine-jacquard-provenance-explorer-20261028",
+      "state": "OPEN"
     },
     {
       "pr": 1019,
       "sha": "24279024cbc683670231682c4d4fbfb5b9b6cad2",
-      "base": "feat/ci-spine-jacquard-provenance-explorer-20261028"
+      "base": "feat/ci-spine-jacquard-provenance-explorer-20261028",
+      "branch": "fix/ci-spine-1002-codeql-script-parser-20261029",
+      "state": "OPEN"
     },
     {
       "pr": 1021,
       "sha": "cda6529e855f711c73dbc8cf648913dc5b5406ce",
-      "base": "feat/ci-spine-jacquard-provenance-explorer-20261028"
+      "base": "feat/ci-spine-jacquard-provenance-explorer-20261028",
+      "branch": "fix/ci-spine-1002-view-links-unknown-clocks-20261029",
+      "state": "OPEN"
     },
     {
       "pr": 1018,
       "sha": "b3389e9f4fc9d4809abf2b2a1ef168254c474041",
-      "base": "feat/ci-spine-jacquard-provenance-explorer-20261028"
+      "base": "feat/ci-spine-jacquard-provenance-explorer-20261028",
+      "branch": "feat/ci-spine-jq04-typed-pointers-20261029",
+      "state": "OPEN"
     },
     {
       "pr": 1017,
       "sha": "7f93c001777dc53925a64b6f4cad1128442fb598",
-      "base": "master"
+      "base": "master",
+      "branch": "feat/ci-spine-jacquard-provenance-explorer-20261029",
+      "state": "OPEN"
     }
   ],
   "known_reds": [
@@ -381,5 +403,12 @@
     "LOCAL_UNKNOWN": "No permission or visibility of local Windows worktree files.",
     "NOT_APPLICABLE": "Must be policy-grounded; never equivalent to passed test.",
     "PDF": "No verified owner PDF/source-to-page rectangle in provided project context; leave unmapped."
-  }
+  },
+  "stack_constraints": [
+    "PR 1018/1019/1021 base points to PR 1002 head branch; do not retarget children to master until parent admitted.",
+    "PR 1012 base points to PR 997 head branch; source binding and namespace compatibility require reread.",
+    "PR 1019 and 1021 modify same test_explorer.py; integrate tests additively into parent, do not overwrite one another.",
+    "PR 1017 is an overlapping parallel implementation; compare before canonicalizing, avoid competing metric/view owners.",
+    "PR 1011 is combined DO-NOT-MERGE testflight and must never become owner of borrowed code."
+  ]
 }
