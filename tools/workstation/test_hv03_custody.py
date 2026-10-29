@@ -42,9 +42,9 @@ class HV03Tests(unittest.TestCase):
         self.assertFalse(data["remote_credential_or_api_use"])
 
     def test_staged_worktree_and_untracked_are_distinct(self):
-        (self.repo / "tracked.txt").write_text("staged\n", encoding="utf-8")
+        (self.repo / "tracked.txt").write_bytes(b"staged\n")
         git(self.repo, "add", "tracked.txt")
-        (self.repo / "tracked.txt").write_text("unstaged\n", encoding="utf-8")
+        (self.repo / "tracked.txt").write_bytes(b"unstaged\n")
         (self.repo / "untracked.docx").write_bytes(b"doc")
         rows = hv03.scan(self.repo)["worktrees"][0]["files"]
         staged = next(r for r in rows if r["path"] == "tracked.txt")
