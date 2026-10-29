@@ -198,12 +198,23 @@ class ReaderNegativeControls(unittest.TestCase):
                 self.calls.append(route)
                 if ".." not in route:
                     return [run(1)], 1001
-                return ([run(1), run(2)] if "T00:" in route else [run(2)]), 2
+                return ([run(1), run(2)], 2) if "T00:" in route else ([run(2)], 1)
         rd = Hourly()
         rows = M.fetch_runs_day(rd, REPO, date(2026, 10, 26))
         self.assertEqual({r["id"] for r in rows}, {1, 2})
         self.assertEqual(len(rows), 2)
         self.assertEqual(len(rd.calls), 25)
+
+    def test_hourly_incomplete_total_fails_closed_not_a_fake_success(self):
+        class Incomplete:
+            def pages(self, route, key):
+                # This was previously misreported by the successful 24-hour
+                # fixture. An hour with one row but total_count=2 is incomplete.
+                if ".." not in route:
+                    return [run(1)], 1001
+                return [run(1)], 2
+        with self.assertRaisesRegex(ValueError, "exceeds the search cap"):
+            M.fetch_runs_day(Incomplete(), REPO, date(2026, 10, 26))
 
     def test_hourly_search_cap_fails_closed(self):
         class Saturated:
