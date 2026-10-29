@@ -116,5 +116,31 @@ class TemporalGraphNonCompensation(unittest.TestCase):
         self.assertEqual(L._b(True), L.PASS)
 
 
+
+    def test_no_stage_can_be_promoted_by_five_explicit_failures(self):
+        states = {pid: L.FAIL for pid in L.PROBE_IDS}
+        for stage in L.STAGE_KEYS:
+            with self.subTest(stage=stage):
+                score = L.stage_score(states, stage)
+                self.assertEqual(score["level"], 0)
+                self.assertEqual((score["pass"], score["fail"], score["unknown"]), (0, 5, 0))
+
+    def test_all_unknown_probes_are_not_five_successes(self):
+        states = {pid: L.UNKNOWN for pid in L.PROBE_IDS}
+        for stage in L.STAGE_KEYS:
+            with self.subTest(stage=stage):
+                score = L.stage_score(states, stage)
+                self.assertEqual(score["level"], 0)
+                self.assertEqual((score["pass"], score["fail"], score["unknown"]), (0, 0, 5))
+
+    def test_disjoint_parallel_inputs_join_only_after_both_sources(self):
+        layers = L.topo_layers(
+            ["source-a", "source-b", "join"],
+            [("source-a", "join", "FEEDFORWARD"),
+             ("source-b", "join", "FEEDFORWARD")],
+        )
+        self.assertEqual(layers, [["source-a", "source-b"], ["join"]])
+
+
 if __name__ == "__main__":
     unittest.main()
