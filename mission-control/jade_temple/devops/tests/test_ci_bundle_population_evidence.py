@@ -81,5 +81,49 @@ class PopulationEvidence(unittest.TestCase):
             E.observe(log(1), SHA, 0)
 
 
+    def test_extra_cohort_cannot_inflate_total(self):
+        rows = {"devops": E.observe(log(77), SHA, 123),
+                "actions_metrics": E.observe(log(12), SHA, 123),
+                "unrelated": E.observe(log(900), SHA, 123)}
+        result = E.reconcile(rows)
+        self.assertFalse(result["scope_exact"])
+        self.assertTrue(result["complete_groups"])
+        self.assertEqual(result["unexpected_groups"], ["unrelated"])
+        self.assertIsNone(result["observed_executed_total"])
+
+    def test_multiple_summaries_not_mistaken_for_one_cohort(self):
+        row = E.observe(log(77) + log(12), SHA, 123)
+        self.assertEqual(row["state"], "AMBIGUOUS_MULTIPLE_SUMMARIES")
+        self.assertIsNone(row["executed"])
+
+    def test_disconnected_footer_cannot_rescue_a_failed_test(self):
+        row = E.observe("Ran 77 tests in 1.2s\nerror: lost footer\nOK\n", SHA, 123)
+        self.assertEqual(row["state"], "UNKNOWN_NO_OUTCOME")
+        row = E.observe(log(77, "FAILED (failures=1)") + "OK\n", SHA, 123)
+        self.assertEqual(row["state"], "LOG_FAIL")
+
+    def test_run_attempt_mismatch_refuses_reconciliation(self):
+        rows = {"devops": E.observe(log(77), SHA, 123, run_attempt=1),
+                "actions_metrics": E.observe(log(12), SHA, 123, run_attempt=2)}
+        result = E.reconcile(rows)
+        self.assertFalse(result["same_run_claim"])
+        self.assertIsNone(result["observed_executed_total"])
+
+    def test_malformed_record_and_invalid_required_scope_refused(self):
+        rows = {"devops": E.observe(log(77), SHA, 123),
+                "actions_metrics": E.observe(log(12), SHA, 123)}
+        rows["actions_metrics"]["executed"] = 10_000
+        self.assertFalse(E.reconcile(rows)["all_logs_good"])
+        self.assertIsNone(E.reconcile(rows)["observed_executed_total"])
+        with self.assertRaises(ValueError):
+            E.reconcile(rows, required=("devops", "devops"))
+        with self.assertRaises(ValueError):
+            E.observe(log(1), SHA, 123, run_attempt=0)
+
+    def test_windows_crlf_footers_are_accepted_as_text(self):
+        row = E.observe(log(3).replace("\n", "\r\n"), SHA, 123)
+        self.assertEqual((row["ran"], row["executed"], row["state"]), (3, 3, "LOG_PASS"))
+
+
 if __name__ == "__main__":
     unittest.main()
