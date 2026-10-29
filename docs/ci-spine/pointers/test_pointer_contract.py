@@ -114,6 +114,11 @@ class PointerContractTests(unittest.TestCase):
         self.assertTrue({x["output"]["href"] for x in self.doc["pointers"]} <= nav.links)
         self.assertIn("0 PDF RECTANGLES VERIFIED", text)
 
+    def test_decorative_arrow_cannot_capture_pointer_events(self):
+        html = p.NAV.read_text("utf-8")
+        self.assertRegex(html, r"\.arrow\{[^}]*pointer-events:none")
+        self.assertEqual(html.count('class="action"'), 3)
+
     def test_companion_gui_script_injection_fails(self):
         with tempfile.TemporaryDirectory() as temp:
             nav = Path(temp) / "index.html"
