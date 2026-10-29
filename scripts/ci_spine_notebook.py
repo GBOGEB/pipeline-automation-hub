@@ -161,7 +161,7 @@ def project(graph: dict, runs: dict, *, graph_digest: str,
                     "timing_window": runs["observed_window"]},
         "nodes": annotated, "edges": edges, "timings": timing_rows,
         "crosslinks": [
-            {"title": "CI Spine source index", "href": "../governance/ci_spine/README.md"},
+            {"title": "CI Spine source index", "href": "../../governance/ci_spine/README.md"},
             {"title": "Canonical JADE DAG / SIPOC", "href": "../../mission-control/jade_temple/site/cicd_dag.html"},
             {"title": "Plotly Mission Control generator", "href": "../../mission-control/federation-atlas/mission_rebuild/w2_plotly.py"},
             {"title": "Interactive Mission Control W18", "href": "../mission-control/w18/index.html"},
@@ -198,8 +198,29 @@ def main(argv=None) -> int:
     rendered = build(a.root)
     target = a.root / OUTPUT
     if a.check:
-        if not target.is_file() or target.read_bytes() != rendered.encode("utf-8"):
-            print("CI_SPINE_NOTEBOOK_STALE_OR_MISSING", file=sys.stderr)
+        # Structural HTML parity and *semantic* JSON parity; JSON member order is
+        # not a source identity or approval signal. Reject unescaped script data.
+        if not target.is_file():
+            print("CI_SPINE_NOTEBOOK_MISSING", file=sys.stderr)
+            return 1
+        template = (a.root / TEMPLATE).read_text(encoding="utf-8")
+        prefix, suffix = template.split(PLACEHOLDER)
+        actual = target.read_text(encoding="utf-8")
+        if not actual.startswith(prefix) or not actual.endswith(suffix):
+            print("CI_SPINE_NOTEBOOK_TEMPLATE_DRIFT", file=sys.stderr)
+            return 1
+        payload = actual[len(prefix):len(actual) - len(suffix)]
+        if "<" in payload or "&" in payload:
+            print("CI_SPINE_NOTEBOOK_UNSAFE_PAYLOAD", file=sys.stderr)
+            return 1
+        try:
+            actual_doc = json.loads(payload)
+            expected_doc = json.loads(rendered[len(prefix):len(rendered) - len(suffix)])
+        except json.JSONDecodeError:
+            print("CI_SPINE_NOTEBOOK_INVALID_JSON", file=sys.stderr)
+            return 1
+        if actual_doc != expected_doc:
+            print("CI_SPINE_NOTEBOOK_SOURCE_DRIFT", file=sys.stderr)
             return 1
         print("CI_SPINE_NOTEBOOK_PARITY_PASS")
         return 0
