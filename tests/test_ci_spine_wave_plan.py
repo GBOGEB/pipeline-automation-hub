@@ -85,6 +85,41 @@ class WaveContract(unittest.TestCase):
         self.assertTrue(M.collision("src/**", "src/a.py"))
         self.assertFalse(M.collision("src/a.py", "src2/a.py"))
 
+    def test_malformed_nested_index_fails_closed_with_structured_receipt(self):
+        for field, value in (("source", ["bad"]), ("source", "not-a-mapping"),
+                             ("assurance", ["bad"]), ("assurance", "bad"),
+                             ("errors", None)):
+            with self.subTest(field=field, value=value):
+                i, p = sample()
+                i[field] = value
+                result = M.build(i, p)
+                self.assertEqual(result["verdict"], "WAVE_POLICY_FIRST_RED")
+                self.assertEqual(result["candidate_workers"], [])
+                self.assertTrue(result["errors"])
+                self.assertEqual(result["authority"]["merge"], "HOLD")
+
+    def test_unsupported_glob_cannot_hide_two_worker_ownership(self):
+        for bad in ("src/*.py", "src/a?.py", "src/[ab].py",
+                    "src/{a,b}.py", "src/**/a.py", "src/**/nested"):
+            with self.subTest(bad=bad):
+                self.assertFalse(M.valid_path(bad))
+                i, p = sample()
+                p["tasks"][0]["owns"] = [bad]
+                result = M.build(i, p)
+                self.assertEqual(result["candidate_workers"], [])
+                self.assertIn("invalid ownership paths", " ".join(result["errors"]))
+        self.assertTrue(M.valid_path("src/**"))
+        i, p = sample()
+        p["tasks"][0]["owns"] = ["src/**"]
+        self.assertEqual({x["id"]: x["disposition"] for x in M.build(i, p)["rows"]}["CI-N-C"],
+                         "DEFER_OWNERSHIP_COLLISION")
+
+    def test_receipt_mapping_with_nonstring_keys_fails_closed(self):
+        i, p = sample()
+        out = M.build(i, p, {42: receipt()})
+        self.assertEqual(out["candidate_workers"], [])
+        self.assertIn("receipt keys must be strings", out["errors"])
+
     def test_same_lane_and_worker_capacity(self):
         i, p = sample()
         p["tasks"][2]["owns"] = ["src/c.py"]
