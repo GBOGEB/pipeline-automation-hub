@@ -81,3 +81,12 @@ The CLI reads workflow YAML **from the immutable Git tree at `--source-sha`**, n
 ## Explicit hold
 
 No workflow/job renaming, GOGREEN admission ledger update, branch ruleset mutation, new privileged trigger, external dispatch, deployment or merge in this slice. Preserve `validate-ultra-control`, `canonical-self-test-and-mutation`, and `GOGREEN required gate` required check identities. Existing `AGENTS.md` L1/L4/L5/L6/L7 remain binding.
+
+
+## Live wave qualification: 2026-10-29 readback
+
+The N0 implementation is reviewed at exact PR #997 head `3f09ccdaac86ae3e1310e1ab0106a1386e707913`. The GitHub check set has `GOGREEN required gate`, `validate-ultra-control`, `canonical-self-test-and-mutation`, JADE source/test/browser, and FPC proof checks green; the **JADE DevOps census is RED**. Its [run 40729945327](https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40729945327) recorded 77 passing `test_devops_*.py` tests but a mistaken same-step 89 floor. The separate metrics tests did not run, so do not invent a combined live count. The owner correction is existing [#977](https://github.com/GBOGEB/pipeline-automation-hub/pull/977); [#872](https://github.com/GBOGEB/pipeline-automation-hub/pull/872) owns unread-blob fail-closure. No copied repair in N0.
+
+The source-bound N2 [run 40728019289](https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40728019289) separately verified 183 source-SHA workflow YAMLs (includes new shadow workflow), 0 parse errors, 0 malformed-job errors, 0 DAG anomalies, 3 unclassified candidate labels. The archived ZIP has SHA-256 `d02bfa0793c0495d2d7ba94bef00856c7f6a0e7468cc103a889980e63f28def3`. The derived candidate hints are **not** executed-test credit, coverage percentages, or GOGREEN admission. N1 is [#1012](https://github.com/GBOGEB/pipeline-automation-hub/pull/1012), N2 is [#1014](https://github.com/GBOGEB/pipeline-automation-hub/pull/1014), both disjoint draft follow-ups with newer exact-head testflights pending. **MERGE_ADMISSION_HOLD** remains.
+
+**Integration boundary:** PR #997 N0 and merged #992 have distinct bundle ID namespaces. Do not flatten them or treat equal Bxx suffixes as policy equivalence; first obtain owner disposition on the versioned lossless crosswalk. Parent/child branch SHA drift requires requalification before landing N1 or N2.
