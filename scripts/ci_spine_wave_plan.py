@@ -31,7 +31,18 @@ def valid_path(name):
     if not raw or any(char in raw for char in "*?[]{}!"):
         return False
     p = PurePosixPath(raw)
-    return not p.is_absolute() and str(p) == raw and all(x not in (".", "..") for x in p.parts)
+    if p.is_absolute() or str(p) != raw:
+        return False
+    # Win32 aliases: trailing spaces/dots are discarded, device names are
+    # reserved even when followed by an extension, and ':' is an ADS separator.
+    # Refuse these claims rather than silently allocating overlapping workers.
+    for component in p.parts:
+        if (component in (".", "..") or component.rstrip(" .") != component
+                or any(ord(c) < 32 or c in '<>:"|\\' for c in component)
+                or re.fullmatch(r"(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\..*)?",
+                                component, re.IGNORECASE)):
+            return False
+    return True
 
 
 def collision(left, right):
