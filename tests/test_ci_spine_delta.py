@@ -1,6 +1,8 @@
 """Exact-SHA workflow delta safety, no-running-metrics and custody controls."""
 import copy
 import importlib.util
+import json
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -81,6 +83,52 @@ class Delta(unittest.TestCase):
         self.b = copy.deepcopy(self.a)
         self.b["workflows"][0]["source_sha256"] = "5" * 64
         self.assertIn("same source SHA", " ".join(M.compare(self.a, self.b)["errors"]))
+
+    def test_identical_digest_projections_cannot_disagree(self):
+        changes = {"reusable": True, "paths_filtered": True,
+                   "dag_layers": [["test"], ["deploy"]],
+                   "parse_error": "YAML", "dag_cycle": True,
+                   "dangling_needs": ["test->missing"], "oid": "different"}
+        for field, altered in changes.items():
+            with self.subTest(field=field):
+                self.b = index("b" * 40)
+                self.b["workflows"][0][field] = altered
+                result = M.compare(self.a, self.b)
+                self.assertEqual(result["verdict"], "CI_SPINE_DELTA_FIRST_RED")
+                self.assertIn("parser projection", " ".join(result["errors"]))
+
+    def test_structural_drift_is_not_an_innocuous_source_only_change(self):
+        for field, altered in (("parse_error", "YAML"), ("dag_cycle", True),
+                               ("dangling_needs", ["a->missing"]),
+                               ("jobs", [{"id": "test", "parse_error": "malformed job"}])):
+            with self.subTest(field=field):
+                self.b = index("b" * 40)
+                self.b["workflows"][0]["source_sha256"] = "9" * 64
+                self.b["workflows"][0][field] = altered
+                result = M.compare(self.a, self.b)
+                self.assertEqual(result["counts"]["modified"], 1)
+                row = result["workflow_changes"][0]
+                self.assertTrue(row["safety_attention"])
+                self.assertNotEqual(row["changed_fields"], ["source_only_no_observed_semantic_delta"])
+                self.assertEqual(row["merge_admission"], "HOLD")
+
+    def test_malformed_nested_index_writes_structured_first_red(self):
+        for field, malformed in (("source", ["bad"]), ("assurance", ["bad"]),
+                                 ("source", "bad"), ("assurance", "bad"), ("errors", None)):
+            with self.subTest(field=field, malformed=malformed):
+                self.b = index("b" * 40)
+                self.b[field] = malformed
+                outcome = M.compare(self.a, self.b)
+                self.assertEqual(outcome["verdict"], "CI_SPINE_DELTA_FIRST_RED")
+                self.assertTrue(outcome["errors"])
+                self.assertEqual(outcome["limits"]["merge_admission"], "HOLD")
+                with tempfile.TemporaryDirectory() as td:
+                    before, after, receipt = (Path(td) / x for x in ("before.json", "after.json", "receipt.json"))
+                    before.write_text(json.dumps(self.a), encoding="utf-8")
+                    after.write_text(json.dumps(self.b), encoding="utf-8")
+                    self.assertEqual(M.main(["--before", str(before), "--after", str(after),
+                                             "--out", str(receipt), "--check"]), 1)
+                    self.assertEqual(json.loads(receipt.read_text())["verdict"], "CI_SPINE_DELTA_FIRST_RED")
 
     def test_anchor_rebinding_is_visible_and_cannot_certify(self):
         self.b["anchors"][0]["phase"] = "GOVERN"
