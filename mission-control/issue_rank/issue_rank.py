@@ -1522,15 +1522,14 @@ def redact(model: dict, delta: dict | None = None, private_repos=None):
             return "<private aggregate>"
         return value
 
-    out = export_public(out)
-    # Rebuild only from *public* open items, preserving public stub/closed
-    # ancestors already validated by the ranked source lineage. Never bridge
-    # a private hop: a path crossing private evidence restarts at its last
-    # private member, withholding the unsupported upstream ancestry.
-    public_model = out["model"]
-    public_items = {i["key"]: i for i in public_model["items"]}
-    public_threads = {}
-    for item_key, item in public_items.items():
+    # Freeze public-only lineage while private pseudonyms are still visible to
+    # the detector. export_public() strips those hops, so scanning afterwards
+    # would silently join public nodes across a private intermediary.
+    safe_public_threads = {}
+    for item in m["items"]:
+        if item["repo"] in priv:
+            continue
+        item_key = item["key"]
         source_path = item.get("lineage") or [item_key]
         last_private = max(
             (n for n, node in enumerate(source_path) if private_key(node)),
@@ -1538,7 +1537,17 @@ def redact(model: dict, delta: dict | None = None, private_repos=None):
         )
         safe_path = [node for node in source_path[last_private + 1:]
                      if not private_key(node)]
-        public_threads[item_key] = safe_path if safe_path and safe_path[-1] == item_key else [item_key]
+        safe_public_threads[item_key] = (
+            safe_path if safe_path and safe_path[-1] == item_key else [item_key]
+        )
+
+    out = export_public(out)
+    # Preserve public closed/stub ancestors only when the full source path
+    # contains no intervening private node. No graph bridge through secrecy.
+    public_model = out["model"]
+    public_items = {i["key"]: i for i in public_model["items"]}
+    public_threads = {key: safe_public_threads.get(key, [key])
+                      for key in public_items}
     public_roots = defaultdict(list)
     for item_key, thread in public_threads.items():
         public_roots[thread[0]].append((item_key, len(thread)))
