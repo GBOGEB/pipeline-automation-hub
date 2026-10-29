@@ -319,13 +319,31 @@ def validate_ledger(ledger):
     require(isinstance(ledger, dict) and ledger.get("schema") == LEDGER_SCHEMA and
             ledger.get("merge_authorized") is False and ledger.get("authority_transfer") is False and
             isinstance(ledger.get("events"), list), "INVALID_LEDGER")
+    require(set(ledger) == {"schema", "events", "tail_sha256", "authority_transfer",
+                            "merge_authorized"}, "INVALID_LEDGER_FIELDS")
     parent = None
     event_ids = set()
     for event in ledger["events"]:
-        require(isinstance(event, dict) and event.get("previous_event_sha256") == parent,
-                "BROKEN_EVENT_CHAIN")
-        require(event.get("event_sha256") == digest(_unsigned(event, "event_sha256")), "EVENT_HASH_MISMATCH")
-        require(event.get("event_id") not in event_ids, "DUPLICATE_EVENT_ID")
+        require(isinstance(event, dict) and set(event) == {
+            "kind", "topic", "packet_sha256", "recipient", "evidence_sha256",
+            "at", "event_id", "previous_event_sha256", "event_sha256"},
+            "INVALID_EVENT_FIELDS")
+        require(event["kind"] in {"STAGED", "PUBLICATION_POSTED", "RECIPIENT_ACK",
+                                  "SOURCE_DRIFT", "INVALIDATED"}, "INVALID_EVENT_KIND")
+        require(isinstance(event["topic"], str) and TOPIC.fullmatch(event["topic"]),
+                "BAD_EVENT_TOPIC")
+        require(_sha(event["packet_sha256"], 64) and _sha(event["evidence_sha256"], 64),
+                "BAD_EVENT_HASH")
+        require(event["recipient"] is None or _repo(event["recipient"]),
+                "BAD_EVENT_RECIPIENT")
+        timestamp(event["at"])
+        require(event["event_id"] == digest([event["topic"], event["packet_sha256"],
+                                             event["kind"], event["recipient"]]),
+                "INVALID_EVENT_ID")
+        require(event["previous_event_sha256"] == parent, "BROKEN_EVENT_CHAIN")
+        require(event["event_sha256"] == digest(_unsigned(event, "event_sha256")),
+                "EVENT_HASH_MISMATCH")
+        require(event["event_id"] not in event_ids, "DUPLICATE_EVENT_ID")
         event_ids.add(event["event_id"])
         parent = event["event_sha256"]
     require(ledger.get("tail_sha256") == parent, "STALE_LEDGER_TAIL")

@@ -416,5 +416,60 @@ class EventLedger(unittest.TestCase):
                           'evidence_sha256','at','event_id','previous_event_sha256','event_sha256'})
 
 
+    def forged(self, mutation):
+        ledger=self.append(t.new_ledger())
+        mutation(ledger["events"][0])
+        event=ledger["events"][0]
+        event["event_sha256"]=t.digest({k:v for k,v in event.items()
+                                         if k!="event_sha256"})
+        ledger["tail_sha256"]=event["event_sha256"]
+        return ledger
+
+    def test_stored_event_rehashed_but_unsupported_kind_denied(self):
+        x=self.forged(lambda e:e.update(kind="MERGE"))
+        with self.assertRaisesRegex(t.ExchangeError,"INVALID_EVENT_KIND"):
+            t.validate_ledger(x)
+
+    def test_stored_event_rehashed_but_extra_secret_field_denied(self):
+        x=self.forged(lambda e:e.update(private_data="should-not-exist"))
+        with self.assertRaisesRegex(t.ExchangeError,"INVALID_EVENT_FIELDS"):
+            t.append_event(x,kind="SOURCE_DRIFT",topic="electrical.icd.feeders",
+                           packet_sha256=X,evidence_sha256=Y,at=T1,
+                           expected_tail_sha256=x["tail_sha256"])
+
+    def test_stored_event_wrong_identity_denied_even_if_rehashed(self):
+        x=self.forged(lambda e:e.update(event_id="0"*64))
+        with self.assertRaisesRegex(t.ExchangeError,"INVALID_EVENT_ID"):
+            t.validate_ledger(x)
+
+    def test_stored_event_unbound_packet_hash_denied(self):
+        x=self.forged(lambda e:e.update(packet_sha256="bad"))
+        with self.assertRaisesRegex(t.ExchangeError,"BAD_EVENT_HASH"):
+            t.validate_ledger(x)
+
+    def test_stored_event_wrong_timestamp_denied(self):
+        x=self.forged(lambda e:e.update(at="2026-10-28T09:00:00+01:00"))
+        with self.assertRaisesRegex(t.ExchangeError,"NON_UTC_TIMESTAMP"):
+            t.validate_ledger(x)
+
+    def test_stored_event_wrong_recipient_denied(self):
+        x=self.forged(lambda e:e.update(recipient="UNTRUSTED"))
+        with self.assertRaisesRegex(t.ExchangeError,"BAD_EVENT_RECIPIENT"):
+            t.validate_ledger(x)
+
+    def test_stored_event_unknown_top_level_field_denied(self):
+        x=self.append(t.new_ledger())
+        x["raw_token"]="not-allowed"
+        with self.assertRaisesRegex(t.ExchangeError,"INVALID_LEDGER_FIELDS"):
+            t.validate_ledger(x)
+
+    def test_valid_staged_and_recipient_ack_events_remain_accepted(self):
+        a=self.append(t.new_ledger())
+        b=self.append(a,kind="RECIPIENT_ACK",recipient="GBOGEB/pipeline-automation-hub",
+                      expected=a["tail_sha256"])
+        self.assertEqual(len(t.validate_ledger(b)["events"]),2)
+
+
+
 if __name__=='__main__':
     unittest.main()
