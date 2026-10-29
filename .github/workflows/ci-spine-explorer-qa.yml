@@ -47,11 +47,29 @@ jobs:
               raise SystemExit('CI_SPINE_TEST_POPULATION_FIRST_RED')
           print('CI_SPINE_TESTS_EXECUTED='+str(results[-1]))
           PY
+      - name: JQ-04 source-to-view pointer adversarial matrix and receipt
+        run: |
+          set -euo pipefail
+          python docs/ci-spine/pointers/test_pointer_contract.py 2>&1 | tee "$RUNNER_TEMP/ci-spine-pointers.log"
+          python - <<'PY'
+          import os,re
+          from pathlib import Path
+          s=(Path(os.environ['RUNNER_TEMP'])/'ci-spine-pointers.log').read_text()
+          results=[int(x) for x in re.findall(r'^Ran (\d+) tests in ',s,re.M)]
+          if not results or results[-1] < 19:
+              raise SystemExit('CI_SPINE_POINTER_POPULATION_FIRST_RED')
+          print('CI_SPINE_POINTER_TESTS_EXECUTED='+str(results[-1]))
+          PY
+          python docs/ci-spine/pointers/pointer_contract.py --out "$RUNNER_TEMP/ci-spine-pointer-receipt.json"
+          test -s "$RUNNER_TEMP/ci-spine-pointer-receipt.json"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: ci-spine-source-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
-          path: ${{ runner.temp }}/ci-spine-tests.log
+          path: |
+            ${{ runner.temp }}/ci-spine-tests.log
+            ${{ runner.temp }}/ci-spine-pointers.log
+            ${{ runner.temp }}/ci-spine-pointer-receipt.json
           if-no-files-found: warn
           retention-days: 21
   browser:
