@@ -10,6 +10,13 @@ from mach2 import (build, build_graph, defects_rate, load_manifest, run_event, s
                    trend, validate_missions, validate_mycelium, wilson)
 
 
+def load_tests(loader, tests, pattern):
+    # CI discovers only test_mach2.py; carry the GM-IV wave tests with it.
+    import test_gm4_frontier
+    tests.addTests(loader.loadTestsFromModule(test_gm4_frontier))
+    return tests
+
+
 class Mach2Tests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
