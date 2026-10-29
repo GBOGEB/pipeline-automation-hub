@@ -104,7 +104,7 @@ class Contract(unittest.TestCase):
                      "mission-control/gogreen/scale_dock.py", "AGENTS.md")
         anchors = json.loads((ROOT / "governance/ci_spine/CI_SPINE_BINDINGS_V1.json").read_text())["anchors"]
         for block in (pr, push):
-            patterns = re.findall(r"^\\s+- '([^']+)'$", block, re.M)
+            patterns = re.findall(r"^\s+- '([^']+)'$", block, re.M)
             for path in mandatory:
                 self.assertIn(path, patterns)
             for anchor in anchors:
