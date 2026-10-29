@@ -12,6 +12,16 @@ last 12 merged PRs (#814-#831) it ran 12/12 times, unfiltered, from GitHub Actio
 red (CI/CD DAG outputs stale, outdated pin test), repaired by #829. The 90% bar exists to keep flaky
 checks out; this gate missed it only because it caught real red merges, which is what it is for.
 
+Second owner-requested exception (2026-10-29): the hub also requires the head status
+`First-Pass Closure Gate / first-pass-closure`. It is the status the trusted pull_request_target
+controller publishes on the PR head (docs/W305_FIRST_PASS_CLOSURE_GATE.md, R7), not the job's
+check run, which a candidate workflow could imitate. It is unfiltered (no paths), and is published
+by GitHub Actions (15368). On the last 12 merged PRs (#984-#1018) it was SUCCESS at merge time on
+1/12 (#998), FAILURE on 3, PENDING on 3, absent on 5 (the gate skips drafts). It is far below the
+90% bar for the same reason as GOGREEN: the merges were red, not the gate. #838 and #931 merged
+with it red. Expect it to block until a PR carries an exact-head receipt and a completed Codex
+review; drafts must be marked ready first, and Dependabot PRs need an owner-written receipt.
+
 Import: Settings -> Rules -> Rulesets -> New ruleset -> Import a ruleset (upload the .json),
 or: gh api -X POST repos/OWNER/REPO/rulesets --input FILE.json   (owner only; agents never apply)
 """
@@ -21,6 +31,10 @@ from pathlib import Path
 import yaml
 
 ACTIONS = 15368  # GitHub Actions app id: pins each required check to Actions so a status cannot spoof it
+# Required contexts that are commit statuses, not job check runs: context -> (workflow file, publishing job).
+STATUS_PRODUCERS = {
+    "First-Pass Closure Gate / first-pass-closure": ("first-pass-closure-gate.yml", "first-pass-closure"),
+}
 
 REPOS = {
     "GBOGEB/ABACUS": {"branch": "main", "checks": ["YAML syntax scaffold", "smoke", "a10-guard", "dependency-review"],
@@ -35,9 +49,10 @@ REPOS = {
     "GBOGEB/gg_MATH": {"branch": "main", "checks": ["first-kernel", "monte-carlo-reference"],
                        "methods": ["merge", "squash", "rebase"],
                        "why": "Numerical kernels: first kernel and Monte-Carlo reference run on every PR."},
-    "GBOGEB/pipeline-automation-hub": {"branch": "master", "checks": ["validate-ultra-control", "canonical-self-test-and-mutation", "GOGREEN required gate"],
-                                       "methods": ["squash", "rebase"], "linear": True, "copilot_review": True,
-                                       "why": "Hosts the Code Purple review site. Keeps linear history and Copilot review from the existing ruleset, which currently targets no branch. GOGREEN required gate is the MACH-II compensating check for the solo-owner review waiver; it is below the 90% bar (9/12) only because it failed on true reds (#815, #820, #821)."},
+    "GBOGEB/pipeline-automation-hub": {"branch": "master", "checks": ["validate-ultra-control", "canonical-self-test-and-mutation", "GOGREEN required gate",
+                                                                      "First-Pass Closure Gate / first-pass-closure"],
+                                       "methods": ["squash", "rebase"], "linear": True, "copilot_review": True, "unattributed_approval": True,
+                                       "why": "Hosts the Code Purple review site. Keeps linear history and Copilot review from the existing ruleset, which currently targets no branch. GOGREEN required gate is the MACH-II compensating check for the solo-owner review waiver; it is below the 90% bar (9/12) only because it failed on true reds (#815, #820, #821). First-Pass Closure Gate / first-pass-closure is the trusted controller's head status (W305 R7), required so a red gate blocks the merge button; 1/12 recent merges had it green, so it blocks until receipts and exact-head Codex reviews are routine."},
     "GBOGEB/Q_engineering_tools": {"branch": "main", "checks": ["build-and-exercise", "engineering-source-smoke"],
                                    "methods": ["merge", "squash", "rebase"],
                                    "why": "Build and engineering-source smoke run on every PR."},
@@ -88,6 +103,10 @@ def basic(repo: str, cfg: dict) -> dict:
             "do_not_enforce_on_create": False,
             "required_status_checks": [{"context": c, "integration_id": ACTIONS} for c in cfg["checks"]]}},
     ]
+    if cfg.get("unattributed_approval"):
+        # Live on the hub (ruleset 25789280). Declared here so an owner PUT (apply_rulesets.py) keeps it:
+        # its diff ignores live-only keys, and a PUT replaces the rule list.
+        rules[2]["parameters"]["require_extra_approval_for_unattributed_changes"] = True
     if cfg.get("linear"):
         rules.append({"type": "required_linear_history"})
     if cfg.get("copilot_review"):
