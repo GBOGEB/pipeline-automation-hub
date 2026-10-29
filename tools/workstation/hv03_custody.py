@@ -217,6 +217,10 @@ def scan(repo: Path, *, rules: list[dict] | None = None,
 def public_summary(data: dict) -> dict:
     files = [f for wt in data["worktrees"] for f in wt.get("files", [])]
     incomplete = sum(f["state"] != "HASHED" for f in files)
+    incomplete += sum(
+        stage["index_sha_state"] != "HASHED"
+        for f in files for stage in f.get("staged_index", [])
+    )
     collisions = sum(f["owner_state"] == "COLLISION" for f in files)
     return {"schema": "gbo.hv03.private-scan-summary.v1",
             "worktrees": len(data["worktrees"]), "files": len(files),
