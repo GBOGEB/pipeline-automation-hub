@@ -4,8 +4,8 @@ No API reads, cache writes or changes to required checks.
 """
 from __future__ import annotations
 import copy
+from html.parser import HTMLParser
 import json
-import re
 import shutil
 import subprocess
 import sys
@@ -17,6 +17,32 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import build_explorer as explorer  # noqa: E402
 import plotly_projection as plotly_companion  # noqa: E402
+
+
+class InlineScriptReader(HTMLParser):
+    """HTML-aware inline script collector; accepts legal end-tag whitespace."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=False)
+        self.inline_scripts = []
+        self.has_external_script = False
+        self._in_script = False
+        self._body = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag.lower() == "script":
+            self.has_external_script |= bool(dict(attrs).get("src"))
+            self._in_script = True
+            self._body = []
+
+    def handle_data(self, data):
+        if self._in_script:
+            self._body.append(data)
+
+    def handle_endtag(self, tag):
+        if tag.lower() == "script" and self._in_script:
+            self.inline_scripts.append("".join(self._body))
+            self._in_script = False
 
 
 class ExplorerProvenanceTests(unittest.TestCase):
@@ -124,7 +150,7 @@ class ExplorerProvenanceTests(unittest.TestCase):
 
     def test_no_external_scripts_or_dynamic_network(self):
         s = explorer.OUTPUT.read_text("utf-8")
-        self.assertNotRegex(s, r"<script\b[^>]*\bsrc\s*=")
+        self.assertFalse(plotly_companion.external_scripts(s))
         self.assertIn("connect-src 'none'", s)
         self.assertIn("source_head", s)
         self.assertIn("JACQUARD_CROSSWALK.md", s)
@@ -143,6 +169,21 @@ class ExplorerProvenanceTests(unittest.TestCase):
         self.assertIn("6f7cf145c4ebf585dbb341ba5863e77098ad36b0", s)
         self.assertIn("older than merged PRs", s)
 
+    def test_local_workstream_docs_do_not_point_to_old_catalog_commit(self):
+        page = explorer.OUTPUT.read_text("utf-8")
+        self.assertIn('String(x).startsWith("docs/ci-spine/")', page)
+        self.assertIn('detailLink(x.slice("docs/ci-spine/".length),x)', page)
+        # A live checkout-relative document is not a GitHub blob at the
+        # historical test catalog head where that document did not exist.
+        self.assertIn("JACQUARD_CROSSWALK.md", page)
+
+    def test_unknown_queue_time_is_never_rendered_as_zero(self):
+        page = explorer.OUTPUT.read_text("utf-8")
+        self.assertIn("queueKnown=Number.isFinite(job?.queue_seconds)", page)
+        self.assertIn('(queueKnown?q+"s":"UNKNOWN")+" queue', page)
+        self.assertNotIn('time.textContent=q+"s queue', page)
+        self.assertIn('Queue "+(queueKnown?q+" seconds":"UNKNOWN")', page)
+
     def test_plotly_inline_source_url_is_not_active_network_dependency(self):
         inline = "<html><script>const locationHint='https://cdn.plot.ly/plotly.min.js';</script></html>"
         self.assertFalse(plotly_companion.external_scripts(inline))
@@ -153,10 +194,26 @@ class ExplorerProvenanceTests(unittest.TestCase):
             with self.subTest(document=doc):
                 self.assertTrue(plotly_companion.external_scripts(doc))
 
+    def test_html_parser_handles_script_end_tag_whitespace(self):
+        html = "<script>first</script ><script src='https://example.test/a.js'>second</script>"
+        parser = InlineScriptReader()
+        parser.feed(html)
+        self.assertEqual(parser.inline_scripts, ["first", "second"])
+        self.assertTrue(parser.has_external_script)
+        self.assertTrue(plotly_companion.external_scripts(html))
+
+    def test_unknown_queue_inspector_is_not_null_seconds(self):
+        page = explorer.OUTPUT.read_text("utf-8")
+        self.assertIn('(Number.isFinite(j?.queue_seconds)?E(j.queue_seconds)+" seconds":"UNKNOWN")', page)
+        self.assertNotIn('E(j?.queue_seconds)+" seconds"', page)
+
     @unittest.skipUnless(shutil.which("node"), "Node not installed; native browser QA must separately run")
     def test_inline_javascript_parses_in_node(self):
         html = explorer.OUTPUT.read_text("utf-8")
-        scripts = re.findall(r"<script(?:\s+[^>]*)?>(.*?)</script>", html, flags=re.S|re.I)
+        parser = InlineScriptReader()
+        parser.feed(html)
+        self.assertFalse(parser.has_external_script)
+        scripts = parser.inline_scripts
         self.assertEqual(len(scripts), 2)
         with tempfile.TemporaryDirectory() as d:
             js = Path(d) / "explorer.js"
