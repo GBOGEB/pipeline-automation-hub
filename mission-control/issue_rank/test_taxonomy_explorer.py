@@ -69,6 +69,18 @@ class Explorer(unittest.TestCase):
         self.assertIn("/issues/12", page)
         self.assertIn("No merge / release / engineering credit", page)
 
+    def test_v2_redacted_private_head_is_allowed_but_public_head_is_required(self):
+        m = model()
+        m["schema"] = "jade.issue-rank.v2"
+        m["heads"][QPS]["head_sha"] = None
+        m["items"] = [i for i in m["items"] if i["repo"] != QPS]
+        page = explorer.render(m)
+        self.assertIn("PUBLIC_PROJECTION", page)
+        self.assertNotIn(QPS, page)
+        m["heads"][HUB]["head_sha"] = None
+        with self.assertRaisesRegex(ValueError, "INVALID_REPO_OR_HEAD"):
+            explorer.render(m)
+
     def test_filters_and_peer_counts_have_real_targets(self):
         page = explorer.render(model())
         parser = WorkItemParser()

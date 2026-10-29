@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 from types import SimpleNamespace
 import taxonomy_slowburn_crew as crew
@@ -63,7 +64,44 @@ class Crew(unittest.TestCase):
         r=invoke(queue=21,runner=forbidden)
         self.assertEqual(r["status"],"BACKPRESSURE_HOLD_NO_TEST_PROOF")
         self.assertEqual(r["waves_executed"],0)
+        self.assertFalse(r["terminal_native_proof"])
         self.assertEqual(len(r["test_invocations"]),0)
+
+    def test_no_proof_receipt_cannot_exit_ci_green(self):
+        # On merged #972, all four matrix jobs returned SUCCESS while
+        # their receipts recorded BACKPRESSURE_HOLD with ZERO waves.
+        sample=invoke(queue=21,waves=12)
+        with tempfile.TemporaryDirectory() as tmp:
+            dest=Path(tmp)/"receipt.json"
+            with patch.object(crew,"run",return_value=sample):
+                rc=crew.main(["--lane","grammar","--head",SHA,
+                              "--waves","12","--queue-depth","21",
+                              "--out",str(dest)])
+            self.assertNotEqual(rc,0)
+            receipt=json.loads(dest.read_text())
+            self.assertEqual(receipt["waves_executed"],0)
+            self.assertFalse(receipt["terminal_native_proof"])
+
+    def test_true_native_proof_can_exit_zero(self):
+        sample=invoke(waves=2,queue=1)
+        self.assertTrue(sample["terminal_native_proof"])
+        with tempfile.TemporaryDirectory() as tmp:
+            dest=Path(tmp)/"receipt.json"
+            with patch.object(crew,"run",return_value=sample):
+                rc=crew.main(["--lane","grammar","--head",SHA,
+                              "--waves","2","--queue-depth","1",
+                              "--out",str(dest)])
+            self.assertEqual(rc,0)
+            self.assertEqual(json.loads(dest.read_text())["waves_executed"],2)
+
+    def test_budget_stop_cannot_be_green(self):
+        # Mock an exhausted elapsed clock without running a subprocess.
+        times=iter([0.0,31.0])
+        r=crew.run(lane="grammar",head=SHA,waves=2,queue_depth=1,
+                   budget_seconds=30,clock=lambda:next(times),
+                   rex_check=controls,sleep=lambda _:None)
+        self.assertEqual(r["status"],"BUDGET_EXHAUSTED_HOLD")
+        self.assertFalse(r["terminal_native_proof"])
 
     def test_budget_and_max_wave_bounded(self):
         for bad in (0,-1,13,100):

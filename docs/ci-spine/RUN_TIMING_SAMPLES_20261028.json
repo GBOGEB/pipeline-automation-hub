@@ -1,0 +1,839 @@
+{
+  "schema": "gbo.ci-spine.run-timing-sample.v1",
+  "record_type": "sampled_github_actions_run_job_step_timing_no_fleet_estimation",
+  "repository": "GBOGEB/pipeline-automation-hub",
+  "observed_window": "2026-10-28",
+  "sample_count": 8,
+  "sample_method": "Targeted representative known run IDs; not a random or exhaustive fleet sample. Durations rounded to seconds from GitHub's run/job/step timestamps. Full run updated_at is not an authoritative exact completion timestamp.",
+  "job_tier_source": "GitHub REST /actions/runs/{run_id}/jobs",
+  "owner_for_aggregates": "mission-control/jade_temple/devops/actions_metrics.py",
+  "run_storm_observed": "A separate readback of latest 1,000 workflow runs ending 2026-10-28 ~14:50 UTC found 363 GOGREEN Required Gate Re-check records (278 cancelled, 43 success, 42 skipped). No inference of billable job count.",
+  "runs": [
+    {
+      "run_id": 40690663789,
+      "event": "schedule",
+      "name": "GOGREEN Red-Trace Ledger (read-only)",
+      "source_sha": "e4bb19b8fe4e7f6e9fd4736d13ecffd5a97743ee",
+      "source_branch": "master",
+      "attempt": 1,
+      "created_at": "2026-10-28T12:46:55Z",
+      "run_started_at": "2026-10-28T12:46:55Z",
+      "updated_at": "2026-10-28T12:57:00Z",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 122824299185,
+          "name": "Master red/green transition ledger",
+          "conclusion": "success",
+          "created_at": "2026-10-28T12:46:55Z",
+          "started_at": "2026-10-28T12:46:57Z",
+          "completed_at": "2026-10-28T12:57:00Z",
+          "queue_seconds": 2,
+          "execution_seconds": 603,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "success",
+              "elapsed_seconds": 4
+            },
+            {
+              "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Offline classification and guard tests",
+              "status": "success",
+              "elapsed_seconds": 9
+            },
+            {
+              "name": "Trace master history (GET only)",
+              "status": "success",
+              "elapsed_seconds": 348
+            },
+            {
+              "name": "Admission ledger drift (trust -> authority, offline proposal)",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Required-gate backtest against merged history (GET only)",
+              "status": "success",
+              "elapsed_seconds": 43
+            },
+            {
+              "name": "Depth census (breadth, depth, penetration, tested, ZERO buckets; static)",
+              "status": "success",
+              "elapsed_seconds": 192
+            },
+            {
+              "name": "Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9",
+              "status": "success",
+              "elapsed_seconds": 2
+            },
+            {
+              "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Complete job",
+              "status": "success",
+              "elapsed_seconds": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 40689922118,
+      "event": "pull_request",
+      "name": "GOGREEN Red-Trace Ledger (read-only)",
+      "source_sha": "9f0c0d29232eee797a3deb4ef91eb40ea51d32bc",
+      "source_branch": "feat/triway-n2-parser-20261026",
+      "attempt": 1,
+      "created_at": "2026-10-28T12:41:41Z",
+      "run_started_at": "2026-10-28T12:41:41Z",
+      "updated_at": "2026-10-28T12:51:45Z",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 122822422547,
+          "name": "Master red/green transition ledger",
+          "conclusion": "success",
+          "created_at": "2026-10-28T12:42:59Z",
+          "started_at": "2026-10-28T12:44:21Z",
+          "completed_at": "2026-10-28T12:51:45Z",
+          "queue_seconds": 82,
+          "execution_seconds": 444,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "success",
+              "elapsed_seconds": 4
+            },
+            {
+              "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Offline classification and guard tests",
+              "status": "success",
+              "elapsed_seconds": 7
+            },
+            {
+              "name": "Trace master history (GET only)",
+              "status": "success",
+              "elapsed_seconds": 252
+            },
+            {
+              "name": "Admission ledger drift (trust -> authority, offline proposal)",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Required-gate backtest against merged history (GET only)",
+              "status": "success",
+              "elapsed_seconds": 39
+            },
+            {
+              "name": "Depth census (breadth, depth, penetration, tested, ZERO buckets; static)",
+              "status": "success",
+              "elapsed_seconds": 135
+            },
+            {
+              "name": "Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9",
+              "status": "success",
+              "elapsed_seconds": 2
+            },
+            {
+              "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Complete job",
+              "status": "success",
+              "elapsed_seconds": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 40690211930,
+      "event": "schedule",
+      "name": "GOGREEN Replay Lane (bounded)",
+      "source_sha": "e4bb19b8fe4e7f6e9fd4736d13ecffd5a97743ee",
+      "source_branch": "master",
+      "attempt": 1,
+      "created_at": "2026-10-28T12:43:46Z",
+      "run_started_at": "2026-10-28T12:43:46Z",
+      "updated_at": "2026-10-28T12:47:34Z",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 122822792631,
+          "name": "Replay stale reds on master",
+          "conclusion": "success",
+          "created_at": "2026-10-28T12:43:46Z",
+          "started_at": "2026-10-28T12:44:06Z",
+          "completed_at": "2026-10-28T12:47:34Z",
+          "queue_seconds": 20,
+          "execution_seconds": 208,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "success",
+              "elapsed_seconds": 2
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "success",
+              "elapsed_seconds": 5
+            },
+            {
+              "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Lane safety tests",
+              "status": "success",
+              "elapsed_seconds": 2
+            },
+            {
+              "name": "Trace master (GET only)",
+              "status": "success",
+              "elapsed_seconds": 192
+            },
+            {
+              "name": "Plan and dispatch (dry run on PRs and when requested)",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Complete job",
+              "status": "success",
+              "elapsed_seconds": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 40690086233,
+      "event": "pull_request",
+      "name": "GOGREEN Required Gate",
+      "source_sha": "a0678181e1ca0c36ec4c700c992938aa7aaac411",
+      "source_branch": "feat/issue-rank-n3-wave-control-20261026",
+      "attempt": 1,
+      "created_at": "2026-10-28T12:42:52Z",
+      "run_started_at": "2026-10-28T12:42:52Z",
+      "updated_at": "2026-10-28T12:46:33Z",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 122822628710,
+          "name": "GOGREEN required gate",
+          "conclusion": "success",
+          "created_at": "2026-10-28T12:43:26Z",
+          "started_at": "2026-10-28T12:44:08Z",
+          "completed_at": "2026-10-28T12:46:33Z",
+          "queue_seconds": 42,
+          "execution_seconds": 145,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "success",
+              "elapsed_seconds": 2
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "success",
+              "elapsed_seconds": 4
+            },
+            {
+              "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Gate tests",
+              "status": "success",
+              "elapsed_seconds": 7
+            },
+            {
+              "name": "Aggregate path-filtered gates on exact head",
+              "status": "success",
+              "elapsed_seconds": 127
+            },
+            {
+              "name": "Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Complete job",
+              "status": "success",
+              "elapsed_seconds": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 40704770871,
+      "event": "pull_request",
+      "name": "CODE PURPLE Method Atlas (read-only)",
+      "source_sha": "cb249a9c1a117dd49cd10dce558d36a6491614d0",
+      "source_branch": "dependabot/github_actions/actions/setup-python-7.1.0",
+      "attempt": 1,
+      "created_at": "2026-10-28T14:19:20Z",
+      "run_started_at": "2026-10-28T14:19:20Z",
+      "updated_at": "2026-10-28T14:22:19Z",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 122873801771,
+          "name": "render",
+          "conclusion": "success",
+          "created_at": "2026-10-28T14:19:21Z",
+          "started_at": "2026-10-28T14:19:50Z",
+          "completed_at": "2026-10-28T14:22:18Z",
+          "queue_seconds": 29,
+          "execution_seconds": 148,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Checkout exact source",
+              "status": "success",
+              "elapsed_seconds": 3
+            },
+            {
+              "name": "Assert checkout identity",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Python 3.12",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Install pinned YAML parser",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Install pinned offline Plotly for MissionControl W2",
+              "status": "success",
+              "elapsed_seconds": 3
+            },
+            {
+              "name": "Contract and Doctor routing tests",
+              "status": "success",
+              "elapsed_seconds": 6
+            },
+            {
+              "name": "CODE PURPLE series must match this tree (append an entry per closed iteration)",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Build CODE PURPLE control page",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Build method-aware read-only dashboard",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Build Mission Control W1 repo/graph explorer",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Capture bounded native W1 and gg_MATH read-only statuses",
+              "status": "success",
+              "elapsed_seconds": 4
+            },
+            {
+              "name": "N3 bounded native historical queue KPI / REX projection",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "CPQ N5: source-bound convergence + disjoint test-coverage receipt",
+              "status": "success",
+              "elapsed_seconds": 2
+            },
+            {
+              "name": "CPQ N6: historical I2 job lineage and scoped coverage",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "CPQ N5: native browser/SVG seeded-negative visual proof",
+              "status": "success",
+              "elapsed_seconds": 26
+            },
+            {
+              "name": "Build CODE-HEALTH Central with exact-checkout and fail-closed corpus",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Produce source-owned side-load inventory and Kubernetes proof ladder",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Flight Deck source-matched producer (single Atlas artifact, no Pages)",
+              "status": "success",
+              "elapsed_seconds": 7
+            },
+            {
+              "name": "Roll up historical federation waves and method eligibility",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Add latest source-bound federation pulse on top of frozen history",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Build read-only BD CHAR temporal pulse viewer",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Verify merged PR chronology and bounded ancestry",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Backfill past merged PR runs and attempts (read-only)",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Build P3 typed worker and IDE review (no dispatch)",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Build recursive SIPOC federation home from canonical source",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Build additive source-bound Live Lossless review site",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "LDAB / DAG / SIPOC cold lint, negative tests and typed receipt",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Stage P process site (prebuilt, hash-checked by its own tests)",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "W32 Global DoV source-locked hub / local-scope branch coverage",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "W34 source-bound Superstitch / DOW TESTFLIGHT and visual QA",
+              "status": "success",
+              "elapsed_seconds": 33
+            },
+            {
+              "name": "Build source-bound execution Atlas and validate every output member",
+              "status": "success",
+              "elapsed_seconds": 32
+            },
+            {
+              "name": "Bind source-owned coverage-integrity view when present",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Build public review projection",
+              "status": "success",
+              "elapsed_seconds": 2
+            },
+            {
+              "name": "W32 Global DoV three-viewport / status-overlay browser QA",
+              "status": "success",
+              "elapsed_seconds": 3
+            },
+            {
+              "name": "N3 responsive Plotly / SHA-bound Pages / control QA",
+              "status": "success",
+              "elapsed_seconds": 5
+            },
+            {
+              "name": "Mission Control W1 Playwright three-viewport DoV and Pages byte parity",
+              "status": "success",
+              "elapsed_seconds": 2
+            },
+            {
+              "name": "W2 native Plotly responsive QA and Pages source/hash parity",
+              "status": "success",
+              "elapsed_seconds": 5
+            },
+            {
+              "name": "Upload identity-bound HTML SVG and metrics",
+              "status": "success",
+              "elapsed_seconds": 4
+            },
+            {
+              "name": "Post Python 3.12",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Post Checkout exact source",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Complete job",
+              "status": "success",
+              "elapsed_seconds": 0
+            }
+          ]
+        },
+        {
+          "id": 122875518833,
+          "name": "Publish CODE PURPLE review site",
+          "conclusion": "skipped",
+          "created_at": "2026-10-28T14:22:19Z",
+          "started_at": "2026-10-28T14:22:19Z",
+          "completed_at": "2026-10-28T14:22:19Z",
+          "queue_seconds": 0,
+          "execution_seconds": 0,
+          "steps": []
+        }
+      ]
+    },
+    {
+      "run_id": 40690086343,
+      "event": "pull_request",
+      "name": "JADE_CASTE N+3 eight-point MIP qualification (read-only)",
+      "source_sha": "a0678181e1ca0c36ec4c700c992938aa7aaac411",
+      "source_branch": "feat/issue-rank-n3-wave-control-20261026",
+      "attempt": 1,
+      "created_at": "2026-10-28T12:42:52Z",
+      "run_started_at": "2026-10-28T12:42:52Z",
+      "updated_at": "2026-10-28T12:46:22Z",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 122822370616,
+          "name": "JADE source, negative controls, deterministic bundle",
+          "conclusion": "success",
+          "created_at": "2026-10-28T12:42:53Z",
+          "started_at": "2026-10-28T12:43:42Z",
+          "completed_at": "2026-10-28T12:44:11Z",
+          "queue_seconds": 49,
+          "execution_seconds": 29,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "success",
+              "elapsed_seconds": 4
+            },
+            {
+              "name": "Assert exact checkout and source binding",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Contract, adversarial and hash-drift tests",
+              "status": "success",
+              "elapsed_seconds": 20
+            },
+            {
+              "name": "Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Complete job",
+              "status": "success",
+              "elapsed_seconds": 0
+            }
+          ]
+        },
+        {
+          "id": 122822991666,
+          "name": "JADE responsive browser / offline security QA",
+          "conclusion": "success",
+          "created_at": "2026-10-28T12:44:12Z",
+          "started_at": "2026-10-28T12:44:16Z",
+          "completed_at": "2026-10-28T12:46:21Z",
+          "queue_seconds": 4,
+          "execution_seconds": 125,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "success",
+              "elapsed_seconds": 4
+            },
+            {
+              "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Install pinned Playwright / Chromium",
+              "status": "success",
+              "elapsed_seconds": 28
+            },
+            {
+              "name": "Responsive interactions and negative external-request check",
+              "status": "success",
+              "elapsed_seconds": 87
+            },
+            {
+              "name": "Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9",
+              "status": "success",
+              "elapsed_seconds": 2
+            },
+            {
+              "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Complete job",
+              "status": "success",
+              "elapsed_seconds": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 40707286792,
+      "event": "pull_request",
+      "name": "Excel Schedule Engine",
+      "source_sha": "852bbc1441224c0e88c074716817325d99d971c3",
+      "source_branch": "docs/ci-spine-evidence-badges-pilot-20261028",
+      "attempt": 1,
+      "created_at": "2026-10-28T14:34:32Z",
+      "run_started_at": "2026-10-28T14:34:32Z",
+      "updated_at": "2026-10-28T14:34:45Z",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 122882702749,
+          "name": "test",
+          "conclusion": "success",
+          "created_at": "2026-10-28T14:34:33Z",
+          "started_at": "2026-10-28T14:34:34Z",
+          "completed_at": "2026-10-28T14:34:45Z",
+          "queue_seconds": 1,
+          "execution_seconds": 11,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "success",
+              "elapsed_seconds": 4
+            },
+            {
+              "name": "Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Install Excel schedule-engine dependency",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Compile schedule engine",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Excel engine + schedule projection unit tests",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "MAIN runner Excel integration tests",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Post Run actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Complete job",
+              "status": "success",
+              "elapsed_seconds": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "run_id": 40708495729,
+      "event": "workflow_run",
+      "name": "GOGREEN Required Gate Re-check",
+      "source_sha": "ca623ab83793df6edd245942884ad5428a5fe079",
+      "source_branch": "master",
+      "attempt": 1,
+      "created_at": "2026-10-28T14:41:51Z",
+      "run_started_at": "2026-10-28T14:41:51Z",
+      "updated_at": "2026-10-28T14:42:04Z",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 122887006320,
+          "name": "Re-run failed GOGREEN required gate",
+          "conclusion": "success",
+          "created_at": "2026-10-28T14:41:52Z",
+          "started_at": "2026-10-28T14:41:55Z",
+          "completed_at": "2026-10-28T14:42:03Z",
+          "queue_seconds": 3,
+          "execution_seconds": 8,
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "success",
+              "elapsed_seconds": 4
+            },
+            {
+              "name": "Assert checkout is the default-branch commit",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Re-run the latest failed aggregator run on this head",
+              "status": "success",
+              "elapsed_seconds": 1
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "success",
+              "elapsed_seconds": 0
+            },
+            {
+              "name": "Complete job",
+              "status": "success",
+              "elapsed_seconds": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

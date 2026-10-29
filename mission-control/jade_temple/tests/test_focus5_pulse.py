@@ -16,11 +16,15 @@ spec5.loader.exec_module(r5)
 NEW = "c" * 40
 
 
-def fake_github(protected=False, rules=(), runs=(), readme=True, tags=()):
+def fake_github(protected=False, rules=(), runs=(), readme=True, tags=(), started=True):
     calls = []
 
     def lookup(path):
         calls.append(path)
+        if path.startswith("repos/O/R/actions/runs/") and "/jobs" in path:
+            # started: a runner executed steps; not started: billing/spending-limit refusal
+            steps = [{"name": "Run tests", "conclusion": "failure"}] if started else []
+            return {"jobs": [{"conclusion": "failure", "runner_id": 7 if started else 0, "steps": steps}]}
         if path == "repos/O/R":
             return {"default_branch": "main"}
         if path == "repos/O/R/commits/main":
@@ -81,6 +85,60 @@ class Focus5PulseTests(unittest.TestCase):
         gh = fake_github()
         fp.observe_repo("O/R", None, gh)
         self.assertEqual(gh.calls.count("repos/O/R/commits/main"), 1)
+
+    def test_declared_workflows_override_previous_pulse_and_all_must_pass(self):
+        declared = {"H05": [".github/workflows/a.yml", ".github/workflows/b.yml"]}
+        both = [run(".github/workflows/a.yml", "success"), run(".github/workflows/b.yml", "success")]
+        g = self.gates(fp.observe_repo("O/R", PREV, fake_github(runs=both), declared))
+        self.assertEqual(g["H05"], "PASS")
+        one = [run(".github/workflows/a.yml", "success")]  # b.yml never ran on this SHA
+        self.assertEqual(self.gates(fp.observe_repo("O/R", PREV, fake_github(runs=one), declared))["H05"], "UNKNOWN")
+        # the previous-pulse workflow (ci.yml) succeeding does not stand in for a declared one
+        prev_only = [run(".github/workflows/ci.yml", "success")]
+        self.assertEqual(self.gates(fp.observe_repo("O/R", PREV, fake_github(runs=prev_only), declared))["H05"], "UNKNOWN")
+
+    def test_any_declared_failure_fails_and_cancelled_is_unknown(self):
+        declared = {"H06": [".github/workflows/a.yml", ".github/workflows/b.yml"]}
+        mixed = [run(".github/workflows/a.yml", "success"), run(".github/workflows/b.yml", "failure")]
+        self.assertEqual(self.gates(fp.observe_repo("O/R", None, fake_github(runs=mixed), declared))["H06"], "FAIL")
+        for c in ("cancelled", "skipped", None):
+            runs = [run(".github/workflows/a.yml", "success"), run(".github/workflows/b.yml", c)]
+            self.assertEqual(self.gates(fp.observe_repo("O/R", None, fake_github(runs=runs), declared))["H06"], "UNKNOWN", c)
+
+    def test_failed_run_whose_jobs_never_started_is_unknown_not_fail(self):
+        declared = {"H05": [".github/workflows/a.yml"]}
+        failed = [run(".github/workflows/a.yml", "failure")]
+        refused = fp.observe_repo("O/R", None, fake_github(runs=failed, started=False), declared)
+        g = {x["id"]: x for x in refused["gates"]}
+        self.assertEqual(g["H05"]["status"], "UNKNOWN")
+        self.assertIn("not_started", g["H05"]["reason"])
+        self.assertFalse([b for b in refused["blockers"] if b.startswith("H05")])
+        executed = fp.observe_repo("O/R", None, fake_github(runs=failed, started=True), declared)
+        self.assertEqual(self.gates(executed)["H05"], "FAIL")
+        # previous-pulse fallback evidence gets the same treatment
+        self.assertEqual(self.gates(fp.observe_repo("O/R", PREV, fake_github(
+            runs=[run(".github/workflows/ci.yml", "failure")], started=False)))["H05"], "UNKNOWN")
+
+    def test_registry_rejects_owner_gates_and_unstated_evidence(self):
+        ok = {"schema": "jade.focus5.gate_evidence_registry.v1",
+              "repos": {"O/R": {"H05": [{"workflow": ".github/workflows/a.yml", "proves": "tests"}]}}}
+        self.assertEqual(fp.validate_registry(ok), {"O/R": {"H05": [".github/workflows/a.yml"]}})
+        bad = [("H09", ".github/workflows/a.yml", "tests"), ("H07", ".github/workflows/a.yml", "scan"),
+               ("H05", "scripts/a.yml", "tests"), ("H05", ".github/workflows/a.yml", " ")]
+        for gid, wfp, proves in bad:
+            reg = {"schema": ok["schema"], "repos": {"O/R": {gid: [{"workflow": wfp, "proves": proves}]}}}
+            with self.assertRaises(ValueError, msg=(gid, wfp)):
+                fp.validate_registry(reg)
+        dup = {"schema": ok["schema"], "repos": {"O/R": {"H05": ok["repos"]["O/R"]["H05"] * 2}}}
+        with self.assertRaises(ValueError):
+            fp.validate_registry(dup)
+
+    def test_committed_registry_is_valid_and_covers_only_the_window(self):
+        import json
+        reg = fp.load_registry(ROOT)
+        window = json.loads((ROOT / fp.WINDOW).read_text(encoding="utf-8"))["window"]["current"]
+        self.assertTrue(reg)
+        self.assertLessEqual(set(reg), set(window))
 
     def test_snapshot_shape_is_accepted_by_rolling5(self):
         prev = {"schema": "s", "source": {"observed_date": "2026-10-19"}, "metrics": {}, "rows": [PREV]}

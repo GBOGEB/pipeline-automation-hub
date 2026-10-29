@@ -1,0 +1,131 @@
+name: N6 CREW Slow-Burn Disjoint Testflight
+on:
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/n6_scale/**'
+      - '.github/workflows/n6-crew-slow-burn.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: n6-crew-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  disjoint-crew:
+    name: N6 ${{ matrix.family }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        family: [controller, n3, crew, rex]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Verify exact head and local queue backpressure
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          queued=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs?status=queued&per_page=1" --jq '.total_count')
+          running=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs?status=in_progress&per_page=1" --jq '.total_count')
+          echo "N6_QUEUE queued=$queued running=$running max_queued=60 max_running=20"
+          test "$queued" -lt 60
+          test "$running" -lt 20
+      - name: Install coverage instrument
+        run: python -m pip install --disable-pip-version-check coverage==7.13.3
+      - name: Run three bounded disjoint family replays
+        env:
+          FAMILY: ${{ matrix.family }}
+        run: |
+          set -euo pipefail
+          for pulse in 1 2 3; do
+            echo "N6_FAMILY=$FAMILY REPLAY=$pulse/3"
+            case "$FAMILY" in
+              controller)
+                if [ "$pulse" = 1 ]; then
+                  python -m coverage run --branch \
+                    --include='*/n6_scale/slow_burn.py' \
+                    -m unittest discover \
+                    -s mission-control/gogreen/n6_scale/tests \
+                    -p 'test_slow_burn.py' -v
+                  python -m coverage json -o n6-coverage.json
+                  python - <<'PY'
+          import json
+          row = json.load(open("n6-coverage.json"))
+          items = [value["summary"] for key, value in row["files"].items()
+                   if key.endswith("n6_scale/slow_burn.py")]
+          assert len(items) == 1, "measured controller source missing"
+          m = items[0]
+          assert m["num_statements"] > 0 and m["num_branches"] > 0
+          print("N6_MEASURED", m["covered_lines"], m["num_statements"],
+                m["covered_branches"], m["num_branches"])
+          assert m["covered_lines"] / m["num_statements"] >= 0.80
+          assert m["covered_branches"] / m["num_branches"] >= 0.70
+          PY
+                else
+                  python -m unittest discover \
+                    -s mission-control/gogreen/n6_scale/tests \
+                    -p 'test_slow_burn.py' -q
+                fi
+                ;;
+              n3)
+                python -m unittest discover \
+                  -s mission-control/gogreen/n3_continuation/tests \
+                  -p 'test_*.py' -q
+                ;;
+              crew)
+                python -m unittest discover \
+                  -s mission-control/qps-triage-ultra/crew \
+                  -p 'test_validate_crew_system.py' -q
+                ;;
+              rex)
+                python mission-control/grand-missions/test_crew_rex_bridge_semantics.py
+                ;;
+              *)
+                echo "Unrecognized crew family" >&2; exit 1
+                ;;
+            esac
+          done
+      - name: Create read-only exact-head test receipt
+        if: success()
+        env:
+          FAMILY: ${{ matrix.family }}
+        run: |
+          python - <<'PY'
+          import json, os, subprocess
+          value = {
+              "schema": "missioncontrol.n6.bounded_run/v1",
+              "source_sha": subprocess.check_output(
+                  ["git", "rev-parse", "HEAD"], text=True).strip(),
+              "native_run_id": int(os.environ["GITHUB_RUN_ID"]),
+              "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
+              "family": os.environ["FAMILY"],
+              "replays_completed": 3,
+              "queue_admission": "ACCEPTED_BEFORE_TESTS",
+              "merge_authorized": False,
+              "engineering_acceptance": False,
+              "independent_review": "UNKNOWN"
+          }
+          with open("n6-run-receipt.json", "w", encoding="utf-8") as f:
+              json.dump(value, f, indent=2, sort_keys=True)
+              f.write("\n")
+          print(json.dumps(value, sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v6
+        if: always()
+        with:
+          name: n6-${{ matrix.family }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            n6-run-receipt.json
+            n6-coverage.json
+          if-no-files-found: warn
