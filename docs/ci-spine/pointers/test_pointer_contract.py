@@ -13,6 +13,7 @@ import shutil
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -103,6 +104,35 @@ class PointerContractTests(unittest.TestCase):
 
     def test_multiple_identical_pointers_are_not_independent_proof(self):
         self.expect_red("DUPLICATE_POINTER", lambda d: d["pointers"][1].__setitem__("id", d["pointers"][0]["id"]))
+
+    def test_companion_gui_links_are_all_sourced_from_manifest(self):
+        nav = p.Anchors()
+        text = p.NAV.read_text("utf-8")
+        nav.feed(text)
+        self.assertEqual(nav.scripts, [])
+        self.assertIn("connect-src 'none'", text)
+        self.assertTrue({x["output"]["href"] for x in self.doc["pointers"]} <= nav.links)
+        self.assertIn("0 PDF RECTANGLES VERIFIED", text)
+
+    def test_companion_gui_script_injection_fails(self):
+        with tempfile.TemporaryDirectory() as temp:
+            nav = Path(temp) / "index.html"
+            nav.write_text(p.NAV.read_text("utf-8") + "<script>alert(1)</script>",
+                           encoding="utf-8")
+            with mock.patch.object(p, "NAV", nav):
+                with self.assertRaisesRegex(ValueError, "NAV_REMOTE_EXECUTION"):
+                    self.validate()
+
+    def test_companion_gui_wrong_link_fails(self):
+        with tempfile.TemporaryDirectory() as temp:
+            nav = Path(temp) / "index.html"
+            original = self.doc["pointers"][0]["output"]["href"]
+            nav.write_text(p.NAV.read_text("utf-8").replace(
+                original.replace("&", "&amp;"), "../explorer.html#lens=graph&kind=bundle&id=FAKE"),
+                encoding="utf-8")
+            with mock.patch.object(p, "NAV", nav):
+                with self.assertRaisesRegex(ValueError, "NAV_BROKEN_POINTER_LINK"):
+                    self.validate()
 
     def test_mutated_real_html_bytes_cannot_satisfy_pinned_manifest(self):
         with tempfile.TemporaryDirectory() as temp:
