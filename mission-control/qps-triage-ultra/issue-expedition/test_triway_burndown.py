@@ -145,6 +145,13 @@ class ParserN2(unittest.TestCase):
   self.assertEqual(self.refs("Does not close or resolve #12",pr=True),[(B+"#12","PR_ASSOCIATION")])
   self.assertEqual(self.refs("Never fixes or resolves #12",pr=True),[(B+"#12","PR_ASSOCIATION")])
   self.assertEqual(self.refs("Does not fix old behavior, but closes #12",pr=True),[(B+"#12","PR_CLOSURE_CLAIM")])
+ def test_n6_contrast_scope_and_repeated_relations(self):
+  self.assertEqual(self.refs("We depend on #7"),[(B+"#7","DECLARED_BLOCKER_CANDIDATE")])
+  self.assertEqual(self.refs("We do not depend on #7"),[(B+"#7","TEXT_ASSOCIATION")])
+  self.assertEqual(self.refs("Does not depend on old rollout, but requires #3"),[(B+"#3","DECLARED_BLOCKER_CANDIDATE")])
+  self.assertEqual(self.refs("Requires old work, but does not depend on #3"),[(B+"#3","TEXT_ASSOCIATION")])
+  self.assertEqual(self.refs("Does not depend on old rollout, however now blocks #4"),[(B+"#4","DECLARED_BLOCKS_CANDIDATE")])
+  self.assertEqual(self.refs("Does not depend on old rollout, but closes #12",pr=True),[(B+"#12","PR_CLOSURE_CLAIM")])
  def test_n5_abbreviations_with_uppercase_alias(self):
   self.assertEqual(self.refs("Blocked by e.g. CODEX #3"),[("GBOGEB/CODEX#3","DECLARED_BLOCKER_CANDIDATE")])
   self.assertEqual(self.refs("Blocked by i.e. ABACUS #3"),[(A+"#3","DECLARED_BLOCKER_CANDIDATE")])
