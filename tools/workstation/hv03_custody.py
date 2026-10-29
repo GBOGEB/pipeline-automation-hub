@@ -58,7 +58,7 @@ def worktrees(repo: Path) -> list[Path]:
     return sorted(entries, key=lambda p: str(p).casefold())
 
 def paths_status(wt: Path) -> list[dict]:
-    tokens = git(wt, "status", "--porcelain=v1", "-z", "--untracked-files=all").split(b"\0")
+    tokens = git(wt, "--no-optional-locks", "status", "--porcelain=v1", "-z", "--untracked-files=all").split(b"\0")
     records = []
     i = 0
     while i < len(tokens):
