@@ -157,10 +157,21 @@ def test_missing_perpetuate_output_fails_check_15(mod, monkeypatch, tmp_path):
 
 
 def test_real_committed_data_current_outcome(mod, monkeypatch, tmp_path):
-    # Stage superseded: some Perpetuate outputs listed in the committed v4 control
-    # are no longer present in the repository, so only check 15 is red.
+    # Checks 1-14 hold on the committed data. Check 15 depends on whether every
+    # Perpetuate output listed in the committed v4 control is present in the
+    # tree, so derive the expected outcome from the tree instead of pinning it.
+    ctrl = json.loads((GM_DIR / CTRL).read_text(encoding="utf-8"))
+    outputs = ctrl["mip"]["Perpetuate"]["outputs"]
+    all_present = all((REPO_ROOT / p).is_file() for p in outputs)
     out = tmp_path / "real.json"
     monkeypatch.setattr(sys, "argv", ["prog", "--source-sha", "real", "--out", str(out)])
-    assert mod.main() == 1
+    rc = mod.main()
     receipt = json.loads(out.read_text(encoding="utf-8"))
-    assert [k for k, v in receipt["checks"].items() if not v] == ["15_perpetuate_outputs"]
+    failing = [k for k, v in receipt["checks"].items() if not v]
+    if all_present:
+        assert rc == 0
+        assert receipt["result"] == "PASS_GM_FLEET_3PSTAR_MIP_V4"
+        assert failing == []
+    else:
+        assert rc == 1
+        assert failing == ["15_perpetuate_outputs"]
