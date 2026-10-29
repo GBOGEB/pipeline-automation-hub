@@ -31,7 +31,10 @@ def _workflow_blobs(root: Path, source_sha: str):
     top = Path(_git(root, "rev-parse", "--show-toplevel").decode("utf-8").strip()).resolve()
     if top != root:
         raise ValueError("ROOT_MUST_BE_REPOSITORY_TOPLEVEL")
-    tree = _git(root, "ls-tree", "-rz", source_sha, "--", ".github/workflows")
+    # ls-tree accepts any tree-ish; only a commit OID binds the report to a repository head.
+    if _git(root, "cat-file", "-t", source_sha).strip() != b"commit":
+        raise ValueError("SOURCE_SHA_MUST_NAME_A_COMMIT")
+    tree =_git(root, "ls-tree", "-rz", source_sha, "--", ".github/workflows")
     rows = []
     for item in tree.split(b"\0"):
         if not item:
