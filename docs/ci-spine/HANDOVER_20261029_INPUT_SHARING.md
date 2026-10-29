@@ -187,6 +187,8 @@ git -C $Worktree diff --cached --check
 if ($LASTEXITCODE -ne 0) { throw 'Staged patch check failed' }
 git -C $Worktree diff --cached --stat
 git -C $Worktree diff --cached -- $Allowed  # REVIEW CONTENT BEFORE COMMIT
+$Consent = Read-Host "Type COMMIT $ExpectedBranch to authorize this exact branch"
+if ($Consent -ne "COMMIT $ExpectedBranch") { throw 'No commit authorization; staged changes remain for inspection' }
 git -C $Worktree commit -m 'fix(ci-spine): preserve source-owned input and tests'
 if ($LASTEXITCODE -ne 0) { throw 'Commit failed' }
 git -C $Worktree push -u origin $ExpectedBranch
