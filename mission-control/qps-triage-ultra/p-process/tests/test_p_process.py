@@ -180,6 +180,15 @@ class Rulesets(unittest.TestCase):
                 self.assertIn("pull_request_target", d.get(True, d.get("on")), "the status must come from the trusted base-side event")
                 self.assertIn(f"context='{context}'", text, f"{wf} does not publish {context}")
 
+    def test_published_ruleset_copies_match_source(self):
+        # The P-process workflow packages site/ as committed; refresh.py is what copies rulesets/ there.
+        for f in sorted((P / "rulesets").glob("*.json")):
+            if f.name == "survey.json":
+                continue
+            with self.subTest(file=f.name):
+                self.assertEqual((P / "site/rulesets" / f.name).read_bytes(), f.read_bytes(),
+                                 f"site/rulesets/{f.name} is stale: copy it (refresh.py) and update site/manifest.json")
+
     def test_path_filter_detection(self):
         tmp = P / "build" / "wf_test"
         shutil.rmtree(tmp, ignore_errors=True)

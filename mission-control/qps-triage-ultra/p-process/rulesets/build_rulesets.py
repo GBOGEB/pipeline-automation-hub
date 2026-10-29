@@ -51,7 +51,7 @@ REPOS = {
                        "why": "Numerical kernels: first kernel and Monte-Carlo reference run on every PR."},
     "GBOGEB/pipeline-automation-hub": {"branch": "master", "checks": ["validate-ultra-control", "canonical-self-test-and-mutation", "GOGREEN required gate",
                                                                       "First-Pass Closure Gate / first-pass-closure"],
-                                       "methods": ["squash", "rebase"], "linear": True, "copilot_review": True,
+                                       "methods": ["squash", "rebase"], "linear": True, "copilot_review": True, "unattributed_approval": True,
                                        "why": "Hosts the Code Purple review site. Keeps linear history and Copilot review from the existing ruleset, which currently targets no branch. GOGREEN required gate is the MACH-II compensating check for the solo-owner review waiver; it is below the 90% bar (9/12) only because it failed on true reds (#815, #820, #821). First-Pass Closure Gate / first-pass-closure is the trusted controller's head status (W305 R7), required so a red gate blocks the merge button; 1/12 recent merges had it green, so it blocks until receipts and exact-head Codex reviews are routine."},
     "GBOGEB/Q_engineering_tools": {"branch": "main", "checks": ["build-and-exercise", "engineering-source-smoke"],
                                    "methods": ["merge", "squash", "rebase"],
@@ -103,6 +103,10 @@ def basic(repo: str, cfg: dict) -> dict:
             "do_not_enforce_on_create": False,
             "required_status_checks": [{"context": c, "integration_id": ACTIONS} for c in cfg["checks"]]}},
     ]
+    if cfg.get("unattributed_approval"):
+        # Live on the hub (ruleset 25789280). Declared here so an owner PUT (apply_rulesets.py) keeps it:
+        # its diff ignores live-only keys, and a PUT replaces the rule list.
+        rules[2]["parameters"]["require_extra_approval_for_unattributed_changes"] = True
     if cfg.get("linear"):
         rules.append({"type": "required_linear_history"})
     if cfg.get("copilot_review"):
