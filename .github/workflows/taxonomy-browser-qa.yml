@@ -3,8 +3,15 @@ on:
   pull_request:
     paths:
       - 'mission-control/issue_rank/taxonomy_browser_qa.py'
+      - 'mission-control/issue_rank/browser-qa-requirements.txt'
       - '.github/workflows/taxonomy-browser-qa.yml'
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      cache_pilot:
+        type: boolean
+        description: 'Opt in to bounded synthetic pip cache A/B comparison'
+        required: false
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -34,3 +41,98 @@ jobs:
       - name: Execute synthetic no-network browser QA
         working-directory: mission-control/issue_rank
         run: python taxonomy_browser_qa.py
+
+  cache-ab:
+    name: taxonomy opt-in pip cache A/B / ${{ matrix.mode }}
+    # The original browser-qa job above is unchanged and remains the PR check.
+    # This is a separate, OBSERVED, manually opted-in experiment only.
+    if: github.event_name == 'workflow_dispatch' && inputs.cache_pilot == true
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        mode: [none, pip]
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Assert exact selected source SHA
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        id: python
+        with:
+          python-version: '3.12'
+          cache: ${{ matrix.mode == 'pip' && 'pip' || '' }}
+          cache-dependency-path: mission-control/issue_rank/browser-qa-requirements.txt
+      - name: Timed pinned dependency and Chromium preparation
+        id: setup
+        shell: bash
+        run: |
+          set -euo pipefail
+          start=$(date +%s)
+          python -m pip install --disable-pip-version-check -r mission-control/issue_rank/browser-qa-requirements.txt
+          python -m playwright install --with-deps chromium
+          echo "seconds=$(( $(date +%s) - start ))" >> "$GITHUB_OUTPUT"
+      - name: Timed synthetic no-network three-viewport QA
+        id: qa
+        working-directory: mission-control/issue_rank
+        shell: bash
+        run: |
+          set -euo pipefail
+          start=$(date +%s)
+          python taxonomy_browser_qa.py
+          echo "seconds=$(( $(date +%s) - start ))" >> "$GITHUB_OUTPUT"
+      - name: Write non-authoritative exact-run timing receipt
+        if: always()
+        env:
+          CACHE_MODE: ${{ matrix.mode }}
+          CACHE_HIT: ${{ steps.python.outputs.cache-hit }}
+          PREP_SECONDS: ${{ steps.setup.outputs.seconds }}
+          QA_SECONDS: ${{ steps.qa.outputs.seconds }}
+          QA_OUTCOME: ${{ steps.qa.outcome }}
+          SOURCE_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          def seconds(name):
+              raw = os.environ.get(name, "")
+              return int(raw) if raw.isdigit() else None
+          receipt = {
+              "schema": "jade.ci-spine.cache-ab-receipt.v1",
+              "record_type": "OBSERVED_NOT_MERGE_AUTHORITY",
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "head_sha": os.environ["SOURCE_SHA"],
+              "run_id": int(os.environ["GITHUB_RUN_ID"]),
+              "run_attempt": int(os.environ["GITHUB_RUN_ATTEMPT"]),
+              "runner": "ubuntu-24.04",
+              "python": "3.12",
+              "mode": os.environ["CACHE_MODE"],
+              "cache_hit": os.environ.get("CACHE_HIT") if os.environ["CACHE_MODE"] == "pip" else None,
+              "preparation_seconds": seconds("PREP_SECONDS"),
+              "test_seconds": seconds("QA_SECONDS"),
+              "qa_outcome": os.environ.get("QA_OUTCOME", "UNKNOWN"),
+              "test_scope": "synthetic three-viewport privacy and interaction QA",
+              "merge_authorized": False,
+          }
+          path = Path(os.environ["RUNNER_TEMP"]) / "taxonomy-cache-ab.json"
+          path.write_text(json.dumps(receipt, sort_keys=True, indent=2) + "\n",
+                          encoding="utf-8", newline="\n")
+          print("CACHE_AB_RECEIPT=" + str(path))
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: taxonomy-cache-ab-${{ matrix.mode }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/taxonomy-cache-ab.json
+          if-no-files-found: error
+          retention-days: 14
