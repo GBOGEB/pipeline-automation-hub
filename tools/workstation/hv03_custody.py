@@ -125,6 +125,8 @@ def staged_index(wt: Path, max_bytes: int) -> dict[str, list[dict]]:
     return result
 
 def hash_index_stage(wt: Path, entry: dict, max_bytes: int) -> dict:
+    if entry["mode"] == "160000":
+        return {"index_sha_state": "GITLINK_NONBLOB", "index_sha256": None}
     size_raw = git(wt, "cat-file", "-s", entry["oid"])
     try:
         size = int(size_raw.strip())
