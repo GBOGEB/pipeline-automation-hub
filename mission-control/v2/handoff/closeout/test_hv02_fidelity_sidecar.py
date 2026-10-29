@@ -82,6 +82,15 @@ class HV02Tests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     hv02.validate(obj)
 
+    def test_public_sidecar_rejects_nested_local_storage_paths(self):
+        for path in ("C:\\Users\\demo\\secret.zip", "/home/user/private.zip",
+                     "file:///Users/demo/chat.json", "\\\\server\\share\\chat.json"):
+            with self.subTest(path=path):
+                obj = fixture()
+                obj["future_v2"] = {"metadata": {"unapproved_storage": path}}
+                with self.assertRaisesRegex(ValueError, "private local storage"):
+                    hv02.validate(obj)
+
     def test_s8_future_unknown_field_additive(self):
         obj = fixture()
         obj["future_v2_addendum"] = {"nonsecret_metadata": {"type": "novel"}}
