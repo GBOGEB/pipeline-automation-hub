@@ -139,6 +139,41 @@ class WaveContract(unittest.TestCase):
         self.assertEqual(out["candidate_workers"], [])
         self.assertIn("receipt keys must be strings", out["errors"])
 
+    def test_windows_casefold_aliases_cannot_run_concurrently(self):
+        self.assertTrue(M.collision("src/A.py", "src/a.py"))
+        self.assertTrue(M.collision("SRC/**", "src/subdir/a.py"))
+        self.assertFalse(M.collision("src/a.py", "src-extra/a.py"))
+        i, p = sample()
+        p["tasks"][2]["owns"] = ["SRC/A.py"]
+        p["tasks"][0]["owns"] = ["src/a.py"]
+        result = M.build(i, p)
+        self.assertEqual({t["id"]: t["disposition"] for t in result["rows"]}["CI-N-C"],
+                         "DEFER_OWNERSHIP_COLLISION")
+        self.assertEqual(result["candidate_workers"], ["CI-N-A", "CI-N-B"])
+
+    def test_thousand_task_chain_and_cycle_have_structured_outcomes(self):
+        i, p = sample()
+        p["tasks"] = [job("CI-L-" + str(n).zfill(4), "WORKER-A",
+                          ["src/" + str(n).zfill(4) + ".py"],
+                          ["CI-L-" + str(n - 1).zfill(4)] if n else [])
+                      for n in range(1200)]
+        good = M.build(i, p)
+        self.assertEqual(good["errors"], [])
+        self.assertEqual(good["candidate_workers"], ["CI-L-0000"])
+        p["tasks"][0]["depends"] = ["CI-L-1199"]
+        bad = M.build(i, p)
+        self.assertEqual(bad["candidate_workers"], [])
+        self.assertIn("cycle", " ".join(bad["errors"]))
+        with tempfile.TemporaryDirectory() as td:
+            src, pol, out = (Path(td) / name for name in ("index.json", "policy.json", "result.json"))
+            src.write_text(json.dumps(i), encoding="utf-8")
+            pol.write_text(json.dumps(p), encoding="utf-8")
+            with contextlib.redirect_stdout(io.StringIO()):
+                rc = M.main(["--index", str(src), "--policy", str(pol),
+                             "--out", str(out), "--check"])
+            self.assertEqual(rc, 1)
+            self.assertEqual(json.loads(out.read_text())["verdict"], "WAVE_POLICY_FIRST_RED")
+
     def test_same_lane_and_worker_capacity(self):
         i, p = sample()
         p["tasks"][2]["owns"] = ["src/c.py"]
