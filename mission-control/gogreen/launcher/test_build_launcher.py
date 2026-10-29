@@ -206,6 +206,12 @@ class Hub(unittest.TestCase):
         title_census = next(e for e in self.hub["entries"] if e.get("url") == "https://claude.ai/artifact/RARdwhuvVk2emp2iCRRhDw")
         self.assertIn("private until shared", title_census["note"])
 
+    def test_cross_repo_rows_get_clone_and_open_commands(self):
+        html = bl.TEMPLATE.read_text(encoding="utf-8")
+        self.assertIn('"git clone https://github.com/"+r+".git"', html)
+        self.assertIn('"start "+e.repo.split("/")[1]', html)
+        self.assertIn("data-copy=\"'+esc(opener(e))", html)
+
     def test_missing_in_repo_entry_fails_the_build(self):
         sha = bl.git("rev-parse", "HEAD^{commit}").strip()
         with self.assertRaises(FileNotFoundError):

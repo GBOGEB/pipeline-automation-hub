@@ -53,8 +53,9 @@ cockpits, EVERRED, the G3P live ledger and the issue-rank title census artifact.
   file fails the build) and records the page's title, so `--check` names a retitled hub page
   (`hub changed: <path>`). It gets **Open** (relative), **GitHub** and **History** links.
 - An entry with `repo`, `ref` and `path` is in another repository (cryoplant-project is private). It is
-  declared, not probed: GitHub source and history links only, and it opens from a local clone of that
-  repository. Its Pages site returned 404 for these paths, so no Pages URL is given.
+  declared, not probed: GitHub source and history links, plus a copyable `start <repo>\<path>` command
+  that opens the page from a clone of that repository (the section shows the `git clone` command once
+  per repository). Its Pages site returned 404 for these paths, so no Pages URL is given.
 - The BnB `url` entry links to the claude.ai artifact as written. It is private to its owner unless
   shared, and the `bnb-dashboard-pull` scheduled task republishes it each weekday.
 - The issue-rank title census links to its hosted claude.ai artifact, documented in
