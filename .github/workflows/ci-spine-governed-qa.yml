@@ -1,5 +1,7 @@
 # Read-only CI spine qualification. Separate from the JADE-pinned zero-test guard
 # so its known OID cannot drift without canonical regeneration (AGENTS.md L7).
+# Audit every workflow source change plus the imported parser/metric owners;
+# never confuse a path-filtered passing badge with full repo coverage.
 name: CI Spine Source-Bound QA
 on:
   pull_request:
@@ -8,14 +10,26 @@ on:
       - 'scripts/ci_spine_*.py'
       - 'tests/test_ci_spine_*.py'
       - 'governance/ci_spine/**'
-      - '.github/workflows/ci-spine-governed-qa.yml'
+      - '.github/workflows/**'
+      - 'mission-control/jade_temple/devops/workflows.py'
+      - 'mission-control/jade_temple/devops/actions_metrics.py'
+      - 'mission-control/jade_temple/tools/cicd_dag.py'
+      - 'mission-control/jade_temple/tools/rolling5.py'
+      - 'mission-control/gogreen/scale_dock.py'
+      - 'AGENTS.md'
   push:
     branches: [master]
     paths:
       - 'scripts/ci_spine_*.py'
       - 'tests/test_ci_spine_*.py'
       - 'governance/ci_spine/**'
-      - '.github/workflows/ci-spine-governed-qa.yml'
+      - '.github/workflows/**'
+      - 'mission-control/jade_temple/devops/workflows.py'
+      - 'mission-control/jade_temple/devops/actions_metrics.py'
+      - 'mission-control/jade_temple/tools/cicd_dag.py'
+      - 'mission-control/jade_temple/tools/rolling5.py'
+      - 'mission-control/gogreen/scale_dock.py'
+      - 'AGENTS.md'
   workflow_dispatch: {}
 permissions:
   contents: read
