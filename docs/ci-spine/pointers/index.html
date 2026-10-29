@@ -17,8 +17,18 @@ h1{font-size:clamp(28px,4vw,49px);letter-spacing:-.055em;line-height:1.08;margin
 .flow strong{word-break:break-word;font-size:15px}.flow small{color:var(--muted);font-size:10px;letter-spacing:.12em}.flow a{font-size:12px}.flow .action{border:1px solid #4c9688;border-radius:6px;background:#1c5149;text-align:center;padding:9px;font-weight:750}.arrow{font-size:24px;display:flex;align-items:center;justify-content:center;color:var(--bright);pointer-events:none}
 details{border-top:1px solid var(--line);padding-top:12px;font-size:12px}summary{cursor:pointer;font-weight:750;color:var(--bright)}dl{display:grid;grid-template-columns:140px minmax(0,1fr);gap:8px;margin:15px 0}dt{color:var(--muted)}dd{margin:0;overflow-wrap:anywhere}code{font-family:ui-monospace,Consolas,monospace;color:#d6e4fd}.limit{color:var(--warn)}
 .pending{border:1px dashed #997a4a;background:#2b291e;padding:18px;border-radius:10px;color:var(--warn);font-size:13px}
+
+/* Jacquard-inspired cross-medium comparison uses native disclosure, not a new executor. */
+.layer-compare{border:1px solid var(--line);border-radius:10px;background:#0d2428;padding:22px;margin:22px 0}
+.layer-compare h2{font-size:22px;margin:0 0 7px}.layer-compare>p{color:var(--muted);font-size:13px}
+.layer-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:17px}
+.layer-stage{border:1px solid var(--line);border-radius:8px;padding:15px;background:#17363b;min-width:0}
+.layer-stage[open]{background:#1b4345;border-color:#5a9e91}.layer-stage summary{font-size:14px;line-height:1.45;min-height:42px}
+.layer-stage p{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.layer-stage code{font-size:11px;overflow-wrap:anywhere}
+.layer-stage a{display:inline-block;margin:4px 9px 5px 0;font-size:12px}
+.layer-legend{margin:14px 0 0;font-size:11px;color:var(--warn)}
 footer{border-top:1px solid var(--line);font-size:12px;color:var(--muted);margin-top:35px}.source{font-size:11px;overflow-wrap:anywhere;color:var(--muted)}
-@media(max-width:720px){header{align-items:flex-start}.flow{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}dl{grid-template-columns:1fr}main,header,footer{padding:15px}.card{padding:15px}}
+@media(max-width:720px){header{align-items:flex-start}.flow{grid-template-columns:1fr}.layer-grid{grid-template-columns:1fr}.layer-compare{padding:15px}.arrow{transform:rotate(90deg)}dl{grid-template-columns:1fr}main,header,footer{padding:15px}.card{padding:15px}}
 @media print{body{background:white;color:#111}.card,.pending,.banner{background:white;color:#111;break-inside:avoid}.flow>div:not(.arrow){background:white;color:#111}a,code{color:#003d58}}
 </style></head><body>
 <header><div class="brand">GBOGEB · Mission Control / CI Spine</div><nav aria-label="Related views"><a href="../explorer.html">Five-lens explorer</a><a href="../JACQUARD_CROSSWALK.md">Jacquard crosswalk</a><a href="../README.md">Suite catalog</a></nav></header>
@@ -42,6 +52,34 @@ footer{border-top:1px solid var(--line);font-size:12px;color:var(--muted);margin
  <div class="flow"><div><small>SOURCE OBJECT</small><strong>run:40690663789</strong><a target="_blank" rel="noopener noreferrer" href="https://github.com/GBOGEB/pipeline-automation-hub/blob/4cc045d322fb65fef8fb00b2cd93e50bbc52bbd8/docs/ci-spine/RUN_TIMING_SAMPLES_20261028.json">Open frozen source JSON</a></div><div class="arrow" aria-hidden="true">→</div><div><small>OUTPUT VIEW</small><strong>TIMING / 40690663789</strong><a class="action" href="../explorer.html#lens=timing&amp;kind=run&amp;id=40690663789">Open linked view</a></div></div>
  <details><summary>Inspect provenance and limitations</summary><dl><dt>Source blob OID</dt><dd><code>431fb7dd2b5485312f2ca6d96e5a520638351dd5</code></dd><dt>HTML SHA-256</dt><dd><code>a7cbae8da2753404241b99a50f999f3f7526f111c30e86c102025d81aa283e0c</code></dd><dt>DOM container</dt><dd><code>#timing-rows</code></dd><dt>Precision</dt><dd><code>VIEW_SELECTION</code></dd></dl><p class="limit">A source-to-view selection is not an exact SVG rectangle, Plotly point, or PDF page/layer mapping.</p></details>
  </article></section>
+
+<section class="layer-compare" aria-labelledby="layer-compare-title">
+ <h2 id="layer-compare-title">One object, three reading layers</h2>
+ <p>Compare where B05 comes from, where it appears, and what cannot yet be asserted in a published PDF. Expand any layer; nothing is executed or modified.</p>
+ <div class="layer-grid" role="group" aria-label="Source, derived views and publication boundary">
+  <details class="layer-stage" data-layer="source" open>
+   <summary>01 · Frozen source object</summary>
+   <p><strong>B05 Browser</strong> is an object in the proposed logical CI Spine bundle DAG, not a live required check.</p>
+   <p><code>ci-spine:bundle:B05</code></p>
+   <p>Git blob identity: <code>7ff3fba10633b1f271e024ce2ccde8121417c9cb</code></p>
+   <a href="https://github.com/GBOGEB/pipeline-automation-hub/blob/4cc045d322fb65fef8fb00b2cd93e50bbc52bbd8/docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json" rel="noopener noreferrer" target="_blank">Frozen JSON source</a>
+  </details>
+  <details class="layer-stage" data-layer="views">
+   <summary>02 · Graph ↔ SIPOC projections</summary>
+   <p>Two distinct, source-bound <strong>view selections</strong> of B05. Neither claims a precise SVG bounding box or executable approval.</p>
+   <a href="../explorer.html#lens=graph&amp;kind=bundle&amp;id=B05">Open B05 graph</a>
+   <a href="../explorer.html#lens=sipoc&amp;kind=bundle&amp;id=B05">Open B05 SIPOC</a>
+   <p>Both target the parent explorer SHA-256 <code>a7cbae8da2753404241b99a50f999f3f7526f111c30e86c102025d81aa283e0c</code>.</p>
+  </details>
+  <details class="layer-stage" data-layer="publication">
+   <summary>03 · PDF / layer boundary</summary>
+   <p class="limit">UNMAPPED — no verified owner PDF, page, rectangle, OCG or rendering transform.</p>
+   <p>For a future promoted pointer: require source identity, output binary SHA-256, coordinate convention, page dimensions, independently inspected region and invalidation tests across versions.</p>
+   <p>Mirrored comments must remain attached to source objects; never migrate them using page numbers alone.</p>
+  </details>
+ </div>
+ <p class="layer-legend">Source → derived view is currently VIEW_SELECTION precision. Derived view → PDF geometry is UNKNOWN, never PASS by visual resemblance.</p>
+</section>
 <section class="pending" aria-label="Unverified PDF mappings"><strong>PDF / interactive drawing mapping is still unverified.</strong><p>Before a PDF page, bbox or optional-content-group (OCG) layer becomes clickable, bind the owner source, exact PDF SHA-256, page numbering, normalized coordinate convention, layer inventory, geometry precision and an independent readback. This placeholder intentionally has no action link.</p></section>
 <p class="source">Source commit 4cc045d322fb65fef8fb00b2cd93e50bbc52bbd8 · original catalog ca623ab83793df6edd245942884ad5428a5fe079 · viewer SHA-256 a7cbae8da2753404241b99a50f999f3f7526f111c30e86c102025d81aa283e0c · build run 40726398983</p></main>
 <footer><p>Navigation inspired by Ink &amp; Switch Jacquard's provenance pointers. This is an independent read-only implementation, not a copy of Jacquard. GitHub PR checks and source owners remain authoritative.</p></footer></body></html>
