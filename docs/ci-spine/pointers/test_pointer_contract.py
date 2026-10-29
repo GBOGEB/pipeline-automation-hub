@@ -152,5 +152,26 @@ class PointerContractTests(unittest.TestCase):
                 self.validate(root=root)
 
 
+    def test_layer_comparison_is_native_offline_disclosure(self):
+        html = p.NAV.read_text("utf-8")
+        self.assertEqual(html.count('class="layer-stage"'), 3)
+        for layer in ("source", "views", "publication"):
+            self.assertIn(f'data-layer="{layer}"', html)
+        self.assertIn("Source → derived view is currently VIEW_SELECTION precision", html)
+        self.assertIn("Derived view → PDF geometry is UNKNOWN", html)
+        self.assertIn("script-src 'none'", html)
+        self.assertEqual(html.count('class="action"'), 3)
+
+    def test_unverified_publication_layer_has_no_navigation(self):
+        html = p.NAV.read_text("utf-8")
+        start = html.index('data-layer="publication"')
+        end = html.index("</details>", start)
+        publication = html[start:end]
+        self.assertIn("UNMAPPED", publication)
+        self.assertIn("no verified owner PDF", publication)
+        self.assertNotIn("<a ", publication)
+        self.assertNotIn('href=', publication)
+        self.assertIn("never migrate them using page numbers alone", publication)
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
