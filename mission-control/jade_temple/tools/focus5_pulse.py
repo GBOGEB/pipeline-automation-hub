@@ -7,9 +7,11 @@ exact SHA only, writing a snapshot in the FOCUS5 shape that rolling5.py pins:
 
   H01  PASS when the head SHA is read back.
   H02  PASS when a root README exists at that SHA.
-  H04/H05/H06  the workflow that evidenced the gate in the previous pulse is
-       looked up on the new head: success -> PASS, failure -> FAIL, not run on
-       this SHA -> UNKNOWN. A gate with no previous workflow evidence stays UNKNOWN.
+  H04/H05/H06  the workflows declared for the gate in
+       data/FOCUS5_GATE_EVIDENCE_REGISTRY.json (else the workflow that evidenced it
+       in the previous pulse) are looked up on the new head: every one success ->
+       PASS, any failure -> FAIL, otherwise (not run, cancelled, skipped) ->
+       UNKNOWN. A gate with neither stays UNKNOWN.
   H08  FAIL when the default branch is unprotected; protected with a pull
        request rule -> UNKNOWN until a rejected RED canary is evidenced.
   H03 H07 H09 H10 H11 H12  owner or independent evidence -> UNKNOWN here; the
@@ -35,6 +37,7 @@ PB = importlib.util.module_from_spec(_pb)
 _pb.loader.exec_module(PB)
 WINDOW = "site/rolling5.json"
 LEDGER = "data/ROLLING5_PULSES.json"
+REGISTRY = "data/FOCUS5_GATE_EVIDENCE_REGISTRY.json"
 RUN_GATES = ("H04", "H05", "H06")
 SECURITY_RX = re.compile(r"codeql|osv|bandit|security|scorecard|dependency.review|secret", re.I)
 RUN_URL = re.compile(r"/actions/runs/(\d+)")
@@ -60,11 +63,70 @@ def evidence_workflows(prev_row: dict | None, repo: str, lookup=gh) -> dict[str,
     return out
 
 
+def validate_registry(reg: dict) -> dict[str, dict[str, list[str]]]:
+    """Repo -> gate -> declared workflow paths. Raises ValueError on a malformed registry."""
+    if reg.get("schema") != "jade.focus5.gate_evidence_registry.v1":
+        raise ValueError("unknown registry schema")
+    out: dict[str, dict[str, list[str]]] = {}
+    for repo, gates in reg["repos"].items():
+        if repo.count("/") != 1:
+            raise ValueError(f"{repo}: expected owner/name")
+        for gid, entries in gates.items():
+            if gid not in RUN_GATES:
+                raise ValueError(f"{repo} {gid}: only {', '.join(RUN_GATES)} may be declared")
+            paths = [e["workflow"] for e in entries]
+            if not paths or len(set(paths)) != len(paths):
+                raise ValueError(f"{repo} {gid}: empty or duplicate workflows")
+            for e in entries:
+                if not e["workflow"].startswith(".github/workflows/") or not e["workflow"].endswith((".yml", ".yaml")):
+                    raise ValueError(f"{repo} {gid}: {e['workflow']} is not a workflow file")
+                if not str(e.get("proves") or "").strip():
+                    raise ValueError(f"{repo} {gid}: {e['workflow']} does not state what it proves")
+            out.setdefault(repo, {})[gid] = paths
+    return out
+
+
+def load_registry(root: Path) -> dict[str, dict[str, list[str]]]:
+    path = root / REGISTRY
+    return validate_registry(json.loads(path.read_text(encoding="utf-8"))) if path.exists() else {}
+
+
+NOT_STARTED = "not_started"
+
+
+def mark_unstarted_failures(repo: str, latest: dict[str, dict], paths, lookup=gh) -> None:
+    """A failed run whose jobs never ran a step (no runner: billing, spending limit,
+    runner outage) proves nothing about the code: its conclusion becomes not_started,
+    which classifies as UNKNOWN, never FAIL or PASS."""
+    for path in paths:
+        run = latest.get(path)
+        if run and run["conclusion"] == "failure":
+            jobs = lookup(f"repos/{repo}/actions/runs/{run['id']}/jobs?per_page=100")["jobs"]
+            if not any(j.get("steps") for j in jobs):
+                latest[path] = dict(run, conclusion=NOT_STARTED)
+
+
 def classify_run(conclusion: str | None) -> str:
     return {"success": "PASS", "failure": "FAIL"}.get(conclusion or "", "UNKNOWN")
 
 
-def observe_repo(repo: str, prev_row: dict | None, lookup=gh) -> dict:
+def classify_gate(paths: list[str], latest: dict[str, dict]) -> tuple[str, str | None, str]:
+    """All declared workflows must succeed on this SHA; any failure fails the gate."""
+    runs = {p: latest.get(p) for p in paths}
+    failed = [p for p, r in runs.items() if r and classify_run(r["conclusion"]) == "FAIL"]
+    if failed:
+        r = runs[failed[0]]
+        return "FAIL", r["html_url"], f"{r['name']} failure on this exact SHA ({', '.join(failed)})"
+    missing = [p for p, r in runs.items() if not r or classify_run(r["conclusion"]) != "PASS"]
+    if missing:
+        detail = ", ".join(f"{p}={runs[p]['conclusion']}" if runs[p] else f"{p} not completed" for p in missing)
+        return "UNKNOWN", None, f"Declared evidence incomplete on this exact SHA: {detail}"
+    first = runs[paths[0]]
+    names = ", ".join(runs[p]["name"] for p in paths)
+    return "PASS", first["html_url"], f"{names} success on this exact SHA"
+
+
+def observe_repo(repo: str, prev_row: dict | None, lookup=gh, declared: dict[str, list[str]] | None = None) -> dict:
     meta = lookup(f"repos/{repo}")
     branch = meta["default_branch"]
     sha = lookup(f"repos/{repo}/commits/{branch}")["sha"]  # read once, used for every gate
@@ -86,8 +148,15 @@ def observe_repo(repo: str, prev_row: dict | None, lookup=gh) -> dict:
     for run in sorted(runs, key=lambda r: r["created_at"]):
         if run["status"] == "completed":
             latest[run["path"]] = run
-    wf = evidence_workflows(prev_row, repo, lookup)
+    declared = declared or {}
+    wf = evidence_workflows(prev_row, repo, lookup) if set(RUN_GATES) - set(declared) else {}
+    evidence_paths = {p for ps in declared.values() for p in ps} | set(wf.values())
+    mark_unstarted_failures(repo, latest, sorted(evidence_paths), lookup)
     for gid in RUN_GATES:
+        if gid in declared:
+            status, url, why = classify_gate(declared[gid], latest)
+            gate(gid, status, url, why + " (declared in gate evidence registry)")
+            continue
         path = wf.get(gid)
         run = latest.get(path) if path else None
         if run:
@@ -149,9 +218,11 @@ def observe_repo(repo: str, prev_row: dict | None, lookup=gh) -> dict:
     return row
 
 
-def build_snapshot(prev: dict, repos: list[str], date: str, lookup=gh) -> dict:
+def build_snapshot(prev: dict, repos: list[str], date: str, lookup=gh,
+                   registry: dict[str, dict[str, list[str]]] | None = None) -> dict:
     prev_rows = {r["repo"]: r for r in prev["rows"]}
-    rows = [observe_repo(repo, prev_rows.get(repo), lookup) for repo in repos]
+    registry = registry or {}
+    rows = [observe_repo(repo, prev_rows.get(repo), lookup, registry.get(repo)) for repo in repos]
     for row in rows:
         row["head_readback"] = f"{date} one pulse"
     passed = sum(r["verified_complete"] for r in rows)
@@ -173,7 +244,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--date", required=True, help="observation date (YYYY-MM-DD)")
     args = ap.parse_args(argv)
     window = json.loads((ROOT / WINDOW).read_text(encoding="utf-8"))["window"]["current"]
-    snap = build_snapshot(previous_snapshot(ROOT), window, args.date)
+    snap = build_snapshot(previous_snapshot(ROOT), window, args.date, registry=load_registry(ROOT))
     out = ROOT / args.out
     out.write_text(json.dumps(snap, indent=2) + "\n", encoding="utf-8", newline="\n")
     m = snap["metrics"]

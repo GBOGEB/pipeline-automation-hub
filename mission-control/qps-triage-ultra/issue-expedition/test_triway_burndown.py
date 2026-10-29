@@ -96,6 +96,22 @@ class ParserN2(unittest.TestCase):
   p=m.project(c);self.assertEqual(p["issues"][A+"#1"]["blocker_candidates"],1)  # both sides declare one pair;self.assertEqual(p["issues"][A+"#2"]["dependent_candidates"],1)
   self.assertEqual(p["issues"][A+"#2"]["parked_intent"]["id"],"U12");self.assertIsNone(p["issues"][A+"#1"]["parked_intent"])
   self.assertEqual(m.parked_intent("<!-- parked-intent:v1 {bad json} -->")["valid"],False)
+ def test_wrapped_criteria_not_double_counted(self):
+  c=m.checklist("## DoD\n- [ ] Implement foo\n  with native test\n- Deploy to staging\n  and run smoke tests")
+  self.assertEqual(c["DoD"]["progress"]["total"],1)
+  self.assertEqual(c["DoD"]["untracked"],1)
+  self.assertIn("native test",c["DoD"]["items"][0]["text"])
+  self.assertIn("smoke tests",c["DoD"]["declared"][0]["text"])
+ def test_fence_length_alias_join_and_negated_closure(self):
+  self.assertEqual(self.refs("````\n#99\n```\n#98\n````\nsee #1"),[(B+"#1","TEXT_ASSOCIATION")])
+  self.assertEqual(self.refs("blocked by ABACUS #1 and CODEX #2"),
+      [(A+"#1","DECLARED_BLOCKER_CANDIDATE"),("GBOGEB/CODEX#2","DECLARED_BLOCKER_CANDIDATE")])
+  self.assertEqual(self.refs("Does not fix #12",pr=True),[(B+"#12","PR_ASSOCIATION")])
+  self.assertEqual(self.refs("Close #13",pr=True),[(B+"#13","PR_CLOSURE_CLAIM")])
+ def test_nested_parked_intent(self):
+  mark='<!-- parked-intent:v1 {"id":"U12","sessions":[{"id":"S1"}]} -->'
+  self.assertEqual(m.parked_intent(mark)["id"],"U12")
+  self.assertTrue(m.parked_intent(mark)["valid"])
  def test_codex_p2_fixes(self):
   self.assertEqual(self.refs("> ```\n> blocked by #2\n> ```\nsee #1"),[(B+"#1","TEXT_ASSOCIATION")])
   self.assertIsNone(m.checklist("> ```\n> - [ ] quoted example\n> ```")["OTHER"]["progress"])
@@ -106,4 +122,17 @@ class ParserN2(unittest.TestCase):
   got=self.refs("- [~] depends on #15\n- [-] blocks #17\n- [~] superseded by #18\n- [ ] ~~depends on #19~~",home=A)
   self.assertEqual({k for _,k in got},{"TEXT_ASSOCIATION"})
   self.assertEqual(self.refs("- [-] closes #16",home=A,pr=True),[(A+"#16","PR_ASSOCIATION")])
+ def test_multiline_inline_code_never_declares_edges(self):
+  self.assertEqual(self.refs("`blocked by #3\\nand #4` See #5"),[(B+"#5","TEXT_ASSOCIATION")])
+ def test_negation_and_relation_scoped_to_current_clause(self):
+  self.assertEqual(self.refs("Not urgent. Blocked by #2"),[(B+"#2","DECLARED_BLOCKER_CANDIDATE")])
+  self.assertEqual(self.refs("This blocks nothing. See #2"),[(B+"#2","TEXT_ASSOCIATION")])
+  self.assertEqual(self.refs("Does not fix #12",pr=True),[(B+"#12","PR_ASSOCIATION")])
+ def test_alias_relation_does_not_leak_across_sentence(self):
+  self.assertEqual(self.refs("blocked by ABACUS #1. See CODEX #2"),[(A+"#1","DECLARED_BLOCKER_CANDIDATE"),("GBOGEB/CODEX#2","TEXT_ASSOCIATION")])
+ def test_blockquote_continuation_is_one_criterion(self):
+  c=m.checklist("## DoD\n> - [ ] Implement foo\n>   with native test")
+  self.assertEqual(c["DoD"]["progress"]["total"],1)
+  self.assertEqual(c["DoD"]["untracked"],0)
+  self.assertIn("native test",c["DoD"]["items"][0]["text"])
 if __name__=="__main__":unittest.main()
