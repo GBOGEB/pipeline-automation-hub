@@ -130,6 +130,37 @@ class Delta(unittest.TestCase):
                                              "--out", str(receipt), "--check"]), 1)
                     self.assertEqual(json.loads(receipt.read_text())["verdict"], "CI_SPINE_DELTA_FIRST_RED")
 
+    def test_falsy_or_missing_job_inventory_is_not_a_clean_delta(self):
+        for malformed in (None, "", {}, 0, False, "MISSING"):
+            with self.subTest(value=malformed):
+                self.b = index("b" * 40)
+                wf = self.b["workflows"][0]
+                wf["source_sha256"] = "9" * 64
+                if malformed == "MISSING":
+                    wf.pop("jobs")
+                else:
+                    wf["jobs"] = malformed
+                result = M.compare(self.a, self.b)
+                self.assertEqual(result["verdict"], "CI_SPINE_DELTA_FIRST_RED")
+                self.assertIn("malformed jobs inventory", " ".join(result["errors"]))
+                row = result["workflow_changes"][0]
+                self.assertEqual(row["change"], "MODIFIED")
+                self.assertTrue(row["safety_attention"])
+                self.assertIn("malformed_job_inventory", row["changed_fields"])
+                self.assertEqual(row["merge_admission"], "HOLD")
+
+    def test_duplicate_or_invalid_job_identity_is_first_red(self):
+        for invalid in ([None], [{"id": 2}],
+                        [{"id": "test"}, {"id": "test"}]):
+            with self.subTest(invalid=invalid):
+                self.b = index("b" * 40)
+                self.b["workflows"][0]["jobs"] = invalid
+                self.b["workflows"][0]["source_sha256"] = "a" * 64
+                result = M.compare(self.a, self.b)
+                self.assertEqual(result["verdict"], "CI_SPINE_DELTA_FIRST_RED")
+                self.assertTrue(result["errors"])
+                self.assertTrue(result["workflow_changes"][0]["safety_attention"])
+
     def test_anchor_rebinding_is_visible_and_cannot_certify(self):
         self.b["anchors"][0]["phase"] = "GOVERN"
         r = M.compare(self.a, self.b)
