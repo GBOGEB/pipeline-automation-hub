@@ -18,7 +18,8 @@ on:
       - 'mission-control/gogreen/scale_dock.py'
       - 'AGENTS.md'
   push:
-    branches: [master]
+    # Temporary branch-only testflight trigger. DO NOT MERGE this wrapper.
+    branches: [master, 'testflight/ci-spine-n6-fanin-20261028']
     paths:
       - 'scripts/ci_spine_*.py'
       - 'tests/test_ci_spine_*.py'
