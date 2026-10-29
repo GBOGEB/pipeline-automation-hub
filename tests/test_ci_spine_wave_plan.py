@@ -1,6 +1,9 @@
 """Offline wave scheduler safety, precedence and disjointness tests."""
+import contextlib
 import importlib.util
+import io
 import json
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -113,6 +116,22 @@ class WaveContract(unittest.TestCase):
         p["tasks"][0]["owns"] = ["src/**"]
         self.assertEqual({x["id"]: x["disposition"] for x in M.build(i, p)["rows"]}["CI-N-C"],
                          "DEFER_OWNERSHIP_COLLISION")
+
+    def test_cli_malformed_nested_source_emits_first_red_receipt(self):
+        index, policy = sample()
+        index["source"] = ["invalid"]
+        with tempfile.TemporaryDirectory() as td:
+            src, pol, out = (Path(td) / name for name in ("index.json", "policy.json", "receipt.json"))
+            src.write_text(json.dumps(index), encoding="utf-8")
+            pol.write_text(json.dumps(policy), encoding="utf-8")
+            with contextlib.redirect_stdout(io.StringIO()):
+                rc = M.main(["--index", str(src), "--policy", str(pol),
+                             "--out", str(out), "--check"])
+            self.assertEqual(rc, 1)
+            result = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(result["verdict"], "WAVE_POLICY_FIRST_RED")
+            self.assertEqual(result["candidate_workers"], [])
+            self.assertIn("malformed source object", result["errors"])
 
     def test_receipt_mapping_with_nonstring_keys_fails_closed(self):
         i, p = sample()
