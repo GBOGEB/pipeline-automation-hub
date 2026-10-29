@@ -1,0 +1,109 @@
+{
+  "schema": "gbo.ci-spine.pointer-map.v1",
+  "kind": "frozen_advisory_source_to_view_mappings_no_execution",
+  "repository": "GBOGEB/pipeline-automation-hub",
+  "source_commit": "4cc045d322fb65fef8fb00b2cd93e50bbc52bbd8",
+  "catalog_snapshot_commit": "ca623ab83793df6edd245942884ad5428a5fe079",
+  "viewer": {
+    "path": "docs/ci-spine/explorer.html",
+    "blob_oid": "231450e0c16e704e8ea1964222dd08d376f38252",
+    "sha256": "a7cbae8da2753404241b99a50f999f3f7526f111c30e86c102025d81aa283e0c",
+    "build_workflow_run_id": 40726398983,
+    "head_sha": "4cc045d322fb65fef8fb00b2cd93e50bbc52bbd8",
+    "authority": "FROZEN_ADVISORY"
+  },
+  "pointers": [
+    {
+      "id": "JQ4-B05-GRAPH",
+      "source": {
+        "path": "docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json",
+        "blob_oid": "7ff3fba10633b1f271e024ce2ccde8121417c9cb",
+        "json_pointer": "/nodes/5",
+        "object_id": "ci-spine:bundle:B05"
+      },
+      "output": {
+        "path": "docs/ci-spine/explorer.html",
+        "blob_oid": "231450e0c16e704e8ea1964222dd08d376f38252",
+        "sha256": "a7cbae8da2753404241b99a50f999f3f7526f111c30e86c102025d81aa283e0c",
+        "dom_id": "dag",
+        "lens": "graph",
+        "kind": "bundle",
+        "selection_id": "B05",
+        "href": "../explorer.html#lens=graph&kind=bundle&id=B05"
+      },
+      "precision": "VIEW_SELECTION",
+      "claim": "B05 logical bundle selected on the DAG viewer; this is not an SVG element bbox or exact output geometry",
+      "state": "CANDIDATE_PENDING_NATIVE_DOV",
+      "authority": "ADVISORY",
+      "source_commit": "4cc045d322fb65fef8fb00b2cd93e50bbc52bbd8",
+      "output_commit": "4cc045d322fb65fef8fb00b2cd93e50bbc52bbd8"
+    },
+    {
+      "id": "JQ4-B05-SIPOC",
+      "source": {
+        "path": "docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json",
+        "blob_oid": "7ff3fba10633b1f271e024ce2ccde8121417c9cb",
+        "json_pointer": "/nodes/5",
+        "object_id": "ci-spine:bundle:B05"
+      },
+      "output": {
+        "path": "docs/ci-spine/explorer.html",
+        "blob_oid": "231450e0c16e704e8ea1964222dd08d376f38252",
+        "sha256": "a7cbae8da2753404241b99a50f999f3f7526f111c30e86c102025d81aa283e0c",
+        "dom_id": "sipoc-body",
+        "lens": "sipoc",
+        "kind": "bundle",
+        "selection_id": "B05",
+        "href": "../explorer.html#lens=sipoc&kind=bundle&id=B05"
+      },
+      "precision": "VIEW_SELECTION",
+      "claim": "B05 SIPOC panel selection, not a line-level or PDF source-location map",
+      "state": "CANDIDATE_PENDING_NATIVE_DOV",
+      "authority": "ADVISORY",
+      "source_commit": "4cc045d322fb65fef8fb00b2cd93e50bbc52bbd8",
+      "output_commit": "4cc045d322fb65fef8fb00b2cd93e50bbc52bbd8"
+    },
+    {
+      "id": "JQ4-RUN-40690663789",
+      "source": {
+        "path": "docs/ci-spine/RUN_TIMING_SAMPLES_20261028.json",
+        "blob_oid": "431fb7dd2b5485312f2ca6d96e5a520638351dd5",
+        "json_pointer": "/runs/0",
+        "object_id": "run:40690663789"
+      },
+      "output": {
+        "path": "docs/ci-spine/explorer.html",
+        "blob_oid": "231450e0c16e704e8ea1964222dd08d376f38252",
+        "sha256": "a7cbae8da2753404241b99a50f999f3f7526f111c30e86c102025d81aa283e0c",
+        "dom_id": "timing-rows",
+        "lens": "timing",
+        "kind": "run",
+        "selection_id": "40690663789",
+        "href": "../explorer.html#lens=timing&kind=run&id=40690663789"
+      },
+      "precision": "VIEW_SELECTION",
+      "claim": "Exact recorded run ID selection with sampled job timing, not release or full-fleet performance",
+      "state": "CANDIDATE_PENDING_NATIVE_DOV",
+      "authority": "ADVISORY",
+      "source_commit": "4cc045d322fb65fef8fb00b2cd93e50bbc52bbd8",
+      "output_commit": "4cc045d322fb65fef8fb00b2cd93e50bbc52bbd8"
+    }
+  ],
+  "pending": [
+    {
+      "id": "JQ4-PDF-OCG-FUTURE",
+      "kind": "PDF_PAGE_RECT_OR_OCG",
+      "state": "UNMAPPED_NO_VERIFIED_BINARY",
+      "source_object": "RTM-#### / owner PID / engineering drawing locator",
+      "output": null,
+      "precision": "UNKNOWN",
+      "href": null,
+      "reason": "Requires a real owner PDF, exact binary sha256, verified page and bbox coordinate system, optional OCG layer, and independent source mapping"
+    }
+  ],
+  "notes": [
+    "Do not elevate candidate pointers to engineering or merge authority.",
+    "Source commit is the PR #1002 head where the referenced files exist, not the older catalog snapshot SHA.",
+    "No PDF rectangle, native layer, inline edit or mirrored-comment precision is inferred."
+  ]
+}
