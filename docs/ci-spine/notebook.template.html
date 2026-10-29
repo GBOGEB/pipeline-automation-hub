@@ -196,7 +196,12 @@ const el=(tag,cls,txt)=>{const x=document.createElement(tag);if(cls)x.className=
 const svg=(tag,attrs)=>{const x=document.createElementNS(NS,tag);Object.entries(attrs||{}).forEach(k=>x.setAttribute(k[0],String(k[1])));return x;};
 const safe=val=>val==null?"UNKNOWN":String(val);
 const short=val=>String(val||"").length>22?String(val).slice(0,21)+"…":String(val||"");
-const link=(node,href,label)=>{node.href=href;node.textContent=label;node.rel="noopener noreferrer";};
+// Data JSON is read from DOM text, so URLs are never trusted as-is: run links are rebuilt
+// from a positive integer id, and source links must stay under the frozen repo blob prefix.
+const GH="https://github.com/GBOGEB/pipeline-automation-hub/";
+const runHref=id=>{const n=Number(id);return Number.isSafeInteger(n)&&n>0?GH+"actions/runs/"+n:null;};
+const blobHref=href=>typeof href==="string"&&href.startsWith(GH+"blob/")&&!/[\s"'<>\\]/.test(href)?href:null;
+const link=(node,href,label)=>{const h=blobHref(href);if(h)node.href=h;else node.removeAttribute("href");node.textContent=label;node.rel="noopener noreferrer";};
 function parseHash(){const h=new URLSearchParams(location.hash.slice(1));const b=h.get("bundle");const v=h.get("view");if(byId[b])selected=b;if(["graph","sipoc","timing","document","compendium"].includes(v))view=v;}
 function updateHash(){history.replaceState(null,"","#bundle="+selected+"&view="+view);}
 function pick(id){if(!byId[id])return;selected=id;updateHash();refresh();}
@@ -241,7 +246,7 @@ function showSipoc(){const n=byId[selected],out=$("sipoc");out.replaceChildren()
 function showTiming(){const tbody=$("timing-rows");tbody.replaceChildren();const max=Math.max(1,...D.timings.map(t=>t.execution_seconds||0));
 D.timings.forEach(t=>{const tr=el("tr"),label=el("td"),q=el("td","numeric",t.queue_seconds==null?"UNKNOWN":t.queue_seconds+"s"),run=el("td","numeric",t.execution_seconds==null?"UNKNOWN":t.execution_seconds+"s");
 label.append(el("strong","",t.name),el("div","muted",t.job+" · "+t.source_sha.slice(0,10)));const slot=el("td"),track=el("div","bartrack"),bar=el("div","bar");bar.style.width=(t.execution_seconds==null?0:100*t.execution_seconds/max)+"%";track.append(bar);slot.append(track);
-const l=el("td"),a=el("a","",String(t.run_id));a.href=t.url;a.target="_blank";a.rel="noopener noreferrer";l.append(a);tr.append(label,q,run,slot,l);tbody.append(tr);});}
+const l=el("td"),a=el("a","",String(t.run_id)),rh=runHref(t.run_id);if(rh)a.href=rh;a.target="_blank";a.rel="noopener noreferrer";l.append(a);tr.append(label,q,run,slot,l);tbody.append(tr);});}
 function refresh(){addList();inspect();showSipoc();showTiming();draw();document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.view===view)));
 ["graph","sipoc","timing","document","compendium"].forEach(v=>{$("view-"+v).hidden=v!==view;});
 $("copy-status").textContent="";}

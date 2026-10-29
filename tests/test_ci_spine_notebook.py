@@ -178,6 +178,19 @@ class Notebook(unittest.TestCase):
         target.write_text(content, encoding="utf-8")
         self.assertEqual(M.main(["--root", str(root), "--check"]), 1)
 
+    def test_dom_sourced_urls_never_reach_href_unvalidated(self):
+        # CodeQL js/xss-through-dom (#66/#67): payload JSON is DOM text, so every
+        # href assignment must go through the integer run builder or blob-prefix guard.
+        template = (ROOT / M.TEMPLATE).read_text(encoding="utf-8")
+        self.assertNotIn("a.href=t.url", template)
+        self.assertEqual(sorted(re.findall(r"\.href=(\w+)", template)), ["h", "rh"])
+        self.assertIn('const GH="https://github.com/' + M.REPO + '/";', template)
+        p = self.proj()
+        for n in p["nodes"]:
+            for href in (n["source_pointer"]["href"], n["workflow_href"]):
+                self.assertTrue(href.startswith("https://github.com/" + M.REPO + "/blob/"))
+                self.assertIsNone(re.search(r"[\s\"'<>\\]", href))
+
     def test_render_is_deterministic_and_no_external_data_fetch(self):
         first, second = M.build(ROOT), M.build(ROOT)
         self.assertEqual(first, second)
