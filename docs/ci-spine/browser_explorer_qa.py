@@ -124,6 +124,19 @@ def run():
                 expect(pointer_page.locator("article.card")).to_have_count(3)
                 expect(pointer_page.locator("a.action")).to_have_count(3)
                 expect(pointer_page.locator("main")).to_contain_text("0 PDF RECTANGLES VERIFIED")
+                expect(pointer_page.locator(".layer-stage")).to_have_count(3)
+                assert pointer_page.locator('.layer-stage[data-layer="source"]').get_attribute("open") is not None
+                view_layer = pointer_page.locator('.layer-stage[data-layer="views"]')
+                assert view_layer.get_attribute("open") is None
+                view_layer.locator("summary").click()
+                assert view_layer.get_attribute("open") is not None, "view comparison is not interactive"
+                expect(view_layer).to_contain_text("Two distinct, source-bound")
+                assert view_layer.locator('a[href="../explorer.html#lens=sipoc&kind=bundle&id=B05"]').count() == 1
+                pdf_layer = pointer_page.locator('.layer-stage[data-layer="publication"]')
+                pdf_layer.locator("summary").click()
+                assert pdf_layer.get_attribute("open") is not None, "publication unknown-state disclosure"
+                expect(pdf_layer).to_contain_text("UNMAPPED")
+                assert pdf_layer.locator("a").count() == 0, "never create an unverified PDF link"
                 assert pointer_page.locator("script").count() == 0, "companion must have no script"
                 for href in (
                     "../explorer.html#lens=graph&kind=bundle&id=B05",
@@ -151,6 +164,7 @@ def run():
                     "no_script": True,
                     "pdf_rectangles_verified": 0,
                     "navigation": "PASS",
+                    "layer_comparison": "PASS",
                     "horizontal_overflow": False,
                 })
                 pointer_page.close()
