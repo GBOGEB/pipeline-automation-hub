@@ -72,10 +72,12 @@
         "https://github.com/GBOGEB/pipeline-automation-hub/issues/304",
         "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38250379852",
         "https://github.com/GBOGEB/pipeline-automation-hub/pull/880",
-        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40252128567"
+        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40252128567",
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/933",
+        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40317092326"
       ],
       "severity": "P1",
-      "source_evidence": "Recurrence (occurrence, not a new root): hub #880 head 524c024d264df5d2ca71e693b95761c62a826978 marked ready 2026-10-26T01:01:05Z and merged 01:02:42Z as 2c2079327aec7b350f172146e5e50de4373cd926 while First-Pass Closure Gate run 40252128567 job 121346125131 was FAIL (receipt reason MISSING_RECEIPT: PR body held only the FPC_RECEIPT_V1 PENDING placeholder) and the Codex exact-head review was still Running. The other 19 checks passed. Same pattern for #865, #867, #854 and #871 is recorded in #876. #336 required-status canary still unproved.",
+      "source_evidence": "Recurrence (occurrence, not a new root): hub #880 head 524c024d264df5d2ca71e693b95761c62a826978 marked ready 2026-10-26T01:01:05Z and merged 01:02:42Z as 2c2079327aec7b350f172146e5e50de4373cd926 while First-Pass Closure Gate run 40252128567 job 121346125131 was FAIL (receipt reason MISSING_RECEIPT: PR body held only the FPC_RECEIPT_V1 PENDING placeholder) and the Codex exact-head review was still Running. The other 19 checks passed. Same pattern for #865, #867, #854 and #871 is recorded in #876. #336 required-status canary still unproved. Second recurrence (occurrence, not a new root; same series step, so appended to this row): hub #933 head 2a3ea872a2e959b8c7010f70066794544b495282 marked ready 2026-10-26T11:42:42Z and merged by GBOGEB at 11:42:49Z as 7063a02fcbfa23e49d7dbf8074b96172eb48baa1. The ready_for_review First-Pass Closure Gate run 40317092326 job 121552303408 started 11:42:48Z and concluded failure at 11:43:03Z (GATE_OUTCOME=failure, RECEIPT_OUTCOME=failure, receipt reason MISSING_RECEIPT: the PR body had no FPC_RECEIPT_V1 block); the draft-time run 40315902826 was skipped. JADE (run 40315906545) and GOGREEN required gate (run 40315906633) were green on that head, as were the other checks. A retroactive FPC receipt on merged #933 is an owner decision and was not written; it would have needed an FPC_RECEIPT_V1 block bound to head 2a3ea872 (python scripts/fpc_receipt.py --pr 933 --write) with every non-FPC check green and the Codex exact-head review recorded before ready-for-review. #336 required-status canary still unproved.",
       "state": "UNKNOWN_NEEDS_READER",
       "title": "PRs merged while First-Pass Closure was red or still running (REX-CM-005 recurrence)"
     },
@@ -106,5 +108,5 @@
   "read_only_historical": true,
   "schema": "missioncontrol.cp_close.bd_projection.v1",
   "source_path": "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
-  "source_sha256": "52f3039deeb09fd2a75ca8edd56c6faa07cb111056b93d1cd9b756fe84849388"
+  "source_sha256": "9e074ab3dfa814a45efb48fb0a88097081de8d99f423047f35dbcc3c16b59711"
 }
