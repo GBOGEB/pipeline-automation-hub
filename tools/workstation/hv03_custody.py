@@ -26,6 +26,8 @@ def git(repo: Path, *args: str) -> bytes:
     env = dict(os.environ)
     env.pop("GITHUB_TOKEN", None)
     env.pop("GH_TOKEN", None)
+    env["GIT_NO_LAZY_FETCH"] = "1"
+    env["GIT_ALLOW_PROTOCOL"] = ""
     p = subprocess.run(["git", "-C", str(repo), *args], env=env,
                        stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
     if p.returncode:
