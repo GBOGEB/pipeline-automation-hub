@@ -78,7 +78,9 @@ def paths_status(wt: Path) -> list[dict]:
     return sorted(records, key=lambda r: (r["path"], r["status"]))
 
 def hash_file(wt: Path, rel: str, max_bytes: int) -> dict:
-    if not rel or Path(rel).is_absolute() or ".." in Path(rel).parts or "\x00" in rel:
+    if (not rel or Path(rel).is_absolute() or rel.startswith(("/", "\\"))
+            or re.match(r"^[A-Za-z]:[\\/]", rel) or ".." in Path(rel).parts
+            or ".." in rel.replace("\\", "/").split("/") or "\x00" in rel):
         return {"state": "UNSAFE_PATH", "bytes": None, "sha256": None}
     path = wt / rel
     if path.is_symlink():
