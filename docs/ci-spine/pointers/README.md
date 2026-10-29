@@ -19,7 +19,7 @@ python docs/ci-spine/pointers/test_pointer_contract.py
 python docs/ci-spine/pointers/pointer_contract.py --out /tmp/ci-spine-pointer-receipt.json
 ```
 
-The existing #1002 path-scoped workflow `test(ci-spine): provenance explorer QA` is extended **in its existing static job**, not by creating a new runner or replacing any gate. It retains its original 20-test explorer QA, browser DoV and Plotly proof, adds **22 pointer tests**, checks the nonzero executed-test count, and uploads a candidate pointer receipt. Tested failure modes: wrong source SHA/blob, mutated HTML binary SHA/digest, invalid or dangling JSON pointer, object/selection mismatch, external URL, wrong hash route, missing DOM anchor, fake PDF rectangle/OCG link, duplicated pointer, external script and misleading green/authority assertions.
+The existing #1002 path-scoped workflow `test(ci-spine): provenance explorer QA` is extended **in its existing static job**, not by creating a new runner or replacing any gate. It retains its original 20-test explorer QA, browser DoV and Plotly proof, adds **25 pointer tests**, checks the nonzero executed-test count, and uploads a candidate pointer receipt. Tested failure modes: wrong source SHA/blob, mutated HTML binary SHA/digest, invalid or dangling JSON pointer, object/selection mismatch, external URL, wrong hash route, missing DOM anchor, fake PDF rectangle/OCG link, duplicated pointer, external script and misleading green/authority assertions.
 
 Receipt values:
 - `verdict=SOURCE_BOUND_VIEW_SELECTION_ONLY`;
@@ -37,10 +37,19 @@ The immutable **view binary is parent #1002's exact head**. When the parent expl
 | JQ-01 | Existing GUI | Five-lens offline explorer, search, zoom, SVG export, linked results | [#1002] native 20 tests, Chromium viewports, zero external requests | HOSTED PASS on parent head; CodeQL/FPC still HOLD |
 | JQ-02 | Logical DAG/SIPOC | Ten bundles, 17 edges, typed N+1 feedback | Existing deterministic/cycle/phantom-negative tests | HOSTED PASS on parent head, no live-authority upgrade |
 | JQ-03 | Runtime | Eight sampled run/queue/step receipts | Exact run/attempt and immutable test assertions | HOSTED PASS on parent head; not fleet statistics |
-| **JQ-04** | **Typed pointers** | 3 source-bound HTML view selections + no-fake-PDF marker | 22 negatives, exact SHA/HTML OIDs, offline nav, existing static CI | **IMPLEMENTED CANDIDATE → NATIVE DoV PENDING** |
+| **JQ-04** | **Typed pointers** | 3 source-bound HTML view selections + no-fake-PDF marker | 25 negative and positive controls, exact SHA/HTML OIDs, offline nav, existing static CI | **IMPLEMENTED CANDIDATE → NATIVE DoV PENDING** |
 | JQ-05 | PDF/Plotly | Plotly companion; PDF/OCG pointer model separate | Existing Plotly passed; no live PDF binary map | PLOTLY PASS; PDF UNMAPPED |
 | JQ-06 | Scouts | Research Jacquard, Patchwork, SyncTeX, FileWeaver, Automerge/CRDT | Compare source/license/version, overlap, security and test costs | RESEARCH ONLY, no worker dispatch |
 | JQ-07 | Governance | Exact-head CI, required checks/FPC and eligible independent review | Qualified source/receipt set + security review, no red waiver | HOLD |
+
+
+## JQ-04b — native comparison layers, additive child-branch iteration
+
+Added a **script-free three-stage disclosure** to the existing pointer atlas, preserving the three manifest-bound navigation actions and the original source/view hashes. A reviewer can expand: (1) the frozen B05 source identity; (2) graph and SIPOC selections on the parent explorer; (3) the explicit **UNMAPPED** PDF/OCG boundary, which has no link and grants no false precision. This is a complementary reading surface, not a new metric owner, live dashboard or PDF conversion.
+
+New local controls cover the three native details panels, unchanged no-script CSP, and absence of a publication link. The existing Chromium QA exercises both graph/SIPOC and unknown-publication disclosures at 1440 and 390 px, alongside the original three exact pointer routes. No output viewer bytes, pointer source OIDs, or stored target SHA-256s were changed by this iteration. CI is requalified at the **new child PR head**; prior green receipts do not transfer.
+
+**Chaperone stop:** JQ-04b does not promote JQ-04 or JQ-05 to engineering acceptance. Parent #1002 security / review first reds and its children #1019/#1021 remain separate; a parent rebuild must rebind #1018's viewer digest before admitting pointer evidence. Review/merge admission HOLD.
 
 ## Why Jacquard is relevant, but not directly imported
 
