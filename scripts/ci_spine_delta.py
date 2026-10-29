@@ -22,15 +22,24 @@ def _normalize(doc, label, errors):
     if not isinstance(doc, dict) or doc.get("schema") != SCHEMA_IN:
         errors.append(label + ": invalid index schema")
         return None, {}, {}
-    source = doc.get("source") or {}
+    source = doc.get("source")
+    if not isinstance(source, dict):
+        errors.append(label + ": malformed source object")
+        source = {}
+    assurance = doc.get("assurance")
+    if not isinstance(assurance, dict):
+        errors.append(label + ": malformed assurance object")
+        assurance = {}
     head = source.get("checkout_sha")
     if not isinstance(head, str) or not SHA40.fullmatch(head):
         errors.append(label + ": no canonical 40-hex head")
     if source.get("expected_sha") not in (None, head):
         errors.append(label + ": expected head differs")
+    if not isinstance(doc.get("errors"), list):
+        errors.append(label + ": malformed errors list")
     if doc.get("verdict") != "PASS_STATIC_BINDINGS_ONLY" or doc.get("errors"):
         errors.append(label + ": index not statically qualified")
-    if (doc.get("assurance") or {}).get("merge_admission") != "HOLD":
+    if assurance.get("merge_admission") != "HOLD":
         errors.append(label + ": merge-admission status invalid")
     records = doc.get("workflows")
     if not isinstance(records, list):
@@ -77,16 +86,35 @@ def _job_map(wf):
 
 
 def _fields(a, b):
+    """Semantic changes in emitted index rows; never equate structural RED with text-only drift."""
     out = []
     for key in ("name", "class", "triggers", "schedules", "permissions",
-                "reusable", "paths_filtered", "dag_edges", "dag_layers"):
+                "reusable", "paths_filtered", "dag_edges", "dag_layers",
+                "parse_error", "dag_cycle", "dangling_needs"):
         if a.get(key) != b.get(key):
             out.append(key)
     if _job_map(a) != _job_map(b):
         out.append("job_definitions_or_needs")
+    if a.get("jobs") != b.get("jobs") and "job_definitions_or_needs" not in out:
+        out.append("job_structure_or_errors")
+    # Other emitted fields (e.g. workflow OID) also carry source meaning.
+    if a.get("oid") != b.get("oid"):
+        out.append("workflow_oid")
     if a.get("source_sha256") != b.get("source_sha256") and not out:
         out.append("source_only_no_observed_semantic_delta")
     return out
+
+
+def _structural_fault(row):
+    """Unbound workflows may be advisory in the index, but cannot be hidden in a delta."""
+    if not isinstance(row, dict):
+        return True
+    if row.get("parse_error") or row.get("dag_cycle") or row.get("dangling_needs"):
+        return True
+    jobs = row.get("jobs") or []
+    return not isinstance(jobs, list) or any(
+        not isinstance(job, dict) or job.get("parse_error") for job in jobs
+    )
 
 
 def compare(old, new):
@@ -107,8 +135,9 @@ def compare(old, new):
             status, changed = "REMOVED_REQUIRES_CUSTODY_PROOF", ["entire_workflow"]
         elif a["source_sha256"] == b["source_sha256"]:
             status, changed = "SAME_SOURCE", []
-            if any(a.get(k) != b.get(k) for k in ("name", "class", "triggers", "schedules",
-                                                  "permissions", "jobs", "dag_edges")):
+            # Compare the entire emitted row. Parser/classifier drift can change
+            # projection without changing workflow bytes (e.g. reusable, layers).
+            if a != b:
                 errors.append(path + ": identical source digest has inconsistent parser projection")
         else:
             status, changed = "MODIFIED", _fields(a, b)
@@ -116,9 +145,13 @@ def compare(old, new):
             rows.append({"path": path, "change": status, "changed_fields": changed,
                          "previous_source_sha256": a.get("source_sha256") if a else None,
                          "current_source_sha256": b.get("source_sha256") if b else None,
-                         "safety_attention": status == "REMOVED_REQUIRES_CUSTODY_PROOF" or any(
-                             x in changed for x in ("permissions", "triggers", "schedules",
-                                                   "dag_edges", "job_definitions_or_needs")),
+                         "safety_attention": (
+                             status == "REMOVED_REQUIRES_CUSTODY_PROOF"
+                             or _structural_fault(b) or _structural_fault(a)
+                             or any(x in changed for x in ("permissions", "triggers", "schedules",
+                               "dag_edges", "dag_layers", "job_definitions_or_needs",
+                               "job_structure_or_errors", "parse_error", "dag_cycle",
+                               "dangling_needs", "workflow_oid"))),
                          "merge_admission": "HOLD"})
     ar = []
     for ident in sorted(set(old_anchors) | set(new_anchors)):
