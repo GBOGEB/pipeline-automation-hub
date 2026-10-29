@@ -37,7 +37,7 @@ def valid_path(name):
     # reserved even when followed by an extension, and ':' is an ADS separator.
     # Refuse these claims rather than silently allocating overlapping workers.
     for component in p.parts:
-        if (component in (".", "..") or component.rstrip(" .") != component
+        if (component in (".", "..") or (component.rstrip(" .") != component or component.lstrip(" ") != component)
                 or any(ord(c) < 32 or c in '<>:"|\\' for c in component)
                 or re.fullmatch(r"(?:con|conin\$|conout\$|prn|aux|nul|com[1-9\u00b9\u00b2\u00b3]|lpt[1-9\u00b9\u00b2\u00b3])(?:\..*)?",
                                 component, re.IGNORECASE)):
