@@ -293,3 +293,111 @@ def topo_layers(nodes: list[str], edges: list[tuple]) -> list[list[str]]:
     if seen != len(nodes):
         raise ValueError("cycle in feedforward graph")
     return layers
+
+
+# RF waves extend the existing JADE lifecycle authority. These descending maturity
+# targets apply to experimental qualification, NOT merge protections or required gates.
+RF_PHASE_MATURITY = {"P0_CONTROL": 5, "P1_PILOT": 4, "P2_EXPAND": 3,
+                     "P3_SCALE": 2, "P4_SCOUT": 1}
+RF_CREW = {"SCOUT", "READER", "DOCTOR", "BUILDER", "RUNNER", "AUDITOR"}
+RF_STATES = {"READY", "RUNNING", "DONE", "FAILED", "HOLD"}
+
+
+def rf_pulse_plan(steps: list[dict], *, source_sha: str, max_parallel: int = 6,
+                  per_cluster: int = 2, open_stack: int = 0, max_stack: int = 5) -> dict:
+    """Pure ON/OFF plan: no real dispatch, PR creation, gate change or merge authority.
+
+    Actual run, job and cost metrics remain owned by actions_metrics.py; a T0
+    source reference is mandatory for every work item. Failed items enter OFF
+    repair, while selected items enter OFF measurement/qualification before N+1.
+    """
+    if len(source_sha) != 40 or any(c not in "0123456789abcdef" for c in source_sha):
+        raise ValueError("RF requires an exact lowercase 40-hex source SHA")
+    limits = (max_parallel, per_cluster, open_stack, max_stack)
+    if any(not isinstance(n, int) or isinstance(n, bool) for n in limits):
+        raise ValueError("RF limits must be integers")
+    if not 1 <= max_parallel <= 32 or not 1 <= per_cluster <= max_parallel:
+        raise ValueError("RF concurrency out of bounds")
+    if not 0 <= open_stack <= max_stack <= 5:
+        raise ValueError("RF PR stack maximum is five")
+    if not isinstance(steps, list) or any(not isinstance(s, dict) for s in steps):
+        raise ValueError("RF steps must be a list of objects")
+    ids = [s.get("id") for s in steps]
+    if any(not isinstance(i, str) or not i.strip() for i in ids) or len(ids) != len(set(ids)):
+        raise ValueError("RF ids must be unique nonempty strings")
+    states, edges = {}, []
+    for s in steps:
+        sid = s["id"]
+        if s.get("phase") not in RF_PHASE_MATURITY or s.get("crew") not in RF_CREW:
+            raise ValueError(f"{sid}: invalid phase/CREW")
+        if s.get("state") not in RF_STATES:
+            raise ValueError(f"{sid}: invalid state")
+        if not isinstance(s.get("cluster"), str) or not s["cluster"].strip():
+            raise ValueError(f"{sid}: missing cluster")
+        deps = s.get("depends_on", [])
+        if not isinstance(deps, list) or len(deps) != len(set(deps)):
+            raise ValueError(f"{sid}: bad dependencies")
+        edges.extend((dep, sid, "FEEDFORWARD") for dep in deps)
+        paths = s.get("touch_paths", [])
+        if (not isinstance(paths, list) or any(not isinstance(p, str) or not p or
+                                               p.startswith("/") or ".." in p.split("/")
+                                               for p in paths)):
+            raise ValueError(f"{sid}: bad changed paths")
+        if not isinstance(s.get("write_pr", False), bool):
+            raise ValueError(f"{sid}: write_pr must be boolean")
+        if s.get("write_pr", False) and not paths:
+            raise ValueError(f"{sid}: write must name paths")
+        states[sid] = s["state"]
+    topo_layers(ids, edges)  # rejects cycles and missing endpoints, keeps temporal feedback separate
+    on, held, off = [], [], []
+    clusters, used_paths, writes = {}, set(), 0
+    for s in sorted(steps, key=lambda a: (-RF_PHASE_MATURITY[a["phase"]], a["id"])):
+        sid, state = s["id"], s["state"]
+        if state == "DONE":
+            continue
+        if state == "FAILED":
+            held.append({"id": sid, "reason": "FIRST_RED_REPAIR"})
+            off.append({"id": sid, "crew": "DOCTOR", "mode": "REPAIR_FIRST_RED",
+                        "actions": ["classify first-red", "repair isolated branch",
+                                    "retest exact-head", "prepare next-pulse receipt"]})
+            continue
+        reason = None
+        if state != "READY":
+            reason = "NOT_READY"
+        elif s.get("source_sha") != source_sha:
+            reason = "STALE_SOURCE_SHA"
+        elif not isinstance(s.get("t0_ref"), str) or not s["t0_ref"].strip():
+            reason = "MISSING_T0_RECEIPT"
+        elif any(states[d] != "DONE" for d in s.get("depends_on", [])):
+            reason = "DEPENDENCY_NOT_DONE"
+        elif len(on) >= max_parallel:
+            reason = "PARALLEL_CAP"
+        elif clusters.get(s["cluster"], 0) >= per_cluster:
+            reason = "CLUSTER_CAP"
+        elif s.get("write_pr", False) and open_stack + writes >= max_stack:
+            reason = "PR_STACK_CAP"
+        elif s.get("write_pr", False) and used_paths.intersection(s.get("touch_paths", [])):
+            reason = "OVERLAPPING_PATHS"
+        if reason:
+            held.append({"id": sid, "reason": reason})
+            continue
+        on.append({"id": sid, "cluster": s["cluster"], "phase": s["phase"],
+                   "qualification_target": RF_PHASE_MATURITY[s["phase"]],
+                   "crew": s["crew"], "source_sha": source_sha,
+                   "t0_ref": s["t0_ref"], "write_pr": bool(s.get("write_pr", False)),
+                   "dispatch": "CANDIDATE_NOT_LAUNCHED"})
+        clusters[s["cluster"]] = clusters.get(s["cluster"], 0) + 1
+        if s.get("write_pr", False):
+            writes += 1
+            used_paths.update(s["touch_paths"])
+        off.append({"id": sid, "crew": "AUDITOR", "mode": "TAKE_STOCK_NEXT_PULSE",
+                    "actions": ["record exact run/job/attempt and denominators",
+                                "compare T0 and T1 with canonical metrics",
+                                "classify and repair regressions",
+                                "requalify exact head before N+1"]})
+    return {"schema": "jade.devops.rf-pulse-plan.v1", "source_sha": source_sha,
+            "on": on, "off": off, "held": held,
+            "concurrency": {"max_parallel": max_parallel, "per_cluster": per_cluster,
+                            "existing_stack": open_stack, "max_stack": max_stack},
+            "authority": {"dispatch_performed": False, "merge_authorized": False,
+                          "gate_policy": "UNCHANGED", "feedback": "NEXT_PULSE_ONLY"}}

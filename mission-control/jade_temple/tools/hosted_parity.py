@@ -116,7 +116,9 @@ def fetch_hosted(url: str, rel: str) -> bytes:
     req=urllib.request.Request(endpoint,headers={"Cache-Control":"no-cache","User-Agent":"JADE-CASTE-READONLY-PROOF/2"})
     with urllib.request.urlopen(req, timeout=14) as response:
         served=urllib.parse.urlsplit(response.geturl())
-        if served.scheme!="https" or served.netloc!="gbogeb.github.io" or response.status!=200:
+        if (served.scheme!="https" or served.netloc!="gbogeb.github.io" or response.status!=200
+                or served.path!=urllib.parse.urlsplit(endpoint).path or served.query or served.fragment
+                or served.username or served.password):
             raise ValueError("JADE_BAD_HOSTED_STATUS_OR_REDIRECT")
         b=response.read(MAX_BYTES+1)
         if len(b)>MAX_BYTES:

@@ -1,0 +1,62 @@
+name: MissionControl CREW N8 12-wave slow-burn
+on:
+  pull_request:
+    paths:
+      - 'mission-control/issue_rank/taxonomy_slowburn_crew.py'
+      - 'mission-control/issue_rank/test_taxonomy_slowburn_crew.py'
+      - '.github/workflows/taxonomy-n8-crew-slowburn.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: taxonomy-n8-crew-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  disjoint-slowburn:
+    name: CREW ${{ matrix.lane }} N+12
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        lane: [grammar, rootrank, privacy, triway]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Assert exact branch head and no privileged mutation
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$HEAD"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Test CREW runner and REX gates first
+        working-directory: mission-control/issue_rank
+        run: python -m unittest -v test_taxonomy_slowburn_crew
+      - name: Run queue-aware 12-wave native slow-burn
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          LANE: ${{ matrix.lane }}
+          RECEIPT: ${{ runner.temp }}/taxonomy-crew-${{ matrix.lane }}.json
+        shell: bash
+        run: |
+          set -euo pipefail
+          QUEUE_DEPTH="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs?status=queued&per_page=1" --jq '.total_count')"
+          test "$QUEUE_DEPTH" -ge 0
+          python mission-control/issue_rank/taxonomy_slowburn_crew.py \
+            --lane "$LANE" --head "$HEAD" --waves 12 \
+            --queue-depth "$QUEUE_DEPTH" --gap-seconds 5 \
+            --budget-seconds 600 --out "$RECEIPT"
+      - name: Preserve only source-pinned nonprivate wave receipt
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: crew-n8-${{ matrix.lane }}-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/taxonomy-crew-${{ matrix.lane }}.json
+          if-no-files-found: ignore
+          retention-days: 14

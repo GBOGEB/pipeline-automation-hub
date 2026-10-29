@@ -1,0 +1,38 @@
+name: Taxonomy N7-N12 MIP DMAIC Efficacy
+on:
+  pull_request:
+    paths:
+      - 'mission-control/issue_rank/taxonomy_dmaic_efficacy.py'
+      - 'mission-control/issue_rank/test_taxonomy_dmaic_efficacy.py'
+      - '.github/workflows/taxonomy-n7-dmaic.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: taxonomy-n7-dmaic-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  controller:
+    name: N7-N12 governed stop rules (py${{ matrix.python }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        python: ['3.11','3.12']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Exact source SHA contract
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$HEAD"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: 12-wave negative and boundary contracts
+        working-directory: mission-control/issue_rank
+        run: python -m unittest -v test_taxonomy_dmaic_efficacy

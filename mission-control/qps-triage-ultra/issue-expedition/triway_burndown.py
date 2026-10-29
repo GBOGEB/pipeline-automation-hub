@@ -35,15 +35,68 @@ DEFAULT_REPOS = ("GBOGEB/cryoplant-project", "GBOGEB/ABACUS",
                  "GBOGEB/gg_MATH")
 REPO = re.compile(r"GBOGEB/[A-Za-z0-9_.-]+\Z")
 SHA = re.compile(r"[0-9a-f]{40}\Z")
-ITEM = re.compile(r"^\s*[-*]\s+\[([xX ])\]\s+(.+?)\s*$")
-HEADING = re.compile(r"^\s{0,3}#{1,6}\s+(.+?)\s*$")
-REF = re.compile(
-    r"https://github\.com/GBOGEB/(?P<urlrepo>[A-Za-z0-9_.-]+)/issues/(?P<urlnum>\d+)"
-    r"|GBOGEB/(?P<namerepo>[A-Za-z0-9_.-]+)#(?P<namenum>\d+)"
-    r"|(?<![A-Za-z0-9/])#(?P<localnum>\d+)"
+ITEM = re.compile(r"^\s*(?:>\s*)*(?:[-*+]|\d+[.)])\s+\[([xX ~-])\]\s+(.+?)\s*$")
+BULLET = re.compile(r"^\s*(?:>\s*)*(?:[-*+]|\d+[.)])\s+(.+?)\s*$")
+HEADING = re.compile(r"^\s{0,3}(?:#{1,6}\s+(.+?)\s*#*|\*\*([^*]+?)\*\*\s*:?|__([^_]+?)__\s*:?)\s*$")
+# Section of the nearest heading, first match wins. EXPLICIT is the original
+# DoD/DoV rule; the synonyms were calibrated on the 168 open QPS / ABACUS /
+# CODEX / hub issues of 2026-10-26 ("Done when", "Acceptance", "Closure
+# predicate", ...). Each item keeps its basis, so a strict consumer can drop
+# the synonyms again.
+SECTIONS = (
+    ("DoD", "EXPLICIT_HEADING", re.compile(r"\bDoD\b|definition of done", re.I)),
+    ("DoV", "EXPLICIT_HEADING", re.compile(r"\bDoV\b|definition of verification", re.I)),
+    ("DoD", "SYNONYM_HEADING", re.compile(
+        r"done when|acceptance|exit (?:gate|criteria)|closure (?:predicate|rule|criteria)"
+        r"|victory (?:predicate|condition)|definition of victory|success criteria"
+        r"|completion criteria|required (?:outputs?|disposition|return)|go\s*/\s*no-go", re.I)),
+    ("DoV", "SYNONYM_HEADING", re.compile(
+        r"verification|validation|required proof|proof required|evidence required|how to verify", re.I)),
+    ("STEPS", "SYNONYM_HEADING", re.compile(
+        r"\bsteps?\b|\btasks?\b|to-?do|checklist|work (?:items?|packages?)|deliverables?"
+        r"|next actions?|execution|\bplan\b", re.I)),
 )
-DEP = re.compile(r"\b(?:blocked by|depends on|waiting for|requires)\b.{0,72}\Z", re.I)
-CLAIM = re.compile(r"\b(?:fix(?:es|ed)?|clos(?:es|ed)?|resolv(?:es|ed)?)\b.{0,40}\Z", re.I)
+INLINE_LABEL = re.compile(r"\W*(DoD|DoV)\b", re.I)
+STRUCK = re.compile(r"~~.+~~")
+COMMENT = re.compile(r"<!--.*?-->", re.S)
+PARKED = re.compile(r"<!--\s*parked-intent:v1\s*(.*?)\s*-->", re.S)
+# Federation shorthand used across the four repositories, e.g. "QPS parent #1920",
+# "ABACUS #1860/#2471" or "ABACUS#1996/PR#2041".
+ALIASES = {"qps": "cryoplant-project", "abacus": "ABACUS", "codex": "CODEX",
+           "hub": "pipeline-automation-hub", "pah": "pipeline-automation-hub",
+           "mission control": "pipeline-automation-hub", "gg_math": "gg_MATH"}
+REF = re.compile(
+    r"https://github\.com/GBOGEB/(?P<urlrepo>[A-Za-z0-9_.-]+)/(?:issues|pull)/(?P<urlnum>\d+)"
+    r"|GBOGEB/(?P<namerepo>[A-Za-z0-9_.-]+)#(?P<namenum>\d+)"
+    r"|(?<![A-Za-z0-9_/])(?P<alias>(?i:qps|abacus|codex|hub|pah|mission\s+control|gg_math))"
+    r"(?:\s+(?i:pr|issue|parent|child|root|lane))?\s*#(?P<aliasnum>\d+)"
+    r"|/(?:(?i:pr)\s*)?#(?P<chainnum>\d+)"
+    r"|(?<![A-Za-z0-9/&])#(?P<localnum>\d+)"
+)
+CLAIM = re.compile(r"\b(?:fix(?:es|ed)?|clos(?:e|es|ed)|resolv(?:e|es|ed))\b.{0,40}\Z", re.I)
+# Issue-body reference kinds, first match wins. The words between the previous
+# reference on the line and this one type it, so a keyword binds to the next
+# reference only; a run joined by commas or "and" keeps the kind of its head.
+KINDS = (
+    ("DECLARED_BLOCKER_CANDIDATE", re.compile(
+        r"\b(?:blocked by|depends on|waiting (?:for|on)|waits (?:for|on)|requires|needs)\b.{0,72}\Z", re.I)),
+    ("DECLARED_BLOCKS_CANDIDATE", re.compile(
+        r"\b(?:blocks|blocking|unblocks|prerequisite (?:for|of))\b.{0,72}\Z", re.I)),
+    ("DECLARED_PREDECESSOR", re.compile(
+        r"\b(?:supersedes|replaces|successor (?:of|to)|follow-?up (?:of|to)|continues)\b.{0,72}\Z", re.I)),
+    ("DECLARED_SUCCESSOR", re.compile(
+        r"\b(?:superseded by|successor|replaced by|routed to|moved to|continued in|carried (?:to|into))\b.{0,72}\Z",
+        re.I)),
+    ("DECLARED_PARENT_CANDIDATE", re.compile(
+        r"\b(?:parent|epic|umbrella|part of|child of|tracked (?:in|by))\b.{0,72}\Z", re.I)),
+    ("DECLARED_DUPLICATE_OF", re.compile(r"\b(?:duplicate of|dup of)\b.{0,72}\Z", re.I)),
+)
+QUOTE = re.compile(r"^(?:\s*>)*\s*")
+# A code span opens and closes with backtick runs of equal length (CommonMark).
+CODE_SPAN = re.compile(r"(`+)(?!`)([\s\S]+?)(?<!`)\1(?!`)")
+META = re.compile(r"^\s*(?:related|refs?|references|see also|sources?|links?)\s*:", re.I)
+NEGATED = re.compile(r"\b(?:not|no longer|never|unrelated|instead of)\b", re.I)
+JOINER = re.compile(r"[\s,;&+]*(?:(?:and|or)\b[\s,;&+]*)?\Z", re.I)
 PRIORITY = re.compile(r"(?:^|[/:\s_-])P([0-4])(?:$|[/:\s_-])", re.I)
 
 
@@ -68,52 +121,175 @@ def identity(repo, number):
     return f"{repo}#{number}"
 
 
+def _section(title):
+    for name, basis, rx in SECTIONS:
+        if rx.search(title):
+            return name, basis
+    return "OTHER", None
+
+
+def _source_lines(body):
+    """Body lines outside HTML comments and length-aware fenced code blocks."""
+    fence = None
+    for line in COMMENT.sub("", body).splitlines():
+        # A blockquote marker may precede a Markdown fence.
+        stripped = QUOTE.sub("", line).lstrip()
+        mark = re.match(r"^(`{3,}|~{3,})(.*)$", stripped)
+        if fence:
+            if (mark and mark.group(1)[0] == fence[0]
+                    and len(mark.group(1)) >= len(fence)
+                    and not mark.group(2).strip()):
+                fence = None
+            continue
+        if mark:
+            fence = mark.group(1)
+            continue
+        yield line
+
+
 def checklist(body):
-    """Return explicit DoD/DoV steps; no checklist => null, not 0/0."""
-    steps = {"DoD": [], "DoV": [], "OTHER": []}
-    section = "OTHER"
-    for line in body.splitlines():
+    """Return explicit DoD/DoV steps; no checklist => null, not 0/0.
+
+    Items take the section (DoD / DoV / STEPS / OTHER) of the nearest heading,
+    or of an inline ``- [ ] DoD:`` label; ``basis`` says which rule placed them.
+    Plain bullets and prose under a DoD / DoV / STEPS heading are ``declared``
+    criteria without a tick state: counted as ``untracked``, never as done.
+    ``[~]`` / ``[-]`` and fully struck-through (``~~...~~``) items are
+    withdrawn: kept in ``items`` with ``withdrawn``, never counted.
+    """
+    steps = {"DoD": [], "DoV": [], "STEPS": [], "OTHER": []}
+    declared = {k: [] for k in steps}
+    headed = dict.fromkeys(steps, False)
+    section, basis, prose = "OTHER", None, False
+    continuation = None
+    for line in _source_lines(body):
         h = HEADING.match(line)
         if h:
-            title = h.group(1)
-            section = ("DoD" if re.search(r"\bDoD\b|definition of done", title, re.I)
-                       else "DoV" if re.search(r"\bDoV\b|definition of verification", title, re.I)
-                       else "OTHER")
+            section, basis = _section(next(g for g in h.groups() if g))
+            headed[section] = True
+            prose = False
+            continuation = None
             continue
         m = ITEM.match(line)
         if m:
-            steps[section].append({"text": m.group(2)[:300],
-                                   "checked_in_issue": m.group(1).lower() == "x",
-                                   "evidence": "ISSUE_BODY_SELF_ASSERTED_UNVERIFIED"})
+            text, own, own_basis = m.group(2), section, basis or "NO_HEADING"
+            label = INLINE_LABEL.match(text)
+            if label:
+                own, own_basis = ("DoD" if label.group(1).lower() == "dod" else "DoV"), "INLINE_LABEL"
+            row = {"text": text[:300], "checked_in_issue": m.group(1).lower() == "x",
+                   "evidence": "ISSUE_BODY_SELF_ASSERTED_UNVERIFIED", "basis": own_basis}
+            if m.group(1) in "~-" or STRUCK.fullmatch(text):  # dropped: never counted
+                row["withdrawn"] = True
+            steps[own].append(row)
+            continuation = row
+            prose = False
+        elif section != "OTHER" and line.strip():
+            if continuation is not None and re.match(r"^ {2,}\S", re.sub(r"^\s*(?:>[ \t]?)+", "", line)):
+                continuation["text"] = (continuation["text"] + " " + line.strip())[:300]
+                continue
+            b = BULLET.match(line)
+            if b:
+                declared[section].append({"text": b.group(1)[:300], "form": "BULLET"})
+                continuation = declared[section][-1]
+            elif not prose and not META.match(line):  # one prose criterion per paragraph
+                declared[section].append({"text": line.strip()[:300], "form": "PROSE"})
+                continuation = None
+            prose = not b
+        else:
+            prose = False
+            continuation = None
+
     def summary(rows):
-        return (None if not rows else
-                {"checked": sum(x["checked_in_issue"] for x in rows),
-                 "total": len(rows),
-                 "remaining": sum(not x["checked_in_issue"] for x in rows),
+        live = [x for x in rows if not x.get("withdrawn")]
+        return (None if not live else
+                {"checked": sum(x["checked_in_issue"] for x in live),
+                 "total": len(live),
+                 "remaining": sum(not x["checked_in_issue"] for x in live),
+                 "withdrawn": len(rows) - len(live),
                  "grade": "SELF_REPORTED_NOT_QUALIFIED"})
-    return {key: {"items": val, "progress": summary(val)} for key, val in steps.items()}
+    return {key: {"items": val, "progress": summary(val),
+                  "declared": declared[key], "untracked": len(declared[key]),
+                  "heading_seen": headed[key]}
+            for key, val in steps.items()}
+
+
+def parked_intent(body):
+    """The ``<!-- parked-intent:v1 {...} -->`` marker of a parked issue, else None."""
+    m = PARKED.search(body or "")
+    if not m:
+        return None
+    try:
+        data = json.loads(m.group(1))
+    except ValueError:
+        return {"marker": "parked-intent:v1", "valid": False, "id": None}
+    ok = isinstance(data, dict)
+    return {"marker": "parked-intent:v1", "valid": ok, "id": data.get("id") if ok else None}
 
 
 def references(body, repo, pr=False):
+    """GBOGEB references in ``body``, typed by the words just before them.
+
+    Forms: issue and pull URLs, ``GBOGEB/repo#N``, federation shorthand
+    (``QPS #N``, ``ABACUS PR #N``, ``hub #N``), a ``/#N`` or ``/PR#N`` chained
+    onto the previous reference, and bare ``#N`` (home repository). Fences,
+    comments and inline code are skipped. A live checklist item (``[ ]`` or
+    ``[x]``) that references an issue makes it a child candidate, ``ticked``
+    recorded; a negation before the keyword keeps the reference textual.
+    """
     found = {}
-    fence = False
-    for line in body.splitlines():
-        if line.strip().startswith((chr(96) * 3, "~~~")):
-            fence = not fence
-            continue
-        if fence:
-            continue
+    # Join first so a Markdown inline code span spanning lines cannot yield edges.
+    for line in CODE_SPAN.sub("", "\n".join(_source_lines(body))).splitlines():
+        item = ITEM.match(line)
+        # A withdrawn item ([~], [-] or fully struck) declares nothing: its references stay textual.
+        withdrawn = bool(item) and (item.group(1) in "~-" or bool(STRUCK.fullmatch(item.group(2))))
+        last_end, last_repo, last_kind = 0, None, None
         for m in REF.finditer(line):
-            name = m.group("urlrepo") or m.group("namerepo") or repo.split("/")[1]
-            num = int(m.group("urlnum") or m.group("namenum") or m.group("localnum"))
+            # The typing window ends at the '#', so "QPS parent #1920" sees "parent".
+            stop = m.start("aliasnum") - 1 if m.group("aliasnum") is not None else m.start()
+            previous_end = last_end
+            window = line[previous_end:stop]
+            if m.group("chainnum") is not None:
+                if last_repo is None or m.start() != last_end:
+                    continue  # a stray "/#N" with nothing to chain onto
+                name, num = last_repo, int(m.group("chainnum"))
+            elif m.group("aliasnum") is not None:
+                alias = re.sub(r"\s+", " ", m.group("alias").lower())
+                name, num = ALIASES[alias], int(m.group("aliasnum"))
+            else:
+                name = m.group("urlrepo") or m.group("namerepo") or repo.split("/")[1]
+                num = int(m.group("urlnum") or m.group("namenum") or m.group("localnum"))
+            last_end = m.end()
+            if num <= 0:
+                continue
             target = identity("GBOGEB/" + name, num)
-            before = line[max(0, m.start() - 90):m.start()]
-            kind = ("PR_CLOSURE_CLAIM" if pr and CLAIM.search(before) else
-                    "PR_ASSOCIATION" if pr else
-                    "DECLARED_BLOCKER_CANDIDATE" if DEP.search(before) else
-                    "TEXT_ASSOCIATION")
-            found[target, kind] = {"target": target, "kind": kind,
-                                   "grade": "UNVERIFIED_SOURCE_TEXT"}
+            before = re.split(r"[.!?;]", window[-90:])[-1]
+            join_window = (line[previous_end:m.start("alias")]
+                           if m.group("aliasnum") is not None else window)
+            if withdrawn:
+                kind = "PR_ASSOCIATION" if pr else "TEXT_ASSOCIATION"
+            elif pr:
+                claim = CLAIM.search(before)
+                kind = ("PR_CLOSURE_CLAIM" if claim and not NEGATED.search(before[:claim.start()])
+                        else "PR_ASSOCIATION")
+                if last_kind == "PR_CLOSURE_CLAIM" and JOINER.fullmatch(join_window):
+                    kind = last_kind
+            elif last_kind and JOINER.fullmatch(join_window):
+                kind = last_kind
+            else:
+                kind = "TEXT_ASSOCIATION"
+                for label, rx in KINDS:
+                    hit = rx.search(before)
+                    if hit:
+                        kind = "TEXT_ASSOCIATION" if NEGATED.search(before[:hit.start()]) else label
+                        break
+                if item and item.group(1) in "xX " and kind == "TEXT_ASSOCIATION":
+                    kind = "DECLARED_CHILD_CANDIDATE"  # a live checkbox only; [~] #N stays text
+            last_repo, last_kind = name, kind
+            row = {"target": target, "repo": "GBOGEB/" + name, "number": num,
+                   "kind": kind, "grade": "UNVERIFIED_SOURCE_TEXT"}
+            if kind == "DECLARED_CHILD_CANDIDATE":
+                row["ticked"] = item.group(1).lower() == "x"
+            found[target, kind] = row
     return [found[key] for key in sorted(found)]
 
 
@@ -192,8 +368,9 @@ def project(census, previous=None):
             "updated_at": timestamp(issue["updated_at"]),
             "priority": p, "priority_basis": basis,
             "body_sha256": hashlib.sha256(issue["body"].encode()).hexdigest(),
-            "DoD": checks["DoD"], "DoV": checks["DoV"],
+            "DoD": checks["DoD"], "DoV": checks["DoV"], "Steps": checks["STEPS"],
             "unclassified_checklist": checks["OTHER"],
+            "parked_intent": parked_intent(issue["body"]),
             "qualified_DoD": None, "qualified_DoV": None,
             "owner_accepted": None, "closure_credit": 0,
             "open_pr_overlap": [], "degree": 0, "blocker_candidates": 0,
@@ -224,6 +401,9 @@ def project(census, previous=None):
         if e["kind"] == "DECLARED_BLOCKER_CANDIDATE":
             blocked[a].add(b)
             dependents[b].add(a)
+        elif e["kind"] == "DECLARED_BLOCKS_CANDIDATE":  # "a blocks b": b waits on a
+            blocked[b].add(a)
+            dependents[a].add(b)
     for key, node in nodes.items():
         node["degree"] = len(links[key])
         node["blocker_candidates"] = len(blocked[key])
@@ -299,7 +479,8 @@ def project(census, previous=None):
             "with_uncategorized_checklists": sum(
                 x["unclassified_checklist"]["progress"] is not None for x in nodes.values()),
             "candidate_dependency_links_in_scope": sum(
-                x["kind"] == "DECLARED_BLOCKER_CANDIDATE" and x["to"] in nodes for x in edges),
+                x["kind"] in ("DECLARED_BLOCKER_CANDIDATE", "DECLARED_BLOCKS_CANDIDATE")
+                and x["to"] in nodes for x in edges),
             "association_or_candidate_links": len(edges),
             "verified_DoD_steps": None, "verified_DoV_steps": None,
             "verified_root_closures": None,
