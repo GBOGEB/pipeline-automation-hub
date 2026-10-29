@@ -231,6 +231,8 @@ def public_summary(data: dict) -> dict:
 def write_private(out_dir: Path, data: dict, summary: dict) -> None:
     # Explicit destination only, and never beneath a worktree; no automatic upload.
     target = out_dir.resolve()
+    if any((parent / ".git").exists() for parent in (target, *target.parents)):
+        raise ValueError("HV03_HOLD: cannot write receipts into a git worktree")
     for wt in data["worktrees"]:
         root = Path(wt["path"]).resolve()
         if target == root or target.is_relative_to(root):
