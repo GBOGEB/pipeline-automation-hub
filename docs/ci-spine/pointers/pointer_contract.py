@@ -18,6 +18,7 @@ from urllib.parse import parse_qs, urlsplit
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 MANIFEST = HERE / "POINTER_MAP_v1.json"
+NAV = HERE / "index.html"
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 ALLOWED = {
@@ -48,11 +49,17 @@ class Anchors(HTMLParser):
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.ids = set()
+        self.links = set()
+        self.scripts = []
 
     def handle_starttag(self, tag, attrs):
-        for key, value in attrs:
-            if key == "id" and value:
-                self.ids.add(value)
+        attrs = dict(attrs)
+        if attrs.get("id"):
+            self.ids.add(attrs["id"])
+        if tag == "a" and attrs.get("href"):
+            self.links.add(attrs["href"])
+        if tag == "script":
+            self.scripts.append(attrs.get("src"))
 
 
 def json_pointer(doc, ptr: str):
@@ -138,6 +145,19 @@ def validate(doc: dict, root: Path = ROOT) -> dict:
                        "source_object": oid, "output_anchor": target["dom_id"],
                        "source_blob_oid": source["blob_oid"], "output_sha256": target["sha256"],
                        "state": "VALIDATED_AGAINST_PINNED_BYTES"})
+    # Small static companion UI is a navigation projection, not a second metric owner.
+    # It must expose only links from the fully validated map and contain no scripts.
+    require(NAV.is_file(), "NAV_PAGE_MISSING")
+    nav_bytes = NAV.read_bytes()
+    nav = Anchors()
+    nav.feed(nav_bytes.decode("utf-8"))
+    require(not nav.scripts and b"script-src 'none'" in nav_bytes
+            and b"connect-src 'none'" in nav_bytes, "NAV_REMOTE_EXECUTION")
+    require(all(row["output"]["href"] in nav.links for row in rows),
+            "NAV_BROKEN_POINTER_LINK")
+    require("FROZEN" in nav_bytes.decode("utf-8")
+            and "0 PDF RECTANGLES VERIFIED" in nav_bytes.decode("utf-8"),
+            "NAV_FALSE_AUTHORITY")
     pending = doc.get("pending")
     require(isinstance(pending, list) and len(pending) == 1, "UNVERIFIED_POPULATION")
     for p in pending:
