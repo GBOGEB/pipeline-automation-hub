@@ -180,7 +180,10 @@ class WaveContract(unittest.TestCase):
             "src/a.py.", "src/a.py ", "src/a.py. ",
             "src/subfolder./a.py", "src/subfolder /a.py",
             "SRC/CON", "src/con.txt", "src/PRN.log", "src/COM1.csv",
-            "src/lpt9", "src/a.py:malicious", "src/a|b.py",
+            "src/lpt9", "src/COM\u00b9.txt", "src/COM\u00b2.log",
+            "src/CoM\u00b3", "src/LPT\u00b9.txt", "src/lpt\u00b2.log",
+            "src/Lpt\u00b3", "src/CONIN$", "src/conout$.txt",
+            "src/a.py:malicious", "src/a|b.py",
             "src/tab\\tname.py", "src/review\\nname.py",
         )
         for candidate in bad_paths:
