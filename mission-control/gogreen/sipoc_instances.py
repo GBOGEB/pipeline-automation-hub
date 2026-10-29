@@ -163,6 +163,96 @@ def validate(plan, atlas):
     return capacity, repo_capacity, by_id
 
 
+
+_HANDOFF_SHA = re.compile(r'[0-9a-f]{40}\Z')
+_HANDOFF_DIGEST = re.compile(r'[0-9a-f]{64}\Z')
+_HANDOFF_EDGE_TYPES = {'CONTINUE_NEXT', 'SELF_REENTRY', 'PAY_IT_FORWARD'}
+_HANDOFF_EVIDENCE = {'OBSERVED', 'DECLARED', 'SYNTHETIC'}
+
+
+def _project_handoffs(plan, by_id, allowed):
+    """Opt-in typed edge projection; no native admission or work dispatch."""
+    edges = plan.get('handoffs', [])
+    if not isinstance(edges, list) or len(edges) > 128:
+        raise ValueError('invalid handoff population')
+    keys, projection = set(), []
+    for edge in edges:
+        if not isinstance(edge, dict) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._:-]{0,95}', str(edge.get('id', ''))):
+            raise ValueError('invalid handoff identity')
+        ident = edge['id']
+        if ident in keys:
+            raise ValueError('duplicate handoff identity')
+        keys.add(ident)
+        kind = edge.get('edge_type')
+        if kind not in _HANDOFF_EDGE_TYPES:
+            raise ValueError('unknown handoff edge type')
+        producer = by_id.get(edge.get('producer'))
+        if producer is None:
+            raise ValueError('unknown handoff producer')
+        for name in ('authority_transfer', 'dispatch_authorized', 'merge_authorized'):
+            if edge.get(name) is not False:
+                raise ValueError('handoff cannot grant execution or authority')
+        if edge.get('source_sha') != producer['source_sha']:
+            raise ValueError('handoff source SHA mismatch')
+        receipt = edge.get('producer_receipt_sha256')
+        proof = edge.get('consumer_receipt_sha256')
+        if receipt is not None and (not isinstance(receipt, str) or not _HANDOFF_DIGEST.fullmatch(receipt)):
+            raise ValueError('malformed handoff producer receipt')
+        if proof is not None and (not isinstance(proof, str) or not _HANDOFF_DIGEST.fullmatch(proof)):
+            raise ValueError('malformed handoff consumer receipt')
+        consumer_head = edge.get('consumer_source_sha')
+        if consumer_head is not None and (not isinstance(consumer_head, str) or not _HANDOFF_SHA.fullmatch(consumer_head)):
+            raise ValueError('malformed consumer source SHA')
+        if edge.get('evidence_class') not in _HANDOFF_EVIDENCE:
+            raise ValueError('invalid handoff evidence class')
+        sp, tp = edge.get('source_pulse'), edge.get('target_pulse')
+        if type(sp) is not int or type(tp) is not int or not 0 <= sp <= 100000 or not 0 <= tp <= 100000:
+            raise ValueError('invalid handoff pulse identity')
+        consumer_id = edge.get('consumer')
+        consumer = by_id.get(consumer_id) if isinstance(consumer_id, str) else None
+        if kind == 'CONTINUE_NEXT':
+            if sp != tp or consumer is None or edge['producer'] not in consumer['depends_on']:
+                raise ValueError('same-pulse continuation must follow executable DAG')
+            if edge.get('consumer_repo') != consumer['repo']:
+                raise ValueError('same-pulse consumer repo mismatch')
+            if consumer_head is not None and consumer_head != consumer['source_sha']:
+                raise ValueError('same-pulse consumer head mismatch')
+        else:
+            if consumer_id is not None or edge.get('target_stage_ref') not in allowed:
+                raise ValueError('cross-process handoff requires declared target stage')
+            target_repo = edge.get('consumer_repo')
+            if not isinstance(target_repo, str) or target_repo.count('/') != 1:
+                raise ValueError('invalid target process repository')
+            if kind == 'SELF_REENTRY':
+                if (tp <= sp or target_repo != producer['repo'] or
+                        edge['target_stage_ref'] != producer['stage_ref']):
+                    raise ValueError('self reentry needs same owner and later pulse')
+            elif tp < sp or (target_repo == producer['repo'] and edge['target_stage_ref'] == producer['stage_ref']):
+                raise ValueError('pay-it-forward must target an adjacent process without temporal reversal')
+        reasons = []
+        if edge['evidence_class'] != 'OBSERVED':
+            reasons.append('EVIDENCE_NOT_NATIVE_OBSERVED')
+        if receipt is None:
+            reasons.append('PRODUCER_RECEIPT_UNPROVEN')
+        if proof is None or consumer_head is None:
+            reasons.append('INDEPENDENT_CONSUMER_RECEIPT_UNPROVEN')
+        if edge.get('independent_consumer_proof') is not True:
+            reasons.append('CONSUMER_PROOF_UNVERIFIED')
+        if kind == 'PAY_IT_FORWARD' and edge.get('sanitized') is not True:
+            reasons.append('PRIVACY_SANITIZATION_UNVERIFIED')
+        projection.append({
+            'id': ident, 'edge_type': kind, 'producer': edge['producer'],
+            'consumer': consumer_id if consumer_id else edge.get('target_stage_ref'),
+            'source_pulse': sp, 'target_pulse': tp,
+            'advisory_status': 'ELIGIBLE_FOR_EXTERNAL_ADMISSION' if not reasons else 'DEFER',
+            'reasons': reasons,
+            'native_consumer_accepted': False,
+            'dispatch_authorized': False, 'merge_authorized': False,
+            'authority_transfer': False, 'formal_credit_delta': 0,
+        })
+    return projection
+
+
 def plan_instances(plan, atlas):
     capacity, repo_capacity, by_id = validate(plan, atlas)
     refused = {}
@@ -220,6 +310,8 @@ def plan_instances(plan, atlas):
             "accepted_root_closures": 0, "native_proof_passes": None},
         "held": [{"id": i, "reasons": refused[i]} for i in sorted(refused)],
         "next_pulse_feedback": plan.get("next_pulse_feedback", []),
+        **({"handoff_admission": _project_handoffs(plan, by_id, _stage_ids(atlas))}
+           if "handoffs" in plan else {}),
     }
 
 
