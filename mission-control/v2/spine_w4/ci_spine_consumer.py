@@ -12,7 +12,7 @@ import html
 import importlib.util
 import json
 import re
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
@@ -44,6 +44,24 @@ def table(cols, rows):
     head = "".join("<th scope='col'>" + esc(c) + "</th>" for c in cols)
     body = "".join("<tr>" + "".join("<td>" + esc(c) + "</td>" for c in row) + "</tr>" for row in rows)
     return "<div style='overflow-x:auto'><table><thead><tr>" + head + "</tr></thead><tbody>" + body + "</tbody></table></div>"
+
+
+def canonical_workflow_binding(path):
+    """Match the CI index's top-level .github/workflows YAML inventory shape.
+
+    Source deltas can refer to removed historical files, so no filesystem read
+    or source promotion occurs during this lexical validation.
+    """
+    if (not isinstance(path, str) or not path.startswith(".github/workflows/")
+            or not path.endswith((".yml", ".yaml"))
+            or "\\\\" in path or any(ord(char) < 32 or char in '<>:"|*?' for char in path)):
+        return False
+    posix = PurePosixPath(path)
+    return (not posix.is_absolute() and str(posix) == path
+            and posix.parent.as_posix() == ".github/workflows"
+            and posix.name.lstrip(" ") == posix.name
+            and posix.name.rstrip(" .") == posix.name
+            and all(part not in (".", "..") for part in posix.parts))
 
 
 def render(index, control, metrics=None, delta=None, wave=None, expected_head=""):
@@ -102,7 +120,7 @@ def render(index, control, metrics=None, delta=None, wave=None, expected_head=""
             and row["before"] != row["after"]
             and all(binding is None or (
                 isinstance(binding, dict)
-                and isinstance(binding.get("path"), str) and bool(binding["path"])
+                and canonical_workflow_binding(binding.get("path"))
             ) for binding in (row["before"], row["after"]))
             and (row["before"] is not None or row["after"] is not None)
             for row in authority_changes), "delta authority-binding change contract")
