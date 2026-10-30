@@ -443,13 +443,13 @@ class RecheckPressureRF(unittest.TestCase):
             observed = json.loads(rp.read_text(encoding="utf-8"))["fetched_at"]
             meta = json.loads(rp.read_text(encoding="utf-8"))
             meta["fetched_at"] = "2000-01-01T00:00:00Z"
-            rp.write_text(json.dumps(meta), encoding="utf-8", newline="\\n")
+            rp.write_text(json.dumps(meta), encoding="utf-8", newline="\n")
             issues, digest = M.pressure_cache_evidence(Path(td), REPO, day, day, observed)
             self.assertIn(f"{day}:STALE_CURRENT_DAY_FETCH", issues)
             self.assertIsNone(digest)
             meta["fetched_at"] = observed
-            rp.write_text(json.dumps(meta), encoding="utf-8", newline="\\n")
-            p.write_text(p.read_text(encoding="utf-8") + " ", encoding="utf-8", newline="\\n")
+            rp.write_text(json.dumps(meta), encoding="utf-8", newline="\n")
+            p.write_text(p.read_text(encoding="utf-8") + " ", encoding="utf-8", newline="\n")
             issues, digest = M.pressure_cache_evidence(Path(td), REPO, day, day, observed)
             self.assertIn(f"{day}:UNVERIFIED_CACHE_RECEIPT", issues)
             self.assertIsNone(digest)
@@ -460,7 +460,7 @@ class RecheckPressureRF(unittest.TestCase):
             day = datetime.now(timezone.utc).date() - timedelta(days=1)
             p = M.repo_dir(Path(td), REPO) / "runs" / f"{day}.json"
             p.parent.mkdir(parents=True)
-            p.write_text("[]\\n", encoding="utf-8", newline="\\n")
+            p.write_text("[]\n", encoding="utf-8", newline="\n")
             issues, digest = M.pressure_cache_evidence(
                 Path(td), REPO, day, day, datetime.now(timezone.utc).isoformat())
             self.assertIn(f"{day}:MISSING_RUNS_OR_RECEIPT", issues)
@@ -480,7 +480,7 @@ class RecheckPressureRF(unittest.TestCase):
             p = M.repo_dir(Path(td), REPO) / "runs" / f"{day}.json"
             p.parent.mkdir(parents=True)
             rows = [run(i, created=f"{day}T00:01:00Z") for i in range(1, 1001)]
-            p.write_text(json.dumps(rows), encoding="utf-8", newline="\\n")
+            p.write_text(json.dumps(rows), encoding="utf-8", newline="\n")
             out = Path(td) / "pressure.json"
             self.assertEqual(M.main(["pressure", "--cache", td, "--since", str(day),
                 "--until", str(day), "--repo", REPO, "--source-sha", SHA,
