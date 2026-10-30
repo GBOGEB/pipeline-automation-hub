@@ -59,6 +59,15 @@ class Roots(unittest.TestCase):
         self.assertEqual(p["fix"], "upgrade pillow to >= 11.0.0")  # highest patched version among open advisories
         self.assertEqual(p["advisories"], ["GHSA-a", "GHSA-b"])
 
+    def test_pip_names_are_one_root_whatever_their_spelling(self):
+        raw = json.loads(json.dumps(RAW))
+        raw["repos"]["O/pub"]["sources"]["dependabot"]["alerts"].append(dep(6, "open", "Pillow", "low", "GHSA-f", "req.txt"))
+        roots = {x["id"]: x for x in M.build(raw)["roots"]}
+        self.assertEqual(roots["O/pub|dependabot|pip|pillow"]["outstanding"], 3)
+        self.assertNotIn("O/pub|dependabot|pip|Pillow", roots)
+        self.assertEqual(M.package_name("pip", "Zope.Interface_x"), "zope-interface-x")
+        self.assertEqual(M.package_name("npm", "@Scope/Pkg"), "@Scope/Pkg")
+
     def test_root_without_open_alerts_has_no_severity_or_fix(self):
         r = self.roots["O/pub|dependabot|pip|requests"]
         self.assertEqual((r["outstanding"], r["deferred"], r["severity"]), (0, 1, None))

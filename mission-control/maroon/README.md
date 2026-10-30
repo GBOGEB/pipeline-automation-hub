@@ -65,6 +65,20 @@ Two Dependabot lanes never edit the same manifest, so separate workers can take 
 Code-scanning lanes in one repository can touch the same source file; a lane's `shared_paths` names
 those files so the work can be sequenced.
 
+## Current receipt
+
+`data/MAROON_PUBLIC_20261030.json` holds the counts-only projection of the first run, read on 2026-10-30:
+- 34 repositories, all alert states;
+- 355 outstanding roots in 21 lanes;
+- 509 outstanding Dependabot manifestations (337 closed, 5 deferred);
+- 13,612 outstanding code-scanning manifestations (8,868 closed);
+- no open secret-scanning alerts in the 18 repositories where it could be read.
+
+The full receipt, fix list and lanes are in the private cryoplant-project repository.
+
+Code-scanning roots are one per rule. For osv-scanner and Trivy the rule is a CVE, so one vulnerable
+package can show up as several roots there; Dependabot already groups those by package.
+
 ## Storage split
 
 The public hub holds this runner and `MAROON_PUBLIC.json` only. The full receipt, fix list and lanes

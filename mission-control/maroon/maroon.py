@@ -25,6 +25,7 @@ import argparse
 import collections
 import csv
 import json
+import re
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -79,14 +80,20 @@ def fetch(owner: str, gh=run_gh) -> dict:
     return raw
 
 
+def package_name(ecosystem: str, name: str) -> str:
+    """One spelling per package: pip names compare as PEP 503 normalizes them (Pillow == pillow)."""
+    return re.sub(r"[-_.]+", "-", name).lower() if ecosystem == "pip" else name
+
+
 def manifestation(repo: str, source: str, a: dict) -> dict:
     """One alert, reduced to what roots, lanes and dispositions need."""
     disposition = SOURCES[source][2].get(a.get("state"), "outstanding")
     if source == "dependabot":
         adv, vuln, dep = a["security_advisory"], a.get("security_vulnerability") or {}, a["dependency"]
         patched = (vuln.get("first_patched_version") or {}).get("identifier")
+        eco = dep["package"]["ecosystem"]
         return {"repo": repo, "source": source, "number": a["number"], "disposition": disposition,
-                "severity": adv["severity"], "family": dep["package"]["ecosystem"], "subject": dep["package"]["name"],
+                "severity": adv["severity"], "family": eco, "subject": package_name(eco, dep["package"]["name"]),
                 "path": dep.get("manifest_path"), "advisory": adv["ghsa_id"], "patched": patched}
     if source == "code_scanning":
         rule = a["rule"]
