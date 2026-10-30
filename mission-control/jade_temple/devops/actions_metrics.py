@@ -236,6 +236,10 @@ def pressure_cache_evidence(cache: Path, repo: str, since: date, until: date,
         p = repo_dir(cache, repo) / "runs" / f"{day}.json"
         rp = cache_receipt_path(p)
         key = day.isoformat()
+        if day > observed.date():
+            problems.append(f"{key}:FUTURE_CACHE_DAY")
+            day += timedelta(days=1)
+            continue
         if not p.is_file() or not rp.is_file():
             problems.append(f"{key}:MISSING_RUNS_OR_RECEIPT")
             day += timedelta(days=1)
@@ -244,6 +248,10 @@ def pressure_cache_evidence(cache: Path, repo: str, since: date, until: date,
             raw = p.read_bytes()
             d = json.loads(raw)
             rec = json.loads(rp.read_text(encoding="utf-8"))
+            if not isinstance(rec, dict):
+                problems.append(f"{key}:INVALID_CACHE_RECEIPT_TYPE")
+                day += timedelta(days=1)
+                continue
             ts = BQ.utc(rec.get("fetched_at"))
             digest = hashlib.sha256(raw).hexdigest()
             if (not isinstance(d, list) or not isinstance(rec, dict)
