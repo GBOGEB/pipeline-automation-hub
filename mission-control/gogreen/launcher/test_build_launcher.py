@@ -161,6 +161,68 @@ class Catalog(unittest.TestCase):
                          "catalog added: c.html; catalog removed: b.html; catalog retitled: a.html")
 
 
+class Hub(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.snap = json.loads(bl.SNAPSHOT.read_text(encoding="utf-8"))
+        cls.spec = json.loads(bl.SOURCES.read_text(encoding="utf-8"))["hub"]
+        cls.hub = cls.snap["hub"]
+
+    def test_entries_follow_the_declaration_order(self):
+        self.assertEqual([e.get("path") or e.get("url") for e in self.hub["entries"]],
+                         [e.get("path") or e.get("url") for e in self.spec["entries"]])
+
+    def test_in_repo_entries_resolve_and_are_titled_from_the_page(self):
+        catalog = {e["path"]: e["title"] for e in self.snap["catalog"]}
+        local = [e for e in self.hub["entries"] if "repo" not in e and "url" not in e]
+        self.assertTrue(local)
+        for e in local:
+            with self.subTest(path=e["path"]):
+                self.assertEqual(posixpath.normpath(posixpath.join(bl.SELF_DIR, e["href"])), e["path"])
+                declared = next(d for d in self.spec["entries"] if d.get("path") == e["path"])
+                # The page's own <title> wins; a declared title only fills in for a page without one.
+                expected = declared.get("title", catalog[e["path"]]) if catalog[e["path"]] == posixpath.basename(e["path"]) else catalog[e["path"]]
+                self.assertEqual(e["title"], expected)
+
+    def test_cross_repo_entries_are_declared_verbatim(self):
+        declared = [e for e in self.spec["entries"] if "repo" in e or "url" in e]
+        self.assertEqual([e for e in self.hub["entries"] if "repo" in e or "url" in e], declared)
+        for e in declared:
+            with self.subTest(entry=e.get("path") or e.get("url")):
+                self.assertTrue(e["title"])
+                if "repo" in e:
+                    self.assertRegex(e["repo"], r"^GBOGEB/[\w.-]+$")
+                    self.assertTrue(e["ref"] and e["path"])
+                else:
+                    self.assertTrue(e["url"].startswith("https://"))
+        self.assertTrue(self.hub["verified"]["on"] and self.hub["verified"]["by"])
+
+    def test_requested_dashboards_are_listed(self):
+        keys = " ".join((e.get("path") or e.get("url")) for e in self.hub["entries"])
+        for want in ("claude.ai/artifact/", "QPS_DASHBOARD_LAUNCHER_CURRENT.html", "master_input_cleanup/repo_ledger.html",
+                     "code_bnb/", "everred/index.html", "G3P_LIVE_LEDGER.html",
+                     "claude.ai/artifact/RARdwhuvVk2emp2iCRRhDw"):
+            self.assertIn(want, keys)
+        title_census = next(e for e in self.hub["entries"] if e.get("url") == "https://claude.ai/artifact/RARdwhuvVk2emp2iCRRhDw")
+        self.assertIn("private until shared", title_census["note"])
+
+    def test_cross_repo_rows_get_clone_and_open_commands(self):
+        html = bl.TEMPLATE.read_text(encoding="utf-8")
+        self.assertIn('"git clone https://github.com/"+r+".git"', html)
+        self.assertIn('"start "+e.repo.split("/")[1]', html)
+        self.assertIn("data-copy=\"'+esc(opener(e))", html)
+
+    def test_missing_in_repo_entry_fails_the_build(self):
+        sha = bl.git("rev-parse", "HEAD^{commit}").strip()
+        with self.assertRaises(FileNotFoundError):
+            bl.hub({"note": "", "verified": {}, "entries": [{"group": "g", "path": "no/such/page.html"}]}, sha)
+
+    def test_retitled_hub_page_is_named(self):
+        old = {"inputs": {}, "pages": [], "hub": {"entries": [{"path": "a.html", "title": "A"}]}}
+        new = {"inputs": {}, "pages": [], "hub": {"entries": [{"path": "a.html", "title": "B"}]}}
+        self.assertEqual(bl.stale_reason(old, new), "hub changed: a.html")
+
+
 class Render(unittest.TestCase):
     def test_page_is_self_contained(self):
         html = bl.TEMPLATE.read_text(encoding="utf-8")
@@ -169,7 +231,7 @@ class Render(unittest.TestCase):
         self.assertIn("default-src 'none'", html)
         self.assertEqual(html.count(bl.DATA_HOLE), 1)
         self.assertNotRegex(html, r"\b(?:src|href)=\"(?:https?:)?//")  # no hard-coded external loads
-        for anchor in ('id="access"', 'id="catalog"', 'id="acc-local"', "location.protocol"):
+        for anchor in ('id="hub"', 'id="access"', 'id="catalog"', 'id="acc-local"', "location.protocol"):
             self.assertIn(anchor, html)
 
     def test_catalog_rows_link_history_and_copy_local_path(self):
