@@ -27,6 +27,15 @@ class LauncherTests(unittest.TestCase):
             first={name:(Path(td)/name).read_bytes() for name in mod.FILES}
             mod.build(td,SHA)
             self.assertEqual(first,{name:(Path(td)/name).read_bytes() for name in mod.FILES})
+    def test_outputs_are_lf_on_every_os(self):
+        with tempfile.TemporaryDirectory() as td:
+            mod.build(td,SHA)
+            for name in (*mod.FILES,"manifest.json"):
+                self.assertNotIn(b"\r",(Path(td)/name).read_bytes(),name)
+        with tempfile.TemporaryDirectory() as td:
+            nav_model.generate(out=td)
+            for name in ("snapshot.json","federation.mmd","SIPOC.md"):
+                self.assertNotIn(b"\r",(Path(td)/name).read_bytes(),name)
     def test_reject_non_sha(self):
         with tempfile.TemporaryDirectory() as td:
             for bad in ("short","g"*40,"A"*40):
