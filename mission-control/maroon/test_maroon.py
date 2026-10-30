@@ -108,6 +108,11 @@ class Lanes(unittest.TestCase):
                 if a is not b and a["repo"] == b["repo"]:
                     self.assertFalse(set(a["paths"]) & set(b["paths"]))
 
+    def test_lane_ids_are_branch_safe(self):
+        raw = json.loads(json.dumps(RAW))
+        raw["repos"]["O/pub"]["sources"]["code_scanning"]["alerts"].append(code(13, "open", "r", "low", "c.py", tool="Semgrep OSS"))
+        self.assertIn("pub:code-semgrep-oss", [l["id"] for l in M.build(raw)["lanes"]])
+
     def test_code_lanes_name_shared_files(self):
         lanes = {l["id"]: l for l in M.build(RAW)["lanes"]}
         self.assertEqual(lanes["pub:code-codeql"]["shared_paths"], ["a.py"])

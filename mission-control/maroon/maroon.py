@@ -153,7 +153,7 @@ def lanes_of(roots: list[dict]) -> list[dict]:
     lanes = []
     for (repo, source, family), rs in groups.items():
         prefix = {"dependabot": "deps", "code_scanning": "code", "secret_scanning": "secrets"}[source]
-        lanes.append({"id": f"{repo.split('/')[-1]}:{prefix}-{family}".lower(), "repo": repo, "source": source,
+        lanes.append({"id": re.sub(r"[^a-z0-9:._-]+", "-", f"{repo.split('/')[-1]}:{prefix}-{family}".lower()), "repo": repo, "source": source,
                       "family": family, "severity": rs[0]["severity"], "roots": [r["id"] for r in rs],
                       "outstanding": sum(r["outstanding"] for r in rs),
                       "paths": sorted({p for r in rs for p in r["paths"]})})
