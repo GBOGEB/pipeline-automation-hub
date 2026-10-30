@@ -17,6 +17,9 @@ on:
       - 'tests/test_qps_w189r_authoritative_return.py'
       - '.github/workflows/w189rf-federation-sample4-return-exact.yml'
 
+permissions:
+  contents: read
+
 jobs:
   exact-w189r:
     runs-on: ubuntu-latest

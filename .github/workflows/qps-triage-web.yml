@@ -23,6 +23,9 @@ on:
       - '.github/workflows/qps-triage-web.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   qps-web-dov:
     runs-on: ubuntu-latest

@@ -17,6 +17,9 @@ on:
       - '.github/workflows/gm-top7-depth3.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   prove:
     runs-on: ubuntu-latest
