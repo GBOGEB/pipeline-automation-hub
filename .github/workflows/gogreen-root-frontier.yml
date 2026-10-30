@@ -4,6 +4,7 @@ on:
     paths:
       - 'mission-control/gogreen/recovery_frontier.py'
       - 'mission-control/gogreen/tests/test_recovery_frontier.py'
+      - 'mission-control/gogreen/tests/test_recovery_frontier_depth.py'
       - 'mission-control/qps-triage-ultra/p-process/site/everred/data/everred.json'
       - '.github/workflows/gogreen-root-frontier.yml'
   workflow_dispatch: {}
@@ -39,4 +40,4 @@ jobs:
         working-directory: mission-control/gogreen/tests
         run: |
           set -euo pipefail
-          python -m unittest -v test_recovery_frontier
+          python -m unittest -v test_recovery_frontier test_recovery_frontier_depth
