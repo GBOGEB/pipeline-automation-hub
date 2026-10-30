@@ -464,6 +464,76 @@
     }
   ],
   "computes_metrics": false,
+  "hub": {
+    "entries": [
+      {
+        "group": "BnB (Bread and Butter)",
+        "note": "claude.ai artifact, private to its owner unless shared. Republished each weekday by the bnb-dashboard-pull scheduled task (bnb_pull.py, bnb-history.json).",
+        "title": "BnB · Bread & Butter dashboard",
+        "url": "https://claude.ai/artifact/EArR4uVDAnujnC7Cv5qLUD"
+      },
+      {
+        "group": "BnB (Bread and Butter)",
+        "path": "qps/engineering_hub/code_bnb/n3/dist/CODE_BNB_DAILY_N3.html",
+        "ref": "main",
+        "repo": "GBOGEB/cryoplant-project",
+        "title": "CODE_BNB · QPS Bread & Butter N+3 daily cockpit"
+      },
+      {
+        "group": "BnB (Bread and Butter)",
+        "path": "qps/engineering_hub/code_bnb/n11/N11_CONVERGENCE_DASHBOARD.html",
+        "ref": "main",
+        "repo": "GBOGEB/cryoplant-project",
+        "title": "QPS Bread & Butter N11 — Source, Review and Release Convergence"
+      },
+      {
+        "group": "cryoplant-project",
+        "path": "docs/QPS_DASHBOARD_LAUNCHER_CURRENT.html",
+        "ref": "main",
+        "repo": "GBOGEB/cryoplant-project",
+        "title": "QPS Dashboard Launcher — CURRENT"
+      },
+      {
+        "group": "Master Input repo ledger",
+        "note": "Assimilation, pruning, smoke and incubation of Master_Input assets into the main model.",
+        "path": "mission_control/master_input_cleanup/index.html",
+        "ref": "main",
+        "repo": "GBOGEB/cryoplant-project",
+        "title": "Master_Input Repo Ledger (index)"
+      },
+      {
+        "group": "Master Input repo ledger",
+        "path": "mission_control/master_input_cleanup/repo_ledger.html",
+        "ref": "main",
+        "repo": "GBOGEB/cryoplant-project",
+        "title": "Master_Input Repo Ledger"
+      },
+      {
+        "group": "EVERRED and ledgers (this repo)",
+        "href": "../../qps-triage-ultra/p-process/site/everred/index.html",
+        "path": "mission-control/qps-triage-ultra/p-process/site/everred/index.html",
+        "title": "EVERRED Register"
+      },
+      {
+        "group": "EVERRED and ledgers (this repo)",
+        "href": "../../federation-atlas/G3P_LIVE_LEDGER.html",
+        "path": "mission-control/federation-atlas/G3P_LIVE_LEDGER.html",
+        "title": "G3P Live Lineage"
+      },
+      {
+        "group": "EVERRED and ledgers (this repo)",
+        "note": "claude.ai artifact, private until shared.",
+        "title": "Issue-rank title census dashboard",
+        "url": "https://claude.ai/artifact/RARdwhuvVk2emp2iCRRhDw"
+      }
+    ],
+    "note": "Dashboards to start from, across repositories. Entries with only a path are in this repository: the build reads each one at the build commit (a missing file fails the build) and records its title. Entries with a repo or url are declared, not probed: they record where and when they were checked, like pages_site.",
+    "verified": {
+      "by": "gh api repos/GBOGEB/cryoplant-project/contents/<path>?ref=main at c747f63b (title read from each file); Artifact read of the BnB and issue-rank title census artifacts",
+      "observed": "all cryoplant paths present on main c747f63b; https://gbogeb.github.io/cryoplant-project/QPS_DASHBOARD_LAUNCHER_CURRENT.html returned 404, so no Pages URL is given; both claude.ai artifacts exist and are private to their owner",
+      "on": "2026-10-29"
+    }
+  },
   "inputs": {
     "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json": "42b864e784ff99676ba8f450aa440edc817e9046",
     "mission-control/federation-atlas/CODE_PURPLE_ITERATION_SERIES_v1.json": "022a588b5f56b7ba09c9d59bc1f3bf3439fe1fb0",
