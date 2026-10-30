@@ -41,7 +41,8 @@
 #>
 [CmdletBinding(DefaultParameterSetName = 'Pr')]
 param(
-    [Parameter(ParameterSetName = 'Pr', Mandatory)] [int[]] $Pr,
+    # PR numbers. `pwsh -File` passes "842,995" as one string, so commas and spaces are split here.
+    [Parameter(ParameterSetName = 'Pr', Mandatory)] [string[]] $Pr,
     [Parameter(ParameterSetName = 'All', Mandatory)] [switch] $All,
     [string]   $Repo         = 'GBOGEB/pipeline-automation-hub',
     # The main checkout; its `git worktree list` is searched for live sessions and it hosts -WorkTree.
@@ -150,7 +151,7 @@ $prs = if ($All) {
     @(Get-GhJson @('pr', 'list', '--repo', $Repo, '--state', 'open', '--limit', '300', '--json', $fields) |
         Where-Object mergeable -eq 'CONFLICTING')
 } else {
-    @($Pr | ForEach-Object { Get-GhJson @('pr', 'view', "$_", '--repo', $Repo, '--json', $fields) })
+    @($Pr -split '[,\s]+' | Where-Object { $_ } | ForEach-Object { Get-GhJson @('pr', 'view', "$([int]$_)", '--repo', $Repo, '--json', $fields) })
 }
 Write-Host ("REGEN_RESOLVE {0} PR(s) selected; push={1}" -f $prs.Count, [bool]$Push)
 if (-not $prs) { return }
