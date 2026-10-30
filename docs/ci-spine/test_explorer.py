@@ -227,6 +227,26 @@ class ExplorerProvenanceTests(unittest.TestCase):
         self.assertEqual(plotly_companion.explorer_href(HERE / "qa" / "plotly" / "c.html"),
                          "../../explorer.html")
 
+    def test_plotly_unknown_queue_projects_but_negative_queue_fails_closed(self):
+        source = json.loads(plotly_companion.DATA.read_text("utf-8"))
+        original = plotly_companion.DATA
+        try:
+            for queue, ok in ((None, True), (-1, False), ("5", False)):
+                with self.subTest(queue=queue), tempfile.TemporaryDirectory() as tmp:
+                    doc = copy.deepcopy(source)
+                    for job in doc["runs"][0]["jobs"]:
+                        job["queue_seconds"] = queue
+                    path = Path(tmp) / "timing.json"
+                    path.write_text(json.dumps(doc), "utf-8")
+                    plotly_companion.DATA = path
+                    if ok:
+                        self.assertIsNone(plotly_companion.rows()[0]["queue_seconds"])
+                    else:
+                        with self.assertRaisesRegex(ValueError, "PLOTLY_NEGATIVE_OR_MISSING_CLOCK_FIRST_RED"):
+                            plotly_companion.rows()
+        finally:
+            plotly_companion.DATA = original
+
     def test_unknown_queue_inspector_is_not_null_seconds(self):
         page = explorer.OUTPUT.read_text("utf-8")
         self.assertIn('(Number.isFinite(j?.queue_seconds)?E(j.queue_seconds)+" seconds":"UNKNOWN")', page)

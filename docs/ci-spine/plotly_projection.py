@@ -31,7 +31,8 @@ def rows():
             raise ValueError("PLOTLY_MISSING_MEASURED_JOB_FIRST_RED")
         job = max(candidates, key=lambda x: x["execution_seconds"])
         q, t = job.get("queue_seconds"), job["execution_seconds"]
-        if not isinstance(q, (int, float)) or q < 0 or t < 0:
+        # A null queue is UNKNOWN (as in the explorer): kept as None, so Plotly omits that segment.
+        if (q is not None and (not isinstance(q, (int, float)) or q < 0)) or t < 0:
             raise ValueError("PLOTLY_NEGATIVE_OR_MISSING_CLOCK_FIRST_RED")
         observed.append({
             "run_id": run["run_id"],
