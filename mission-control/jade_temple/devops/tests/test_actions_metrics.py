@@ -531,5 +531,24 @@ class RecheckPressureRF(unittest.TestCase):
             self.assertIsNone(proof)
 
 
+    def test_cross_day_duplicate_run_id_cannot_qualify(self):
+        from datetime import datetime, timedelta, timezone
+        with tempfile.TemporaryDirectory() as td:
+            last = datetime.now(timezone.utc).date()
+            first = last - timedelta(days=1)
+            root = M.repo_dir(Path(td), REPO) / "runs"
+            root.mkdir(parents=True)
+            M.write_runs_with_receipt(root / f"{first}.json", REPO, first,
+                                      [run(42, created=f"{first}T10:00:00Z")])
+            M.write_runs_with_receipt(root / f"{last}.json", REPO, last,
+                                      [run(42, created=f"{last}T10:00:00Z")])
+            observed = json.loads((root / f"{last}.receipt.json").read_text(
+                encoding="utf-8"))["fetched_at"]
+            problems, proof = M.pressure_cache_evidence(
+                Path(td), REPO, first, last, observed)
+            self.assertIn(f"{last}:UNVERIFIED_CACHE_RECEIPT", problems)
+            self.assertIsNone(proof)
+
+
 if __name__ == "__main__":
     unittest.main()
