@@ -27,7 +27,6 @@ PENDING={
     "qps-triage-ultra/p-process/package.py",
     "qps-triage-ultra/p-process/rulesets/survey.py",
     "qps-triage-ultra/p-process/rulesets/verify_rulesets.py",
-    "qps-triage-ultra/p-process/site/code-purple/kit/readback.py",
     "qps-triage-ultra/p-process/tests/test_p_process.py",
 }
 
