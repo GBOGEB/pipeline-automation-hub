@@ -36,10 +36,29 @@ class GraphTests(unittest.TestCase):
         self.assertTrue(x['metrics.census.ack']['source_recensus_required'])
         self.assertFalse(x['electrical.icd.feeders']['source_recensus_required'])
         self.assertEqual(r['metrics']['source_recensus_requested'],1)
+    def retake(self, p, topic, head):
+        row=next(r for r in p['packets'] if r['packet']['topic']==topic)
+        keep=('topic','producer_repo','scope_sha256','source_sha256','receipt_sha256','recipients',
+              'sequence','observed_at','expires_at','prior_packet_sha256','evidence_class')
+        row['packet']=tx.create_packet(producer_head=head,**{k:row['packet'][k] for k in keep})
     def test_unrelated_head_needs_bridge_not_recensus(self):
+        # One stale cryoplant producer head for the whole pulse; the recipient has moved on.
+        stale='9f19a8a2fe7bc3292e37b1efc374ec313a7e1ee9'
+        for topic in ('electrical.icd.feeders','publishing.r07.oid'):
+            self.retake(self.p, topic, stale)
         r=m.pilot(self.p)
         x={v['topic']:v for v in r['topics']}
         self.assertEqual(x['publishing.r07.oid']['decision'],'VERIFY_HEAD_BRIDGE_NO_FULL_RECENSUS')
+        self.assertEqual(x['publishing.r07.oid']['producer_head'],stale)
+    def test_mixed_producer_head_rejected(self):
+        # AGENTS.md "one pulse per snapshot": retake, never publish two heads of one repo.
+        self.retake(self.p, 'publishing.r07.oid', '9f19a8a2fe7bc3292e37b1efc374ec313a7e1ee9')
+        with self.assertRaisesRegex(ValueError,'MIXED_PRODUCER_HEAD'):m.pilot(self.p)
+    def test_topic_plans_carry_producer_head(self):
+        r=m.pilot(self.p)
+        heads={row['packet']['topic']:row['packet']['producer_head'] for row in self.p['packets']}
+        self.assertEqual({x['topic']:x['producer_head'] for x in r['topics']},heads)
+        self.assertEqual(len({x['producer_head'] for x in r['topics'] if x['producer_repo']=='GBOGEB/cryoplant-project'}),1)
     def test_readers_disjoint_and_bounded(self):
         r=m.pilot(self.p)
         self.assertEqual([x['reader_lane'] for x in r['topics']],[0,1,0])
