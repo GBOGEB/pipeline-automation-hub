@@ -60,6 +60,28 @@ class ApiClient:
                 return rows
             page += 1
 
+    def graphql(self, query: str, variables: dict[str, Any]) -> Any:
+        """Read-only GraphQL query (review-thread resolution has no REST field)."""
+        req = urllib.request.Request(
+            self.api_root + "/graphql",
+            data=json.dumps({"query": query, "variables": variables}).encode("utf-8"),
+            method="POST",
+            headers={
+                "Authorization": f"Bearer {self.token}",
+                "Content-Type": "application/json",
+                "User-Agent": "gbo-first-pass-closure-gate/3",
+            },
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                payload = json.load(resp)
+        except urllib.error.HTTPError as exc:
+            body = exc.read().decode("utf-8", errors="replace")
+            raise GateError(f"GitHub GraphQL {exc.code}: {body[:500]}") from exc
+        if not isinstance(payload, dict) or payload.get("errors") or "data" not in payload:
+            raise GateError(f"GitHub GraphQL error: {str(payload.get('errors') if isinstance(payload, dict) else payload)[:500]}")
+        return payload["data"]
+
 
 def load_policy(path: str) -> dict[str, Any]:
     try:
@@ -218,6 +240,65 @@ def codex_finding_reviews_for_head(
         if any(f"`{prefix}`" in body for prefix in prefixes):
             out.append(review)
     return out
+
+
+PRIORITY_BADGE_RE = re.compile(r"!\[(P[0-3]) Badge\]")
+THREADS_QUERY = """query($owner:String!,$name:String!,$number:Int!,$after:String){
+  repository(owner:$owner,name:$name){pullRequest(number:$number){
+    reviewThreads(first:100,after:$after){pageInfo{hasNextPage endCursor}
+      nodes{isResolved comments(first:1){nodes{databaseId}}}}}}}"""
+
+
+def resolved_thread_roots(client: Any, repo: str, pr_number: int) -> set[int]:
+    """databaseIds of the first comment of every resolved review thread, all pages."""
+    owner, name = repo.split("/", 1)
+    roots: set[int] = set()
+    after = None
+    while True:
+        data = client.graphql(THREADS_QUERY, {"owner": owner, "name": name, "number": pr_number, "after": after})
+        conn = (((data or {}).get("repository") or {}).get("pullRequest") or {}).get("reviewThreads")
+        if not isinstance(conn, dict) or not isinstance(conn.get("nodes"), list):
+            raise GateError("REVIEW_THREADS_UNAVAILABLE")
+        for node in conn["nodes"]:
+            first = ((node.get("comments") or {}).get("nodes") or [{}])[0]
+            if node.get("isResolved") and isinstance(first.get("databaseId"), int):
+                roots.add(first["databaseId"])
+        page = conn.get("pageInfo") or {}
+        if not page.get("hasNextPage"):
+            return roots
+        after = page.get("endCursor")
+
+
+def codex_blocking_findings(
+    client: Any, repo: str, pr_number: int, head_sha: str, expected_login: str,
+    blocking: set[str],
+) -> tuple[list[dict[str, Any]], dict[str, int]]:
+    """Codex inline findings raised on the exact head whose priority blocks and whose thread is open.
+
+    A finding without a priority badge counts as blocking (fail closed). A resolved thread does
+    not block: resolving without a new commit is the owner's explicit dismissal and is counted.
+    """
+    comments = client.get_all(f"/repos/{repo}/pulls/{pr_number}/comments")
+    on_head = [
+        c for c in comments
+        if isinstance(c, dict) and not c.get("in_reply_to_id")
+        and c.get("original_commit_id") == head_sha
+        and login_matches(((c.get("user") or {}).get("login")), expected_login)
+    ]
+    resolved = resolved_thread_roots(client, repo, pr_number) if on_head else set()
+    out: list[dict[str, Any]] = []
+    counts = {"blocking_open": 0, "blocking_resolved": 0, "non_blocking": 0}
+    for c in on_head:
+        match = PRIORITY_BADGE_RE.search(c.get("body") or "")
+        priority = match.group(1) if match else None
+        if priority is not None and priority not in blocking:
+            counts["non_blocking"] += 1
+        elif c.get("id") in resolved:
+            counts["blocking_resolved"] += 1
+        else:
+            counts["blocking_open"] += 1
+            out.append({"id": c.get("id"), "priority": priority, "path": c.get("path")})
+    return out, counts
 
 
 def protected_control_changes(
@@ -384,6 +465,7 @@ def evaluate(
 
     exemption = dependency_update_exemption(client, repo, pr_number, pr, policy)
     summary_id = None
+    finding_counts = None
     if exemption is None or "CODEX_REVIEW" not in exemption["waives"]:
         expected_login = codex_login(policy)
         comments = client.get_all(f"/repos/{repo}/issues/{pr_number}/comments")
@@ -393,10 +475,24 @@ def evaluate(
         if not completed:
             raise GateError("CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD")
 
-        reviews = client.get_all(f"/repos/{repo}/pulls/{pr_number}/reviews")
-        findings = codex_finding_reviews_for_head(reviews, head_sha, expected_login)
-        if findings:
-            raise GateError(f"CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD: {len(findings)}")
+        blocking = (policy.get("codex_contract") or {}).get("blocking_priorities")
+        if blocking is None:
+            # Strict rule: any commented Codex review bound to the exact head blocks.
+            reviews = client.get_all(f"/repos/{repo}/pulls/{pr_number}/reviews")
+            findings = codex_finding_reviews_for_head(reviews, head_sha, expected_login)
+            if findings:
+                raise GateError(f"CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD: {len(findings)}")
+        else:
+            if not isinstance(blocking, list) or not blocking or not set(blocking) <= {"P0", "P1", "P2", "P3"}:
+                raise GateError("POLICY_CODEX_BLOCKING_PRIORITIES_INVALID")
+            findings, finding_counts = codex_blocking_findings(
+                client, repo, pr_number, head_sha, expected_login, set(blocking)
+            )
+            if findings:
+                raise GateError(
+                    f"CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD: {len(findings)} open "
+                    + "/".join(sorted(blocking))
+                )
 
     return {
         "schema": PASS_SCHEMA,
@@ -410,6 +506,7 @@ def evaluate(
         "codex_material_finding_review_count": 0,
         "proven_purposes": sorted(proven_purposes),
         "receipt_source": receipt_source,
+        "codex_finding_counts_on_exact_head": finding_counts,
         "dependency_update_exemption": exemption,
         "required_runs": run_receipts,
         "merge_allowed": True,

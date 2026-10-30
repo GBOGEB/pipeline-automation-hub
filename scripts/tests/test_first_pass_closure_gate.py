@@ -55,6 +55,11 @@ class FakeClient:
             raise AssertionError(path)
         return self.mapping[path]
 
+    def graphql(self, query, variables):
+        if "graphql" not in self.mapping:
+            raise AssertionError("graphql")
+        return self.mapping["graphql"]
+
 
 def body(head=HEAD):
     obj = {
@@ -89,6 +94,8 @@ def mapping(
     head_runs=None,
     pr_author="GBOGEB",
     commit_authors=("GBOGEB",),
+    inline_findings=(),
+    resolved_ids=(),
 ):
     summary = f"""<!-- codex-pull-request-review-summary -->
 | Review | Status | Commit |
@@ -135,6 +142,18 @@ def mapping(
             "user": {"login": summary_login},
         }],
         f"/repos/{REPO}/pulls/{PR}/reviews": reviews,
+        # inline_findings: (id, priority or None, commit) tuples from the Codex reviewer.
+        f"/repos/{REPO}/pulls/{PR}/comments": [
+            {"id": cid, "original_commit_id": commit, "path": "x.py",
+             "user": {"login": "chatgpt-codex-connector[bot]"},
+             "body": (f"**<sub><sub>![{pri} Badge](https://img.shields.io/badge/{pri}-x)</sub></sub> Finding**"
+                      if pri else "**Finding without a badge**")}
+            for cid, pri, commit in inline_findings
+        ],
+        "graphql": {"repository": {"pullRequest": {"reviewThreads": {
+            "pageInfo": {"hasNextPage": False, "endCursor": None},
+            "nodes": [{"isResolved": cid in resolved_ids, "comments": {"nodes": [{"databaseId": cid}]}}
+                      for cid, _pri, _commit in inline_findings]}}}},
     }
 
 
@@ -367,6 +386,52 @@ class TestFirstPassClosureGate(unittest.TestCase):
         )
         self.assertIn("ref: ${{ steps.pr.outputs.base_sha }}", workflow)
 
+    # Owner decision 2026-10-30: only open P0/P1 Codex findings on the exact head block.
+    P01_POLICY = {**POLICY, "codex_contract": {**POLICY["codex_contract"], "blocking_priorities": ["P0", "P1"]}}
+    COMMENTED = f"### Codex Review\n**Reviewed commit:** `{HEAD[:10]}`"
+
+    def p01(self, findings, resolved=()):
+        return FakeClient(mapping(review_body=self.COMMENTED, inline_findings=findings, resolved_ids=resolved))
+
+    def test_p2_p3_findings_on_head_do_not_block(self):
+        receipt = fpc.evaluate(self.p01([(1, "P2", HEAD), (2, "P3", HEAD)]), REPO, PR, self.P01_POLICY)
+        self.assertEqual(receipt["status"], fpc.PASS_STATUS)
+        self.assertEqual(receipt["codex_finding_counts_on_exact_head"],
+                         {"blocking_open": 0, "blocking_resolved": 0, "non_blocking": 2})
+
+    def test_open_p1_on_head_blocks(self):
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD: 1 open P0/P1"):
+            fpc.evaluate(self.p01([(1, "P1", HEAD), (2, "P2", HEAD)]), REPO, PR, self.P01_POLICY)
+
+    def test_open_p0_on_head_blocks(self):
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD"):
+            fpc.evaluate(self.p01([(1, "P0", HEAD)]), REPO, PR, self.P01_POLICY)
+
+    def test_badgeless_codex_finding_blocks(self):
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD"):
+            fpc.evaluate(self.p01([(1, None, HEAD)]), REPO, PR, self.P01_POLICY)
+
+    def test_resolved_p1_thread_does_not_block_and_is_counted(self):
+        receipt = fpc.evaluate(self.p01([(1, "P1", HEAD)], resolved=(1,)), REPO, PR, self.P01_POLICY)
+        self.assertEqual(receipt["codex_finding_counts_on_exact_head"]["blocking_resolved"], 1)
+
+    def test_p1_raised_on_older_head_does_not_block(self):
+        receipt = fpc.evaluate(self.p01([(1, "P1", "b" * 40)]), REPO, PR, self.P01_POLICY)
+        self.assertEqual(receipt["status"], fpc.PASS_STATUS)
+
+    def test_review_must_still_be_completed_under_p01_rule(self):
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
+            fpc.evaluate(FakeClient(mapping(completed=False)), REPO, PR, self.P01_POLICY)
+
+    def test_invalid_blocking_priorities_fail_closed(self):
+        policy = {**POLICY, "codex_contract": {**POLICY["codex_contract"], "blocking_priorities": []}}
+        with self.assertRaisesRegex(fpc.GateError, "POLICY_CODEX_BLOCKING_PRIORITIES_INVALID"):
+            fpc.evaluate(self.p01([]), REPO, PR, policy)
+
+    def test_strict_rule_without_blocking_priorities_is_unchanged(self):
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_MATERIAL_FINDINGS"):
+            fpc.evaluate(self.p01([(1, "P3", HEAD)]), REPO, PR, POLICY)
+
     def test_workflow_rechecks_when_the_proof_completes(self):
         # A derived receipt exists only after the proof run finishes, so that completion must
         # re-run the gate, serialised per PR and never trusting the triggering run's checkout.
@@ -387,6 +452,7 @@ class TestFirstPassClosureGate(unittest.TestCase):
         import fnmatch
         self.assertFalse(any(fnmatch.fnmatchcase("scripts/first_pass_closure_gate.py", p)
                              for p in rule["allowed_path_patterns"]))
+        self.assertEqual(policy["codex_contract"]["blocking_priorities"], ["P0", "P1"])
 
 
 
