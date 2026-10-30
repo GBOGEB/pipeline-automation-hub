@@ -244,6 +244,10 @@ class Everred(unittest.TestCase):
         patcher = mock.patch.object(harvest, "gh", fake)
         patcher.start()
         self.addCleanup(patcher.stop)
+        self.pauses = []
+        sleeper = mock.patch.object(harvest.time, "sleep", self.pauses.append)
+        sleeper.start()
+        self.addCleanup(sleeper.stop)
         return served
 
     @staticmethod
@@ -302,6 +306,23 @@ class Everred(unittest.TestCase):
         got = harvest.check_runs_for_sha(repo, sha)
         self.assertEqual(sorted(r["id"] for r in got), list(range(1, 103)))
         self.assertEqual(len(passes), 3, "one moving pass, then two agreeing stable passes")
+        self.assertEqual(self.pauses, [harvest.PASS_PAUSE_S * 1], "one pause, after the moving pass only")
+
+    def test_stable_head_is_read_without_pausing(self):
+        repo, sha = "GBOGEB/stub", "f" * 40
+        runs = [{"id": i, "conclusion": "success", "html_url": ""} for i in range(1, 4)]
+        self._stub_gh(lambda path: {"total_count": 3, "check_runs": runs if self._page(path) == 1 else []})
+        self.assertEqual(len(harvest.check_runs_for_sha(repo, sha)), 3)
+        self.assertEqual(self.pauses, [], "two agreeing passes back to back: no wait for a settled head")
+
+    def test_moving_head_backs_off_then_fails_closed(self):
+        repo, sha = "GBOGEB/stub", "9" * 40
+        runs = [{"id": i, "conclusion": "success", "html_url": ""} for i in range(1, 103)]
+        pages = {1: (101, runs[1:101]), 2: (102, runs[100:102]), 3: (102, [])}
+        self._stub_gh(lambda path: dict(zip(("total_count", "check_runs"), pages[self._page(path)])))
+        with self.assertRaisesRegex(RuntimeError, "no two consecutive stable reads agreed"):
+            harvest.check_runs_for_sha(repo, sha)
+        self.assertEqual(self.pauses, [harvest.PASS_PAUSE_S * n for n in range(1, 6)], "growing waits between the 6 passes")
 
     def test_check_run_total_falling_mid_read_restarts_then_fails_closed(self):
         # A run vanished mid-read (e.g. superseded by a rerun): later pages shift back and a run can be skipped.
@@ -318,6 +339,11 @@ class Everred(unittest.TestCase):
         from unittest import mock
         harvest.CACHE.clear()
         self.addCleanup(harvest.CACHE.clear)
+        dropped = [SimpleNamespace(returncode=1, stdout="", stderr="error connecting to api.github.com"),
+                   SimpleNamespace(returncode=0, stdout='{"ok": 2}', stderr="")]
+        with mock.patch.object(harvest.subprocess, "run", side_effect=dropped) as run, mock.patch.object(harvest.time, "sleep"):
+            self.assertEqual(harvest.gh("repos/x/dropped"), {"ok": 2}, "gh's 'error connecting to' is a network blip (2026-10-30)")
+        self.assertEqual(run.call_count, 2)
         flaky = [SimpleNamespace(returncode=1, stdout="", stderr="dial tcp: connection attempt failed"),
                  SimpleNamespace(returncode=0, stdout='{"ok": 1}', stderr="")]
         with mock.patch.object(harvest.subprocess, "run", side_effect=flaky) as run, mock.patch.object(harvest.time, "sleep"):
