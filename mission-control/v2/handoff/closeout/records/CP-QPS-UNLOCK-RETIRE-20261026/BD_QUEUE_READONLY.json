@@ -41,13 +41,10 @@
         "https://github.com/GBOGEB/pipeline-automation-hub/issues/304",
         "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/38250379852",
         "https://github.com/GBOGEB/pipeline-automation-hub/pull/880",
-        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40252128567",
-        "https://github.com/GBOGEB/pipeline-automation-hub/pull/933",
-        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40317092326",
-        "https://github.com/GBOGEB/pipeline-automation-hub/pull/1035"
+        "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40252128567"
       ],
       "severity": "P1",
-      "source_evidence": "Recurrence (occurrence, not a new root): hub #880 head 524c024d264df5d2ca71e693b95761c62a826978 marked ready 2026-10-26T01:01:05Z and merged 01:02:42Z as 2c2079327aec7b350f172146e5e50de4373cd926 while First-Pass Closure Gate run 40252128567 job 121346125131 was FAIL (receipt reason MISSING_RECEIPT: PR body held only the FPC_RECEIPT_V1 PENDING placeholder) and the Codex exact-head review was still Running. The other 19 checks passed. Same pattern for #865, #867, #854 and #871 is recorded in #876. #336 required-status canary still unproved. SYSTEMIC RESTATEMENT (same root, not a new id; recurrence PERSISTENT): read 2026-10-30T06:14Z at master b2509f3b3daf43fb652e9993974476747ddc49ea. Of the last 100 PRs merged into master (merged 2026-10-25T18:56:39Z..2026-10-29T16:31:39Z), the trusted status 'First-Pass Closure Gate / first-pass-closure' on the merge head was failure ('Trusted exact-head gate FAIL') for 97 and success for 3 (#1028, #998, #855); 13 of the 97 are Dependabot (#909-#923). All 116 master merges since 2026-10-24: 111 failure, 5 success (adds #844, #838). Root cause: ruleset 25789280 (P-BASIC, ~DEFAULT_BRANCH, active, no bypass actors) requires only validate-ultra-control, canonical-self-test-and-mutation and 'GOGREEN required gate'; first-pass-closure is not required (#336), and the gate fails closed without an FPC_RECEIPT_V1 body receipt and a zero-finding Codex exact-head review. Dependabot sub-case: a bot PR cannot write a receipt, so the policy needs an exemption or bot path. Examples: #880 (above); #933 head 2a3ea872 merged 2026-10-26T11:42:49Z as 7063a02f by GBOGEB one second after FPC run 40317092326 started, which then failed (GATE_OUTCOME=failure, RECEIPT_OUTCOME=failure, MISSING_RECEIPT, no FPC_RECEIPT_V1 block) while JADE and GOGREEN required gate were green; #1016, #960 and #940 (FAIL); Dependabot #923. A retroactive receipt on any merged PR is an owner decision and was not written. Owner decision relayed by the 'Draft PR review pass' session on 2026-10-30 (not verified here): 'Fix gate, then require' - stage it: first make FPC passable, then require it in the ruleset. Corrective action in progress in #1035: the gate derives the exact-head proof runs itself (no hand-written receipt), a policy-bound Dependabot exemption waives only the Codex review, and the gate re-checks when First-Pass Closure Proof completes. The ruleset change is the owner's step, only after #1035 lands and a post-merge canary run is green. Ruleset and FIRST_PASS_CLOSURE_POLICY_v1.json untouched by this record.",
+      "source_evidence": "Recurrence (occurrence, not a new root): hub #880 head 524c024d264df5d2ca71e693b95761c62a826978 marked ready 2026-10-26T01:01:05Z and merged 01:02:42Z as 2c2079327aec7b350f172146e5e50de4373cd926 while First-Pass Closure Gate run 40252128567 job 121346125131 was FAIL (receipt reason MISSING_RECEIPT: PR body held only the FPC_RECEIPT_V1 PENDING placeholder) and the Codex exact-head review was still Running. The other 19 checks passed. Same pattern for #865, #867, #854 and #871 is recorded in #876. #336 required-status canary still unproved.",
       "state": "UNKNOWN_NEEDS_READER",
       "title": "PRs merged while First-Pass Closure was red or still running (REX-CM-005 recurrence)"
     }
@@ -64,5 +61,5 @@
   "read_only_historical": true,
   "schema": "missioncontrol.cp_close.bd_projection.v1",
   "source_path": "mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json",
-  "source_sha256": "5ba439340ede29f987b0a4d35534c89d22a47ea6f5369dc3e78676e998b1cbd2"
+  "source_sha256": "52f3039deeb09fd2a75ca8edd56c6faa07cb111056b93d1cd9b756fe84849388"
 }
