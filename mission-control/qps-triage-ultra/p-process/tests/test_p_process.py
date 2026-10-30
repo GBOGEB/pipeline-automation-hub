@@ -130,6 +130,26 @@ class CodePurpleKit(unittest.TestCase):
         self.assertEqual(readback.gate_at_merge(runs[1:], "PR Feedback Gate", "2026-10-13T11:00:00Z"), "in_progress")
         self.assertEqual(readback.gate_at_merge([], "PR Feedback Gate", "2026-10-13T11:00:00Z"), "none")
 
+    def test_merges_since_reads_every_page_to_the_cutoff(self):
+        # 30 Oct Codex P2: one page of 100 closed pulls dropped older merges from the census.
+        from unittest import mock
+        def pull(n, merged, updated):
+            return {"number": n, "title": f"#{n}", "merged_at": merged, "updated_at": updated}
+        pages = {1: [pull(n, "2026-10-29T00:00:00Z", "2026-10-29T00:00:00Z") for n in range(100)],
+                 2: [pull(100, "2026-10-13T00:00:00Z", "2026-10-14T00:00:00Z"), pull(101, None, "2026-10-13T00:00:00Z")]
+                    + [pull(n, "2026-10-01T00:00:00Z", "2026-10-11T00:00:00Z") for n in range(102, 200)],
+                 3: [pull(999, "2026-10-20T00:00:00Z", "2026-10-20T00:00:00Z")]}
+        asked = []
+        def fake(path, paginate=False):
+            page = int(re.search(r"[?&]page=(\d+)", path).group(1))
+            asked.append(page)
+            return pages[page]
+        with mock.patch.object(readback, "gh", fake):
+            got = readback.merges_since("o/r", "2026-10-12T00:00:00Z")
+        self.assertEqual(asked, [1, 2], "page 2 reaches the cutoff, so page 3 is never read")
+        self.assertEqual(len(got), 101)
+        self.assertEqual(got[0]["number"], 100)
+
     def test_classify_inherited_vs_source(self):
         c = readback.classify(["coverage", "lint"], ["coverage"])
         self.assertEqual(c, {"inherited": ["coverage"], "source_defect_candidates": ["lint"]})
