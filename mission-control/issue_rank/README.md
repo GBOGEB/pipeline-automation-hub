@@ -17,7 +17,8 @@ evidence and close", not "closed".
 ## Run
 
 ```bash
-python mission-control/issue_rank/issue_rank.py run --scope jade
+python mission-control/issue_rank/issue_rank.py run --scope focus   # the four federated repos
+python mission-control/issue_rank/issue_rank.py run --scope jade    # TOP21 roster
 python mission-control/issue_rank/issue_rank.py run --scope user
 python mission-control/issue_rank/issue_rank.py verify-ledger --ledger mission-control/issue_rank/out/jade/ledger.jsonl
 python mission-control/issue_rank/issue_rank.py rank --snapshot out/jade/snapshot.json --prev old/issue_rank.json --out /tmp/r
@@ -97,31 +98,55 @@ snapshot is resolved for its state and creation time; references to nothing (`#1
 as list numbering) are dropped. A blocker whose state is unknown counts as open (fail
 closed).
 
-## Score and lanes
+## Score and lanes (method v2, see METHOD.md)
 
-```
-score = 0.25·pressure + 0.20·nearness + 0.15·priority + 0.15·centrality
-      + 0.10·bridge + 0.10·pr_ready + 0.05·age
-```
+Two stages, so graph structure is not counted three times:
 
-| Part | Definition |
-|---|---|
-| pressure | open items that transitively wait on this one (DEPENDS_ON, CHILD, PARENT), log-scaled |
-| nearness | ticked / total; 1.0 when all ticked |
-| priority | P0 1.0, P1 0.66, P2 0.33, P3 0.1 (label or title); critical / urgent / blocker 0.66 |
-| centrality | percentile of weighted PageRank (a reference passes importance to its target) |
-| bridge | percentile of Brandes betweenness on the undirected graph |
-| pr_ready | linked or own PR green 1.0, red 0.5, none 0 |
-| age | percentile of age |
+1. **Urgency** `u` (what the item asks for on its own) is a weighted mean of
+   `priority 0.35, nearness 0.20, pr_ready 0.15, age 0.15, idle 0.15`, each in [0, 1].
+   A part that is not observed is **never 0**: priority takes a declared neutral prior
+   (P2, because owners label only the urgent few), and the other parts take the scope
+   mean. `coverage` is the share of weight actually observed, and `imputed` lists the
+   parts that were filled in. Parked intents are scaled by 0.1.
+2. **Pressure** is PageRank over the wait-for graph (waiter → blocker on DEPENDS_ON /
+   CHILD / PARENT, issue → the PR that closes it; mentions as soft edges, weight 0.15).
+   The walk restarts in proportion to `u`, with damping 0.85. At the fixed point
+   `score = own + inherited` exactly, where `inherited` is the urgency its waiters push
+   onto it. A blocker of an urgent item ranks high even when it is quiet itself.
 
-`score_parts` is stored per item so every rank can be explained. The lane gives the
-next action, checked in this order:
+A **Monte Carlo** run (200 seeded draws, perturbing the weights (Dirichlet,
+concentration 20), damping in [0.75, 0.92] and soft weight in [0.05, 0.30]) gives each
+item a 90% rank interval `rank_interval` and `p_top`, the probability of reaching the
+top 10. `robust_top` lists the items with `p_top` ≥ 0.8. The ordering is
+`NON_BT_REVERSE_PRESSURE_PAGERANK`: Bradley–Terry stays withheld, because issues have no
+observed pairwise outcomes.
+
+Structure per item:
+
+- `pressure`: open items that wait on it transitively.
+- `unblocks_now`: items for which it is the only open blocker.
+- `chain.below`: the longest blocker chain that must close first.
+- `deadlock`: membership of a dependency cycle.
+- Each edge has a `binding`. GitHub's own relations (blockedBy / blocking / parent /
+  sub-issues / closing PRs) and timeline events are `OBSERVED`; parsed text is
+  `DECLARED`.
+
+The **golden thread** is the lifecycle gate chain scored by
+`jade_temple/tools/rolling5.golden_thread()`. The gates are DEFINED, VERIFIABLE, OWNED,
+STARTED, UNBLOCKED, then on the CODE track PR_GREEN and REVIEWED, then DOD_MET and
+DOV_MET. It reports a position (for example `5/9`), the first break and the next step.
+`lineage` (older references back to a root) is provenance, not the golden thread.
+
+The lane gives the next action, checked in this order:
 
 - PRs: `FIX_RED`, `IN_FLIGHT` (draft), `REVIEW` (not approved), `AWAIT_CHECKS` (approved,
   checks not all green yet), `MERGE_READY` (approved and every check green).
-- Issues: `BLOCKED`, `CLOSE_CANDIDATE`, `FIX_RED`, `BOTTLENECK` (two or more open
-  waiters), `NEARLY_DONE` (70% or more ticked), `TRACK_DOD`, `DEFINE_DOD`,
-  `NOT_STARTED`, `IN_PROGRESS`.
+- Issues: `PARKED`, `DEADLOCK`, `BLOCKED`, `CLOSE_CANDIDATE`, `FIX_RED`, `REVIEW` (the
+  linked PR is green but not approved), `MERGE_READY`, `BOTTLENECK` (two or more
+  waiters, or two or more freed now), `NEARLY_DONE` (70% or more ticked, or one item
+  left of three or more), `TRACK_DOD`, `DEFINE_DOD`, `NOT_STARTED`, `IN_PROGRESS`.
+
+The **action queue** is every item not BLOCKED, DEADLOCK or PARKED, in pressure order.
 
 ## Recursive title families for issues and PRs (v1)
 
@@ -152,18 +177,58 @@ No automatic GitHub issue title rewrites. A later owner-authorized metadata migr
 
 ## Rollups and telemetry
 
-For each scope (USER, JADE, each repository) the rollup reports open issues and PRs,
-tasks ticked / total, untracked criteria, checklist / DoD / DoV coverage, the state and
-lane distributions, red and unapproved PRs, median age, items idle for more than 21
-days, checklist drift, the top 10, the bottlenecks and the nearly-finished items.
+Scopes are USER (every fetched repository), JADE (the TOP21 roster in
+`jade_temple/data/TOP21_PORTFOLIO.json`), FOCUS4 (the four federated repositories) and
+each repository. `complete` says whether every repository of the scope was fetched.
+Per scope the rollup reports:
+
+- open issues and PRs, and tasks ticked / total;
+- untracked criteria, checklist / DoD / DoV coverage, measurable share and mean coverage;
+- state, lane and golden-thread first-break distributions;
+- red and unapproved PRs, median age, items idle for more than 21 days, checklist drift;
+- actionable / parked / deadlocked counts and the share of total pressure;
+- the top 10, the action queue, the robust top, the bottlenecks, the nearly-finished
+  items and owners by summed score;
+- **flow** over the window (`--window-days`, default 14).
+
+Flow covers issues only:
+
+- arrivals and closures per day with exact (Garwood) Poisson 90% intervals, and closure
+  reasons (COMPLETED / NOT_PLANNED / DUPLICATE);
+- net burn;
+- Little's-law time in system;
+- an ETA, given only when the lower bound of the net burn is above 0. Otherwise the
+  status is `NOT_CONVERGING` or `GROWING`.
+
+`predicate_leaks` lists issues closed as completed with unticked items and no open
+successor or parent to carry them.
 
 Every `run` appends a row to `ledger.jsonl` (`jade.issue-rank.ledger.v1`). Each row is
-sha256-chained to the one before it and records the snapshot and output digests, the
-default-branch head SHA of every repository (one pulse per snapshot), fetch telemetry
-(API calls, retries, seconds, resolved and missing references), graph stats, scope
-rollups and the delta counts. `delta.json` lists what moved since the previous pulse:
-new and gone items, new and removed links, new PR→issue dependencies, checklist moves
-(`2/5 → 3/5`) and lane moves.
+sha256-chained to the one before it and records:
+
+- the snapshot and output digests;
+- the default-branch head SHA of every repository (one pulse per snapshot);
+- fetch telemetry: API calls, retries, GraphQL cost and remaining points, seconds, and
+  resolved and missing references;
+- graph stats, the method version, walk convergence and Monte Carlo stability (median
+  Spearman);
+- scope rollups and the delta counts.
+
+`delta.json` lists what moved since the previous pulse:
+
+- new items, split into rooted (linked to the existing network) and unrooted;
+- gone items, split by closure reason;
+- new and removed links, and new PR→issue dependencies;
+- checklist moves, with net ticks kept apart from net scope growth (`2/5 → 3/6` is one
+  tick plus one new item);
+- lane moves and golden-thread advances and regressions.
+
+`--redact-private` projects private items to rank-ordered pseudonyms
+(`owner/repo#PRIVATE-007`) in the model and the delta. The result must be a fixed point
+of `jade_temple/tools/private_boundary.py`.
+
+`overlay.json` holds owner-declared priorities with provenance (the D+14 lanes for the
+public repositories). `out/overlay_private.json` (gitignored) holds the private ones.
 
 ## Burndown slices (`burndown_apply.py`)
 
@@ -178,6 +243,14 @@ Dry-run unless `--apply` is given.
 - **checkbox:** for the top `TRACK_DOD` issues, turn each declared DoD / DoV / STEPS bullet
   into `- [ ]`, ticking nothing. `--skip` leaves out issues whose bullets are options or
   dispositions rather than criteria.
+- **evidence** (`--evidence`, writes `burndown_evidence.json`): commit workers rarely tick
+  the issue that tracks their work, so this reads the other direction. For each open
+  checklist item it lists merged PRs that cross-reference the issue and either name the
+  item's child (`DIRECT`, confidence HIGH) or share at least 3 of its distinctive tokens
+  (tokens in at most 10% of the candidate PRs) covering half of them (`TEXT`, MEDIUM with
+  5+ hits and 75% cover, else LOW). Classes add the merge-commit check state:
+  `EVIDENCE_GREEN_*` / `EVIDENCE_RED_*`. Candidates are leads for whoever ticks; nothing is
+  ticked.
 - `--apply tick|checkbox|all [--only KEY ...]` edits issue bodies: it re-reads the live
   body, refuses if it changed since the snapshot, and appends a sha256-chained row per
   edit to `edits.jsonl`. Issue edits are owner decisions; apply only with the owner's
@@ -207,7 +280,9 @@ python mission-control/issue_rank/burndown_apply.py --pulse mission-control/issu
 
 ## Roadmap
 
-1. **Now.** Engine, contract tests (3.11 / 3.12), local pulses for JADE and USER.
+1. **Done (v2).** Unknown-not-zero urgency, pressure walk, Monte Carlo intervals,
+   deadlocks / chains, lifecycle golden thread, flow, leaks, OBSERVED API relations,
+   overlay, private projection. Contract tests on py3.11 / 3.12; see PLAN.md.
 2. **Make progress measurable.** Agree the DoD / DoV / Steps template with the owners.
    Convert the `TRACK_DOD` issues, top-ranked first, from plain bullets to checkboxes.
    This edits issues, so the owner decides.
@@ -216,9 +291,10 @@ python mission-control/issue_rank/burndown_apply.py --pulse mission-control/issu
    to `gogreen/scale_dock.py` in its own PR, since that module owns the docks.
 4. **Root join.** Join `FIX_RED` lanes to EVERRED roots (`p-process/everred/harvest.py`)
    so red PRs rank by root, not by occurrence. Feed the QPS 67-ID BD recensus (#481).
-5. **gg_MATH upstream.** Propose `kernels/graph_centrality.py` (PageRank, Brandes) to
-   gg_MATH, then bind it through `ggmath_bridge.py rebind` and import it here instead
-   of the local copy. Cross-check each component's spectral gap with
+5. **gg_MATH upstream.** Propose `kernels/graph_centrality.py` (PageRank, Brandes) and
+   the `issue_math.py` primitives (SCC, chains, exact Poisson interval) to gg_MATH, then
+   bind them through `ggmath_bridge.py rebind` and import them here instead of the
+   local copy. Cross-check each component's spectral gap with
    `spectral_graph.laplacian`.
 6. **Owner pairwise priority.** Where owners rank items pairwise, fit Bradley–Terry with
    `level1/runtime.py` `bt()` and add it as a score part.

@@ -147,5 +147,86 @@ class Project(unittest.TestCase):
                          ("hosted", "windows"))
 
 
+
+class ReaderNegativeControls(unittest.TestCase):
+    """Previously shallow API and saturation paths, exercised without network."""
+
+    def test_reject_unsafe_routes_before_network(self):
+        rd = M.Reader("test")
+        for route in ("https://evil.invalid/repos", "relative", "/repos/x/../secrets",
+                      "/repos/x\\evil"):
+            with self.subTest(route=route), self.assertRaisesRegex(ValueError, "noncanonical API path"):
+                rd.get(route)
+        self.assertEqual(rd.calls, 0)
+
+    def test_auth_403_fails_immediately_without_retry(self):
+        from unittest.mock import patch
+        from urllib.error import HTTPError
+        err = HTTPError("https://api.github.com/x", 403, "forbidden", {}, None)
+        rd = M.Reader()
+        with patch.object(M.urllib.request, "urlopen", side_effect=err) as req, \
+             patch.object(M.time, "sleep") as sleeping:
+            with self.assertRaises(HTTPError):
+                rd.get("/repos/a/b")
+            self.assertEqual((req.call_count, rd.calls, sleeping.call_count), (1, 1, 0))
+
+    def test_transient_503_retries_bounded_exactly_four(self):
+        from unittest.mock import patch
+        from urllib.error import HTTPError
+        rd = M.Reader()
+        err = HTTPError("https://api.github.com/x", 503, "unavailable", {}, None)
+        with patch.object(M.urllib.request, "urlopen", side_effect=err) as req, \
+             patch.object(M.time, "sleep") as sleeping:
+            with self.assertRaises(HTTPError):
+                rd.get("/repos/a/b")
+            self.assertEqual((req.call_count, rd.calls), (4, 4))
+            self.assertEqual([c.args[0] for c in sleeping.call_args_list], [3, 6, 12])
+
+    def test_reader_page_limit_exposes_unread_remainder(self):
+        class Pages(M.Reader):
+            def get(self, route):
+                return {"workflow_runs": [{"id": n} for n in range(100)],
+                        "total_count": 1001}
+        rows, total = Pages().pages("/repos/x/y/actions/runs", "workflow_runs")
+        self.assertEqual((len(rows), total), (1000, 1001))
+
+    def test_oversized_day_fans_out_hours_and_deduplicates(self):
+        class Hourly:
+            def __init__(self):
+                self.calls = []
+            def pages(self, route, key):
+                self.calls.append(route)
+                if ".." not in route:
+                    return [run(1)], 1001
+                return ([run(1), run(2)], 2) if "T00:" in route else ([run(2)], 1)
+        rd = Hourly()
+        rows = M.fetch_runs_day(rd, REPO, date(2026, 10, 26))
+        self.assertEqual({r["id"] for r in rows}, {1, 2})
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(len(rd.calls), 25)
+
+    def test_hourly_incomplete_total_fails_closed_not_a_fake_success(self):
+        class Incomplete:
+            def pages(self, route, key):
+                # This was previously misreported by the successful 24-hour
+                # fixture. An hour with one row but total_count=2 is incomplete.
+                if ".." not in route:
+                    return [run(1)], 1001
+                return [run(1)], 2
+        with self.assertRaisesRegex(ValueError, "exceeds the search cap"):
+            M.fetch_runs_day(Incomplete(), REPO, date(2026, 10, 26))
+
+    def test_hourly_search_cap_fails_closed(self):
+        class Saturated:
+            def pages(self, route, key):
+                return [run(1)], 1001
+        with self.assertRaisesRegex(ValueError, "exceeds the search cap"):
+            M.fetch_runs_day(Saturated(), REPO, date(2026, 10, 26))
+
+    def test_empty_or_negative_durations_are_unknown_not_zero(self):
+        self.assertIsNone(M.seconds(None, "2026-10-26T00:00:00Z"))
+        self.assertIsNone(M.seconds("2026-10-26T02:00:00Z", "2026-10-26T01:00:00Z"))
+        self.assertIsNone(M.band(None))
+
 if __name__ == "__main__":
     unittest.main()

@@ -103,5 +103,60 @@ class Apply(unittest.TestCase):
         self.assertEqual(ba.slices(snap, model, gh, skip={f"{HUB}#1"})["summary"]["checkbox_issues"], 0)
 
 
+class Evidence(unittest.TestCase):
+    def merged(self, title, body="", checks="SUCCESS", merged=True):
+        return {"__typename": "PullRequest", "title": title, "body": body, "merged": merged, "url": "u",
+                "mergedAt": "2026-10-28T00:00:00Z", "mergeCommit": {"oid": "b" * 40, "statusCheckRollup": {"state": checks}}}
+
+    def test_tokens(self):
+        t = ba.tokens("Add `QPS_MASTER_INPUT_RETURN.json` receipt for W373, with every row")
+        self.assertIn("qps_master_input_return.json", t)
+        self.assertIn("w373", t)
+        self.assertNotIn("every", t)
+        self.assertNotIn("for", t)
+
+    def test_direct_text_and_noise(self):
+        body = ("- [ ] #5 lands\n- [ ] generate `QPS_MASTER_INPUT_RETURN.json` with recursive manifest receipt\n"
+                "- [x] already ticked `QPS_MASTER_INPUT_RETURN.json` recursive manifest receipt\n- [ ] unrelated zebra work")
+        prs = {f"{HUB}#5": self.merged("small fix", checks="FAILURE"),
+               f"{HUB}#6": self.merged("feat: generate QPS_MASTER_INPUT_RETURN.json", "recursive manifest and receipt hashes"),
+               f"{HUB}#7": self.merged("emit QPS_MASTER_INPUT_RETURN.json recursive manifest receipt", merged=False),
+               f"{HUB}#8": None}
+        for pr in prs.values():
+            if pr:
+                pr["_tokens"] = ba.tokens(pr["title"] + "\n" + pr["body"])
+        rows = ba.evidence_items({"repo": HUB, "body": body}, prs, {}, 40)
+        self.assertEqual([(r["line"], r["class"]) for r in rows], [(0, "EVIDENCE_RED_DIRECT"), (1, "EVIDENCE_GREEN_TEXT")])
+        self.assertEqual(rows[1]["candidates"][0]["pr"], f"{HUB}#6")
+        self.assertEqual([rows[0]["candidates"][0]["confidence"], rows[1]["candidates"][0]["confidence"]], ["HIGH", "MEDIUM"])
+        self.assertEqual([c["pr"] for c in rows[1]["candidates"]], [f"{HUB}#6"])  # unmerged #7 never counts
+
+    def test_common_tokens_are_not_distinctive(self):
+        prs = {f"{HUB}#6": self.merged("exact head review gate proof")}
+        prs[f"{HUB}#6"]["_tokens"] = ba.tokens(prs[f"{HUB}#6"]["title"])
+        df = {t: 30 for t in ("exact", "head", "review", "gate", "proof")}
+        rows = ba.evidence_items({"repo": HUB, "body": "- [ ] exact head review gate proof"}, prs, df, 40)
+        self.assertEqual(rows, [])
+
+    def test_evidence_slice_end_to_end(self):
+        snap = {"fetched_at": "t", "repos": {HUB: {"issues": [
+            {"number": 1, "body": "- [ ] #9 merged\n- [ ] other", "refs_in": [
+                {"repo": HUB, "number": 9, "type": "PullRequest", "state": "MERGED"},
+                {"repo": HUB, "number": 10, "type": "PullRequest", "state": "CLOSED"}]}]}}}
+        model = {"items": [{"key": f"{HUB}#1", "type": "Issue", "rank_global": 1, "lane": "BLOCKED",
+                            "progress": "0/2", "private": False}]}
+        seen = []
+
+        def gh(q, allow_not_found=False):
+            seen.append(q)
+            return {"p0": {"issueOrPullRequest": self.merged("x")}}
+        r = ba.evidence_slice(snap, model, gh)
+        self.assertEqual(r["summary"]["open_items"], 2)
+        self.assertEqual(r["summary"]["by_class"], {"EVIDENCE_GREEN_DIRECT": 1})
+        self.assertEqual(r["ticks"], 0)
+        self.assertFalse(r["authority_transfer"])
+        self.assertNotIn("number:10", seen[0])  # closed-unmerged PRs are not fetched
+
+
 if __name__ == "__main__":
     unittest.main()
