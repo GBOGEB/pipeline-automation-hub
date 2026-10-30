@@ -403,7 +403,7 @@ class RecheckPressureRF(unittest.TestCase):
             cache = base / REPO.replace("/", "__") / "runs"
             cache.mkdir(parents=True)
             (cache / "2026-10-28.json").write_text(
-                json.dumps(self.synthetic()), encoding="utf-8", newline="\\n")
+                json.dumps(self.synthetic()), encoding="utf-8", newline="\n")
             out = base / "pressure.json"
             with mock.patch.object(M, "token", side_effect=AssertionError("no token for projection")):
                 self.assertEqual(M.main(["pressure", "--cache", str(base),
