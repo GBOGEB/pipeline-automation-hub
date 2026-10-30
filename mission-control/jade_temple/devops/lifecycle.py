@@ -325,7 +325,7 @@ def rf_pulse_plan(steps: list[dict], *, source_sha: str, max_parallel: int = 6,
     ids = [s.get("id") for s in steps]
     if any(not isinstance(i, str) or not i.strip() for i in ids) or len(ids) != len(set(ids)):
         raise ValueError("RF ids must be unique nonempty strings")
-    states, edges = {}, []
+    states, edges, unbound = {}, [], {}
     for s in steps:
         sid = s["id"]
         if s.get("phase") not in RF_PHASE_MATURITY or s.get("crew") not in RF_CREW:
@@ -339,8 +339,9 @@ def rf_pulse_plan(steps: list[dict], *, source_sha: str, max_parallel: int = 6,
             raise ValueError(f"{sid}: bad dependencies")
         edges.extend((dep, sid, "FEEDFORWARD") for dep in deps)
         paths = s.get("touch_paths", [])
-        if (not isinstance(paths, list) or any(not isinstance(p, str) or not p or
-                                               p.startswith("/") or ".." in p.split("/")
+        # Canonical relative paths only: "./x.py", "a//b" or "a\b" would alias and dodge the overlap check.
+        if (not isinstance(paths, list) or any(not isinstance(p, str) or "\\" in p or
+                                               any(part in ("", ".", "..") for part in p.split("/"))
                                                for p in paths)):
             raise ValueError(f"{sid}: bad changed paths")
         if not isinstance(s.get("write_pr", False), bool):
@@ -348,12 +349,19 @@ def rf_pulse_plan(steps: list[dict], *, source_sha: str, max_parallel: int = 6,
         if s.get("write_pr", False) and not paths:
             raise ValueError(f"{sid}: write must name paths")
         states[sid] = s["state"]
+        if s.get("source_sha") != source_sha:
+            unbound[sid] = "STALE_SOURCE_SHA"
+        elif not isinstance(s.get("t0_ref"), str) or not s["t0_ref"].strip():
+            unbound[sid] = "MISSING_T0_RECEIPT"
     topo_layers(ids, edges)  # rejects cycles and missing endpoints, keeps temporal feedback separate
     on, held, off = [], [], []
     clusters, used_paths, writes = {}, set(), 0
     for s in sorted(steps, key=lambda a: (-RF_PHASE_MATURITY[a["phase"]], a["id"])):
         sid, state = s["id"], s["state"]
         if state == "DONE":
+            continue
+        if state == "FAILED" and sid in unbound:  # no repair prescription without its own evidence
+            held.append({"id": sid, "reason": unbound[sid]})
             continue
         if state == "FAILED":
             held.append({"id": sid, "reason": "FIRST_RED_REPAIR"})
@@ -364,11 +372,9 @@ def rf_pulse_plan(steps: list[dict], *, source_sha: str, max_parallel: int = 6,
         reason = None
         if state != "READY":
             reason = "NOT_READY"
-        elif s.get("source_sha") != source_sha:
-            reason = "STALE_SOURCE_SHA"
-        elif not isinstance(s.get("t0_ref"), str) or not s["t0_ref"].strip():
-            reason = "MISSING_T0_RECEIPT"
-        elif any(states[d] != "DONE" for d in s.get("depends_on", [])):
+        elif sid in unbound:
+            reason = unbound[sid]
+        elif any(states[d] != "DONE" or d in unbound for d in s.get("depends_on", [])):
             reason = "DEPENDENCY_NOT_DONE"
         elif len(on) >= max_parallel:
             reason = "PARALLEL_CAP"
