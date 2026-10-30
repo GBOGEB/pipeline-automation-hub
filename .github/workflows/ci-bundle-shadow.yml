@@ -4,6 +4,9 @@ on:
   pull_request:
     paths:
       - 'mission-control/jade_temple/devops/ci_bundle_*'
+      # Direct inventory inputs: path filters are case-sensitive, so the catalog needs its own entry.
+      - 'mission-control/jade_temple/devops/CI_BUNDLE_CATALOG_V1.json'
+      - 'mission-control/jade_temple/devops/workflows.py'
       - 'mission-control/jade_temple/devops/tests/test_ci_bundle_*.py'
       - '.github/workflows/ci-bundle-shadow.yml'
   workflow_dispatch: {}
