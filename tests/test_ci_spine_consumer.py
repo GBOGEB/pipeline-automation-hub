@@ -159,6 +159,7 @@ class Consumer(unittest.TestCase):
         invalid = (" ", "unrelated.txt", ".github/workflows/ ",
                    ".github/workflows/ .yaml", ".github/workflows/a.yml ",
                    ".github/workflows/sub/a.yml", ".github/workflows//a.yml",
+                   ".github/workflows/a\\b.yml", ".github/workflows/a\\\\b.yml",
                    ".github/workflows/../a.yml", ".github/workflows/a.json",
                    ".github\\\\workflows\\\\a.yml")
         for path in invalid:
