@@ -1,0 +1,81 @@
+name: JADE CREW slow-burn disjoint proof lanes
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/jade-crew-slowburn.yml"
+      - "mission-control/gogreen/tests/test_jade_slowburn_workflow.py"
+  schedule:
+    - cron: '13 4 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: jade-slowburn-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  slowburn:
+    if: github.event_name != 'schedule' || github.ref == 'refs/heads/master'
+    name: Disjoint ${{ matrix.lane }} stability proof
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        lane: [crew-control, actions-telemetry, hosted-parity]
+    steps:
+      - name: Exact-head checkout (no credentials persisted)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Pin test-only dependencies
+        run: python -m pip install --disable-pip-version-check coverage==7.13.3 pyyaml==6.0.3
+      - name: Exact SHA and bounded three-pass proof
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          LANE: ${{ matrix.lane }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          mkdir -p slowburn
+          for repeat in 1 2 3; do
+            case "$LANE" in
+              crew-control)
+                python -m coverage run --branch -m unittest discover -s mission-control/gogreen/tests -p test_subtype_orchestrator.py -v
+                python -m unittest discover -s mission-control/gogreen/tests -p test_jade_slowburn_workflow.py -v
+                ;;
+              actions-telemetry)
+                python -m coverage run --branch -m unittest discover -s mission-control/jade_temple/devops/tests -p test_actions_metrics.py -v
+                ;;
+              hosted-parity)
+                python -m coverage run --branch -m unittest discover -s mission-control/jade_temple/tests -p test_hosted_parity.py -v
+                ;;
+              *) echo "UNKNOWN_COHORT" >&2; exit 1 ;;
+            esac
+            python -m coverage json -q -o "slowburn/${LANE}-round-${repeat}.json"
+            echo "PASS lane=$LANE repeat=$repeat head=$EXPECTED_SHA" >> slowburn/repeats.txt
+          done
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          d = {'schema': 'jade.crew.slowburn.v1',
+               'lane': os.environ['LANE'], 'source_sha': os.environ['EXPECTED_SHA'],
+               'repeat_count': 3, 'stable_in_job': True,
+               'coverage_scope': 'LANE_ONLY_NOT_FLEET',
+               'independent_review': False, 'merge_admission': 'HOLD',
+               'authority_transfer': False, 'formal_credit_delta': 0}
+          Path('slowburn/receipt.json').write_text(json.dumps(d, sort_keys=True, indent=2) + '\n', encoding='utf-8', newline='\n')
+          PY
+      - name: Upload exact-head evidence even on red
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: jade-slowburn-${{ matrix.lane }}-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: slowburn/
+          retention-days: 14
+          if-no-files-found: warn

@@ -108,5 +108,60 @@ class SubtypePlannerTests(unittest.TestCase):
         self.assertFalse(ok["merge_authorized"])
         self.assertFalse(ok["dispatch_authorized"])
 
+
+class CrewCapacityNegativeTests(unittest.TestCase):
+    def data(self, packets):
+        return {"schema": MOD.SCHEMA, "cohort": "JADE_N15",
+                "observed_at": "2026-10-26T00:00:00Z", "authority_transfer": False,
+                "max_parallel": 8, "packets": packets}
+
+    def test_parallel_cap_is_bounded(self):
+        data = self.data([packet("A", "one")])
+        data["max_parallel"] = 17
+        with self.assertRaisesRegex(ValueError, "unsafe parallelism"):
+            MOD.plan(data)
+
+    def test_negative_or_boolean_observation_is_not_a_metric(self):
+        for n in (-1, True, "zero"):
+            with self.subTest(value=n):
+                p = packet("A", "one")
+                p["occurrence_count"] = n
+                with self.assertRaises(ValueError):
+                    MOD.plan(self.data([p]))
+
+    def test_cross_sha_proof_is_rejected(self):
+        p = packet("A", "one")
+        p["proof"] = {"source_sha": "b"*40, "run_id": 12, "job_id": 14,
+                      "run_attempt": 1, "conclusion": "PASS"}
+        with self.assertRaisesRegex(ValueError, "proof source mismatch"):
+            MOD.plan(self.data([p]))
+
+    def test_missing_run_identity_is_rejected(self):
+        p = packet("A", "one")
+        p["proof"] = {"source_sha": SHA, "job_id": 14,
+                      "run_attempt": 1, "conclusion": "PASS"}
+        with self.assertRaises(ValueError):
+            MOD.plan(self.data([p]))
+
+    def test_approval_claim_does_not_count_root_closure(self):
+        p = packet("A", "one")
+        p["independent_approval"] = True
+        p["proof"] = {"source_sha": SHA, "run_id": 12, "job_id": 14,
+                      "run_attempt": 1, "conclusion": "PASS"}
+        r = MOD.plan(self.data([p]))
+        self.assertEqual(r["kpi"]["independently_accepted_root_closures"], 0)
+        self.assertFalse(r["merge_authorized"])
+
+    def test_eight_disjoint_packets_schedule_without_claiming_worker_capacity(self):
+        r = MOD.plan(self.data([packet(str(i), f"subtype{i}") for i in range(8)]))
+        self.assertEqual(r["schedule"]["waves_planned"], 1)
+        self.assertEqual(r["schedule"]["packets_planned"], 8)
+        self.assertIsNone(r["kpi"]["real_worker_capacity"])
+        self.assertFalse(r["dispatch_authorized"])
+
+    def test_duplicate_id_denied(self):
+        with self.assertRaisesRegex(ValueError, "packet identity"):
+            MOD.plan(self.data([packet("A", "one"), packet("A", "two")]))
+
 if __name__ == "__main__":
     unittest.main()

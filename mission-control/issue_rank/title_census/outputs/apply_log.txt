@@ -1,0 +1,31 @@
+APPLY ABACUS label create family:ci-ops
+APPLY ABACUS label create family:qps
+APPLY ABACUS label create scope:ci
+APPLY ABACUS label create scope:dashboard
+APPLY ABACUS label create type:ci
+APPLY ABACUS label create type:fix
+APPLY CODEX label create family:ci-ops
+APPLY CODEX label create family:dmaic
+APPLY CODEX label create scope:ci
+APPLY CODEX label create type:fix
+APPLY CODEX label create type:plan
+APPLY cryoplant-project label create family:cryo-eng
+APPLY cryoplant-project label create family:qps
+APPLY cryoplant-project label create scope:offer
+APPLY cryoplant-project label create type:plan
+APPLY document-organization-system label create family:ci-ops
+APPLY document-organization-system label create scope:release
+APPLY document-organization-system label create type:build
+APPLY ABACUS#644 labels+type:fix,family:qps title: 'QPS OCD/ADR bridge: binary parsing feedback and federated roll-up contract' -> 'fix(qps): QPS OCD/ADR bridge: binary parsing feedback and federated roll-up contract'
+APPLY ABACUS#1736 labels+type:ci,family:ci-ops,scope:ci title: 'CI: close dependency-review snapshot gap on PR heads' -> 'ci(ci): close dependency-review snapshot gap on PR heads'
+APPLY ABACUS#1874 labels+type:ci 
+APPLY ABACUS#1885 labels+type:fix,family:ci-ops,scope:dashboard 
+APPLY CODEX#319 labels+type:plan,family:dmaic title: 'DMAIC wave control: PR-to-PR progress, queue recovery and governance repairs' -> 'plan(dmaic): DMAIC wave control: PR-to-PR progress, queue recovery and governance repairs'
+APPLY CODEX#500 labels+type:fix,family:ci-ops,scope:ci title: 'TRIAGE conversion gate: governance green + production zero-delta' -> 'fix(ci): TRIAGE conversion gate: governance green + production zero-delta'
+APPLY cryoplant-project#75 labels+type:plan,family:cryo-eng,scope:offer title: 'RFI-QPS-CC-01: Bind cold-compressor common-cause and shared-dependency evidence' -> 'plan(offer RFI-QPS-CC-01): Bind cold-compressor common-cause and shared-dependency evidence'
+APPLY cryoplant-project#85 labels+type:plan,family:cryo-eng,scope:offer title: 'RFI-QPS-TURB-01: Close turbine position, trip-consequence and recovery evidence' -> 'plan(offer RFI-QPS-TURB-01): Close turbine position, trip-consequence and recovery evidence'
+APPLY cryoplant-project#208 labels+type:plan,family:cryo-eng,scope:offer title: 'RFI-QPS-3D-01: Clarify bidder 3D model, spatial integration and maintenance-access evidence' -> 'plan(offer RFI-QPS-3D-01): Clarify bidder 3D model, spatial integration and maintenance-access evidence'
+APPLY cryoplant-project#211 labels+type:plan,family:cryo-eng,scope:offer title: 'RFI-QPS-WCS-BL-01: Clarify granular WCS battery limits, utilities and interface ownership' -> 'plan(offer RFI-QPS-WCS-BL-01): Clarify granular WCS battery limits, utilities and interface ownership'
+APPLY cryoplant-project#481 labels+type:plan,family:qps title: 'program(qps): tri-repo issue index + PCA/BT burn-down control' -> 'plan(qps): tri-repo issue index + PCA/BT burn-down control'
+APPLY document-organization-system#51 labels+type:build,family:ci-ops,scope:release title: 'release(v0.4.9): publish GitHub Release from existing immutable tag' -> 'build(release v0.4.9): publish GitHub Release from existing immutable tag'
+APPLY: 12 issues, 12 label edits, 10 retitles

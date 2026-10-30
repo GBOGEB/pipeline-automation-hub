@@ -1,0 +1,37 @@
+name: Taxonomy N10 Root Successor Proof
+on:
+  pull_request:
+    paths:
+      - 'mission-control/issue_rank/taxonomy_successor_audit.py'
+      - 'mission-control/issue_rank/test_taxonomy_successor_audit.py'
+      - '.github/workflows/taxonomy-n10-successor.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: taxonomy-n10-successor-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  successor:
+    name: N10 golden-thread negatives (py${{ matrix.python }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11','3.12']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Exact head
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$HEAD"
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: N10 recursive successor and acceptance negative tests
+        working-directory: mission-control/issue_rank
+        run: python -m unittest -v test_taxonomy_successor_audit

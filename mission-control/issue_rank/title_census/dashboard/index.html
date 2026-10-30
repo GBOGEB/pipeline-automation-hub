@@ -1,0 +1,1007 @@
+<style>
+  .tx { display: grid; gap: var(--cds-gap-lg); font-family: var(--font-anthropic-sans); }
+  .tx h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; }
+  .tx h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+  .tx .muted { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .tx .lead { margin: var(--cds-gap-xs) 0 0; max-width: 70ch; }
+  .tx-bar { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
+  .tx-bar label { display: flex; gap: var(--cds-gap-xs); align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .tx-bar select { font: inherit; padding: var(--cds-pad-xs) var(--cds-pad-sm); border-radius: var(--cds-radius); border: 1px solid var(--color-border-line); background: var(--color-panel); color: var(--color-fg); }
+  .tx-seg { display: inline-flex; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); overflow: hidden; }
+  .tx-seg button { font: inherit; font-size: var(--cds-font-size-caption); border: 0; padding: var(--cds-pad-xs) var(--cds-pad-md); background: var(--color-panel); color: var(--color-fg); cursor: pointer; }
+  .tx-seg button[aria-pressed="true"] { background: var(--color-fg); color: var(--color-bg); }
+  .tx-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: var(--cds-gap-md); }
+  .tx-tile, .tx-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+  .tx-tile .v { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; }
+  .tx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); gap: var(--cds-gap-md); }
+  .tx-card > header { display: grid; gap: var(--cds-gap-xs); margin-bottom: var(--cds-gap-md); }
+  .tx-card > header .row { display: flex; justify-content: space-between; gap: var(--cds-gap-sm); flex-wrap: wrap; align-items: center; }
+  .tx-chart { position: relative; min-height: 14rem; }
+  .tx-scroll { max-height: 26rem; overflow: auto; }
+  .tx table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+  .tx th { position: sticky; top: 0; background: var(--color-panel); text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); cursor: pointer; white-space: nowrap; }
+  .tx td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
+  .tx td.num, .tx th.num { text-align: right; }
+  .tx code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.95em; }
+  .tx .up { color: var(--color-warn); } .tx .down { color: var(--color-ok); }
+  .tx .pill { display: inline-block; padding: 0 var(--cds-pad-xs); border-radius: var(--cds-radius); border: 1px solid var(--color-border-line); font-size: var(--cds-font-size-caption); }
+  .tx .pill.explicit { color: var(--color-ok); } .tx .pill.inferred { color: var(--color-warn); }
+  .tx-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; }
+  .tx-search { font: inherit; font-size: var(--cds-font-size-caption); padding: var(--cds-pad-xs) var(--cds-pad-sm); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-bg); color: var(--color-fg); min-width: 0; }
+  .tx-chip { font: inherit; font-size: var(--cds-font-size-caption); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-panel); color: var(--color-fg); padding: var(--cds-pad-xs) var(--cds-pad-sm); cursor: pointer; }
+  .tx-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr)); gap: var(--cds-gap-sm); margin-bottom: var(--cds-gap-md); }
+  .tx-stats > div { display: grid; gap: 2px; }
+  .tx .tx-stats b { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-heading); font-variant-numeric: tabular-nums; }
+  .tx a { color: inherit; text-decoration: underline; text-decoration-color: var(--color-border-line); text-underline-offset: 2px; }
+  .tx a:hover { text-decoration-color: currentColor; }
+  .tx tbody tr.clickable { cursor: pointer; }
+  .tx tbody tr.clickable:hover td { background: color-mix(in srgb, var(--color-fg) 5%, transparent); }
+  .tx-sipoc { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--cds-gap-sm); margin-bottom: var(--cds-gap-md); }
+  .tx-sipoc > div { border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-sm); min-width: 0; display: grid; gap: var(--cds-gap-xs); align-content: start; }
+  .tx-sipoc h3 { margin: 0; font-size: var(--cds-font-size-caption); font-weight: var(--cds-font-weight-medium); }
+  .tx-sipoc span { font-size: var(--cds-font-size-caption); overflow-wrap: anywhere; padding: 2px var(--cds-pad-xs); border-radius: var(--cds-radius); }
+  @media (max-width: 640px) { .tx-sipoc { grid-template-columns: 1fr; } }
+  .tx-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); margin-bottom: var(--cds-gap-sm); }
+  .tx-lg { font: inherit; font-size: var(--cds-font-size-caption); display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-panel); color: var(--color-fg); padding: 2px var(--cds-pad-sm); cursor: pointer; }
+  .tx-lg i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  .tx-lg[aria-pressed="false"] { opacity: .45; text-decoration: line-through; }
+  .tx-lg-reset { color: var(--color-fg-muted); }
+  .tx [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+  .tx [data-dash-source-state=empty] { color: transparent; }
+  .tx .fail { display: flex; align-items: center; justify-content: center; gap: var(--cds-gap-xs); min-height: 6rem; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+  .tx .fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+</style>
+
+<div class="tx">
+  <section id="overview">
+    <h1>GBOGEB title taxonomy</h1>
+    <p class="lead tx-takeaway" data-source="conformance stats">—</p>
+    <p class="muted">Grammar <code>type(scope qualifier): subject</code>, e.g. <code>fix(jade devops N12): census fails closed</code>. Levels: type family › type, family › scope › qualifier; prefix = type(scope).</p>
+  </section>
+
+  <div class="tx-bar">
+    <label>Repository <select id="f-repo" class="tx-repo" data-source="pulse"></select></label>
+    <span class="tx-seg" role="group" aria-label="Kind">
+      <button type="button" data-kind="all">PRs + issues</button>
+      <button type="button" data-kind="pr">PRs</button>
+      <button type="button" data-kind="issue">Issues</button>
+    </span>
+    <label>Sort <select id="f-sort">
+      <option value="n-desc">Most first</option><option value="n-asc">Fewest first</option>
+      <option value="az">Name A → Z</option><option value="za">Name Z → A</option></select></label>
+    <label>Show <select id="f-top">
+      <option value="0">All</option><option value="5">Top 5</option><option value="10">Top 10</option>
+      <option value="20">Top 20</option><option value="50">Top 50</option></select></label>
+    <button type="button" class="tx-chip tx-range" hidden></button>
+    <button type="button" class="tx-chip tx-pick" hidden></button>
+    <span class="muted tx-pulse" data-source="pulse">—</span>
+  </div>
+
+  <article class="tx-card" id="spread">
+    <header><div class="row"><h2>Spread and frequency</h2>
+      <label class="muted">Level <select id="f-dlevel">
+        <option value="family">Family</option><option value="scope">Scope</option><option value="prefix">Prefix type(scope)</option>
+        <option value="family_prefix">Family prefix</option><option value="type">Type</option><option value="qualifier_class">Qualifier class</option></select></label></div>
+      <span class="muted">How titles spread over the keys of one level. Histogram: how many keys have that many titles. Click a bar to keep only that range everywhere; shift-click to extend it; this is how you drop the tail.</span></header>
+    <div class="tx-stats" id="c-lstats">
+      <div><span class="muted">Distinct keys</span><b class="tx-s" data-s="keys" data-source="levelstats" data-field="keys">—</b></div>
+      <div><span class="muted">Titles</span><b class="tx-s" data-s="total" data-source="levelstats" data-field="total">—</b></div>
+      <div><span class="muted">Mean per key</span><b class="tx-s" data-s="mean" data-source="levelstats" data-field="mean">—</b></div>
+      <div><span class="muted">Median per key</span><b class="tx-s" data-s="median" data-source="levelstats" data-field="median">—</b></div>
+      <div><span class="muted">90th percentile</span><b class="tx-s" data-s="p90" data-source="levelstats" data-field="p90">—</b></div>
+      <div><span class="muted">Largest key</span><b class="tx-s" data-s="max" data-source="levelstats" data-field="max">—</b></div>
+      <div><span class="muted">Top-5 share</span><b class="tx-s" data-s="top5_share" data-source="levelstats" data-field="top5_share">—</b></div>
+      <div><span class="muted">Tail share (keys under 5)</span><b class="tx-s" data-s="tail_share" data-source="levelstats" data-field="tail_share">—</b></div>
+      <div><span class="muted">Gini (0 even, 1 one key)</span><b class="tx-s" data-s="gini" data-source="levelstats" data-field="gini">—</b></div>
+    </div>
+    <div class="tx-chart" id="c-hist" data-source="stats" style="min-height:12rem"></div>
+  </article>
+
+  <article class="tx-card" id="map">
+    <header><h2>Family › scope › type map</h2><span class="muted">Width is title count. Click a block to zoom in and list its titles below; click the left column to zoom out.</span></header>
+    <div class="tx-chart" id="c-icicle" data-source="stats keywords" style="min-height:22rem"></div>
+  </article>
+
+  <div class="tx-tiles" id="tiles">
+    <div class="tx-tile"><div class="muted">Titles</div><div class="v tx-k" data-k="n" data-source="conformance" data-field="n">—</div></div>
+    <div class="tx-tile"><div class="muted">Explicit type(scope) prefix</div><div class="v tx-k" data-k="explicit_rate" data-source="conformance" data-field="explicit_rate">—</div></div>
+    <div class="tx-tile"><div class="muted">Lint clean (no warning or error)</div><div class="v tx-k" data-k="clean_rate" data-source="conformance" data-field="clean_rate">—</div></div>
+    <div class="tx-tile"><div class="muted">Resolved to type + family</div><div class="v tx-k" data-k="resolved_rate" data-source="conformance" data-field="resolved_rate">—</div></div>
+  </div>
+
+  <div class="tx-grid">
+    <article class="tx-card" id="families">
+      <header><h2>Families</h2><span class="muted">Count per family (scope cluster). Arrow: last 30 days vs the 30 before.</span></header>
+      <div class="tx-chart" id="c-family" data-source="stats"></div>
+    </article>
+    <article class="tx-card" id="types">
+      <header><h2>Types</h2><span class="muted">Count per type, grouped by type family.</span></header>
+      <div class="tx-chart" id="c-type" data-source="stats typemap"></div>
+    </article>
+  </div>
+
+  <article class="tx-card" id="matrix">
+    <header><h2>Type × family</h2><span class="muted">Each cell is a family prefix such as fix(gogreen). Darker is more.</span></header>
+    <div class="tx-chart" id="c-matrix" data-source="stats" style="overflow-x:auto"></div>
+  </article>
+
+  <div class="tx-grid">
+    <article class="tx-card" id="peers">
+      <header><div class="row"><h2>Peers inside a family</h2><label class="muted">Family <select id="f-family" class="tx-fam" data-source="keywords"></select></label></div>
+        <span class="muted">Scopes at the same level within the chosen family.</span></header>
+      <div class="tx-chart" id="c-peers" data-source="stats keywords"></div>
+    </article>
+    <article class="tx-card" id="trend">
+      <header><h2>Running totals by family</h2><span class="muted">Cumulative titles per month, top 6 families.</span></header>
+      <div class="tx-chart" id="c-trend" data-source="series"></div>
+    </article>
+  </div>
+
+  <article class="tx-card" id="by-repo">
+    <header><h2>Families per repository</h2><span class="muted">Same kind filter; rows are repositories, columns are families.</span></header>
+    <div class="tx-scroll" id="c-repo" data-source="stats"></div>
+  </article>
+
+  <article class="tx-card" id="prefixes">
+    <header><div class="row"><h2>Prefix leaderboard</h2><input id="q-prefix" class="tx-search" type="search" placeholder="Filter, e.g. fix( or gogreen" aria-label="Filter prefixes"></div>
+      <span class="muted">Every type(scope) combination with state, 30-day trend and median days to close.</span></header>
+    <div class="tx-scroll">
+      <table class="tx-t-prefix" data-source="stats" data-row-key="id">
+        <thead><tr><th data-field="key">Prefix</th><th class="num" data-field="n">n</th><th class="num" data-field="share">Share</th><th class="num" data-field="open">Open</th><th class="num" data-field="merged">Merged</th><th class="num" data-field="closed">Closed</th><th class="num" data-field="n_30d">30 d</th><th class="num" data-field="trend_30d">Δ 30 d</th><th class="num" data-field="median_days_to_close">Median days</th><th data-field="last_seen">Last</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="tx-card" id="titles">
+    <header><div class="row"><h2 class="tx-titles-h">Titles</h2><input id="q-titles" class="tx-search" type="search" placeholder="Search titles" aria-label="Search titles"></div>
+      <span class="muted tx-titles-note">Every PR and issue for the chosen repository and kind. Click any bar, cell or prefix above to narrow it. Numbers open GitHub.</span></header>
+    <div class="tx-scroll">
+      <table class="tx-t-titles" data-source="titles" data-row-key="id">
+        <thead><tr><th data-field="number">#</th><th data-field="repo">Repo</th><th data-field="kind">Kind</th><th data-field="state">State</th><th data-field="title">Title</th><th data-field="prefix">Prefix</th><th data-field="confidence">Confidence</th><th data-field="created">Created</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </article>
+
+  <section class="tx-graph-sec" id="crosswalk" style="display:grid;gap:var(--cds-gap-md)">
+    <header><h2>PR ↔ issue crosswalk and dependency graph</h2>
+      <span class="muted">One link per pair, typed by its strongest evidence: closes (GitHub closing references, Closes/Fixes/Resolves in a PR body, or a closing cross-reference), parent (sub-issues), title mentions (#123, Repo#123, PR123), body refs (references in a PR or issue body) and timeline (GitHub cross-reference events). Only links between items in this snapshot. Counts only; ranking metrics stay with issue_rank.</span></header>
+    <article class="tx-card" id="xw">
+      <header><h2>Crosswalk per family</h2><span class="muted">For the chosen repository: PRs and issues per family, how many issues a PR closes, and where the links go. Click a row to graph that family.</span></header>
+      <div class="tx-scroll">
+        <table class="tx-t-xw" data-source="crosswalk" data-row-key="id">
+          <thead><tr><th data-field="family">Family</th><th class="num" data-field="prs">PRs</th><th class="num" data-field="issues">Issues</th><th class="num" data-field="open_issues">Open issues</th><th class="num" data-field="issues_closed_by_pr">Issues with a closing PR</th><th class="num" data-field="link_rate">Issue link rate</th><th class="num" data-field="prs_closing">PRs that close issues</th><th class="num" data-field="edges">Edges</th><th class="num" data-field="internal">Inside family</th><th class="num" data-field="outgoing">To other families</th><th class="num" data-field="incoming">From other families</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </article>
+    <article class="tx-card" id="none-links">
+      <header><div class="row"><h2>(none): can it reuse an existing family?</h2>
+        <label class="muted">Show <select id="f-nstatus"><option value="clear">Clear candidate</option><option value="mixed">Mixed links</option><option value="no family neighbour">No family neighbour</option><option value="">All</option></select></label></div>
+        <span class="muted">Titles whose own text maps to no family, given a candidate from the families of everything they link to (closes and parent count 3, title mentions 2, body refs and timeline 1). Clear = the top family has at least 60% of the weight. A candidate never overwrites the title's own family.</span></header>
+      <div class="tx-stats" id="c-none">
+        <div><span class="muted">(none) titles</span><b class="tx-n" data-n="total" data-source="nonelinks" data-field="total">—</b></div>
+        <div><span class="muted">Clear candidate</span><b class="tx-n" data-n="clear" data-source="nonelinks" data-field="clear">—</b></div>
+        <div><span class="muted">Mixed links</span><b class="tx-n" data-n="mixed" data-source="nonelinks" data-field="mixed">—</b></div>
+        <div><span class="muted">No family neighbour</span><b class="tx-n" data-n="isolated" data-source="nonelinks" data-field="isolated">—</b></div>
+      </div>
+      <div class="tx-scroll">
+        <table class="tx-t-none" data-source="titles" data-row-key="id">
+          <thead><tr><th data-field="number">#</th><th data-field="repo">Repo</th><th data-field="title">Title</th><th data-field="link_family">Candidate family</th><th class="num" data-field="link_share">Vote share</th><th data-field="link_status">Status</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </article>
+    <div class="tx-grid">
+      <article class="tx-card" id="flow">
+        <header><h2>Family to family links</h2><span class="muted">Rows: family of the source (the PR, parent or mentioning title). Columns: family of the target. Diagonal = links inside one family.</span></header>
+        <div class="tx-chart" id="c-flow" data-source="flow" style="overflow-x:auto"></div>
+      </article>
+      <article class="tx-card" id="graph">
+        <header><div class="row"><h2>Dependency graph</h2>
+          <label class="muted">Group <select id="f-gfam" data-source="crosswalk"></select></label></div>
+          <div class="row"><span class="muted">Filled: in the group; faded: linked from outside it. Circle = PR, square = issue. Drag to rearrange; click a node to open it on GitHub.</span>
+          <span class="tx-etypes"><label class="muted"><input type="checkbox" id="e-closes" checked> closes</label> <label class="muted"><input type="checkbox" id="e-parent" checked> parent</label> <label class="muted"><input type="checkbox" id="e-mentions" checked> title mentions</label> <label class="muted"><input type="checkbox" id="e-refs" checked> body refs</label> <label class="muted"><input type="checkbox" id="e-xref"> timeline</label></span></div></header>
+        <div class="tx-chart" id="c-graph" data-source="edges titles" style="min-height:26rem"></div>
+      </article>
+    </div>
+    <article class="tx-card" id="edges">
+      <header><div class="row"><h2 class="tx-edges-h">Links in the group</h2><input id="q-edges" class="tx-search" type="search" placeholder="Search links" aria-label="Search links"></div>
+        <span class="muted tx-edges-note">Every edge with at least one end in the group.</span></header>
+      <div class="tx-scroll">
+        <table class="tx-t-edges" data-source="edges" data-row-key="id">
+          <thead><tr><th data-field="src">From</th><th data-field="type">Link</th><th data-field="evidence">Evidence</th><th data-field="dst">To</th><th data-field="src_family">From family</th><th data-field="dst_family">To family</th><th data-field="cross_repo">Cross-repo</th><th>From title</th><th>To title</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </article>
+  </section>
+
+  <section id="ci" style="display:grid;gap:var(--cds-gap-md)">
+    <header><h2>CI health: EVERRED, red ↔ green, checks, DAG / SIPOC and OIDs</h2>
+      <span class="muted">Three lenses, all on the PAH owners. Default branch: each check's class from the EVERRED red-trace ledger (red_trace.classify(), cicd_dag.everred_metrics()), weighted by the check's test jobs in DevOps census N11. PR head: the checks on each PR's last commit, with always-red policy gates set apart. Combined: GitHub's single combined state per commit, gates included (the strictest and most pessimistic view).</span></header>
+
+    <article class="tx-card" id="ci-scope">
+      <header><h2>Default branch by scope</h2><span class="muted">Workflows traced on each repository's default branch in the EVERRED ledger, with the test cases and test jobs the DevOps census found. These are the owners' own numbers.</span></header>
+      <div class="tx-legend" id="lg-scope"></div>
+      <div class="tx-chart" id="c-ci-scope" data-source="ci_scope" style="min-height:9rem"></div>
+    </article>
+
+    <article class="tx-card" id="ci-family">
+      <header><div class="row"><h2>Families</h2>
+        <label class="muted">Lens <select id="f-cilens"><option value="db">Default branch, per check, test-weighted</option><option value="code">PR head, code checks (gates apart)</option><option value="combined">Combined state incl. gates</option></select></label></div>
+        <span class="muted tx-lens-note"></span></header>
+      <div class="tx-legend" id="lg-family"></div>
+      <div class="tx-chart" id="c-ci-bars" data-source="ci_family" style="min-height:12rem"></div>
+    </article>
+
+    <article class="tx-card" id="ci-rank">
+      <header><h2>Ranking</h2><span class="muted">Score = lower bound of the 95% Wilson interval on the test-weighted pass share of code checks on PR heads. A family with few PRs needs a higher pass share to rank as high, so size no longer hides behind a percentage. Click a row to see its checks.</span></header>
+      <div class="tx-scroll">
+        <table class="tx-t-cif" data-source="ci_family" data-row-key="id">
+          <thead><tr><th class="num" data-field="rank">Rank</th><th data-field="family">Family</th><th class="num" data-field="rank_score">Score</th><th class="num" data-field="weighted_pass">Weighted pass</th><th class="num" data-field="code_prs">PRs</th><th class="num" data-field="code_green">Code green</th><th class="num" data-field="code_red">Code red</th><th class="num" data-field="db_stable_green">Default stable</th><th class="num" data-field="db_everred">Default EVERRED</th><th class="num" data-field="gate_red_prs">PRs red on a gate</th><th class="num" data-field="nodes">Checks</th><th data-field="last_pr">Last PR</th><th data-field="last_pr_ci">Last PR CI</th><th data-field="last_pr_oid">Head OID</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </article>
+
+    <article class="tx-card" id="ci-checks">
+      <header><div class="row"><h2>Checks (nodes) of a family</h2><label class="muted">Family <select id="f-cfam" data-source="ci_family"></select></label></div>
+        <span class="muted">Each check that ran on the family's PR heads: pass and fail counts, its weight (1 + test jobs), whether it is an always-red gate, its default-branch class, and where it sits in the CI/CD DAG (SIPOC, DMAIC, blob OID). Bars: the 25 heaviest checks.</span></header>
+      <div class="tx-legend" id="lg-nodes"></div>
+      <div class="tx-chart" id="c-ci-nodes" data-source="ci_checks" style="min-height:10rem"></div>
+      <div class="tx-sipoc" id="c-sipoc" data-source="ci_checks"></div>
+      <div class="tx-scroll">
+        <table class="tx-t-cic" data-source="ci_checks" data-row-key="id">
+          <thead><tr><th data-field="workflow">Check</th><th data-field="workflow_repo">Repo</th><th class="num" data-field="weight">Weight</th><th class="num" data-field="test_jobs">Test jobs</th><th class="num" data-field="runs">Runs</th><th class="num" data-field="failure">Failed</th><th class="num" data-field="failure_share">Fail share</th><th data-field="gate">Gate</th><th data-field="default_branch_class">Default branch</th><th data-field="sipoc">SIPOC</th><th data-field="dag_nodes">DAG nodes</th><th data-field="dmaic">DMAIC</th><th data-field="blob_oid">Blob OID</th><th data-field="path">File</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </article>
+
+    <div class="tx-grid">
+      <article class="tx-card" id="ci-gates">
+        <header><h2>Always-red gates</h2><span class="muted">Checks that failed on at least 80% of the 20 or more PR heads they ran on. They are set apart in the PR-head lens; the combined lens still counts them.</span></header>
+        <div class="tx-scroll">
+          <table class="tx-t-gates" data-source="ci_gates" data-row-key="id">
+            <thead><tr><th data-field="workflow">Gate</th><th data-field="repo">Repo</th><th class="num" data-field="runs">Runs</th><th class="num" data-field="red_share">Red share</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </article>
+      <article class="tx-card" id="ci-sigs">
+        <header><h2>Activity signatures</h2><span class="muted">PRs in the chosen family that ran exactly the same set of checks on their head commit (at least 2 PRs).</span></header>
+        <div class="tx-scroll">
+          <table class="tx-t-sig" data-source="ci_signatures" data-row-key="id">
+            <thead><tr><th class="num" data-field="prs">PRs</th><th class="num" data-field="n_workflows">Checks</th><th class="num" data-field="red_now">Red now</th><th data-field="classes">Classes</th><th data-field="workflows">Check set</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <article class="tx-card" id="keywords">
+    <header><h2>Keyword inventory</h2><span class="muted">Every canonical scope, its aliases and the spellings seen in explicit prefixes. Italic aliases match only inside type(scope) or a label, never free text.</span></header>
+    <div class="tx-scroll">
+      <table class="tx-t-kw" data-source="keywords" data-row-key="scope">
+        <thead><tr><th data-field="family">Family</th><th data-field="scope">Scope</th><th data-field="aliases">Aliases</th><th data-field="seen">Spellings seen</th><th class="num" data-field="n_explicit">Explicit</th><th data-field="repos">Repos</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </article>
+
+  <div class="tx-grid">
+    <article class="tx-card" id="unmapped">
+      <header><h2>Not in the vocabulary yet</h2><span class="muted">Explicit scopes and types that map to nothing. Add each to a family, or rename the titles.</span></header>
+      <div class="tx-scroll">
+        <table class="tx-t-un" data-source="unmapped" data-row-key="id">
+          <thead><tr><th data-field="what">What</th><th data-field="token">Token</th><th class="num" data-field="n">n</th><th data-field="repos">Repos</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </article>
+    <article class="tx-card" id="lint">
+      <header><h2>Lint findings</h2><span class="muted">Titles hit per rule, all repositories.</span></header>
+      <div class="tx-scroll">
+        <table class="tx-t-lint" data-source="lint" data-row-key="code">
+          <thead><tr><th data-field="code">Code</th><th data-field="severity">Severity</th><th data-field="message">Rule</th><th class="num" data-field="n">Titles</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+
+  <article class="tx-card" id="plan">
+    <header><div class="row"><h2>Issue alignment plan (dry run)</h2><input id="q-plan" class="tx-search" type="search" placeholder="Filter issues" aria-label="Filter plan"></div>
+      <span class="muted">Open issues re-expressed in the PR vocabulary. Nothing has been changed on GitHub. Bot-authored titles keep their title and get labels only.</span></header>
+    <div class="tx-scroll">
+      <table class="tx-t-plan" data-source="plan" data-row-key="id">
+        <thead><tr><th data-field="id">Issue</th><th data-field="confidence">Confidence</th><th data-field="title">Current title</th><th data-field="new_title">Proposed title</th><th data-field="add_labels">Labels to add</th><th data-field="evidence">Evidence</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </article>
+</div>
+
+<script>
+dash.calc('levelstats', {
+  inputs: ['stats'],
+  title: 'Spread per level',
+  description: 'Per repository, kind and level: distinct keys, titles, mean, median, 90th percentile and largest count per key, share of the top 5 keys, share in keys under 5 titles, and the Gini coefficient of counts.',
+  fn: (stats) => {
+    const groups = d3.groups(stats, (s) => `${s.repo}|${s.kind}|${s.level}`);
+    return groups.map(([id, g]) => {
+      const v = g.map((s) => s.n).sort((a, b) => a - b), total = d3.sum(v), k = v.length;
+      const gini = k && total ? (2 * d3.sum(v, (x, i) => (i + 1) * x)) / (k * total) - (k + 1) / k : 0;
+      return { id, keys: k, total, mean: total / k, median: d3.median(v), p90: d3.quantileSorted(v, 0.9), max: v[k - 1],
+        top5_share: d3.sum(v.slice(-5)) / total, tail_share: d3.sum(v.filter((x) => x < 5)) / total, gini };
+    });
+  },
+});
+
+dash.calc('crosswalk', {
+  inputs: ['titles', 'edges'],
+  title: 'PR and issue crosswalk per family',
+  description: 'Per repository (and ALL) and family: PRs, issues, open issues, issues with a closing PR, the share of issues linked that way, PRs that close issues, and edges inside the family, to other families and from other families. An edge counts for a repository when either end is in it.',
+  fn: (titles, edges) => {
+    const out = new Map();
+    const get = (repo, family) => {
+      const id = `${repo}|${family}`;
+      if (!out.has(id)) out.set(id, { id, repo, family, prs: 0, issues: 0, open_issues: 0, issues_closed_by_pr: 0, prs_closing: 0, edges: 0, internal: 0, outgoing: 0, incoming: 0 });
+      return out.get(id);
+    };
+    const closedIssues = new Set(edges.filter((e) => e.type === 'closes').map((e) => e.dst));
+    const closingPrs = new Set(edges.filter((e) => e.type === 'closes').map((e) => e.src));
+    titles.forEach((t) => [t.repo, 'ALL'].forEach((repo) => {
+      const g = get(repo, t.family);
+      if (t.kind === 'pr') { g.prs += 1; if (closingPrs.has(t.id)) g.prs_closing += 1; }
+      else { g.issues += 1; if (t.state === 'open') g.open_issues += 1; if (closedIssues.has(t.id)) g.issues_closed_by_pr += 1; }
+    }));
+    edges.forEach((e) => [...new Set([e.src_repo, e.dst_repo, 'ALL'])].forEach((repo) => {
+      if (e.same_family) { const g = get(repo, e.src_family); g.edges += 1; g.internal += 1; return; }
+      const a = get(repo, e.src_family), b = get(repo, e.dst_family);
+      a.edges += 1; a.outgoing += 1; b.edges += 1; b.incoming += 1;
+    }));
+    return [...out.values()].map((g) => ({ ...g, link_rate: g.issues ? g.issues_closed_by_pr / g.issues : null }));
+  },
+});
+
+dash.calc('nonelinks', {
+  inputs: ['titles'],
+  title: '(none) titles by link candidate',
+  description: 'Per repository and ALL: titles with no family of their own, split by whether their links give a clear candidate family, a mixed one, or none.',
+  fn: (titles) => {
+    const out = new Map();
+    titles.filter((t) => t.family === '?').forEach((t) => [t.repo, 'ALL'].forEach((repo) => {
+      if (!out.has(repo)) out.set(repo, { id: repo, total: 0, clear: 0, mixed: 0, isolated: 0 });
+      const g = out.get(repo); g.total += 1;
+      if (t.link_status === 'clear') g.clear += 1; else if (t.link_status === 'mixed') g.mixed += 1; else g.isolated += 1;
+    }));
+    return [...out.values()];
+  },
+});
+
+dash.calc('flow', {
+  inputs: ['edges'],
+  title: 'Family to family link counts',
+  description: 'Edges counted by source family and target family, per repository (an edge counts where either end lives) and ALL, split by link type.',
+  fn: (edges) => {
+    const out = new Map();
+    edges.forEach((e) => [...new Set([e.src_repo, e.dst_repo, 'ALL'])].forEach((repo) => {
+      const id = `${repo}|${e.src_family}|${e.dst_family}`;
+      if (!out.has(id)) out.set(id, { id, repo, src_family: e.src_family, dst_family: e.dst_family, n: 0, closes: 0, parent: 0, mentions: 0, refs: 0, xref: 0 });
+      const f = out.get(id); f.n += 1; f[e.type] += 1;
+    }));
+    return [...out.values()];
+  },
+});
+</script>
+
+<script>
+(() => {
+  const fmt = d3.format(','), pct = d3.format('.1%');
+  const gh = (r) => `https://github.com/GBOGEB/${r.repo}/${r.kind === 'pr' ? 'pull' : 'issues'}/${r.number}`;
+  const kindLabel = { all: 'PRs and issues', pr: 'PRs', issue: 'issues' };
+  const P = () => ({ repo: dash.params().repo || 'ALL', kind: dash.params().kind || 'all' });
+  const ok = (id) => dash.data(id).status === 'ok';
+  const rows = (id) => (ok(id) ? dash.data(id).data : []);
+  const num = (v) => (v === '' || v == null ? null : Number(v));
+  const fail = (el, id) => { el.replaceChildren(); if (dash.data(id).status === 'error') { const d = document.createElement('div'); d.className = 'fail'; d.textContent = 'Failed to load'; el.append(d); } };
+
+  // filters
+  const repoSel = document.getElementById('f-repo');
+  repoSel.addEventListener('change', () => dash.setParams({ repo: repoSel.value }));
+  document.querySelectorAll('.tx-seg button').forEach((b) => b.addEventListener('click', () => dash.setParams({ kind: b.dataset.kind })));
+  const famSel = document.getElementById('f-family');
+  famSel.addEventListener('change', () => dash.setParams({ family: famSel.value }));
+  ['q-prefix', 'q-plan', 'q-titles'].forEach((id) => document.getElementById(id).addEventListener('input', () => window.__txDraw && window.__txDraw()));
+  const sortSel = document.getElementById('f-sort'), topSel = document.getElementById('f-top'), dlevelSel = document.getElementById('f-dlevel');
+  sortSel.addEventListener('change', () => dash.setParams({ sort: sortSel.value }));
+  topSel.addEventListener('change', () => dash.setParams({ top: Number(topSel.value) }));
+  dlevelSel.addEventListener('change', () => dash.setParams({ dlevel: dlevelSel.value, nmin: null, nmax: null }));
+  const rangeChip = document.querySelector('.tx-range'), pickChip = document.querySelector('.tx-pick');
+  rangeChip.addEventListener('click', () => dash.setParams({ nmin: null, nmax: null }));
+  pickChip.addEventListener('click', () => dash.setParams({ plevel: null, pkey: null }));
+  const pick = (level, key, scroll = true) => { dash.setParams({ plevel: level, pkey: key }); if (scroll) document.getElementById('titles').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+
+  // shared ordering for every ranked list: count range (histogram), sort, top-N
+  const order = (list, level) => {
+    const p = dash.params(), dl = p.dlevel || 'family';
+    let out = list.slice();
+    if (level === dl && p.nmin != null) out = out.filter((s) => s.n >= p.nmin && (p.nmax == null || s.n <= p.nmax));
+    const sort = p.sort || 'n-desc';
+    out.sort(sort === 'n-asc' ? (a, b) => a.n - b.n : sort === 'az' ? (a, b) => d3.ascending(a.key, b.key) : sort === 'za' ? (a, b) => d3.descending(a.key, b.key) : (a, b) => b.n - a.n);
+    const top = Number(p.top || 0);
+    return top ? out.slice(0, top) : out;
+  };
+
+  const tip = document.createElement('div'); tip.className = 'tx-tip'; tip.hidden = true;
+  const showTip = (box, ev, lines) => { if (tip.parentNode !== box) box.append(tip); tip.replaceChildren(...lines.map((l, i) => { const d = document.createElement('div'); d.textContent = l; if (i === 0) d.style.color = 'var(--cds-text-secondary)'; return d; })); tip.hidden = false; const r = box.getBoundingClientRect(); let x = ev.clientX - r.left + 12; if (x + tip.offsetWidth > r.width) x = ev.clientX - r.left - tip.offsetWidth - 12; tip.style.left = Math.max(0, x) + 'px'; tip.style.top = (ev.clientY - r.top + 12) + 'px'; };
+  const hideTip = () => { tip.hidden = true; };
+
+  function hbars(el, data, opts) {
+    el.replaceChildren();
+    if (!data.length) return;
+    const W = el.clientWidth || 400, bh = 22, gap = 6;
+    const svg = d3.select(el).append('svg').attr('width', '100%');
+    const probe = svg.append('text').attr('font-size', 12).style('font-family', 'var(--font-anthropic-sans)');
+    let lw = 0; data.forEach((d) => { probe.text(d.label); lw = Math.max(lw, probe.node().getComputedTextLength()); });
+    probe.remove();
+    lw = Math.min(lw + 10, W * 0.45);
+    const rw = 92, H = data.length * (bh + gap);
+    svg.attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
+    const x = d3.scaleLinear([0, d3.max(data, (d) => d.n) || 1], [0, Math.max(10, W - lw - rw)]);
+    const g = svg.selectAll('g').data(data).join('g').attr('transform', (d, i) => `translate(0,${i * (bh + gap)})`);
+    g.append('text').attr('x', lw - 8).attr('y', bh / 2).attr('dy', '0.35em').attr('text-anchor', 'end').attr('font-size', 12).attr('fill', 'var(--color-fg)').text((d) => d.label);
+    g.append('rect').attr('x', lw).attr('height', bh).attr('rx', 4).attr('width', (d) => Math.max(2, x(d.n))).attr('fill', (d) => d.color || dash.colors[0])
+      .on('mousemove', (ev, d) => showTip(el, ev, d.tip)).on('mouseleave', hideTip)
+      .style('cursor', opts && opts.onClick ? 'pointer' : null).on('click', (ev, d) => opts && opts.onClick && opts.onClick(d));
+    g.append('text').attr('x', (d) => lw + Math.max(2, x(d.n)) + 6).attr('y', bh / 2).attr('dy', '0.35em').attr('font-size', 12).attr('fill', 'var(--color-fg-muted)')
+      .text((d) => fmt(d.n) + (d.trend ? (d.trend > 0 ? ' ▲' : ' ▼') + Math.abs(d.trend) : ''));
+  }
+
+  function table(tbody, data, cols, key) {
+    tbody.replaceChildren(...data.map((r) => {
+      const tr = document.createElement('tr'); tr.dataset.key = r[key];
+      cols.forEach((c) => { const td = document.createElement('td'); if (c.num) td.className = 'num'; const v = c.f ? c.f(r) : r[c.k]; if (c.link) { const a = document.createElement('a'); a.href = c.link(r); a.target = '_blank'; a.rel = 'noopener'; a.textContent = v; td.append(a); } else if (c.code) { const code = document.createElement('code'); code.textContent = v; td.append(code); } else if (c.pill) { const s = document.createElement('span'); s.className = 'pill ' + v; s.textContent = v; td.append(s); } else td.textContent = v == null ? '' : v; tr.append(td); });
+      return tr;
+    }));
+  }
+  // sortable headers
+  document.querySelectorAll('.tx table').forEach((t) => t.querySelectorAll('th').forEach((th, i) => th.addEventListener('click', () => {
+    const tb = t.tBodies[0], dir = th.getAttribute('aria-sort') === 'descending' ? 1 : -1;
+    t.querySelectorAll('th').forEach((h) => h.removeAttribute('aria-sort'));
+    th.setAttribute('aria-sort', dir === 1 ? 'ascending' : 'descending');
+    const val = (tr) => { const s = tr.children[i].textContent.replace(/,/g, ''); const n = parseFloat(s); return isNaN(n) || th.className !== 'num' ? s : n; };
+    [...tb.rows].sort((a, b) => (val(a) > val(b) ? dir : val(a) < val(b) ? -dir : 0)).forEach((r) => tb.append(r));
+  })));
+
+  function draw() {
+    const { repo, kind } = P();
+    document.querySelectorAll('.tx-seg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.kind === kind)));
+
+    // pulse + repo options
+    const pulse = rows('pulse');
+    if (ok('pulse')) {
+      const opts = [new Option('All repositories', 'ALL')].concat(pulse.slice().sort((a, b) => (num(b.prs) + num(b.issues)) - (num(a.prs) + num(a.issues))).map((r) => new Option(`${r.repo} (${fmt(num(r.prs) + num(r.issues))})`, r.repo)));
+      repoSel.replaceChildren(...opts); repoSel.value = repo;
+      const one = pulse.find((r) => r.repo === repo);
+      document.querySelector('.tx-pulse').textContent = one ? `${repo} @ ${String(one.head_sha).slice(0, 10)} · pulse ${String(one.fetched_at).slice(0, 16).replace('T', ' ')} UTC` : `${pulse.length} repositories · pulse ${String(pulse[0] && pulse[0].fetched_at).slice(0, 16).replace('T', ' ')} UTC`;
+    }
+
+    // tiles
+    const conf = rows('conformance').find((c) => c.id === `${repo}|${kind}|ALL`);
+    document.querySelectorAll('.tx-k').forEach((el) => {
+      el.dataset.where = `id=${encodeURIComponent(`${repo}|${kind}|ALL`)}`;
+      el.textContent = conf ? (el.dataset.k === 'n' ? fmt(num(conf.n)) : pct(num(conf[el.dataset.k]))) : '—';
+    });
+
+    const st = rows('stats').filter((s) => s.repo === repo && s.kind === kind);
+    const lvl = (l) => st.filter((s) => s.level === l).sort((a, b) => num(b.n) - num(a.n));
+
+    // takeaway
+    const fams = lvl('family').filter((s) => s.key !== '?');
+    const unres = lvl('family').find((s) => s.key === '?');
+    const tk = document.querySelector('.tx-takeaway');
+    if (conf && fams.length) {
+      tk.textContent = `${fmt(num(conf.n))} ${kindLabel[kind]} in ${repo === 'ALL' ? 'all repositories' : repo}: ${pct(num(conf.explicit_rate))} carry an explicit type(scope) prefix. Largest family is ${fams[0].key} (${pct(num(fams[0].share))}); ${unres ? fmt(num(unres.n)) : 0} titles still map to no family.`;
+    } else tk.textContent = '—';
+
+    // families
+    const cf = document.getElementById('c-family');
+    if (!ok('stats')) fail(cf, 'stats'); else hbars(cf, order(lvl('family'), 'family').map((s) => ({ label: s.key === '?' ? '(none)' : s.key, n: num(s.n), trend: num(s.trend_30d), color: s.key === '?' ? 'var(--cds-chart-muted)' : dash.colors[0], tip: [s.key, `${fmt(num(s.n))} titles · ${pct(num(s.share))}`, `last 30 d ${num(s.n_30d)}, prior 30 d ${num(s.n_prev_30d)}`, 'click to list titles'], key: s.key })), { onClick: (d) => { if (d.key !== '?') dash.setParams({ family: d.key }); pick('family', d.key); } });
+
+    // types coloured by type family
+    const ct = document.getElementById('c-type');
+    const tfOrder = lvl('type_family').map((s) => s.key);
+    const typeFam = {}; (rows('typemap')).forEach((t) => { typeFam[t.type] = t.family; });
+    if (!ok('stats')) fail(ct, 'stats'); else hbars(ct, order(lvl('type'), 'type').map((s) => ({ key: s.key, label: s.key === '?' ? '(none)' : s.key, n: num(s.n), trend: num(s.trend_30d), color: s.key === '?' ? 'var(--cds-chart-muted)' : dash.colors[Math.max(0, tfOrder.indexOf(typeFam[s.key] || '?')) % 8], tip: [`${s.key} · ${typeFam[s.key] || 'unresolved'}`, `${fmt(num(s.n))} titles · ${pct(num(s.share))}`, `median ${s.median_days_to_close ?? '–'} days to close`] })), { onClick: (d) => pick('type', d.key) });
+
+    // matrix
+    const cm = document.getElementById('c-matrix');
+    if (!ok('stats')) fail(cm, 'stats'); else {
+      cm.replaceChildren();
+      const cells = lvl('family_prefix').map((s) => { const m = /^([^(]*)\((.*)\)$/.exec(s.key); return { t: m[1], f: m[2], n: num(s.n) }; });
+      const types = order(lvl('type'), 'type').map((s) => s.key), famsK = order(lvl('family'), 'family').map((s) => s.key);
+      const cw = 52, ch = 24, left = 130, top = 28;
+      const W = left + types.length * cw, H = top + famsK.length * ch;
+      const svg = d3.select(cm).append('svg').attr('width', Math.max(W, 10)).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
+      const max = d3.max(cells, (c) => c.n) || 1;
+      const col = d3.scaleSqrt([0, max], [0.06, 1]);
+      svg.selectAll('text.c').data(types).join('text').attr('x', (d, i) => left + i * cw + cw / 2).attr('y', 16).attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text((d) => (d === '?' ? '(none)' : d));
+      svg.selectAll('text.r').data(famsK).join('text').attr('x', left - 8).attr('y', (d, i) => top + i * ch + ch / 2).attr('dy', '0.35em').attr('text-anchor', 'end').attr('font-size', 11).attr('fill', 'var(--color-fg)').text((d) => (d === '?' ? '(none)' : d));
+      const g = svg.append('g');
+      cells.forEach((c) => {
+        const i = types.indexOf(c.t), j = famsK.indexOf(c.f); if (i < 0 || j < 0) return;
+        g.append('rect').attr('x', left + i * cw + 1).attr('y', top + j * ch + 1).attr('width', cw - 2).attr('height', ch - 2).attr('rx', 3).attr('fill', dash.colors[0]).attr('fill-opacity', col(c.n))
+          .style('cursor', 'pointer').on('click', () => pick('family_prefix', `${c.t}(${c.f})`))
+          .on('mousemove', (ev) => showTip(cm, ev, [`${c.t}(${c.f})`, `${fmt(c.n)} titles`, 'click to list titles'])).on('mouseleave', hideTip);
+        g.append('text').attr('x', left + i * cw + cw / 2).attr('y', top + j * ch + ch / 2).attr('dy', '0.35em').attr('text-anchor', 'middle').attr('font-size', 10).attr('pointer-events', 'none').attr('fill', col(c.n) > 0.55 ? 'var(--color-bg)' : 'var(--color-fg)').text(fmt(c.n));
+      });
+    }
+
+    // peers in a family
+    const kw = rows('keywords');
+    const famList = [...new Set(kw.map((k) => k.family))];
+    const fam = dash.params().family || famList[0];
+    if (ok('keywords')) { famSel.replaceChildren(...famList.map((f) => new Option(f, f))); famSel.value = fam; }
+    const cp = document.getElementById('c-peers');
+    if (!ok('stats') || !ok('keywords')) fail(cp, ok('stats') ? 'keywords' : 'stats'); else {
+      const members = new Set(kw.filter((k) => k.family === fam).map((k) => k.scope));
+      hbars(cp, order(lvl('scope').filter((s) => members.has(s.key)), 'scope').map((s) => ({ key: s.key, label: s.key, n: num(s.n), trend: num(s.trend_30d), tip: [`${fam} › ${s.key}`, `${fmt(num(s.n))} titles · open ${num(s.open)} · merged ${num(s.merged)}`, `first ${s.first_seen}, last ${s.last_seen}`] })), { onClick: (d) => pick('scope', d.key) });
+      if (!cp.childNodes.length) { const d = document.createElement('div'); d.className = 'muted'; d.textContent = `No ${kindLabel[kind]} in ${fam} for this repository.`; cp.append(d); }
+    }
+
+    // running totals
+    const cr = document.getElementById('c-trend');
+    if (!ok('series')) fail(cr, 'series'); else {
+      cr.replaceChildren();
+      const top6 = fams.slice(0, 6).map((s) => s.key);
+      const ser = rows('series').filter((s) => s.repo === repo && s.kind === kind && s.level === 'family' && top6.includes(s.key));
+      const months = [...new Set(ser.map((s) => s.month))].sort();
+      if (months.length) {
+        const W = cr.clientWidth || 400, H = 240, m = { l: 44, r: 96, t: 8, b: 24 };
+        const parse = d3.utcParse('%Y-%m');
+        const x = d3.scaleUtc(d3.extent(months, parse), [m.l, W - m.r]);
+        const lines = top6.map((f) => { let last = 0; const pts = months.map((mo) => { const r = ser.find((s) => s.key === f && s.month === mo); if (r) last = num(r.cum_n); return { d: parse(mo), v: last, mo }; }); return { f, pts }; });
+        const y = d3.scaleLinear([0, d3.max(lines, (l) => d3.max(l.pts, (p) => p.v)) || 1], [H - m.b, m.t]).nice();
+        const svg = d3.select(cr).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
+        svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).ticks(Math.max(2, Math.floor(W / 110))).tickFormat(d3.utcFormat('%b %y'))).attr('font-size', null).attr('font-family', null).call((g) => g.selectAll('text').attr('fill', 'var(--color-fg-muted)')).call((g) => g.selectAll('line,path').attr('stroke', 'var(--cds-chart-axis)'));
+        svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d3.format('~s'))).attr('font-size', null).attr('font-family', null).call((g) => g.select('.domain').remove()).call((g) => g.selectAll('text').attr('fill', 'var(--color-fg-muted)')).call((g) => g.selectAll('line').attr('x2', W - m.l - m.r).attr('stroke', 'var(--cds-chart-grid)'));
+        const line = d3.line().x((p) => x(p.d)).y((p) => y(p.v));
+        let lastY = [];
+        lines.forEach((l, i) => {
+          svg.append('path').attr('d', line(l.pts)).attr('fill', 'none').attr('stroke', dash.colors[i]).attr('stroke-width', 2).attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round');
+          const end = l.pts[l.pts.length - 1]; let ly = y(end.v); while (lastY.some((v) => Math.abs(v - ly) < 13)) ly -= 13; lastY.push(ly);
+          svg.append('text').attr('x', W - m.r + 6).attr('y', ly).attr('dy', '0.35em').attr('font-size', 11).attr('fill', dash.colors[i]).text(`${l.f} ${fmt(end.v)}`);
+        });
+        svg.append('rect').attr('x', m.l).attr('y', m.t).attr('width', W - m.l - m.r).attr('height', H - m.t - m.b).attr('fill', 'transparent')
+          .on('mousemove', (ev) => { const [px] = d3.pointer(ev); const d = x.invert(px); const mo = d3.utcFormat('%Y-%m')(d); const idx = months.findIndex((q) => q >= mo); const k = idx < 0 ? months.length - 1 : idx; showTip(cr, ev, [d3.utcFormat('%B %Y')(parse(months[k]))].concat(lines.map((l) => `${l.f}: ${fmt(l.pts[k].v)}`))); })
+          .on('mouseleave', hideTip);
+      }
+    }
+
+    // families per repo (matrix table)
+    const crp = document.getElementById('c-repo');
+    if (!ok('stats')) fail(crp, 'stats'); else {
+      const all = rows('stats').filter((s) => s.kind === kind && s.level === 'family' && s.repo !== 'ALL');
+      const famCols = order(rows('stats').filter((s) => s.repo === 'ALL' && s.kind === kind && s.level === 'family'), 'family').map((s) => s.key);
+      const repos = d3.rollups(all, (v) => d3.sum(v, (s) => num(s.n)), (s) => s.repo).sort((a, b) => b[1] - a[1]);
+      const t = document.createElement('table');
+      const hr = document.createElement('tr'); ['Repository', 'Total'].concat(famCols.map((f) => (f === '?' ? '(none)' : f))).forEach((h, i) => { const th = document.createElement('th'); th.textContent = h; if (i) th.className = 'num'; hr.append(th); });
+      const th = document.createElement('thead'); th.append(hr); t.append(th);
+      const tb = document.createElement('tbody');
+      const max = d3.max(all, (s) => num(s.n)) || 1;
+      repos.forEach(([r, tot]) => {
+        const tr = document.createElement('tr'); if (r === repo) tr.style.fontWeight = 'var(--cds-font-weight-medium)';
+        const td0 = document.createElement('td'); td0.textContent = r; tr.append(td0);
+        const td1 = document.createElement('td'); td1.className = 'num'; td1.textContent = fmt(tot); tr.append(td1);
+        famCols.forEach((f) => { const s = all.find((x) => x.repo === r && x.key === f); const td = document.createElement('td'); td.className = 'num'; if (s) { td.textContent = fmt(num(s.n)); td.style.background = `color-mix(in srgb, ${dash.colors[0]} ${Math.round(8 + 60 * Math.sqrt(num(s.n) / max))}%, transparent)`; } tr.append(td); });
+        tr.style.cursor = 'pointer'; tr.addEventListener('click', () => dash.setParams({ repo: r }));
+        tb.append(tr);
+      });
+      t.append(tb); crp.replaceChildren(t);
+    }
+
+    // prefix leaderboard
+    const q = document.getElementById('q-prefix').value.trim().toLowerCase();
+    const prefTb = document.querySelector('.tx-t-prefix tbody');
+    table(prefTb, order(lvl('prefix'), 'prefix').filter((s) => !q || s.key.toLowerCase().includes(q)), [
+      { k: 'key', code: true }, { f: (r) => fmt(num(r.n)), num: true }, { f: (r) => pct(num(r.share)), num: true }, { k: 'open', num: true }, { k: 'merged', num: true }, { k: 'closed', num: true }, { k: 'n_30d', num: true }, { f: (r) => (num(r.trend_30d) > 0 ? '+' : '') + r.trend_30d, num: true }, { f: (r) => (r.median_days_to_close === '' ? '–' : r.median_days_to_close), num: true }, { k: 'last_seen' }], 'id');
+
+    [...prefTb.rows].forEach((tr) => { tr.className = 'clickable'; tr.addEventListener('click', () => pick('prefix', tr.dataset.key.split('|').pop())); });
+
+    // keywords
+    table(document.querySelector('.tx-t-kw tbody'), kw, [{ k: 'family' }, { k: 'scope', code: true }, { k: 'aliases' }, { k: 'seen' }, { k: 'n_explicit', num: true }, { k: 'repos' }], 'scope');
+    table(document.querySelector('.tx-t-un tbody'), rows('unmapped'), [{ k: 'what' }, { k: 'token', code: true }, { k: 'n', num: true }, { k: 'repos' }], 'id');
+    table(document.querySelector('.tx-t-lint tbody'), rows('lint'), [{ k: 'code' }, { k: 'severity' }, { k: 'message' }, { k: 'n', num: true }], 'code');
+
+    // plan
+    const qp = document.getElementById('q-plan').value.trim().toLowerCase();
+    table(document.querySelector('.tx-t-plan tbody'), rows('plan').filter((p) => (repo === 'ALL' || p.repo === repo) && (!qp || (p.title + ' ' + p.new_title).toLowerCase().includes(qp))), [
+      { k: 'id', link: (r) => `https://github.com/GBOGEB/${r.repo}/issues/${r.number}` }, { k: 'confidence', pill: true }, { k: 'title' }, { f: (r) => r.new_title || '(keep)', code: true }, { k: 'add_labels' }, { k: 'evidence' }], 'id');
+
+    drawExtras(repo, kind, lvl, kw);
+    drawCrosswalk(repo);
+    drawCI(repo);
+  }
+
+  // ---- CI health ----
+  const cfamSel = document.getElementById('f-cfam'), lensSel = document.getElementById('f-cilens');
+  cfamSel.addEventListener('change', () => dash.setParams({ cfam: cfamSel.value }));
+  lensSel.addEventListener('change', () => dash.setParams({ cilens: lensSel.value }));
+  const commitUrl = (repo, oid) => `https://github.com/GBOGEB/${repo}/commit/${oid}`;
+  const rate = (v) => (v == null || v === '' ? '–' : pct(v));
+  const fam = (f) => (f === '?' ? '(none)' : f);
+  const CLS = {
+    stable: ['Stable green', 'var(--color-ok)'], r2g: ['Red→green', dash.colors[0]], flaky: ['Flaky', 'var(--color-warn)'],
+    g2r: ['Green→red', dash.colors[4]], everred: ['EVERRED', 'var(--color-bad)'],
+    green: ['Code checks green', 'var(--color-ok)'], red: ['Code checks red', 'var(--color-bad)'],
+    pass: ['Passed', 'var(--color-ok)'], fail: ['Failed', 'var(--color-bad)'],
+  };
+  const hidden = { scope: new Set(), family: new Set(), nodes: new Set() };   // per chart: classes switched off in the legend
+
+  // legend: tick a class off and the rest close up to the left; leave one ticked for a single-class view
+  function legend(el, chart, keys) {
+    el.replaceChildren(...keys.map((k) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'tx-lg';
+      b.setAttribute('aria-pressed', String(!hidden[chart].has(k)));
+      const sw = document.createElement('i'); sw.style.background = CLS[k][1];
+      b.append(sw, document.createTextNode(CLS[k][0]));
+      b.addEventListener('click', () => { hidden[chart].has(k) ? hidden[chart].delete(k) : hidden[chart].add(k); drawCI(P().repo); });
+      return b;
+    }), (() => {
+      const r = document.createElement('button'); r.type = 'button'; r.className = 'tx-lg tx-lg-reset'; r.textContent = 'Show all';
+      r.hidden = !hidden[chart].size; r.addEventListener('click', () => { hidden[chart].clear(); drawCI(P().repo); }); return r;
+    })());
+  }
+
+  // stacked bars over the visible classes; one visible class = a ranked single-class bar chart
+  function stack(el, rows, keys, chart, opts) {
+    el.replaceChildren();
+    const vis = keys.filter((k) => !hidden[chart].has(k));
+    if (!rows.length || !vis.length) { const d = document.createElement('div'); d.className = 'muted'; d.textContent = vis.length ? 'No rows.' : 'Every class is switched off: tick one in the legend.'; el.append(d); return; }
+    const total = (r) => d3.sum(keys, (k) => r.v[k] || 0);
+    const shown = (r) => d3.sum(vis, (k) => r.v[k] || 0);
+    let data = rows.filter((r) => total(r) > 0);
+    const single = vis.length === 1;
+    if (single) data = data.slice().sort((a, b) => (b.v[vis[0]] || 0) / total(b) - (a.v[vis[0]] || 0) / total(a));
+    const W = el.clientWidth || 600, bh = 18, gap = 6;
+    const svg = d3.select(el).append('svg').attr('width', '100%');
+    const probe = svg.append('text').attr('font-size', 11);
+    let left = 0; data.forEach((r) => { probe.text(r.label); left = Math.max(left, probe.node().getComputedTextLength()); }); probe.remove();
+    left = Math.min(left + 10, W * 0.4); const right = 64, H = data.length * (bh + gap);
+    svg.attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
+    // shares are of the whole row (all classes), so switching a class off leaves the others' sizes honest
+    const max = single ? d3.max(data, (r) => (r.v[vis[0]] || 0) / total(r)) || 1 : d3.max(data, (r) => shown(r) / total(r)) || 1;
+    const x = d3.scaleLinear([0, max], [left, W - right]);
+    data.forEach((r, j) => {
+      const y = j * (bh + gap); let acc = 0;
+      svg.append('text').attr('x', left - 6).attr('y', y + bh / 2).attr('dy', '0.35em').attr('text-anchor', 'end').attr('font-size', 11).attr('fill', 'var(--color-fg)').text(r.label);
+      vis.forEach((k) => {
+        const share = (r.v[k] || 0) / total(r); if (!share) return;
+        svg.append('rect').attr('x', x(acc)).attr('y', y).attr('width', Math.max(1, x(acc + share) - x(acc))).attr('height', bh).attr('fill', CLS[k][1])
+          .on('mousemove', (ev) => showTip(el, ev, [r.label, `${CLS[k][0]}: ${pct(share)}${r.unit ? ` of ${fmt(Math.round(total(r)))} ${r.unit}` : ''}`].concat(r.tip || []))).on('mouseleave', hideTip)
+          .style('cursor', opts && opts.onClick ? 'pointer' : null).on('click', () => opts && opts.onClick && opts.onClick(r));
+        acc += share;
+      });
+      svg.append('text').attr('x', x(acc) + 5).attr('y', y + bh / 2).attr('dy', '0.35em').attr('font-size', 10).attr('fill', 'var(--color-fg-muted)')
+        .text(single || vis.length < keys.length ? pct(acc) : (r.note || ''));
+    });
+  }
+
+  const LENS = {
+    db: { keys: ['stable', 'r2g', 'flaky', 'g2r', 'everred'], note: 'Every check the family\'s PRs ran, weighted by 1 + its test jobs, coloured by its class on the default branch in the EVERRED ledger. Checks outside the five traced repositories are left out.',
+      v: (r) => ({ stable: r.db_stable_green, r2g: r.db_red_to_green, flaky: r.db_flaky, g2r: r.db_green_to_red, everred: r.db_everred }), unit: '', sort: (a, b) => (b.db_stable_green || 0) - (a.db_stable_green || 0) },
+    code: { keys: ['green', 'red'], note: 'Each PR\'s last commit: green when every non-gate check passed. Always-red gates are set apart (see the list below). The ranking table weights each check by its test jobs.',
+      v: (r) => ({ green: r.code_green, red: r.code_red }), unit: 'PRs', sort: (a, b) => (b.rank_score || 0) - (a.rank_score || 0) },
+    combined: { keys: ['stable', 'r2g', 'flaky', 'g2r', 'everred'], note: 'GitHub\'s combined state over each PR\'s last 10 commits, classified with red_trace.classify(). Any one red check, gates included, makes a commit red, so this is the most pessimistic view.',
+      v: (r) => ({ stable: r.stable_green, r2g: r.red_to_green, flaky: r.flaky, g2r: r.green_to_red, everred: r.everred }), unit: 'PRs', sort: (a, b) => b.prs_with_ci - a.prs_with_ci },
+  };
+
+  function drawCI(repo) {
+    const cf = rows('ci_family').filter((r) => r.repo === repo);
+    const cfam = dash.params().cfam && cf.some((r) => r.family === dash.params().cfam) ? dash.params().cfam : (cf[0] && cf.slice().sort((a, b) => b.prs - a.prs)[0].family);
+    const lens = LENS[dash.params().cilens] ? dash.params().cilens : 'db';
+    lensSel.value = lens;
+    if (ok('ci_family')) { cfamSel.replaceChildren(...cf.slice().sort((a, b) => b.prs - a.prs).map((r) => new Option(fam(r.family), r.family))); if (cfam) cfamSel.value = cfam; }
+
+    // scopes (owner statistics)
+    const sc = rows('ci_scope');
+    legend(document.getElementById('lg-scope'), 'scope', LENS.db.keys);
+    if (!ok('ci_scope')) fail(document.getElementById('c-ci-scope'), 'ci_scope');
+    else stack(document.getElementById('c-ci-scope'), sc.map((r) => ({ label: r.scope.replace('GBOGEB/', ''), unit: 'workflows',
+      v: { stable: r.stable_green, r2g: r.red_to_green, flaky: r.flaky, g2r: r.green_to_red, everred: r.everred },
+      tip: [`recovery ${rate(r.recovery_rate)} · EVERRED ratio ${rate(r.everred_ratio)}`, `${fmt(r.test_cases || 0)} test cases · ${fmt(r.test_jobs || 0)} test jobs`],
+      note: `${fmt(r.workflows_traced)} wf · ${fmt(r.test_cases || 0)} tests` })), LENS.db.keys, 'scope');
+
+    // families under the chosen lens
+    const L = LENS[lens];
+    document.querySelector('.tx-lens-note').textContent = L.note;
+    legend(document.getElementById('lg-family'), 'family', L.keys);
+    if (!ok('ci_family')) fail(document.getElementById('c-ci-bars'), 'ci_family');
+    else stack(document.getElementById('c-ci-bars'), cf.slice().sort(L.sort).map((r) => ({ label: fam(r.family), family: r.family, v: L.v(r), unit: L.unit,
+      tip: [`rank ${r.rank || '–'} · score ${r.rank_score == null ? '–' : r.rank_score.toFixed(2)} · weighted pass ${rate(r.weighted_pass)}`],
+      note: lens === 'code' ? `#${r.rank || '–'}` : '' })), L.keys, 'family', { onClick: (r) => dash.setParams({ cfam: r.family }) });
+
+    // ranking table
+    const rk = cf.slice().sort((a, b) => (a.rank || 999) - (b.rank || 999));
+    table(document.querySelector('.tx-t-cif tbody'), rk, [
+      { f: (r) => r.rank || '–', num: true }, { f: (r) => fam(r.family) }, { f: (r) => (r.rank_score == null ? '–' : r.rank_score.toFixed(3)), num: true },
+      { f: (r) => rate(r.weighted_pass), num: true }, { k: 'code_prs', num: true }, { k: 'code_green', num: true }, { k: 'code_red', num: true },
+      { f: (r) => rate(r.db_stable_green), num: true }, { f: (r) => rate(r.db_everred), num: true }, { k: 'gate_red_prs', num: true }, { k: 'nodes', num: true },
+      { f: (r) => `${r.last_pr_repo}#${r.last_pr} (${r.last_pr_state})`, link: (r) => `https://github.com/GBOGEB/${r.last_pr_repo}/pull/${r.last_pr}` },
+      { f: (r) => r.last_pr_ci || '–' }, { f: (r) => (r.last_pr_oid || '').slice(0, 10), link: (r) => commitUrl(r.last_pr_repo, r.last_pr_oid) }], 'id');
+    [...document.querySelectorAll('.tx-t-cif tbody tr')].forEach((tr) => { tr.className = 'clickable'; tr.addEventListener('click', (ev) => { if (ev.target.closest('a')) return; dash.setParams({ cfam: tr.dataset.key.split('|')[1] }); document.getElementById('ci-checks').scrollIntoView({ behavior: 'smooth', block: 'start' }); }); });
+
+    // checks (nodes) of the chosen family
+    const cc = rows('ci_checks').filter((r) => r.repo === repo && r.family === cfam);
+    legend(document.getElementById('lg-nodes'), 'nodes', ['pass', 'fail']);
+    const heavy = cc.filter((r) => r.path && r.path.startsWith('.github')).sort((a, b) => b.weight * b.runs - a.weight * a.runs).slice(0, 25);
+    if (!ok('ci_checks')) fail(document.getElementById('c-ci-nodes'), 'ci_checks');
+    else stack(document.getElementById('c-ci-nodes'), heavy.map((r) => ({ label: `${r.gate ? '⛔ ' : ''}${r.workflow || r.path}`, unit: 'runs',
+      v: { pass: r.success, fail: r.failure }, tip: [`${r.workflow_repo} · weight ${r.weight} (${r.test_jobs} test jobs)${r.gate ? ' · always-red gate' : ''}`, `default branch: ${r.default_branch_class}${r.sipoc ? ` · SIPOC ${r.sipoc}` : ''}`],
+      note: `w${r.weight}` })), ['pass', 'fail'], 'nodes');
+    table(document.querySelector('.tx-t-cic tbody'), cc.slice().sort((a, b) => b.weight * b.runs - a.weight * a.runs).slice(0, 400), [
+      { f: (r) => r.workflow || r.path }, { k: 'workflow_repo' }, { k: 'weight', num: true }, { k: 'test_jobs', num: true }, { k: 'runs', num: true }, { k: 'failure', num: true },
+      { f: (r) => rate(r.failure_share), num: true }, { f: (r) => (r.gate ? 'gate' : '') }, { k: 'default_branch_class' }, { k: 'sipoc' }, { k: 'dag_nodes' }, { k: 'dmaic' },
+      { f: (r) => (r.blob_oid || r.oid || '').slice(0, 10) },
+      { f: (r) => r.path, link: (r) => (r.path && r.path.startsWith('.github') ? `https://github.com/GBOGEB/${r.workflow_repo}/blob/HEAD/${r.path}` : '#') }], 'id');
+
+    // SIPOC strip
+    const sp = document.getElementById('c-sipoc');
+    if (!ok('ci_checks')) fail(sp, 'ci_checks'); else {
+      const names = { S: 'Suppliers', I: 'Inputs', P: 'Process', O: 'Outputs', C: 'Customers' };
+      const mapped = cc.filter((r) => r.sipoc);
+      sp.replaceChildren(...['S', 'I', 'P', 'O', 'C'].map((k) => {
+        const col = document.createElement('div'); const h = document.createElement('h3');
+        const items = mapped.filter((r) => r.sipoc.split(' ').includes(k));
+        h.textContent = `${k} · ${names[k]} (${items.length})`; col.append(h);
+        items.slice(0, 12).forEach((r) => { const s = document.createElement('span'); s.textContent = `${r.workflow || r.path} · ${fmt(r.runs)} runs, ${rate(r.failure_share)} failed`; s.style.background = `color-mix(in srgb, var(--color-bad) ${Math.round(100 * (r.failure_share || 0) * 0.5)}%, transparent)`; col.append(s); });
+        return col;
+      }));
+      if (!mapped.length) { const d = document.createElement('div'); d.className = 'muted'; d.style.gridColumn = '1 / -1'; d.textContent = `None of the ${fmt(cc.length)} checks this family ran is bound to a node in the CI/CD DAG (the DAG covers pipeline-automation-hub, cryoplant-project, DOCX_RTM_Automation, gg_MATH and yaml-grammar).`; sp.append(d); }
+    }
+
+    table(document.querySelector('.tx-t-gates tbody'), rows('ci_gates').filter((g) => repo === 'ALL' || g.repo === repo).sort((a, b) => b.runs - a.runs), [
+      { f: (r) => r.workflow || r.path }, { k: 'repo' }, { k: 'runs', num: true }, { f: (r) => pct(r.red_share), num: true }], 'id');
+    table(document.querySelector('.tx-t-sig tbody'), rows('ci_signatures').filter((r) => r.repo === repo && r.family === cfam).sort((a, b) => b.prs - a.prs).slice(0, 200), [
+      { k: 'prs', num: true }, { k: 'n_workflows', num: true }, { k: 'red_now', num: true }, { k: 'classes' }, { k: 'workflows' }], 'id');
+  }
+  // ---- crosswalk, flow matrix, dependency graph, edge list ----
+  const gfamSel = document.getElementById('f-gfam');
+  gfamSel.addEventListener('change', () => dash.setParams({ gfam: gfamSel.value }));
+  ['e-closes', 'e-parent', 'e-mentions', 'e-refs', 'e-xref', 'q-edges', 'f-nstatus'].forEach((id) => document.getElementById(id).addEventListener('input', () => drawCrosswalk(P().repo)));
+  let sim = null;
+
+  function drawCrosswalk(repo) {
+    const xw = rows('crosswalk').filter((r) => r.repo === repo).sort((a, b) => (b.edges - a.edges) || (b.prs + b.issues - a.prs - a.issues));
+    const gfam = dash.params().gfam || (xw[0] && xw[0].family) || '*';
+    if (ok('crosswalk')) {
+      gfamSel.replaceChildren(new Option('All families (most linked)', '*'), ...xw.filter((r) => r.edges).map((r) => new Option(`${r.family === '?' ? '(none)' : r.family} · ${fmt(r.edges)} links`, r.family)));
+      gfamSel.value = gfam;
+    }
+    const xtb = document.querySelector('.tx-t-xw tbody');
+    table(xtb, xw, [{ f: (r) => (r.family === '?' ? '(none)' : r.family) }, { k: 'prs', num: true }, { k: 'issues', num: true }, { k: 'open_issues', num: true },
+      { k: 'issues_closed_by_pr', num: true }, { f: (r) => (r.link_rate == null ? '–' : pct(r.link_rate)), num: true }, { k: 'prs_closing', num: true },
+      { k: 'edges', num: true }, { k: 'internal', num: true }, { k: 'outgoing', num: true }, { k: 'incoming', num: true }], 'id');
+    [...xtb.rows].forEach((tr) => { tr.className = 'clickable'; if (tr.dataset.key.split('|')[1] === gfam) tr.style.fontWeight = 'var(--cds-font-weight-medium)'; tr.addEventListener('click', () => { dash.setParams({ gfam: tr.dataset.key.split('|')[1] }); document.getElementById('graph').scrollIntoView({ behavior: 'smooth', block: 'start' }); }); });
+
+    // (none) post-assignment candidates
+    const nl = rows('nonelinks').find((r) => r.id === repo);
+    document.querySelectorAll('.tx-n').forEach((el) => { el.dataset.where = `id=${encodeURIComponent(repo)}`; el.textContent = nl ? fmt(nl[el.dataset.n]) : '—'; });
+    const nst = document.getElementById('f-nstatus').value;
+    table(document.querySelector('.tx-t-none tbody'), rows('titles').filter((t) => t.family === '?' && (repo === 'ALL' || t.repo === repo) && (!nst || t.link_status === nst))
+      .sort((a, b) => (b.link_share || 0) - (a.link_share || 0)).slice(0, 500), [
+      { f: (t) => `#${t.number}`, link: gh }, { k: 'repo' }, { k: 'title', link: gh }, { f: (t) => t.link_family || '–' },
+      { f: (t) => (t.link_share == null ? '–' : pct(t.link_share)), num: true }, { k: 'link_status' }], 'id');
+
+    // flow matrix
+    const cf = document.getElementById('c-flow');
+    if (!ok('flow')) fail(cf, 'flow'); else {
+      cf.replaceChildren();
+      const fl = rows('flow').filter((f) => f.repo === repo);
+      const tot = new Map(); fl.forEach((f) => { tot.set(f.src_family, (tot.get(f.src_family) || 0) + f.n); tot.set(f.dst_family, (tot.get(f.dst_family) || 0) + f.n); });
+      const fams = [...tot.keys()].sort((a, b) => tot.get(b) - tot.get(a)).slice(0, 18);
+      if (fams.length) {
+        const cw = 34, ch = 22, left = 128, top = 96, W = left + fams.length * cw + 90, H = top + fams.length * ch;   // +90: rotated labels of the last columns
+        const svg = d3.select(cf).append('svg').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
+        const max = d3.max(fl, (f) => f.n) || 1, op = d3.scaleSqrt([0, max], [0.08, 1]);
+        const name = (f) => (f === '?' ? '(none)' : f);
+        svg.selectAll('text.c').data(fams).join('text').attr('transform', (d, i) => `translate(${left + i * cw + cw / 2},${top - 6}) rotate(-50)`).attr('font-size', 10).attr('fill', 'var(--color-fg-muted)').text(name);
+        svg.selectAll('text.r').data(fams).join('text').attr('x', left - 6).attr('y', (d, i) => top + i * ch + ch / 2).attr('dy', '0.35em').attr('text-anchor', 'end').attr('font-size', 11).attr('fill', 'var(--color-fg)').text(name);
+        fl.forEach((f) => {
+          const i = fams.indexOf(f.dst_family), j = fams.indexOf(f.src_family); if (i < 0 || j < 0) return;
+          svg.append('rect').attr('x', left + i * cw + 1).attr('y', top + j * ch + 1).attr('width', cw - 2).attr('height', ch - 2).attr('rx', 3)
+            .attr('fill', i === j ? dash.colors[1] : dash.colors[0]).attr('fill-opacity', op(f.n)).style('cursor', 'pointer')
+            .on('mousemove', (ev) => showTip(cf, ev, [`${name(f.src_family)} → ${name(f.dst_family)}`, `${fmt(f.n)} links: ${f.closes} closes, ${f.parent} parent, ${f.mentions} title, ${f.refs} body, ${f.xref} timeline`, 'click to graph the source family']))
+            .on('mouseleave', hideTip).on('click', () => dash.setParams({ gfam: f.src_family }));
+          svg.append('text').attr('x', left + i * cw + cw / 2).attr('y', top + j * ch + ch / 2).attr('dy', '0.35em').attr('text-anchor', 'middle').attr('font-size', 10).attr('pointer-events', 'none')
+            .attr('fill', op(f.n) > 0.6 ? 'var(--color-bg)' : 'var(--color-fg)').text(fmt(f.n));
+        });
+      } else { const d = document.createElement('div'); d.className = 'muted'; d.textContent = 'No links for this repository.'; cf.append(d); }
+    }
+
+    // graph
+    const cg = document.getElementById('c-graph');
+    if (!ok('edges') || !ok('titles')) { fail(cg, ok('edges') ? 'titles' : 'edges'); return; }
+    const types = new Set(['closes', 'parent', 'mentions', 'refs', 'xref'].filter((t) => document.getElementById('e-' + t).checked));
+    const node = new Map(rows('titles').map((t) => [t.id, t]));
+    const inRepo = (e) => repo === 'ALL' || e.src_repo === repo || e.dst_repo === repo;
+    const inGroup = (id) => gfam === '*' || (node.get(id) && node.get(id).family === gfam);
+    let es = rows('edges').filter((e) => types.has(e.type) && inRepo(e) && (inGroup(e.src) || inGroup(e.dst)));
+    const deg = new Map(); es.forEach((e) => { deg.set(e.src, (deg.get(e.src) || 0) + 1); deg.set(e.dst, (deg.get(e.dst) || 0) + 1); });
+    const CAP = 320;
+    let ids = [...deg.keys()];
+    const capped = ids.length > CAP;
+    if (capped) { ids = ids.sort((a, b) => deg.get(b) - deg.get(a)).slice(0, CAP); const keep = new Set(ids); es = es.filter((e) => keep.has(e.src) && keep.has(e.dst)); }
+    const nodes = ids.map((id) => ({ id, t: node.get(id), deg: deg.get(id), inside: inGroup(id) }));
+    const links = es.map((e) => ({ source: e.src, target: e.dst, type: e.type }));
+
+    // edge list
+    const qe = document.getElementById('q-edges').value.trim().toLowerCase();
+    const label = (id) => { const t = node.get(id); return t ? `${t.repo}#${t.number}` : id; };
+    const ghE = (id) => { const t = node.get(id); return t ? gh(t) : '#'; };
+    const ttl = (id) => (node.get(id) ? node.get(id).title : '');
+    const list = es.filter((e) => !qe || (ttl(e.src) + ' ' + ttl(e.dst) + ' ' + e.src + ' ' + e.dst).toLowerCase().includes(qe));
+    document.querySelector('.tx-edges-h').textContent = gfam === '*' ? 'Links (most linked items)' : `Links touching ${gfam === '?' ? '(none)' : gfam}`;
+    document.querySelector('.tx-edges-note').textContent = `${fmt(list.length)} links${capped ? `; graph and list limited to the ${CAP} most linked items` : ''}. Item numbers open GitHub.`;
+    table(document.querySelector('.tx-t-edges tbody'), list.slice(0, 600), [
+      { f: (e) => label(e.src), link: (e) => ghE(e.src) }, { k: 'type' }, { k: 'evidence' }, { f: (e) => label(e.dst), link: (e) => ghE(e.dst) },
+      { f: (e) => (e.src_family === '?' ? '(none)' : e.src_family) }, { f: (e) => (e.dst_family === '?' ? '(none)' : e.dst_family) },
+      { f: (e) => (e.cross_repo ? 'yes' : '') }, { f: (e) => ttl(e.src) }, { f: (e) => ttl(e.dst) }], 'id');
+
+    if (sim) sim.stop();
+    cg.replaceChildren();
+    if (!nodes.length) { const d = document.createElement('div'); d.className = 'muted'; d.textContent = 'No links of the chosen types for this group.'; cg.append(d); return; }
+    const W = cg.clientWidth || 600, H = 460;
+    const svg = d3.select(cg).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
+    const ecol = { closes: dash.colors[0], parent: dash.colors[2], mentions: dash.colors[3], refs: 'var(--cds-chart-muted)', xref: 'var(--cds-chart-muted)' };
+    const link = svg.append('g').selectAll('line').data(links).join('line').attr('stroke', (d) => ecol[d.type]).attr('stroke-width', (d) => (d.type === 'closes' || d.type === 'parent' ? 1.6 : 1)).attr('stroke-opacity', 0.7)
+      .attr('stroke-dasharray', (d) => (d.type === 'xref' ? '2 3' : d.type === 'refs' ? '5 3' : null));
+    const r = (d) => 4 + Math.sqrt(d.deg) * 2.2;
+    const g = svg.append('g').selectAll('a').data(nodes).join('a').attr('href', (d) => (d.t ? gh(d.t) : null)).attr('target', '_blank').attr('rel', 'noopener');
+    g.append('path').attr('d', (d) => d3.symbol(d.t && d.t.kind === 'pr' ? d3.symbolCircle : d3.symbolSquare, Math.PI * r(d) * r(d))())
+      .attr('fill', (d) => (d.t && d.t.kind === 'pr' ? dash.colors[0] : dash.colors[1])).attr('fill-opacity', (d) => (d.inside ? 0.95 : 0.3))
+      .attr('stroke', 'var(--color-bg)').attr('stroke-width', 1);
+    g.on('mousemove', (ev, d) => showTip(cg, ev, [d.t ? `${d.t.repo}#${d.t.number} · ${d.t.kind} · ${d.t.state}` : d.id, d.t ? d.t.title.slice(0, 90) : '', d.t ? `${d.t.prefix} · ${d.deg} links${d.inside ? '' : ' · outside the group'}` : ''])).on('mouseleave', hideTip);
+    const big = nodes.filter((d) => d.deg >= 3).length <= 25;
+    g.filter((d) => d.deg >= 3 && big).append('text').attr('x', (d) => r(d) + 3).attr('dy', '0.35em').attr('font-size', 10).attr('fill', 'var(--color-fg-muted)').attr('pointer-events', 'none').text((d) => (d.t ? `#${d.t.number}` : ''));
+    sim = d3.forceSimulation(nodes).force('link', d3.forceLink(links).id((d) => d.id).distance(40).strength(0.6))
+      .force('charge', d3.forceManyBody().strength(-60)).force('center', d3.forceCenter(W / 2, H / 2)).force('collide', d3.forceCollide().radius((d) => r(d) + 2))
+      .force('x', d3.forceX(W / 2).strength(0.05)).force('y', d3.forceY(H / 2).strength(0.08));
+    const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+    sim.on('tick', () => {
+      nodes.forEach((d) => { d.x = clamp(d.x, 10, W - 10); d.y = clamp(d.y, 10, H - 10); });
+      link.attr('x1', (d) => d.source.x).attr('y1', (d) => d.source.y).attr('x2', (d) => d.target.x).attr('y2', (d) => d.target.y);
+      g.attr('transform', (d) => `translate(${d.x},${d.y})`);
+    });
+    g.call(d3.drag().clickDistance(4)
+      .on('start', (ev, d) => { if (!ev.active) sim.alphaTarget(0.2).restart(); d.fx = d.x; d.fy = d.y; })
+      .on('drag', (ev, d) => { d.fx = ev.x; d.fy = ev.y; })
+      .on('end', (ev, d) => { if (!ev.active) sim.alphaTarget(0); d.fx = null; d.fy = null; }));
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { sim.stop(); for (let i = 0; i < 200; i++) sim.tick(); sim.on('tick')(); }
+  }
+
+  // controls state, spread stats, histogram, icicle map, titles drill-down
+  function drawExtras(repo, kind, lvl, kw) {
+    const p = dash.params(), dl = p.dlevel || 'family';
+    sortSel.value = p.sort || 'n-desc'; topSel.value = String(p.top || 0); dlevelSel.value = dl;
+    rangeChip.hidden = p.nmin == null;
+    rangeChip.textContent = p.nmin == null ? '' : `${dl}: ${p.nmin}${p.nmax == null ? '+' : p.nmax === p.nmin ? '' : '–' + p.nmax} titles per key ×`;
+    pickChip.hidden = !p.pkey;
+    pickChip.textContent = p.pkey ? `${p.plevel} = ${p.pkey} ×` : '';
+
+    // spread stats
+    const lsId = `${repo}|${kind}|${dl}`;
+    const ls = rows('levelstats').find((r) => r.id === lsId);
+    const f2 = d3.format(',.1f');
+    document.querySelectorAll('.tx-s').forEach((el) => {
+      el.dataset.where = `id=${encodeURIComponent(lsId)}`;
+      const k = el.dataset.s, v = ls ? ls[k] : null;
+      el.textContent = v == null ? '—' : /share|gini/.test(k) ? (k === 'gini' ? d3.format('.2f')(v) : pct(v)) : /mean|median|p90/.test(k) ? f2(v) : fmt(v);
+    });
+
+    // histogram: number of keys per count bin (log-ish bins), click to keep a range
+    const ch = document.getElementById('c-hist');
+    if (!ok('stats')) fail(ch, 'stats'); else {
+      ch.replaceChildren();
+      const vals = lvl(dl).map((s) => s.n);
+      const edges = [1, 2, 3, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000];
+      const bins = [];
+      for (let i = 0; i < edges.length - 1; i++) {
+        const lo = edges[i], hi = edges[i + 1] - 1, ks = vals.filter((v) => v >= lo && v <= hi);
+        if (lo <= (d3.max(vals) || 0)) bins.push({ lo, hi, keys: ks.length, titles: d3.sum(ks), label: lo === hi ? `${lo}` : `${lo}–${hi}` });
+      }
+      if (bins.length) {
+        const W = ch.clientWidth || 400, H = 200, m = { l: 40, r: 8, t: 18, b: 34 };
+        const x = d3.scaleBand(bins.map((b) => b.label), [m.l, W - m.r]).padding(0.18);
+        const y = d3.scaleLinear([0, d3.max(bins, (b) => b.keys) || 1], [H - m.b, m.t]).nice();
+        const svg = d3.select(ch).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
+        svg.append('g').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d3.format('~s'))).attr('font-size', null).attr('font-family', null).call((g) => g.select('.domain').remove()).call((g) => g.selectAll('text').attr('fill', 'var(--color-fg-muted)')).call((g) => g.selectAll('line').attr('x2', W - m.l - m.r).attr('stroke', 'var(--cds-chart-grid)'));
+        svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickSizeOuter(0)).attr('font-size', null).attr('font-family', null).call((g) => g.selectAll('text').attr('fill', 'var(--color-fg-muted)')).call((g) => g.selectAll('line,path').attr('stroke', 'var(--cds-chart-axis)'));
+        svg.append('text').attr('x', W - m.r).attr('y', H - 4).attr('text-anchor', 'end').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text('titles per key');
+        svg.append('text').attr('x', m.l).attr('y', 10).attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text('keys');
+        const inRange = (b) => p.nmin == null || (b.lo >= p.nmin && (p.nmax == null || b.hi <= p.nmax));
+        svg.selectAll('rect.b').data(bins).join('rect').attr('class', 'b').attr('x', (b) => x(b.label)).attr('width', x.bandwidth())
+          .attr('y', (b) => y(b.keys)).attr('height', (b) => Math.max(0, y(0) - y(b.keys))).attr('rx', 4)
+          .attr('fill', (b) => (inRange(b) ? dash.colors[0] : 'var(--cds-chart-muted)')).style('cursor', 'pointer')
+          .on('mousemove', (ev, b) => showTip(ch, ev, [`${b.label} titles per key`, `${fmt(b.keys)} keys hold ${fmt(b.titles)} titles`, 'click: keep this range · shift-click: extend']))
+          .on('mouseleave', hideTip)
+          .on('click', (ev, b) => {
+            if (ev.shiftKey && p.nmin != null) dash.setParams({ nmin: Math.min(p.nmin, b.lo), nmax: Math.max(p.nmax ?? b.hi, b.hi) });
+            else if (p.nmin === b.lo && p.nmax === b.hi) dash.setParams({ nmin: null, nmax: null });
+            else dash.setParams({ nmin: b.lo, nmax: b.hi });
+          });
+        svg.selectAll('text.v').data(bins).join('text').attr('class', 'v').attr('x', (b) => x(b.label) + x.bandwidth() / 2).attr('y', (b) => y(b.keys) - 4).attr('text-anchor', 'middle').attr('font-size', 10).attr('fill', 'var(--color-fg-muted)').attr('pointer-events', 'none').text((b) => (b.keys ? fmt(b.keys) : ''));
+      }
+    }
+
+    // icicle: family > scope > type, zoomable
+    const ci = document.getElementById('c-icicle');
+    if (!ok('stats') || !ok('keywords')) fail(ci, ok('stats') ? 'keywords' : 'stats'); else {
+      ci.replaceChildren();
+      const famOf = {}; kw.forEach((k) => { famOf[k.scope] = k.family; });
+      const kids = d3.groups(lvl('prefix').map((s) => { const m = /^([^(]*)\((.*)\)$/.exec(s.key); return { t: m[1], sc: m[2], n: s.n }; }),
+        (d) => famOf[d.sc] || (d.sc.startsWith('~') ? 'unmapped' : '(none)'), (d) => d.sc);
+      const data = { name: 'all', children: kids.map(([f, scs]) => ({ name: f, level: 'family', children: scs.map(([sc, ts]) => ({ name: sc, level: 'scope', children: ts.map((t) => ({ name: t.t, level: 'prefix', key: `${t.t}(${t.sc})`, value: t.n })) })) })) };
+      const root = d3.partition().size([1, 1])(d3.hierarchy(data).sum((d) => d.value || 0).sort((a, b) => b.value - a.value));
+      const W = ci.clientWidth || 400, H = 340;
+      const svg = d3.select(ci).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
+      let focus = root;
+      const nodes = root.descendants().filter((d) => d.depth > 0);
+      const famIdx = new Map(root.children ? root.children.map((c, i) => [c.data.name, i]) : []);
+      const colorOf = (d) => { let a = d; while (a.depth > 1) a = a.parent; return dash.colors[(famIdx.get(a.data.name) || 0) % 8]; };
+      const cell = svg.selectAll('g').data(nodes).join('g');
+      const rect = cell.append('rect').attr('rx', 3).attr('fill', colorOf).attr('fill-opacity', (d) => 1 - (d.depth - 1) * 0.28).style('cursor', 'pointer');
+      const label = cell.append('text').attr('font-size', 11).attr('dy', '0.35em').attr('pointer-events', 'none').attr('fill', 'var(--color-bg)');
+      const base = () => (focus === root ? 1 : focus.depth);   // left column: the zoomed block itself
+      const layout = () => {
+        const x0 = focus.x0, x1 = focus.x1, b = base();
+        const cols = 3, cw = W / cols;
+        cell.attr('display', (d) => (d.depth >= b && d.depth < b + cols && d.x1 > x0 && d.x0 < x1 ? null : 'none'));
+        const pos = (d) => ({ x: (d.depth - b) * cw, y: ((Math.max(d.x0, x0) - x0) / (x1 - x0)) * H, h: ((Math.min(d.x1, x1) - Math.max(d.x0, x0)) / (x1 - x0)) * H });
+        rect.each(function (d) { const q = pos(d); d3.select(this).attr('x', q.x + 1).attr('y', q.y + 0.5).attr('width', cw - 2).attr('height', Math.max(0, q.h - 1)); });
+        label.each(function (d) { const q = pos(d); d3.select(this).attr('x', q.x + 6).attr('y', q.y + q.h / 2).text(q.h > 13 ? `${d.data.name} ${fmt(d.value)}` : ''); });
+      };
+      rect.on('mousemove', (ev, d) => showTip(ci, ev, [d.ancestors().reverse().slice(1).map((a) => a.data.name).join(' › '), `${fmt(d.value)} titles · ${pct(d.value / root.value)}`, d.children ? 'click to zoom and list titles' : 'click to list titles']))
+        .on('mouseleave', hideTip)
+        .on('click', (ev, d) => {
+          const zoomOut = focus !== root && d === focus;
+          if (zoomOut) focus = focus.parent || root; else if (d.children) focus = d;
+          layout();
+          if (zoomOut) { if (focus === root) dash.setParams({ plevel: null, pkey: null }); else pick(focus.data.level, focus.data.name, false); }
+          else pick(d.data.level, d.data.level === 'prefix' ? d.data.key : d.data.name, !d.children);
+        });
+      layout();
+    }
+
+    // titles drill-down with GitHub links
+    const tq = document.getElementById('q-titles').value.trim().toLowerCase();
+    const typeFam = {}; rows('typemap').forEach((t) => { typeFam[t.type] = t.family; });
+    const match = (r) => {
+      if (!p.pkey) return true;
+      switch (p.plevel) {
+        case 'family': return r.family === p.pkey;
+        case 'scope': return r.scope === p.pkey;
+        case 'type': return r.type === p.pkey;
+        case 'prefix': return r.prefix === p.pkey;
+        case 'family_prefix': return `${r.type}(${r.family})` === p.pkey;
+        case 'type_family': return typeFam[r.type] === p.pkey;
+        default: return true;
+      }
+    };
+    const all = rows('titles').filter((r) => (repo === 'ALL' || r.repo === repo) && (kind === 'all' || r.kind === kind) && match(r) && (!tq || r.title.toLowerCase().includes(tq)))
+      .sort((a, b) => d3.descending(a.created, b.created));
+    const cap = 500, shown = all.slice(0, cap);
+    document.querySelector('.tx-titles-h').textContent = p.pkey ? `Titles in ${p.pkey}` : 'Titles';
+    document.querySelector('.tx-titles-note').textContent = `${fmt(all.length)} ${kindLabel[kind]}${all.length > cap ? `, newest ${cap} shown (search to narrow)` : ''}. Numbers open GitHub. Click any bar, cell, block or prefix above to narrow the list.`;
+    table(document.querySelector('.tx-t-titles tbody'), shown, [
+      { f: (r) => `#${r.number}`, link: gh }, { k: 'repo' }, { k: 'kind' }, { k: 'state' }, { k: 'title', link: gh }, { k: 'prefix', code: true }, { k: 'confidence', pill: true }, { k: 'created' }], 'id');
+  }
+  window.__txDraw = draw;
+  dash.onData(draw);
+})();
+</script>

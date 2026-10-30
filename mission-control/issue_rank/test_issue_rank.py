@@ -1,11 +1,14 @@
 """Contract tests for issue_rank on synthetic snapshots (no network, no private data)."""
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import issue_rank as ir  # noqa: E402
@@ -88,13 +91,17 @@ class Refs(unittest.TestCase):
 
     def test_forms_and_foreign_owner(self):
         got = self.refs("see #5, GBOGEB/ABACUS#7, https://github.com/GBOGEB/CODEX/pull/9 and other/x#1")
-        self.assertEqual(got, [(HUB, 5, "MENTION"), ("GBOGEB/ABACUS", 7, "MENTION"),
-                               ("GBOGEB/CODEX", 9, "MENTION")])
+        self.assertEqual(sorted(got), [("GBOGEB/ABACUS", 7, "MENTION"), ("GBOGEB/CODEX", 9, "MENTION"),
+                                       (HUB, 5, "MENTION")])
+        with self.assertRaises(ValueError):  # triway reads GBOGEB references only
+            ir.extract_refs("#1", "other/x", owner="other")
 
     def test_typed_keywords(self):
         self.assertEqual(self.refs("Blocked by #3")[0][2], "DEPENDS_ON")
         self.assertEqual(self.refs("This blocks #4")[0][2], "BLOCKS")
-        self.assertEqual(self.refs("Closes #5")[0][2], "CLOSES")
+        self.assertEqual(self.refs("Closes #5")[0][2], "MENTION")  # a closing claim needs a PR body
+        self.assertEqual(ir.extract_refs("Closes #5", HUB, pr=True)[0]["kind"], "CLOSES")
+        self.assertEqual(self.refs("Superseded by #8"), [(HUB, 8, "SUPERSEDED_BY")])
         self.assertEqual(self.refs("Parent: #6")[0][2], "PARENT")
         self.assertEqual(self.refs("Supersedes #7")[0][2], "SUPERSEDES")
 
@@ -111,6 +118,17 @@ class Refs(unittest.TestCase):
         r = ir.extract_refs("- [x] #11 done\n- [ ] #12 open", HUB)
         self.assertEqual([(x["number"], x["kind"], x["ticked"]) for x in r], [(11, "CHILD", True), (12, "CHILD", False)])
 
+    def test_dropped_checklist_ref_is_not_a_child(self):
+        r = ir.extract_refs("- [~] #13 obsolete\n- [-] #14", HUB)
+        self.assertEqual([(x["number"], x["kind"], x["ticked"]) for x in r], [(13, "MENTION", None), (14, "MENTION", None)])
+        r = ir.extract_refs("- [~] depends on #15\n- [-] closes #16\n- [~] blocks #17", HUB)
+        self.assertEqual([(x["number"], x["kind"]) for x in r], [(15, "MENTION"), (16, "MENTION"), (17, "MENTION")])
+        r = ir.extract_refs("- [ ] ~~depends on #19~~\n- [~] superseded by #18", HUB)
+        self.assertEqual([(x["number"], x["kind"]) for x in r], [(18, "MENTION"), (19, "MENTION")])
+        self.assertEqual(ir.extract_refs("- [-] closes #16", HUB, pr=True)[0]["kind"], "MENTION")
+        g = ir.build_graph(snapshot([issue(HUB, 1, "- [~] depends on #2"), issue(HUB, 2)]))
+        self.assertEqual({e["kind"] for e in g["edges"]}, {"MENTION"})  # no blocker, no pressure
+
     def test_code_is_ignored(self):
         self.assertEqual(self.refs("`#99` and\n```\n#98\n```"), [])
 
@@ -122,6 +140,11 @@ class Graph(unittest.TestCase):
         self.assertNotIn(f"{HUB}#77", g["nodes"])
         self.assertEqual([(e["source"], e["target"], e["kind"]) for e in g["edges"]],
                          [(f"{HUB}#2", f"{HUB}#1", "DEPENDS_ON")])
+
+    def test_superseded_by_is_stored_reversed(self):
+        g = ir.build_graph(snapshot([issue(HUB, 1, "Superseded by #2"), issue(HUB, 2)]))
+        self.assertEqual([(e["source"], e["target"], e["kind"]) for e in g["edges"]],
+                         [(HUB + "#2", HUB + "#1", "SUPERSEDES")])
 
     def test_unblock_pressure_is_transitive_and_open_only(self):
         snap = snapshot([issue(HUB, 1), issue(HUB, 2, "depends on #1"), issue(HUB, 3, "depends on #2"),
@@ -151,7 +174,7 @@ class Graph(unittest.TestCase):
                          issue(HUB, 2, "follow-up of #1", created="2026-09-10T00:00:00Z"),
                          issue(HUB, 3, "see #2 and #1", created="2026-10-01T00:00:00Z")])
         g = ir.build_graph(snap)
-        t = ir.golden_threads(g["nodes"], g["edges"])
+        t = ir.lineages(g["nodes"], g["edges"])
         self.assertEqual(t[f"{HUB}#3"], [f"{HUB}#1", f"{HUB}#3"])  # oldest older ref first
         self.assertEqual(t[f"{HUB}#2"], [f"{HUB}#1", f"{HUB}#2"])
         m = ir.mycelium(g["nodes"], g["edges"])
@@ -186,19 +209,25 @@ class Rank(unittest.TestCase):
         self.assertEqual(lane["pipeline-automation-hub#11"], "MERGE_READY")
         self.assertEqual(lane["cryoplant-project#7"], "NOT_STARTED")
 
+    def test_approved_pr_with_pending_checks_is_not_merge_ready(self):
+        for checks in ("PENDING", "EXPECTED", None):
+            with self.subTest(checks=checks):
+                m = ir.rank(snapshot([pr(HUB, 20, checks=checks, review="APPROVED")]))
+                self.assertEqual(m["items"][0]["lane"], "AWAIT_CHECKS")
+
     def test_scores_ranks_and_authority(self):
         self.assertEqual([i["rank_global"] for i in self.m["items"]], list(range(1, len(self.m["items"]) + 1)))
         self.assertEqual(self.by[f"{HUB}#3"]["pressure"], 2)
-        self.assertEqual(self.by[f"{HUB}#1"]["score_parts"]["nearness"], 1.0)
-        for i in self.m["items"]:
-            self.assertAlmostEqual(i["score"], sum(ir.WEIGHTS[k] * v for k, v in i["score_parts"].items()), places=3)
+        self.assertEqual(self.by[f"{HUB}#1"]["urgency_parts"]["nearness"], 1.0)
+        for i in self.m["items"]:  # score = own urgency + pressure inherited from waiters, exactly
+            self.assertAlmostEqual(i["score"], i["score_parts"]["own"] + i["score_parts"]["inherited"], places=3)
         a = self.m["authority"]
         self.assertTrue(a["advisory_only"])
         self.assertFalse(a["closure_authorized"] or a["merge_authorized"] or a["dispatch_authorized"])
 
     def test_rollups(self):
         r = self.m["rollups"]
-        self.assertEqual(set(r), {"USER", "JADE", HUB, QPS})
+        self.assertEqual(set(r), {"USER", "JADE", "FOCUS4", HUB, QPS})
         self.assertEqual(r[HUB]["open_issues"], 5)
         self.assertEqual((r[HUB]["tasks_done"], r[HUB]["tasks_total"]), (6, 9))
         self.assertEqual(r["USER"]["open_issues"], 6)
@@ -214,8 +243,11 @@ class Rank(unittest.TestCase):
 
     def test_redact_hides_private_text(self):
         red = ir.redact(self.m)
-        q = next(i for i in red["items"] if i["key"] == f"{QPS}#7")
-        self.assertIsNone(q["title"])
+        self.assertFalse(any(i["repo"] == QPS for i in red["items"]))
+        self.assertEqual(red["rollups"][QPS]["by_assignee"], [])
+        self.assertIn(QPS, red["privacy_projection"]["validated_then_redacted_heads"])
+        self.assertNotIn(f"{QPS}#7", json.dumps(red))
+        self.assertIsNone(red["heads"][QPS]["head_sha"])
         self.assertNotIn("secret", json.dumps(red))
         self.assertNotIn("confidential", ir.render_html(red))
 
@@ -318,6 +350,9 @@ class FakeGh:
                                                             "repository": {"nameWithOwner": "GBOGEB/r"}}}]}}
             return {"repository": {"issues": {"pageInfo": {"hasNextPage": not page, "endCursor": "c1"},
                                               "nodes": [node]}}}
+        if "issues(states:CLOSED,first" in query:
+            return {"repository": {"issues": {"pageInfo": {"hasNextPage": False, "endCursor": None},
+                                              "nodes": []}}}
         if "pullRequests(states:OPEN" in query:
             return {"repository": {"pullRequests": {"pageInfo": {"hasNextPage": False, "endCursor": None},
                                                     "nodes": []}}}
@@ -336,6 +371,21 @@ class Fetch(unittest.TestCase):
         m = ir.rank(snap)
         self.assertEqual(m["items"][0]["linked_prs"][0]["pr"], "GBOGEB/r#9")
         self.assertNotIn("GBOGEB/r#50", {e["target"] for e in m["edges"]})
+
+    def test_redacted_run_persists_no_raw_snapshot(self):
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(ir, "Gh", FakeGh), \
+                contextlib.redirect_stdout(io.StringIO()):
+            out = Path(d) / "focus"
+            out.mkdir()
+            (out / "snapshot.json").write_text("{\"stale\": \"raw private body\"}", encoding="utf-8")
+            self.assertEqual(ir.main(["run", "--repos", "r", "--out", d, "--redact-private", "--draws", "5"]), 0)
+            self.assertFalse((out / "snapshot.json").exists())
+            self.assertTrue((out / "issue_rank.json").exists())
+            self.assertEqual(ir.verify_ledger(out / "ledger.jsonl"), 1)
+            # A plain run persists its snapshot. Own scope directory: a second pulse in the
+            # same directory within the same second fails the taxonomy series' strict order.
+            ir.main(["run", "--scope", "user", "--repos", "r", "--out", d, "--draws", "5"])
+            self.assertTrue((Path(d) / "user" / "snapshot.json").exists())
 
 
 if __name__ == "__main__":

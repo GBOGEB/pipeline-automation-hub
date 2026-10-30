@@ -1,9 +1,10 @@
 name: GOGREEN launcher
 on:
+  # no path filter: the launcher pins owner outputs and the titles of HTML pages across the repository,
+  # so any PR can stale it; the job takes under a minute
   pull_request:
-    paths:
-      - 'mission-control/gogreen/launcher/**'
-      - '.github/workflows/gogreen-launcher.yml'
+  push:
+    branches: [master]
   workflow_dispatch: {}
 permissions:
   contents: read
