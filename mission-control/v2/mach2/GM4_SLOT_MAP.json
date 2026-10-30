@@ -1,0 +1,303 @@
+{
+  "authority_transfer": false,
+  "authorized_workers": null,
+  "canonical_children": [],
+  "canonical_state": "ACTIVE_8_OF_8",
+  "dispatch_authorized": false,
+  "lease_check": {
+    "not_verified": [
+      "PR_BURNDOWN_WAVE_LEASE_NOT_DECLARED_AS_PATHS",
+      "UNDECLARED_WRITES_NOT_DETECTED"
+    ],
+    "overlapping_pairs": 0,
+    "pairs_checked": 28,
+    "result": "PASS_DISJOINT",
+    "semantics": "federation-atlas broker.conflicts: write/write and write/read incl. parents",
+    "sibling_waves_checked": [
+      "LAUNCHPAD_WAVE"
+    ]
+  },
+  "mission_id": "GM-IV",
+  "named_slots": 8,
+  "noncompensation": [
+    "8 named slots imply 8 authorized workers",
+    "Backfill historic GM-IV with new child claims"
+  ],
+  "schema": "missioncontrol.mach_ii.gm4.slot_map.v1",
+  "sibling_leases": {
+    "LAUNCHPAD_WAVE": [
+      "mission-control/launchpad"
+    ]
+  },
+  "slots": [
+    {
+      "assigned_worker": null,
+      "candidate_repository": "GBOGEB/DOCX_RTM_Automation",
+      "canonical_class": "CONTROLLED_PILOT",
+      "child_binding": null,
+      "crew_pool": [
+        "GOVERNOR",
+        "GEOGRAPHER",
+        "GEOLOGIST",
+        "HISTORIAN",
+        "NEURONS",
+        "QA",
+        "SCOUT",
+        "READER",
+        "AMBASSADOR"
+      ],
+      "governor_class": "CONTROLLED_PILOT_RETAINED",
+      "lease": {
+        "read_paths": [
+          "GBOGEB/DOCX_RTM_Automation",
+          "GBOGEB/pipeline-automation-hub/mission-control/grand-missions/GRAND_MISSION_REGISTRY.json",
+          "GBOGEB/pipeline-automation-hub/mission-control/grand-missions/GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json"
+        ],
+        "write_paths": [
+          "GBOGEB/pipeline-automation-hub/mission-control/v2/mach2/gm4_returns/GM-IV-F01"
+        ]
+      },
+      "observed_surface": null,
+      "owner_account": "GBOGEB",
+      "slot": "GM-IV-F01",
+      "source_owner": "GBOGEB/DOCX_RTM_Automation",
+      "target_sha": "d85dc2de1b4beb88bc8e8ce4796784f4577f9a96"
+    },
+    {
+      "assigned_worker": null,
+      "candidate_repository": "GBOGEB/attest-build-provenance",
+      "canonical_class": "REFERENCE",
+      "child_binding": null,
+      "crew_pool": [
+        "GOVERNOR",
+        "GEOGRAPHER",
+        "GEOLOGIST",
+        "HISTORIAN",
+        "NEURONS",
+        "QA",
+        "SCOUT",
+        "READER",
+        "AMBASSADOR"
+      ],
+      "governor_class": "REFERENCE_RETAINED",
+      "lease": {
+        "read_paths": [
+          "GBOGEB/attest-build-provenance",
+          "GBOGEB/pipeline-automation-hub/mission-control/grand-missions/GRAND_MISSION_REGISTRY.json",
+          "GBOGEB/pipeline-automation-hub/mission-control/grand-missions/GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json"
+        ],
+        "write_paths": [
+          "GBOGEB/pipeline-automation-hub/mission-control/v2/mach2/gm4_returns/GM-IV-F02"
+        ]
+      },
+      "observed_surface": null,
+      "owner_account": "GBOGEB",
+      "slot": "GM-IV-F02",
+      "source_owner": "GBOGEB/attest-build-provenance",
+      "target_sha": "10334b5f1e684784025c3fc0a277c88c19089275"
+    },
+    {
+      "assigned_worker": null,
+      "candidate_repository": "GBOGEB/codespaces-jupyter",
+      "canonical_class": "CONTROLLED_PILOT",
+      "child_binding": null,
+      "crew_pool": [
+        "GOVERNOR",
+        "GEOGRAPHER",
+        "GEOLOGIST",
+        "HISTORIAN",
+        "NEURONS",
+        "QA",
+        "SCOUT",
+        "READER",
+        "AMBASSADOR"
+      ],
+      "governor_class": "CONTROLLED_PILOT_RETAINED",
+      "lease": {
+        "read_paths": [
+          "GBOGEB/codespaces-jupyter",
+          "GBOGEB/pipeline-automation-hub/mission-control/grand-missions/GRAND_MISSION_REGISTRY.json",
+          "GBOGEB/pipeline-automation-hub/mission-control/grand-missions/GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json"
+        ],
+        "write_paths": [
+          "GBOGEB/pipeline-automation-hub/mission-control/v2/mach2/gm4_returns/GM-IV-F03"
+        ]
+      },
+      "observed_surface": null,
+      "owner_account": "GBOGEB",
+      "slot": "GM-IV-F03",
+      "source_owner": "GBOGEB/codespaces-jupyter",
+      "target_sha": "1eba2240a86d1fd2bd6375e2fac481caf645cdde"
+    },
+    {
+      "assigned_worker": null,
+      "candidate_repository": "GBOGEB/yaml-reference-parser",
+      "canonical_class": "REFERENCE",
+      "child_binding": null,
+      "crew_pool": [
+        "GOVERNOR",
+        "GEOGRAPHER",
+        "GEOLOGIST",
+        "HISTORIAN",
+        "NEURONS",
+        "QA",
+        "SCOUT",
+        "READER",
+        "AMBASSADOR"
+      ],
+      "governor_class": "REFERENCE_RETAINED",
+      "lease": {
+        "read_paths": [
+          "GBOGEB/yaml-reference-parser",
+          "GBOGEB/pipeline-automation-hub/mission-control/grand-missions/GRAND_MISSION_REGISTRY.json",
+          "GBOGEB/pipeline-automation-hub/mission-control/grand-missions/GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json"
+        ],
+        "write_paths": [
+          "GBOGEB/pipeline-automation-hub/mission-control/v2/mach2/gm4_returns/GM-IV-F04"
+        ]
+      },
+      "observed_surface": null,
+      "owner_account": "GBOGEB",
+      "slot": "GM-IV-F04",
+      "source_owner": "GBOGEB/yaml-reference-parser",
+      "target_sha": "2c36c6cb4cce0c29e5adfb97743ddb7b17b0eb99"
+    },
+    {
+      "assigned_worker": null,
+      "candidate_repository": "GBOGEB/ABACUS",
+      "canonical_class": "NEW_CANDIDATE_RECON",
+      "child_binding": null,
+      "crew_pool": [
+        "GOVERNOR",
+        "GEOGRAPHER",
+        "GEOLOGIST",
+        "HISTORIAN",
+        "NEURONS",
+        "QA",
+        "SCOUT",
+        "READER",
+        "AMBASSADOR"
+      ],
+      "governor_class": "OBSERVED_CANDIDATE_RECON",
+      "lease": {
+        "read_paths": [
+          "GBOGEB/ABACUS",
+          "GBOGEB/pipeline-automation-hub/mission-control/grand-missions/GRAND_MISSION_REGISTRY.json",
+          "GBOGEB/pipeline-automation-hub/mission-control/grand-missions/GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json"
+        ],
+        "write_paths": [
+          "GBOGEB/pipeline-automation-hub/mission-control/v2/mach2/gm4_returns/GM-IV-F05"
+        ]
+      },
+      "observed_surface": "DMAIC_delivery_work_execution_and_federated_MIP_consumption",
+      "owner_account": "GBOGEB",
+      "slot": "GM-IV-F05",
+      "source_owner": "GBOGEB/ABACUS",
+      "target_sha": "cb1f29a8c598b5b8bc196554abff9c16f488db63"
+    },
+    {
+      "assigned_worker": null,
+      "candidate_repository": "GBOGEB/CODEX",
+      "canonical_class": "NEW_CANDIDATE_RECON",
+      "child_binding": null,
+      "crew_pool": [
+        "GOVERNOR",
+        "GEOGRAPHER",
+        "GEOLOGIST",
+        "HISTORIAN",
+        "NEURONS",
+        "QA",
+        "SCOUT",
+        "READER",
+        "AMBASSADOR"
+      ],
+      "governor_class": "OBSERVED_CANDIDATE_RECON",
+      "lease": {
+        "read_paths": [
+          "GBOGEB/CODEX",
+          "GBOGEB/pipeline-automation-hub/mission-control/grand-missions/GRAND_MISSION_REGISTRY.json",
+          "GBOGEB/pipeline-automation-hub/mission-control/grand-missions/GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json"
+        ],
+        "write_paths": [
+          "GBOGEB/pipeline-automation-hub/mission-control/v2/mach2/gm4_returns/GM-IV-F06"
+        ]
+      },
+      "observed_surface": "semantic_manifest_provenance_and_MIP_self_index_control",
+      "owner_account": "GBOGEB",
+      "slot": "GM-IV-F06",
+      "source_owner": "GBOGEB/CODEX",
+      "target_sha": "b4fff9852b27412f35a22439d09c427dc364158a"
+    },
+    {
+      "assigned_worker": null,
+      "candidate_repository": "GBOGEB/cryo_leak_rate_dashboard",
+      "canonical_class": "NEW_CANDIDATE_RECON",
+      "child_binding": null,
+      "crew_pool": [
+        "GOVERNOR",
+        "GEOGRAPHER",
+        "GEOLOGIST",
+        "HISTORIAN",
+        "NEURONS",
+        "QA",
+        "SCOUT",
+        "READER",
+        "AMBASSADOR"
+      ],
+      "governor_class": "OBSERVED_CANDIDATE_RECON",
+      "lease": {
+        "read_paths": [
+          "GBOGEB/cryo_leak_rate_dashboard",
+          "GBOGEB/pipeline-automation-hub/mission-control/grand-missions/GRAND_MISSION_REGISTRY.json",
+          "GBOGEB/pipeline-automation-hub/mission-control/grand-missions/GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json"
+        ],
+        "write_paths": [
+          "GBOGEB/pipeline-automation-hub/mission-control/v2/mach2/gm4_returns/GM-IV-F07"
+        ]
+      },
+      "observed_surface": "independent_cryo_leak_kernel_dashboard_with_authority_quarantine",
+      "owner_account": "GBOGEB",
+      "slot": "GM-IV-F07",
+      "source_owner": "GBOGEB/cryo_leak_rate_dashboard",
+      "target_sha": "6f6ce5fe1042e4ff59be06909b248a6444136e92"
+    },
+    {
+      "assigned_worker": null,
+      "candidate_repository": "GBOGEB/document-organization-system",
+      "canonical_class": "NEW_CANDIDATE_RECON",
+      "child_binding": null,
+      "crew_pool": [
+        "GOVERNOR",
+        "GEOGRAPHER",
+        "GEOLOGIST",
+        "HISTORIAN",
+        "NEURONS",
+        "QA",
+        "SCOUT",
+        "READER",
+        "AMBASSADOR"
+      ],
+      "governor_class": "OBSERVED_CANDIDATE_RECON",
+      "lease": {
+        "read_paths": [
+          "GBOGEB/document-organization-system",
+          "GBOGEB/pipeline-automation-hub/mission-control/grand-missions/GRAND_MISSION_REGISTRY.json",
+          "GBOGEB/pipeline-automation-hub/mission-control/grand-missions/GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json"
+        ],
+        "write_paths": [
+          "GBOGEB/pipeline-automation-hub/mission-control/v2/mach2/gm4_returns/GM-IV-F08"
+        ]
+      },
+      "observed_surface": "document_topology_causal_attribution_and_bounded_routing",
+      "owner_account": "GBOGEB",
+      "slot": "GM-IV-F08",
+      "source_owner": "GBOGEB/document-organization-system",
+      "target_sha": "3729f3864c3f6019c4b0a4e2bbe0c1ad419bff68"
+    }
+  ],
+  "source": {
+    "governor_contract": "mission-control/grand-missions/GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json",
+    "registry": "mission-control/grand-missions/GRAND_MISSION_REGISTRY.json"
+  },
+  "wave_lease": "mission-control/v2/mach2"
+}
