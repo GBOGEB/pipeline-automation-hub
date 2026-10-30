@@ -102,7 +102,7 @@ class Consumer(unittest.TestCase):
         d["workflow_changes"] = []
         d["authority_changes"] = [{
             "id": "CI-SOURCE", "status": "AUTHORITY_REVIEW_REQUIRED",
-            "before": None, "after": {"path": "historical.yml"},
+            "before": None, "after": {"path": ".github/workflows/historical.yml"},
         }]
         d["source"]["current_sha"] = "c" * 40
         page, receipt = M.render(i, c, m, d, w)
@@ -119,7 +119,7 @@ class Consumer(unittest.TestCase):
                [{"id": "a", "status": "AUTHORITY_REVIEW_REQUIRED",
                  "before": None, "after": None}],
                [{"id": "a", "status": "AUTHORITY_REVIEW_REQUIRED",
-                 "before": {"path": "same.yml"}, "after": {"path": "same.yml"}}],
+                 "before": {"path": ".github/workflows/same.yml"}, "after": {"path": ".github/workflows/same.yml"}}],
                [{"id": "a", "status": "AUTHORITY_REVIEW_REQUIRED",
                  "before": None, "after": {}}],
                [{"id": "a", "status": "AUTHORITY_REVIEW_REQUIRED",
@@ -132,7 +132,7 @@ class Consumer(unittest.TestCase):
                     M.render(i, c, m, trial, w)
         d["authority_changes"] = [{
             "id": "a", "status": "AUTHORITY_REVIEW_REQUIRED",
-            "before": None, "after": {"path": "new.yml"},
+            "before": None, "after": {"path": ".github/workflows/new.yml"},
         }]
         d["verdict"] = "NO_OBSERVED_SOURCE_DELTA"
         with self.assertRaisesRegex(ValueError, "contradictory delta verdict"):
@@ -143,12 +143,34 @@ class Consumer(unittest.TestCase):
         injection = "<img src=x onerror=alert(1)>"
         d["authority_changes"] = [{
             "id": injection, "status": "AUTHORITY_REVIEW_REQUIRED",
-            "before": {"path": injection}, "after": {"path": "safe.yml"},
+            "before": {"path": ".github/workflows/old.yml", "purpose": injection},
+            "after": {"path": ".github/workflows/safe.yml"},
         }]
         page, receipt = M.render(i, c, m, d, w)
         self.assertNotIn(injection, page)
         self.assertIn("&lt;img src=x onerror=alert(1)&gt;", page)
         self.assertEqual(receipt["authority_changes_count"], 1)
+
+    def test_only_canonical_top_level_workflow_yaml_paths_are_accepted(self):
+        valid = (".github/workflows/canonical.yml", ".github/workflows/fpc.yaml")
+        for path in valid:
+            with self.subTest(valid_path=path):
+                self.assertTrue(M.canonical_workflow_binding(path))
+        invalid = (" ", "unrelated.txt", ".github/workflows/ ",
+                   ".github/workflows/ .yaml", ".github/workflows/a.yml ",
+                   ".github/workflows/sub/a.yml", ".github/workflows//a.yml",
+                   ".github/workflows/../a.yml", ".github/workflows/a.json",
+                   ".github\\\\workflows\\\\a.yml")
+        for path in invalid:
+            with self.subTest(invalid_path=path):
+                self.assertFalse(M.canonical_workflow_binding(path))
+                i, c, m, d, w = sample()
+                d["authority_changes"] = [{
+                    "id": "CI-FAIL", "status": "AUTHORITY_REVIEW_REQUIRED",
+                    "before": None, "after": {"path": path},
+                }]
+                with self.assertRaisesRegex(ValueError, "CI_SPINE_VIEW_HOLD"):
+                    M.render(i, c, m, d, w)
 
     def test_static_index_never_grants_admission(self):
         i, c, m, d, w = sample()
