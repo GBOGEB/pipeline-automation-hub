@@ -30,7 +30,10 @@ class MyceliumCandidate(unittest.TestCase):
         self.assertEqual(r["consumer_acceptance"],"WITHHELD")
         self.assertEqual(len(r["nodes"]),6+len(self.ev["roots"]))
         self.assertEqual(len(r["edges"]),len(self.ev["roots"]))
-        self.assertEqual(r["incident"]["criteria_met"],2)
+        # Counted from the published census, not pinned: a pulse can flip a criterion (30 Oct: L4).
+        met=sum(x["ok"] is True for x in self.census["lift"])
+        self.assertEqual(r["incident"]["criteria_met"],met)
+        self.assertLess(met,len(self.census["lift"]),"an unlifted incident cannot meet every criterion")
     def test_root_provenance_unique(self):
         r=self.call()
         ids=[n["id"] for n in r["nodes"]]
