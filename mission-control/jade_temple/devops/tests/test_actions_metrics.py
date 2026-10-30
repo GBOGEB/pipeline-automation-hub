@@ -415,5 +415,83 @@ class RecheckPressureRF(unittest.TestCase):
             self.assertIsNone(report["value"])
 
 
+    def test_fresh_same_day_fetch_receipt_binds_exact_cache_bytes(self):
+        from datetime import datetime, timezone
+        with tempfile.TemporaryDirectory() as td:
+            day = datetime.now(timezone.utc).date()
+            p = M.repo_dir(Path(td), REPO) / "runs" / f"{day}.json"
+            p.parent.mkdir(parents=True)
+            M.write_runs_with_receipt(p, REPO, day,
+                                      [run(1, created=f"{day}T00:01:00Z")])
+            meta = json.loads(M.cache_receipt_path(p).read_text(encoding="utf-8"))
+            issues, digest = M.pressure_cache_evidence(
+                Path(td), REPO, day, day, meta["fetched_at"])
+            self.assertEqual(issues, [])
+            self.assertRegex(digest, r"^[0-9a-f]{64}$")
+            self.assertEqual(meta["schema"], M.RUN_CACHE_RECEIPT_SCHEMA)
+            self.assertEqual(meta["records"], 1)
+
+    def test_same_day_old_fetch_and_mutated_bytes_remain_unknown(self):
+        from datetime import datetime, timezone
+        with tempfile.TemporaryDirectory() as td:
+            day = datetime.now(timezone.utc).date()
+            p = M.repo_dir(Path(td), REPO) / "runs" / f"{day}.json"
+            p.parent.mkdir(parents=True)
+            M.write_runs_with_receipt(p, REPO, day,
+                                      [run(1, created=f"{day}T00:01:00Z")])
+            rp = M.cache_receipt_path(p)
+            observed = json.loads(rp.read_text(encoding="utf-8"))["fetched_at"]
+            meta = json.loads(rp.read_text(encoding="utf-8"))
+            meta["fetched_at"] = "2000-01-01T00:00:00Z"
+            rp.write_text(json.dumps(meta), encoding="utf-8", newline="\\n")
+            issues, digest = M.pressure_cache_evidence(Path(td), REPO, day, day, observed)
+            self.assertIn(f"{day}:STALE_CURRENT_DAY_FETCH", issues)
+            self.assertIsNone(digest)
+            meta["fetched_at"] = observed
+            rp.write_text(json.dumps(meta), encoding="utf-8", newline="\\n")
+            p.write_text(p.read_text(encoding="utf-8") + " ", encoding="utf-8", newline="\\n")
+            issues, digest = M.pressure_cache_evidence(Path(td), REPO, day, day, observed)
+            self.assertIn(f"{day}:UNVERIFIED_CACHE_RECEIPT", issues)
+            self.assertIsNone(digest)
+
+    def test_incomplete_day_receipts_and_duplicate_ids_fail_closed(self):
+        from datetime import datetime, timedelta, timezone
+        with tempfile.TemporaryDirectory() as td:
+            day = datetime.now(timezone.utc).date() - timedelta(days=1)
+            p = M.repo_dir(Path(td), REPO) / "runs" / f"{day}.json"
+            p.parent.mkdir(parents=True)
+            p.write_text("[]\\n", encoding="utf-8", newline="\\n")
+            issues, digest = M.pressure_cache_evidence(
+                Path(td), REPO, day, day, datetime.now(timezone.utc).isoformat())
+            self.assertIn(f"{day}:MISSING_RUNS_OR_RECEIPT", issues)
+            self.assertIsNone(digest)
+            M.write_runs_with_receipt(p, REPO, day, [
+                run(1, created=f"{day}T10:00:00Z"),
+                run(1, created=f"{day}T10:01:00Z")])
+            issues, digest = M.pressure_cache_evidence(
+                Path(td), REPO, day, day, datetime.now(timezone.utc).isoformat())
+            self.assertIn(f"{day}:UNVERIFIED_CACHE_RECEIPT", issues)
+            self.assertIsNone(digest)
+
+    def test_cli_cannot_promote_1000_cached_records_without_fetch_receipt(self):
+        from datetime import datetime, timezone
+        with tempfile.TemporaryDirectory() as td:
+            day = datetime.now(timezone.utc).date()
+            p = M.repo_dir(Path(td), REPO) / "runs" / f"{day}.json"
+            p.parent.mkdir(parents=True)
+            rows = [run(i, created=f"{day}T00:01:00Z") for i in range(1, 1001)]
+            p.write_text(json.dumps(rows), encoding="utf-8", newline="\\n")
+            out = Path(td) / "pressure.json"
+            self.assertEqual(M.main(["pressure", "--cache", td, "--since", str(day),
+                "--until", str(day), "--repo", REPO, "--source-sha", SHA,
+                "--out", str(out)]), 0)
+            receipt = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(receipt["sample_n"], 1000)
+            self.assertEqual(receipt["coverage"], "PARTIAL_UNKNOWN")
+            self.assertIsNone(receipt["value"])
+            self.assertIsNone(receipt["cache_readback_sha256"])
+            self.assertIn(f"{day}:MISSING_RUNS_OR_RECEIPT", receipt["cache_source_issues"])
+
+
 if __name__ == "__main__":
     unittest.main()
