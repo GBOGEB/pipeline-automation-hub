@@ -17,15 +17,15 @@ First obtain the **default-branch master SHA once**, using a GitHub connection w
 
 ```bash
 python mission-control/jade_temple/devops/actions_metrics.py fetch \
-  --cache /tmp/jade-actions --since 2026-10-27 --until 2026-10-28 \
+  --cache /tmp/jade-actions --since 2026-10-29 --until 2026-10-30 \
   --repo GBOGEB/pipeline-automation-hub --job-budget 100
 python mission-control/jade_temple/devops/actions_metrics.py pressure \
-  --cache /tmp/jade-actions --since 2026-10-27 --until 2026-10-28 \
+  --cache /tmp/jade-actions --since 2026-10-29 --until 2026-10-30 \
   --repo GBOGEB/pipeline-automation-hub --source-sha <EXACT_MASTER_SHA> \
   --out /tmp/recheck-pressure.json
 ```
 
-`pressure` uses only existing cache files and makes **no** API or credential calls. Existing `fetch` enforces the daily/hourly pagination saturation fail-closed, which is intentionally not overridden. If a source window is missing or contains fewer than 1,000 records, leave the observed value NULL and collect more evidence. Never backfill with synthetic successes.
+**P1 observation-window guard:** the `--until` date must reach the current observation UTC date (30 Oct for this shown example); substitute the actual UTC date on later runs. A historical window that ends before that date is `PARTIAL_UNKNOWN`, even if it contains 1,000 older records. The cache must also have actually been refreshed; a local file alone cannot independently attest that no newer runs exist. `pressure` uses only existing cache files and makes **no** API or credential calls. Existing `fetch` enforces the daily/hourly pagination saturation fail-closed, which is intentionally not overridden. If a source window is missing or contains fewer than 1,000 records, leave the observed value NULL and collect more evidence. Never backfill with synthetic successes.
 
 To evaluate the target with RF N+1, pass the actual `pressure` JSON as `--observation /tmp/recheck-pressure.json` to `mission-control/jade_temple/tools/rf_matrix_wave.py` using the SAME source SHA. The adapter can return `TARGET_REACHED_UNVERIFIED` and recommends independent review; that is not a GitHub acceptance predicate. Its goal only matches the proposed same-method cohort.
 
