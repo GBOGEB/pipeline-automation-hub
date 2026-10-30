@@ -191,6 +191,85 @@ def repo_dir(cache: Path, repo: str) -> Path:
     return Path(cache) / repo.replace("/", "__")
 
 
+
+# A per-day, digest-bound receipt is produced by the *existing* Actions fetch
+# owner. It is source evidence, not GitHub's independent attestation.
+RUN_CACHE_RECEIPT_SCHEMA = "jade.devops.actions-run-cache-day.v1"
+PRESSURE_FRESH_SECONDS = 120
+
+
+def cache_receipt_path(day_file: Path) -> Path:
+    return day_file.with_suffix(".receipt.json")
+
+
+def write_runs_with_receipt(day_file: Path, repo: str, day: date, rows: list) -> None:
+    """Write run bytes and a companion fetch-time/digest receipt, fail-closed on interruption."""
+    raw = json.dumps(rows, sort_keys=True) + "\n"
+    receipt = {
+        "schema": RUN_CACHE_RECEIPT_SCHEMA, "repository": repo, "day": day.isoformat(),
+        "fetched_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "records": len(rows), "sha256": hashlib.sha256(raw.encode("utf-8")).hexdigest(),
+    }
+    tmp = day_file.with_suffix(".json.tmp")
+    tmp.write_text(raw, encoding="utf-8", newline="\n")
+    tmp.replace(day_file)
+    receipt_file = cache_receipt_path(day_file)
+    tmp_receipt = receipt_file.with_suffix(".json.tmp")
+    tmp_receipt.write_text(json.dumps(receipt, sort_keys=True) + "\n",
+                           encoding="utf-8", newline="\n")
+    tmp_receipt.replace(receipt_file)
+
+
+def pressure_cache_evidence(cache: Path, repo: str, since: date, until: date,
+                            observed_at: str) -> tuple[list[str], str | None]:
+    """Validate complete day receipts and a <=120 s current-UTC-day fetch pulse.
+
+    Metadata absence, source mutation, old/future pulses and incomplete days
+    are UNKNOWN, never zero or a success. This adds no metric owner or API call.
+    """
+    observed = BQ.utc(observed_at)
+    if observed is None or until < since:
+        return ["INVALID_OBSERVATION_WINDOW"], None
+    problems, sources = [], []
+    day = since
+    while day <= until:
+        p = repo_dir(cache, repo) / "runs" / f"{day}.json"
+        rp = cache_receipt_path(p)
+        key = day.isoformat()
+        if not p.is_file() or not rp.is_file():
+            problems.append(f"{key}:MISSING_RUNS_OR_RECEIPT")
+            day += timedelta(days=1)
+            continue
+        try:
+            raw = p.read_bytes()
+            d = json.loads(raw)
+            rec = json.loads(rp.read_text(encoding="utf-8"))
+            ts = BQ.utc(rec.get("fetched_at"))
+            digest = hashlib.sha256(raw).hexdigest()
+            if (not isinstance(d, list) or not isinstance(rec, dict)
+                    or rec.get("schema") != RUN_CACHE_RECEIPT_SCHEMA
+                    or rec.get("repository") != repo or rec.get("day") != key
+                    or rec.get("records") != len(d) or rec.get("sha256") != digest
+                    or ts is None):
+                problems.append(f"{key}:UNVERIFIED_CACHE_RECEIPT")
+            elif ts > observed:
+                problems.append(f"{key}:FUTURE_CACHE_FETCH")
+            elif day == observed.date() and (observed - ts).total_seconds() > PRESSURE_FRESH_SECONDS:
+                problems.append(f"{key}:STALE_CURRENT_DAY_FETCH")
+            elif day < observed.date() and ts.date() <= day:
+                problems.append(f"{key}:DAY_NOT_FINALIZED")
+            else:
+                sources.append([key, rec["fetched_at"], digest, rec["records"]])
+        except (OSError, ValueError, KeyError, TypeError):
+            problems.append(f"{key}:INVALID_CACHE_BYTES_OR_RECEIPT")
+        day += timedelta(days=1)
+    if problems:
+        return sorted(set(problems)), None
+    fingerprint = hashlib.sha256(json.dumps(sources, separators=(",", ":"),
+                                           ensure_ascii=True).encode("utf-8")).hexdigest()
+    return [], fingerprint
+
+
 def fetch_runs_day(rd: Reader, repo: str, day: date) -> list:
     """All runs created on one UTC day; hour slices when the day exceeds the 1000-record search cap."""
     route = f"/repos/{repo}/actions/runs?created={day.isoformat()}"
@@ -234,10 +313,22 @@ def fetch(cache: Path, repos: list, since: date, until: date, job_budget: int, r
         try:
             while day <= until:
                 p = d / "runs" / f"{day}.json"
-                stale = not p.exists() or day >= today - timedelta(days=1) or any(
-                    r["status"] != "completed" for r in json.loads(p.read_text(encoding="utf-8")))
+                rp = cache_receipt_path(p)
+                stale = not p.exists() or not rp.exists() or day >= today - timedelta(days=1)
+                if not stale:
+                    try:
+                        rec = json.loads(rp.read_text(encoding="utf-8"))
+                        fetched_at = BQ.utc(rec.get("fetched_at"))
+                        raw = p.read_bytes()
+                        cached = json.loads(raw)
+                        stale = (not isinstance(cached, list)
+                                 or rec.get("sha256") != hashlib.sha256(raw).hexdigest()
+                                 or fetched_at is None or fetched_at.date() <= day
+                                 or any(r["status"] != "completed" for r in cached))
+                    except (OSError, ValueError, KeyError, TypeError):
+                        stale = True
                 if stale:
-                    p.write_text(json.dumps(fetch_runs_day(rd, repo, day), sort_keys=True), encoding="utf-8", newline="\n")
+                    write_runs_with_receipt(p, repo, day, fetch_runs_day(rd, repo, day))
                     fetched_days += 1
                 day += timedelta(days=1)
         except (urllib.error.URLError, ValueError) as exc:  # one unreadable repo is UNKNOWN, not a fleet abort
@@ -368,7 +459,9 @@ def missing_run_days(cache: Path, repo: str, since: date, until: date) -> list[s
 def recheck_pressure(runs: list[dict], repo: str, source_sha: str,
                      observed_at: str, sample_size: int = 1000,
                      missing_days: list[str] | None = None,
-                     window_end_date: date | None = None) -> dict:
+                     window_end_date: date | None = None,
+                     cache_source_issues: list[str] | None = None,
+                     cache_readback_sha256: str | None = None) -> dict:
     """Project a source-bound, fixed-count run cohort without confusing runs and jobs.
 
     source_sha is the *collector's* exact repository head for this pulse, not a
@@ -404,11 +497,12 @@ def recheck_pressure(runs: list[dict], repo: str, source_sha: str,
         raise ValueError("window_end_date must be date")
     stale_window = window_end_date is not None and window_end_date < observed.date()
     missing = sorted(set(missing_days or []))
+    source_issues = sorted(set(cache_source_issues or []))
     completed = [rec for rec in runs if rec.get("status") == "completed"]
     selected = sorted(completed, key=lambda rec: (BQ.utc(rec["created_at"]), rec["id"]),
                       reverse=True)[:sample_size]
     n = len(selected)
-    complete = n == sample_size and not missing and not stale_window
+    complete = n == sample_size and not missing and not stale_window and not source_issues
     # Canonical cohort identity: the fields this metric reads, per selected run.
     cohort = [[rec["id"], rec.get("run_attempt"), rec["created_at"], rec["name"],
                rec.get("event"), rec.get("conclusion")] for rec in selected]
@@ -432,6 +526,8 @@ def recheck_pressure(runs: list[dict], repo: str, source_sha: str,
            "missing_source_days": missing,
            "window_end_date": window_end_date.isoformat() if window_end_date else None,
            "window_end_before_observation": stale_window,
+           "cache_source_issues": source_issues,
+           "cache_readback_sha256": cache_readback_sha256,
            "excluded_incomplete_runs": len(runs) - len(completed),
            "cohort_sha256": cohort_sha,
            "recheck_records": len(target),
@@ -594,10 +690,13 @@ def main(argv=None) -> int:
         if not a.repo or len(a.repo) != 1:
             p.error("pressure requires exactly one --repo")
         observed = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        cache_issues, cache_digest = pressure_cache_evidence(
+            a.cache, a.repo[0], a.since, a.until, observed)
         doc = recheck_pressure(load_runs(a.cache, a.repo[0], a.since, a.until),
                                a.repo[0], a.source_sha or "", observed,
                                missing_days=missing_run_days(a.cache, a.repo[0], a.since, a.until),
-                               window_end_date=a.until)
+                               window_end_date=a.until, cache_source_issues=cache_issues,
+                               cache_readback_sha256=cache_digest)
         txt = json.dumps(doc, sort_keys=True, indent=2) + "\n"
         if a.out:
             a.out.parent.mkdir(parents=True, exist_ok=True)
