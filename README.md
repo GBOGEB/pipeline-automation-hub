@@ -8,6 +8,8 @@
 
 > **Status is not certification.** Badges report the latest matching workflow run on `master`, which can be older than the current commit for path-filtered workflows. They do not establish exact-head merge readiness or external approval. See the [CI evidence, reuse spine, and lossless branch extraction guide](docs/CI_STATUS_BADGES_AND_REUSE_SPINE.md).
 
+> **CI Spine provenance notebook (29 October 2026, review-only):** [offline interactive HTML](docs/ci-spine/notebook.html) · [Jacquard deep-read + DoD/DoV](docs/ci-spine/NOTEBOOK_JACQUARD_METHOD_DOD_DOV.md) · [original B00–B09 graph](docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json). Open the HTML in a local browser; GitHub displays source rather than rendering it. This is a frozen navigation layer, **not a live badge, deployed site, PDF mapping, merge approval or engineering acceptance**.
+
 > **Start here (25 October 2026):** [GoGreen launcher](mission-control/gogreen/launcher/index.html) (metrics, every linked page, and a list of all committed HTML pages with GitHub and local-path links). GitHub shows HTML source, not the rendered page: clone the repo and open `mission-control\gogreen\launcher\index.html` from File Explorer. How-to: [launcher README](mission-control/gogreen/launcher/README.md#open-the-pages).
 
 > **JADE_CASTE N+2 pilot (19 October 2026):** [Measured Top21 burn-down](mission-control/jade_temple/site/burndown.html) · [Executable stop controller](mission-control/jade_temple/tools/stop_rules.py) · [MIP and DoV](mission-control/jade_temple/notes/NPLUS2_MIP_BURNDOWN_DOV.md) · [Lossless restart](mission-control/jade_temple/DROPIN_NEXT_CHAT.md). Read-only frozen evidence, not release admission, current live fleet truth or a verified hosted HTTP URL.
