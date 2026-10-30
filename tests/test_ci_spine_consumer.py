@@ -115,7 +115,15 @@ class Consumer(unittest.TestCase):
         bad = [None, {}, "bad", [None], [{"id": "a"}],
                [{"id": "a", "status": "PASS", "before": {}, "after": {}}],
                [{"id": "a", "status": "AUTHORITY_REVIEW_REQUIRED",
-                 "before": [], "after": {}}]]
+                 "before": [], "after": {}}],
+               [{"id": "a", "status": "AUTHORITY_REVIEW_REQUIRED",
+                 "before": None, "after": None}],
+               [{"id": "a", "status": "AUTHORITY_REVIEW_REQUIRED",
+                 "before": {"path": "same.yml"}, "after": {"path": "same.yml"}}],
+               [{"id": "a", "status": "AUTHORITY_REVIEW_REQUIRED",
+                 "before": None, "after": {}}],
+               [{"id": "a", "status": "AUTHORITY_REVIEW_REQUIRED",
+                 "before": None, "after": {"path": ""}}]]
         for value in bad:
             with self.subTest(value=value):
                 trial = copy.deepcopy(d)
