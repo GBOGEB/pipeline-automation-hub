@@ -16,4 +16,4 @@ def test_security_rule_selftest():
         capture_output=True, text=True, timeout=120,
     )
     assert out.returncode == 0, out.stdout + out.stderr
-    assert "SELFTEST 7/7 passed" in out.stdout
+    assert "SELFTEST 13/13 passed" in out.stdout

@@ -58,6 +58,8 @@ $now = [DateTimeOffset]::UtcNow
 $tokenNames = 'GITHUB_TOKEN', 'GH_TOKEN'
 # Security words. "token" alone is not one (token census, tokenise); it counts only next to leak/exposure words.
 $securityPattern = 'secur|inject|secret|credential|poison|traversal|XSS|untrusted|privilege|CodeQL|ReDoS|backtracking'
+# Explicit vulnerability classes. These are security findings at any priority (P2, P3 or no badge).
+$vulnPattern = 'inject|traversal|XSS|cross-site|privilege escalation|escalat\w* privilege|cache.poison|SSRF|CSRF|\bRCE\b|remote code|ReDoS|vulnerab'
 $tokenLeakPattern = 'token.{0,40}(leak|expos|secret|credential|hardcod)|(leak|expos|hardcod)\w*.{0,40}token'
 $classOrder = 'LIVE', 'THREAD-P1', 'CONFLICT', 'RED', 'OUTDATED', 'THREAD', 'PENDING', 'CLEAN'
 
@@ -89,10 +91,12 @@ function Get-Priority([string]$Body) {
 }
 
 function Test-SecurityThread([string]$Login, [string]$Body) {
-    <# Security when CodeQL raised it, when a P0/P1 badge names a security word, or when the body names a
-       token leak. A P2/P3 that only says "token" or "untrusted" in passing stays out of THREAD-P1. #>
+    <# Security when CodeQL raised it, when the body names a token leak or an explicit vulnerability class
+       (any priority), or when a P0/P1 badge names a security word. A P2/P3 that only says "token" or
+       "untrusted" in passing stays out of THREAD-P1. #>
     if ($Login -eq 'github-advanced-security') { return $true }
     if ($Body -match $tokenLeakPattern) { return $true }
+    if ($Body -match $vulnPattern) { return $true }
     ((Get-Priority $Body) -in 'P0', 'P1') -and ($Body -match $securityPattern)
 }
 
@@ -160,6 +164,12 @@ if ($SelfTest) {
         @{ Login = 'chatgpt-codex-connector'; Body = '![P1 Badge] Path traversal in the report path'; Want = $true }
         @{ Login = 'chatgpt-codex-connector'; Body = '![P1 Badge] Off-by-one in the page loop'; Want = $false }
         @{ Login = 'github-advanced-security'; Body = 'Checkout of untrusted code in a privileged context'; Want = $true }
+        @{ Login = 'chatgpt-codex-connector'; Body = '![P2 Badge] SQL injection through the repo filter'; Want = $true }
+        @{ Login = 'chatgpt-codex-connector'; Body = '![P3 Badge] Path traversal when ReportPath is relative'; Want = $true }
+        @{ Login = 'copilot-pull-request-reviewer'; Body = 'Rendering the title as HTML allows XSS'; Want = $true }
+        @{ Login = 'chatgpt-codex-connector'; Body = '![P2 Badge] Privilege escalation via the runner group'; Want = $true }
+        @{ Login = 'chatgpt-codex-connector'; Body = '![P2 Badge] Skip untrusted forks in the count'; Want = $false }
+        @{ Login = 'chatgpt-codex-connector'; Body = '![P2 Badge] Force the source list to sort once'; Want = $false }
     )
     $bad = @($cases | Where-Object { (Test-SecurityThread $_.Login $_.Body) -ne $_.Want })
     foreach ($b in $bad) { Write-Host "FAIL want=$($b.Want): $($b.Login) :: $($b.Body)" }
