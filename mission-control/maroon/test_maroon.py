@@ -163,5 +163,43 @@ class Public(unittest.TestCase):
             self.assertTrue(rows[1].startswith("1,critical,O/pub,dependabot,pip,pillow"))
 
 
+class Diff(unittest.TestCase):
+    def test_fixed_alerts_leave_and_new_ones_join(self):
+        old = M.build(RAW)
+        raw = json.loads(json.dumps(RAW))
+        alerts = raw["repos"]["O/pub"]["sources"]["dependabot"]["alerts"]
+        alerts[0]["state"] = alerts[1]["state"] = "fixed"  # a merged PR upgraded pillow
+        alerts.append(dep(7, "open", "jinja2", "high", "GHSA-g", "req.txt", "3.1.5"))
+        raw["repos"]["O/priv"]["sources"]["code_scanning"] = {"coverage": "not_readable", "error": "x"}
+        d = M.diff(old, M.build(raw))
+        self.assertEqual((d["alerts_left"], d["alerts_joined"], d["roots_cleared"], d["roots_new"]), (2, 1, 1, 1))
+        self.assertEqual(d["left"][0], {"id": "O/pub|dependabot|pip|pillow", "repo": "O/pub", "source": "dependabot",
+                                        "alerts": [1, 2], "root_cleared": True})
+        self.assertEqual(d["coverage_changes"], [{"repo": "O/priv", "source": "code_scanning",
+                                                  "old": "not_enabled", "new": "not_readable"}])
+        self.assertIs(d["closes_findings"], False)
+
+    def test_same_receipt_has_no_delta(self):
+        r = M.build(RAW)
+        d = M.diff(r, r)
+        self.assertEqual((d["alerts_left"], d["alerts_joined"], d["left"], d["joined"], d["coverage_changes"]),
+                         (0, 0, [], [], []))
+
+    def test_delta_counts_name_no_roots(self):
+        old = M.build(RAW)
+        raw = json.loads(json.dumps(RAW))
+        raw["repos"]["O/pub"]["sources"]["dependabot"]["alerts"][0]["state"] = "fixed"
+        text = json.dumps(M.delta_counts(M.diff(old, M.build(raw))))
+        for secret in ("pillow", "req.txt", "GHSA-"):
+            self.assertNotIn(secret, text)
+
+    def test_diff_command_writes_delta(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            a = Path(tmp) / "r.json"
+            a.write_text(json.dumps(M.build(RAW)), encoding="utf-8")
+            self.assertEqual(M.main(["diff", "--old", str(a), "--new", str(a), "--out", tmp]), 0)
+            self.assertEqual(json.loads((Path(tmp) / "MAROON_DELTA.json").read_text(encoding="utf-8"))["alerts_left"], 0)
+
+
 if __name__ == "__main__":
     unittest.main()

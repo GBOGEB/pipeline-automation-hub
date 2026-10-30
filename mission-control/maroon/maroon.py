@@ -18,6 +18,7 @@ with the caller's token) are recorded as such, never as zero.
 
     python maroon.py fetch --owner GBOGEB --out <dir>         # raw alerts, one file
     python maroon.py build --raw <dir>/raw.json --out <dir>   # receipt, fix list, lanes, public projection
+    python maroon.py diff --old <a>/MAROON_RECEIPT.json --new <b>/MAROON_RECEIPT.json --out <dir>  # what moved
 """
 from __future__ import annotations
 
@@ -33,6 +34,7 @@ from pathlib import Path
 
 SCHEMA = "code_maroon.receipt.v1"
 PUBLIC_SCHEMA = "code_maroon.public.v1"
+DELTA_SCHEMA = "code_maroon.delta.v1"
 RANK = {"critical": 6, "high": 5, "medium": 4, "low": 3, "error": 2, "warning": 1, "note": 0}
 SOURCES = {
     # source -> (API path, states to read, state -> disposition)
@@ -231,6 +233,48 @@ def write_outputs(receipt: dict, out: Path) -> None:
     (out / "MAROON_LANES.md").write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
 
+def diff(old: dict, new: dict) -> dict:
+    """What moved between two receipts: roots and alerts that left or joined the outstanding set.
+
+    An alert leaves when GitHub marks it fixed (for example after a merged PR lands the fix on the
+    default branch), dismissed or resolved, or when its repository drops out of the read. Coverage
+    changes are listed so a source that became unreadable is not mistaken for a fix."""
+    def outstanding(receipt):
+        return {r["id"]: r for r in receipt["roots"] if r["outstanding"]}
+    a, b = outstanding(old), outstanding(new)
+    left, joined = [], []
+    for rid in sorted(set(a) | set(b)):
+        was, now = set(a.get(rid, {}).get("alerts", [])), set(b.get(rid, {}).get("alerts", []))
+        root = b.get(rid) or a[rid]
+        if was - now:
+            left.append({"id": rid, "repo": root["repo"], "source": root["source"], "alerts": sorted(was - now),
+                         "root_cleared": rid not in b})
+        if now - was:
+            joined.append({"id": rid, "repo": root["repo"], "source": root["source"], "alerts": sorted(now - was),
+                           "root_new": rid not in a})
+    coverage = []
+    for repo in sorted(set(old["coverage"]) | set(new["coverage"])):
+        for source in SOURCES:
+            o = old["coverage"].get(repo, {}).get(source, "absent")
+            n = new["coverage"].get(repo, {}).get(source, "absent")
+            if o != n:
+                coverage.append({"repo": repo, "source": source, "old": o, "new": n})
+    return {"schema": DELTA_SCHEMA, "programme": "CODE_MAROON", "owner": new["owner"],
+            "old_fetched_at": old["fetched_at"], "new_fetched_at": new["fetched_at"],
+            "closes_findings": False, "merge_authority": False,
+            "alerts_left": sum(len(x["alerts"]) for x in left), "alerts_joined": sum(len(x["alerts"]) for x in joined),
+            "roots_cleared": sum(x["root_cleared"] for x in left), "roots_new": sum(x["root_new"] for x in joined),
+            "roots_outstanding": {"old": old["roots_outstanding"], "new": new["roots_outstanding"]},
+            "coverage_changes": coverage, "left": left, "joined": joined}
+
+
+def delta_counts(delta: dict) -> dict:
+    """Counts only, with no root ids, so the delta can be shown wherever MAROON_PUBLIC.json can."""
+    keep = ("schema", "programme", "owner", "old_fetched_at", "new_fetched_at", "closes_findings", "merge_authority",
+            "alerts_left", "alerts_joined", "roots_cleared", "roots_new", "roots_outstanding")
+    return {**{k: delta[k] for k in keep}, "coverage_changes": len(delta["coverage_changes"])}
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -240,12 +284,25 @@ def main(argv=None) -> int:
     b = sub.add_parser("build", help="build receipt, fix list, lanes and public projection from raw alerts")
     b.add_argument("--raw", required=True, type=Path)
     b.add_argument("--out", required=True, type=Path)
+    d = sub.add_parser("diff", help="alerts and roots that left or joined the outstanding set between two receipts")
+    d.add_argument("--old", required=True, type=Path)
+    d.add_argument("--new", required=True, type=Path)
+    d.add_argument("--out", required=True, type=Path)
     args = ap.parse_args(argv)
     if args.cmd == "fetch":
         args.out.mkdir(parents=True, exist_ok=True)
         raw = fetch(args.owner)
         (args.out / "raw.json").write_text(json.dumps(raw, ensure_ascii=False), encoding="utf-8", newline="\n")
         print("MAROON_FETCH=PASS", "repos=%d" % len(raw["repos"]), "out=%s" % (args.out / "raw.json"))
+        return 0
+    if args.cmd == "diff":
+        delta = diff(*(json.loads(x.read_text(encoding="utf-8")) for x in (args.old, args.new)))
+        args.out.mkdir(parents=True, exist_ok=True)
+        (args.out / "MAROON_DELTA.json").write_text(json.dumps(delta, indent=1, sort_keys=True) + "\n",
+                                                    encoding="utf-8", newline="\n")
+        print("MAROON_DIFF=PASS", *("%s=%s" % (k, delta[k]) for k in
+                                    ("alerts_left", "alerts_joined", "roots_cleared", "roots_new")),
+              "coverage_changes=%d" % len(delta["coverage_changes"]), "out=%s" % (args.out / "MAROON_DELTA.json"))
         return 0
     receipt = build(json.loads(args.raw.read_text(encoding="utf-8")))
     write_outputs(receipt, args.out)

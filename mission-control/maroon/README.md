@@ -13,6 +13,7 @@ CODE_MAROON is the review- and security-debt programme declared in
 ```bash
 python mission-control/maroon/maroon.py fetch --owner GBOGEB --out <private dir>
 python mission-control/maroon/maroon.py build --raw <private dir>/raw.json --out <private dir>
+python mission-control/maroon/maroon.py diff --old <earlier>/MAROON_RECEIPT.json --new <private dir>/MAROON_RECEIPT.json --out <private dir>
 python -m unittest discover -s mission-control/maroon -p "test_*.py"
 ```
 
@@ -78,6 +79,23 @@ The full receipt, fix list and lanes are in the private cryoplant-project reposi
 
 Code-scanning roots are one per rule. For osv-scanner and Trivy the rule is a CVE, so one vulnerable
 package can show up as several roots there; Dependabot already groups those by package.
+
+## What moved
+
+`diff` compares two receipts and writes `MAROON_DELTA.json` (private: it names roots):
+- **Left:** alerts that are no longer outstanding. GitHub marks a Dependabot or code-scanning alert
+  `fixed` once the fix reaches the default branch, so fixes from merged PRs show up here on the next
+  read.
+- **Joined:** new outstanding alerts, and roots that weren't outstanding before.
+- **Coverage changes:** a source that became unreadable is listed here, so it isn't mistaken for a fix.
+
+`delta_counts()` gives the same delta as counts only.
+
+## Nightly run
+
+The scheduled run lives in the private cryoplant-project repository
+(`.github/workflows/code-maroon-nightly.yml`). It checks out this runner at a pinned commit, fetches
+with a read-only token, builds the receipt and diffs it against the committed one there.
 
 ## Storage split
 
