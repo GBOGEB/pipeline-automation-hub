@@ -1,0 +1,103 @@
+{
+  "schema": "gbo.handover.fidelity-sidecar.v1",
+  "role": "ADDITIVE_PRIVATE_METADATA_CONTRACT_NOT_SECOND_HANDOVER_ENGINE",
+  "compatible_with": [
+    "mission-control/v2/handoff/closeout/CP_CLOSE_GITHUB_v1.json",
+    "mission-control/v2/handoff/CP_HANDOFF_RESUME_V1.json",
+    "GBOGEB/ABACUS:tools/handover_v2/process_spec.json"
+  ],
+  "state_vocabulary": [
+    "VERIFIED",
+    "SOURCE_DECLARED",
+    "PARTIAL",
+    "UNKNOWN",
+    "UNAVAILABLE",
+    "STALE",
+    "DENIED"
+  ],
+  "assertions": {
+    "whole_conversation_complete": "UNKNOWN",
+    "original_message_ids": "UNKNOWN",
+    "provider_attestation": "UNKNOWN",
+    "tool_history_complete": "UNKNOWN",
+    "prompt_list": "UNKNOWN",
+    "token_counts": "UNKNOWN",
+    "private_reasoning": "UNAVAILABLE",
+    "attachment_bytes_available": "UNKNOWN",
+    "local_worktree_contents": "UNKNOWN"
+  },
+  "required_fields": {
+    "session_alias": "pseudonym; not native chat ID",
+    "capture_utc": "UTC capture instant supplied by observer or UNKNOWN",
+    "source_class": "GITHUB_OBSERVED|AUTHORIZED_EXPORT|USER_SUPPLIED|RECONSTRUCTED|UNKNOWN",
+    "source_locator": "private locator or public approved URI; never secrets",
+    "source_sha256": "64-character lowercase hex or null with UNKNOWN state",
+    "scope": "CURRENT_VISIBLE|AUTHORIZED_EXPORT|SANITIZED_SUBSET|UNKNOWN",
+    "completeness": "VERIFIED_PROVIDER_ATTESTED|USER_DECLARED|PARTIAL|UNKNOWN",
+    "message_count": "nonnegative integer only with populated message list and declared population, else null",
+    "artifact_refs": "array of records with id, media_type, bytes, sha256, custody, access_class, state",
+    "evidence": "list of source SHA/run ID/attempt/observation identities; optional field values must remain null when unknown"
+  },
+  "artifact_reference_example": {
+    "id": "EXAMPLE-NOT-A-REAL-ASSET",
+    "media_type": "application/octet-stream",
+    "bytes": null,
+    "sha256": null,
+    "custody": "UNKNOWN",
+    "access_class": "PRIVATE",
+    "state": "UNKNOWN"
+  },
+  "rules": [
+    "Never infer full-chat completeness from visible prompts, reconstructed summaries, screenshots or GitHub records",
+    "Never make USER_DECLARED equal to provider-attested completeness",
+    "Never publish raw exports, private file names, secrets, access tokens or private asset URLs in a public branch",
+    "For non-UNKNOWN source_sha256 require exact 64 lowercase hexadecimal characters and verified bytes",
+    "On stale branch/run or missing evidence set state STALE/UNKNOWN and preserve historic result",
+    "Sidecar remains optional: legacy V1 and ABACUS V2 outputs unchanged; unknown fields default UNKNOWN, not 0 or empty lists",
+    "PDF reading copy is a rendering derivative, not verbatim chat or proof of original message IDs"
+  ],
+  "verification_cases": [
+    {
+      "id": "S1",
+      "input": "legacy closeout without sidecar",
+      "expected": "ACCEPT_LEGACY_UNMODIFIED"
+    },
+    {
+      "id": "S2",
+      "input": "unsupported full transcript claim, no authorized export",
+      "expected": "REJECT"
+    },
+    {
+      "id": "S3",
+      "input": "reconstructed user prompt list presented as provider complete",
+      "expected": "REJECT"
+    },
+    {
+      "id": "S4",
+      "input": "unknown message count",
+      "expected": "PRESERVE_NULL"
+    },
+    {
+      "id": "S5",
+      "input": "artifact digest without accessible bytes",
+      "expected": "SOURCE_DECLARED_NOT_VERIFIED"
+    },
+    {
+      "id": "S6",
+      "input": "stale run or advanced branch",
+      "expected": "STALE_HOLD"
+    },
+    {
+      "id": "S7",
+      "input": "private raw transcript in public metadata",
+      "expected": "REJECT"
+    },
+    {
+      "id": "S8",
+      "input": "future V2 unknown field additive",
+      "expected": "PRESERVE_COMPATIBILITY"
+    }
+  ],
+  "verification_status": "SPECIFICATION_ONLY_TESTS_NOT_EXECUTED",
+  "merge_admission": "HOLD"
+}

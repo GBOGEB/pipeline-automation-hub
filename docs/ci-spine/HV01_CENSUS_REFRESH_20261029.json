@@ -1,0 +1,177 @@
+{
+  "schema": "gbo.ci-spine.source-head-census.v1",
+  "observed_date": "2026-10-29",
+  "readback_kind": "NON_ATOMIC_GITHUB_CONNECTOR_OBSERVATION",
+  "frozen_source": {
+    "pr": 1022,
+    "head_sha": "243d186660875687f6a1c37b6eac15ae8ecf3157",
+    "path": "docs/ci-spine/NEXT_EXECUTION_20261029.json",
+    "preserve_original": true
+  },
+  "scope": {
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "requested_pr_count": 11,
+    "reconciled_pr_count": 11,
+    "global_open_pr_census": "UNKNOWN"
+  },
+  "master": {
+    "frozen_sha": "e7b5c580fa2f1088c58913c80feeae91e6cd5ad8",
+    "current_sha": "e7b5c580fa2f1088c58913c80feeae91e6cd5ad8",
+    "classification": "UNCHANGED"
+  },
+  "heads": [
+    {
+      "pr": 997,
+      "base": "master",
+      "branch": "refactor/ci-bundle-inventory-lifecycle-pilot-20261028",
+      "old_head_sha": "2b0b2622725592edbaa9d0905a4295dc1cbb4d1f",
+      "current_head_sha": "2b0b2622725592edbaa9d0905a4295dc1cbb4d1f",
+      "classification": "UNCHANGED",
+      "source_state": "open",
+      "source_updated_at": "2026-10-29T08:31:19Z",
+      "head_branch_match": true,
+      "base_branch_match": true
+    },
+    {
+      "pr": 1012,
+      "base": "refactor/ci-bundle-inventory-lifecycle-pilot-20261028",
+      "branch": "refactor/ci-n1-title-crosswalk-20261028",
+      "old_head_sha": "2cd0a37920e6024454e385ac37eec1fa3f356e26",
+      "current_head_sha": "2cd0a37920e6024454e385ac37eec1fa3f356e26",
+      "classification": "UNCHANGED",
+      "source_state": "open",
+      "source_updated_at": "2026-10-29T08:26:40Z",
+      "head_branch_match": true,
+      "base_branch_match": true
+    },
+    {
+      "pr": 996,
+      "base": "master",
+      "branch": "feat/ci-spine-authority-index-20261028",
+      "old_head_sha": "cb782597008c953a97d04cab8b431e6cab1ac974",
+      "current_head_sha": "cb782597008c953a97d04cab8b431e6cab1ac974",
+      "classification": "UNCHANGED",
+      "source_state": "open",
+      "source_updated_at": "2026-10-29T10:16:12Z",
+      "head_branch_match": true,
+      "base_branch_match": true
+    },
+    {
+      "pr": 1001,
+      "base": "master",
+      "branch": "feat/ci-spine-disjoint-wave-controller-20261028",
+      "old_head_sha": "39e3d4ca82d6560fdefc594a516a26b0d65cd185",
+      "current_head_sha": "83cb93a085775489d3dcd2dcc1517ad5fc63f8e9",
+      "classification": "FAST_FORWARD_ADVANCE",
+      "source_state": "open",
+      "source_updated_at": "2026-10-29T10:18:14Z",
+      "head_branch_match": true,
+      "base_branch_match": true,
+      "compare": {
+        "status": "ahead",
+        "ahead_by": 2,
+        "behind_by": 0,
+        "total_commits": 2,
+        "changed_files": [
+          {
+            "path": "scripts/ci_spine_wave_plan.py",
+            "changes": 2
+          },
+          {
+            "path": "tests/test_ci_spine_wave_plan.py",
+            "changes": 1
+          }
+        ]
+      }
+    },
+    {
+      "pr": 1006,
+      "base": "master",
+      "branch": "feat/ci-spine-source-delta-audit-20261028",
+      "old_head_sha": "6827ad91eae632e66ea2b0890d423e706c6de1b3",
+      "current_head_sha": "6827ad91eae632e66ea2b0890d423e706c6de1b3",
+      "classification": "UNCHANGED",
+      "source_state": "open",
+      "source_updated_at": "2026-10-29T10:09:10Z",
+      "head_branch_match": true,
+      "base_branch_match": true
+    },
+    {
+      "pr": 1016,
+      "base": "master",
+      "branch": "feat/ci-spine-w4-readonly-consumer-20261029",
+      "old_head_sha": "b1d93dbc83c7469246b9388f52b40592d419585c",
+      "current_head_sha": "b1d93dbc83c7469246b9388f52b40592d419585c",
+      "classification": "UNCHANGED",
+      "source_state": "open",
+      "source_updated_at": "2026-10-29T08:35:41Z",
+      "head_branch_match": true,
+      "base_branch_match": true
+    },
+    {
+      "pr": 1002,
+      "base": "master",
+      "branch": "feat/ci-spine-jacquard-provenance-explorer-20261028",
+      "old_head_sha": "4cc045d322fb65fef8fb00b2cd93e50bbc52bbd8",
+      "current_head_sha": "4cc045d322fb65fef8fb00b2cd93e50bbc52bbd8",
+      "classification": "UNCHANGED",
+      "source_state": "open",
+      "source_updated_at": "2026-10-29T10:22:20Z",
+      "head_branch_match": true,
+      "base_branch_match": true
+    },
+    {
+      "pr": 1019,
+      "base": "feat/ci-spine-jacquard-provenance-explorer-20261028",
+      "branch": "fix/ci-spine-1002-codeql-script-parser-20261029",
+      "old_head_sha": "24279024cbc683670231682c4d4fbfb5b9b6cad2",
+      "current_head_sha": "24279024cbc683670231682c4d4fbfb5b9b6cad2",
+      "classification": "UNCHANGED",
+      "source_state": "open",
+      "source_updated_at": "2026-10-29T08:40:00Z",
+      "head_branch_match": true,
+      "base_branch_match": true
+    },
+    {
+      "pr": 1021,
+      "base": "feat/ci-spine-jacquard-provenance-explorer-20261028",
+      "branch": "fix/ci-spine-1002-view-links-unknown-clocks-20261029",
+      "old_head_sha": "cda6529e855f711c73dbc8cf648913dc5b5406ce",
+      "current_head_sha": "cda6529e855f711c73dbc8cf648913dc5b5406ce",
+      "classification": "UNCHANGED",
+      "source_state": "open",
+      "source_updated_at": "2026-10-29T08:40:03Z",
+      "head_branch_match": true,
+      "base_branch_match": true
+    },
+    {
+      "pr": 1018,
+      "base": "feat/ci-spine-jacquard-provenance-explorer-20261028",
+      "branch": "feat/ci-spine-jq04-typed-pointers-20261029",
+      "old_head_sha": "b3389e9f4fc9d4809abf2b2a1ef168254c474041",
+      "current_head_sha": "b3389e9f4fc9d4809abf2b2a1ef168254c474041",
+      "classification": "UNCHANGED",
+      "source_state": "open",
+      "source_updated_at": "2026-10-29T09:56:21Z",
+      "head_branch_match": true,
+      "base_branch_match": true
+    },
+    {
+      "pr": 1017,
+      "base": "master",
+      "branch": "feat/ci-spine-jacquard-provenance-explorer-20261029",
+      "old_head_sha": "7f93c001777dc53925a64b6f4cad1128442fb598",
+      "current_head_sha": "7f93c001777dc53925a64b6f4cad1128442fb598",
+      "classification": "UNCHANGED",
+      "source_state": "open",
+      "source_updated_at": "2026-10-29T08:38:54Z",
+      "head_branch_match": true,
+      "base_branch_match": true
+    }
+  ],
+  "unclassified_head_differences": 0,
+  "ci_proof": "NOT_EVALUATED",
+  "independent_review": "PENDING",
+  "merge_admission": "HOLD",
+  "local_worktrees": "UNKNOWN"
+}
