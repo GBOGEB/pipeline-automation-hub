@@ -13,7 +13,7 @@ $Repo   = 'C:\path\to\pipeline-automation-hub'   # your clone
 $Branch = 'feat/ci-spine-jacquard-provenance-explorer-20261028'
 cd $Repo
 git fetch origin $Branch
-$Wt = Join-Path $Repo '.claude\worktrees\ci-spine-assets'
+$Wt = Join-Path (Split-Path $Repo -Parent) 'pah-ci-spine-assets'   # beside the clone, so the clone stays clean
 if (Test-Path $Wt) { git -C $Wt checkout --detach "origin/$Branch" } else { git worktree add --detach $Wt "origin/$Branch" }
 cd (Join-Path $Wt 'docs\ci-spine')
 git log -1 --format='%h %cd %s' --date=iso
