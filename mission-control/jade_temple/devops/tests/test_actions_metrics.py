@@ -493,5 +493,43 @@ class RecheckPressureRF(unittest.TestCase):
             self.assertIn(f"{day}:MISSING_RUNS_OR_RECEIPT", receipt["cache_source_issues"])
 
 
+    def test_fetch_mints_current_day_receipt_with_zero_job_budget(self):
+        from datetime import datetime, timezone
+        from unittest import mock
+        with tempfile.TemporaryDirectory() as td:
+            day = datetime.now(timezone.utc).date()
+            evidence = [run(1, created=f"{day}T00:01:00Z")]
+            with mock.patch.object(M, "fetch_runs_day", return_value=evidence) as fetched:
+                summary = M.fetch(Path(td), [REPO], day, day, 0, None,
+                                  workers=1, log=lambda _: None)
+            self.assertEqual(summary[REPO]["days_fetched"], 1)
+            self.assertEqual(summary[REPO]["job_lists_fetched"], 0)
+            fetched.assert_called_once()
+            path = M.repo_dir(Path(td), REPO) / "runs" / f"{day}.json"
+            receipt = json.loads(M.cache_receipt_path(path).read_text(encoding="utf-8"))
+            problems, digest = M.pressure_cache_evidence(
+                Path(td), REPO, day, day, receipt["fetched_at"])
+            self.assertEqual(problems, [])
+            self.assertRegex(digest, r"^[0-9a-f]{64}$")
+
+    def test_mismatched_day_and_wrong_type_receipts_are_unknown(self):
+        from datetime import datetime, timezone
+        with tempfile.TemporaryDirectory() as td:
+            day = datetime.now(timezone.utc).date()
+            path = M.repo_dir(Path(td), REPO) / "runs" / f"{day}.json"
+            path.parent.mkdir(parents=True)
+            M.write_runs_with_receipt(path, REPO, day,
+                                      [run(1, created="2020-01-01T10:00:00Z")])
+            rp = M.cache_receipt_path(path)
+            stamp = json.loads(rp.read_text(encoding="utf-8"))["fetched_at"]
+            problems, proof = M.pressure_cache_evidence(Path(td), REPO, day, day, stamp)
+            self.assertIn(f"{day}:UNVERIFIED_CACHE_RECEIPT", problems)
+            self.assertIsNone(proof)
+            rp.write_text("[]", encoding="utf-8")
+            problems, proof = M.pressure_cache_evidence(Path(td), REPO, day, day, stamp)
+            self.assertIn(f"{day}:INVALID_CACHE_RECEIPT_TYPE", problems)
+            self.assertIsNone(proof)
+
+
 if __name__ == "__main__":
     unittest.main()
