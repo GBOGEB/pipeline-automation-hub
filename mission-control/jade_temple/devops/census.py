@@ -297,18 +297,23 @@ def fetch_repo(cache: Path, repo: str, branch: str, baseline: str | None, url: s
                   f"+refs/heads/{branch}:refs/heads/{branch}", check=False)
     refresh_tags(d)
     shas =[head] + ([baseline] if base_ok and baseline != head else [])
-    want = sorted({oid for s in shas for (_m, t, oid, path) in g.ls_tree(s) if t == "blob" and wanted(path)}
-                  & set().union(*(g.missing(s) for s in shas)))
     # Fail closed: a blob that never arrived (network timeout) would otherwise be scanned as an absent file.
-    left = want
-    for _attempt in range(2):
-        try:
+    # A timeout anywhere in the blob phase (fetch or the missing-object probes) is a blob failure too,
+    # not the generic UNKNOWN row that lets 'fetch' exit 0.
+    want: list[str] = []
+    try:
+        want = sorted({oid for s in shas for (_m, t, oid, path) in g.ls_tree(s) if t == "blob" and wanted(path)}
+                      & set().union(*(g.missing(s) for s in shas)))
+        left = want
+        for _attempt in range(2):
             g.fetch_blobs(left)
-        except subprocess.TimeoutExpired:
-            pass  # whatever did not arrive is still missing below, so it fails as BLOBS_UNFETCHED
-        left = sorted(set(left) & set().union(*(g.missing(s) for s in shas)))
-        if not left:
-            break
+            left = sorted(set(left) & set().union(*(g.missing(s) for s in shas)))
+            if not left:
+                break
+    except subprocess.TimeoutExpired:
+        return {"repo": repo, "ok": False, "head": head,
+                "error": f"BLOBS_UNFETCHED: timeout in blob phase ({len(want)} wanted blobs known)",
+                "blobs_unfetched": max(1, len(want))}
     if left:
         return {"repo": repo, "ok": False, "head": head, "error": f"BLOBS_UNFETCHED: {len(left)} of {len(want)} wanted blobs",
                 "blobs_unfetched": len(left)}

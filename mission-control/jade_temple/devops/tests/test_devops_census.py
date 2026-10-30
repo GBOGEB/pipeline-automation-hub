@@ -217,6 +217,14 @@ class EndToEnd(unittest.TestCase):
                           encoding="utf-8", newline="\n")
         with redirect_stdout(io.StringIO()), mock.patch.object(C.Git, "fetch_blobs", timeout):
             self.assertEqual(C.main(["fetch", "--cache", str(cache), "--roster", str(roster)]), 1)
+        # A timeout in the missing-object probe of the blob phase fails the same way.
+        probe = self.tmp / "probe-timeout"
+        probe.mkdir(exist_ok=True)
+        with mock.patch.object(C.Git, "missing", timeout):
+            info = C.fetch_repo(probe, "demo/service", "main", self.base, url=self.url)
+        self.assertFalse(info["ok"])
+        self.assertTrue(info["error"].startswith("BLOBS_UNFETCHED"), info)
+        self.assertGreater(info["blobs_unfetched"], 0)
 
     def test_unread_baseline_blobs_fail_closed(self):
         # HEAD read fully but the delta baseline did not: its deltas would be computed from a partial tree.
