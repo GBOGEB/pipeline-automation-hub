@@ -10,6 +10,11 @@ from mach2 import (build, build_graph, defects_rate, load_manifest, run_event, s
                    trend, validate_missions, validate_mycelium, wilson)
 
 
+# CI discovers only test_mach2.py; carry the GM-IV wave tests with it (static import,
+# not load_tests, so scripts/zero_test_gate_audit.py can still count this gate).
+from test_gm4_frontier import LeaseTests, ReceiptTests, SlotMapTests  # noqa: F401,E402
+
+
 class Mach2Tests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

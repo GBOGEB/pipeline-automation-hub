@@ -11,7 +11,7 @@ not this page.
 
 | File | Role |
 |---|---|
-| `sources.json` | Declares each tile: owner, input file, field paths, related pages; the launcher page list; the verified GitHub Pages site root |
+| `sources.json` | Declares each tile: owner, input file, field paths, related pages; the launcher page list; the verified GitHub Pages site root; the cross-repo Dashboards hub |
 | `build_launcher.py` | Reads the inputs at one commit with `git cat-file`, writes `launcher.json` and `index.html` |
 | `launcher_template.html` | Self-contained page (no external scripts or styles; CSP `default-src 'none'`) |
 | `launcher.json` | Generated snapshot: source SHA, blob OID of every input, values, missing fields, HTML catalog |
@@ -41,6 +41,28 @@ Field paths are dotted; `name[]` maps the rest of the path over a list and `name
 mapping's entries, each read as `{"key": k, "value": v}` (used for the repo-keyed `p_state.json`).
 
 Paths are under `mission-control/`.
+
+## Dashboards (cross-repo hub)
+
+The **Dashboards** section, first on the page, lists the dashboards to start from across repositories:
+BnB (Bread and Butter), the cryoplant QPS dashboard launcher, the Master Input repo ledger, the CODE BNB
+cockpits, EVERRED, the G3P live ledger and the issue-rank title census artifact. They are declared in
+`sources.json` `hub`:
+
+- An entry with only a `path` is in this repository. The build reads it at the build commit (a missing
+  file fails the build) and records the page's title, so `--check` names a retitled hub page
+  (`hub changed: <path>`). It gets **Open** (relative), **GitHub** and **History** links.
+- An entry with `repo`, `ref` and `path` is in another repository (cryoplant-project is private). It is
+  declared, not probed: GitHub source and history links, plus a copyable `start <repo>\<path>` command
+  that opens the page from a clone of that repository (the section shows the `git clone` command once
+  per repository). Its Pages site returned 404 for these paths, so no Pages URL is given.
+- The BnB `url` entry links to the claude.ai artifact as written. It is private to its owner unless
+  shared, and the `bnb-dashboard-pull` scheduled task republishes it each weekday.
+- The issue-rank title census links to its hosted claude.ai artifact, documented in
+  `mission-control/issue_rank/title_census/README.md`; it is private until shared.
+
+`hub.verified` records when and how the cross-repo entries were checked. Re-check them and update it
+when a target moves.
 
 ## All pages (catalog) and How to access
 

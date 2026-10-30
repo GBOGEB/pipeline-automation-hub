@@ -1,7 +1,5 @@
 # Read-only CI spine qualification. Separate from the JADE-pinned zero-test guard
 # so its known OID cannot drift without canonical regeneration (AGENTS.md L7).
-# Audit every workflow source change plus the imported parser/metric owners;
-# never confuse a path-filtered passing badge with full repo coverage.
 name: CI Spine Source-Bound QA
 on:
   pull_request:
@@ -17,6 +15,11 @@ on:
       - 'mission-control/jade_temple/tools/rolling5.py'
       - 'mission-control/gogreen/scale_dock.py'
       - 'AGENTS.md'
+      - 'docs/ci-spine/notebook.html'
+      - 'docs/ci-spine/notebook.template.html'
+      - 'docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json'
+      - 'docs/ci-spine/RUN_TIMING_SAMPLES_20261028.json'
+      - '.github/workflows/ci-spine-governed-qa.yml'
   push:
     branches: [master]
     paths:
@@ -30,6 +33,11 @@ on:
       - 'mission-control/jade_temple/tools/rolling5.py'
       - 'mission-control/gogreen/scale_dock.py'
       - 'AGENTS.md'
+      - 'docs/ci-spine/notebook.html'
+      - 'docs/ci-spine/notebook.template.html'
+      - 'docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json'
+      - 'docs/ci-spine/RUN_TIMING_SAMPLES_20261028.json'
+      - '.github/workflows/ci-spine-governed-qa.yml'
   workflow_dispatch: {}
 permissions:
   contents: read
@@ -53,7 +61,7 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED"
           echo "CI_SPINE_SOURCE_SHA=$EXPECTED"
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: '3.11'
       - name: Install canonical parser dependency
@@ -82,6 +90,10 @@ jobs:
         run: |
           set -euo pipefail
           python scripts/ci_spine_index.py --check --source-sha "$SOURCE_HEAD" --out ci-spine-index.json
+      - name: Verify notebook source-to-view parity
+        run: |
+          set -euo pipefail
+          python scripts/ci_spine_notebook.py --check
       - name: Publish exact-source topology receipt for review
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -89,6 +101,51 @@ jobs:
           name: ci-spine-index-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
           path: |
             ci-spine-index.json
+            docs/ci-spine/notebook.html
             ${{ runner.temp }}/ci-spine-tests.log
+          retention-days: 21
+          if-no-files-found: warn
+  browser:
+    name: CI Spine provenance notebook 3-viewport browser QA
+    needs: offline
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Assert exact notebook source
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          echo "CI_SPINE_BROWSER_SOURCE_SHA=$EXPECTED_SHA"
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Install existing QA Playwright version and Chromium
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Execute offline UI interaction and visual QA
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python scripts/ci_spine_notebook_browser.py
+          test -s qa/ci_spine/receipt.json
+      - name: Upload source-bound browser screenshots and receipt
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ci-spine-notebook-browser-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            qa/ci_spine/receipt.json
+            qa/ci_spine/*.png
           retention-days: 21
           if-no-files-found: warn

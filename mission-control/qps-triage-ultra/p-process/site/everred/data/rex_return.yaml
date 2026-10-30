@@ -1,7 +1,7 @@
 schema: gbogeb-repo-rex-return/1.0
 repo: GBOGEB/ABACUS
 measurement_window:
-  end: '2026-10-18T13:29:56+00:00'
+  end: '2026-10-30T13:14:25+00:00'
   basis: everred harvest
 records:
 - rex_id: ABACUS-RC-2026-0001
@@ -13,7 +13,7 @@ records:
   frequency:
     observed_count: 0
     unit: occurrences
-    measurement_window: '2026-10-18T13:29:56+00:00'
+    measurement_window: '2026-10-30T13:14:25+00:00'
   root_cause: '12 Oct 17:58: ruleset 24494381 emptied during break-glass; 61 PRs merged
     with PR Feedback Gate green on 0; 15 Oct 10:35: deletion, pull_request (thread
     resolution) and non_fast_forward restored; required_status_checks still absent;
@@ -34,7 +34,7 @@ records:
   frequency:
     observed_count: 0
     unit: occurrences
-    measurement_window: '2026-10-18T13:29:56+00:00'
+    measurement_window: '2026-10-30T13:14:25+00:00'
   root_cause: 'Broad CI on #1914 head e9f34b22: 12,731 / 29,093 statements, 42.63%
     combined (V3 §9.3); Red in every nightly through 16 Oct (54da377c)'
   repair_method: Raise coverage (waves W0–W5) or admit a reviewed baseline-plus-ratchet
@@ -50,9 +50,9 @@ records:
   family: CI_CD
   symptom: Code-quality full-red surface (Black / isort / Flake8 umbrella)
   frequency:
-    observed_count: 8
+    observed_count: 3
     unit: occurrences
-    measurement_window: '2026-10-18T13:29:56+00:00'
+    measurement_window: '2026-10-30T13:14:25+00:00'
   root_cause: Red in every nightly since at least 7 Oct; DAB full-red census 2,973
     (E501 943, E402 612, F401 330, F541 295, E305 108)
   repair_method: DAB G1-C cohorts T0–T4, one lane per rule family
@@ -67,9 +67,9 @@ records:
   family: SECURITY
   symptom: Bandit full-scan security debt (6,363 raw observations)
   frequency:
-    observed_count: 11
+    observed_count: 2
     unit: occurrences
-    measurement_window: '2026-10-18T13:29:56+00:00'
+    measurement_window: '2026-10-30T13:14:25+00:00'
   root_cause: '6,363 raw Bandit observations full scan vs 3 configured (V3 §9.3);
     Burndown must use matched fingerprints: opened = after − before, resolved = before
     − after'
@@ -87,7 +87,7 @@ records:
   frequency:
     observed_count: 0
     unit: occurrences
-    measurement_window: '2026-10-18T13:29:56+00:00'
+    measurement_window: '2026-10-30T13:14:25+00:00'
   root_cause: 'tests/test_dmaic_measurement_receipts.py::test_real_measurement_and_repeat
     → RuntimeError: Measurement reports missing (V3 §1, #1914 run 38532010346); Fix
     lineage on main 14 Oct: 21e0c0f8, d3466031, 25e7d5ae, 7e0fb54a (nested SUT coverage,
@@ -107,7 +107,7 @@ records:
   frequency:
     observed_count: 0
     unit: occurrences
-    measurement_window: '2026-10-18T13:29:56+00:00'
+    measurement_window: '2026-10-30T13:14:25+00:00'
   root_cause: 'Regenerated in e7616e62 on #1858; check green; merged with #1858'
   repair_method: ABACUS e7616e62
   control_guard:
@@ -122,7 +122,7 @@ records:
   frequency:
     observed_count: 0
     unit: occurrences
-    measurement_window: '2026-10-18T13:29:56+00:00'
+    measurement_window: '2026-10-30T13:14:25+00:00'
   root_cause: 'Safety exit 64 on #1914 and main (V3 §1); exit 64 is a usage/invocation
     code, not a vulnerability count'
   repair_method: Read the Safety step log; separate authentication, invocation, version
@@ -137,9 +137,9 @@ records:
   family: VALIDATION
   symptom: Bandit census coverage producer (module identity / JUnit receipt mismatch)
   frequency:
-    observed_count: 1
+    observed_count: 9
     unit: occurrences
-    measurement_window: '2026-10-18T13:29:56+00:00'
+    measurement_window: '2026-10-30T13:14:25+00:00'
   root_cause: '#1914 head e9f34b22: Bandit Census run 38532010232 PASS, 52/52 tests,
     49/61 statements; #1914 merged 14 Oct 10:56 CEST'
   repair_method: 'ABACUS #1914'
@@ -155,7 +155,7 @@ records:
   frequency:
     observed_count: 0
     unit: occurrences
-    measurement_window: '2026-10-18T13:29:56+00:00'
+    measurement_window: '2026-10-30T13:14:25+00:00'
   root_cause: 'Red on 59b0326d (before #984) and every main push since'
   repair_method: Read reporter output; fix dependency or reporter configuration
   control_guard:
@@ -170,7 +170,7 @@ records:
   frequency:
     observed_count: 0
     unit: occurrences
-    measurement_window: '2026-10-18T13:29:56+00:00'
+    measurement_window: '2026-10-30T13:14:25+00:00'
   root_cause: Red on 768c9e35 and 6e9eea8c; green from f9ae4676
   repair_method: CODEX f9ae4676
   control_guard:
@@ -185,7 +185,7 @@ records:
   frequency:
     observed_count: 0
     unit: occurrences
-    measurement_window: '2026-10-18T13:29:56+00:00'
+    measurement_window: '2026-10-30T13:14:25+00:00'
   root_cause: 'No ruleset; #984 merged with 4 red checks on 12 Oct'
   repair_method: Import rulesets/CODEX.basic.json
   control_guard:
@@ -200,7 +200,7 @@ records:
   frequency:
     observed_count: 0
     unit: occurrences
-    measurement_window: '2026-10-18T13:29:56+00:00'
+    measurement_window: '2026-10-30T13:14:25+00:00'
   root_cause: No ruleset on the engineering-authority repo
   repair_method: Import rulesets/cryoplant-project.basic.json
   control_guard:
@@ -215,7 +215,7 @@ records:
   frequency:
     observed_count: 0
     unit: occurrences
-    measurement_window: '2026-10-18T13:29:56+00:00'
+    measurement_window: '2026-10-30T13:14:25+00:00'
   root_cause: No ruleset
   repair_method: Import rulesets/gg_MATH.basic.json
   control_guard:
@@ -230,14 +230,19 @@ records:
   frequency:
     observed_count: 0
     unit: occurrences
-    measurement_window: '2026-10-18T13:29:56+00:00'
-  root_cause: Ruleset 25252917 'QPS TRAIGE project' has ref_name include [] — no branch
-    protected; default branch master
+    measurement_window: '2026-10-30T13:14:25+00:00'
+  root_cause: 'Ruleset 25252917 ''QPS TRAIGE project'' has ref_name include [] — no
+    branch protected; default branch master; Repair: ruleset 25789280 ''P-BASIC pipeline-automation-hub
+    default branch'' active on ~DEFAULT_BRANCH (canonical rulesets/pipeline-automation-hub.basic.json);
+    updated 30 Oct 05:55 UTC to also require First-Pass Closure Gate / first-pass-closure
+    (#1028); 30 Oct 07:44:51 UTC verify_rulesets.py probe (live refresh at master
+    b2509f3b): GBOGEB/pipeline-automation-hub red false, gaps [], no unknown readbacks;
+    apply_rulesets.py --verify: ACTIVE, VERIFIED_EFFECTIVE'
   repair_method: Set its target to ~DEFAULT_BRANCH or import rulesets/pipeline-automation-hub.basic.json
   control_guard:
   - verify_rulesets.py reports untargeted rulesets
-  control_status: DEFERRED
-  everred_state: BLOCKED_AUTHORITY
+  control_status: VERIFIED
+  everred_state: VERIFIED_FIXED
 - rex_id: QET-RC-2026-0001
   signature: everred.control_plane_drift.qet-rc-2026-0001
   issue_kind: INCIDENT
@@ -246,7 +251,7 @@ records:
   frequency:
     observed_count: 0
     unit: occurrences
-    measurement_window: '2026-10-18T13:29:56+00:00'
+    measurement_window: '2026-10-30T13:14:25+00:00'
   root_cause: No ruleset
   repair_method: Import rulesets/Q_engineering_tools.basic.json
   control_guard:

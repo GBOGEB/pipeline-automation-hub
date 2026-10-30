@@ -1,9 +1,10 @@
 name: GOGREEN launcher
 on:
+  # no path filter: the launcher pins owner outputs and the titles of HTML pages across the repository,
+  # so any PR can stale it; the job takes under a minute
   pull_request:
-    paths:
-      - 'mission-control/gogreen/launcher/**'
-      - '.github/workflows/gogreen-launcher.yml'
+  push:
+    branches: [master]
   workflow_dispatch: {}
 permissions:
   contents: read
@@ -22,7 +23,7 @@ jobs:
           persist-credentials: false
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Python 3.12
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: '3.12'
       - name: Check outputs and run tests
