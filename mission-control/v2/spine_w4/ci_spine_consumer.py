@@ -99,8 +99,12 @@ def render(index, control, metrics=None, delta=None, wave=None, expected_head=""
             isinstance(row, dict) and isinstance(row.get("id"), str) and row["id"]
             and row.get("status") == "AUTHORITY_REVIEW_REQUIRED"
             and "before" in row and "after" in row
-            and (row["before"] is None or isinstance(row["before"], dict))
-            and (row["after"] is None or isinstance(row["after"], dict))
+            and row["before"] != row["after"]
+            and all(binding is None or (
+                isinstance(binding, dict)
+                and isinstance(binding.get("path"), str) and bool(binding["path"])
+            ) for binding in (row["before"], row["after"]))
+            and (row["before"] is not None or row["after"] is not None)
             for row in authority_changes), "delta authority-binding change contract")
         need(delta["verdict"] != "NO_OBSERVED_SOURCE_DELTA"
              or (not changes and not authority_changes), "contradictory delta verdict")
