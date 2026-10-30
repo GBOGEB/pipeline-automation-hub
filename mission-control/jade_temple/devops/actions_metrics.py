@@ -253,9 +253,21 @@ def pressure_cache_evidence(cache: Path, repo: str, since: date, until: date,
                 day += timedelta(days=1)
                 continue
             ts = BQ.utc(rec.get("fetched_at"))
+            ids_in_day = set()
+            valid_day_rows = True
+            if isinstance(d, list):
+                for row in d:
+                    created = BQ.utc(row.get("created_at")) if isinstance(row, dict) else None
+                    rid = row.get("id") if isinstance(row, dict) else None
+                    if (not isinstance(rid, int) or isinstance(rid, bool) or rid <= 0
+                            or rid in ids_in_day or created is None or created.date() != day):
+                        valid_day_rows = False
+                        break
+                    ids_in_day.add(rid)
+            else:
+                valid_day_rows = False
             digest = hashlib.sha256(raw).hexdigest()
-            if (not isinstance(d, list) or not isinstance(rec, dict)
-                    or rec.get("schema") != RUN_CACHE_RECEIPT_SCHEMA
+            if (not valid_day_rows or rec.get("schema") != RUN_CACHE_RECEIPT_SCHEMA
                     or rec.get("repository") != repo or rec.get("day") != key
                     or rec.get("records") != len(d) or rec.get("sha256") != digest
                     or ts is None):
