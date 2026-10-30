@@ -129,13 +129,23 @@ class HV03Tests(unittest.TestCase):
     def test_private_receipts_owner_only_acl_or_refuse(self):
         data = hv03.scan(self.repo)
         summary = hv03.public_summary(data)
+        if os.name == "nt":
+            probe = self.root / "acl-probe"
+            probe.mkdir()
+            try:
+                hv03.restrict_private(probe, directory=True)
+            except ValueError:
+                self.fail("DACL not owner-only: " + hv03.windows_dacl_sddl(probe)
+                          + " expected " + hv03.current_user_sid())
         outside = self.root / "acl"
         hv03.write_private(outside, data, summary)
         for path in (outside, outside / "HV03_PRIVATE.json", outside / "HV03_SUMMARY.json"):
             self.assertTrue(hv03.private_acl_ok(path), path.name)
             if os.name == "nt":
-                self.assertTrue(hv03.sddl_owner_only(hv03.windows_dacl_sddl(path),
-                                                     hv03.current_user_sid()))
+                self.assertTrue(hv03.sddl_owner_only(
+                    hv03.windows_dacl_sddl(path),
+                    hv03.windows_sid_string(hv03.current_user_sid()),
+                    normalize=hv03.windows_sid_string))
         refused = self.root / "refused"
         with mock.patch.object(hv03, "private_acl_ok", return_value=False):
             with self.assertRaisesRegex(ValueError, "cannot verify private receipt ACL"):
@@ -149,6 +159,14 @@ class HV03Tests(unittest.TestCase):
         self.assertFalse(hv03.sddl_owner_only(f"D:P(A;;FA;;;{me})(A;;FR;;;WD)", me))
         self.assertFalse(hv03.sddl_owner_only(f"D:P(D;;FA;;;{me})", me))
         self.assertFalse(hv03.sddl_owner_only("D:P", me))
+        # The built-in Administrator (RID 500) prints as the alias LA.
+        alias = {"LA": me}.get
+        self.assertTrue(hv03.sddl_owner_only("D:PAI(A;OICI;FA;;;LA)", me,
+                                             normalize=lambda s: alias(s, s)))
+        self.assertFalse(hv03.sddl_owner_only("D:PAI(A;OICI;FA;;;LA)(A;;FA;;;BA)", me,
+                                              normalize=lambda s: alias(s, s)))
+        if os.name == "nt":
+            self.assertEqual(hv03.windows_sid_string("SY"), "S-1-5-18")
 
     def test_summary_counts_unhashed_staged_index(self):
         (self.repo / "tracked.txt").write_bytes(b"x" * 200)

@@ -321,17 +321,48 @@ def windows_dacl_sddl(path: Path) -> str:
     finally:
         kernel.LocalFree(sd)
 
-def sddl_owner_only(sddl: str, sid: str) -> bool:
-    """True only for a protected DACL whose every ACE allows exactly `sid`."""
+def windows_sid_string(text: str) -> str:
+    """Canonical S-1-... form of a SID string or SDDL alias (LA for RID 500, SY, ...)."""
+    import ctypes
+    from ctypes import wintypes
+    advapi = ctypes.WinDLL("advapi32", use_last_error=True)
+    kernel = ctypes.WinDLL("kernel32", use_last_error=True)
+    advapi.ConvertStringSidToSidW.restype = wintypes.BOOL
+    advapi.ConvertStringSidToSidW.argtypes = [wintypes.LPCWSTR, ctypes.POINTER(ctypes.c_void_p)]
+    advapi.ConvertSidToStringSidW.restype = wintypes.BOOL
+    advapi.ConvertSidToStringSidW.argtypes = [ctypes.c_void_p, ctypes.POINTER(wintypes.LPWSTR)]
+    kernel.LocalFree.argtypes = [ctypes.c_void_p]
+    psid = ctypes.c_void_p()
+    if not advapi.ConvertStringSidToSidW(text, ctypes.byref(psid)):
+        raise ValueError("HV03_HOLD: unknown SID in private receipt ACL")
+    try:
+        out = wintypes.LPWSTR()
+        if not advapi.ConvertSidToStringSidW(psid, ctypes.byref(out)):
+            raise ValueError("HV03_HOLD: unknown SID in private receipt ACL")
+        try:
+            return out.value or ""
+        finally:
+            kernel.LocalFree(ctypes.cast(out, ctypes.c_void_p))
+    finally:
+        kernel.LocalFree(psid)
+
+def sddl_owner_only(sddl: str, sid: str, normalize=lambda s: s) -> bool:
+    """True only for a protected DACL whose every ACE allows exactly `sid`.
+
+    SDDL may abbreviate a well-known or machine-relative SID (the built-in
+    Administrator prints as LA), so ACE SIDs pass through `normalize` first.
+    """
     if not sddl.startswith("D:P"):
         return False
     aces = [ace.split(";") for ace in re.findall(r"\(([^)]*)\)", sddl)]
-    return bool(aces) and all(len(f) == 6 and f[0] == "A" and f[5] == sid for f in aces)
+    return bool(aces) and all(
+        len(f) == 6 and f[0] == "A" and normalize(f[5]) == sid for f in aces)
 
 def private_acl_ok(path: Path) -> bool:
     if os.name != "nt":
         return path.stat().st_mode & 0o077 == 0
-    return sddl_owner_only(windows_dacl_sddl(path), current_user_sid())
+    return sddl_owner_only(windows_dacl_sddl(path), windows_sid_string(current_user_sid()),
+                           normalize=windows_sid_string)
 
 def restrict_private(path: Path, *, directory: bool) -> None:
     """Owner-only access; refuse to continue when it cannot be verified.
