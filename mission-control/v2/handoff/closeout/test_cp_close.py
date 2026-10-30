@@ -183,5 +183,8 @@ class CloseoutTests(unittest.TestCase):
         self.assertFalse(protocol["contract"]["autonomous_merge"])
         self.assertIsNone(protocol["contract"]["disclosure"]["full_chat_prompts_without_export"])
 
+# Additive sidecar test population, exercised by the EXISTING CP.CLOSE QA workflow.
+from test_hv02_fidelity_sidecar import HV02Tests
+
 if __name__=="__main__":
     unittest.main()
