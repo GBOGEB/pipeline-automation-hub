@@ -243,6 +243,14 @@ Dry-run unless `--apply` is given.
 - **checkbox:** for the top `TRACK_DOD` issues, turn each declared DoD / DoV / STEPS bullet
   into `- [ ]`, ticking nothing. `--skip` leaves out issues whose bullets are options or
   dispositions rather than criteria.
+- **evidence** (`--evidence`, writes `burndown_evidence.json`): commit workers rarely tick
+  the issue that tracks their work, so this reads the other direction. For each open
+  checklist item it lists merged PRs that cross-reference the issue and either name the
+  item's child (`DIRECT`, confidence HIGH) or share at least 3 of its distinctive tokens
+  (tokens in at most 10% of the candidate PRs) covering half of them (`TEXT`, MEDIUM with
+  5+ hits and 75% cover, else LOW). Classes add the merge-commit check state:
+  `EVIDENCE_GREEN_*` / `EVIDENCE_RED_*`. Candidates are leads for whoever ticks; nothing is
+  ticked.
 - `--apply tick|checkbox|all [--only KEY ...]` edits issue bodies: it re-reads the live
   body, refuses if it changed since the snapshot, and appends a sha256-chained row per
   edit to `edits.jsonl`. Issue edits are owner decisions; apply only with the owner's

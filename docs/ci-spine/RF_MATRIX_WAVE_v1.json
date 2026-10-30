@@ -1,0 +1,202 @@
+{
+  "schema": "jade.devops.rf-matrix.v1",
+  "record_type": "advisory_plan_only_not_a_runnable_crew",
+  "authority": "ADVISORY_NON_DISPATCHING",
+  "temporal_contract": "ON is bounded and feedforward; OFF repairs/tests/measures; B09 -> next-pulse B00 only",
+  "canonical_owners": {
+    "scheduler": "mission-control/jade_temple/devops/lifecycle.py",
+    "dag_sipoc": "docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json",
+    "performance": "mission-control/jade_temple/devops/actions_metrics.py",
+    "gate": "mission-control/gogreen/required_gate/gate.py",
+    "source_identity": "mission-control/jade_temple/devops/workflows.py",
+    "adjoining_authority_index": "governance/ci_spine/CI_SPINE_BINDINGS_V1.json (draft PR 996, not yet authoritative)"
+  },
+  "goal": {
+    "metric": "recheck_workflow_record_share",
+    "metric_owner": "mission-control/jade_temple/devops/actions_metrics.py",
+    "sample_method": "last_1000_repo_workflow_runs",
+    "comparison": "at_most",
+    "target": 0.2,
+    "minimum_sample": 1000,
+    "t0": {
+      "value": 0.363,
+      "numerator": 363,
+      "denominator": 1000,
+      "observed_at": "2026-10-28T14:50:00Z",
+      "source_ref": "docs/ci-spine/README.md",
+      "source_head_sha": "ca623ab83793df6edd245942884ad5428a5fe079",
+      "interpretation": "sampled workflow_run records, not job minutes or successful tests"
+    },
+    "acceptance": "advisory stop only; independent acceptance, preserved fail-closed checks, no merge-authority transfer"
+  },
+  "lanes": [
+    {
+      "id": "P0_BASELINE_READER",
+      "bundle": "B00",
+      "devops_stage": "S1_CODE",
+      "cluster": "source-telemetry",
+      "phase": "P0_CONTROL",
+      "crew": "READER",
+      "depends_on": [],
+      "t0_ref": "docs/ci-spine/WORKFLOW_INDEX_20261028.json",
+      "write_pr": false,
+      "touch_paths": [],
+      "state": "READY"
+    },
+    {
+      "id": "P0_RECHECK_DOCTOR",
+      "bundle": "B07",
+      "devops_stage": "S3_TEST",
+      "cluster": "gate-recovery",
+      "phase": "P0_CONTROL",
+      "crew": "DOCTOR",
+      "depends_on": [],
+      "t0_ref": "docs/ci-spine/RUN_TIMING_SAMPLES_20261028.json",
+      "write_pr": false,
+      "touch_paths": [],
+      "state": "READY"
+    },
+    {
+      "id": "P0_SECURITY_AUDITOR",
+      "bundle": "B06",
+      "devops_stage": "S4_SECURE",
+      "cluster": "supply-chain",
+      "phase": "P0_CONTROL",
+      "crew": "AUDITOR",
+      "depends_on": [],
+      "t0_ref": "docs/ci-spine/WORKFLOW_INDEX_20261028.json",
+      "write_pr": false,
+      "touch_paths": [],
+      "state": "READY"
+    },
+    {
+      "id": "P1_COVERAGE_GUARD",
+      "bundle": "B01",
+      "devops_stage": "S3_TEST",
+      "cluster": "test-population",
+      "phase": "P1_PILOT",
+      "crew": "BUILDER",
+      "depends_on": [],
+      "t0_ref": "docs/ci-spine/WORKFLOW_INDEX_20261028.json",
+      "write_pr": false,
+      "touch_paths": [],
+      "state": "READY"
+    },
+    {
+      "id": "P1_CACHE_PILOT",
+      "bundle": "B02",
+      "devops_stage": "S2_BUILD",
+      "cluster": "dependency-cache",
+      "phase": "P1_PILOT",
+      "crew": "RUNNER",
+      "depends_on": [],
+      "t0_ref": "docs/ci-spine/RUN_TIMING_SAMPLES_20261028.json",
+      "write_pr": true,
+      "touch_paths": [
+        ".github/workflows/taxonomy-browser-qa.yml"
+      ],
+      "state": "READY"
+    },
+    {
+      "id": "P2_DOMAIN_SCALE",
+      "bundle": "B03",
+      "devops_stage": "S3_TEST",
+      "cluster": "domain-federation",
+      "phase": "P2_EXPAND",
+      "crew": "BUILDER",
+      "depends_on": [
+        "P1_COVERAGE_GUARD",
+        "P1_CACHE_PILOT"
+      ],
+      "t0_ref": "docs/ci-spine/WORKFLOW_INDEX_20261028.json",
+      "write_pr": true,
+      "touch_paths": [
+        "mission-control/jade_temple/devops/templates/rf-domain-pilot.json"
+      ],
+      "state": "READY"
+    },
+    {
+      "id": "P2_INTEGRATION_SCALE",
+      "bundle": "B04",
+      "devops_stage": "S3_TEST",
+      "cluster": "cross-repo",
+      "phase": "P2_EXPAND",
+      "crew": "RUNNER",
+      "depends_on": [
+        "P1_COVERAGE_GUARD",
+        "P1_CACHE_PILOT"
+      ],
+      "t0_ref": "docs/ci-spine/WORKFLOW_INDEX_20261028.json",
+      "write_pr": true,
+      "touch_paths": [
+        "mission-control/federation-atlas/rf-integration-pilot.json"
+      ],
+      "state": "READY"
+    },
+    {
+      "id": "P2_BROWSER_SCALE",
+      "bundle": "B05",
+      "devops_stage": "S3_TEST",
+      "cluster": "browser-qa",
+      "phase": "P2_EXPAND",
+      "crew": "RUNNER",
+      "depends_on": [
+        "P1_COVERAGE_GUARD",
+        "P1_CACHE_PILOT"
+      ],
+      "t0_ref": "docs/ci-spine/RUN_TIMING_SAMPLES_20261028.json",
+      "write_pr": false,
+      "touch_paths": [],
+      "state": "READY"
+    },
+    {
+      "id": "P3_EXACT_HEAD_FANIN",
+      "bundle": "B07",
+      "devops_stage": "S3_TEST",
+      "cluster": "governance",
+      "phase": "P3_SCALE",
+      "crew": "AUDITOR",
+      "depends_on": [
+        "P0_RECHECK_DOCTOR",
+        "P0_SECURITY_AUDITOR",
+        "P2_DOMAIN_SCALE",
+        "P2_INTEGRATION_SCALE",
+        "P2_BROWSER_SCALE"
+      ],
+      "t0_ref": "docs/ci-spine/WORKFLOW_INDEX_20261028.json",
+      "write_pr": false,
+      "touch_paths": [],
+      "state": "READY"
+    },
+    {
+      "id": "P3_RECURSIVE_CONTROL",
+      "bundle": "B09",
+      "devops_stage": "S9_CONTROL",
+      "cluster": "temporal-control",
+      "phase": "P3_SCALE",
+      "crew": "READER",
+      "depends_on": [
+        "P3_EXACT_HEAD_FANIN"
+      ],
+      "t0_ref": "docs/ci-spine/RUN_TIMING_SAMPLES_20261028.json",
+      "write_pr": false,
+      "touch_paths": [],
+      "state": "READY"
+    },
+    {
+      "id": "P4_DELIVERY_SCOUT",
+      "bundle": "B08",
+      "devops_stage": "S5_RELEASE/S6_DEPLOY",
+      "cluster": "delivery",
+      "phase": "P4_SCOUT",
+      "crew": "SCOUT",
+      "depends_on": [
+        "P3_EXACT_HEAD_FANIN"
+      ],
+      "t0_ref": "docs/ci-spine/WORKFLOW_INDEX_20261028.json",
+      "write_pr": false,
+      "touch_paths": [],
+      "state": "HOLD"
+    }
+  ]
+}
