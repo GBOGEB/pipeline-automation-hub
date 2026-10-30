@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import sys
 from pathlib import Path
@@ -16,6 +17,24 @@ SCHEMA_IN = "jade.devops.ci-spine.index.v1"
 SCHEMA_OUT = "jade.devops.ci-spine.source-delta.v1"
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
 SHA64 = re.compile(r"^[0-9a-f]{64}$")
+
+
+def _valid_job_projection(job):
+    """Validate exact fields emitted by the authoritative CI-spine index parser."""
+    if not isinstance(job, dict):
+        return False
+    ident, oid, needs = job.get("id"), job.get("oid"), job.get("needs")
+    layer, digest = job.get("layer"), job.get("def_sha256")
+    return bool(
+        isinstance(ident, str) and ident.strip()
+        and isinstance(oid, str) and oid.strip()
+        and isinstance(needs, list) and all(isinstance(item, str) and item.strip()
+                                            for item in needs)
+        and len(needs) == len(set(needs))
+        and (layer is None or (type(layer) in (int, float)
+                               and (type(layer) is int or math.isfinite(layer))))
+        and isinstance(digest, str) and SHA64.fullmatch(digest)
+    )
 
 
 def _normalize(doc, label, errors):
@@ -60,9 +79,9 @@ def _normalize(doc, label, errors):
             errors.append(label + ": malformed jobs inventory " + path)
         else:
             ids = [job.get("id") for job in jobs if isinstance(job, dict)]
-            if (len(ids) != len(jobs) or any(not isinstance(i, str) for i in ids)
-                    or len(ids) != len(set(ids))):
-                errors.append(label + ": malformed or duplicate job identities " + path)
+            if (len(ids) != len(jobs) or len(ids) != len(set(map(str, ids)))
+                    or not all(_valid_job_projection(job) for job in jobs)):
+                errors.append(label + ": malformed job projection or duplicate identity " + path)
         if path in by_path:
             errors.append(label + ": duplicate workflow " + path)
         by_path[path] = wf
