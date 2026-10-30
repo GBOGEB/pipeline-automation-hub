@@ -201,6 +201,22 @@ class WaveContract(unittest.TestCase):
             with self.subTest(valid=valid):
                 self.assertTrue(M.valid_path(valid))
 
+    def test_win32_short_name_alias_rejected(self):
+        # On NTFS src/PROGRA~1/a can be the same object as src/Program Files/a.
+        for alias in ("src/PROGRA~1/a", "src/progra~1/a", "src/LONGFI~12.TXT",
+                      "PROGRA~1/**", "docs/SPECIF~1.MD", "src/A~9"):
+            with self.subTest(alias=alias):
+                self.assertFalse(M.valid_path(alias))
+                i, policy = sample()
+                policy["tasks"][0]["owns"] = [alias]
+                outcome = M.build(i, policy)
+                self.assertEqual(outcome["candidate_workers"], [])
+                self.assertIn("invalid ownership paths", " ".join(outcome["errors"]))
+        # Long-name claims and a tilde without a digit stay valid.
+        for valid in ("src/Program Files/a", "src/backup~/a.py", "src/~notes.md"):
+            with self.subTest(valid=valid):
+                self.assertTrue(M.valid_path(valid))
+
     def test_same_lane_and_worker_capacity(self):
         i, p = sample()
         p["tasks"][2]["owns"] = ["src/c.py"]

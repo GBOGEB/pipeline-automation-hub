@@ -19,6 +19,7 @@ INDEX_SCHEMA = "jade.devops.ci-spine.index.v1"
 OUTPUT_SCHEMA = "jade.devops.ci-spine.wave-plan.v1"
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
 TASK_ID = re.compile(r"^[A-Z][A-Z0-9-]{2,63}$")
+SHORT_NAME_MARKER = re.compile(r"~[0-9]")
 STAGES = ("DISCOVER", "PREPARE", "BUILD", "VERIFY", "INTEGRATE", "CONTROL")
 
 
@@ -36,8 +37,12 @@ def valid_path(name):
     # Win32 aliases: trailing spaces/dots are discarded, device names are
     # reserved even when followed by an extension, and ':' is an ADS separator.
     # Refuse these claims rather than silently allocating overlapping workers.
+    # 8.3 short names (PROGRA~1, LONGFI~12.TXT) alias a long-named sibling on
+    # NTFS and cannot be expanded without the target filesystem, so any
+    # component carrying the "~<digit>" short-name marker is refused.
     for component in p.parts:
         if (component in (".", "..") or (component.rstrip(" .") != component or component.lstrip(" ") != component)
+                or SHORT_NAME_MARKER.search(component)
                 or any(ord(c) < 32 or c in '<>:"|\\' for c in component)
                 or re.fullmatch(r"(?:con|conin\$|conout\$|prn|aux|nul|com[1-9\u00b9\u00b2\u00b3]|lpt[1-9\u00b9\u00b2\u00b3])(?:\..*)?",
                                 component, re.IGNORECASE)):
