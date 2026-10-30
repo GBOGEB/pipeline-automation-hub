@@ -18,8 +18,9 @@ def index(sha="a" * 40):
           "source_sha256": "1" * 64, "triggers": ["pull_request"],
           "schedules": [], "permissions": "read", "reusable": False,
           "paths_filtered": False, "dag_edges": [],
-          "dag_layers": [["test"]], "jobs": [{"id": "test", "needs": [],
-                                             "layer": 0, "def_sha256": "2" * 64}]}
+          "dag_layers": [["test"]], "jobs": [{"id": "test", "oid": "jade:job:check/test",
+                                             "needs": [], "layer": 0,
+                                             "def_sha256": "2" * 64}]}
     return {"schema": M.SCHEMA_IN,
             "verdict": "PASS_STATIC_BINDINGS_ONLY",
             "source": {"checkout_sha": sha, "expected_sha": sha},
@@ -160,6 +161,48 @@ class Delta(unittest.TestCase):
                 self.assertEqual(result["verdict"], "CI_SPINE_DELTA_FIRST_RED")
                 self.assertTrue(result["errors"])
                 self.assertTrue(result["workflow_changes"][0]["safety_attention"])
+
+    def test_complete_job_projection_is_required_for_all_pulses(self):
+        # A malformed projection must not become NO_OBSERVED_SOURCE_DELTA,
+        # even when both source hashes and the malformed job are identical.
+        variants = (
+            {"id": "test", "needs": {}, "layer": [], "def_sha256": "bad",
+             "oid": "jade:job:bad"},
+            {"id": "", "needs": [], "layer": 0, "def_sha256": "2" * 64,
+             "oid": "jade:job:bad"},
+            {"id": "test", "needs": [], "layer": 0, "def_sha256": "2" * 64},
+            {"id": "test", "oid": "", "needs": [], "layer": 0,
+             "def_sha256": "2" * 64},
+            {"id": "test", "oid": "jade:job:a", "needs": "build", "layer": 0,
+             "def_sha256": "2" * 64},
+            {"id": "test", "oid": "jade:job:a", "needs": ["", "build"],
+             "layer": 0, "def_sha256": "2" * 64},
+            {"id": "test", "oid": "jade:job:a", "needs": [], "layer": True,
+             "def_sha256": "2" * 64},
+            {"id": "test", "oid": "jade:job:a", "needs": [], "layer": [],
+             "def_sha256": "2" * 64},
+            {"id": "test", "oid": "jade:job:a", "needs": [], "layer": 0,
+             "def_sha256": "bad"},
+        )
+        for job in variants:
+            with self.subTest(job=job):
+                old, new = index(), index("b" * 40)
+                old["workflows"][0]["jobs"] = [copy.deepcopy(job)]
+                new["workflows"][0]["jobs"] = [copy.deepcopy(job)]
+                result = M.compare(old, new)
+                self.assertEqual(result["verdict"], "CI_SPINE_DELTA_FIRST_RED")
+                self.assertTrue(any("malformed job projection" in e for e in result["errors"]))
+                self.assertEqual(result["limits"]["merge_admission"], "HOLD")
+
+    def test_valid_job_projection_accepts_null_layer_and_multiple_needs(self):
+        old, new = index(), index("b" * 40)
+        for row in (old["workflows"][0], new["workflows"][0]):
+            row["jobs"] = [{"id": "test", "oid": "jade:job:check/test",
+                            "needs": ["build", "check"], "layer": None,
+                            "def_sha256": "f" * 64}]
+        result = M.compare(old, new)
+        self.assertEqual(result["verdict"], "NO_OBSERVED_SOURCE_DELTA")
+        self.assertEqual(result["errors"], [])
 
     def test_anchor_rebinding_is_visible_and_cannot_certify(self):
         self.b["anchors"][0]["phase"] = "GOVERN"
