@@ -230,6 +230,22 @@ class RFPulse(unittest.TestCase):
         self.assertEqual([x["id"] for x in p["on"]], ["child"])
         self.assertNotIn("complete", [x["id"] for x in p["off"]])
 
+    def test_terminal_rows_are_source_bound(self):
+        stale_done = self.s("a", state="DONE", source_sha="b" * 40)
+        p = self.plan([stale_done, self.s("child", depends_on=["a"])])
+        self.assertEqual(p["on"], [])
+        self.assertEqual(p["held"], [{"id": "child", "reason": "DEPENDENCY_NOT_DONE"}])
+        p = self.plan([self.s("red", state="FAILED", t0_ref=None),
+                       self.s("old", state="FAILED", source_sha="b" * 40)])
+        self.assertEqual(p["off"], [])
+        self.assertEqual(sorted((x["id"], x["reason"]) for x in p["held"]),
+                         [("old", "STALE_SOURCE_SHA"), ("red", "MISSING_T0_RECEIPT")])
+
+    def test_aliased_write_paths_rejected(self):
+        for path in ("./a.py", "a//b.py", "a/./b.py", "a\\b.py", "a/", "/a.py"):
+            with self.subTest(path=path), self.assertRaises(ValueError):
+                self.plan([self.s("a", write_pr=True, touch_paths=[path])])
+
     def test_missing_t0_is_not_inferred_from_other_worker(self):
         p = self.plan([self.s("a", t0_ref="receipt"),
                        self.s("b", cluster="beta", t0_ref="")])

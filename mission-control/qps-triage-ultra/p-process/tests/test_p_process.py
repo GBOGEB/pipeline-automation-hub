@@ -130,6 +130,26 @@ class CodePurpleKit(unittest.TestCase):
         self.assertEqual(readback.gate_at_merge(runs[1:], "PR Feedback Gate", "2026-10-13T11:00:00Z"), "in_progress")
         self.assertEqual(readback.gate_at_merge([], "PR Feedback Gate", "2026-10-13T11:00:00Z"), "none")
 
+    def test_merges_since_reads_every_page_to_the_cutoff(self):
+        # 30 Oct Codex P2: one page of 100 closed pulls dropped older merges from the census.
+        from unittest import mock
+        def pull(n, merged, updated):
+            return {"number": n, "title": f"#{n}", "merged_at": merged, "updated_at": updated}
+        pages = {1: [pull(n, "2026-10-29T00:00:00Z", "2026-10-29T00:00:00Z") for n in range(100)],
+                 2: [pull(100, "2026-10-13T00:00:00Z", "2026-10-14T00:00:00Z"), pull(101, None, "2026-10-13T00:00:00Z")]
+                    + [pull(n, "2026-10-01T00:00:00Z", "2026-10-11T00:00:00Z") for n in range(102, 200)],
+                 3: [pull(999, "2026-10-20T00:00:00Z", "2026-10-20T00:00:00Z")]}
+        asked = []
+        def fake(path, paginate=False):
+            page = int(re.search(r"[?&]page=(\d+)", path).group(1))
+            asked.append(page)
+            return pages[page]
+        with mock.patch.object(readback, "gh", fake):
+            got = readback.merges_since("o/r", "2026-10-12T00:00:00Z")
+        self.assertEqual(asked, [1, 2], "page 2 reaches the cutoff, so page 3 is never read")
+        self.assertEqual(len(got), 101)
+        self.assertEqual(got[0]["number"], 100)
+
     def test_classify_inherited_vs_source(self):
         c = readback.classify(["coverage", "lint"], ["coverage"])
         self.assertEqual(c, {"inherited": ["coverage"], "source_defect_candidates": ["lint"]})
@@ -244,6 +264,10 @@ class Everred(unittest.TestCase):
         patcher = mock.patch.object(harvest, "gh", fake)
         patcher.start()
         self.addCleanup(patcher.stop)
+        self.pauses = []
+        sleeper = mock.patch.object(harvest.time, "sleep", self.pauses.append)
+        sleeper.start()
+        self.addCleanup(sleeper.stop)
         return served
 
     @staticmethod
@@ -302,6 +326,23 @@ class Everred(unittest.TestCase):
         got = harvest.check_runs_for_sha(repo, sha)
         self.assertEqual(sorted(r["id"] for r in got), list(range(1, 103)))
         self.assertEqual(len(passes), 3, "one moving pass, then two agreeing stable passes")
+        self.assertEqual(self.pauses, [harvest.PASS_PAUSE_S * 1], "one pause, after the moving pass only")
+
+    def test_stable_head_is_read_without_pausing(self):
+        repo, sha = "GBOGEB/stub", "f" * 40
+        runs = [{"id": i, "conclusion": "success", "html_url": ""} for i in range(1, 4)]
+        self._stub_gh(lambda path: {"total_count": 3, "check_runs": runs if self._page(path) == 1 else []})
+        self.assertEqual(len(harvest.check_runs_for_sha(repo, sha)), 3)
+        self.assertEqual(self.pauses, [], "two agreeing passes back to back: no wait for a settled head")
+
+    def test_moving_head_backs_off_then_fails_closed(self):
+        repo, sha = "GBOGEB/stub", "9" * 40
+        runs = [{"id": i, "conclusion": "success", "html_url": ""} for i in range(1, 103)]
+        pages = {1: (101, runs[1:101]), 2: (102, runs[100:102]), 3: (102, [])}
+        self._stub_gh(lambda path: dict(zip(("total_count", "check_runs"), pages[self._page(path)])))
+        with self.assertRaisesRegex(RuntimeError, "no two consecutive stable reads agreed"):
+            harvest.check_runs_for_sha(repo, sha)
+        self.assertEqual(self.pauses, [harvest.PASS_PAUSE_S * n for n in range(1, 6)], "growing waits between the 6 passes")
 
     def test_check_run_total_falling_mid_read_restarts_then_fails_closed(self):
         # A run vanished mid-read (e.g. superseded by a rerun): later pages shift back and a run can be skipped.
@@ -318,6 +359,11 @@ class Everred(unittest.TestCase):
         from unittest import mock
         harvest.CACHE.clear()
         self.addCleanup(harvest.CACHE.clear)
+        dropped = [SimpleNamespace(returncode=1, stdout="", stderr="error connecting to api.github.com"),
+                   SimpleNamespace(returncode=0, stdout='{"ok": 2}', stderr="")]
+        with mock.patch.object(harvest.subprocess, "run", side_effect=dropped) as run, mock.patch.object(harvest.time, "sleep"):
+            self.assertEqual(harvest.gh("repos/x/dropped"), {"ok": 2}, "gh's 'error connecting to' is a network blip (2026-10-30)")
+        self.assertEqual(run.call_count, 2)
         flaky = [SimpleNamespace(returncode=1, stdout="", stderr="dial tcp: connection attempt failed"),
                  SimpleNamespace(returncode=0, stdout='{"ok": 1}', stderr="")]
         with mock.patch.object(harvest.subprocess, "run", side_effect=flaky) as run, mock.patch.object(harvest.time, "sleep"):
