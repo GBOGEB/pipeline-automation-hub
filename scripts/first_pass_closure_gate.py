@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import fnmatch
 import hashlib
 import json
 import os
@@ -103,6 +104,80 @@ def parse_receipt(body: str | None) -> dict[str, Any]:
     if not isinstance(runs, list) or not runs:
         raise GateError("MISSING_REQUIRED_RUNS")
     return receipt
+
+
+def derive_required_runs(
+    client: Any, repo: str, head_sha: str, policy: dict[str, Any]
+) -> list[dict[str, Any]]:
+    """Run specs for the allowlisted proof workflows on the exact head, without a body receipt.
+
+    For each allowlisted workflow identity the newest run on head_sha is taken (a re-run keeps its
+    id), so an older green run cannot stand in for a newer red one. Every spec still goes through
+    validate_run(): success, exact head, allowlisted identity and workflow content equal to base.
+    """
+    identities = {
+        (i.get("repo"), i.get("workflow_name"), i.get("workflow_path"))
+        for purpose, rows in (policy.get("proof_identity_allowlist") or {}).items()
+        if purpose in REQUIRED_PURPOSES and isinstance(rows, list)
+        for i in rows
+        if isinstance(i, dict)
+    }
+    runs: list[Any] = []
+    page = 1
+    while True:
+        chunk = client.get(f"/repos/{repo}/actions/runs?head_sha={head_sha}&per_page=100&page={page}")
+        rows = chunk.get("workflow_runs") if isinstance(chunk, dict) else None
+        if not isinstance(rows, list):
+            raise GateError(f"EXPECTED_WORKFLOW_RUNS: {repo}@{head_sha[:12]}")
+        runs.extend(rows)
+        if len(rows) < 100:
+            break
+        page += 1
+    newest: dict[tuple[Any, Any, Any], dict[str, Any]] = {}
+    for run in runs:
+        if not isinstance(run, dict) or run.get("head_sha") != head_sha:
+            continue
+        key = (((run.get("repository") or {}).get("full_name")) or repo, run.get("name"), run.get("path"))
+        if key not in identities or type(run.get("id")) is not int:
+            continue
+        if key not in newest or (run.get("run_number") or 0) > (newest[key].get("run_number") or 0):
+            newest[key] = run
+    if not newest:
+        raise GateError(f"NO_ALLOWLISTED_PROOF_RUN_ON_EXACT_HEAD: {head_sha[:12]}")
+    return [{"repo": key[0], "run_id": run["id"]} for key, run in sorted(newest.items(), key=lambda kv: kv[1]["id"])]
+
+
+def dependency_update_exemption(
+    client: Any, repo: str, pr_number: int, pr: dict[str, Any], policy: dict[str, Any]
+) -> dict[str, Any] | None:
+    """The policy-bound dependency-update exemption, or None when it does not apply.
+
+    It applies only when the PR and every commit on it are authored by the declared bot, and every
+    changed path matches a declared dependency pattern. It waives only what the policy lists in
+    `waives`; the exact-head proof runs are always required.
+    """
+    rule = policy.get("dependency_update_exemption")
+    if rule is None:
+        return None
+    login = rule.get("author_login") if isinstance(rule, dict) else None
+    patterns = rule.get("allowed_path_patterns") if isinstance(rule, dict) else None
+    waives = rule.get("waives") if isinstance(rule, dict) else None
+    if (not isinstance(login, str) or not login or not isinstance(patterns, list) or not patterns
+            or not isinstance(waives, list) or not set(waives) <= {"CODEX_REVIEW"}):
+        raise GateError("POLICY_DEPENDENCY_EXEMPTION_INVALID")
+    if ((pr.get("user") or {}).get("login")) != login:
+        return None
+    commits = client.get_all(f"/repos/{repo}/pulls/{pr_number}/commits")
+    if not commits or any(((c.get("author") or {}).get("login")) != login for c in commits):
+        return None
+    files = client.get_all(f"/repos/{repo}/pulls/{pr_number}/files")
+    paths = [f.get("filename") for f in files if isinstance(f, dict)]
+    if not paths or not all(
+        isinstance(p, str) and any(fnmatch.fnmatchcase(p, pat) for pat in patterns) for p in paths
+    ):
+        return None
+    return {"author_login": login, "commit_count": len(commits), "paths": sorted(paths),
+            "waives": sorted(waives)}
 
 
 def login_matches(actual: str | None, expected: str) -> bool:
@@ -285,13 +360,20 @@ def evaluate(
             "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP: " + ",".join(protected)
         )
 
-    receipt = parse_receipt(pr.get("body"))
-    if receipt["head_sha"] != head_sha:
-        raise GateError(f"STALE_HEAD: receipt={receipt['head_sha']} current={head_sha}")
+    # A hand-written body receipt is still honoured (and must be on the exact head); without one,
+    # the trusted controller finds the allowlisted proof runs on the exact head itself.
+    if MARKER_RE.search(pr.get("body") or ""):
+        receipt = parse_receipt(pr.get("body"))
+        if receipt["head_sha"] != head_sha:
+            raise GateError(f"STALE_HEAD: receipt={receipt['head_sha']} current={head_sha}")
+        run_specs, receipt_source = receipt["required_runs"], "PR_BODY"
+    else:
+        run_specs = derive_required_runs(client, repo, head_sha, policy)
+        receipt_source = "DERIVED_EXACT_HEAD"
 
     proven_purposes: set[str] = set()
     run_receipts: list[dict[str, Any]] = []
-    for spec in receipt["required_runs"]:
+    for spec in run_specs:
         run_receipt = validate_run(client, spec, head_sha, repo, base_sha, policy)
         run_receipts.append(run_receipt)
         proven_purposes.update(run_receipt["purposes"])
@@ -300,18 +382,21 @@ def evaluate(
     if missing:
         raise GateError("MISSING_REQUIRED_PROOF_PURPOSE: " + ",".join(missing))
 
-    expected_login = codex_login(policy)
-    comments = client.get_all(f"/repos/{repo}/issues/{pr_number}/comments")
-    completed, summary_id = review_is_completed_for_head(
-        comments, head_sha, expected_login
-    )
-    if not completed:
-        raise GateError("CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD")
+    exemption = dependency_update_exemption(client, repo, pr_number, pr, policy)
+    summary_id = None
+    if exemption is None or "CODEX_REVIEW" not in exemption["waives"]:
+        expected_login = codex_login(policy)
+        comments = client.get_all(f"/repos/{repo}/issues/{pr_number}/comments")
+        completed, summary_id = review_is_completed_for_head(
+            comments, head_sha, expected_login
+        )
+        if not completed:
+            raise GateError("CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD")
 
-    reviews = client.get_all(f"/repos/{repo}/pulls/{pr_number}/reviews")
-    findings = codex_finding_reviews_for_head(reviews, head_sha, expected_login)
-    if findings:
-        raise GateError(f"CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD: {len(findings)}")
+        reviews = client.get_all(f"/repos/{repo}/pulls/{pr_number}/reviews")
+        findings = codex_finding_reviews_for_head(reviews, head_sha, expected_login)
+        if findings:
+            raise GateError(f"CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD: {len(findings)}")
 
     return {
         "schema": PASS_SCHEMA,
@@ -324,6 +409,8 @@ def evaluate(
         "codex_summary_comment_id": summary_id,
         "codex_material_finding_review_count": 0,
         "proven_purposes": sorted(proven_purposes),
+        "receipt_source": receipt_source,
+        "dependency_update_exemption": exemption,
         "required_runs": run_receipts,
         "merge_allowed": True,
         "authority_transfer": False,

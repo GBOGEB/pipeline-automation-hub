@@ -45,7 +45,9 @@
     "required_run_fields": [
       "repo",
       "run_id"
-    ]
+    ],
+    "optional": true,
+    "when_absent": "DERIVED_EXACT_HEAD: the trusted controller takes the newest run of each allowlisted proof workflow on the PR head and validates it exactly as a body-receipt run"
   },
   "codex_contract": {
     "summary_marker": "<!-- codex-pull-request-review-summary -->",
@@ -77,7 +79,9 @@
     "FINAL_RECEIPT_BASE_MISMATCH",
     "FINAL_RECEIPT_CONTROLLER_REVISION_MISMATCH",
     "LIVE_PR_RESOLUTION_FAILED_AFTER_TRIGGER_HEAD_CAPTURE",
-    "TRIGGER_LIVE_HEAD_MISMATCH"
+    "TRIGGER_LIVE_HEAD_MISMATCH",
+    "NO_ALLOWLISTED_PROOF_RUN_ON_EXACT_HEAD",
+    "POLICY_DEPENDENCY_EXEMPTION_INVALID"
   ],
   "non_compensation": {
     "r3_release_credit": "NONE",
@@ -172,5 +176,24 @@
     "r8_bootstrap_reason": "R7_CANARY_MERGED_BEFORE_FROZEN_REVIEW_AND_HEAD_STATUS_ACCEPTANCE; R7_LIVE_PR_LOOKUP_COULD_LEAVE_PRIOR_SUCCESS_STALE",
     "r8_postmerge_canary_required": true,
     "owner_admin_gate_after_clean_canary": "REQUIRED_STATUS_OR_RULESET_REQUIRED_TO_PREVENT_MANUAL_BYPASS"
+  },
+  "dependency_update_exemption": {
+    "author_login": "dependabot[bot]",
+    "applies_when": "PR_AUTHOR_AND_EVERY_COMMIT_AUTHOR_EQUAL_author_login_AND_EVERY_CHANGED_PATH_MATCHES",
+    "allowed_path_patterns": [
+      ".github/workflows/*.yml",
+      "scripts/requirements*.txt",
+      "excel_schedule_engine/requirements*.txt",
+      "mission-control/jade_temple/sprint/requirements*.txt",
+      "app/package.json",
+      "app/package-lock.json"
+    ],
+    "waives": [
+      "CODEX_REVIEW"
+    ],
+    "never_waives": [
+      "EXACT_HEAD_PROOF_RUNS",
+      "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP"
+    ]
   }
 }

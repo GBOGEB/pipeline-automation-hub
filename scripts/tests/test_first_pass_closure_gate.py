@@ -86,6 +86,9 @@ def mapping(
     base_workflow=TRUSTED_WORKFLOW,
     changed_files=None,
     changed_file_rows=None,
+    head_runs=None,
+    pr_author="GBOGEB",
+    commit_authors=("GBOGEB",),
 ):
     summary = f"""<!-- codex-pull-request-review-summary -->
 | Review | Status | Commit |
@@ -104,6 +107,13 @@ def mapping(
             "head": {"sha": HEAD},
             "base": {"sha": BASE},
             "body": pr_body if pr_body is not None else body(),
+            "user": {"login": pr_author},
+        },
+        f"/repos/{REPO}/pulls/{PR}/commits": [{"author": {"login": a}} for a in commit_authors],
+        f"/repos/{REPO}/actions/runs?head_sha={HEAD}&per_page=100&page=1": {
+            "workflow_runs": head_runs if head_runs is not None else [
+                {"id": RUN, "run_number": 5, "head_sha": run_head, "name": run_name, "path": run_path}
+            ]
         },
         f"/repos/{REPO}/pulls/{PR}/files": (
             changed_file_rows
@@ -165,9 +175,87 @@ class TestFirstPassClosureGate(unittest.TestCase):
                 POLICY,
             )
 
-    def test_missing_receipt_rejected(self):
-        with self.assertRaisesRegex(fpc.GateError, "MISSING_RECEIPT"):
-            fpc.evaluate(FakeClient(mapping(pr_body="")), REPO, PR, POLICY)
+    def test_malformed_body_receipt_rejected(self):
+        bad = "<!-- FPC_RECEIPT_V1 {\"schema\": \"first_pass_closure/v1\"} -->"
+        with self.assertRaisesRegex(fpc.GateError, "INVALID_RECEIPT_FIELDS"):
+            fpc.evaluate(FakeClient(mapping(pr_body=bad)), REPO, PR, POLICY)
+
+    # Without a body receipt the trusted controller derives the proof runs on the exact head.
+    def test_receipt_derived_from_exact_head_runs_passes(self):
+        receipt = fpc.evaluate(FakeClient(mapping(pr_body="")), REPO, PR, POLICY)
+        self.assertEqual(receipt["status"], fpc.PASS_STATUS)
+        self.assertEqual(receipt["receipt_source"], "DERIVED_EXACT_HEAD")
+        self.assertEqual([r["run_id"] for r in receipt["required_runs"]], [RUN])
+
+    def test_body_receipt_is_still_the_source_when_present(self):
+        receipt = fpc.evaluate(FakeClient(mapping()), REPO, PR, POLICY)
+        self.assertEqual(receipt["receipt_source"], "PR_BODY")
+
+    def test_derived_newest_red_run_is_not_hidden_by_older_green(self):
+        newer = RUN + 1
+        m = mapping(pr_body="", head_runs=[
+            {"id": RUN, "run_number": 5, "head_sha": HEAD, "name": "Trusted Proof", "path": ".github/workflows/trusted.yml"},
+            {"id": newer, "run_number": 6, "head_sha": HEAD, "name": "Trusted Proof", "path": ".github/workflows/trusted.yml"},
+        ])
+        m[f"/repos/{REPO}/actions/runs/{newer}"] = {**m[f"/repos/{REPO}/actions/runs/{RUN}"], "conclusion": "failure"}
+        with self.assertRaisesRegex(fpc.GateError, f"RUN_NOT_SUCCESS: {REPO}#{newer}"):
+            fpc.evaluate(FakeClient(m), REPO, PR, POLICY)
+
+    def test_derived_without_allowlisted_run_rejected(self):
+        runs = [{"id": 9, "run_number": 1, "head_sha": HEAD, "name": "Unrelated", "path": ".github/workflows/other.yml"},
+                {"id": 8, "run_number": 1, "head_sha": "b" * 40, "name": "Trusted Proof",
+                 "path": ".github/workflows/trusted.yml"}]
+        with self.assertRaisesRegex(fpc.GateError, "NO_ALLOWLISTED_PROOF_RUN_ON_EXACT_HEAD"):
+            fpc.evaluate(FakeClient(mapping(pr_body="", head_runs=runs)), REPO, PR, POLICY)
+
+    def test_derived_failed_proof_rejected(self):
+        with self.assertRaisesRegex(fpc.GateError, "RUN_NOT_SUCCESS"):
+            fpc.evaluate(FakeClient(mapping(pr_body="", run_conclusion="failure")), REPO, PR, POLICY)
+
+    # Dependency-update exemption: only the declared bot, only dependency paths, proofs still required.
+    DEP_POLICY = {**POLICY, "dependency_update_exemption": {
+        "author_login": "dependabot[bot]",
+        "allowed_path_patterns": ["requirements*.txt", "*/requirements*.txt", ".github/workflows/*.yml"],
+        "waives": ["CODEX_REVIEW"]}}
+
+    def dep(self, **kw):
+        args = {"pr_body": "", "completed": False, "pr_author": "dependabot[bot]",
+                "commit_authors": ("dependabot[bot]",), "changed_files": ["scripts/requirements.txt"], **kw}
+        return FakeClient(mapping(**args))
+
+    def test_dependabot_update_waives_codex_only(self):
+        receipt = fpc.evaluate(self.dep(), REPO, PR, self.DEP_POLICY)
+        self.assertEqual(receipt["status"], fpc.PASS_STATUS)
+        self.assertEqual(receipt["dependency_update_exemption"]["waives"], ["CODEX_REVIEW"])
+        self.assertIsNone(receipt["codex_summary_comment_id"])
+
+    def test_dependabot_update_still_needs_green_proof(self):
+        with self.assertRaisesRegex(fpc.GateError, "RUN_NOT_SUCCESS"):
+            fpc.evaluate(self.dep(run_conclusion="failure"), REPO, PR, self.DEP_POLICY)
+
+    def test_human_commit_on_dependabot_branch_loses_exemption(self):
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
+            fpc.evaluate(self.dep(commit_authors=("dependabot[bot]", "GBOGEB")), REPO, PR, self.DEP_POLICY)
+
+    def test_dependabot_change_outside_dependency_paths_loses_exemption(self):
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
+            fpc.evaluate(self.dep(changed_files=["scripts/requirements.txt", "scripts/run.py"]),
+                         REPO, PR, self.DEP_POLICY)
+
+    def test_other_author_never_gets_exemption(self):
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
+            fpc.evaluate(self.dep(pr_author="GBOGEB"), REPO, PR, self.DEP_POLICY)
+
+    def test_exemption_cannot_touch_control_plane(self):
+        with self.assertRaisesRegex(fpc.GateError, "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP"):
+            fpc.evaluate(self.dep(changed_files=[".github/workflows/first-pass-closure-gate.yml"]),
+                         REPO, PR, self.DEP_POLICY)
+
+    def test_exemption_waiving_anything_but_codex_is_invalid_policy(self):
+        policy = {**POLICY, "dependency_update_exemption": {
+            **self.DEP_POLICY["dependency_update_exemption"], "waives": ["CODEX_REVIEW", "EXACT_HEAD_CI"]}}
+        with self.assertRaisesRegex(fpc.GateError, "POLICY_DEPENDENCY_EXEMPTION_INVALID"):
+            fpc.evaluate(self.dep(), REPO, PR, policy)
 
     def test_stale_head_rejected(self):
         with self.assertRaisesRegex(fpc.GateError, "STALE_HEAD"):
@@ -278,6 +366,27 @@ class TestFirstPassClosureGate(unittest.TestCase):
             workflow,
         )
         self.assertIn("ref: ${{ steps.pr.outputs.base_sha }}", workflow)
+
+    def test_workflow_rechecks_when_the_proof_completes(self):
+        # A derived receipt exists only after the proof run finishes, so that completion must
+        # re-run the gate, serialised per PR and never trusting the triggering run's checkout.
+        workflow = (
+            ROOT.parent / ".github/workflows/first-pass-closure-gate.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn("workflow_run:\n    workflows: [First-Pass Closure Proof]\n    types: [completed]", workflow)
+        self.assertIn("github.event.workflow_run.pull_requests[0].number || inputs.pr_number", workflow)
+        self.assertIn("github.event.workflow_run.head_repository.full_name == github.repository", workflow)
+        self.assertIn('TRIGGER_HEAD_SHA="${{ github.event.workflow_run.head_sha }}"', workflow)
+        self.assertNotIn("workflow_run.head_branch", workflow)
+
+    def test_repository_policy_exemption_is_valid_and_narrow(self):
+        policy = fpc.load_policy(str(ROOT.parent / "mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json"))
+        rule = policy["dependency_update_exemption"]
+        self.assertEqual(rule["waives"], ["CODEX_REVIEW"])
+        self.assertEqual(rule["author_login"], "dependabot[bot]")
+        import fnmatch
+        self.assertFalse(any(fnmatch.fnmatchcase("scripts/first_pass_closure_gate.py", p)
+                             for p in rule["allowed_path_patterns"]))
 
 
 
