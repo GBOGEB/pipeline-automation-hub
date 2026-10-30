@@ -86,6 +86,8 @@ Prove sustained 8-frontier safe federation, crew availability and root-leverage 
 
 **Noncompensation:** 8 named slots imply 8 authorized workers; Backfill historic GM-IV with new child claims
 
+**GM-IV wave (`gm4_frontier.py`, read-only):** `GM4_SLOT_MAP.json` maps F01–F08 from the canonical registry and `GM_IV_ACTIVE8_GOVERNOR_CONTRACT.json` (repository, pinned target SHA, class, source owner, crew pool) with `assigned_worker`, `child_binding` and `authorized_workers` all `null`. Each slot leases read on its own repository and write only on `gm4_returns/<slot>/`; disjointness is decided by the federation-atlas `broker.conflicts` owner and path safety by gogreen `_validate_path_lease`, not copies. `gm4_returns/<slot>/series_<X>.json` holds one API-readback return receipt per slot per series, bound to the hub head SHA and the blob OIDs of both sources at that SHA. Run, job, root and owner disposition stay `null` and are listed as `not_verified`; independence of the series, queue p95 / proof yield (owner: `grand-missions/measure_gm_iv_runtime_capacity.py`) and the Governor disposition are `NOT_VERIFIED`.
+
 ### GM-V — CLOUD16_READINESS_MACH_II
 
 Specify elastic 16-frontier readiness and stress/adversarial scheduling without initiating a new mission or child dispatch.
@@ -175,6 +177,8 @@ Return envelope fields: `mission_id`, `MACH-II scope`, `crew_role`, `source_owne
 python -m unittest discover -s mission-control/v2/mach2 -p 'test_mach2.py' -v
 python mission-control/v2/mach2/mach2.py --out out/mach2_generated_projection.json
 python mission-control/v2/mach2/browser_qa.py out/mach2_browser_qa
+python mission-control/v2/mach2/gm4_frontier.py status
+python mission-control/v2/mach2/gm4_frontier.py observe --series B --hub-sha <40-hex hub head>
 ```
 
 Native workflow cross-validates pinned CODEX Mycelium graph and browser screenshot hashes; do not call a static source assertion a native pass.

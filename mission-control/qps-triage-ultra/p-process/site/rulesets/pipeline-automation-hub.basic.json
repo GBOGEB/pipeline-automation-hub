@@ -29,7 +29,8 @@
         "allowed_merge_methods": [
           "squash",
           "rebase"
-        ]
+        ],
+        "require_extra_approval_for_unattributed_changes": true
       }
     },
     {
@@ -48,6 +49,10 @@
           },
           {
             "context": "GOGREEN required gate",
+            "integration_id": 15368
+          },
+          {
+            "context": "First-Pass Closure Gate / first-pass-closure",
             "integration_id": 15368
           }
         ]

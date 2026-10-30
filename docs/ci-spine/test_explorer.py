@@ -169,6 +169,21 @@ class ExplorerProvenanceTests(unittest.TestCase):
         self.assertIn("6f7cf145c4ebf585dbb341ba5863e77098ad36b0", s)
         self.assertIn("older than merged PRs", s)
 
+    def test_local_workstream_docs_do_not_point_to_old_catalog_commit(self):
+        page = explorer.OUTPUT.read_text("utf-8")
+        self.assertIn('String(x).startsWith("docs/ci-spine/")', page)
+        self.assertIn('detailLink(x.slice("docs/ci-spine/".length),x)', page)
+        # A live checkout-relative document is not a GitHub blob at the
+        # historical test catalog head where that document did not exist.
+        self.assertIn("JACQUARD_CROSSWALK.md", page)
+
+    def test_unknown_queue_time_is_never_rendered_as_zero(self):
+        page = explorer.OUTPUT.read_text("utf-8")
+        self.assertIn("queueKnown=Number.isFinite(job?.queue_seconds)", page)
+        self.assertIn('(queueKnown?q+"s":"UNKNOWN")+" queue', page)
+        self.assertNotIn('time.textContent=q+"s queue', page)
+        self.assertIn('Queue "+(queueKnown?q+" seconds":"UNKNOWN")', page)
+
     def test_plotly_inline_source_url_is_not_active_network_dependency(self):
         inline = "<html><script>const locationHint='https://cdn.plot.ly/plotly.min.js';</script></html>"
         self.assertFalse(plotly_companion.external_scripts(inline))
@@ -186,6 +201,36 @@ class ExplorerProvenanceTests(unittest.TestCase):
         self.assertEqual(parser.inline_scripts, ["first", "second"])
         self.assertTrue(parser.has_external_script)
         self.assertTrue(plotly_companion.external_scripts(html))
+
+    def test_hash_router_rejects_inherited_ids_and_restores_defaults(self):
+        page = explorer.OUTPUT.read_text("utf-8")
+        self.assertIn("const byId = Object.assign(Object.create(null),", page)
+        self.assertIn('k==="bundle"&&Object.hasOwn(byId,id)', page)
+        self.assertNotIn('k==="bundle"&&byId[id]', page)
+        restore = page[page.index("function restore(){"):page.index("function setSelected(")]
+        self.assertLess(restore.index("lens=DEFAULT_LENS;selected={...DEFAULT_SELECTED};"),
+                        restore.index('if(["graph"'))
+
+    def test_redraw_restores_keyboard_focus_by_stable_key(self):
+        page = explorer.OUTPUT.read_text("utf-8")
+        self.assertIn('b.dataset.focusKey="nav:"+kind+":"+id;', page)
+        self.assertIn('"data-focus-key":"graph:bundle:"+n.short_id', page)
+        refresh = page[page.index("function refresh("):page.index("function navItem(")]
+        self.assertIn("const focusKey=document.activeElement?.dataset?.focusKey;", refresh)
+        self.assertIn("t.focus({preventScroll:true})", refresh)
+
+    def test_plotly_explorer_link_resolves_from_output_location(self):
+        repo = HERE.parents[1]
+        self.assertEqual(plotly_companion.explorer_href(repo / "ci-spine-plotly.html"),
+                         "docs/ci-spine/explorer.html")
+        self.assertEqual(plotly_companion.explorer_href(HERE / "chart.html"), "explorer.html")
+        self.assertEqual(plotly_companion.explorer_href(HERE / "qa" / "plotly" / "c.html"),
+                         "../../explorer.html")
+
+    def test_unknown_queue_inspector_is_not_null_seconds(self):
+        page = explorer.OUTPUT.read_text("utf-8")
+        self.assertIn('(Number.isFinite(j?.queue_seconds)?E(j.queue_seconds)+" seconds":"UNKNOWN")', page)
+        self.assertNotIn('E(j?.queue_seconds)+" seconds"', page)
 
     @unittest.skipUnless(shutil.which("node"), "Node not installed; native browser QA must separately run")
     def test_inline_javascript_parses_in_node(self):
