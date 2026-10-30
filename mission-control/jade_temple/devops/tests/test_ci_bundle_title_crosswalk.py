@@ -82,6 +82,12 @@ class CanonicalCrosswalk(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "CANDIDATE_CATALOG_NOT_ADVISORY"):
             C.crosswalk("test(ci/B07): suspicious match", wrong)
 
+    def test_foreign_namespace_cannot_take_candidate_identity(self):
+        for namespace in ("ci-spine:bundle", None):
+            wrong = dict(CATALOG, namespace=namespace)
+            with self.assertRaisesRegex(ValueError, "CANDIDATE_NAMESPACE_REQUIRED"):
+                C.crosswalk("test(ci/B07): suspicious match", wrong)
+
     def test_duplicate_candidate_ids_rejected(self):
         wrong = dict(CATALOG, bundles=CATALOG["bundles"] + [CATALOG["bundles"][7]])
         with self.assertRaisesRegex(ValueError, "DUPLICATE_OR_INVALID_BUNDLES"):

@@ -23,6 +23,8 @@ def _checked_candidate_catalog(catalog: dict) -> dict:
         raise ValueError("CANDIDATE_CATALOG_REQUIRED")
     if catalog.get("merge_authorized") is not False or not str(catalog.get("status", "")).startswith("ADVISORY"):
         raise ValueError("CANDIDATE_CATALOG_NOT_ADVISORY")
+    if catalog.get("namespace") != CANDIDATE_NAMESPACE:
+        raise ValueError("CANDIDATE_NAMESPACE_REQUIRED")
     rows = catalog.get("bundles")
     if not isinstance(rows, list) or not rows:
         raise ValueError("CANDIDATE_BUNDLES_UNAVAILABLE")

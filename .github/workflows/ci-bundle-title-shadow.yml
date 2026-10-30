@@ -7,6 +7,7 @@ on:
       - 'mission-control/jade_temple/devops/ci_bundle_title_crosswalk.py'
       - 'mission-control/jade_temple/devops/tests/test_ci_bundle_title_crosswalk.py'
       - 'mission-control/jade_temple/devops/CI_BUNDLE_CATALOG_V1.json'
+      - 'mission-control/issue_rank/title_taxonomy.py'  # canonical parser crosswalk() imports
       - '.github/workflows/ci-bundle-title-shadow.yml'
   workflow_dispatch: {}
 permissions:
@@ -16,13 +17,13 @@ concurrency:
   cancel-in-progress: false
 jobs:
   crosswalk:
-    name: Candidate title crosswalk (13 tests; no admission)
+    name: Candidate title crosswalk (14 tests; no admission)
     uses: ./.github/workflows/jade-reusable-ci.yml
     with:
       python-version: '3.12'
       install: 'python -c "import sys; print(sys.version)"'
       test-runner: unittest
       test-args: 'discover -s mission-control/jade_temple/devops/tests -p test_ci_bundle_title_crosswalk.py -v'
-      min-tests: 13
+      min-tests: 14
       coverage-include: '*/mission-control/jade_temple/devops/ci_bundle_title_crosswalk.py'
       coverage-floor: 0
