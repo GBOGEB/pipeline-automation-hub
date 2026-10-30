@@ -44,6 +44,13 @@ def _native_proof(record, source_sha):
     )
 
 
+def _census(heads):
+    return (isinstance(heads, dict) and bool(heads) and all(
+        isinstance(repo, str) and REPO.fullmatch(repo)
+        and isinstance(sha, str) and SHA.fullmatch(sha)
+        for repo, sha in heads.items()))
+
+
 def assess(observation):
     if not isinstance(observation, dict) or observation.get("schema") != SCHEMA:
         raise ValueError("invalid scaling observation schema")
@@ -54,10 +61,7 @@ def assess(observation):
     if type(target) is not int or target not in (2, 4):
         raise ValueError("unsupported mutator scale target")
     heads = observation.get("source_heads")
-    if not isinstance(heads, dict) or not heads or any(
-            not isinstance(repo, str) or not REPO.fullmatch(repo)
-            or not isinstance(sha, str) or not SHA.fullmatch(sha)
-            for repo, sha in heads.items()):
+    if not _census(heads):
         raise ValueError("invalid exact source census")
     pulses = observation.get("pulses")
     if not isinstance(pulses, list) or not 1 <= len(pulses) <= 16:
@@ -67,10 +71,20 @@ def assess(observation):
             or any(type(i) is not int or i < 1 for i in ids)
             or ids != sorted(set(ids))):
         raise ValueError("invalid nonmonotonic pulse identities")
+    # Per-pulse source census; a pulse without one is read at the top-level heads.
+    census = {}
+    for pulse in pulses:
+        pulse_heads = pulse.get("source_heads", heads)
+        if not _census(pulse_heads):
+            raise ValueError("invalid exact pulse source census")
+        census[pulse["pulse_id"]] = pulse_heads
 
     reasons = []
     verified_pairs = 0
     recent = pulses[-2:]
+    # A native execution or receipt may back exactly one worker or verifier
+    # record across every pair of every assessed pulse.
+    native_ids, receipt_ids = set(), set()
     if target == 4 and len(recent) < 2:
         reasons.append("TWO_CONSECUTIVE_PULSES_REQUIRED")
     if target == 4 and len(recent) == 2 and ids[-1] != ids[-2] + 1:
@@ -105,6 +119,17 @@ def assess(observation):
                 reasons.append("EXACT_HEAD_NATIVE_PAIR_PROOF_MISSING")
             if wp == vp:
                 reasons.append("VERIFIER_REUSES_WORKER_EVIDENCE")
+            for record in (wp, vp):
+                if not isinstance(record, dict):
+                    continue
+                native = (record.get("run_id"), record.get("attempt"), record.get("job_id"))
+                if native in native_ids:
+                    reasons.append("NATIVE_EVIDENCE_REUSED")
+                native_ids.add(native)
+                receipt = record.get("receipt_sha256")
+                if receipt in receipt_ids:
+                    reasons.append("NATIVE_RECEIPT_REUSED")
+                receipt_ids.add(receipt)
             if (worker.get("mode") != "MUTATION_PROPOSAL"
                     or verifier.get("mode") != "NATIVE_PROVE"):
                 reasons.append("INVALID_PAIR_MODE")
@@ -143,6 +168,14 @@ def assess(observation):
             if (any(before.get(k) is None or before.get(k) != after.get(k) for k in keys)
                     or before.get("metric_key") != "queue_p95_seconds"):
                 reasons.append("METRIC_COHORT_NOT_COMPARABLE")
+            # Each window must name the pulse it was read at and that pulse's
+            # exact source census; after = latest pulse, before = an earlier one.
+            bp, ap = before.get("pulse_id"), after.get("pulse_id")
+            if (type(bp) is not int or type(ap) is not int
+                    or ap != ids[-1] or bp not in census or not bp < ap
+                    or before.get("source_heads") != census[bp]
+                    or after.get("source_heads") != census[ap]):
+                reasons.append("METRIC_WINDOW_NOT_SOURCE_BOUND")
             complete = True
             for m in (before, after):
                 if (type(m.get("count")) is not int or m["count"] < 5

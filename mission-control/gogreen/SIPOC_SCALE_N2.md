@@ -37,7 +37,7 @@ Do not recurse on unchanged inputs, presumed approval, skipped/neutral CI, or st
 
 ## Evidence requirements for `sipoc_scale_gate.py`
 
-Input schema `missioncontrol.sipoc-scale-observation.v1`: explicit source heads, two ordered pulses, exactly two disjoint worker+verifier pairs per pulse, distinct actor and native run/job/attempt receipt identities, per-pulse completed review, no first red/security recurrence, and **external** comparable `queue_p95_seconds` from the existing Actions metric owner. The projector validates input *claims*, **not** their truth against live GitHub. Its positive return is `SCALE_CANDIDATE_EXTERNAL_GATE`, never `SCALE_APPROVED`.
+Input schema `missioncontrol.sipoc-scale-observation.v1`: explicit source heads, two ordered pulses, exactly two disjoint worker+verifier pairs per pulse, distinct actor and native run/job/attempt receipt identities (each `(run_id, attempt, job_id)` and each `receipt_sha256` used by at most one worker or verifier record across all assessed pulses), per-pulse completed review, no first red/security recurrence, and **external** comparable `queue_p95_seconds` from the existing Actions metric owner. Each metric window names its `pulse_id` and that pulse's exact `source_heads` (a pulse's own census, else the top-level heads); `after` is the latest pulse and `before` an earlier listed pulse. The projector validates input *claims*, **not** their truth against live GitHub. Its positive return is `SCALE_CANDIDATE_EXTERNAL_GATE`, never `SCALE_APPROVED`.
 
 Actual values are **WITHHELD** until a complete comparable metric cohort and real exact-head run/job readback are available. An empty status list is not CI pass. Green test labels are not independently accepted causal-root closure.
 

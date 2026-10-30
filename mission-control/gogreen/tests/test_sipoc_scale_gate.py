@@ -10,12 +10,18 @@ m = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(m)
 SHA = "a" * 40
 DIGEST = "b" * 64
+HEADS = {"GBOGEB/pipeline-automation-hub": SHA}
 
 
-def pair(i):
-    proof = dict(run_id=i, attempt=1, job_id=i+10, source_sha=SHA,
-                 receipt_sha256=DIGEST, status="completed", conclusion="success")
-    check = dict(proof, run_id=i+100, job_id=i+110)
+def digest(n):
+    return format(n, "064x")
+
+
+def pair(i, pulse=0):
+    base = 1000 * pulse + i
+    proof = dict(run_id=base, attempt=1, job_id=base+10, source_sha=SHA,
+                 receipt_sha256=digest(base), status="completed", conclusion="success")
+    check = dict(proof, run_id=base+100, job_id=base+110, receipt_sha256=digest(base+100))
     return dict(id=f"PAIR-{i}", repo="GBOGEB/pipeline-automation-hub",
                 source_sha=SHA, root_id=None, first_red_roots=[],
                 lease_collision=False,
@@ -27,17 +33,19 @@ def pair(i):
 def sample():
     return dict(schema=m.SCHEMA, authority_transfer=False,
                 merge_authorized=False, dispatch_authorized=False,
-                target_mutators=4, source_heads={"GBOGEB/pipeline-automation-hub": SHA},
-                pulses=[dict(pulse_id=n, pairs=[pair(1),pair(2)],
+                target_mutators=4, source_heads=dict(HEADS),
+                pulses=[dict(pulse_id=n, pairs=[pair(1, n),pair(2, n)],
                              first_red_recurrences=0, security_findings=0,
                              independent_review=True) for n in (7,8)],
                 metrics=dict(owner=m.METRIC_OWNER,
                              before=dict(scope="JADE", denominator="executed-jobs",
                                          time_unit="seconds",repo_population="focus5",
-                                         metric_key="queue_p95_seconds",count=10,value=240),
+                                         metric_key="queue_p95_seconds",count=10,value=240,
+                                         pulse_id=7, source_heads=HEADS),
                              after=dict(scope="JADE", denominator="executed-jobs",
                                         time_unit="seconds",repo_population="focus5",
-                                        metric_key="queue_p95_seconds",count=10,value=210)))
+                                        metric_key="queue_p95_seconds",count=10,value=210,
+                                        pulse_id=8, source_heads=HEADS)))
 
 
 class ScaleGateTest(unittest.TestCase):
@@ -64,6 +72,46 @@ class ScaleGateTest(unittest.TestCase):
         record = sample()
         record["pulses"][0]["pairs"][0]["verifier"]["native"] = record["pulses"][0]["pairs"][0]["worker"]["native"]
         self.assertIn("VERIFIER_REUSES_WORKER_EVIDENCE", m.assess(record)["reasons"])
+
+    def test_native_identity_reuse_across_records_blocks(self):
+        # Same run/attempt/job with an irrelevant field changed: wp != vp.
+        record = sample()
+        p = record["pulses"][0]["pairs"][0]
+        p["verifier"]["native"] = dict(p["worker"]["native"], receipt_sha256=digest(999))
+        self.assertIn("NATIVE_EVIDENCE_REUSED", m.assess(record)["reasons"])
+        # Pulse 8 replays pulse 7's native executions.
+        record = sample()
+        record["pulses"][1]["pairs"] = copy.deepcopy(record["pulses"][0]["pairs"])
+        out = m.assess(record)
+        self.assertEqual(out["classification"], "HOLD")
+        self.assertIn("NATIVE_EVIDENCE_REUSED", out["reasons"])
+        self.assertIn("NATIVE_RECEIPT_REUSED", out["reasons"])
+        # Another pair reuses only a receipt digest.
+        record = sample()
+        pulse = record["pulses"][1]["pairs"]
+        pulse[1]["worker"]["native"]["receipt_sha256"] = pulse[0]["worker"]["native"]["receipt_sha256"]
+        self.assertIn("NATIVE_RECEIPT_REUSED", m.assess(record)["reasons"])
+
+    def test_metric_windows_bound_to_pulse_source_census(self):
+        stale = {"GBOGEB/pipeline-automation-hub": "c" * 40}
+        for window, key, value in (("after", "source_heads", stale),
+                                   ("before", "source_heads", None),
+                                   ("after", "pulse_id", 7),
+                                   ("before", "pulse_id", 8),
+                                   ("before", "pulse_id", 3)):
+            record = sample()
+            record["metrics"][window][key] = value
+            with self.subTest(window=window, key=key, value=value):
+                self.assertIn("METRIC_WINDOW_NOT_SOURCE_BOUND", m.assess(record)["reasons"])
+        # A historical baseline pulse with its own census binds to that census.
+        record = sample()
+        record["pulses"].insert(0, dict(pulse_id=6, source_heads=stale, pairs=[],
+                                        first_red_recurrences=0, security_findings=0,
+                                        independent_review=True))
+        record["metrics"]["before"].update(pulse_id=6, source_heads=stale)
+        self.assertEqual(m.assess(record)["classification"], "SCALE_CANDIDATE_EXTERNAL_GATE")
+        record["metrics"]["before"]["source_heads"] = dict(HEADS)
+        self.assertIn("METRIC_WINDOW_NOT_SOURCE_BOUND", m.assess(record)["reasons"])
 
     def test_overlap_or_causal_root_collision_blocks(self):
         record = sample()
