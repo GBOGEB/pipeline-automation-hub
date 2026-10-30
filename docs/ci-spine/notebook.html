@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>CI Spine · Provenance Notebook</title>
+<style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:dark;
+--bg:#0a1424;--panel:#112338;--edge:#284259;--ink:#e8f1f7;--muted:#a3b8ca;--accent:#74d6c4;--blue:#76abff;--amber:#efbd6c;--violet:#baa6ff;--paper:#e8eef1;--paperink:#263c4b}
+*{box-sizing:border-box}body{background:radial-gradient(ellipse at 55% 0,#172c41 0,#0a1424 60%);color:var(--ink);margin:0;min-width:320px}
+a{color:var(--blue)}button,input{font:inherit}button{cursor:pointer}.shell{max-width:1720px;margin:0 auto;padding:22px}
+.skip{position:absolute;top:-100px;left:10px}.skip:focus{top:10px;z-index:10;background:var(--paper);color:#123;padding:10px}
+.mast{display:flex;align-items:flex-start;gap:20px;justify-content:space-between;border-bottom:1px solid var(--edge);padding:2px 0 18px}
+.kicker{color:var(--accent);font-size:12px;text-transform:uppercase;letter-spacing:.17em;font-weight:700}
+h1{margin:4px 0 6px;font-size:clamp(23px,2.8vw,38px);font-weight:690;letter-spacing:-.035em}
+.subhead{margin:0;color:var(--muted);max-width:850px;font-size:14px;line-height:1.5}
+.state{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.pill{display:inline-flex;gap:6px;align-items:center;padding:7px 10px;border-radius:999px;background:#1a354a;border:1px solid #42627b;font-size:11px;letter-spacing:.03em;font-weight:700;white-space:nowrap}
+.pill.hold{background:#49351d;border-color:#806032;color:#ffdc9d}
+.frame{display:grid;grid-template-columns:236px minmax(0,1fr) 326px;gap:15px;margin-top:18px;align-items:start}
+.panel{background:linear-gradient(160deg,#14263a,#0d1c2e);border:1px solid var(--edge);border-radius:16px;min-width:0;overflow:hidden;box-shadow:0 8px 32px #01081440}
+.nav-head,.panel-head{padding:16px 16px 12px;border-bottom:1px solid var(--edge)}
+.smallcap{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:750}
+.nav-head h2,.panel-head h2{margin:5px 0 0;font-size:17px}
+.nav-content{padding:12px}.search{width:100%;background:#0b1727;border:1px solid #45617c;padding:10px;color:var(--ink);border-radius:9px;outline-offset:2px}
+.bundles{margin:12px 0;padding:0;list-style:none}.bundles li+li{margin-top:4px}
+.bundle{border:1px solid transparent;border-radius:9px;display:flex;width:100%;text-align:left;padding:11px 9px;gap:9px;align-items:center;color:var(--muted);background:transparent}
+.bundle:hover{background:#213950}.bundle[aria-current=true]{background:#214251;border-color:#41978f;color:white}
+.bundle strong{font-size:13px;color:var(--ink);flex:0 0 38px}.bundle span{font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav-footer{padding:12px;border-top:1px solid var(--edge);line-height:1.6;font-size:12px;color:var(--muted)}
+.nav-footer a{display:block;text-decoration:none;margin-top:3px}
+.worktop{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:14px 15px;border-bottom:1px solid var(--edge)}
+.tabs{display:flex;gap:5px;flex-wrap:wrap}.tab,.squarebtn,.utility{background:#172c40;color:var(--muted);border:1px solid #38536a;border-radius:8px;padding:9px 12px;font-size:12px}
+.tab[aria-selected=true]{color:#eafffc;background:#1d5352;border-color:#4daca4}
+.tab:hover,.squarebtn:hover,.utility:hover{border-color:var(--accent);color:white}
+.tools{display:flex;align-items:center;gap:6px}.scale{color:var(--muted);min-width:36px;text-align:center;font-size:12px}
+.scene{padding:16px;min-height:555px}.scene[hidden]{display:none}.maphead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:11px}
+.maphead h2{font-size:16px;margin:0}.maphead p{font-size:12px;color:var(--muted);margin:4px 0 0}
+#map{display:block;width:100%;height:min(59vh,555px);min-height:330px;background:radial-gradient(circle at 50% 50%,#1a344c,#0a192a 70%);border:1px solid #2c4962;border-radius:12px;touch-action:none}
+#map:focus-visible{outline:3px solid #80d8d0}.gridline{stroke:#26405a;stroke-width:1;opacity:.22}.edge{stroke:#779db3;stroke-width:1.8;fill:none;opacity:.55}
+.edge.feedback{stroke-dasharray:6 6;stroke:#efbd6c;opacity:.9}.edge.inactive{opacity:.18}
+.gnode{cursor:pointer;outline:none}.gnode rect{fill:#19344b;stroke:#49738a;stroke-width:1.5}.gnode .code{fill:var(--accent);font-size:14px;font-weight:750}
+.gnode .name{fill:#e3eff5;font-size:11px}.gnode .stage{fill:#9cbac9;font-size:10px}
+.gnode.selected rect,.gnode:focus rect{stroke:var(--accent);stroke-width:3;fill:#23516a}
+.gnode.muted{opacity:.38}.gnode:hover rect{stroke:var(--amber)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:11px;margin:10px 0 0}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:6px}
+.dot.amber{background:var(--amber)}.dot.violet{background:var(--violet)}
+.inspector{padding:17px}.inspector h2{margin:5px 0 3px;font-size:21px}.inspector h3{font-size:13px;margin:21px 0 8px}
+.detail{font-size:13px;color:var(--muted);line-height:1.55}.codeword{font-size:12px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere;color:var(--accent)}
+.mini{font-size:12px;color:var(--muted)}.linkstack{display:grid;gap:8px;margin-top:10px}.linkstack a{font-size:12px;overflow-wrap:anywhere}
+.statline{border-top:1px solid var(--edge);padding:9px 0;display:grid;gap:3px}.statline dt{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}.statline dd{margin:0;font-size:12px;overflow-wrap:anywhere}
+.copy{display:block;width:100%;margin:14px 0 0;background:#21685f;border:1px solid #5bb4a4;color:#f4fffd;padding:10px;border-radius:9px;font-size:12px}
+.copy:hover{background:#2d8075}.copy-status{min-height:20px;font-size:11px;color:var(--accent)}
+.evidence-note{padding:12px;border:1px solid #605039;background:#312a25;border-radius:10px;font-size:12px;color:#ffdda0;line-height:1.5}
+.sipoc{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}.sipoc article{background:#132e45;border:1px solid #31506a;border-radius:10px;padding:13px 10px;min-width:0}
+.sipoc h3{margin:0 0 9px;font-size:12px;letter-spacing:.04em;color:var(--accent)}.sipoc ul{list-style:none;padding:0;margin:0}
+.sipoc li{font-size:12px;color:#d1e2ed;line-height:1.5;overflow-wrap:anywhere;padding:6px 0;border-top:1px solid #31506a}
+.timing{width:100%;border-collapse:collapse}.timing th,.timing td{padding:11px 8px;border-bottom:1px solid #34485b;text-align:left;font-size:12px;vertical-align:middle}
+.timing th{color:var(--muted);font-weight:650}.timing td.numeric{font-variant-numeric:tabular-nums;white-space:nowrap}
+.bartrack{width:100%;height:7px;border-radius:9px;background:#263d52;min-width:50px;overflow:hidden}.bar{height:100%;border-radius:9px;background:linear-gradient(90deg,#408aab,#79d6c5)}
+.timing td a{font-size:12px}.timing .muted{color:var(--muted)}
+.doc-split{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(185px,.9fr);gap:15px}
+.paper{background:var(--paper);color:var(--paperink);border-radius:4px;box-shadow:0 12px 23px #03091180;padding:27px 26px;min-height:415px;max-width:560px;margin:auto;border:1px solid #e6edf2;position:relative}
+.paper:before{content:"SOURCE-MAPPED HTML REVIEW · NOT A PDF";display:block;font-size:10px;letter-spacing:.11em;color:#5e8394;border-bottom:1px solid #bdcdd5;padding-bottom:8px}
+.paper h2{font-size:22px;margin:24px 0 8px;line-height:1.2}.paper p{font-size:13px;line-height:1.55}.region{border:2px dashed #6f9faf;background:#d8edf2;border-radius:4px;padding:12px;margin-top:23px;scroll-margin-top:40px}
+.region.focus{border-color:#c17f42;background:#fff1d7}.paper-code{font:11px ui-monospace,Consolas,monospace;word-break:break-word}
+.paper-caption{font-size:12px;color:#567184}.doc-info{line-height:1.6}.doc-info p{font-size:13px;color:var(--muted)}
+.doc-info a{display:block;margin-top:8px;font-size:12px}.fine{color:var(--muted);font-size:11px;line-height:1.6}
+.comp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.comp-card{background:#132e45;border:1px solid #385269;border-radius:10px;padding:15px}
+.comp-card h3{margin:0 0 8px;font-size:14px}.comp-card p{font-size:12px;color:var(--muted);line-height:1.6}
+.comp-card a{overflow-wrap:anywhere;font-size:12px}
+.footer{margin-top:15px;display:flex;flex-wrap:wrap;align-items:center;gap:12px;justify-content:space-between;color:var(--muted);font-size:11px}
+code{font-size:.94em}.no-data{color:var(--amber)}
+@media(max-width:1160px){.frame{grid-template-columns:205px minmax(0,1fr)}.panel.inspector-panel{grid-column:1 / -1}.inspector{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px}.inspector h2,.inspector h3{margin-top:7px}.statline{max-width:100%}}
+@media(max-width:730px){.shell{padding:12px}.mast{display:block}.state{justify-content:flex-start;margin-top:13px}.frame{grid-template-columns:minmax(0,1fr)}.nav-head{padding:12px}.nav-content{padding:10px}.bundles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.bundles li+li{margin:0}.bundle{padding:8px}.nav-footer{display:none}.scene{padding:11px;min-height:0}.sipoc{grid-template-columns:repeat(2,minmax(0,1fr))}.doc-split{grid-template-columns:1fr}.inspector{display:block}.comp-grid{grid-template-columns:1fr}.timing{display:block;overflow-x:auto}#map{height:420px}}
+@media(prefers-reduced-motion:no-preference){button,.gnode{transition:background .13s,border-color .13s,opacity .13s}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to explorer</a>
+<div class="shell">
+<header class="mast">
+  <div>
+    <div class="kicker">Mission Control / CI Spine / Notebook 01</div>
+    <h1>Threads behind the green</h1>
+    <p class="subhead">Follow a bundle across execution dependencies, SIPOC, historical run clocks and source anchors. An offline, read-only provenance explorer built from merged CI Spine evidence.</p>
+  </div>
+  <div class="state" aria-label="Assurance labels">
+    <span class="pill">FROZEN SNAPSHOT</span><span class="pill hold">ADMISSION · HOLD</span><span class="pill">NO NETWORK / NO EXECUTION</span>
+  </div>
+</header>
+<div class="frame">
+  <nav class="panel" aria-label="CI bundles">
+    <div class="nav-head"><div class="smallcap">01 / source registry</div><h2>Test bundles</h2></div>
+    <div class="nav-content">
+      <label class="smallcap" for="search">Find a bundle</label>
+      <input id="search" class="search" type="search" placeholder="B07, security, source…" aria-label="Filter bundles">
+      <ul class="bundles" id="bundles"></ul>
+    </div>
+    <div class="nav-footer"><div class="smallcap">Existing owners</div>
+      <a href="../../governance/ci_spine/README.md">Source-bound CI spine index</a>
+      <a href="../../mission-control/jade_temple/site/cicd_dag.html">Canonical JADE DAG/SIPOC</a>
+      <a href="../../mission-control/federation-atlas/mission_rebuild/w2_plotly.py">Plotly presentation owner</a>
+      <a href="README.md">CI bundle method and clocks</a>
+    </div>
+  </nav>
+  <main class="panel" id="main">
+    <div class="worktop">
+      <div class="tabs" role="tablist" aria-label="Notebook view">
+        <button type="button" class="tab" data-view="graph" role="tab" aria-selected="true">DAG</button>
+        <button type="button" class="tab" data-view="sipoc" role="tab" aria-selected="false">SIPOC</button>
+        <button type="button" class="tab" data-view="timing" role="tab" aria-selected="false">Clocks</button>
+        <button type="button" class="tab" data-view="document" role="tab" aria-selected="false">Document lens</button>
+        <button type="button" class="tab" data-view="compendium" role="tab" aria-selected="false">Compendium</button>
+      </div>
+      <div class="tools"><button class="squarebtn" id="zoom-out" title="Zoom out" aria-label="Zoom out">−</button><span class="scale" id="scale">100%</span><button class="squarebtn" id="zoom-in" title="Zoom in" aria-label="Zoom in">+</button><button class="squarebtn" id="reset" title="Reset graph" aria-label="Reset graph">Reset</button></div>
+    </div>
+    <section class="scene" id="view-graph" role="tabpanel">
+      <div class="maphead"><div><h2>Governed dependency spine</h2><p>Choose a node to trace all upstream prerequisites. Drag to pan, zoom with +/−. Dashed feedback is next-pulse only.</p></div><span class="pill">10 bundles / 17 edges</span></div>
+      <svg id="map" viewBox="0 0 970 740" tabindex="0" aria-label="Interactive CI bundle DAG; select nodes to inspect source pointers">
+        <defs><marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0L7,3.5L0,7Z" fill="#7ba3b7"></path></marker></defs>
+        <g id="map-content"></g>
+      </svg>
+      <div class="legend"><span><i class="dot"></i>Selected / source mapped</span><span><i class="dot amber"></i>Next pulse</span><span><i class="dot violet"></i>Proposed, not a certified executable DAG</span></div>
+    </section>
+    <section class="scene" id="view-sipoc" role="tabpanel" hidden>
+      <div class="maphead"><div><h2>Who supplies what?</h2><p>Supplier → Input → Process → Output → Customer for the selected bundle, from the existing JSON contract.</p></div></div>
+      <div id="sipoc" class="sipoc" aria-live="polite"></div>
+    </section>
+    <section class="scene" id="view-timing" role="tabpanel" hidden>
+      <div class="maphead"><div><h2>Historical execution clocks</h2><p>Observed GitHub run/job samples from 28 October 2026 — not population estimates or matched results for the selected bundle.</p></div></div>
+      <div class="evidence-note">Queue, execution and workflow wall are distinct clocks. UNKNOWN never becomes zero. No runtime improvement, current green status or causal association with the selected bundle is asserted.</div>
+      <div style="overflow:auto;margin-top:12px"><table class="timing"><thead><tr><th>Source run / job</th><th>Queue</th><th>Execution</th><th style="min-width:90px">Relative</th><th>Receipt</th></tr></thead><tbody id="timing-rows"></tbody></table></div>
+    </section>
+    <section class="scene" id="view-document" role="tabpanel" hidden>
+      <div class="maphead"><div><h2>Source ↔ review document</h2><p>A real JSON-to-HTML location mapping. The paper preview is HTML, not an actual PDF and has no inferred PDF coordinates.</p></div></div>
+      <div class="doc-split">
+        <article class="paper" aria-label="Illustrative HTML review document">
+          <h2 id="paper-title">Bundle B00</h2><p id="paper-desc"></p>
+          <div class="region focus" id="paper-region" tabindex="0">
+            <strong id="paper-tag"></strong><p class="paper-code" id="paper-pointer"></p>
+            <p class="paper-caption">This HTML region is anchored to a source JSON member. A future PDF build must emit its own verified page/box mapping.</p>
+          </div>
+          <p class="paper-caption" style="margin-top:20px">Review surface · provenance overlay · source-bound, read-only</p>
+        </article>
+        <aside class="doc-info"><div class="smallcap">Location contract</div>
+          <h3 id="doc-region-title">Selected region</h3><p id="doc-source"></p>
+          <a id="doc-source-link" target="_blank" rel="noopener noreferrer">Open exact source anchor</a>
+          <p><strong>PDF layer</strong> · <span class="no-data">UNAVAILABLE</span></p>
+          <p>No source-to-PDF page/rectangle mapping was supplied. Do not interpret HTML coordinates as PDF geometry or make claims of PDF inline edit support.</p>
+          <p class="fine">Future adapters: SyncTeX source line ↔ PDF coordinate for LaTeX; PDF.js annotation layer and geometry for already-authored PDFs; OpenXML object IDs for PPTX; SVG element IDs for diagrams. Each adapter needs source digest, coordinate transform and confidence.</p>
+        </aside>
+      </div>
+    </section>
+    <section class="scene" id="view-compendium" role="tabpanel" hidden>
+      <div class="maphead"><div><h2>Cross-format workbench</h2><p>Complementary assets, not a second metrics engine or a competing publisher.</p></div></div>
+      <div class="comp-grid">
+        <article class="comp-card"><h3>Origin → derived evidence</h3><p>Git source, canonical parsed workflow DAG and exact run receipts can explain why a page or plot exists. Keep all clocks and authority labels.</p><a href="../../mission-control/jade_temple/site/cicd_dag.html">Open JADE multi-lens DAG</a></article>
+        <article class="comp-card"><h3>Exploratory Plotly charts</h3><p>Keep Plotly as the numerical and interactive-chart champion. Join data by exact source/run identity rather than rewriting the computation.</p><a href="../../mission-control/federation-atlas/mission_rebuild/w2_plotly.py">Open Plotly generator source</a></article>
+        <article class="comp-card"><h3>Comments tied to source</h3><p>The prior W18 dashboard already implements location IDs and comment handoffs. This notebook uses a narrower exact JSON pointer with no write path.</p><a href="../mission-control/w18/index.html">Open existing Mission Control W18</a></article>
+        <article class="comp-card"><h3>Jacquard research reference</h3><p>Fine-grained provenance, build graph navigation and source-anchored comments. A research idea, not an installed certified PDF engine.</p><a href="https://www.inkandswitch.com/jacquard/notebook/" target="_blank" rel="noopener noreferrer">Read Jacquard notebook</a></article>
+      </div>
+    </section>
+  </main>
+  <aside class="panel inspector-panel" aria-label="Source provenance inspector">
+    <div class="panel-head"><div class="smallcap">02 / selected evidence</div><h2>Inspector</h2></div>
+    <div class="inspector">
+      <div><div class="smallcap" id="inspector-id">B00</div><h2 id="inspector-name">Source</h2><p id="inspector-desc" class="detail"></p></div>
+      <div><h3>Authority & stage</h3><dl>
+        <div class="statline"><dt>Proposed policy</dt><dd id="inspector-policy"></dd></div>
+        <div class="statline"><dt>DevOps stage</dt><dd id="inspector-stage"></dd></div>
+        <div class="statline"><dt>JSON pointer</dt><dd class="codeword" id="inspector-pointer"></dd></div>
+        <div class="statline"><dt>Source record SHA</dt><dd class="codeword" id="inspector-sha"></dd></div>
+      </dl></div>
+      <div><h3>Bidirectional references</h3><div class="linkstack"><a id="source-link" target="_blank" rel="noopener noreferrer">Source JSON member</a><a id="workflow-link" target="_blank" rel="noopener noreferrer">Example workflow</a><a href="LOGICAL_BUNDLE_DAG_v1.json">Original model JSON</a><a href="RUN_TIMING_SAMPLES_20261028.json">Original timing sample</a></div><button type="button" class="copy" id="copy-pointer">Copy stable source pointer</button><div class="copy-status" id="copy-status" role="status"></div></div>
+      <div class="evidence-note">Source contract says <strong>PROPOSED_DESIGN</strong>. This view cannot approve a PR, refresh a live census, dispatch jobs, edit PDF content or transfer engineering authority.</div>
+    </div>
+  </aside>
+</div>
+<footer class="footer"><div>Frozen provenance snapshot: <code id="source-head"></code> · Graph SHA-256: <code id="graph-hash"></code></div><div><a href="README.md">DoD / DoV & method</a> · <a href="https://github.com/GBOGEB/pipeline-automation-hub/pull/989" target="_blank" rel="noopener noreferrer">Badge pilot #989</a> · <a href="https://github.com/GBOGEB/pipeline-automation-hub/pull/992" target="_blank" rel="noopener noreferrer">CI spine #992</a></div></footer>
+</div>
+<script type="application/json" id="notebook-data">{"assurance":{"authority_transfer":false,"merge_admission":"HOLD","not_live":true,"pdf_location_mapping":"UNAVAILABLE","release_approval":"NOT_EVALUATED","run_dispatch":false,"source_class":"FROZEN_SOURCE_SUPPORTED_NAVIGATION"},"crosslinks":[{"href":"../../governance/ci_spine/README.md","title":"CI Spine source index"},{"href":"../../mission-control/jade_temple/site/cicd_dag.html","title":"Canonical JADE DAG / SIPOC"},{"href":"../../mission-control/federation-atlas/mission_rebuild/w2_plotly.py","title":"Plotly Mission Control generator"},{"href":"../mission-control/w18/index.html","title":"Interactive Mission Control W18"}],"edges":[{"eligible_only":true,"from":"ci-spine:bundle:B00","kind":"FEEDFORWARD","to":"ci-spine:bundle:B01"},{"eligible_only":true,"from":"ci-spine:bundle:B00","kind":"FEEDFORWARD","to":"ci-spine:bundle:B02"},{"eligible_only":true,"from":"ci-spine:bundle:B01","kind":"FEEDFORWARD","to":"ci-spine:bundle:B03"},{"eligible_only":true,"from":"ci-spine:bundle:B02","kind":"FEEDFORWARD","to":"ci-spine:bundle:B03"},{"eligible_only":true,"from":"ci-spine:bundle:B01","kind":"FEEDFORWARD","to":"ci-spine:bundle:B04"},{"eligible_only":true,"from":"ci-spine:bundle:B02","kind":"FEEDFORWARD","to":"ci-spine:bundle:B04"},{"eligible_only":true,"from":"ci-spine:bundle:B01","kind":"FEEDFORWARD","to":"ci-spine:bundle:B05"},{"eligible_only":true,"from":"ci-spine:bundle:B02","kind":"FEEDFORWARD","to":"ci-spine:bundle:B05"},{"eligible_only":true,"from":"ci-spine:bundle:B00","kind":"FEEDFORWARD","to":"ci-spine:bundle:B06"},{"eligible_only":true,"from":"ci-spine:bundle:B03","kind":"FEEDFORWARD","to":"ci-spine:bundle:B07"},{"eligible_only":true,"from":"ci-spine:bundle:B04","kind":"FEEDFORWARD","to":"ci-spine:bundle:B07"},{"eligible_only":true,"from":"ci-spine:bundle:B05","kind":"FEEDFORWARD","to":"ci-spine:bundle:B07"},{"eligible_only":true,"from":"ci-spine:bundle:B06","kind":"FEEDFORWARD","to":"ci-spine:bundle:B07"},{"eligible_only":true,"from":"ci-spine:bundle:B07","kind":"FEEDFORWARD","to":"ci-spine:bundle:B08"},{"eligible_only":true,"from":"ci-spine:bundle:B07","kind":"FEEDFORWARD","to":"ci-spine:bundle:B09"},{"eligible_only":true,"from":"ci-spine:bundle:B08","kind":"FEEDFORWARD","to":"ci-spine:bundle:B09"},{"eligible_only":false,"from":"ci-spine:bundle:B09","kind":"FEEDBACK_NEXT_PULSE","to":"ci-spine:bundle:B00"}],"nodes":[{"description":"Pinned source identity, lint and trust","devops_stage":"S1_CODE","example_workflow":".github/workflows/actions-pin-ratchet.yml","id":"ci-spine:bundle:B00","layer":0,"name":"source","policy":"required_if_applicable","short_id":"B00","sipoc":{"customer":["downstream owner","Mission Control"],"input":["commit and workflow blob OIDs"],"output":["source_head_sha","lint_receipt"],"process":["Pinned source identity, lint and trust"],"supplier":["repository-source","prior-bundle-evidence"]},"source_binding_required":true,"source_class":"PROPOSED_DESIGN","source_pointer":{"file":"docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json","href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json#L12","kind":"json-pointer","line":12,"mapping_accuracy":"EXACT_FILE_AND_JSON_MEMBER_NOT_PDF_COORDINATES","pointer":"/nodes/0","stable_view_anchor":"#bundle=B00"},"workflow_href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/.github/workflows/actions-pin-ratchet.yml"},{"description":"Unit tests, schema, negatives, zero-test floor","devops_stage":"S3_TEST","example_workflow":".github/workflows/zero-test-gate-guard.yml","id":"ci-spine:bundle:B01","layer":1,"name":"unit-contract","policy":"required_if_applicable","short_id":"B01","sipoc":{"customer":["downstream owner","Mission Control"],"input":["test population and source"],"output":["test_results","coverage","negative_matrix"],"process":["Unit tests, schema, negatives, zero-test floor"],"supplier":["repository-source","prior-bundle-evidence"]},"source_binding_required":true,"source_class":"PROPOSED_DESIGN","source_pointer":{"file":"docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json","href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json#L43","kind":"json-pointer","line":43,"mapping_accuracy":"EXACT_FILE_AND_JSON_MEMBER_NOT_PDF_COORDINATES","pointer":"/nodes/1","stable_view_anchor":"#bundle=B01"},"workflow_href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/.github/workflows/zero-test-gate-guard.yml"},{"description":"Pinned runtime and cache/wheelhouse restore","devops_stage":"S2_BUILD","example_workflow":".github/workflows/jade-reusable-ci.yml","id":"ci-spine:bundle:B02","layer":1,"name":"dependencies","policy":"producer","short_id":"B02","sipoc":{"customer":["downstream owner","Mission Control"],"input":["toolchain","lockfile","OS/ABI/cache key"],"output":["dependency_manifest","cache_receipt"],"process":["Pinned runtime and cache/wheelhouse restore"],"supplier":["repository-source","prior-bundle-evidence"]},"source_binding_required":false,"source_class":"PROPOSED_DESIGN","source_pointer":{"file":"docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json","href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json#L75","kind":"json-pointer","line":75,"mapping_accuracy":"EXACT_FILE_AND_JSON_MEMBER_NOT_PDF_COORDINATES","pointer":"/nodes/2","stable_view_anchor":"#bundle=B02"},"workflow_href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/.github/workflows/jade-reusable-ci.yml"},{"description":"QPS/JADE/CREW/GoGREEN/Taxonomy/GM path-specific tests","devops_stage":"S3_TEST","example_workflow":".github/workflows/jade-devops-census.yml","id":"ci-spine:bundle:B03","layer":2,"name":"domain","policy":"ledger_driven","short_id":"B03","sipoc":{"customer":["downstream owner","Mission Control"],"input":["changed paths","eligible suites","dependency_manifest"],"output":["domain_receipts"],"process":["QPS/JADE/CREW/GoGREEN/Taxonomy/GM path-specific tests"],"supplier":["repository-source","prior-bundle-evidence"]},"source_binding_required":true,"source_class":"PROPOSED_DESIGN","source_pointer":{"file":"docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json","href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json#L108","kind":"json-pointer","line":108,"mapping_accuracy":"EXACT_FILE_AND_JSON_MEMBER_NOT_PDF_COORDINATES","pointer":"/nodes/3","stable_view_anchor":"#bundle=B03"},"workflow_href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/.github/workflows/jade-devops-census.yml"},{"description":"Cross-module and cross-repository exact-head integration","devops_stage":"S3_TEST","example_workflow":".github/workflows/federation-exact-head-receipts.yml","id":"ci-spine:bundle:B04","layer":2,"name":"integration","policy":"ledger_driven","short_id":"B04","sipoc":{"customer":["downstream owner","Mission Control"],"input":["sources and verified domain artifacts"],"output":["integration_receipts"],"process":["Cross-module and cross-repository exact-head integration"],"supplier":["repository-source","prior-bundle-evidence"]},"source_binding_required":true,"source_class":"PROPOSED_DESIGN","source_pointer":{"file":"docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json","href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json#L140","kind":"json-pointer","line":140,"mapping_accuracy":"EXACT_FILE_AND_JSON_MEMBER_NOT_PDF_COORDINATES","pointer":"/nodes/4","stable_view_anchor":"#bundle=B04"},"workflow_href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/.github/workflows/federation-exact-head-receipts.yml"},{"description":"Playwright, visual and no-network verification","devops_stage":"S3_TEST","example_workflow":".github/workflows/jade-temple-readonly-qa.yml","id":"ci-spine:bundle:B05","layer":2,"name":"browser","policy":"path_scoped","short_id":"B05","sipoc":{"customer":["downstream owner","Mission Control"],"input":["frozen HTML/build artifacts","Playwright"],"output":["browser_receipts"],"process":["Playwright, visual and no-network verification"],"supplier":["repository-source","prior-bundle-evidence"]},"source_binding_required":true,"source_class":"PROPOSED_DESIGN","source_pointer":{"file":"docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json","href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json#L170","kind":"json-pointer","line":170,"mapping_accuracy":"EXACT_FILE_AND_JSON_MEMBER_NOT_PDF_COORDINATES","pointer":"/nodes/5","stable_view_anchor":"#bundle=B05"},"workflow_href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/.github/workflows/jade-temple-readonly-qa.yml"},{"description":"Immutable action pins, security and provenance checks","devops_stage":"S4_SECURE","example_workflow":".github/workflows/actions-pin-ratchet.yml","id":"ci-spine:bundle:B06","layer":1,"name":"secure","policy":"policy_driven","short_id":"B06","sipoc":{"customer":["downstream owner","Mission Control"],"input":["actions/dependencies/source artifacts"],"output":["security_receipts"],"process":["Immutable action pins, security and provenance checks"],"supplier":["repository-source","prior-bundle-evidence"]},"source_binding_required":true,"source_class":"PROPOSED_DESIGN","source_pointer":{"file":"docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json","href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json#L201","kind":"json-pointer","line":201,"mapping_accuracy":"EXACT_FILE_AND_JSON_MEMBER_NOT_PDF_COORDINATES","pointer":"/nodes/6","stable_view_anchor":"#bundle=B06"},"workflow_href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/.github/workflows/actions-pin-ratchet.yml"},{"description":"Aggregate only eligible exact-head successful required predicates","devops_stage":"S3_TEST","example_workflow":".github/workflows/gogreen-required-gate.yml","id":"ci-spine:bundle:B07","layer":3,"name":"fanin","policy":"noncompensating_required","short_id":"B07","sipoc":{"customer":["downstream owner","Mission Control"],"input":["verified B00..B06 current-head receipts"],"output":["HOLD_or_eligible"],"process":["Aggregate only eligible exact-head successful required predicates"],"supplier":["repository-source","prior-bundle-evidence"]},"source_binding_required":true,"source_class":"PROPOSED_DESIGN","source_pointer":{"file":"docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json","href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json#L231","kind":"json-pointer","line":231,"mapping_accuracy":"EXACT_FILE_AND_JSON_MEMBER_NOT_PDF_COORDINATES","pointer":"/nodes/7","stable_view_anchor":"#bundle=B07"},"workflow_href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/.github/workflows/gogreen-required-gate.yml"},{"description":"Promote one digest-bound build and verify served artifact","devops_stage":"S5_RELEASE/S6_DEPLOY","example_workflow":".github/workflows/jade-reusable-deploy.yml","id":"ci-spine:bundle:B08","layer":4,"name":"delivery","policy":"separately_governed","short_id":"B08","sipoc":{"customer":["downstream owner","Mission Control"],"input":["qualified build+review+approval"],"output":["deploy_receipt"],"process":["Promote one digest-bound build and verify served artifact"],"supplier":["repository-source","prior-bundle-evidence"]},"source_binding_required":true,"source_class":"PROPOSED_DESIGN","source_pointer":{"file":"docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json","href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json#L261","kind":"json-pointer","line":261,"mapping_accuracy":"EXACT_FILE_AND_JSON_MEMBER_NOT_PDF_COORDINATES","pointer":"/nodes/8","stable_view_anchor":"#bundle=B08"},"workflow_href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/.github/workflows/jade-reusable-deploy.yml"},{"description":"Measure run/job rates, red roots, latency and maturity; feedback to next pulse","devops_stage":"S9_CONTROL","example_workflow":".github/workflows/gogreen-red-trace.yml","id":"ci-spine:bundle:B09","layer":5,"name":"control","policy":"scheduled_readonly","short_id":"B09","sipoc":{"customer":["S0 next pulse"],"input":["live GitHub readback"," receipts"],"output":["history","burndown","next_pulse_issues"],"process":["Measure run/job rates, red roots, latency and maturity; feedback to next pulse"],"supplier":["repository-source","prior-bundle-evidence"]},"source_binding_required":true,"source_class":"PROPOSED_DESIGN","source_pointer":{"file":"docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json","href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json#L291","kind":"json-pointer","line":291,"mapping_accuracy":"EXACT_FILE_AND_JSON_MEMBER_NOT_PDF_COORDINATES","pointer":"/nodes/9","stable_view_anchor":"#bundle=B09"},"workflow_href":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/.github/workflows/gogreen-red-trace.yml"}],"schema":"ci-spine.provenance-notebook.readonly.v1","source_urls":{"graph":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json","pr989":"https://github.com/GBOGEB/pipeline-automation-hub/pull/989","pr992":"https://github.com/GBOGEB/pipeline-automation-hub/pull/992","timing":"https://github.com/GBOGEB/pipeline-automation-hub/blob/83a4afecdad5ed41677591922c8f239316a8f638/docs/ci-spine/RUN_TIMING_SAMPLES_20261028.json"},"sources":{"frozen_ref_for_source_links":"83a4afecdad5ed41677591922c8f239316a8f638","graph_sha256":"8cf8acb237825dd1d5f951a425931ee71eb189b88cbc138123cb671a54a8734a","graph_source_sha":"ca623ab83793df6edd245942884ad5428a5fe079","repo":"GBOGEB/pipeline-automation-hub","timing_sha256":"8415ee2713fa6b88bd0eeba404b2aa2f01420cdc30f40f809ccfc601d63baa81","timing_window":"2026-10-28"},"timings":[{"conclusion":"success","event":"schedule","execution_seconds":603,"job":"Master red/green transition ledger","name":"GOGREEN Red-Trace Ledger (read-only)","queue_seconds":2,"run_attempt":1,"run_id":40690663789,"source_sha":"e4bb19b8fe4e7f6e9fd4736d13ecffd5a97743ee","url":"https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40690663789"},{"conclusion":"success","event":"pull_request","execution_seconds":444,"job":"Master red/green transition ledger","name":"GOGREEN Red-Trace Ledger (read-only)","queue_seconds":82,"run_attempt":1,"run_id":40689922118,"source_sha":"9f0c0d29232eee797a3deb4ef91eb40ea51d32bc","url":"https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40689922118"},{"conclusion":"success","event":"schedule","execution_seconds":208,"job":"Replay stale reds on master","name":"GOGREEN Replay Lane (bounded)","queue_seconds":20,"run_attempt":1,"run_id":40690211930,"source_sha":"e4bb19b8fe4e7f6e9fd4736d13ecffd5a97743ee","url":"https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40690211930"},{"conclusion":"success","event":"pull_request","execution_seconds":145,"job":"GOGREEN required gate","name":"GOGREEN Required Gate","queue_seconds":42,"run_attempt":1,"run_id":40690086233,"source_sha":"a0678181e1ca0c36ec4c700c992938aa7aaac411","url":"https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40690086233"},{"conclusion":"success","event":"pull_request","execution_seconds":148,"job":"render","name":"CODE PURPLE Method Atlas (read-only)","queue_seconds":29,"run_attempt":1,"run_id":40704770871,"source_sha":"cb249a9c1a117dd49cd10dce558d36a6491614d0","url":"https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40704770871"},{"conclusion":"skipped","event":"pull_request","execution_seconds":0,"job":"Publish CODE PURPLE review site","name":"CODE PURPLE Method Atlas (read-only)","queue_seconds":0,"run_attempt":1,"run_id":40704770871,"source_sha":"cb249a9c1a117dd49cd10dce558d36a6491614d0","url":"https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40704770871"},{"conclusion":"success","event":"pull_request","execution_seconds":29,"job":"JADE source, negative controls, deterministic bundle","name":"JADE_CASTE N+3 eight-point MIP qualification (read-only)","queue_seconds":49,"run_attempt":1,"run_id":40690086343,"source_sha":"a0678181e1ca0c36ec4c700c992938aa7aaac411","url":"https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40690086343"},{"conclusion":"success","event":"pull_request","execution_seconds":125,"job":"JADE responsive browser / offline security QA","name":"JADE_CASTE N+3 eight-point MIP qualification (read-only)","queue_seconds":4,"run_attempt":1,"run_id":40690086343,"source_sha":"a0678181e1ca0c36ec4c700c992938aa7aaac411","url":"https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40690086343"},{"conclusion":"success","event":"pull_request","execution_seconds":11,"job":"test","name":"Excel Schedule Engine","queue_seconds":1,"run_attempt":1,"run_id":40707286792,"source_sha":"852bbc1441224c0e88c074716817325d99d971c3","url":"https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40707286792"},{"conclusion":"success","event":"workflow_run","execution_seconds":8,"job":"Re-run failed GOGREEN required gate","name":"GOGREEN Required Gate Re-check","queue_seconds":3,"run_attempt":1,"run_id":40708495729,"source_sha":"ca623ab83793df6edd245942884ad5428a5fe079","url":"https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40708495729"}]}</script>
+<script>
+(function () {
+"use strict";
+const D=JSON.parse(document.getElementById("notebook-data").textContent);
+const $=id=>document.getElementById(id);
+const NS="http://www.w3.org/2000/svg";
+const byId=Object.fromEntries(D.nodes.map(n=>[n.short_id,n]));
+const POS={B00:[402,28],B01:[224,155],B02:[573,155],B03:[67,297],B04:[278,297],B05:[488,297],B06:[700,297],B07:[402,446],B08:[270,586],B09:[589,586]};
+const W=165,H=76;
+let selected="B07",view="graph",scale=1,offsetX=0,offsetY=0,drag=null;
+const el=(tag,cls,txt)=>{const x=document.createElement(tag);if(cls)x.className=cls;if(txt!==undefined)x.textContent=String(txt);return x;};
+const svg=(tag,attrs)=>{const x=document.createElementNS(NS,tag);Object.entries(attrs||{}).forEach(k=>x.setAttribute(k[0],String(k[1])));return x;};
+const safe=val=>val==null?"UNKNOWN":String(val);
+const short=val=>String(val||"").length>22?String(val).slice(0,21)+"…":String(val||"");
+// Data JSON is read from DOM text, so URLs are never trusted as-is: run links are rebuilt
+// from a positive integer id, and source links must stay under the frozen repo blob prefix.
+const GH="https://github.com/GBOGEB/pipeline-automation-hub/";
+const runHref=id=>{const n=Number(id);return Number.isSafeInteger(n)&&n>0?GH+"actions/runs/"+n:null;};
+const blobHref=href=>typeof href==="string"&&href.startsWith(GH+"blob/")&&!/[\s"'<>\\]/.test(href)?href:null;
+const link=(node,href,label)=>{const h=blobHref(href);if(h)node.href=h;else node.removeAttribute("href");node.textContent=label;node.rel="noopener noreferrer";};
+function parseHash(){const h=new URLSearchParams(location.hash.slice(1));const b=h.get("bundle");const v=h.get("view");if(byId[b])selected=b;if(["graph","sipoc","timing","document","compendium"].includes(v))view=v;}
+function updateHash(){history.replaceState(null,"","#bundle="+selected+"&view="+view);}
+function pick(id){if(!byId[id])return;selected=id;updateHash();refresh();}
+function changeView(id){view=id;updateHash();refresh();}
+function addList(){const list=$("bundles");list.textContent="";const q=$("search").value.trim().toLowerCase();D.nodes.forEach(n=>{const txt=(n.short_id+" "+n.name+" "+n.description+" "+n.devops_stage).toLowerCase();if(q&&!txt.includes(q))return;
+const li=el("li"),b=el("button","bundle");b.type="button";b.setAttribute("aria-current",String(n.short_id===selected));b.append(el("strong","",n.short_id),el("span","",n.name));b.addEventListener("click",()=>pick(n.short_id));li.append(b);list.append(li);});}
+function edgePath(a,b,feedback){const x=POS[a],y=POS[b];if(!x||!y)return"";if(feedback)return "M"+(x[0]+W)+" "+(x[1]+H/2)+" C955 720 960 105 "+(y[0]+W/2)+" "+y[1];const sx=x[0]+W/2,sy=x[1]+H,tx=y[0]+W/2,ty=y[1];const mid=(sy+ty)/2;return "M"+sx+" "+sy+" C"+sx+" "+mid+" "+tx+" "+mid+" "+tx+" "+ty;}
+function draw(){const root=$("map-content");root.replaceChildren();root.setAttribute("transform","translate("+offsetX+" "+offsetY+") scale("+scale+")");
+for(let gx=0;gx<=970;gx+=55)root.append(svg("line",{x1:gx,y1:0,x2:gx,y2:740,class:"gridline"}));
+for(let gy=0;gy<=740;gy+=55)root.append(svg("line",{x1:0,y1:gy,x2:970,y2:gy,class:"gridline"}));
+const active="ci-spine:bundle:"+selected;
+// Jacquard-style upstream trace: retain the complete prerequisite ancestry,
+// but show only immediate downstream consumers. Temporal feedback is excluded.
+const near=new Set([active]);
+let changed=true;
+while(changed){changed=false;D.edges.forEach(e=>{
+ if(e.kind!=="FEEDFORWARD")return;
+ if(near.has(e.to)&&!near.has(e.from)){near.add(e.from);changed=true;}
+});}
+D.edges.forEach(e=>{if(e.kind==="FEEDFORWARD"&&e.from===active)near.add(e.to);});
+D.edges.forEach(e=>{const from=e.from.slice(-3),to=e.to.slice(-3),feedback=e.kind==="FEEDBACK_NEXT_PULSE";const cls="edge"+(feedback?" feedback":"")+(!near.has(e.from)&&!near.has(e.to)?" inactive":"");
+const p=svg("path",{d:edgePath(from,to,feedback),class:cls,"marker-end":"url(#arr)"});
+p.append(svg("title",{}));p.lastChild.textContent=from+" → "+to+" · "+e.kind;root.append(p);});
+D.nodes.forEach(n=>{const pos=POS[n.short_id];if(!pos)return;const chosen=n.short_id===selected;const g=svg("g",{class:"gnode"+(chosen?" selected":"")+(!near.has(n.id)?" muted":""),transform:"translate("+pos[0]+" "+pos[1]+")",tabindex:"0",role:"button","aria-label":"Inspect "+n.short_id+" "+n.name});
+g.append(svg("rect",{width:W,height:H,rx:10}));
+const t1=svg("text",{x:14,y:24,class:"code"});t1.textContent=n.short_id;g.append(t1);
+const t2=svg("text",{x:14,y:44,class:"name"});t2.textContent=short(n.name);g.append(t2);
+const t3=svg("text",{x:14,y:63,class:"stage"});t3.textContent=n.devops_stage;g.append(t3);
+g.addEventListener("click",()=>pick(n.short_id));
+g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pick(n.short_id);}});
+root.append(g);});$("scale").textContent=Math.round(scale*100)+"%";}
+function zoom(v){scale=Math.max(.65,Math.min(2.5,Math.round(v*100)/100));draw();}
+function inspect(){const n=byId[selected];$("inspector-id").textContent=n.short_id;$("inspector-name").textContent=n.name;$("inspector-desc").textContent=n.description;
+$("inspector-policy").textContent=n.policy+" · proposed";$("inspector-stage").textContent=n.devops_stage;$("inspector-pointer").textContent=n.source_pointer.file+" "+n.source_pointer.pointer;
+$("inspector-sha").textContent=D.sources.graph_source_sha;$("source-head").textContent=D.sources.graph_source_sha.slice(0,12)+"…";$("graph-hash").textContent=D.sources.graph_sha256.slice(0,16)+"…";
+link($("source-link"),n.source_pointer.href,"Exact source line L"+n.source_pointer.line);link($("workflow-link"),n.workflow_href,"Example workflow (not admission)");
+$("paper-title").textContent=n.short_id+" · "+n.name;$("paper-desc").textContent=n.description;
+$("paper-tag").textContent=n.short_id+" / "+n.devops_stage;$("paper-pointer").textContent=n.source_pointer.file+"  "+n.source_pointer.pointer;
+$("doc-region-title").textContent="HTML region for "+n.short_id;$("doc-source").textContent="Source member "+n.source_pointer.pointer+" · "+n.source_pointer.mapping_accuracy;link($("doc-source-link"),n.source_pointer.href,"Open source line");
+}
+function showSipoc(){const n=byId[selected],out=$("sipoc");out.replaceChildren();[["supplier","S · Supplier"],["input","I · Input"],["process","P · Process"],["output","O · Output"],["customer","C · Customer"]].forEach(k=>{const box=el("article");box.append(el("h3","",k[1]));const ul=el("ul");(n.sipoc[k[0]]||[]).forEach(s=>ul.append(el("li","",s)));box.append(ul);out.append(box);});}
+function showTiming(){const tbody=$("timing-rows");tbody.replaceChildren();const max=Math.max(1,...D.timings.map(t=>t.execution_seconds||0));
+D.timings.forEach(t=>{const tr=el("tr"),label=el("td"),q=el("td","numeric",t.queue_seconds==null?"UNKNOWN":t.queue_seconds+"s"),run=el("td","numeric",t.execution_seconds==null?"UNKNOWN":t.execution_seconds+"s");
+label.append(el("strong","",t.name),el("div","muted",t.job+" · "+t.source_sha.slice(0,10)));const slot=el("td"),track=el("div","bartrack"),bar=el("div","bar");bar.style.width=(t.execution_seconds==null?0:100*t.execution_seconds/max)+"%";track.append(bar);slot.append(track);
+const l=el("td"),a=el("a","",String(t.run_id)),rh=runHref(t.run_id);if(rh)a.href=rh;a.target="_blank";a.rel="noopener noreferrer";l.append(a);tr.append(label,q,run,slot,l);tbody.append(tr);});}
+function refresh(){addList();inspect();showSipoc();showTiming();draw();document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.view===view)));
+["graph","sipoc","timing","document","compendium"].forEach(v=>{$("view-"+v).hidden=v!==view;});
+$("copy-status").textContent="";}
+document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>changeView(b.dataset.view)));
+$("search").addEventListener("input",addList);
+$("zoom-in").addEventListener("click",()=>zoom(scale+.2));$("zoom-out").addEventListener("click",()=>zoom(scale-.2));
+$("reset").addEventListener("click",()=>{scale=1;offsetX=0;offsetY=0;draw();});
+$("map").addEventListener("wheel",e=>{e.preventDefault();zoom(scale+(e.deltaY<0?.1:-.1));},{passive:false});
+$("map").addEventListener("pointerdown",e=>{if(e.target.closest(".gnode"))return;drag={x:e.clientX,y:e.clientY,ox:offsetX,oy:offsetY};e.currentTarget.setPointerCapture(e.pointerId);});
+$("map").addEventListener("pointermove",e=>{if(!drag)return;const rect=e.currentTarget.getBoundingClientRect();offsetX=drag.ox+(e.clientX-drag.x)*970/Math.max(1,rect.width);offsetY=drag.oy+(e.clientY-drag.y)*740/Math.max(1,rect.height);draw();});
+$("map").addEventListener("pointerup",()=>{drag=null;});$("map").addEventListener("pointercancel",()=>{drag=null;});
+$("copy-pointer").addEventListener("click",async()=>{const n=byId[selected],pointer=D.sources.repo+"@"+D.sources.frozen_ref_for_source_links+"#"+n.source_pointer.file+n.source_pointer.pointer;
+try{if(!navigator.clipboard||!navigator.clipboard.writeText)throw Error("clipboard API unavailable");await navigator.clipboard.writeText(pointer);$("copy-status").textContent="Source pointer copied.";}catch(_){$("copy-status").textContent="Copy manually: "+pointer;}});
+window.addEventListener("hashchange",()=>{parseHash();refresh();});
+parseHash();refresh();
+})();
+</script>
+</body>
+</html>
