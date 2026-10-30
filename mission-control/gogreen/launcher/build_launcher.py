@@ -130,6 +130,22 @@ def catalog(sha: str, repo_url: str) -> list[dict]:
     return sorted(out, key=lambda e: (e["group"], e["path"]))
 
 
+def hub(spec: dict, sha: str) -> dict:
+    """Cross-repo dashboard hub. In-repo entries (path only) are read at ``sha``: a missing
+    file fails the build and the title comes from the page (a declared ``title`` is only the
+    fallback for a page without one). Entries naming a ``repo`` or a
+    ``url`` are declared, not probed, and are copied as written. Navigation only: no metric."""
+    in_repo = lambda e: "repo" not in e and "url" not in e
+    texts = read_texts(sha, [e["path"] for e in spec["entries"] if in_repo(e)])
+    entries = []
+    for e in spec["entries"]:
+        out = dict(e)
+        if in_repo(e):
+            out.update(title=page_title(texts[e["path"]], e.get("title") or posixpath.basename(e["path"])), href=rel(e["path"]))
+        entries.append(out)
+    return {"note": spec["note"], "verified": spec["verified"], "entries": entries}
+
+
 def project(spec: dict, sha: str) -> dict:
     inputs: dict[str, dict] = {}
     missing: list[str] = []
@@ -199,6 +215,7 @@ def project(spec: dict, sha: str) -> dict:
         "pages_site": spec.get("pages_site"),
         "self_path": SELF_DIR + "/index.html",
         "catalog": catalog(sha, spec["repo_url"]),
+        "hub": hub(spec["hub"], sha),
         "tiles": tiles,
     }
 
@@ -236,6 +253,11 @@ def stale_reason(committed: dict, fresh: dict) -> str:
                                              if old_cat[p] != new_cat[p]))):
         if names:
             parts.append(f"catalog {label}: " + ", ".join(names))
+    old_hub = {e.get("path") or e.get("url"): e.get("title") for e in (committed.get("hub") or {}).get("entries", [])}
+    new_hub = {e.get("path") or e.get("url"): e.get("title") for e in fresh.get("hub", {}).get("entries", [])}
+    hub_changed = sorted(k for k in set(old_hub) | set(new_hub) if old_hub.get(k) != new_hub.get(k))
+    if hub_changed:
+        parts.append("hub changed: " + ", ".join(hub_changed))
     return "; ".join(parts) or "tile or page declarations changed (sources.json, template or builder)"
 
 
@@ -278,7 +300,7 @@ def main(argv=None) -> int:
     SNAPSHOT.write_text(dump(snapshot), encoding="utf-8", newline="\n")
     PAGE.write_text(render(snapshot), encoding="utf-8", newline="\n")
     print("GOGREEN_LAUNCHER_BUILD=PASS", "rev=" + sha, "tiles=%d" % len(snapshot["tiles"]),
-          "pages=%d" % len(snapshot["pages"]), "catalog=%d" % len(snapshot["catalog"]), "missing=%d" % len(snapshot["missing_fields"]))
+          "pages=%d" % len(snapshot["pages"]), "catalog=%d" % len(snapshot["catalog"]), "hub=%d" % len(snapshot["hub"]["entries"]), "missing=%d" % len(snapshot["missing_fields"]))
     return 0
 
 
