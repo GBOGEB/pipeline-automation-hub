@@ -3,11 +3,13 @@ on:
   pull_request:
     paths:
       - 'mission-control/v2/spine_w4/**'
+      - 'tests/test_ci_spine_consumer.py'
       - '.github/workflows/mission-control-w4-spine.yml'
   push:
     branches: [master]
     paths:
       - 'mission-control/v2/spine_w4/**'
+      - 'tests/test_ci_spine_consumer.py'
       - '.github/workflows/mission-control-w4-spine.yml'
   workflow_dispatch:
 
@@ -38,6 +40,18 @@ jobs:
           test "$(git rev-parse HEAD)" = "$EXACT_HEAD"
           python -m unittest discover -s mission-control/v2/spine_w4 -p 'test_spine_control.py' -v 2>&1 | tee spine-tests.log
           grep -Eq '^Ran 19 tests?' spine-tests.log
+      - name: Test read-only CI-spine consumer and fail on test-count regression
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tests -p 'test_ci_spine_consumer.py' -v 2>&1 | tee ci-consumer-tests.log
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          log=Path('ci-consumer-tests.log').read_text(encoding='utf-8')
+          counts=re.findall(r'^Ran (\\d+) tests?', log, flags=re.MULTILINE)
+          assert counts and int(counts[-1])>=13, 'CI_VIEW_TEST_COUNT_BELOW_13'
+          print('CI_VIEW_TESTS_RAN='+counts[-1])
+          PY
       - name: Generate source-bound DAG/SIPOC/HTML/telemetry with hash manifest
         env:
           EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
@@ -79,4 +93,5 @@ jobs:
           path: |
             /tmp/spine-w4/
             spine-tests.log
+            ci-consumer-tests.log
           if-no-files-found: warn
