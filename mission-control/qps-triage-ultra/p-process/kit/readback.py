@@ -27,7 +27,7 @@ from pathlib import Path
 import yaml
 
 
-TRANSIENT = re.compile(r"timeout|timed out|TLS handshake|connection (reset|refused|attempt failed)|connectex|unexpected EOF|HTTP 5\d\d", re.I)
+TRANSIENT = re.compile(r"timeout|timed out|TLS handshake|connection (reset|refused|attempt failed)|connectex|error connecting to|unexpected EOF|HTTP 5\d\d", re.I)
 
 
 def gh(path: str, paginate: bool = False):
@@ -125,8 +125,18 @@ def classify(pr_reds: list[str], inherited: list[str]) -> dict:
 
 
 def merges_since(repo: str, iso: str, inclusive: bool = False) -> list[dict]:
-    pulls = gh(f"repos/{repo}/pulls?state=closed&sort=updated&direction=desc&per_page=100")
-    keep = [p for p in pulls if p["merged_at"] and (p["merged_at"] >= iso if inclusive else p["merged_at"] > iso)]
+    """Every PR merged after iso, across all pages of closed pulls.
+
+    Pages come newest-updated first. A merge never post-dates its PR's last
+    update, so the first page that reaches updated_at < iso is the last needed.
+    """
+    keep, page = [], 1
+    while True:
+        pulls = gh(f"repos/{repo}/pulls?state=closed&sort=updated&direction=desc&per_page=100&page={page}")
+        keep += [p for p in pulls if p["merged_at"] and (p["merged_at"] >= iso if inclusive else p["merged_at"] > iso)]
+        if len(pulls) < 100 or pulls[-1]["updated_at"] < iso:
+            break
+        page += 1
     return sorted([{"number": p["number"], "merged_at": p["merged_at"], "title": p["title"]} for p in keep], key=lambda x: x["merged_at"])
 
 

@@ -547,8 +547,8 @@
     "mission-control/jade_temple/site/burndown.json": "9440ab673cc4931907986ce4c2ab927db4eb0a86",
     "mission-control/jade_temple/site/eightpoint.json": "e1ac168d7dc3554691068adce3869a223a280d53",
     "mission-control/jade_temple/site/rolling5.json": "5e94939d705a4448eb98f6f964cf2118a321e3eb",
-    "mission-control/qps-triage-ultra/p-process/site/data/p_state.json": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
-    "mission-control/qps-triage-ultra/p-process/site/everred/data/everred.json": "598302afb690cb97e44070eeb0e72e582729a8a9",
+    "mission-control/qps-triage-ultra/p-process/site/data/p_state.json": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
+    "mission-control/qps-triage-ultra/p-process/site/everred/data/everred.json": "902f1548efe8a1f9c015fad88f633c224efb0ae6",
     "mission-control/v2/adoption/MC_S2_A4_DASHBOARD_TODO_SURFACE_20260927_v1.json": "b8055243094c63b6a91bb4fbad8764f139f05fd0"
   },
   "missing_fields": [],
@@ -1658,22 +1658,22 @@
         {
           "label": "Generated",
           "path": "generated_at",
-          "value": "2026-10-18T13:33:21+00:00"
+          "value": "2026-10-30T13:25:00+00:00"
         },
         {
           "label": "Census at",
           "path": "census_at",
-          "value": "2026-10-18T13:27:47+00:00"
+          "value": "2026-10-30T12:47:06+00:00"
         },
         {
           "label": "EVERRED at",
           "path": "everred_at",
-          "value": "2026-10-18T13:29:56+00:00"
+          "value": "2026-10-30T13:14:25+00:00"
         },
         {
           "label": "Drift at",
           "path": "drift_at",
-          "value": "2026-10-18T13:29:50+00:00"
+          "value": "2026-10-30T13:14:05+00:00"
         }
       ],
       "headline": {
@@ -1683,7 +1683,7 @@
       },
       "id": "p_process",
       "input": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
-      "input_oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+      "input_oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
       "label": "P-process mode",
       "lists": [
         {
@@ -1704,7 +1704,7 @@
               6,
               "P0",
               [
-                "E2: Code Purple case open, 2 of 5 lift criteria met",
+                "E2: Code Purple case open, 3 of 5 lift criteria met",
                 "E1: ABACUS-RC-2026-0001 P0 control-plane probe red"
               ]
             ],
@@ -1743,9 +1743,9 @@
             [
               "GBOGEB/pipeline-automation-hub",
               "EVERRED",
-              "RED",
-              1,
-              "P2",
+              "GREEN",
+              0,
+              null,
               []
             ]
           ]
@@ -1781,28 +1781,28 @@
           "label": "Roots by state",
           "path": "metrics.active_roots_by_state",
           "value": {
-            "BLOCKED_AUTHORITY": 6,
+            "BLOCKED_AUTHORITY": 5,
             "DISCOVERED": 2,
             "OWNED": 1,
             "PRODUCER_GREEN": 1,
             "TRIAGED": 2,
-            "VERIFIED_FIXED": 3
+            "VERIFIED_FIXED": 4
           }
         },
         {
           "label": "Occurrences",
           "path": "metrics.occurrences_total",
-          "value": 375
+          "value": 494
         },
         {
           "label": "Failure amplification",
           "path": "metrics.failure_amplification",
-          "value": 1.538
+          "value": 1.077
         },
         {
           "label": "Control plane red",
           "path": "metrics.control_plane_red",
-          "value": 6
+          "value": 5
         },
         {
           "label": "Control plane probed",
@@ -1812,17 +1812,17 @@
         {
           "label": "Generated",
           "path": "generated_at",
-          "value": "2026-10-18T13:29:56+00:00"
+          "value": "2026-10-30T13:14:25+00:00"
         }
       ],
       "headline": {
         "label": "Root closure rate",
         "path": "metrics.root_closure_rate",
-        "value": 0.2
+        "value": 0.267
       },
       "id": "everred",
       "input": "mission-control/qps-triage-ultra/p-process/site/everred/data/everred.json",
-      "input_oid": "598302afb690cb97e44070eeb0e72e582729a8a9",
+      "input_oid": "902f1548efe8a1f9c015fad88f633c224efb0ae6",
       "label": "EVERRED",
       "lists": [
         {
@@ -1921,7 +1921,7 @@
             [
               "PAH-RC-2026-0001",
               "P2",
-              "BLOCKED_AUTHORITY",
+              "VERIFIED_FIXED",
               "pipeline-automation-hub ruleset active but targets no branch"
             ],
             [
