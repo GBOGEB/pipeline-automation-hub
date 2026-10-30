@@ -338,10 +338,15 @@ def fetch(cache: Path, repos: list, since: date, until: date, job_budget: int, r
                 if not stale:
                     try:
                         rec = json.loads(rp.read_text(encoding="utf-8"))
+                        if not isinstance(rec, dict):
+                            raise ValueError("invalid cache receipt type")
                         fetched_at = BQ.utc(rec.get("fetched_at"))
                         raw = p.read_bytes()
                         cached = json.loads(raw)
                         stale = (not isinstance(cached, list)
+                                 or rec.get("schema") != RUN_CACHE_RECEIPT_SCHEMA
+                                 or rec.get("repository") != repo or rec.get("day") != day.isoformat()
+                                 or rec.get("records") != len(cached)
                                  or rec.get("sha256") != hashlib.sha256(raw).hexdigest()
                                  or fetched_at is None or fetched_at.date() <= day
                                  or any(r["status"] != "completed" for r in cached))
