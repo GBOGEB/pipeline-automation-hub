@@ -185,7 +185,11 @@ class EndToEnd(unittest.TestCase):
         census, _obj = C.scan(cache, self.roster, "2026-10-23T00:00:00Z", probe_pages_on=False, probe_api_on=False,
                               only={"demo/service"})
         self.assertGreater(census["repos"][0]["blobs_unread"], 0)
-        self.assertEqual(C.unread_errors(census), [f"BLOBS_UNREAD:demo/service:{census['repos'][0]['blobs_unread']}"])
+        r0 = census["repos"][0]
+        # The starved baseline is unread too; before the fix this slipped through as a delta.
+        self.assertGreater(r0["delta"]["baseline_unread"], 0)
+        self.assertEqual(C.unread_errors(census), [f"BLOBS_UNREAD:demo/service:{r0['blobs_unread']}",
+                                                   f"BASELINE_BLOBS_UNREAD:demo/service:{r0['delta']['baseline_unread']}"])
         self.assertEqual(C.unread_errors(self.census), [])
         roster = self.tmp / "starved-roster.json"
         roster.write_text(json.dumps({"repositories": [json.loads(self.roster.read_text(encoding="utf-8"))["repositories"][0]]}),
@@ -196,6 +200,34 @@ class EndToEnd(unittest.TestCase):
             self.assertEqual(C.main(["scan", "--cache", str(cache), "--roster", str(roster), "--no-pages", "--no-api",
                                      "--out", str(self.tmp / "starved.json"), "--objects", str(self.tmp / "starved-o.json"),
                                      "--observed-at", "2026-10-23T00:00:00Z"]), 1)
+
+    def test_blob_fetch_timeout_fails_closed(self):
+        # A blob fetch that times out must end as BLOBS_UNFETCHED (fetch exits 1), not as a plain error row.
+        cache = self.tmp / "timed-out"
+        cache.mkdir(exist_ok=True)
+
+        def timeout(_self, _oids):
+            raise subprocess.TimeoutExpired("git fetch", 1)
+        with mock.patch.object(C.Git, "fetch_blobs", timeout):
+            info = C.fetch_repo(cache, "demo/service", "main", self.base, url=self.url)
+        self.assertFalse(info["ok"])
+        self.assertGreater(info["blobs_unfetched"], 0)
+        roster = self.tmp / "timed-out-roster.json"
+        roster.write_text(json.dumps({"repositories": [json.loads(self.roster.read_text(encoding="utf-8"))["repositories"][0]]}),
+                          encoding="utf-8", newline="\n")
+        with redirect_stdout(io.StringIO()), mock.patch.object(C.Git, "fetch_blobs", timeout):
+            self.assertEqual(C.main(["fetch", "--cache", str(cache), "--roster", str(roster)]), 1)
+
+    def test_unread_baseline_blobs_fail_closed(self):
+        # HEAD read fully but the delta baseline did not: its deltas would be computed from a partial tree.
+        census = json.loads(json.dumps(self.census))
+        row = census["repos"][0]
+        self.assertTrue(row["reachable"])
+        self.assertEqual(C.unread_errors(census), [])
+        row.setdefault("delta", {})["baseline_unread"] = 3
+        self.assertEqual(C.unread_errors(census), ["BASELINE_BLOBS_UNREAD:demo/service:3"])
+        row["reachable"] = False
+        self.assertEqual(C.unread_errors(census), [])
 
     def test_failed_tag_read_is_unknown_not_zero(self):
         d = self.tmp / "tags-probe.git"

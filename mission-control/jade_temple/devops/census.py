@@ -302,7 +302,10 @@ def fetch_repo(cache: Path, repo: str, branch: str, baseline: str | None, url: s
     # Fail closed: a blob that never arrived (network timeout) would otherwise be scanned as an absent file.
     left = want
     for _attempt in range(2):
-        g.fetch_blobs(left)
+        try:
+            g.fetch_blobs(left)
+        except subprocess.TimeoutExpired:
+            pass  # whatever did not arrive is still missing below, so it fails as BLOBS_UNFETCHED
         left = sorted(set(left) & set().union(*(g.missing(s) for s in shas)))
         if not left:
             break
@@ -313,9 +316,20 @@ def fetch_repo(cache: Path, repo: str, branch: str, baseline: str | None, url: s
 
 
 def unread_errors(census: dict) -> list[str]:
-    """A fresh scan must have read every wanted blob; an unread blob is not evidence of absence."""
-    return [f"BLOBS_UNREAD:{r['repo']}:{r['blobs_unread']}" for r in census["repos"]
-            if r.get("reachable") and r.get("blobs_unread")]
+    """A fresh scan must have read every wanted blob, at HEAD and at the delta baseline.
+
+    An unread blob is not evidence of absence: an unread baseline blob would turn into a
+    test, workflow, stage or outcome delta computed against an incomplete baseline.
+    """
+    errs = []
+    for r in census["repos"]:
+        if not r.get("reachable"):
+            continue
+        if r.get("blobs_unread"):
+            errs.append(f"BLOBS_UNREAD:{r['repo']}:{r['blobs_unread']}")
+        if (r.get("delta") or {}).get("baseline_unread"):
+            errs.append(f"BASELINE_BLOBS_UNREAD:{r['repo']}:{r['delta']['baseline_unread']}")
+    return errs
 
 
 # --------------------------------------------------------------------------- classification
