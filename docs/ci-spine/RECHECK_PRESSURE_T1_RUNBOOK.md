@@ -18,14 +18,14 @@ First obtain the **default-branch master SHA once**, using a GitHub connection w
 ```bash
 python mission-control/jade_temple/devops/actions_metrics.py fetch \
   --cache /tmp/jade-actions --since 2026-10-29 --until 2026-10-30 \
-  --repo GBOGEB/pipeline-automation-hub --job-budget 100
+  --repo GBOGEB/pipeline-automation-hub --job-budget 0
 python mission-control/jade_temple/devops/actions_metrics.py pressure \
   --cache /tmp/jade-actions --since 2026-10-29 --until 2026-10-30 \
   --repo GBOGEB/pipeline-automation-hub --source-sha <EXACT_MASTER_SHA> \
   --out /tmp/recheck-pressure.json
 ```
 
-**P1 observation-window guard:** the `--until` date must reach the current observation UTC date (30 Oct for this shown example); substitute the actual UTC date on later runs. A historical window that ends before that date is `PARTIAL_UNKNOWN`, even if it contains 1,000 older records. The cache must also have actually been refreshed; a local file alone cannot independently attest that no newer runs exist. `pressure` uses only existing cache files and makes **no** API or credential calls. Existing `fetch` enforces the daily/hourly pagination saturation fail-closed, which is intentionally not overridden. If a source window is missing or contains fewer than 1,000 records, leave the observed value NULL and collect more evidence. Never backfill with synthetic successes.
+**P1 observation-window and cache-freshness guards:** use the *current UTC date* for `--until` (30 Oct in this historical command), then run `pressure` within **120 seconds** of the successful `fetch`. The fetch writer now persists a per-day `YYYY-MM-DD.receipt.json` with UTC `fetched_at`, row count and the SHA-256 digest of the exact run-cache bytes. Pressure validates every requested day, duplicate IDs and date membership, complete prior days, and a current-day fetch within 120 seconds of `observed_at`. Missing, mismatched, tampered, future or stale metadata forces `coverage=PARTIAL_UNKNOWN` and `value=null`, even for 1,000 cached records; rejected reasons appear in `cache_source_issues`. The accepted source manifest is bound via `cache_readback_sha256`, which is not a GitHub-signed attestation. A local digest cannot independently prove that GitHub created no newer events after the fetch; report the exact observation timestamp and do not claim real-time completeness beyond this bounded freshness contract. `--job-budget 0` is intentional: this pressure measurement needs run records, not job lists. `pressure` itself makes **no** GitHub API calls and uses no token. Existing `fetch` enforces the daily/hourly pagination saturation fail-closed, which is intentionally not overridden. If a source window is missing or contains fewer than 1,000 records, leave the observed value NULL and collect more evidence. Never backfill with synthetic successes.
 
 To evaluate the target with RF N+1, pass the actual `pressure` JSON as `--observation /tmp/recheck-pressure.json` to `mission-control/jade_temple/tools/rf_matrix_wave.py` using the SAME source SHA. The adapter can return `TARGET_REACHED_UNVERIFIED` and recommends independent review; that is not a GitHub acceptance predicate. Its goal only matches the proposed same-method cohort.
 
