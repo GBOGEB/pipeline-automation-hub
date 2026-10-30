@@ -231,6 +231,7 @@ def pressure_cache_evidence(cache: Path, repo: str, since: date, until: date,
     if observed is None or until < since:
         return ["INVALID_OBSERVATION_WINDOW"], None
     problems, sources = [], []
+    ids_across_days = set()
     day = since
     while day <= until:
         p = repo_dir(cache, repo) / "runs" / f"{day}.json"
@@ -260,10 +261,12 @@ def pressure_cache_evidence(cache: Path, repo: str, since: date, until: date,
                     created = BQ.utc(row.get("created_at")) if isinstance(row, dict) else None
                     rid = row.get("id") if isinstance(row, dict) else None
                     if (not isinstance(rid, int) or isinstance(rid, bool) or rid <= 0
-                            or rid in ids_in_day or created is None or created.date() != day):
+                            or rid in ids_in_day or rid in ids_across_days
+                            or created is None or created.date() != day):
                         valid_day_rows = False
                         break
                     ids_in_day.add(rid)
+                ids_across_days.update(ids_in_day)
             else:
                 valid_day_rows = False
             digest = hashlib.sha256(raw).hexdigest()
