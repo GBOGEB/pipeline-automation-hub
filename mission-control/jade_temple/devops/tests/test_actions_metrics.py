@@ -329,7 +329,8 @@ class RecheckPressureRF(unittest.TestCase):
                     "--repo", REPO, "--source-sha", SHA, "--out", str(out)]), 0)
             report = json.loads(out.read_text(encoding="utf-8"))
             self.assertIsNone(report["value"])
-            self.assertEqual(report["sample_n"], 1)
+            self.assertEqual(report["sample_n"], 0)  # cache lacks a verified fetch receipt
+
     def test_queued_and_in_progress_runs_are_not_in_cohort(self):
         rows = self.synthetic()
         rows.append(dict(run(2001, name="GOGREEN Required Gate Re-check", event="workflow_run",
@@ -410,7 +411,7 @@ class RecheckPressureRF(unittest.TestCase):
                     "--since", "2026-10-28", "--until", "2026-10-28",
                     "--repo", REPO, "--source-sha", SHA, "--out", str(out)]), 0)
             report = json.loads(out.read_text(encoding="utf-8"))
-            self.assertEqual(report["sample_n"], 1000)
+            self.assertEqual(report["sample_n"], 0)  # unverified bytes are not a cohort
             self.assertTrue(report["window_end_before_observation"])
             self.assertIsNone(report["value"])
 
@@ -486,7 +487,7 @@ class RecheckPressureRF(unittest.TestCase):
                 "--until", str(day), "--repo", REPO, "--source-sha", SHA,
                 "--out", str(out)]), 0)
             receipt = json.loads(out.read_text(encoding="utf-8"))
-            self.assertEqual(receipt["sample_n"], 1000)
+            self.assertEqual(receipt["sample_n"], 0)  # no verified day receipt
             self.assertEqual(receipt["coverage"], "PARTIAL_UNKNOWN")
             self.assertIsNone(receipt["value"])
             self.assertIsNone(receipt["cache_readback_sha256"])
@@ -525,7 +526,7 @@ class RecheckPressureRF(unittest.TestCase):
             problems, proof = M.pressure_cache_evidence(Path(td), REPO, day, day, stamp)
             self.assertIn(f"{day}:UNVERIFIED_CACHE_RECEIPT", problems)
             self.assertIsNone(proof)
-            rp.write_text("[]", encoding="utf-8")
+            rp.write_text("[]", encoding="utf-8", newline="\n")
             problems, proof = M.pressure_cache_evidence(Path(td), REPO, day, day, stamp)
             self.assertIn(f"{day}:INVALID_CACHE_RECEIPT_TYPE", problems)
             self.assertIsNone(proof)
@@ -548,6 +549,54 @@ class RecheckPressureRF(unittest.TestCase):
                 Path(td), REPO, first, last, observed)
             self.assertIn(f"{last}:UNVERIFIED_CACHE_RECEIPT", problems)
             self.assertIsNone(proof)
+
+
+    def test_cli_uses_validated_rows_not_racy_second_cache_read(self):
+        """Prevent a concurrent fetch from changing the checked cohort."""
+        from datetime import datetime, timezone
+        from unittest import mock
+        with tempfile.TemporaryDirectory() as td:
+            day = datetime.now(timezone.utc).date()
+            p = M.repo_dir(Path(td), REPO) / "runs" / f"{day}.json"
+            p.parent.mkdir(parents=True)
+            rows = [run(i, created=f"{day}T00:00:00Z",
+                        name=M.RECHECK_WORKFLOW_NAME if i <= 350 else "Other QA",
+                        event="workflow_run" if i <= 350 else "pull_request")
+                    for i in range(1, 1001)]
+            M.write_runs_with_receipt(p, REPO, day, rows)
+            out = Path(td) / "pressure.json"
+            with mock.patch.object(M, "load_runs",
+                                   side_effect=AssertionError("second read forbidden")):
+                self.assertEqual(M.main([
+                    "pressure", "--cache", td, "--since", str(day),
+                    "--until", str(day), "--repo", REPO,
+                    "--source-sha", SHA, "--out", str(out)]), 0)
+            report = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual((report["sample_n"], report["coverage"]), (1000, "COMPLETE"))
+            self.assertEqual((report["recheck_records"], report["value"]), (350, 0.35))
+            self.assertRegex(report["cache_readback_sha256"], r"^[0-9a-f]{64}$")
+            self.assertFalse(report["merge_authorized"])
+
+    def test_cli_invalid_json_yields_unknown_receipt_instead_of_crash(self):
+        """Unparseable cache bytes must not prevent writing the partial receipt."""
+        from datetime import datetime, timezone
+        with tempfile.TemporaryDirectory() as td:
+            day = datetime.now(timezone.utc).date()
+            p = M.repo_dir(Path(td), REPO) / "runs" / f"{day}.json"
+            p.parent.mkdir(parents=True)
+            p.write_text("{broken-json", encoding="utf-8", newline="\n")
+            M.cache_receipt_path(p).write_text("{}", encoding="utf-8", newline="\n")
+            out = Path(td) / "pressure.json"
+            self.assertEqual(M.main([
+                "pressure", "--cache", td, "--since", str(day),
+                "--until", str(day), "--repo", REPO,
+                "--source-sha", SHA, "--out", str(out)]), 0)
+            report = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual((report["sample_n"], report["coverage"]), (0, "PARTIAL_UNKNOWN"))
+            self.assertIsNone(report["value"])
+            self.assertIn(f"{day}:INVALID_CACHE_BYTES_OR_RECEIPT",
+                          report["cache_source_issues"])
+            self.assertIsNone(report["cache_readback_sha256"])
 
 
 if __name__ == "__main__":

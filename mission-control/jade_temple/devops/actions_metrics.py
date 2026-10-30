@@ -221,16 +221,19 @@ def write_runs_with_receipt(day_file: Path, repo: str, day: date, rows: list) ->
 
 
 def pressure_cache_evidence(cache: Path, repo: str, since: date, until: date,
-                            observed_at: str) -> tuple[list[str], str | None]:
+                            observed_at: str, verified_rows: list[dict] | None = None
+                            ) -> tuple[list[str], str | None]:
     """Validate complete day receipts and a <=120 s current-UTC-day fetch pulse.
 
     Metadata absence, source mutation, old/future pulses and incomplete days
-    are UNKNOWN, never zero or a success. This adds no metric owner or API call.
+    are UNKNOWN, never zero or a success. If requested, expose ONLY parsed
+    rows from verified cache bytes; do not reread after checking the SHA-256,
+    as a concurrent fetch may replace those source bytes. No extra API call.
     """
     observed = BQ.utc(observed_at)
     if observed is None or until < since:
         return ["INVALID_OBSERVATION_WINDOW"], None
-    problems, sources = [], []
+    problems, sources, accepted_rows = [], [], []
     ids_across_days = set()
     day = since
     while day <= until:
@@ -262,7 +265,9 @@ def pressure_cache_evidence(cache: Path, repo: str, since: date, until: date,
                     rid = row.get("id") if isinstance(row, dict) else None
                     if (not isinstance(rid, int) or isinstance(rid, bool) or rid <= 0
                             or rid in ids_in_day or rid in ids_across_days
-                            or created is None or created.date() != day):
+                            or created is None or created.date() != day or created > observed
+                            or not isinstance(row.get("name"), str) or not row["name"]
+                            or not isinstance(row.get("status"), str) or not row["status"]):
                         valid_day_rows = False
                         break
                     ids_in_day.add(rid)
@@ -283,9 +288,12 @@ def pressure_cache_evidence(cache: Path, repo: str, since: date, until: date,
                 problems.append(f"{key}:DAY_NOT_FINALIZED")
             else:
                 sources.append([key, rec["fetched_at"], digest, rec["records"]])
+                accepted_rows.extend(d)
         except (OSError, ValueError, KeyError, TypeError):
             problems.append(f"{key}:INVALID_CACHE_BYTES_OR_RECEIPT")
         day += timedelta(days=1)
+    if verified_rows is not None:
+        verified_rows.extend(accepted_rows)
     if problems:
         return sorted(set(problems)), None
     fingerprint = hashlib.sha256(json.dumps(sources, separators=(",", ":"),
@@ -718,9 +726,11 @@ def main(argv=None) -> int:
         if not a.repo or len(a.repo) != 1:
             p.error("pressure requires exactly one --repo")
         observed = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        verified_rows = []
         cache_issues, cache_digest = pressure_cache_evidence(
-            a.cache, a.repo[0], a.since, a.until, observed)
-        doc = recheck_pressure(load_runs(a.cache, a.repo[0], a.since, a.until),
+            a.cache, a.repo[0], a.since, a.until, observed, verified_rows=verified_rows)
+        # Reuse the validated bytes: no second read racing a concurrent fetch.
+        doc = recheck_pressure(verified_rows,
                                a.repo[0], a.source_sha or "", observed,
                                missing_days=missing_run_days(a.cache, a.repo[0], a.since, a.until),
                                window_end_date=a.until, cache_source_issues=cache_issues,
