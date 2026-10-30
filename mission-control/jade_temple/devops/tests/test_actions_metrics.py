@@ -423,7 +423,7 @@ class RecheckPressureRF(unittest.TestCase):
             p = M.repo_dir(Path(td), REPO) / "runs" / f"{day}.json"
             p.parent.mkdir(parents=True)
             M.write_runs_with_receipt(p, REPO, day,
-                                      [run(1, created=f"{day}T00:01:00Z")])
+                                      [run(1, created=f"{day}T00:00:00Z")])
             meta = json.loads(M.cache_receipt_path(p).read_text(encoding="utf-8"))
             issues, digest = M.pressure_cache_evidence(
                 Path(td), REPO, day, day, meta["fetched_at"])
@@ -439,7 +439,7 @@ class RecheckPressureRF(unittest.TestCase):
             p = M.repo_dir(Path(td), REPO) / "runs" / f"{day}.json"
             p.parent.mkdir(parents=True)
             M.write_runs_with_receipt(p, REPO, day,
-                                      [run(1, created=f"{day}T00:01:00Z")])
+                                      [run(1, created=f"{day}T00:00:00Z")])
             rp = M.cache_receipt_path(p)
             observed = json.loads(rp.read_text(encoding="utf-8"))["fetched_at"]
             meta = json.loads(rp.read_text(encoding="utf-8"))
@@ -480,7 +480,7 @@ class RecheckPressureRF(unittest.TestCase):
             day = datetime.now(timezone.utc).date()
             p = M.repo_dir(Path(td), REPO) / "runs" / f"{day}.json"
             p.parent.mkdir(parents=True)
-            rows = [run(i, created=f"{day}T00:01:00Z") for i in range(1, 1001)]
+            rows = [run(i, created=f"{day}T00:00:00Z") for i in range(1, 1001)]
             p.write_text(json.dumps(rows), encoding="utf-8", newline="\n")
             out = Path(td) / "pressure.json"
             self.assertEqual(M.main(["pressure", "--cache", td, "--since", str(day),
@@ -499,7 +499,7 @@ class RecheckPressureRF(unittest.TestCase):
         from unittest import mock
         with tempfile.TemporaryDirectory() as td:
             day = datetime.now(timezone.utc).date()
-            evidence = [run(1, created=f"{day}T00:01:00Z")]
+            evidence = [run(1, created=f"{day}T00:00:00Z")]
             with mock.patch.object(M, "fetch_runs_day", return_value=evidence) as fetched:
                 summary = M.fetch(Path(td), [REPO], day, day, 0, None,
                                   workers=1, log=lambda _: None)
