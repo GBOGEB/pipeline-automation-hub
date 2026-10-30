@@ -83,7 +83,7 @@ def render(index, control, metrics=None, delta=None, wave=None, expected_head=""
         metric_rows = [(key, totals.get(key), "Canonical Actions metric (sample if job-based)")
                        for key in ("job_coverage", "p95_job_queue_s", "avg_job_queue_s",
                                    "job_failure_rate", "total_minutes", "workflow_runs")]
-    delta_status, changes = "NOT_SUPPLIED", []
+    delta_status, changes, authority_changes = "NOT_SUPPLIED", [], []
     if delta is not None:
         need(isinstance(delta, dict) and delta.get("schema") == DELTA_SCHEMA, "delta schema")
         need(delta.get("verdict") in ("DIFFERENCE_REVIEW_REQUIRED", "NO_OBSERVED_SOURCE_DELTA")
@@ -92,7 +92,18 @@ def render(index, control, metrics=None, delta=None, wave=None, expected_head=""
         need(isinstance(dsource, dict) and isinstance(dsource.get("current_sha"), str)
              and SHA40.fullmatch(dsource["current_sha"]), "delta source identity")
         changes = delta.get("workflow_changes")
-        need(isinstance(changes, list), "delta workflow changes")
+        authority_changes = delta.get("authority_changes")
+        need(isinstance(changes, list) and all(isinstance(row, dict) for row in changes),
+             "delta workflow changes")
+        need(isinstance(authority_changes, list) and all(
+            isinstance(row, dict) and isinstance(row.get("id"), str) and row["id"]
+            and row.get("status") == "AUTHORITY_REVIEW_REQUIRED"
+            and "before" in row and "after" in row
+            and (row["before"] is None or isinstance(row["before"], dict))
+            and (row["after"] is None or isinstance(row["after"], dict))
+            for row in authority_changes), "delta authority-binding change contract")
+        need(delta["verdict"] != "NO_OBSERVED_SOURCE_DELTA"
+             or (not changes and not authority_changes), "contradictory delta verdict")
         delta_status = ("SAME_CURRENT_SOURCE_REVIEW_ONLY" if dsource["current_sha"] == sha
                         else "STALE_DIFFERENT_SOURCE_NOT_JOINED")
     wave_status, tasks = "NOT_SUPPLIED", []
@@ -111,8 +122,11 @@ def render(index, control, metrics=None, delta=None, wave=None, expected_head=""
     anchor_rows = [(a.get("id"), a.get("phase"), a.get("path"), a.get("static_binding"))
                    for a in anchors]
     change_rows = [(c.get("path"), c.get("change"), c.get("safety_attention"),
-                    ", ".join(map(str, c.get("changed_fields", [])))) for c in changes
-                   if isinstance(c, dict)]
+                    ", ".join(map(str, c.get("changed_fields", [])))) for c in changes]
+    authority_rows = [(a["id"], a["status"],
+                       json.dumps(a["before"], sort_keys=True, ensure_ascii=True),
+                       json.dumps(a["after"], sort_keys=True, ensure_ascii=True))
+                      for a in authority_changes]
     task_rows = [(t.get("id"), t.get("stage"), t.get("lane"), "NOT_EXECUTED") for t in tasks]
     section = (
         "<section class='panel' id='ci-spine-evidence'><h2>CI source evidence · read-only consumer</h2>"
@@ -132,6 +146,10 @@ def render(index, control, metrics=None, delta=None, wave=None, expected_head=""
         + "<h3>Two-pulse source delta</h3><p>Binding: <strong>" + esc(delta_status)
         + "</strong>. Source changes do not imply a passed CI gate.</p>"
         + table(("Workflow", "Change", "Safety attention", "Changed projection"), change_rows)
+        + "<h3>Authority-binding changes</h3><p>Source binding: <strong>" + esc(delta_status)
+        + "</strong>. Each AUTHORITY_REVIEW_REQUIRED row requires a reviewer disposition; "
+        "historical or mismatched sources are not joined to the current index.</p>"
+        + table(("Anchor ID", "Disposition", "Previous binding", "Current binding"), authority_rows)
         + "<h3>Worker stage matrix</h3><p>Binding: <strong>" + esc(wave_status)
         + "</strong>. This is a policy declaration, not an executed schedule.</p>"
         + table(("Task", "Stage", "Lane", "Execution"), task_rows)
@@ -144,6 +162,7 @@ def render(index, control, metrics=None, delta=None, wave=None, expected_head=""
         "actions_metrics_observed_at": metric_asof,
         "actions_metric_binding": metric_status, "delta_binding": delta_status,
         "worker_binding": wave_status, "anchor_count": len(anchors),
+        "authority_changes_count": len(authority_changes),
         "admission": "HOLD", "dispatch_authorized": False,
         "runtime_nonregression": "NOT_PROVEN",
         "review": "INDEPENDENT_ELIGIBLE_APPROVAL_REQUIRED",
