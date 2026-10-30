@@ -48,7 +48,7 @@ jobs:
           from pathlib import Path
           import re
           log=Path('ci-consumer-tests.log').read_text(encoding='utf-8')
-          counts=re.findall(r'^Ran (\\d+) tests?', log, flags=re.MULTILINE)
+          counts=re.findall(r'^Ran (\d+) tests?', log, flags=re.MULTILINE)
           assert counts and int(counts[-1])>=13, 'CI_VIEW_TEST_COUNT_BELOW_13'
           print('CI_VIEW_TESTS_RAN='+counts[-1])
           PY
