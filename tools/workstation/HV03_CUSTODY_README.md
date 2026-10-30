@@ -30,7 +30,9 @@ A private owner allowlist is optional; without it every file owner is **UNKNOWN*
 - Staged index Git blob OID and SHA-256 separately from the current working-tree bytes; conflict stages retained.
 - Already tracked owner binaries by extension (PDF/DOCX/PPTX/XLSX/ZIP/images/executables etc.), with hash limits shown as `SIZE_LIMIT` rather than invented success.
 - Synthetic `DECLARED_UNVERIFIED` file-owner mappings only when an explicit local owner map is supplied; otherwise `UNKNOWN`.
-- `HV03_PRIVATE.json` and `HV03_SUMMARY.json` only when `--out-dir` is explicitly supplied outside the clone; private directory/receipt permissions tightened. Summary excludes file names and absolute paths.
+- `HV03_PRIVATE.json` and `HV03_SUMMARY.json` only when `--out-dir` is explicitly supplied outside the clone. On Windows the directory and both receipts get a protected DACL with one full-control ACE for the current user (`icacls`), read back and verified; on POSIX modes are 0700/0600. If owner-only access cannot be verified, nothing is written. Summary excludes file names and absolute paths.
+- `incomplete_hashes` counts working-tree and staged-index entries that are not `HASHED`; `incomplete_worktrees` counts listed worktrees that are missing or prunable. A file whose size, mtime or identity changes while it is read is `CHANGED_DURING_SCAN`.
+- Git runs with `core.fsmonitor=false` and `core.untrackedCache=false`, and with repository-local variables (`GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE` and the rest of `git rev-parse --local-env-vars`) removed, so no configured hook runs and the requested clone is the one scanned.
 - Byte-deterministic SHA-256 of the private receipt, and optional prior-receipt comparison. The receipt carries no wall-clock claim, to allow stable same-state readback.
 
 No `git fetch`, GitHub API, remote-head authentication, `git add`, commit, push, prune, delete, network upload or shell program installation occurs. A repository can change during scanning; re-run and compare. If it changes, mark `DRIFT` and reconcile before allowing any publication. **No successful scanner result alone authorizes publication**.

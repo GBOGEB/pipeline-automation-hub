@@ -3,9 +3,11 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import tempfile
 import unittest
+from unittest import mock
 
 import hv03_custody as hv03
 
@@ -123,6 +125,104 @@ class HV03Tests(unittest.TestCase):
         self.assertNotIn(str(self.repo), text)
         self.assertEqual(summary["merge_admission"], "HOLD")
         self.assertEqual(summary["publication"], "NOT_AUTHORIZED")
+
+    def test_private_receipts_owner_only_acl_or_refuse(self):
+        data = hv03.scan(self.repo)
+        summary = hv03.public_summary(data)
+        outside = self.root / "acl"
+        hv03.write_private(outside, data, summary)
+        for path in (outside, outside / "HV03_PRIVATE.json", outside / "HV03_SUMMARY.json"):
+            self.assertTrue(hv03.private_acl_ok(path), path.name)
+            if os.name == "nt":
+                self.assertTrue(hv03.sddl_owner_only(hv03.windows_dacl_sddl(path),
+                                                     hv03.current_user_sid()))
+        refused = self.root / "refused"
+        with mock.patch.object(hv03, "private_acl_ok", return_value=False):
+            with self.assertRaisesRegex(ValueError, "cannot verify private receipt ACL"):
+                hv03.write_private(refused, data, summary)
+        self.assertEqual(list(refused.iterdir()), [])
+
+    def test_sddl_owner_only_rejects_inherited_or_shared(self):
+        me = "S-1-5-21-1-2-3-1001"
+        self.assertTrue(hv03.sddl_owner_only(f"D:PAI(A;OICI;FA;;;{me})", me))
+        self.assertFalse(hv03.sddl_owner_only(f"D:AI(A;;FA;;;{me})", me))
+        self.assertFalse(hv03.sddl_owner_only(f"D:P(A;;FA;;;{me})(A;;FR;;;WD)", me))
+        self.assertFalse(hv03.sddl_owner_only(f"D:P(D;;FA;;;{me})", me))
+        self.assertFalse(hv03.sddl_owner_only("D:P", me))
+
+    def test_summary_counts_unhashed_staged_index(self):
+        (self.repo / "tracked.txt").write_bytes(b"x" * 200)
+        git(self.repo, "add", "tracked.txt")
+        (self.repo / "tracked.txt").write_bytes(b"small\n")
+        data = hv03.scan(self.repo, max_bytes=100)
+        row = next(r for r in data["worktrees"][0]["files"] if r["path"] == "tracked.txt")
+        self.assertEqual(row["state"], "HASHED")
+        self.assertEqual(row["staged_index"][0]["index_sha_state"], "SIZE_LIMIT")
+        self.assertEqual(hv03.public_summary(data)["incomplete_hashes"], 1)
+
+    def test_same_size_rewrite_during_read_is_changed(self):
+        target = self.repo / "plan.pdf"
+        original = target.read_bytes()
+        real = hashlib.sha256
+
+        class RewriteOnFirstChunk:
+            def __init__(self):
+                self.h, self.done = real(), False
+            def update(self, chunk):
+                self.h.update(chunk)
+                if not self.done:
+                    self.done = True
+                    with target.open("r+b") as f:
+                        f.write(bytes(255 - b for b in original))
+                    st = target.stat()
+                    os.utime(target, ns=(st.st_atime_ns, st.st_mtime_ns + 5_000_000_000))
+            def hexdigest(self):
+                return self.h.hexdigest()
+
+        with mock.patch.object(hv03.hashlib, "sha256", RewriteOnFirstChunk):
+            result = hv03.hash_file(self.repo, "plan.pdf", 1024)
+        self.assertEqual(target.stat().st_size, len(original))
+        self.assertEqual(result["state"], "CHANGED_DURING_SCAN")
+        self.assertIsNone(result["sha256"])
+
+    def test_configured_fsmonitor_hook_never_runs(self):
+        marker = self.root / "fsmonitor-ran"
+        hook = self.root / "fsmonitor-hook"
+        hook.write_bytes(b"#!/bin/sh\necho ran > '" + marker.as_posix().encode() + b"'\n")
+        hook.chmod(0o755)
+        git(self.repo, "config", "core.fsmonitor", hook.as_posix())
+        (self.repo / "tracked.txt").write_bytes(b"dirty\n")
+        rows = hv03.scan(self.repo)["worktrees"][0]["files"]
+        self.assertIn("tracked.txt", {r["path"] for r in rows})
+        self.assertFalse(marker.exists())
+
+    def test_repo_local_git_environment_is_ignored(self):
+        other = self.root / "other-repo"
+        other.mkdir()
+        git(other, "init", "-q", "-b", "master")
+        (other / "decoy.pdf").write_bytes(b"decoy")
+        overrides = {"GIT_DIR": str(other / ".git"), "GIT_WORK_TREE": str(other),
+                     "GIT_INDEX_FILE": str(other / ".git" / "index")}
+        with mock.patch.dict(os.environ, overrides):
+            data = hv03.scan(self.repo)
+        self.assertEqual(Path(data["repository_root"]), self.repo.resolve())
+        paths = {r["path"] for r in data["worktrees"][0]["files"]}
+        self.assertEqual(paths, {"plan.pdf"})
+        env = hv03.git_env()
+        for name in overrides:
+            self.assertNotIn(name, env)
+
+    def test_missing_worktree_counted_incomplete(self):
+        linked = self.root / "gone"
+        git(self.repo, "worktree", "add", "-qb", "feature-gone", str(linked))
+        shutil.rmtree(linked)
+        self.assertEqual(sorted(prunable for _, prunable in hv03.worktrees(self.repo)),
+                         [False, True])
+        data = hv03.scan(self.repo)
+        states = sorted(w["state"] for w in data["worktrees"])
+        self.assertEqual(states, ["MISSING_WORKTREE", "OBSERVED"])
+        summary = hv03.public_summary(data)
+        self.assertEqual(summary["incomplete_worktrees"], 1)
 
 if __name__ == "__main__":
     unittest.main()
