@@ -376,5 +376,44 @@ class RecheckPressureRF(unittest.TestCase):
             self.assertEqual(report["coverage"], "PARTIAL_UNKNOWN")
 
 
+    def test_old_full_size_window_must_not_claim_current_t1(self):
+        """Codex P1: 1000 older valid records cannot be the current observation."""
+        result = M.recheck_pressure(self.synthetic(), REPO, SHA,
+                                    "2026-10-30T08:00:00Z",
+                                    window_end_date=date(2026, 10, 28))
+        self.assertEqual((result["sample_n"], result["recheck_records"]), (1000, 363))
+        self.assertEqual(result["coverage"], "PARTIAL_UNKNOWN")
+        self.assertIsNone(result["value"])
+        self.assertTrue(result["window_end_before_observation"])
+        self.assertFalse(result["merge_authorized"])
+
+    def test_matching_utc_day_allows_completeness_only_with_full_cohort(self):
+        result = M.recheck_pressure(self.synthetic(), REPO, SHA,
+                                    "2026-10-30T08:00:00Z",
+                                    window_end_date=date(2026, 10, 30))
+        self.assertEqual((result["sample_n"], result["value"], result["coverage"]),
+                         (1000, 0.363, "COMPLETE"))
+        self.assertFalse(result["window_end_before_observation"])
+        self.assertEqual(result["window_end_date"], "2026-10-30")
+
+    def test_cli_old_full_size_cache_stays_unknown(self):
+        from unittest import mock
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            cache = base / REPO.replace("/", "__") / "runs"
+            cache.mkdir(parents=True)
+            (cache / "2026-10-28.json").write_text(
+                json.dumps(self.synthetic()), encoding="utf-8", newline="\\n")
+            out = base / "pressure.json"
+            with mock.patch.object(M, "token", side_effect=AssertionError("no token for projection")):
+                self.assertEqual(M.main(["pressure", "--cache", str(base),
+                    "--since", "2026-10-28", "--until", "2026-10-28",
+                    "--repo", REPO, "--source-sha", SHA, "--out", str(out)]), 0)
+            report = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(report["sample_n"], 1000)
+            self.assertTrue(report["window_end_before_observation"])
+            self.assertIsNone(report["value"])
+
+
 if __name__ == "__main__":
     unittest.main()
