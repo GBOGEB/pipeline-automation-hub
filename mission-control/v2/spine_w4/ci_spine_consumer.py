@@ -54,7 +54,7 @@ def canonical_workflow_binding(path):
     """
     if (not isinstance(path, str) or not path.startswith(".github/workflows/")
             or not path.endswith((".yml", ".yaml"))
-            or "\\\\" in path or any(ord(char) < 32 or char in '<>:"|*?' for char in path)):
+            or "\\" in path or any(ord(char) < 32 or char in '<>:"|*?' for char in path)):
         return False
     posix = PurePosixPath(path)
     return (not posix.is_absolute() and str(posix) == path
