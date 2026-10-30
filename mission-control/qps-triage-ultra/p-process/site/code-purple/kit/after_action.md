@@ -1,6 +1,6 @@
 # ABACUS merge stall (Codex review allowance exhausted)
 
-Incident `CP-2026-10-12-ABACUS-MERGE-STALL` · readback 2026-10-30T08:03:13+00:00 · owner GBOGEB
+Incident `CP-2026-10-12-ABACUS-MERGE-STALL` · readback 2026-10-30T12:47:06+00:00 · owner GBOGEB
 
 ## Lift: NOT LIFTED
 
@@ -8,13 +8,13 @@ Incident `CP-2026-10-12-ABACUS-MERGE-STALL` · readback 2026-10-30T08:03:13+00:0
 |---|---|---|---|
 | L1 | Unblocker PR merged | yes | merged_at=2026-10-12T16:17:07Z |
 | L2 | Gate restored (ruleset active, no bypass, expected rules present) | no | active, bypass=6, rules=5; missing: required_status_checks rule absent |
-| L5 | Admission integrity (no merge since the unblocker without a green gate) | no | 99 merged; gate green on 0; 61 merged with red checks |
-| L3 | Merge flow restored (at least 5 merges to the default branch since the unblocker) | yes | 99 merges since 2026-10-12T16:17:07Z |
-| L4 | Open PR backlog at most a quarter of the baseline | no | 14 open (baseline 20) |
+| L5 | Admission integrity (no merge since the unblocker without a green gate) | no | 610 merged; gate green on 1; 510 merged with red checks |
+| L3 | Merge flow restored (at least 5 merges to the default branch since the unblocker) | yes | 610 merges since 2026-10-12T16:17:07Z |
+| L4 | Open PR backlog at most a quarter of the baseline | yes | 4 open (baseline 20) |
 
 ## Admission integrity
 
-Since 2026-10-12T16:17:07Z: **99 merged**, gate `PR Feedback Gate` green on **0**, 61 merged with at least one red check. Gate states: failure 36, in_progress 37, none 26.
+Since 2026-10-12T16:17:07Z: **610 merged**, gate `PR Feedback Gate` green on **1**, 510 merged with at least one red check. Gate states: failure 173, in_progress 140, none 296, success 1.
 
 ## Tracked PRs
 
@@ -30,8 +30,8 @@ Since 2026-10-12T16:17:07Z: **99 merged**, gate `PR Feedback Gate` green on **0*
 
 | Repo | Head | Open PRs | Nightly reds (inherited set) | Ruleset |
 |---|---|---|---|---|
-| GBOGEB/ABACUS | `871e750c` | 14 | Code Quality Checks, Full Red Proof Summary, Security Scanning | active, bypass 6 |
-| GBOGEB/CODEX | `479ea40c` | 1 | — | none |
+| GBOGEB/ABACUS | `bca44e8e` | 4 | Code Quality Checks, Full Red Proof Summary, Security Scanning | active, bypass 6 |
+| GBOGEB/CODEX | `e462125f` | 1 | — | none |
 
 ## Follow-ups
 
@@ -41,6 +41,5 @@ Since 2026-10-12T16:17:07Z: **99 merged**, gate `PR Feedback Gate` green on **0*
 ## Next actions
 
 - Meet L2: Gate restored (ruleset active, no bypass, expected rules present) (active, bypass=6, rules=5; missing: required_status_checks rule absent)
-- Meet L5: Admission integrity (no merge since the unblocker without a green gate) (99 merged; gate green on 0; 61 merged with red checks)
-- Meet L4: Open PR backlog at most a quarter of the baseline (14 open (baseline 20))
+- Meet L5: Admission integrity (no merge since the unblocker without a green gate) (610 merged; gate green on 1; 510 merged with red checks)
 - Turn every inherited red into a dated burn-down item; never repair it inside an unrelated PR

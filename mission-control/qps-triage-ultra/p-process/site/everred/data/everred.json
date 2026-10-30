@@ -1,21 +1,21 @@
 {
  "schema": "everred.census/1.0",
- "generated_at": "2026-10-30T08:12:18+00:00",
+ "generated_at": "2026-10-30T13:14:25+00:00",
  "scope": [
   "GBOGEB/ABACUS",
   "GBOGEB/CODEX",
   "GBOGEB/cryoplant-project"
  ],
  "metrics": {
-  "occurrences_total": 496,
-  "occurrences_on_independent_roots": 15,
-  "distinct_signatures": 106,
+  "occurrences_total": 494,
+  "occurrences_on_independent_roots": 14,
+  "distinct_signatures": 109,
   "roots_independent": 15,
   "roots_triaged_or_later": 13,
-  "unmatched_signatures": 100,
-  "failure_amplification": 1.154,
+  "unmatched_signatures": 103,
+  "failure_amplification": 1.077,
   "failure_amplification_note": "occurrences linked to triaged independent roots / triaged independent roots",
-  "signature_amplification_upper_bound": 4.679,
+  "signature_amplification_upper_bound": 4.532,
   "root_closure_rate": 0.267,
   "recurrence_rate": 0.0,
   "consumer_replay_coverage": "UNKNOWN",
@@ -29,10 +29,10 @@
    "DISCOVERED": 2
   },
   "occurrences_by_source": {
-   "main:head": 8,
+   "main:head": 32,
    "main:nightly": 3,
-   "open-pr": 140,
-   "merged-pr": 345
+   "open-pr": 36,
+   "merged-pr": 423
   },
   "control_plane_red": 5,
   "control_plane_probed": 6,
@@ -239,13 +239,13 @@
    "consumers": [
     "all ABACUS PRs"
    ],
-   "occurrences": 2,
+   "occurrences": 3,
    "affected_prs": [
     2510
    ],
-   "affected_shas": 2,
+   "affected_shas": 3,
    "probe": null,
-   "last_seen": "2026-10-30T06:09:11Z"
+   "last_seen": "2026-10-30T12:47:02Z"
   },
   {
    "id": "ABACUS-RC-2026-0004",
@@ -279,11 +279,11 @@
    "consumers": [
     "all ABACUS PRs"
    ],
-   "occurrences": 1,
+   "occurrences": 2,
    "affected_prs": [],
-   "affected_shas": 1,
+   "affected_shas": 2,
    "probe": null,
-   "last_seen": "2026-10-30T02:16:02Z"
+   "last_seen": "2026-10-30T12:46:13Z"
   },
   {
    "id": "ABACUS-RC-2026-0005",
@@ -377,19 +377,19 @@
    "canonical_repair": "None of its own",
    "regression_contract": "Summary lists root IDs, not only red job names",
    "consumers": [],
-   "occurrences": 8,
+   "occurrences": 9,
    "affected_prs": [
-    2368,
     2470,
-    2483,
-    2486,
+    2488,
     2496,
+    2506,
+    2508,
     2510,
-    2523
+    2520
    ],
-   "affected_shas": 8,
+   "affected_shas": 9,
    "probe": null,
-   "last_seen": "2026-10-30T06:33:49Z"
+   "last_seen": "2026-10-30T12:52:19Z"
   },
   {
    "id": "ABACUS-RC-2026-0008",
@@ -451,14 +451,13 @@
     "#1918",
     "#1920"
    ],
-   "occurrences": 12,
+   "occurrences": 9,
    "affected_prs": [
     2515,
     2517,
-    2520,
-    2523
+    2520
    ],
-   "affected_shas": 4,
+   "affected_shas": 3,
    "probe": null,
    "last_seen": "2026-10-30T08:14:19Z"
   },
@@ -723,86 +722,22 @@
  ],
  "unmatched": [
   {
-   "signature": "MIP B0 Test Admission and Coverage Evidence :: B0 report-only admission census :: Require all exact-SHA producers GREEN",
-   "occurrences": 12,
-   "prs": [
-    2368,
-    2470,
-    2488,
-    2503,
-    2504,
-    2506,
-    2508,
-    2514,
-    2515,
-    2516,
-    2517,
-    2523
-   ],
-   "repos": [
-    "GBOGEB/ABACUS"
-   ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548492/job/123927113829"
-  },
-  {
-   "signature": "MIP B0 Test Admission and Coverage Evidence :: B0 report-only admission census :: Upload B0 report-only evidence",
-   "occurrences": 12,
-   "prs": [
-    2368,
-    2470,
-    2488,
-    2503,
-    2504,
-    2506,
-    2508,
-    2514,
-    2515,
-    2516,
-    2517,
-    2523
-   ],
-   "repos": [
-    "GBOGEB/ABACUS"
-   ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548492/job/123927113829"
-  },
-  {
    "signature": "CI/CD Test Suite :: Unit Tests :: Run Unit Tests",
-   "occurrences": 12,
+   "occurrences": 30,
    "prs": [
-    2470,
-    2523
-   ],
-   "repos": [
-    "GBOGEB/ABACUS"
-   ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548586/job/123924601789"
-  },
-  {
-   "signature": "MIP B0 Test Admission and Coverage Evidence :: B0 canonical coverage producer :: Run canonical exact-head coverage surface",
-   "occurrences": 12,
-   "prs": [
-    2368,
     2470,
     2488,
-    2503,
-    2504,
     2506,
-    2508,
-    2514,
-    2515,
-    2516,
-    2517,
-    2523
+    2508
    ],
    "repos": [
     "GBOGEB/ABACUS"
    ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548492/job/123924601301"
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057242270/job/124067753810"
   },
   {
    "signature": "CI :: test :: Run tests",
-   "occurrences": 12,
+   "occurrences": 13,
    "prs": [
     1211,
     1213,
@@ -814,80 +749,134 @@
     1225,
     1226,
     1227,
-    1228
+    1228,
+    1229
    ],
    "repos": [
     "GBOGEB/CODEX"
    ],
-   "example_url": "https://github.com/GBOGEB/CODEX/actions/runs/40915690935/job/123595174409"
+   "example_url": "https://github.com/GBOGEB/CODEX/actions/runs/41057339198/job/124068076205"
   },
   {
    "signature": "CI - ABACUS Matrix :: ABACUS compatibility gate :: Enforce selected proof set",
    "occurrences": 10,
    "prs": [
-    2368,
     2470,
     2488,
-    2503,
     2504,
     2506,
-    2507,
     2508,
     2519,
-    2523
+    2523,
+    2526,
+    2527
    ],
    "repos": [
     "GBOGEB/ABACUS"
    ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548303/job/123928446114"
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057241961/job/124073124781"
   },
   {
    "signature": "CI - ABACUS Matrix :: Python proof completeness :: Audit executed and classified-skipped proof roles",
    "occurrences": 10,
    "prs": [
-    2368,
     2470,
     2488,
-    2503,
     2504,
     2506,
-    2507,
     2508,
     2519,
-    2523
+    2523,
+    2526,
+    2527
    ],
    "repos": [
     "GBOGEB/ABACUS"
    ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548303/job/123928385357"
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057241961/job/124073064550"
+  },
+  {
+   "signature": "MIP B0 Test Admission and Coverage Evidence :: B0 report-only admission census :: Require all exact-SHA producers GREEN",
+   "occurrences": 10,
+   "prs": [
+    2470,
+    2488,
+    2504,
+    2506,
+    2508,
+    2514,
+    2515,
+    2516,
+    2517
+   ],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057241899/job/124071919841"
+  },
+  {
+   "signature": "MIP B0 Test Admission and Coverage Evidence :: B0 report-only admission census :: Upload B0 report-only evidence",
+   "occurrences": 10,
+   "prs": [
+    2470,
+    2488,
+    2504,
+    2506,
+    2508,
+    2514,
+    2515,
+    2516,
+    2517
+   ],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057241899/job/124071919841"
   },
   {
    "signature": "CI - ABACUS Matrix :: ABACUS :: Run canonical coverage and emit governed evidence",
    "occurrences": 10,
    "prs": [
-    2368,
     2470,
     2488,
-    2503,
     2504,
     2506,
-    2507,
     2508,
     2519,
-    2523
+    2523,
+    2526,
+    2527
    ],
    "repos": [
     "GBOGEB/ABACUS"
    ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548303/job/123925396285"
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057241961/job/124069463271"
+  },
+  {
+   "signature": "MIP B0 Test Admission and Coverage Evidence :: B0 canonical coverage producer :: Run canonical exact-head coverage surface",
+   "occurrences": 10,
+   "prs": [
+    2470,
+    2488,
+    2504,
+    2506,
+    2508,
+    2514,
+    2515,
+    2516,
+    2517
+   ],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057241899/job/124067944758"
   },
   {
    "signature": "CODEX Semantic Runtime CI :: semantic-validation :: Run semantic validator",
-   "occurrences": 10,
+   "occurrences": 9,
    "prs": [
     1211,
     1213,
-    1216,
     1217,
     1219,
     1222,
@@ -899,68 +888,12 @@
    "repos": [
     "GBOGEB/CODEX"
    ],
-   "example_url": "https://github.com/GBOGEB/CODEX/actions/runs/40903920597/job/123553368691"
-  },
-  {
-   "signature": "CI - ABACUS Matrix :: Benchmark baseline - no coverage :: Run isolated microbenchmarks",
-   "occurrences": 9,
-   "prs": [
-    2368,
-    2488,
-    2503,
-    2504,
-    2506,
-    2507,
-    2508,
-    2519,
-    2523
-   ],
-   "repos": [
-    "GBOGEB/ABACUS"
-   ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548303/job/123924600897"
-  },
-  {
-   "signature": "CI - ABACUS Matrix :: ABACUS :: Run functional compatibility proof",
-   "occurrences": 8,
-   "prs": [
-    2368,
-    2470,
-    2488,
-    2503,
-    2504,
-    2506,
-    2508,
-    2523
-   ],
-   "repos": [
-    "GBOGEB/ABACUS"
-   ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548303/job/123925396343"
-  },
-  {
-   "signature": "CI Workflow Governance :: policy-and-inventory :: Fail closed on governance red",
-   "occurrences": 8,
-   "prs": [
-    2483,
-    2487,
-    2496,
-    2513,
-    2517,
-    2518,
-    2520,
-    2523
-   ],
-   "repos": [
-    "GBOGEB/ABACUS"
-   ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548622/job/123924601213"
+   "example_url": "https://github.com/GBOGEB/CODEX/actions/runs/40482900938/job/122117394507"
   },
   {
    "signature": "W003 Governance Gate :: governance-gate :: Run governance parser on PR metadata",
-   "occurrences": 8,
+   "occurrences": 7,
    "prs": [
-    1205,
     1206,
     1208,
     1211,
@@ -974,65 +907,102 @@
    "example_url": "https://github.com/GBOGEB/CODEX/actions/runs/40726993914/job/123460047434"
   },
   {
-   "signature": "a10-guard :: a10-guard :: Tender guard (new or changed files only)",
-   "occurrences": 7,
+   "signature": "CI - ABACUS Matrix :: ABACUS :: Run functional compatibility proof",
+   "occurrences": 6,
    "prs": [
-    2487,
+    2470,
+    2488,
+    2504,
+    2506,
+    2508
+   ],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057241961/job/124069463246"
+  },
+  {
+   "signature": "a10-guard :: a10-guard :: Tender guard (new or changed files only)",
+   "occurrences": 5,
+   "prs": [
     2496,
     2513,
     2517,
     2518,
-    2520,
-    2523
+    2520
    ],
    "repos": [
     "GBOGEB/ABACUS"
    ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548271/job/123924599720"
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/40482959610/job/122117594995"
   },
   {
-   "signature": "CI/CD Test Suite :: Code Quality Checks :: Per-tool code-quality new-debt ratchet",
-   "occurrences": 6,
+   "signature": "CI Workflow Governance :: policy-and-inventory :: Fail closed on governance red",
+   "occurrences": 5,
    "prs": [
-    2368,
-    2483,
-    2486,
     2496,
-    2520,
-    2523
+    2513,
+    2517,
+    2518,
+    2520
    ],
    "repos": [
     "GBOGEB/ABACUS"
    ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548586/job/123924601332"
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/40482959447/job/122117594007"
   },
   {
-   "signature": "TestPilot Pre-GitHub Parity :: parity :: Run bounded TestPilot fast preflight",
+   "signature": "CODEX Semantic Runtime CI :: semantic-validation :: Run tests",
    "occurrences": 5,
    "prs": [
-    2510,
-    2516,
-    2522,
-    2523
+    1218,
+    1223,
+    1228,
+    1229
    ],
    "repos": [
-    "GBOGEB/ABACUS"
+    "GBOGEB/CODEX"
    ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41024759456/job/123960119202"
+   "example_url": "https://github.com/GBOGEB/CODEX/actions/runs/41057339221/job/124068076859"
   },
   {
-   "signature": "TestPilot Pre-GitHub Parity :: parity :: Upload TestPilot receipt",
-   "occurrences": 5,
+   "signature": "DMAIC V3 Enterprise CI :: CI Summary :: Set final status",
+   "occurrences": 4,
    "prs": [
-    2510,
-    2516,
-    2522,
-    2523
+    2488,
+    2509,
+    2520
    ],
    "repos": [
     "GBOGEB/ABACUS"
    ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41024759456/job/123960119202"
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057242432/job/124070819550"
+  },
+  {
+   "signature": "DMAIC V3 Enterprise CI :: Test on ubuntu-latest :: Install dev dependencies",
+   "occurrences": 4,
+   "prs": [
+    2488,
+    2509,
+    2520
+   ],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057242432/job/124067753893"
+  },
+  {
+   "signature": "DMAIC V3 Enterprise CI :: Test on macos-latest :: Install dev dependencies",
+   "occurrences": 4,
+   "prs": [
+    2488,
+    2509,
+    2520
+   ],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057242432/job/124067753886"
   },
   {
    "signature": "DMAIC V3 Enterprise CI :: Test on windows-latest :: Install dev dependencies",
@@ -1040,73 +1010,130 @@
    "prs": [
     2488,
     2509,
-    2520,
-    2523
+    2520
    ],
    "repos": [
     "GBOGEB/ABACUS"
    ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548468/job/123924600890"
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057242432/job/124067753838"
   },
   {
-   "signature": "ABACUS W13 Weighted Neural SPINE :: graph-proof (3.12) :: Native W13 typed graph checks and coverage",
+   "signature": "TestPilot Pre-GitHub Parity :: parity :: Run bounded TestPilot fast preflight",
    "occurrences": 4,
    "prs": [
-    2513,
-    2518,
+    2510,
+    2516,
     2520,
-    2523
+    2522
    ],
    "repos": [
     "GBOGEB/ABACUS"
    ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548324/job/123924600364"
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013160782/job/123923379257"
+  },
+  {
+   "signature": "TestPilot Pre-GitHub Parity :: parity :: Upload TestPilot receipt",
+   "occurrences": 4,
+   "prs": [
+    2510,
+    2516,
+    2520,
+    2522
+   ],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013160782/job/123923379257"
   },
   {
    "signature": "ABACUS W13 Weighted Neural SPINE :: graph-proof (3.11) :: Native W13 typed graph checks and coverage",
-   "occurrences": 4,
+   "occurrences": 3,
    "prs": [
     2513,
     2518,
-    2520,
-    2523
+    2520
    ],
    "repos": [
     "GBOGEB/ABACUS"
    ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548324/job/123924599911"
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41024726310/job/123960006662"
   },
   {
-   "signature": "CODEX Semantic Runtime CI :: semantic-validation :: Run tests",
-   "occurrences": 4,
-   "prs": [
-    1218,
-    1223,
-    1228
-   ],
-   "repos": [
-    "GBOGEB/CODEX"
-   ],
-   "example_url": "https://github.com/GBOGEB/CODEX/actions/runs/40915690822/job/123595173292"
-  },
-  {
-   "signature": "DMAIC V3 Enterprise CI :: CI Summary :: Set final status",
+   "signature": "ABACUS W13 Weighted Neural SPINE :: graph-proof (3.12) :: Native W13 typed graph checks and coverage",
    "occurrences": 3,
    "prs": [
-    2488,
-    2509,
-    2523
+    2513,
+    2518,
+    2520
    ],
    "repos": [
     "GBOGEB/ABACUS"
    ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548468/job/123926928868"
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41024726310/job/123960006549"
+  },
+  {
+   "signature": "DOW + Recursive DMAIC - Enhanced CI :: Test (3.11) :: Run python -m coverage erase",
+   "occurrences": 2,
+   "prs": [
+    2488
+   ],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057242217/job/124069969101"
+  },
+  {
+   "signature": "CI/CD Test Suite :: Security Scanning :: PR new-debt ratchet (Bandit)",
+   "occurrences": 2,
+   "prs": [
+    2496,
+    2520
+   ],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/40482959459/job/122117594502"
+  },
+  {
+   "signature": "CI/CD Test Suite :: Code Quality Checks :: Per-tool code-quality new-debt ratchet",
+   "occurrences": 2,
+   "prs": [
+    2496,
+    2520
+   ],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/40482959459/job/122117593942"
+  },
+  {
+   "signature": "CI - ABACUS Matrix :: Benchmark baseline - no coverage :: Run isolated microbenchmarks",
+   "occurrences": 2,
+   "prs": [
+    2504,
+    2519
+   ],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41011612488/job/123918526193"
+  },
+  {
+   "signature": "Validate Docs (Markdown/YAML/JSON) :: Changed docs lint :: Validate changed docs",
+   "occurrences": 2,
+   "prs": [
+    2513,
+    2520
+   ],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41024726293/job/123960006658"
   },
   {
    "signature": "SPINE Gate :: spine-gate :: Run SPINE gate (terms, secrets, import closure)",
-   "occurrences": 3,
+   "occurrences": 2,
    "prs": [
-    1205,
     1210,
     1212
    ],
@@ -1116,109 +1143,100 @@
    "example_url": "https://github.com/GBOGEB/CODEX/actions/runs/40349753119/job/121666268991"
   },
   {
-   "signature": "DOW + Recursive DMAIC - Enhanced CI :: Test (3.11) :: Run python -m coverage erase",
-   "occurrences": 2,
-   "prs": [
-    2488,
-    2523
-   ],
-   "repos": [
-    "GBOGEB/ABACUS"
-   ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548650/job/123926220105"
-  },
-  {
-   "signature": "DMAIC V3 Enterprise CI :: Test on ubuntu-latest :: Install dependencies",
-   "occurrences": 2,
-   "prs": [
-    2488,
-    2523
-   ],
-   "repos": [
-    "GBOGEB/ABACUS"
-   ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548468/job/123924601147"
-  },
-  {
-   "signature": "EVERRED V3 Governed Control Plane :: EVERRED source, provenance and negative tests (3.10) :: Verify committed Black and isort styles",
-   "occurrences": 2,
-   "prs": [
-    2517,
-    2523
-   ],
-   "repos": [
-    "GBOGEB/ABACUS"
-   ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548494/job/123924601106"
-  },
-  {
-   "signature": "CI/CD Test Suite :: Security Scanning :: PR new-debt ratchet (Bandit)",
-   "occurrences": 2,
-   "prs": [
-    2496,
-    2523
-   ],
-   "repos": [
-    "GBOGEB/ABACUS"
-   ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548586/job/123924601005"
-  },
-  {
-   "signature": "Validate Docs (Markdown/YAML/JSON) :: Changed docs lint :: Validate changed docs",
-   "occurrences": 2,
-   "prs": [
-    2513,
-    2523
-   ],
-   "repos": [
-    "GBOGEB/ABACUS"
-   ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548595/job/123924600958"
-  },
-  {
-   "signature": "EVERRED V3 Governed Control Plane :: EVERRED source, provenance and negative tests (3.12) :: Verify committed Black and isort styles",
-   "occurrences": 2,
-   "prs": [
-    2517,
-    2523
-   ],
-   "repos": [
-    "GBOGEB/ABACUS"
-   ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548494/job/123924600933"
-  },
-  {
-   "signature": "DMAIC V3 Enterprise CI :: Test on macos-latest :: Install dependencies",
-   "occurrences": 2,
-   "prs": [
-    2488,
-    2523
-   ],
-   "repos": [
-    "GBOGEB/ABACUS"
-   ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548468/job/123924600914"
-  },
-  {
-   "signature": "W81 Repair Outcome Block :: governance-report-preview :: Generate exact workflow rationalisation candidate",
-   "occurrences": 2,
-   "prs": [
-    2517,
-    2523
-   ],
-   "repos": [
-    "GBOGEB/ABACUS"
-   ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41013548446/job/123924600823"
-  },
-  {
-   "signature": "DMAIC V3 - Cognitive Loop CI/CD :: P0: PHASE0 Validation Gate :: Run PHASE0 Validation",
+   "signature": "Deploy Next.js site to Pages :: build :: Detect package manager",
    "occurrences": 1,
    "prs": [],
    "repos": [
     "GBOGEB/ABACUS"
    ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41024759494/job/123960119458"
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057242280/job/124070467050"
+  },
+  {
+   "signature": "MIP B0 Test Admission and Coverage Evidence :: DAB proposal worker DAB-<sha>-E731-* :: Set up job",
+   "occurrences": 1,
+   "prs": [],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057241899/job/124068459893"
+  },
+  {
+   "signature": "DOW + Recursive DMAIC - Unified CD Pipeline :: Lint & Validate :: Run pre-commit hooks",
+   "occurrences": 1,
+   "prs": [],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057242112/job/124067752755"
+  },
+  {
+   "signature": "Session Tuple CI/CD :: test (3.10) :: Run Full Test Suite",
+   "occurrences": 1,
+   "prs": [],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057242035/job/124067751400"
+  },
+  {
+   "signature": "Session Tuple CI/CD :: test (3.10) :: Test Report",
+   "occurrences": 1,
+   "prs": [],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057242035/job/124067751400"
+  },
+  {
+   "signature": "Continuous Integration Pipeline :: Unit Tests (windows-latest, 3.11) :: Run Tests",
+   "occurrences": 1,
+   "prs": [],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057241880/job/124067751207"
+  },
+  {
+   "signature": "export-docs :: export :: Export",
+   "occurrences": 1,
+   "prs": [],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41057241955/job/124067751120"
+  },
+  {
+   "signature": "EVERRED V3 Governed Control Plane :: EVERRED source, provenance and negative tests (3.10) :: Verify committed Black and isort styles",
+   "occurrences": 1,
+   "prs": [
+    2517
+   ],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41010460299/job/123914923257"
+  },
+  {
+   "signature": "W81 Repair Outcome Block :: governance-report-preview :: Generate exact workflow rationalisation candidate",
+   "occurrences": 1,
+   "prs": [
+    2517
+   ],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41010460421/job/123914923162"
+  },
+  {
+   "signature": "EVERRED V3 Governed Control Plane :: EVERRED source, provenance and negative tests (3.12) :: Verify committed Black and isort styles",
+   "occurrences": 1,
+   "prs": [
+    2517
+   ],
+   "repos": [
+    "GBOGEB/ABACUS"
+   ],
+   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41010460299/job/123914923087"
   },
   {
    "signature": "TestPilot Pre-GitHub Parity :: parity :: Replay pre-push source-bound checks on exact GitHub head",
@@ -1252,43 +1270,12 @@
     "GBOGEB/ABACUS"
    ],
    "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/41011823629/job/123919185234"
-  },
-  {
-   "signature": "DMAIC V3 Enterprise CI :: Test on macos-latest :: Install dev dependencies",
-   "occurrences": 1,
-   "prs": [
-    2509
-   ],
-   "repos": [
-    "GBOGEB/ABACUS"
-   ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/40917436947/job/123601311438"
-  },
-  {
-   "signature": "DMAIC V3 Enterprise CI :: Test on ubuntu-latest :: Install dev dependencies",
-   "occurrences": 1,
-   "prs": [
-    2509
-   ],
-   "repos": [
-    "GBOGEB/ABACUS"
-   ],
-   "example_url": "https://github.com/GBOGEB/ABACUS/actions/runs/40917436947/job/123601311321"
-  },
-  {
-   "signature": "Deploy GitHub Pages :: build :: Build verified Pages output",
-   "occurrences": 1,
-   "prs": [],
-   "repos": [
-    "GBOGEB/CODEX"
-   ],
-   "example_url": "https://github.com/GBOGEB/CODEX/actions/runs/41008417440/job/123908539039"
   }
  ],
  "private_rows": "AGGREGATE_ONLY",
  "private_aggregate": {
   "GBOGEB/cryoplant-project": {
-   "occurrences": 272,
+   "occurrences": 276,
    "distinct_signatures": 62,
    "unmatched_signatures": 62,
    "linked_roots": {}
