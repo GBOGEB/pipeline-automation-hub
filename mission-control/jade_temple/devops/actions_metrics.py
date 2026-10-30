@@ -367,7 +367,8 @@ def missing_run_days(cache: Path, repo: str, since: date, until: date) -> list[s
 
 def recheck_pressure(runs: list[dict], repo: str, source_sha: str,
                      observed_at: str, sample_size: int = 1000,
-                     missing_days: list[str] | None = None) -> dict:
+                     missing_days: list[str] | None = None,
+                     window_end_date: date | None = None) -> dict:
     """Project a source-bound, fixed-count run cohort without confusing runs and jobs.
 
     source_sha is the *collector's* exact repository head for this pulse, not a
@@ -377,7 +378,8 @@ def recheck_pressure(runs: list[dict], repo: str, source_sha: str,
 
     Only completed runs enter the cohort. Any missing source-window day
     (missing_days) keeps the observation PARTIAL_UNKNOWN with a null value, so
-    an interrupted fetch cannot yield a stale "last 1000" cohort.
+    an interrupted fetch cannot yield a stale "last 1000" cohort. The CLI
+    also rejects a window ending before the observation UTC date.
     """
     if not isinstance(source_sha, str) or not re.fullmatch(r"[0-9a-f]{40}", source_sha):
         raise ValueError("pressure requires exact collector source_sha")
@@ -398,12 +400,15 @@ def recheck_pressure(runs: list[dict], repo: str, source_sha: str,
         if BQ.utc(rec["created_at"]) > observed:
             raise ValueError("workflow run created after observation")
         ids.add(rec["id"])
+    if window_end_date is not None and not isinstance(window_end_date, date):
+        raise ValueError("window_end_date must be date")
+    stale_window = window_end_date is not None and window_end_date < observed.date()
     missing = sorted(set(missing_days or []))
     completed = [rec for rec in runs if rec.get("status") == "completed"]
     selected = sorted(completed, key=lambda rec: (BQ.utc(rec["created_at"]), rec["id"]),
                       reverse=True)[:sample_size]
     n = len(selected)
-    complete = n == sample_size and not missing
+    complete = n == sample_size and not missing and not stale_window
     # Canonical cohort identity: the fields this metric reads, per selected run.
     cohort = [[rec["id"], rec.get("run_attempt"), rec["created_at"], rec["name"],
                rec.get("event"), rec.get("conclusion")] for rec in selected]
@@ -425,6 +430,8 @@ def recheck_pressure(runs: list[dict], repo: str, source_sha: str,
            "coverage": "COMPLETE" if complete else "PARTIAL_UNKNOWN",
            "value": round(len(target) / n, 6) if complete else None,
            "missing_source_days": missing,
+           "window_end_date": window_end_date.isoformat() if window_end_date else None,
+           "window_end_before_observation": stale_window,
            "excluded_incomplete_runs": len(runs) - len(completed),
            "cohort_sha256": cohort_sha,
            "recheck_records": len(target),
@@ -589,7 +596,8 @@ def main(argv=None) -> int:
         observed = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         doc = recheck_pressure(load_runs(a.cache, a.repo[0], a.since, a.until),
                                a.repo[0], a.source_sha or "", observed,
-                               missing_days=missing_run_days(a.cache, a.repo[0], a.since, a.until))
+                               missing_days=missing_run_days(a.cache, a.repo[0], a.since, a.until),
+                               window_end_date=a.until)
         txt = json.dumps(doc, sort_keys=True, indent=2) + "\n"
         if a.out:
             a.out.parent.mkdir(parents=True, exist_ok=True)
