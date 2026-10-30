@@ -35,7 +35,7 @@ jobs:
           verify_blob scripts/qps_w189r_validate_authoritative_return.py f0fe044519f15bbc7f8529c14f2fade1ec12538c
           verify_blob tests/test_qps_w189r_authoritative_return.py de4058b1db2bc2c951cb53e0f2e92647dc8494cb
       - name: Set up Python
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with: {python-version: '3.12'}
       - name: Execute authoritative-return validator
         run: python scripts/qps_w189r_validate_authoritative_return.py
