@@ -16,7 +16,7 @@ from pathlib import Path
 D = Path(__file__).parent
 
 
-TRANSIENT = re.compile(r"timeout|timed out|TLS handshake|connection (reset|refused|attempt failed)|connectex|unexpected EOF|HTTP 5\d\d", re.I)
+TRANSIENT = re.compile(r"timeout|timed out|TLS handshake|connection (reset|refused|attempt failed)|connectex|error connecting to|unexpected EOF|HTTP 5\d\d", re.I)
 
 
 def gh(p):

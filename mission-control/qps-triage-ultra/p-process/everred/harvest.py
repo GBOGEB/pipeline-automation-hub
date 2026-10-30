@@ -45,7 +45,7 @@ ENV_RE = [
 HEX_RE = re.compile(r"\b[0-9a-f]{7,40}\b")
 SEQ_RE = re.compile(r"(?<=-)\d{3}\b")
 CACHE: dict[str, object] = {}
-TRANSIENT = re.compile(r"timeout|timed out|TLS handshake|connection (reset|refused|attempt failed)|connectex|unexpected EOF|HTTP 5\d\d", re.I)
+TRANSIENT = re.compile(r"timeout|timed out|TLS handshake|connection (reset|refused|attempt failed)|connectex|error connecting to|unexpected EOF|HTTP 5\d\d", re.I)
 
 
 def gh(path: str, tries: int = 5):
@@ -93,7 +93,10 @@ def _check_run_pass(repo: str, sha: str) -> tuple[dict, list[int]]:
         page += 1
 
 
-def check_runs_for_sha(repo: str, sha: str, attempts: int = 4) -> list[dict]:
+PASS_PAUSE_S = 15  # pause before re-reading a head whose CI was still moving; n-th re-read waits n x this
+
+
+def check_runs_for_sha(repo: str, sha: str, attempts: int = 6) -> list[dict]:
     """Every check run on sha, paged against total_count. Fails closed unless the census is stable.
 
     A single per_page=100 read silently dropped runs past 100 (ABACUS main had 121 on 2026-10-24).
@@ -101,14 +104,19 @@ def check_runs_for_sha(repo: str, sha: str, attempts: int = 4) -> list[dict]:
     on 2026-10-25), and a shifted page can then hide a run although the counts add up. A pass is stable
     when total_count did not change across its pages and exactly that many distinct runs were read. The
     census is accepted only when two consecutive stable passes return the same id set; otherwise it is
-    re-read, up to `attempts` passes, then raises.
+    re-read, up to `attempts` passes, then raises. After a pass that moved or disagreed, the re-read waits
+    (PASS_PAUSE_S x pass number) so in-flight CI can settle; the acceptance rule itself never loosens.
     """
     prev: dict | None = None
-    for _ in range(attempts):
+    settling = False
+    for n in range(attempts):
+        if settling:
+            time.sleep(PASS_PAUSE_S * n)
         runs, totals = _check_run_pass(repo, sha)
         stable = len(set(totals)) == 1 and len(runs) == totals[0]
         if stable and prev is not None and set(runs) == set(prev):
             return list(runs.values())
+        settling = not stable or prev is not None
         prev = runs if stable else None
     raise RuntimeError(f"check-runs for {repo}@{sha}: no two consecutive stable reads agreed; "
                        f"last read {len(runs)} distinct of total_count {'/'.join(map(str, totals))}")
