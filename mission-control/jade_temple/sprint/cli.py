@@ -110,7 +110,7 @@ def cache_valid(path,head,inputs,job,ttl_hours):
 def run_one(job,root,out,cache,head,inputs,ttl_hours,no_cache,started_plan):
     key=cachekey(job,head,inputs)
     record=cache/(key+".json")
-    queued_for=round(max(0,time.monotonic()-started_plan),3)
+    queued_for=round(max(0.0,time.monotonic()-started_plan),3)
     if not no_cache:
         previous=cache_valid(record,head,inputs,job,ttl_hours)
         if previous is not None:
