@@ -152,7 +152,7 @@ jobs:
           ATTEMPTS: ${{ inputs.verify-attempts }}
         run: |
           python3 - <<'PY'
-          import hashlib, json, os, time, urllib.error, urllib.request
+          import hashlib, json, os, time, urllib.error, urllib.parse, urllib.request
           from pathlib import Path
           m = json.loads(Path("artifact/jade-manifest.json").read_text())
           base = (os.environ["BASE_URL"] or "").rstrip("/") + "/"
@@ -164,7 +164,7 @@ jobs:
                   mismatches = []
                   for rel, expected in checks.items():
                       try:
-                          with urllib.request.urlopen(urllib.request.Request(base + rel, headers={"Cache-Control": "no-cache"}), timeout=20) as r:
+                          with urllib.request.urlopen(urllib.request.Request(base + urllib.parse.quote(rel), headers={"Cache-Control": "no-cache"}), timeout=20) as r:
                               got = hashlib.sha256(r.read()).hexdigest() if r.status == 200 else None
                       except (urllib.error.URLError, TimeoutError, OSError):
                           got = None
