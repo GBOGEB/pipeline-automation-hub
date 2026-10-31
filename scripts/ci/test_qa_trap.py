@@ -20,6 +20,9 @@ def run(body, title="My QA step", helper=HELPER):
         return p.returncode, p.stdout + p.stderr
 
 
+# qa_trap.sh is sourced only by ubuntu run: steps. On Windows, Python >= 3.12.4 gives
+# TemporaryDirectory an owner-only ACL that MSYS bash cannot read, and python3 is not on PATH.
+@unittest.skipIf(os.name == "nt", "POSIX bash helper for ubuntu runners only")
 class QaTrap(unittest.TestCase):
     def test_failure_emits_annotation_and_keeps_exit_code(self):
         rc, out = run("echo start\npython3 -c \"raise AssertionError('three viewports: overflow 12px')\"\necho never\n")
