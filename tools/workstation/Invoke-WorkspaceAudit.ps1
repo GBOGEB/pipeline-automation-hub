@@ -194,7 +194,8 @@ $entries = [System.Collections.Generic.List[object]]::new()
 $prCache = @{}
 $defaultCache = @{}
 
-$dirs = Get-ChildItem -LiteralPath $Root -Directory -Force | Where-Object { Test-Path -LiteralPath (Join-Path $_.FullName '.git') }
+# @() keeps a one-folder root an array: under StrictMode a single object has no .Count (line below)
+$dirs = @(Get-ChildItem -LiteralPath $Root -Directory -Force | Where-Object { Test-Path -LiteralPath (Join-Path $_.FullName '.git') })
 $i = 0
 foreach ($d in $dirs) {
     $i++
