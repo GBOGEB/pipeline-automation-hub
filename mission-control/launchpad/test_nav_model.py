@@ -58,4 +58,35 @@ class ModelTests(unittest.TestCase):
         self.reject(lambda d:d["queues"].pop(),"queue coverage")
     def test_no_claimed_worker_count(self):
         self.reject(lambda d:d["workers"][0].update(active_count=8),"worker capacity invented")
+    def test_reports_projected_with_count(self):
+        d=sample();v=nav.project(d)
+        self.assertEqual(v["reports"],d["reports"])
+        self.assertEqual(v["counts"]["reports"],len(d["reports"]))
+        self.assertEqual({r["repo"] for r in d["reports"]},{"hub","abacus","codex","qps","math"})
+    def test_reports_carry_no_values_or_run_state(self):
+        for key,val in (("value",1),("conclusion","success"),("last_run","2026-10-31T00:00Z")):
+            self.reject(lambda d:d["reports"][0].update({key:val}),"report fields")
+        self.reject(lambda d:d["reports"][0].pop("metrics"),"report fields")
+    def test_report_page_listed_once(self):
+        self.reject(lambda d:d["reports"].append(dict(d["reports"][0],id="copy")),"report page")
+        self.reject(lambda d:d["reports"].append(dict(d["reports"][1],path="x.html")),"report id")
+    def test_one_owner_per_metric(self):
+        def dup(d):
+            src=next(r for r in d["reports"] if r["metrics"])
+            other=next(r for r in d["reports"] if r is not src)
+            other["metrics"]=[dict(src["metrics"][0],owner="scripts/copy.py")]
+        self.reject(dup,"one owner per metric")
+    def test_report_sources_bound(self):
+        self.reject(lambda d:d["reports"][0].update(repo="absent"),"report repo")
+        self.reject(lambda d:d["reports"][0].update(path="../escape.html"),"report page")
+        self.reject(lambda d:d["reports"][0].update(generator="C:\\tool.py"),"report generator")
+        self.reject(lambda d:d["reports"][0].update(workflow="scripts/run.yml"),"report workflow")
+        self.reject(lambda d:d["reports"][0].update(workflow_role="DEPLOYED"),"report workflow role")
+        self.reject(lambda d:d["reports"][0].update(schedule="hourly"),"report schedule")
+        self.reject(lambda d:d["reports"][0].update(observed_sha="6fbda559"),"report observed SHA")
+    def test_report_pages_url_stays_on_own_site(self):
+        def wrong(d):
+            r=next(x for x in d["reports"] if x["repo"]=="abacus");r["pages_url"]="https://gbogeb.github.io/CODEX/"
+        self.reject(wrong,"report Pages URL")
+        self.reject(lambda d:d["reports"][0].update(pages_url="https://example.com/"),"report Pages URL")
 if __name__=="__main__":unittest.main()

@@ -15,9 +15,44 @@ RELATIONS={"DEPENDS_ON","DECLARED_ROUTE","EVIDENCE","ASSOCIATION","FEEDBACK"}
 BINDINGS={"DECLARED","RECEIPT"}
 DAG_TYPES={"DEPENDS_ON"}
 MUTATION_FIELDS=("mutation_enabled","browser_apply_allowed","remote_dispatch_enabled","authority_transfer","security_waiver","qps_engineering_acceptance")
+# Reports registry: links and provenance only. Values and run state live on the owner page, never here.
+REPORT_FIELDS={"id","repo","title","path","generator","data_ssot","workflow","workflow_role","schedule","observed_sha","pages_url","metrics"}
+REPORT_ROLES={"REFRESH","CHECK","PUBLISH"}
+SLUG=re.compile(r"[a-z0-9][a-z0-9-]*\Z")
+CRON=re.compile(r"[0-9*/,-]+( [0-9*/,-]+){4}(;[0-9*/,-]+( [0-9*/,-]+){4})*\Z")
 
 def require(ok,why):
     if not ok:raise ValueError("MC_NAV_HOLD:"+why)
+
+def repo_path(v):
+    return isinstance(v,str) and bool(v) and not v.startswith(("/","\\")) and ".." not in v.split("/") and "\\" not in v
+
+def validate_reports(d):
+    repos={r["id"]:r["name"] for r in d.get("repositories",[])}
+    rows=d.get("reports")
+    require(isinstance(rows,list) and len(rows)>0,"reports registry")
+    keys=set();pages=set();metrics={}
+    for x in rows:
+        require(isinstance(x,dict) and set(x)==REPORT_FIELDS,"report fields (no values or run state)")
+        require(isinstance(x["id"],str) and SLUG.fullmatch(x["id"]) is not None and x["id"] not in keys,"report id")
+        keys.add(x["id"])
+        require(x["repo"] in repos and bool(x["title"]),"report repo")
+        require(repo_path(x["path"]) and x["path"].endswith(".html") and (x["repo"],x["path"]) not in pages,"report page")
+        pages.add((x["repo"],x["path"]))
+        for k in ("generator","data_ssot"):
+            require(x[k] is None or repo_path(x[k]),"report "+k)
+        require(repo_path(x["workflow"]) and x["workflow"].startswith(".github/workflows/") and x["workflow"].endswith((".yml",".yaml")),"report workflow")
+        require(x["workflow_role"] in REPORT_ROLES,"report workflow role")
+        require(x["schedule"] is None or (isinstance(x["schedule"],str) and CRON.fullmatch(x["schedule"]) is not None),"report schedule")
+        require(SHA.fullmatch(x["observed_sha"] or "") is not None,"report observed SHA")
+        site="https://gbogeb.github.io/"+repos[x["repo"]].split("/",1)[1]+"/"
+        require(x["pages_url"] is None or (isinstance(x["pages_url"],str) and x["pages_url"].startswith(site)),"report Pages URL")
+        require(isinstance(x["metrics"],list),"report metrics")
+        for m in x["metrics"]:
+            require(isinstance(m,dict) and set(m)=={"name","owner"} and bool(m["name"]) and repo_path(m["owner"]),"report metric owner")
+            require(m["name"] not in metrics,"one owner per metric")
+            metrics[m["name"]]=x["id"]
+    return rows
 
 def canonical(value):
     return json.dumps(value,sort_keys=True,separators=(",",":"),ensure_ascii=True,allow_nan=False)
@@ -82,6 +117,7 @@ def validate(d):
     require(len({x.get("code") for x in d.get("queues",[])})==len(d.get("queues",[])),"queue duplicates")
     require({q.get("code") for q in d.get("queues",[])}=={"EXECUTE_NOW","PROVE","RETURN","CONTROL","READ","HOLD"},"queue coverage")
     for w in d.get("workers",[]):require(w.get("active_count") is None,"worker capacity invented")
+    validate_reports(d)
     return ordered
 
 def mermaid(d):
@@ -117,8 +153,8 @@ def project(d):
             "source_snapshot":d["snapshot"],"policy":d["policy"],
             "repositories":d["repositories"],"nodes":d["nodes"],"edges":d["edges"],
             "sipoc":d["sipoc"],"hierarchy":d["hierarchy"],"queues":d["queues"],
-            "workers":d["workers"],"scheduler":d["scheduler"],"links":d["links"],
-            "counts":{"repositories":len(d["repositories"]),"nodes":len(d["nodes"]),"edges":len(d["edges"]),
+            "workers":d["workers"],"scheduler":d["scheduler"],"links":d["links"],"reports":d["reports"],
+            "counts":{"repositories":len(d["repositories"]),"nodes":len(d["nodes"]),"edges":len(d["edges"]),"reports":len(d["reports"]),
                       "receipt_edges_historical":sum(e["binding"]=="RECEIPT" for e in d["edges"]),
                       "declared_edges":sum(e["binding"]=="DECLARED" for e in d["edges"]),
                       "execution_dependencies":sum(e["relation"]=="DEPENDS_ON" for e in d["edges"])},
