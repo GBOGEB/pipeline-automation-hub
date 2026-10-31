@@ -1,0 +1,32 @@
+name: CODE MAROON runner
+on:
+  pull_request:
+    paths:
+      - 'mission-control/maroon/**'
+      - '.github/workflows/code-maroon-runner.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: code-maroon-runner-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  tests:
+    name: Maroon runner tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12']
+    steps:
+      - name: Checkout exact author head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Python ${{ matrix.python-version }}
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run tests
+        run: python -m unittest discover -s mission-control/maroon -p "test_*.py" -v

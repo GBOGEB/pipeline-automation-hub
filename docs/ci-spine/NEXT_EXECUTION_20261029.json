@@ -1,0 +1,414 @@
+{
+  "schema": "gbo.ci-spine.lossless-handover-execution.v1",
+  "classification": "advisory_snapshot_not_execution_scheduler_or_merge_authority",
+  "date": "2026-10-29",
+  "repository": "GBOGEB/pipeline-automation-hub",
+  "source_readback": {
+    "master_sha": "e7b5c580fa2f1088c58913c80feeae91e6cd5ad8",
+    "master_commit_utc": "2026-10-29T08:35:02Z",
+    "frozen_catalog_sha": "ca623ab83793df6edd245942884ad5428a5fe079",
+    "catalog_workflow_files": 182,
+    "catalog_test_named_files": 307,
+    "local_worktree_contents": "UNKNOWN"
+  },
+  "verified_merged": [
+    {
+      "pr": 992,
+      "at": "2026-10-28T15:34:53Z",
+      "merge_sha": "6b6118efb3479370d5afd991a7bcbe3de1d907ea"
+    },
+    {
+      "pr": 989,
+      "at": "2026-10-28T15:54:09Z",
+      "merge_sha": "6f7cf145c4ebf585dbb341ba5863e77098ad36b0"
+    },
+    {
+      "pr": 998,
+      "at": "2026-10-29T08:35:03Z",
+      "merge_sha": "e7b5c580fa2f1088c58913c80feeae91e6cd5ad8"
+    }
+  ],
+  "active_heads": [
+    {
+      "pr": 997,
+      "sha": "2b0b2622725592edbaa9d0905a4295dc1cbb4d1f",
+      "base": "master",
+      "branch": "refactor/ci-bundle-inventory-lifecycle-pilot-20261028",
+      "state": "OPEN"
+    },
+    {
+      "pr": 1012,
+      "sha": "2cd0a37920e6024454e385ac37eec1fa3f356e26",
+      "base": "refactor/ci-bundle-inventory-lifecycle-pilot-20261028",
+      "branch": "refactor/ci-n1-title-crosswalk-20261028",
+      "state": "OPEN"
+    },
+    {
+      "pr": 996,
+      "sha": "cb782597008c953a97d04cab8b431e6cab1ac974",
+      "base": "master",
+      "branch": "feat/ci-spine-authority-index-20261028",
+      "state": "OPEN"
+    },
+    {
+      "pr": 1001,
+      "sha": "39e3d4ca82d6560fdefc594a516a26b0d65cd185",
+      "base": "master",
+      "branch": "feat/ci-spine-disjoint-wave-controller-20261028",
+      "state": "OPEN"
+    },
+    {
+      "pr": 1006,
+      "sha": "6827ad91eae632e66ea2b0890d423e706c6de1b3",
+      "base": "master",
+      "branch": "feat/ci-spine-source-delta-audit-20261028",
+      "state": "OPEN"
+    },
+    {
+      "pr": 1016,
+      "sha": "b1d93dbc83c7469246b9388f52b40592d419585c",
+      "base": "master",
+      "branch": "feat/ci-spine-w4-readonly-consumer-20261029",
+      "state": "OPEN"
+    },
+    {
+      "pr": 1002,
+      "sha": "4cc045d322fb65fef8fb00b2cd93e50bbc52bbd8",
+      "base": "master",
+      "branch": "feat/ci-spine-jacquard-provenance-explorer-20261028",
+      "state": "OPEN"
+    },
+    {
+      "pr": 1019,
+      "sha": "24279024cbc683670231682c4d4fbfb5b9b6cad2",
+      "base": "feat/ci-spine-jacquard-provenance-explorer-20261028",
+      "branch": "fix/ci-spine-1002-codeql-script-parser-20261029",
+      "state": "OPEN"
+    },
+    {
+      "pr": 1021,
+      "sha": "cda6529e855f711c73dbc8cf648913dc5b5406ce",
+      "base": "feat/ci-spine-jacquard-provenance-explorer-20261028",
+      "branch": "fix/ci-spine-1002-view-links-unknown-clocks-20261029",
+      "state": "OPEN"
+    },
+    {
+      "pr": 1018,
+      "sha": "b3389e9f4fc9d4809abf2b2a1ef168254c474041",
+      "base": "feat/ci-spine-jacquard-provenance-explorer-20261028",
+      "branch": "feat/ci-spine-jq04-typed-pointers-20261029",
+      "state": "OPEN"
+    },
+    {
+      "pr": 1017,
+      "sha": "7f93c001777dc53925a64b6f4cad1128442fb598",
+      "base": "master",
+      "branch": "feat/ci-spine-jacquard-provenance-explorer-20261029",
+      "state": "OPEN"
+    }
+  ],
+  "known_reds": [
+    {
+      "pr": 1002,
+      "head": "4cc045d322fb65fef8fb00b2cd93e50bbc52bbd8",
+      "CodeQL": "FAIL",
+      "FPC": "SKIPPED",
+      "review": "UNRESOLVED",
+      "detail": "HTML bad filtering regexp, incomplete URL substring sanitization, stale workstream link, null queue seconds coerced to zero"
+    },
+    {
+      "pr": 997,
+      "head": "2b0b2622725592edbaa9d0905a4295dc1cbb4d1f",
+      "JADE_CENSUS": "FAIL_OLD_HEAD",
+      "detail": "New current master contains separate PR #998 population fixture fix; requalify, never inherit other PR green"
+    }
+  ],
+  "noncompensating": [
+    "effective_required_checks_exact_head",
+    "first_pass_closure_not_skipped",
+    "CodeQL_exact_head",
+    "source_binary_digest",
+    "eligible_independent_review",
+    "thread_disposition",
+    "owner_approval"
+  ],
+  "queue": [
+    {
+      "id": "H-01",
+      "lane": "custody",
+      "pr": null,
+      "deps": [],
+      "dod": "Inventory every local Git worktree, branch, SHA, dirty/staged/untracked/conflicts and target PR.",
+      "dov": "Compare local OIDs against remote heads, classify ahead/behind/diverged; no unknown local paths left uncategorized.",
+      "state": "LOCAL_UNKNOWN",
+      "owner": "local workstation",
+      "approval": false
+    },
+    {
+      "id": "H-02",
+      "lane": "custody",
+      "pr": null,
+      "deps": [
+        "H-01"
+      ],
+      "dod": "Store local SHA256 receipts and reversible backups for unmerged source and owner binaries outside Git.",
+      "dov": "Independently verify receipt and backup, redact secrets, do not prune branches.",
+      "state": "NOT_STARTED",
+      "owner": "local workstation",
+      "approval": false
+    },
+    {
+      "id": "H-03",
+      "lane": "custody",
+      "pr": null,
+      "deps": [
+        "H-01"
+      ],
+      "dod": "Allocate each unshared file to the one correct source-owned PR branch, identify shared-file collisions.",
+      "dov": "Review path allowlists, no private inputs or generated binary on wrong branch.",
+      "state": "NOT_STARTED",
+      "owner": "source owner",
+      "approval": false
+    },
+    {
+      "id": "H-04",
+      "lane": "custody",
+      "pr": null,
+      "deps": [
+        "H-02",
+        "H-03"
+      ],
+      "dod": "Stage selected files only, commit and push non-force to existing PR-owned branch.",
+      "dov": "Read back exact remote head and PR changed files; preserve parent/child bases and commit receipts.",
+      "state": "NOT_STARTED",
+      "owner": "source owner",
+      "approval": false
+    },
+    {
+      "id": "H-05",
+      "lane": "custody",
+      "pr": null,
+      "deps": [
+        "H-02"
+      ],
+      "dod": "Preserve owner-approved PDF/DOCX/PPTX binaries with byte hash/size/license and controlled locator.",
+      "dov": "Re-fetch exact binary or mark unavailable; no invented local paths or PDF geometry.",
+      "state": "INPUT_UNAVAILABLE",
+      "owner": "document owner",
+      "approval": false
+    },
+    {
+      "id": "JQ-01",
+      "lane": "ui",
+      "pr": 1002,
+      "deps": [
+        "H-04"
+      ],
+      "dod": "Select canonical existing explorer vs separate #1017 notebook after feature comparison.",
+      "dov": "One source owner, no duplicated scheduler/metric, independent parity matrix and reviewer choice.",
+      "state": "CANDIDATE_HOLD",
+      "owner": "explorer owner",
+      "approval": false
+    },
+    {
+      "id": "JQ-02",
+      "lane": "repair",
+      "pr": 1002,
+      "deps": [
+        "JQ-01"
+      ],
+      "dod": "Integrate #1019 HTMLParser + #1021 document/unknown-queue repairs into #1002 in approved order and regenerate HTML.",
+      "dov": "All applicable tests and exact-head CodeQL—including remaining URL sanitization alert—pass; reviewer threads dispositioned.",
+      "state": "CODEQL_RED_HOLD",
+      "owner": "explorer owner",
+      "approval": false
+    },
+    {
+      "id": "JQ-03",
+      "lane": "admission",
+      "pr": 1002,
+      "deps": [
+        "JQ-02"
+      ],
+      "dod": "Requalify parent source, generated HTML, browser/Plotly receipts and reviewers.",
+      "dov": "Exact-head required gates, non-skipped FPC, clean CodeQL, independent eligible review.",
+      "state": "FPC_SKIPPED_HOLD",
+      "owner": "gate owner",
+      "approval": false
+    },
+    {
+      "id": "JQ-04",
+      "lane": "pointer",
+      "pr": 1018,
+      "deps": [
+        "JQ-02",
+        "JQ-03"
+      ],
+      "dod": "Rebind pointer atlas to final parent HTML blob OID and sha256, preserve three real HTML route selections and unverified PDF state.",
+      "dov": "Full explorer and >=25 pointer tests, real source/output hash parity, browser navigation, no false PDF/OCG link.",
+      "state": "REQUIRE_REBIND",
+      "owner": "pointer owner",
+      "approval": false
+    },
+    {
+      "id": "JQ-05",
+      "lane": "ui",
+      "pr": 1002,
+      "deps": [
+        "JQ-02"
+      ],
+      "dod": "Prove offline responsive graph/SIPOC/clocks/Plotly, keyboard, focus, hash deep links and print/export.",
+      "dov": "1440x1000/1280x800/390x844 browser QA, no network/XSS/console/overflow, null remains unknown.",
+      "state": "DOV_PARTIAL",
+      "owner": "browser QA owner",
+      "approval": false
+    },
+    {
+      "id": "JQ-06",
+      "lane": "document",
+      "pr": null,
+      "deps": [
+        "JQ-04",
+        "H-05"
+      ],
+      "dod": "Bind one owner source object to actual PDF binary SHA, page, bbox, coordinate convention and optional verified OCG.",
+      "dov": "Independent visual PDF proof and seeded negative page/scale/repagination/layer/stale SHA tests.",
+      "state": "INPUT_UNAVAILABLE",
+      "owner": "document owner",
+      "approval": false
+    },
+    {
+      "id": "JQ-07",
+      "lane": "rtm_offer_eval",
+      "pr": null,
+      "deps": [
+        "JQ-06"
+      ],
+      "dod": "Link RTM-#### semantics and Word/contract source to OFFER/EVAL and HTML/PDF objects.",
+      "dov": "Bidirectional object ID and exact-source navigation, owner disposition remains separate.",
+      "state": "NOT_STARTED",
+      "owner": "RTM/OFFER owner",
+      "approval": false
+    },
+    {
+      "id": "JQ-08",
+      "lane": "annotations",
+      "pr": null,
+      "deps": [
+        "JQ-06"
+      ],
+      "dod": "Anchor review comments to stable source semantics; migrate after re-render, preserving orphan/stale state.",
+      "dov": "Regression for missing/reordered/moved source, changed page and conflicting annotation resolution.",
+      "state": "NOT_STARTED",
+      "owner": "review owner",
+      "approval": false
+    },
+    {
+      "id": "JQ-09",
+      "lane": "views",
+      "pr": null,
+      "deps": [
+        "JQ-06"
+      ],
+      "dod": "Pilot large-format SVG/A3 zoom, sticky legend, typed layers and cross-format links using existing renderer.",
+      "dov": "Mobile/desktop keyboard/zoom/print and verified actual PDF OCG; no fake interactive PDF support.",
+      "state": "NOT_STARTED",
+      "owner": "UI owner",
+      "approval": false
+    },
+    {
+      "id": "JQ-10",
+      "lane": "research",
+      "pr": null,
+      "deps": [
+        "JQ-01"
+      ],
+      "dod": "Compare Jacquard, Patchwork, SyncTeX, FileWeaver, Burrito and Tenfold playground against existing assets and license.",
+      "dov": "Independent ADOPT/ADAPT/REJECT and tested reuse boundary; no arbitrary privileged watcher.",
+      "state": "RESEARCH_ONLY",
+      "owner": "MC scouts/readers",
+      "approval": false
+    },
+    {
+      "id": "CI-01",
+      "lane": "ci",
+      "pr": 996,
+      "deps": [],
+      "dod": "Requalify canonical index source PR with existing CI and source receipts.",
+      "dov": "Same-head checks, review/FPC/ruleset without relying on stale success.",
+      "state": "OPEN_HOLD",
+      "owner": "CI index owner",
+      "approval": false
+    },
+    {
+      "id": "CI-02",
+      "lane": "ci",
+      "pr": 997,
+      "deps": [],
+      "dod": "Rebase/requalify B00-B12 inventory after merged #998 JADE repair.",
+      "dov": "No census population first-red; full test denominator and distinct candidate B07 identity; eligible review.",
+      "state": "OPEN_OLD_RED",
+      "owner": "JADE owner",
+      "approval": false
+    },
+    {
+      "id": "CI-03",
+      "lane": "federation",
+      "pr": 1016,
+      "deps": [
+        "CI-01"
+      ],
+      "dod": "Requalify #1001 worker and #1006 delta, then W4 read-only consumer #1016 against index.",
+      "dov": "No duplicate metrics, current same-source telemetry, bounded negative tests, independent W4 review.",
+      "state": "OPEN_HOLD",
+      "owner": "W4 owner",
+      "approval": false
+    },
+    {
+      "id": "CI-04",
+      "lane": "performance",
+      "pr": null,
+      "deps": [
+        "CI-01"
+      ],
+      "dod": "Run trust-scoped cold/warm cache and async fan-in A/B on selected existing workflow.",
+      "dov": "Matched head/runtime/lock, >=3 warm repeats, queue/install/test clocks, no security/test regression.",
+      "state": "EXPERIMENTAL",
+      "owner": "CI performance owner",
+      "approval": false
+    },
+    {
+      "id": "CTRL-01",
+      "lane": "admission",
+      "pr": null,
+      "deps": [
+        "JQ-03",
+        "JQ-04",
+        "JQ-06",
+        "JQ-07",
+        "JQ-08",
+        "JQ-09",
+        "CI-03"
+      ],
+      "dod": "Package release-bound GUI/source/doc output family and recorded reviewer dispositions.",
+      "dov": "Exact SHA/OID/digest, test/visual/cross-format receipts, clean effective rules, FPC, CodeQL and independent approval.",
+      "state": "MERGE_HOLD",
+      "owner": "owner/reviewer",
+      "approval": false
+    }
+  ],
+  "interpretation": {
+    "DONE": "DoD output and independent DoV have both been verified on same source/object.",
+    "HOLD": "No authorized merge or promotion.",
+    "LOCAL_UNKNOWN": "No permission or visibility of local Windows worktree files.",
+    "NOT_APPLICABLE": "Must be policy-grounded; never equivalent to passed test.",
+    "PDF": "No verified owner PDF/source-to-page rectangle in provided project context; leave unmapped."
+  },
+  "stack_constraints": [
+    "PR 1018/1019/1021 base points to PR 1002 head branch; do not retarget children to master until parent admitted.",
+    "PR 1012 base points to PR 997 head branch; source binding and namespace compatibility require reread.",
+    "PR 1019 and 1021 modify same test_explorer.py; integrate tests additively into parent, do not overwrite one another.",
+    "PR 1017 is an overlapping parallel implementation; compare before canonicalizing, avoid competing metric/view owners.",
+    "PR 1011 is combined DO-NOT-MERGE testflight and must never become owner of borrowed code."
+  ]
+}
