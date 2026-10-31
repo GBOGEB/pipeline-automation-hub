@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import fnmatch
 import hashlib
 import json
 import os
@@ -13,6 +14,8 @@ from pathlib import Path
 from typing import Any
 
 MARKER_RE = re.compile(r"<!--\s*FPC_RECEIPT_V1\s*(\{.*?\})\s*-->", re.S)
+# The head_sha placeholder in .github/PULL_REQUEST_TEMPLATE.md; an unfilled template is no receipt.
+TEMPLATE_HEAD_PLACEHOLDER = "<40-char PR head SHA>"
 CODEX_SUMMARY_MARKER = "<!-- codex-pull-request-review-summary -->"
 DEFAULT_CODEX_LOGIN = "chatgpt-codex-connector"
 REQUIRED_PURPOSES = {"canonical_self_test", "mutation_test", "exact_head_ci"}
@@ -59,6 +62,28 @@ class ApiClient:
                 return rows
             page += 1
 
+    def graphql(self, query: str, variables: dict[str, Any]) -> Any:
+        """Read-only GraphQL query (review-thread resolution has no REST field)."""
+        req = urllib.request.Request(
+            self.api_root + "/graphql",
+            data=json.dumps({"query": query, "variables": variables}).encode("utf-8"),
+            method="POST",
+            headers={
+                "Authorization": f"Bearer {self.token}",
+                "Content-Type": "application/json",
+                "User-Agent": "gbo-first-pass-closure-gate/3",
+            },
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                payload = json.load(resp)
+        except urllib.error.HTTPError as exc:
+            body = exc.read().decode("utf-8", errors="replace")
+            raise GateError(f"GitHub GraphQL {exc.code}: {body[:500]}") from exc
+        if not isinstance(payload, dict) or payload.get("errors") or "data" not in payload:
+            raise GateError(f"GitHub GraphQL error: {str(payload.get('errors') if isinstance(payload, dict) else payload)[:500]}")
+        return payload["data"]
+
 
 def load_policy(path: str) -> dict[str, Any]:
     try:
@@ -85,6 +110,11 @@ def load_policy(path: str) -> dict[str, Any]:
     return policy
 
 
+def has_body_receipt(body: str | None) -> bool:
+    match = MARKER_RE.search(body or "")
+    return bool(match) and TEMPLATE_HEAD_PLACEHOLDER not in match.group(1)
+
+
 def parse_receipt(body: str | None) -> dict[str, Any]:
     match = MARKER_RE.search(body or "")
     if not match:
@@ -103,6 +133,80 @@ def parse_receipt(body: str | None) -> dict[str, Any]:
     if not isinstance(runs, list) or not runs:
         raise GateError("MISSING_REQUIRED_RUNS")
     return receipt
+
+
+def derive_required_runs(
+    client: Any, repo: str, head_sha: str, policy: dict[str, Any]
+) -> list[dict[str, Any]]:
+    """Run specs for the allowlisted proof workflows on the exact head, without a body receipt.
+
+    For each allowlisted workflow identity the newest run on head_sha is taken (a re-run keeps its
+    id), so an older green run cannot stand in for a newer red one. Every spec still goes through
+    validate_run(): success, exact head, allowlisted identity and workflow content equal to base.
+    """
+    identities = {
+        (i.get("repo"), i.get("workflow_name"), i.get("workflow_path"))
+        for purpose, rows in (policy.get("proof_identity_allowlist") or {}).items()
+        if purpose in REQUIRED_PURPOSES and isinstance(rows, list)
+        for i in rows
+        if isinstance(i, dict)
+    }
+    runs: list[Any] = []
+    page = 1
+    while True:
+        chunk = client.get(f"/repos/{repo}/actions/runs?head_sha={head_sha}&per_page=100&page={page}")
+        rows = chunk.get("workflow_runs") if isinstance(chunk, dict) else None
+        if not isinstance(rows, list):
+            raise GateError(f"EXPECTED_WORKFLOW_RUNS: {repo}@{head_sha[:12]}")
+        runs.extend(rows)
+        if len(rows) < 100:
+            break
+        page += 1
+    newest: dict[tuple[Any, Any, Any], dict[str, Any]] = {}
+    for run in runs:
+        if not isinstance(run, dict) or run.get("head_sha") != head_sha:
+            continue
+        key = (((run.get("repository") or {}).get("full_name")) or repo, run.get("name"), run.get("path"))
+        if key not in identities or type(run.get("id")) is not int:
+            continue
+        if key not in newest or (run.get("run_number") or 0) > (newest[key].get("run_number") or 0):
+            newest[key] = run
+    if not newest:
+        raise GateError(f"NO_ALLOWLISTED_PROOF_RUN_ON_EXACT_HEAD: {head_sha[:12]}")
+    return [{"repo": key[0], "run_id": run["id"]} for key, run in sorted(newest.items(), key=lambda kv: kv[1]["id"])]
+
+
+def dependency_update_exemption(
+    client: Any, repo: str, pr_number: int, pr: dict[str, Any], policy: dict[str, Any]
+) -> dict[str, Any] | None:
+    """The policy-bound dependency-update exemption, or None when it does not apply.
+
+    It applies only when the PR and every commit on it are authored by the declared bot, and every
+    changed path matches a declared dependency pattern. It waives only what the policy lists in
+    `waives`; the exact-head proof runs are always required.
+    """
+    rule = policy.get("dependency_update_exemption")
+    if rule is None:
+        return None
+    login = rule.get("author_login") if isinstance(rule, dict) else None
+    patterns = rule.get("allowed_path_patterns") if isinstance(rule, dict) else None
+    waives = rule.get("waives") if isinstance(rule, dict) else None
+    if (not isinstance(login, str) or not login or not isinstance(patterns, list) or not patterns
+            or not isinstance(waives, list) or not set(waives) <= {"CODEX_REVIEW"}):
+        raise GateError("POLICY_DEPENDENCY_EXEMPTION_INVALID")
+    if ((pr.get("user") or {}).get("login")) != login:
+        return None
+    commits = client.get_all(f"/repos/{repo}/pulls/{pr_number}/commits")
+    if not commits or any(((c.get("author") or {}).get("login")) != login for c in commits):
+        return None
+    files = client.get_all(f"/repos/{repo}/pulls/{pr_number}/files")
+    paths = [f.get("filename") for f in files if isinstance(f, dict)]
+    if not paths or not all(
+        isinstance(p, str) and any(fnmatch.fnmatchcase(p, pat) for pat in patterns) for p in paths
+    ):
+        return None
+    return {"author_login": login, "commit_count": len(commits), "paths": sorted(paths),
+            "waives": sorted(waives)}
 
 
 def login_matches(actual: str | None, expected: str) -> bool:
@@ -143,6 +247,65 @@ def codex_finding_reviews_for_head(
         if any(f"`{prefix}`" in body for prefix in prefixes):
             out.append(review)
     return out
+
+
+PRIORITY_BADGE_RE = re.compile(r"!\[(P[0-3]) Badge\]")
+THREADS_QUERY = """query($owner:String!,$name:String!,$number:Int!,$after:String){
+  repository(owner:$owner,name:$name){pullRequest(number:$number){
+    reviewThreads(first:100,after:$after){pageInfo{hasNextPage endCursor}
+      nodes{isResolved comments(first:1){nodes{databaseId}}}}}}}"""
+
+
+def resolved_thread_roots(client: Any, repo: str, pr_number: int) -> set[int]:
+    """databaseIds of the first comment of every resolved review thread, all pages."""
+    owner, name = repo.split("/", 1)
+    roots: set[int] = set()
+    after = None
+    while True:
+        data = client.graphql(THREADS_QUERY, {"owner": owner, "name": name, "number": pr_number, "after": after})
+        conn = (((data or {}).get("repository") or {}).get("pullRequest") or {}).get("reviewThreads")
+        if not isinstance(conn, dict) or not isinstance(conn.get("nodes"), list):
+            raise GateError("REVIEW_THREADS_UNAVAILABLE")
+        for node in conn["nodes"]:
+            first = ((node.get("comments") or {}).get("nodes") or [{}])[0]
+            if node.get("isResolved") and isinstance(first.get("databaseId"), int):
+                roots.add(first["databaseId"])
+        page = conn.get("pageInfo") or {}
+        if not page.get("hasNextPage"):
+            return roots
+        after = page.get("endCursor")
+
+
+def codex_blocking_findings(
+    client: Any, repo: str, pr_number: int, head_sha: str, expected_login: str,
+    blocking: set[str],
+) -> tuple[list[dict[str, Any]], dict[str, int]]:
+    """Codex inline findings raised on the exact head whose priority blocks and whose thread is open.
+
+    A finding without a priority badge counts as blocking (fail closed). A resolved thread does
+    not block: resolving without a new commit is the owner's explicit dismissal and is counted.
+    """
+    comments = client.get_all(f"/repos/{repo}/pulls/{pr_number}/comments")
+    on_head = [
+        c for c in comments
+        if isinstance(c, dict) and not c.get("in_reply_to_id")
+        and c.get("original_commit_id") == head_sha
+        and login_matches(((c.get("user") or {}).get("login")), expected_login)
+    ]
+    resolved = resolved_thread_roots(client, repo, pr_number) if on_head else set()
+    out: list[dict[str, Any]] = []
+    counts = {"blocking_open": 0, "blocking_resolved": 0, "non_blocking": 0}
+    for c in on_head:
+        match = PRIORITY_BADGE_RE.search(c.get("body") or "")
+        priority = match.group(1) if match else None
+        if priority is not None and priority not in blocking:
+            counts["non_blocking"] += 1
+        elif c.get("id") in resolved:
+            counts["blocking_resolved"] += 1
+        else:
+            counts["blocking_open"] += 1
+            out.append({"id": c.get("id"), "priority": priority, "path": c.get("path")})
+    return out, counts
 
 
 def protected_control_changes(
@@ -285,13 +448,20 @@ def evaluate(
             "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP: " + ",".join(protected)
         )
 
-    receipt = parse_receipt(pr.get("body"))
-    if receipt["head_sha"] != head_sha:
-        raise GateError(f"STALE_HEAD: receipt={receipt['head_sha']} current={head_sha}")
+    # A hand-written body receipt is still honoured (and must be on the exact head); without one,
+    # the trusted controller finds the allowlisted proof runs on the exact head itself.
+    if has_body_receipt(pr.get("body")):
+        receipt = parse_receipt(pr.get("body"))
+        if receipt["head_sha"] != head_sha:
+            raise GateError(f"STALE_HEAD: receipt={receipt['head_sha']} current={head_sha}")
+        run_specs, receipt_source = receipt["required_runs"], "PR_BODY"
+    else:
+        run_specs = derive_required_runs(client, repo, head_sha, policy)
+        receipt_source = "DERIVED_EXACT_HEAD"
 
     proven_purposes: set[str] = set()
     run_receipts: list[dict[str, Any]] = []
-    for spec in receipt["required_runs"]:
+    for spec in run_specs:
         run_receipt = validate_run(client, spec, head_sha, repo, base_sha, policy)
         run_receipts.append(run_receipt)
         proven_purposes.update(run_receipt["purposes"])
@@ -300,18 +470,36 @@ def evaluate(
     if missing:
         raise GateError("MISSING_REQUIRED_PROOF_PURPOSE: " + ",".join(missing))
 
-    expected_login = codex_login(policy)
-    comments = client.get_all(f"/repos/{repo}/issues/{pr_number}/comments")
-    completed, summary_id = review_is_completed_for_head(
-        comments, head_sha, expected_login
-    )
-    if not completed:
-        raise GateError("CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD")
+    exemption = dependency_update_exemption(client, repo, pr_number, pr, policy)
+    summary_id = None
+    finding_counts = None
+    if exemption is None or "CODEX_REVIEW" not in exemption["waives"]:
+        expected_login = codex_login(policy)
+        comments = client.get_all(f"/repos/{repo}/issues/{pr_number}/comments")
+        completed, summary_id = review_is_completed_for_head(
+            comments, head_sha, expected_login
+        )
+        if not completed:
+            raise GateError("CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD")
 
-    reviews = client.get_all(f"/repos/{repo}/pulls/{pr_number}/reviews")
-    findings = codex_finding_reviews_for_head(reviews, head_sha, expected_login)
-    if findings:
-        raise GateError(f"CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD: {len(findings)}")
+        blocking = (policy.get("codex_contract") or {}).get("blocking_priorities")
+        if blocking is None:
+            # Strict rule: any commented Codex review bound to the exact head blocks.
+            reviews = client.get_all(f"/repos/{repo}/pulls/{pr_number}/reviews")
+            findings = codex_finding_reviews_for_head(reviews, head_sha, expected_login)
+            if findings:
+                raise GateError(f"CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD: {len(findings)}")
+        else:
+            if not isinstance(blocking, list) or not blocking or not set(blocking) <= {"P0", "P1", "P2", "P3"}:
+                raise GateError("POLICY_CODEX_BLOCKING_PRIORITIES_INVALID")
+            findings, finding_counts = codex_blocking_findings(
+                client, repo, pr_number, head_sha, expected_login, set(blocking)
+            )
+            if findings:
+                raise GateError(
+                    f"CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD: {len(findings)} open "
+                    + "/".join(sorted(blocking))
+                )
 
     return {
         "schema": PASS_SCHEMA,
@@ -324,6 +512,9 @@ def evaluate(
         "codex_summary_comment_id": summary_id,
         "codex_material_finding_review_count": 0,
         "proven_purposes": sorted(proven_purposes),
+        "receipt_source": receipt_source,
+        "codex_finding_counts_on_exact_head": finding_counts,
+        "dependency_update_exemption": exemption,
         "required_runs": run_receipts,
         "merge_allowed": True,
         "authority_transfer": False,
