@@ -3,6 +3,9 @@ name: Coverage Waves Collection
 # Runs tests/coverage_waves (CODE PURPLE lane tests for mission-control/ and scripts/),
 # which no other workflow collects. The parity guard fails the job on zero tests,
 # on fewer than EXPECTED_MIN tests, on any skip, and on a missing pinned defect.
+#
+# Job g-pah-uncollected runs the 41 other test files no workflow collected (CODE PURPLE
+# vector G, audit at 70d90a31), one pytest process and one parity guard per directory family.
 
 on:
   pull_request:
@@ -12,6 +15,11 @@ on:
       - "tests/coverage_waves/**"
       - "mission-control/**"
       - "scripts/**"
+      - "docs/mission-control/w18/**"
+      - "docs/mission-control/w19/**"
+      - "federation/**"
+      - "governance/**"
+      - "tests/*.py"
   push:
     branches: [master]
     paths:
@@ -19,6 +27,11 @@ on:
       - "tests/coverage_waves/**"
       - "mission-control/**"
       - "scripts/**"
+      - "docs/mission-control/w18/**"
+      - "docs/mission-control/w19/**"
+      - "federation/**"
+      - "governance/**"
+      - "tests/*.py"
   workflow_dispatch:
 
 permissions:
@@ -92,4 +105,127 @@ jobs:
           path: |
             coverage-waves-junit.xml
             coverage-waves-parity.json
+          if-no-files-found: ignore
+
+  g-pah-uncollected:
+    name: g-pah uncollected families ${{ matrix.os }} Python 3.12
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # scripts/ci/test_qa_trap.py (7 tests) drives POSIX bash and skips on Windows.
+          - {os: ubuntu-24.04, scripts_skips: 0}
+          - {os: windows-2025, scripts_skips: 7}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Exact-head read-only checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - name: Install test requirements
+        # The same pins cover these files' third-party imports (PyYAML, openpyxl).
+        run: python -m pip install --disable-pip-version-check -r tests/coverage_waves/requirements.txt
+      - name: Run each family in its own pytest process
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        # One process per family: families import sibling modules by bare name (render, main,
+        # gate) from sys.path, which collide in one process. federation/ uses importlib mode
+        # because the w283 and w283r payloads share a test basename and are hash-pinned, so they
+        # are not renamed. File lists are literal so required_gate/depth.py can count them.
+        # The guard step decides the verdict from the JUnit reports.
+        run: |
+          set -uo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA" || exit 1
+          rc=0
+          python -m pytest -q -p no:cacheprovider -rsxX --junitxml=g-pah-junit/docs-w18.xml \
+            docs/mission-control/w18/tests/test_contract.py \
+            docs/mission-control/w18/tests/test_locator_contract.py || rc=1
+          python -m pytest -q -p no:cacheprovider -rsxX --import-mode=importlib --junitxml=g-pah-junit/federation.xml \
+            federation/convergence/tests/test_converge.py \
+            federation/w280r/payload/tests/test_qps_w280_federation_sample5.py \
+            federation/w283/payload/tests/test_qps_w283_federation_surface.py \
+            federation/w283r/payload/tests/test_qps_w283_federation_surface.py || rc=1
+          python -m pytest -q -p no:cacheprovider -rsxX --junitxml=g-pah-junit/governance.xml \
+            governance/branch_protection/test_ctl.py || rc=1
+          python -m pytest -q -p no:cacheprovider -rsxX --junitxml=g-pah-junit/mc-federation-atlas.xml \
+            mission-control/federation-atlas/flightdeck/pulses/test_merged_pr_temporal.py \
+            mission-control/federation-atlas/flightdeck/test_global_dov_handoff.py \
+            mission-control/federation-atlas/flightdeck/test_global_dov_runner.py \
+            mission-control/federation-atlas/orchestration/test_broker.py \
+            mission-control/federation-atlas/orchestration/test_broker_slowburn.py \
+            mission-control/federation-atlas/orchestration/test_coverage_contract.py \
+            mission-control/federation-atlas/orchestration/test_main.py \
+            mission-control/federation-atlas/orchestration/test_render.py || rc=1
+          python -m pytest -q -p no:cacheprovider -rsxX --junitxml=g-pah-junit/mc-gogreen.xml \
+            mission-control/gogreen/mycelium_history/tests/test_annotated_green.py \
+            mission-control/gogreen/mycelium_history/tests/test_history.py \
+            mission-control/gogreen/nurture_incubator/tests/test_incubator.py || rc=1
+          python -m pytest -q -p no:cacheprovider -rsxX --junitxml=g-pah-junit/mc-issue-rank.xml \
+            mission-control/issue_rank/test_burndown_apply.py \
+            mission-control/issue_rank/test_issue_rank.py \
+            mission-control/issue_rank/test_issue_rank_n4.py \
+            mission-control/issue_rank/test_issue_rank_v2.py \
+            mission-control/issue_rank/test_taxonomy_pulse.py \
+            mission-control/issue_rank/test_wave_control.py || rc=1
+          python -m pytest -q -p no:cacheprovider -rsxX --junitxml=g-pah-junit/mc-qps-triage-ultra.xml \
+            mission-control/qps-triage-ultra/crew/measured/frontier/temporal/test_temporal_effect_and_pca.py \
+            mission-control/qps-triage-ultra/crew/measured/frontier/temporal/test_temporal_regression_diagnostics.py || rc=1
+          python -m pytest -q -p no:cacheprovider -rsxX --junitxml=g-pah-junit/mc-runner-economics.xml \
+            mission-control/runner-economics/tests/test_jade_scale_controller.py || rc=1
+          python -m pytest -q -p no:cacheprovider -rsxX --junitxml=g-pah-junit/mc-v2.xml \
+            mission-control/v2/handoff/closeout/test_hv02_fidelity_sidecar.py \
+            mission-control/v2/handoff/test_chat_closeout.py \
+            mission-control/v2/handoff/test_github_first_handoff.py \
+            mission-control/v2/mach2/test_gm4_frontier.py || rc=1
+          python -m pytest -q -p no:cacheprovider -rsxX --junitxml=g-pah-junit/scripts.xml \
+            scripts/ci/test_qa_trap.py \
+            scripts/ci/tests/test_pin_actions.py \
+            scripts/owner/tests/test_apply_rulesets.py \
+            scripts/tests/test_fpc_receipt.py \
+            scripts/tests/test_preflight_overlap.py || rc=1
+          python -m pytest -q -p no:cacheprovider -rsxX --junitxml=g-pah-junit/tests-root.xml \
+            tests/test_draft_pr_pass_security.py \
+            tests/test_mach_iii_federation.py \
+            tests/test_main_pipeline_e2e.py \
+            tests/test_qps_satellite_adapter.py \
+            tests/test_w19_integer_burndown.py || rc=1
+          echo "pytest exit code: $rc"
+          echo "PYTEST_RC=$rc" >> "$GITHUB_ENV"
+      - name: Collection parity guard per family
+        # EXPECTED_MIN per family = local `pytest --collect-only` at 8fbf7347 (Python 3.12.7, both
+        # on Windows and in a clean venv with requirements.txt), 735 in total. Skipped tests are
+        # still collected, so the floor is the same on both OSes. tests-root pins PD-GPAH-001
+        # (w19 burndown.html is a tool-error string) as 3 strict expected failures.
+        run: |
+          set -uo pipefail
+          bad=0
+          g() { python scripts/coverage_waves_parity_guard.py "g-pah-junit/$1.xml" --out "g-pah-junit/$1.json" "${@:2}" || bad=1; }
+          g docs-w18 --expected-min 21
+          g federation --expected-min 67
+          g governance --expected-min 10
+          g mc-federation-atlas --expected-min 139
+          g mc-gogreen --expected-min 184
+          g mc-issue-rank --expected-min 130
+          g mc-qps-triage-ultra --expected-min 7
+          g mc-runner-economics --expected-min 11
+          g mc-v2 --expected-min 70
+          g scripts --expected-min 76 --max-skips "${{ matrix.scripts_skips }}"
+          g tests-root --expected-min 20 --expect-xfail 3
+          test "$bad" = 0
+          test "$PYTEST_RC" = 0
+      - name: Upload JUnit and parity receipts
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: g-pah-uncollected-${{ matrix.os }}-${{ github.sha }}
+          path: g-pah-junit/
           if-no-files-found: ignore
