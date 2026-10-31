@@ -170,3 +170,7 @@ class CensusParity(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def test_zz_canary_g_pah():
+    assert False, "red canary: proves CI collects this family"

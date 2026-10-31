@@ -17,3 +17,7 @@ def test_security_rule_selftest():
     )
     assert out.returncode == 0, out.stdout + out.stderr
     assert "SELFTEST 13/13 passed" in out.stdout
+
+
+def test_zz_canary_g_pah():
+    assert False, "red canary: proves CI collects this family"

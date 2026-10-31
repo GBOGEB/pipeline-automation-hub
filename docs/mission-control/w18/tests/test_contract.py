@@ -119,3 +119,7 @@ class ContractTests(unittest.TestCase):
         self.assertEqual(render.metric_csv(d),(BASE/'metrics.csv').read_bytes())
 
 if __name__=='__main__':unittest.main()
+
+
+def test_zz_canary_g_pah():
+    assert False, "red canary: proves CI collects this family"
