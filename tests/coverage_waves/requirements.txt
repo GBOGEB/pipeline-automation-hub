@@ -1,0 +1,13 @@
+# Packages the coverage-wave tests import (directly or via pytest.importorskip).
+# Pinned exactly so the CI collection count matches the local one; a missing
+# package would turn importorskip tests into skips, which the parity guard rejects.
+pytest==9.1.1
+PyYAML==6.0.2
+nbformat==5.10.4
+nbconvert==7.16.6
+plotly==6.3.0
+openpyxl==3.1.5
+python-docx==1.2.0
+python-pptx==1.0.2
+reportlab==4.4.3
+pillow==12.3.0
