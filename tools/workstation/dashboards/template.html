@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GBOGEB Dashboards</title>
+<style>
+:root {
+  --bg: #f6f7f9; --panel: #ffffff; --ink: #1b1f24; --muted: #5d6673; --line: #e2e5ea;
+  --accent: #2456c9; --accent-soft: #e8eefb; --ext: #7a3fb8; --ext-soft: #f2eafb;
+  --local: #1f7a4d; --local-soft: #e5f4ec; --warn: #9a6a00; --warn-soft: #fbf3dc; --star: #d49a00;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111418; --panel: #1a1e24; --ink: #e6e9ee; --muted: #9aa3ae; --line: #2b313a;
+    --accent: #7ea2ff; --accent-soft: #1f2a44; --ext: #c39bf0; --ext-soft: #2c2240;
+    --local: #6fd3a0; --local-soft: #183226; --warn: #e8c060; --warn-soft: #362c12; --star: #f0c040;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111418; --panel: #1a1e24; --ink: #e6e9ee; --muted: #9aa3ae; --line: #2b313a;
+  --accent: #7ea2ff; --accent-soft: #1f2a44; --ext: #c39bf0; --ext-soft: #2c2240;
+  --local: #6fd3a0; --local-soft: #183226; --warn: #e8c060; --warn-soft: #362c12; --star: #f0c040;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 14px/1.45 "Segoe UI", system-ui, -apple-system, sans-serif; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 20px 16px 60px; }
+header { display: flex; flex-wrap: wrap; align-items: end; gap: 12px 24px; margin-bottom: 18px; }
+h1 { margin: 0; font-size: 26px; letter-spacing: -0.01em; }
+.meta { color: var(--muted); font-size: 12.5px; }
+.meta code { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+#q { flex: 1 1 320px; font: inherit; font-size: 16px; padding: 10px 14px; border-radius: 8px;
+  border: 1px solid var(--line); background: var(--panel); color: var(--ink); }
+#q:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+nav.jump { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 18px; }
+nav.jump a { font-size: 12.5px; padding: 3px 10px; border-radius: 99px; background: var(--panel); border: 1px solid var(--line); }
+section { margin: 0 0 26px; }
+h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 10px;
+  display: flex; align-items: baseline; gap: 10px; }
+h2 .n { font-weight: 400; text-transform: none; letter-spacing: 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.card .t { font-weight: 600; font-size: 14.5px; display: flex; gap: 6px; align-items: start; }
+.card .t a { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.card .sub { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.badge { font-size: 10.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; padding: 1px 6px;
+  border-radius: 4px; white-space: nowrap; }
+.b-local { background: var(--local-soft); color: var(--local); }
+.b-ext { background: var(--ext-soft); color: var(--ext); }
+.b-miss { background: var(--warn-soft); color: var(--warn); }
+.list { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.row { display: flex; gap: 10px; align-items: baseline; padding: 7px 12px; border-top: 1px solid var(--line); min-width: 0; }
+.row:first-child { border-top: 0; }
+.row .main { flex: 1; min-width: 0; }
+.row .main a { font-weight: 500; overflow-wrap: anywhere; }
+.row .path { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.row .when { color: var(--muted); font-size: 12px; white-space: nowrap; }
+.star { background: none; border: 0; cursor: pointer; color: var(--line); font-size: 16px; line-height: 1; padding: 0 2px; }
+.star.on { color: var(--star); }
+.star:hover { color: var(--star); }
+details.repo { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 8px; }
+details.repo > summary { cursor: pointer; padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; list-style: none; }
+details.repo > summary::-webkit-details-marker { display: none; }
+details.repo > summary::before { content: "▸"; color: var(--muted); }
+details.repo[open] > summary::before { content: "▾"; }
+.rname { font-weight: 600; font-size: 15px; }
+.rmeta { color: var(--muted); font-size: 12px; }
+.rlinks { margin-left: auto; display: flex; gap: 10px; font-size: 12.5px; }
+.rbody { padding: 0 14px 12px; }
+.rbody h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 8px 0 6px; }
+details.all > summary { cursor: pointer; color: var(--accent); font-size: 13px; margin: 10px 0 6px; }
+.empty { color: var(--muted); padding: 10px 12px; font-style: italic; }
+.hidden { display: none !important; }
+.ext::after { content: " ↗"; font-size: 11px; color: var(--ext); }
+@media (max-width: 600px) { .rlinks { margin-left: 0; } .row .when { display: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Dashboards</h1>
+      <div class="meta" id="meta"></div>
+    </div>
+    <input id="q" type="search" placeholder="Find any dashboard, page or repo…  (press / to focus)" autocomplete="off" autofocus>
+  </header>
+  <nav class="jump">
+    <a href="#pins">★ My pins</a><a href="#top">Top dashboards</a><a href="#recent">Recently changed</a>
+    <a href="#hosted">Hosted &amp; external</a><a href="#repos">On this PC, per repo</a>
+  </nav>
+
+  <section id="pins"><h2>★ My pins <span class="n" id="pins-n"></span></h2><div class="list" id="pins-list"></div></section>
+  <section id="top"><h2>Top dashboards</h2><div class="grid" id="top-grid"></div></section>
+  <section id="recent"><h2>Recently changed HTML <span class="n">newest 15 across all clones</span></h2><div class="list" id="recent-list"></div></section>
+  <section id="hosted">
+    <h2>Hosted &amp; external <span class="n">GitHub Pages sites and claude.ai artifacts</span></h2>
+    <div class="grid" id="hosted-grid"></div>
+  </section>
+  <section id="repos"><h2>On this PC, per repo <span class="n" id="repos-n"></span></h2><div id="repo-list"></div></section>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const PIN_KEY = "gbogeb.dashboards.pins.v1";
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const isExt = u => /^https?:/.test(u || "");
+const tgt = u => isExt(u) ? ' target="_blank" rel="noopener"' : "";
+const ago = t => { const d = (Date.now()/1000 - t) / 86400;
+  return d < 1 ? "today" : d < 2 ? "yesterday" : d < 30 ? Math.floor(d) + " d ago" : new Date(t*1000).toISOString().slice(0,10); };
+const repoName = r => r.slug || r.path.split(/[\\/]/).pop();
+
+function loadPins() { try { return JSON.parse(localStorage.getItem(PIN_KEY)) || {}; } catch (e) { return {}; } }
+function savePins(p) { try { localStorage.setItem(PIN_KEY, JSON.stringify(p)); } catch (e) {} }
+let PINS = loadPins();
+
+function starBtn(url, title) {
+  return `<button class="star${PINS[url] ? " on" : ""}" data-url="${esc(url)}" data-title="${esc(title)}" title="Pin / unpin">★</button>`;
+}
+function row(url, title, sub, when, badge) {
+  const hay = (title + " " + sub).toLowerCase();
+  return `<div class="row" data-hay="${esc(hay)}">${starBtn(url, title)}<div class="main">
+    <a href="${esc(url)}"${tgt(url)} class="${isExt(url) ? "ext" : ""}">${esc(title)}</a>${badge || ""}
+    <div class="path">${esc(sub)}</div></div>${when ? `<span class="when">${esc(when)}</span>` : ""}</div>`;
+}
+
+function renderMeta() {
+  const n = DATA.repos.reduce((a, r) => a + r.pages.length, 0);
+  document.getElementById("meta").innerHTML =
+    `${DATA.repos.length} clones · ${n} HTML pages · built ${esc(DATA.generated)} · refresh: run <code>REFRESH.cmd</code> · ` +
+    `<a href="${esc(DATA.config_uri)}">edit pins &amp; folders (dashboards.json)</a>`;
+}
+
+function renderPins() {
+  const items = Object.entries(PINS);
+  document.getElementById("pins-n").textContent = items.length ? items.length + " pinned" : "";
+  document.getElementById("pins-list").innerHTML = items.length
+    ? items.map(([u, t]) => row(u, t, isExt(u) ? u : decodeURI(u.replace(/^file:\/\/\//, "")), "")).join("")
+    : `<div class="empty">Click ★ next to any page below to pin it here. Pins are stored in this browser.</div>`;
+}
+
+function renderTop() {
+  document.getElementById("top-grid").innerHTML = DATA.top.map(t => {
+    const ok = !!t.url;
+    const badge = t.kind === "local" ? (ok ? `<span class="badge b-local">on PC</span>` : `<span class="badge b-miss">not on PC</span>`)
+                : `<span class="badge b-ext">${esc(t.kind === "artifact" ? "artifact" : "hosted")}</span>`;
+    const link = ok ? `<a href="${esc(t.url)}"${tgt(t.url)} class="${isExt(t.url) ? "ext" : ""}">${esc(t.title)}</a>` : `<span>${esc(t.title)}</span>`;
+    const sub = [t.where ? t.repo + " · " + t.path : (t.repo ? t.repo + " · " + t.path : ""), t.note || ""].filter(Boolean).join(" — ");
+    const gh = t.github ? ` · <a href="${esc(t.github)}" target="_blank" rel="noopener" class="ext">GitHub</a>` : "";
+    return `<div class="card" data-hay="${esc((t.title + " " + sub).toLowerCase())}"><div class="t">${ok ? starBtn(t.url, t.title) : ""}${link}${badge}</div>
+      <div class="sub">${esc(sub)}${gh}</div></div>`;
+  }).join("");
+}
+
+// One group per GitHub repo (case-insensitive); each page path keeps its newest copy across checkouts.
+const short = path => path.split(/[\\/]/).slice(-2).join("/");
+const GROUPS = (() => {
+  const g = {};
+  DATA.repos.forEach(r => {
+    const key = (r.slug || r.path).toLowerCase();
+    const grp = g[key] || (g[key] = { name: repoName(r), slug: r.slug, clones: [], pages: {} });
+    grp.clones.push(r);
+    r.pages.forEach(p => {
+      const cur = grp.pages[p.rel];
+      if (!cur || p.mtime > cur.mtime) grp.pages[p.rel] = Object.assign({}, p, { clone: r });
+    });
+  });
+  return Object.values(g).map(grp => {
+    grp.clones.sort((a, b) => (b.last_commit || "").localeCompare(a.last_commit || ""));
+    grp.list = Object.values(grp.pages);
+    grp.newest = Math.max(0, ...grp.list.map(p => p.mtime));
+    return grp;
+  }).sort((a, b) => b.newest - a.newest);
+})();
+const pageSub = (grp, p) => grp.name + " · " + p.rel + (grp.clones.length > 1 ? "  [" + short(p.clone.path) + "]" : "");
+
+function renderRecent() {
+  const all = [];
+  GROUPS.forEach(grp => grp.list.forEach(p => all.push([grp, p])));
+  all.sort((a, b) => b[1].mtime - a[1].mtime);
+  document.getElementById("recent-list").innerHTML = all.slice(0, 15).map(([grp, p]) =>
+    row(p.uri, p.title || p.rel.split("/").pop(), pageSub(grp, p), ago(p.mtime))).join("");
+}
+
+function renderHosted() {
+  const sites = DATA.sites.filter(s => s.url).map(s =>
+    `<div class="card" data-hay="${esc((s.slug + " pages").toLowerCase())}"><div class="t">${starBtn(s.url, s.slug + " — Pages")}
+     <a href="${esc(s.url)}" target="_blank" rel="noopener" class="ext">${esc(s.slug.split("/")[1])}</a><span class="badge b-ext">Pages</span></div>
+     <div class="sub">${esc(s.url)} · checked ${esc(s.checked)}</div></div>`);
+  const arts = DATA.artifacts.map(a =>
+    `<div class="card" data-hay="${esc((a.title + " artifact").toLowerCase())}"><div class="t">${starBtn(a.url, a.title)}
+     <a href="${esc(a.url)}" target="_blank" rel="noopener" class="ext">${esc(a.title)}</a><span class="badge b-ext">artifact</span></div>
+     <div class="sub">${esc(a.url)}</div></div>`);
+  document.getElementById("hosted-grid").innerHTML = sites.concat(arts).join("");
+}
+
+function renderRepos() {
+  document.getElementById("repos-n").textContent =
+    GROUPS.length + " repos from " + DATA.repos.length + " checkouts · most recently changed first";
+  const site = Object.fromEntries(DATA.sites.map(s => [s.slug.toLowerCase(), s.url]));
+  document.getElementById("repo-list").innerHTML = GROUPS.map(grp => {
+    const entries = grp.list.filter(p => p.entry).sort((a, b) => b.mtime - a.mtime);
+    const rest = grp.list.filter(p => !p.entry).sort((a, b) => a.rel.localeCompare(b.rel));
+    const pg = site[(grp.slug || "").toLowerCase()];
+    const links = [];
+    if (grp.slug) links.push(`<a href="https://github.com/${esc(grp.slug)}" target="_blank" rel="noopener" class="ext">GitHub</a>`);
+    if (pg) links.push(`<a href="${esc(pg)}" target="_blank" rel="noopener" class="ext">Pages</a>`);
+    const mk = p => row(p.uri, p.title || p.rel.split("/").pop(), pageSub(grp, p), ago(p.mtime));
+    const clones = grp.clones.map(c =>
+      `<div class="row" data-hay="${esc((grp.name + " " + c.path + " " + c.branch).toLowerCase())}"><div class="main">
+        <a href="${esc(c.uri)}">${esc(c.path)}</a><div class="path">${esc(c.branch)} · ${esc(c.last_commit)} ${esc(c.head)} · ${c.pages.length} HTML</div></div></div>`).join("");
+    const hay = (grp.name + " " + grp.clones.map(c => c.path + " " + c.branch).join(" ")).toLowerCase();
+    return `<details class="repo" data-hay="${esc(hay)}">
+      <summary><span class="rname">${esc(grp.name)}</span>
+        <span class="rmeta">${grp.list.length} HTML · ${entries.length} entry pages · ${grp.clones.length} checkout${grp.clones.length > 1 ? "s" : ""} · changed ${grp.newest ? ago(grp.newest) : "—"}</span>
+        <span class="rlinks">${links.join("")}</span></summary>
+      <div class="rbody">
+        <h3>Entry pages: index, dashboards, launchers (${entries.length})</h3>
+        <div class="list">${entries.length ? entries.map(mk).join("") : `<div class="empty">No index / dashboard / launcher pages.</div>`}</div>
+        ${rest.length ? `<details class="all"><summary>All other HTML (${rest.length})</summary><div class="list">${rest.map(mk).join("")}</div></details>` : ""}
+        <details class="all"><summary>Checkouts on this PC (${grp.clones.length})</summary><div class="list">${clones}</div></details>
+      </div></details>`;
+  }).join("");
+}
+
+function applyFilter() {
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const terms = q.split(/\s+/).filter(Boolean);
+  const hit = el => terms.every(t => (el.dataset.hay || "").includes(t));
+  document.querySelectorAll(".card, .row").forEach(el => {
+    el.classList.toggle("hidden", terms.length > 0 && !hit(el));
+  });
+  document.querySelectorAll("details.repo").forEach(d => {
+    const any = d.querySelector(".row:not(.hidden)");
+    d.classList.toggle("hidden", terms.length > 0 && !any && !hit(d));
+    if (terms.length) { d.open = !!any; d.querySelectorAll("details.all").forEach(a => a.open = !!a.querySelector(".row:not(.hidden)")); }
+  });
+  document.querySelectorAll("#recent, #pins").forEach(s => s.classList.toggle("hidden", terms.length > 0 && !s.querySelector(".row:not(.hidden)")));
+}
+
+function renderAll() { renderMeta(); renderPins(); renderTop(); renderRecent(); renderHosted(); renderRepos(); applyFilter(); }
+
+document.addEventListener("click", e => {
+  const b = e.target.closest(".star"); if (!b) return;
+  const u = b.dataset.url;
+  if (PINS[u]) delete PINS[u]; else PINS[u] = b.dataset.title;
+  savePins(PINS); renderAll();
+});
+document.getElementById("q").addEventListener("input", applyFilter);
+document.addEventListener("keydown", e => {
+  if (e.key === "/" && document.activeElement.id !== "q") { e.preventDefault(); document.getElementById("q").focus(); }
+  if (e.key === "Escape") { const q = document.getElementById("q"); q.value = ""; applyFilter(); }
+});
+renderAll();
+</script>
+</body>
+</html>
