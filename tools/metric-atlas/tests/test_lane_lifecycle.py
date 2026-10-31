@@ -113,5 +113,61 @@ class LaneStageTests(unittest.TestCase):
         with self.assertRaises(ValueError):M.project(s)
 
 
+PILOT = Path(__file__).with_name("pilot_3topic.json")
+
+
+class PilotBindingTests(unittest.TestCase):
+    """A W378 pilot attaches only when it is from the snapshot's pulse."""
+
+    def setUp(self):
+        self.pilot = json.loads(PILOT.read_text())
+        self.snap = snapshot()
+        self.snap["source_heads"] = {r["packet"]["producer_repo"]: r["packet"]["producer_head"]
+                                     for r in self.pilot["packets"]}
+
+    def test_same_pulse_pilot_attached_with_its_identity(self):
+        p = M.project(self.snap, self.pilot)["pilot"]
+        self.assertEqual(p["declared_pilot_cohort"], self.pilot["cohort"])
+        self.assertEqual(p["declared_pilot_observed_at"], self.pilot["observed_at"])
+        self.assertEqual([tuple(x) for x in p["producer_heads"]],
+                         sorted(self.snap["source_heads"].items()))
+
+    def test_future_pilot_rejected(self):
+        self.snap["observed_at"] = "2026-10-28T12:39:59Z"
+        with self.assertRaisesRegex(ValueError, "W378_PILOT_FROM_FUTURE"):
+            M.project(self.snap, self.pilot)
+
+    def test_pilot_from_other_producer_head_rejected(self):
+        repo = next(iter(self.snap["source_heads"]))
+        self.snap["source_heads"][repo] = "c"*40
+        with self.assertRaisesRegex(ValueError, "W378_PILOT_SOURCE_HEAD_MISMATCH"):
+            M.project(self.snap, self.pilot)
+
+    def test_graph_node_head_outside_snapshot_rejected(self):
+        node = next(n for n in self.pilot["nodes"] if n["kind"] == "PROCESS")
+        node["head_sha"] = "d"*40
+        with self.assertRaisesRegex(ValueError, "W378_PILOT_GRAPH_HEAD_MISMATCH"):
+            M.project(self.snap, self.pilot)
+
+    def test_graph_node_head_of_other_bound_repo_rejected(self):
+        heads = self.snap["source_heads"]
+        node = next(n for n in self.pilot["nodes"] if n["owner"] in heads)
+        node["head_sha"] = next(sha for repo, sha in heads.items() if repo != node["owner"])
+        with self.assertRaisesRegex(ValueError, "W378_PILOT_GRAPH_HEAD_MISMATCH"):
+            M.project(self.snap, self.pilot)
+
+    def test_graph_node_owner_repo_unbound_by_snapshot_rejected(self):
+        # Borrows a bound head, but names a repository the snapshot never recorded.
+        node = next(n for n in self.pilot["nodes"] if n["owner"] in self.snap["source_heads"])
+        node["owner"] = "GBOGEB/unbound-repo"
+        with self.assertRaisesRegex(ValueError, "W378_PILOT_GRAPH_HEAD_MISMATCH"):
+            M.project(self.snap, self.pilot)
+
+    def test_pilot_repo_unbound_by_snapshot_rejected(self):
+        self.snap["source_heads"] = {REPO: SHA}
+        with self.assertRaisesRegex(ValueError, "W378_PILOT_SOURCE_HEAD_MISMATCH"):
+            M.project(self.snap, self.pilot)
+
+
 if __name__=="__main__":
     unittest.main()

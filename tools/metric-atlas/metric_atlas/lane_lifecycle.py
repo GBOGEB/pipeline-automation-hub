@@ -183,8 +183,25 @@ def project(snapshot, pilot_input=None):
                 "W378_AUTHORITY_ESCALATION")
         require(wave["metrics"]["source_writers"] == 0 and
                 wave["metrics"]["native_jobs_dispatched"] == 0, "W378_NATIVE_WRITE_CLAIM")
+        # One pulse per snapshot: the pilot may not post-date the snapshot or read other heads.
+        require(topic_exchange.timestamp(wave["observed_at"]) <=
+                topic_exchange.timestamp(snapshot["observed_at"]), "W378_PILOT_FROM_FUTURE")
+        heads = snapshot["source_heads"]
+        require(all(t["producer_repo"] in heads and t["producer_head"] == heads[t["producer_repo"]]
+                    for t in wave["topics"]), "W378_PILOT_SOURCE_HEAD_MISMATCH")
+        # Graph nodes carry heads too: each must be a snapshot head; a repository-named
+        # owner must be bound by the snapshot and the node must carry that repo's head.
+        require(all(n["head_sha"] is None or n["head_sha"] in heads.values()
+                    for n in wave["graph"]["nodes"]) and
+                all(n["owner"] in heads and n["head_sha"] in (None, heads[n["owner"]])
+                    for n in wave["graph"]["nodes"] if REPOSITORY.fullmatch(n["owner"])),
+                "W378_PILOT_GRAPH_HEAD_MISMATCH")
         pilot = {"schema": wave["schema"],
                  "declared_source_pulse_sha256": wave["source_pulse_sha256"],
+                 "declared_pilot_cohort": wave["cohort"],
+                 "declared_pilot_observed_at": wave["observed_at"],
+                 "producer_heads": sorted({(t["producer_repo"], t["producer_head"])
+                                           for t in wave["topics"]}),
                  "declared_topics": wave["metrics"]["topics"],
                  "declared_planner_readers": pilot_input["max_readers"],
                  "classification": "SYNTHETIC_PILOT_NOT_LIVE_EVIDENCE",
