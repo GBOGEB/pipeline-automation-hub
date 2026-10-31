@@ -74,5 +74,9 @@ class ScaleTests(unittest.TestCase):
     def test_exact_recipient_subscription_preserved(self):
         r=m.plan(self.p)
         self.assertTrue(all(x['topic_ids'] for x in r['waves']))
+    def test_method_drift_between_waves_rejected(self):
+        self.bad(lambda p:p['waves'][1].__setitem__('method_version','2.0.0'),'METHOD_DRIFT_ACROSS_WAVES')
+    def test_common_method_version_retained(self):
+        self.assertEqual(m.plan(self.p)['method_version'],self.p['waves'][0]['method_version'])
 
 if __name__=='__main__':unittest.main()

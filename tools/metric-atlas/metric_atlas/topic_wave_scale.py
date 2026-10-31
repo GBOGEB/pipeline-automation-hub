@@ -45,6 +45,8 @@ def validate(doc):
         results.append(result)
     need(len(all_producers)<=3,'THREE_PHYSICAL_REPOSITORY_CAP')
     need(len(set(graphs))==1,'INCONSISTENT_GRAPH_SOURCE_ACROSS_WAVES')
+    # topic_wave.compare() treats method drift as incomparable; never aggregate across it.
+    need(len({r['method_version'] for r in results})==1,'METHOD_DRIFT_ACROSS_WAVES')
     targets=doc.get('bd_targets')
     need(isinstance(targets,list) and len(targets)<=12,'UNBOUNDED_TARGETS')
     seen=set()
@@ -80,6 +82,7 @@ def plan(doc):
         steps.append(member);prior=member['receipt_sha256']
     return {'schema':OUTPUT,'plan_sha256':topic_wave.digest(doc),
             'source_graph_sha256':topic_wave.digest({'nodes':waves[0]['graph']['nodes'],'edges':waves[0]['graph']['edges']}),
+            'method_version':waves[0]['method_version'],
             'producer_repos':producers,'planned_topic_count':sum(x['topic_count'] for x in steps),
             'wave_count':len(steps),'waves':steps,
             'bd_targets_count':len(doc['bd_targets']),

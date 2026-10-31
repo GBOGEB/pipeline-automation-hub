@@ -25,6 +25,8 @@ LENSES = ('FUNCTION', 'SHA', 'OID')
 VIEWS = ('DAG', 'SIPOC', 'SPINE')
 NODE = re.compile(r'[A-Za-z0-9][A-Za-z0-9._:-]{0,95}\Z')
 HEX = re.compile(r'[0-9a-f]{40}\Z')
+# A line break ends a Mermaid statement; a label carrying one can forge nodes or directives.
+CONTROL = re.compile('[\x00-\x1f\x7f\x85  ]')
 
 
 def require(value, message):
@@ -76,6 +78,7 @@ def validate(pulse):
         ids.add(ident)
         require(node['kind'] in TYPES and node['state'] in STATES, 'INVALID_NODE_CLASS')
         require(isinstance(node['owner'], str) and node['owner'] and isinstance(node['function'], str) and node['function'], 'MISSING_NODE_OWNER')
+        require(not CONTROL.search(node['owner']) and not CONTROL.search(node['function']), 'CONTROL_CHARACTER_IN_LABEL')
         require(node['head_sha'] is None or isinstance(node['head_sha'], str) and bool(HEX.fullmatch(node['head_sha'])), 'INVALID_COMMIT_SHA')
         require(node['blob_oid'] is None or isinstance(node['blob_oid'], str) and bool(HEX.fullmatch(node['blob_oid'])), 'INVALID_GIT_BLOB_OID')
     seen = set()
@@ -124,7 +127,7 @@ def make_mermaid(nodes, edges, lens, view):
     aliases = {n['id']: 'N'+str(i) for i,n in enumerate(ordered)}
     for n in ordered:
         prefix = n['kind'] if view == 'DAG' else SIPOC[n['kind']] if view == 'SIPOC' else n['owner']
-        value = (prefix + ' | ' + label(n,lens)).replace('"','\'').replace('<','(').replace('>',')')
+        value = CONTROL.sub(' ', prefix + ' | ' + label(n,lens)).replace('"','\'').replace('<','(').replace('>',')')
         out.append('  '+aliases[n['id']]+'["'+value[:115]+'"]')
     for e in sorted(edges,key=lambda x:(x['from'],x['to'],x['relation'])):
         a,b = aliases[e['from']], aliases[e['to']]
