@@ -24,7 +24,7 @@ class FixtureCase(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
-        self.root = Path(self.temporary.name)
+        self.root = Path(self.temporary.name).resolve()  # long form: CI TEMP is 8.3 (RUNNER~1)
 
     def write(self, name, value):
         path = self.root / name
