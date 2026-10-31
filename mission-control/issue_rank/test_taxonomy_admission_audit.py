@@ -137,6 +137,8 @@ class AdmissionAudit(unittest.TestCase):
         self.assertFalse(r["blocked_red_canary_claim_consistent"])
         m["reviews"] = [{"state": "APPROVED", "user": "reviewer2", "commit_id": HEAD}]
         self.assertTrue(a.audit(m)["blocked_red_canary_claim_consistent"])
+        m["reviews"] = [{"state": "APPROVED", "user": {"login": "reviewer2"}, "commit_id": HEAD}]
+        self.assertTrue(a.audit(m)["blocked_red_canary_claim_consistent"])
 
     def test_fail_closed_unknown_schema_shas_rules_review_and_times(self):
         m = observation()
@@ -160,6 +162,11 @@ class AdmissionAudit(unittest.TestCase):
     def test_without_main_target_scope_hard_gap(self):
         m = observation()
         m["ruleset"]["conditions"]["ref_name"]["include"] = []
+        self.assertIn("main_targeted", a.audit(m)["missing_controls"])
+
+    def test_excluded_master_is_not_main_targeted(self):
+        m = observation()
+        m["ruleset"]["conditions"]["ref_name"]["exclude"] = ["refs/heads/master"]
         self.assertIn("main_targeted", a.audit(m)["missing_controls"])
 
 

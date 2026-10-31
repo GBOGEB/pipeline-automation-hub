@@ -22,6 +22,12 @@ TRUSTED_STATUS_CREATOR = "github-actions[bot]"
 EFFECTIVE_POLICY_SOURCES = frozenset({"rules_for_branch", "classic_branch_protection"})
 
 
+def review_login(review: dict):
+    # GitHub's reviews API returns user as {"login": ...}; hand-built snapshots may use the bare login.
+    user = review.get("user")
+    return user.get("login") if isinstance(user, dict) else user
+
+
 def timestamp(value: str) -> datetime:
     if not isinstance(value, str):
         raise ValueError("MISSING_TIMESTAMP")
@@ -84,6 +90,8 @@ def audit(snapshot: dict) -> dict:
     if len(names) != len(checks) or any(not isinstance(x, str) for x in names):
         raise ValueError("MALFORMED_CHECK_IDENTITY")
     pr = policy.get("pull_request") or {}
+    ref_name = (ruleset.get("conditions") or {}).get("ref_name") or {}
+    ref_include, ref_exclude = ref_name.get("include") or [], ref_name.get("exclude") or []
     expected = {
         "required_fpc_context": REQUIRED_CONTEXT in names,
         "strict_up_to_date": policy.get("required_status_checks", {}).get(
@@ -94,8 +102,8 @@ def audit(snapshot: dict) -> dict:
         "resolved_threads": pr.get("required_review_thread_resolution") is True,
         "no_bypass_actors": isinstance(ruleset.get("bypass_actors"), list)
                            and len(ruleset["bypass_actors"]) == 0,
-        "main_targeted": any(x in ("~DEFAULT_BRANCH", "refs/heads/master") for x
-                             in ((ruleset.get("conditions") or {}).get("ref_name") or {}).get("include", [])),
+        "main_targeted": any(x in ("~DEFAULT_BRANCH", "refs/heads/master") for x in ref_include)
+                         and not any(x in ("~DEFAULT_BRANCH", "refs/heads/master") for x in ref_exclude),
     }
     # FPC evidence is the commit status the trusted evaluator posts on the
     # candidate SHA, not an Actions workflow run: the workflow is named
@@ -142,8 +150,8 @@ def audit(snapshot: dict) -> dict:
         raise ValueError("REVIEW_LIST_NOT_RETURNED")
     approval = any(
         isinstance(x, dict) and x.get("state") == "APPROVED"
-        and x.get("commit_id") == head and isinstance(x.get("user"), str)
-        and x["user"].casefold() != str(pull.get("author", "")).casefold()
+        and x.get("commit_id") == head and isinstance(review_login(x), str)
+        and review_login(x).casefold() != str(pull.get("author", "")).casefold()
         for x in reviews
     )
     gaps = sorted(k for k, ok in expected.items() if not ok)
