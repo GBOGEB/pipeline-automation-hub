@@ -143,6 +143,19 @@ class PilotBindingTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "W378_PILOT_SOURCE_HEAD_MISMATCH"):
             M.project(self.snap, self.pilot)
 
+    def test_graph_node_head_outside_snapshot_rejected(self):
+        node = next(n for n in self.pilot["nodes"] if n["kind"] == "PROCESS")
+        node["head_sha"] = "d"*40
+        with self.assertRaisesRegex(ValueError, "W378_PILOT_GRAPH_HEAD_MISMATCH"):
+            M.project(self.snap, self.pilot)
+
+    def test_graph_node_head_of_other_bound_repo_rejected(self):
+        heads = self.snap["source_heads"]
+        node = next(n for n in self.pilot["nodes"] if n["owner"] in heads)
+        node["head_sha"] = next(sha for repo, sha in heads.items() if repo != node["owner"])
+        with self.assertRaisesRegex(ValueError, "W378_PILOT_GRAPH_HEAD_MISMATCH"):
+            M.project(self.snap, self.pilot)
+
     def test_pilot_repo_unbound_by_snapshot_rejected(self):
         self.snap["source_heads"] = {REPO: SHA}
         with self.assertRaisesRegex(ValueError, "W378_PILOT_SOURCE_HEAD_MISMATCH"):
