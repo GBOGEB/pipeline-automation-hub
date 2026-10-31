@@ -130,9 +130,9 @@ def generate(root=None,out=None):
     d=json.loads((root/"MISSIONCONTROL_NAV_SOURCES_v1.json").read_text(encoding="utf-8"))
     result=project(d)
     out=Path(out or root/"build");out.mkdir(parents=True,exist_ok=True)
-    (out/"snapshot.json").write_text(json.dumps(result,sort_keys=True,indent=2)+"\n",encoding="utf-8")
-    (out/"federation.mmd").write_text(mermaid(d),encoding="utf-8")
-    (out/"SIPOC.md").write_text(sipoc_md(d),encoding="utf-8")
+    (out/"snapshot.json").write_text(json.dumps(result,sort_keys=True,indent=2)+"\n",encoding="utf-8",newline="\n")
+    (out/"federation.mmd").write_text(mermaid(d),encoding="utf-8",newline="\n")
+    (out/"SIPOC.md").write_text(sipoc_md(d),encoding="utf-8",newline="\n")
     return result
 
 if __name__=="__main__":

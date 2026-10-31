@@ -93,3 +93,33 @@ These worktrees under the work root are in use by active sessions. Do not remove
 - the seven lesson workers' `wt-lesson*` worktrees. Six of them existed when this was written: `wt-lesson1-fpc`, `wt-lesson2-rulesets`, `wt-lesson3-pins`, `wt-lesson4-rules`, `wt-lesson6-jade` and `wt-lesson9-workstation`.
 
 The default `-Exclude` already covers `wt-jade5` and `wt-lesson*`. Once those PRs land, rerun the audit, and they will show up as REMOVABLE when they are clean.
+
+# Generated-output conflict resolver
+
+`Resolve-RegenConflicts.ps1` clears merge conflicts that are only in generated, SHA-pinned outputs, such as `mission-control/gogreen/launcher/launcher.json` and `index.html`. These files embed blob OIDs and commit SHAs. Every merge to master moves them, so every open PR that also touched them conflicts. Resolving the hunks by hand is wasted work: the right content is whatever the generators produce from the merged sources.
+
+The generated set is read from `CHAIN` in `mission-control/jade_temple/tools/regen.py` at the base commit (the owner of that list). Add more with `-ExtraGenerated 'path/**'`.
+
+```powershell
+# Dry run for one or more PRs. Merges and regenerates in a scratch worktree, pushes nothing.
+pwsh -NoProfile -File tools\workstation\Resolve-RegenConflicts.ps1 -Pr 1036,1038
+
+# Every open CONFLICTING PR in the repo: dry run first, then push the ones that end RESOLVED
+pwsh -NoProfile -File tools\workstation\Resolve-RegenConflicts.ps1 -All
+pwsh -NoProfile -File tools\workstation\Resolve-RegenConflicts.ps1 -All -Push
+```
+
+For each PR, the script merges `origin/<base>` into the PR head in one reused scratch worktree (`-WorkTree`, default `%TEMP%\pah-regen-resolver`, removed at the end). It takes the base copy of each conflicted generated file, commits the merge, then runs `regen.py --write` and commits until nothing changes. It ends with `regen.py --check`. The push is a fast-forward of the PR branch, guarded by `--force-with-lease` against the head it merged into. It never changes draft state, never comments and never merges.
+
+| Class | Meaning |
+| --- | --- |
+| **MANUAL** | A conflicted path is not a generated output. Nothing is changed. Resolve it by hand, then run `regen.py --write`. |
+| **STALE** | After regen, a step that is fresh at the base is still stale at the PR. Not pushed (`-AllowStale` overrides). Steps already stale at the base are listed, but don't block. |
+| **FAIL** | git, gh or a generator failed, or the branch moved while the script ran. Re-run. |
+| **LIVE** | Another worktree on the branch is dirty or has a reflog entry younger than `-LiveMinutes`. Leave it to that session. |
+| **FORK** | The head is in a fork. Resolve it there. |
+| **RESOLVED** | Clean merge plus regen, and `--check` passes. Dry run only: re-run with `-Push`. |
+| **PUSHED** | Pushed. Once CI finishes on the new head, write the FPC receipt (`python scripts/fpc_receipt.py --pr N --write`, or pass `-WriteReceipt`). |
+| **NOOP** | The PR already contains the base, and regen changed nothing. |
+
+The script exits 1 if any PR ends FAIL or STALE. A JSON report is written to `-ReportPath`.
