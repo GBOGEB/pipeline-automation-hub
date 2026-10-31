@@ -1,0 +1,95 @@
+name: Coverage Waves Collection
+
+# Runs tests/coverage_waves (CODE PURPLE lane tests for mission-control/ and scripts/),
+# which no other workflow collects. The parity guard fails the job on zero tests,
+# on fewer than EXPECTED_MIN tests, on any skip, and on a missing pinned defect.
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - ".github/workflows/coverage-waves.yml"
+      - "tests/coverage_waves/**"
+      - "mission-control/**"
+      - "scripts/**"
+  push:
+    branches: [master]
+    paths:
+      - ".github/workflows/coverage-waves.yml"
+      - "tests/coverage_waves/**"
+      - "mission-control/**"
+      - "scripts/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: coverage-waves-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # `pytest tests/coverage_waves --collect-only -q` at 70d90a31 (Python 3.12.7) collects 3865.
+  # Known platform skips: none (requirements.txt installs every importorskip package), so the
+  # floor is the full local count. Raise it in the PR that adds lane tests.
+  EXPECTED_MIN: "3865"
+
+jobs:
+  coverage-waves:
+    name: coverage_waves ${{ matrix.os }} Python 3.12
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Strict xfails pinned as production defects. PD-L6-001 (no-encoding open) only fails
+          # under a non-UTF-8 locale and PD-L6-004 (CRLF digest) only on win32, so Linux pins 5.
+          - {os: ubuntu-24.04, expect_xfail: 5}
+          - {os: windows-2025, expect_xfail: 7}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Exact-head read-only checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - name: Install lane test requirements
+        run: python -m pip install --disable-pip-version-check -r tests/coverage_waves/requirements.txt
+      - name: Parity guard self-tests
+        run: python -m unittest discover -s scripts/tests -p 'test_coverage_waves_parity_guard.py' -v
+      - name: Run tests/coverage_waves
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          # The guard below decides the verdict from the JUnit report, so pytest's own exit
+          # code is recorded but does not stop the step before the counts are reported.
+          rc=0
+          python -m pytest tests/coverage_waves -q -p no:cacheprovider -rsxX \
+            --junitxml=coverage-waves-junit.xml || rc=$?
+          echo "pytest exit code: $rc"
+          echo "PYTEST_RC=$rc" >> "$GITHUB_ENV"
+      - name: Collection parity guard
+        run: |
+          set -euo pipefail
+          python scripts/coverage_waves_parity_guard.py coverage-waves-junit.xml \
+            --expected-min "$EXPECTED_MIN" --expect-xfail "${{ matrix.expect_xfail }}" \
+            --out coverage-waves-parity.json
+          test "$PYTEST_RC" = 0
+      - name: Upload JUnit and parity receipt
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage-waves-${{ matrix.os }}-${{ github.sha }}
+          path: |
+            coverage-waves-junit.xml
+            coverage-waves-parity.json
+          if-no-files-found: ignore
