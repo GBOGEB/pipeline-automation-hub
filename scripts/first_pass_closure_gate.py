@@ -14,6 +14,8 @@ from pathlib import Path
 from typing import Any
 
 MARKER_RE = re.compile(r"<!--\s*FPC_RECEIPT_V1\s*(\{.*?\})\s*-->", re.S)
+# The head_sha placeholder in .github/PULL_REQUEST_TEMPLATE.md; an unfilled template is no receipt.
+TEMPLATE_HEAD_PLACEHOLDER = "<40-char PR head SHA>"
 CODEX_SUMMARY_MARKER = "<!-- codex-pull-request-review-summary -->"
 DEFAULT_CODEX_LOGIN = "chatgpt-codex-connector"
 REQUIRED_PURPOSES = {"canonical_self_test", "mutation_test", "exact_head_ci"}
@@ -106,6 +108,11 @@ def load_policy(path: str) -> dict[str, Any]:
     ):
         raise GateError("POLICY_LOAD_FAILED:PROTECTED_CONTROL_PATHS_MISSING")
     return policy
+
+
+def has_body_receipt(body: str | None) -> bool:
+    match = MARKER_RE.search(body or "")
+    return bool(match) and TEMPLATE_HEAD_PLACEHOLDER not in match.group(1)
 
 
 def parse_receipt(body: str | None) -> dict[str, Any]:
@@ -443,7 +450,7 @@ def evaluate(
 
     # A hand-written body receipt is still honoured (and must be on the exact head); without one,
     # the trusted controller finds the allowlisted proof runs on the exact head itself.
-    if MARKER_RE.search(pr.get("body") or ""):
+    if has_body_receipt(pr.get("body")):
         receipt = parse_receipt(pr.get("body"))
         if receipt["head_sha"] != head_sha:
             raise GateError(f"STALE_HEAD: receipt={receipt['head_sha']} current={head_sha}")

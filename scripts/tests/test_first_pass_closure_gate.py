@@ -206,6 +206,14 @@ class TestFirstPassClosureGate(unittest.TestCase):
         self.assertEqual(receipt["receipt_source"], "DERIVED_EXACT_HEAD")
         self.assertEqual([r["run_id"] for r in receipt["required_runs"]], [RUN])
 
+    def test_unfilled_template_receipt_is_derived(self):
+        template = (Path(__file__).resolve().parents[2] / ".github" / "PULL_REQUEST_TEMPLATE.md").read_text(
+            encoding="utf-8")
+        self.assertIn(fpc.TEMPLATE_HEAD_PLACEHOLDER, template)
+        receipt = fpc.evaluate(FakeClient(mapping(pr_body=template)), REPO, PR, POLICY)
+        self.assertEqual(receipt["status"], fpc.PASS_STATUS)
+        self.assertEqual(receipt["receipt_source"], "DERIVED_EXACT_HEAD")
+
     def test_body_receipt_is_still_the_source_when_present(self):
         receipt = fpc.evaluate(FakeClient(mapping()), REPO, PR, POLICY)
         self.assertEqual(receipt["receipt_source"], "PR_BODY")
