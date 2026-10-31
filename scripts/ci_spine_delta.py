@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import sys
 from pathlib import Path
@@ -16,6 +17,24 @@ SCHEMA_IN = "jade.devops.ci-spine.index.v1"
 SCHEMA_OUT = "jade.devops.ci-spine.source-delta.v1"
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
 SHA64 = re.compile(r"^[0-9a-f]{64}$")
+
+
+def _valid_job_projection(job):
+    """Validate exact fields emitted by the authoritative CI-spine index parser."""
+    if not isinstance(job, dict):
+        return False
+    ident, oid, needs = job.get("id"), job.get("oid"), job.get("needs")
+    layer, digest = job.get("layer"), job.get("def_sha256")
+    return bool(
+        isinstance(ident, str) and ident.strip()
+        and isinstance(oid, str) and oid.strip()
+        and isinstance(needs, list) and all(isinstance(item, str) and item.strip()
+                                            for item in needs)
+        and len(needs) == len(set(needs))
+        and (layer is None or (type(layer) in (int, float)
+                               and (type(layer) is int or math.isfinite(layer))))
+        and isinstance(digest, str) and SHA64.fullmatch(digest)
+    )
 
 
 def _normalize(doc, label, errors):
@@ -55,6 +74,14 @@ def _normalize(doc, label, errors):
                 not isinstance(digest, str) or not SHA64.fullmatch(digest):
             errors.append(label + ": malformed workflow identity/digest")
             continue
+        jobs = wf.get("jobs")
+        if not isinstance(jobs, list):
+            errors.append(label + ": malformed jobs inventory " + path)
+        else:
+            ids = [job.get("id") for job in jobs if isinstance(job, dict)]
+            if (len(ids) != len(jobs) or len(ids) != len(set(map(str, ids)))
+                    or not all(_valid_job_projection(job) for job in jobs)):
+                errors.append(label + ": malformed job projection or duplicate identity " + path)
         if path in by_path:
             errors.append(label + ": duplicate workflow " + path)
         by_path[path] = wf
@@ -77,9 +104,9 @@ def _normalize(doc, label, errors):
 
 
 def _job_map(wf):
-    jobs = wf.get("jobs") or []
+    jobs = wf.get("jobs")
     if not isinstance(jobs, list):
-        return {}
+        return {}  # _normalize reports a first-red; _fields also marks malformed.
     return {x.get("id"): {"needs": x.get("needs"), "def_sha256": x.get("def_sha256"),
                           "layer": x.get("layer")}
             for x in jobs if isinstance(x, dict) and isinstance(x.get("id"), str)}
@@ -88,6 +115,8 @@ def _job_map(wf):
 def _fields(a, b):
     """Semantic changes in emitted index rows; never equate structural RED with text-only drift."""
     out = []
+    if not isinstance(a.get("jobs"), list) or not isinstance(b.get("jobs"), list):
+        out.append("malformed_job_inventory")
     for key in ("name", "class", "triggers", "schedules", "permissions",
                 "reusable", "paths_filtered", "dag_edges", "dag_layers",
                 "parse_error", "dag_cycle", "dangling_needs"):
@@ -111,7 +140,7 @@ def _structural_fault(row):
         return True
     if row.get("parse_error") or row.get("dag_cycle") or row.get("dangling_needs"):
         return True
-    jobs = row.get("jobs") or []
+    jobs = row.get("jobs")
     return not isinstance(jobs, list) or any(
         not isinstance(job, dict) or job.get("parse_error") for job in jobs
     )
@@ -150,7 +179,8 @@ def compare(old, new):
                              or _structural_fault(b) or _structural_fault(a)
                              or any(x in changed for x in ("permissions", "triggers", "schedules",
                                "dag_edges", "dag_layers", "job_definitions_or_needs",
-                               "job_structure_or_errors", "parse_error", "dag_cycle",
+                               "job_structure_or_errors", "malformed_job_inventory",
+                               "parse_error", "dag_cycle",
                                "dangling_needs", "workflow_oid"))),
                          "merge_admission": "HOLD"})
     ar = []

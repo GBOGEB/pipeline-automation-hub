@@ -178,9 +178,13 @@ class WaveContract(unittest.TestCase):
         # Windows strips trailing dot/space, reserves devices, and uses colon for ADS.
         bad_paths = (
             "src/a.py.", "src/a.py ", "src/a.py. ",
+            "src/ a.py", "src/  a.py", " src/a.py", "src/ folder/a.py",
             "src/subfolder./a.py", "src/subfolder /a.py",
             "SRC/CON", "src/con.txt", "src/PRN.log", "src/COM1.csv",
-            "src/lpt9", "src/a.py:malicious", "src/a|b.py",
+            "src/lpt9", "src/COM\u00b9.txt", "src/COM\u00b2.log",
+            "src/CoM\u00b3", "src/LPT\u00b9.txt", "src/lpt\u00b2.log",
+            "src/Lpt\u00b3", "src/CONIN$", "src/conout$.txt",
+            "src/a.py:malicious", "src/a|b.py",
             "src/tab\\tname.py", "src/review\\nname.py",
         )
         for candidate in bad_paths:
@@ -194,6 +198,22 @@ class WaveContract(unittest.TestCase):
                 self.assertIn("invalid ownership paths", " ".join(outcome["errors"]))
         for valid in ("src/a.py", "src/reports/R1.2.md",
                       ".github/workflows/**", "docs/Specification 1.txt"):
+            with self.subTest(valid=valid):
+                self.assertTrue(M.valid_path(valid))
+
+    def test_win32_short_name_alias_rejected(self):
+        # On NTFS src/PROGRA~1/a can be the same object as src/Program Files/a.
+        for alias in ("src/PROGRA~1/a", "src/progra~1/a", "src/LONGFI~12.TXT",
+                      "PROGRA~1/**", "docs/SPECIF~1.MD", "src/A~9"):
+            with self.subTest(alias=alias):
+                self.assertFalse(M.valid_path(alias))
+                i, policy = sample()
+                policy["tasks"][0]["owns"] = [alias]
+                outcome = M.build(i, policy)
+                self.assertEqual(outcome["candidate_workers"], [])
+                self.assertIn("invalid ownership paths", " ".join(outcome["errors"]))
+        # Long-name claims and a tilde without a digit stay valid.
+        for valid in ("src/Program Files/a", "src/backup~/a.py", "src/~notes.md"):
             with self.subTest(valid=valid):
                 self.assertTrue(M.valid_path(valid))
 

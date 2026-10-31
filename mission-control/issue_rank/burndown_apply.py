@@ -132,7 +132,7 @@ def _brief(node: dict | None) -> dict:
 
 def checkbox_body(body: str) -> tuple[str, int]:
     """``body`` with each declared DoD / DoV / STEPS bullet turned into ``- [ ]``."""
-    declared = {x["text"] for sec in tw.checklist(body).values()
+    declared = {x.get("match_text", x["text"]) for sec in tw.checklist(body).values()
                 for x in sec["declared"] if x["form"] == "BULLET"}
     out, n, fence, section = [], 0, None, "OTHER"
     for line in body.splitlines(keepends=True):
@@ -198,6 +198,118 @@ def slices(snapshot: dict, model: dict, gh, top: int = 10, skip: set[str] = froz
                         "checkbox_issues": len(checkbox),
                         "checkbox_items": sum(c["converted"] for c in checkbox)},
             "verify": verify, "checkbox": checkbox}
+
+
+# ---------------------------------------------------------------- evidence
+
+# Commit workers rarely tick the issue that tracks their work. This slice reads the
+# other direction: merged PRs that cross-reference an open issue, matched to its open
+# checklist items. A match is a candidate with links for whoever ticks, never a tick.
+EVIDENCE_SCHEMA = "jade.issue-burndown.evidence.v1"
+PR_Q = "... on PullRequest{title body merged mergedAt url mergeCommit{oid statusCheckRollup{state}}}"
+WORD = re.compile(r"`([^`]{3,80})`|([A-Za-z][A-Za-z0-9_./-]{3,}|[A-Za-z]+\d+[A-Za-z0-9]*)")
+STOP = frozenset("""this that with from into then than when only must have will each every their there
+also been being does done make more most none once over same such them they were what which while
+where after before under above other about would should could issue issues pull request""".split())
+
+
+def tokens(text: str) -> set[str]:
+    out = set()
+    for code, word in WORD.findall(text or ""):
+        t = (code or word).strip().lower().rstrip(".,;:")
+        if len(t) >= 3 and t not in STOP and not t.isdigit():
+            out.add(t)
+    return out
+
+
+def pr_details(gh, keys: list[str], batch: int = 40) -> dict[str, dict | None]:
+    out: dict[str, dict | None] = {}
+    for start in range(0, len(keys), batch):
+        chunk, parts = keys[start:start + batch], []
+        for i, k in enumerate(chunk):
+            repo, n = k.split("#")
+            owner, name = repo.split("/")
+            parts.append(f'p{i}:repository(owner:"{owner}",name:"{name}"){{issueOrPullRequest(number:{int(n)})'
+                         f"{{__typename {PR_Q}}}}}")
+        data = gh("query{" + " ".join(parts) + "}", allow_not_found=True) or {}
+        for i, k in enumerate(chunk):
+            node = (data.get(f"p{i}") or {}).get("issueOrPullRequest")
+            out[k] = node if node and node.get("__typename") == "PullRequest" else None
+    return out
+
+
+def evidence_items(issue: dict, prs: dict[str, dict], df: dict[str, int], n_docs: int,
+                   max_df: float = 0.1, min_hits: int = 3, min_share: float = 0.5) -> list[dict]:
+    """Open checklist items of ``issue`` with merged PRs that look like their evidence.
+
+    DIRECT: the item names the merged PR. TEXT: at least ``min_hits`` of the item's
+    distinctive tokens (in at most ``max_df`` of all candidate PRs) appear in the PR's
+    title or body, covering at least ``min_share`` of them.
+    """
+    rows = []
+    for ln, line in enumerate((issue.get("body") or "").splitlines()):
+        m = tw.ITEM.match(line)
+        if not m or m.group(1) != " ":
+            continue
+        named = {ir.key(r["repo"], r["number"]) for r in ir.extract_refs(line, issue["repo"])}
+        rare = {t for t in tokens(m.group(2)) if df.get(t, 0) <= max(1, max_df * n_docs)}
+        cands = []
+        for k, pr in prs.items():
+            if not pr or not pr.get("merged"):
+                continue
+            hits = sorted(rare & pr["_tokens"])
+            direct = k in named
+            share = len(hits) / len(rare) if rare else 0.0
+            if direct or (len(hits) >= min_hits and share >= min_share):
+                mc = pr.get("mergeCommit") or {}
+                cands.append({"pr": k, "url": pr.get("url"), "title": (pr.get("title") or "")[:160],
+                              "match": "DIRECT" if direct else "TEXT", "share": round(share, 3),
+                              # TEXT matches are leads for a reviewer: precision is low on short items.
+                              "confidence": ("HIGH" if direct else "MEDIUM" if len(hits) >= 5 and share >= 0.75
+                                             else "LOW"),
+                              "hits": hits[:12], "merged_at": pr.get("mergedAt"), "merge_sha": mc.get("oid"),
+                              "merge_checks": (mc.get("statusCheckRollup") or {}).get("state")})
+        if cands:
+            cands.sort(key=lambda c: (c["match"] != "DIRECT", -c["share"], c["pr"]))
+            best = cands[0]
+            cls = ("EVIDENCE_GREEN" if best["merge_checks"] == "SUCCESS" else "EVIDENCE_RED") \
+                + ("_DIRECT" if best["match"] == "DIRECT" else "_TEXT")
+            rows.append({"line": ln, "text": m.group(2)[:300], "class": cls, "candidates": cands[:3]})
+    return rows
+
+
+def evidence_slice(snapshot: dict, model: dict, gh) -> dict:
+    issues = {ir.key(r, i["number"]): {**i, "repo": r}
+              for r, d in snapshot["repos"].items() for i in d["issues"]}
+    ranked = [i for i in model["items"] if i["type"] == "Issue" and i["key"] in issues]
+    merged_in = {k: sorted({ir.key(x["repo"], x["number"]) for x in issues[k].get("refs_in") or []
+                            if x["type"] == "PullRequest" and x["state"] == "MERGED"}) for k in issues}
+    details = pr_details(gh, sorted({p for ps in merged_in.values() for p in ps}))
+    for pr in details.values():
+        if pr:
+            pr["_tokens"] = tokens(f"{pr.get('title') or ''}\n{pr.get('body') or ''}")
+    docs = [pr["_tokens"] for pr in details.values() if pr]
+    df: dict[str, int] = {}
+    for d in docs:
+        for t in d:
+            df[t] = df.get(t, 0) + 1
+    out, counts, open_items = [], {}, 0
+    for it in ranked:
+        body = issues[it["key"]].get("body") or ""
+        open_items += sum(1 for line in body.splitlines() if (m := tw.ITEM.match(line)) and m.group(1) == " ")
+        prs = {k: details.get(k) for k in merged_in[it["key"]]}
+        rows = evidence_items(issues[it["key"]], prs, df, len(docs))
+        for r in rows:
+            counts[r["class"]] = counts.get(r["class"], 0) + 1
+        if rows:
+            out.append({"issue": it["key"], "rank": it["rank_global"], "lane": it["lane"],
+                        "progress": it["progress"], "private": it.get("private"),
+                        "merged_prs_referencing": len(prs), "items": rows})
+    return {"schema": EVIDENCE_SCHEMA, "fetched_at": snapshot.get("fetched_at"),
+            "authority_transfer": False, "ticks": 0,
+            "summary": {"open_items": open_items, "items_with_evidence": sum(counts.values()),
+                        "by_class": counts, "issues": len(out), "merged_prs_read": len(docs)},
+            "issues": out}
 
 
 def _diff(a: str, b: str) -> list[str]:
@@ -280,9 +392,16 @@ def main(argv=None) -> int:
     ap.add_argument("--only", nargs="*", help="limit --apply to these issue keys")
     ap.add_argument("--skip", nargs="*", default=[],
                     help="issue keys left out of the checkbox slice (bullets are options, not criteria)")
+    ap.add_argument("--evidence", action="store_true",
+                    help="also write burndown_evidence.json: merged PRs matched to open checklist items")
     args = ap.parse_args(argv)
     snap = json.loads((args.pulse / "snapshot.json").read_text(encoding="utf-8"))
     model = json.loads((args.pulse / "issue_rank.json").read_text(encoding="utf-8"))
+    if args.evidence:
+        ev = evidence_slice(snap, model, ir.Gh())
+        path = args.pulse / "burndown_evidence.json"
+        path.write_text(json.dumps(ev, indent=1, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+        print(f"{path} {ev['summary']}")
     report = slices(snap, model, ir.Gh(), args.top, set(args.skip))
     out = args.pulse / "burndown_slices.json"
     out.write_text(json.dumps(report, indent=1, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
