@@ -1,0 +1,153 @@
+{
+  "schema": "gbogeb.pc-dashboards.config.v1",
+  "note": "Edit this file to pin dashboards or add scan folders, then run REFRESH.cmd. scan_roots paths accept ~ and glob patterns. Install-Dashboards.ps1 copies this file to the install folder only when none is there, so your edits survive reinstalls.",
+  "scan_roots": [
+    {
+      "path": "~",
+      "depth": 1
+    },
+    {
+      "path": "~/Documents",
+      "depth": 2
+    },
+    {
+      "path": "~/Documents/Codex",
+      "depth": 3
+    },
+    {
+      "path": "~/OneDrive - *",
+      "depth": 2
+    }
+  ],
+  "include_claude_worktrees": false,
+  "skip_dirs": [
+    "node_modules",
+    "AppData",
+    ".venv",
+    "venv",
+    "site-packages",
+    "__pycache__",
+    ".cache",
+    ".tox",
+    "htmlcov",
+    ".pytest_cache"
+  ],
+  "skip_html_patterns": [
+    "node_modules/",
+    "htmlcov/",
+    "site-packages/",
+    "/fixtures/",
+    "/test_data/",
+    "_template.html",
+    "/templates/"
+  ],
+  "entry_name_pattern": "(^|/)(index|home)\\.html?$|launcher|dashboard|portal|landing|cockpit|hub|_current|navigator|tracker|burndown",
+  "top": [
+    {
+      "title": "BnB · Bread & Butter dashboard",
+      "url": "https://claude.ai/artifact/EArR4uVDAnujnC7Cv5qLUD",
+      "kind": "artifact",
+      "note": "Republished each weekday by the bnb-dashboard-pull task"
+    },
+    {
+      "title": "Burn-down Matrix",
+      "url": "https://claude.ai/artifact/LwhKD5jNaLcV6U7H5kXwVD",
+      "kind": "artifact"
+    },
+    {
+      "title": "GBOGEB lane matrix TOP view",
+      "url": "https://claude.ai/artifact/9QJzk9GgjeA8ktHXLLZjVK",
+      "kind": "artifact"
+    },
+    {
+      "title": "CODE PURPLE Fleet Matrix",
+      "url": "https://claude.ai/artifact/T13PQ3gyE82RFYeucW5ejP",
+      "kind": "artifact"
+    },
+    {
+      "title": "JADE DevOps Lifecycle Census",
+      "url": "https://claude.ai/artifact/NyGZtfSiKiWar8HUWvenYf",
+      "kind": "artifact"
+    },
+    {
+      "title": "GoGreen launcher (pipeline-automation-hub)",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/gogreen/launcher/index.html",
+      "kind": "local"
+    },
+    {
+      "title": "QPS Dashboard Launcher — CURRENT (cryoplant)",
+      "repo": "GBOGEB/cryoplant-project",
+      "path": "docs/QPS_DASHBOARD_LAUNCHER_CURRENT.html",
+      "kind": "local"
+    },
+    {
+      "title": "CODE_BNB N+3 daily cockpit (cryoplant)",
+      "repo": "GBOGEB/cryoplant-project",
+      "path": "qps/engineering_hub/code_bnb/n3/dist/CODE_BNB_DAILY_N3.html",
+      "kind": "local"
+    },
+    {
+      "title": "Master_Input repo ledger (cryoplant)",
+      "repo": "GBOGEB/cryoplant-project",
+      "path": "mission_control/master_input_cleanup/index.html",
+      "kind": "local"
+    },
+    {
+      "title": "pipeline-automation-hub (Vercel)",
+      "url": "https://pipeline-automation-hub.vercel.app",
+      "kind": "hosted"
+    }
+  ],
+  "artifacts": [
+    {
+      "title": "ABACUS red burn-down",
+      "url": "https://claude.ai/artifact/SKthvLvJT4D48XvNSVQhzM"
+    },
+    {
+      "title": "PAH lane matrix TOP view",
+      "url": "https://claude.ai/artifact/8ZARhGevm4CD5NFWYFneka"
+    },
+    {
+      "title": "CODE PURPLE Lane Matrix",
+      "url": "https://claude.ai/artifact/YEWmFe4YAXFad2LE6GkDHv"
+    },
+    {
+      "title": "GBOGEB title taxonomy (issue-rank census)",
+      "url": "https://claude.ai/artifact/RARdwhuvVk2emp2iCRRhDw"
+    },
+    {
+      "title": "Derived Outputs Architecture",
+      "url": "https://claude.ai/artifact/DGbAyMja6vDRLjeBNvyx2U"
+    },
+    {
+      "title": "JADE Page Directory",
+      "url": "https://claude.ai/artifact/LbUQxSGS5JfopeXgeiGuFE"
+    },
+    {
+      "title": "QPS Cool-down Atlas",
+      "url": "https://claude.ai/artifact/1Gxqv5ZJn7Cn7bzSpdDaHP"
+    },
+    {
+      "title": "Cross-Repo Token Census",
+      "url": "https://claude.ai/artifact/9hVa5TSQPnTtga5gvGiKCe"
+    },
+    {
+      "title": "ABACUS Deployment Burndown",
+      "url": "https://claude.ai/artifact/NsobNjxY45iSxftiX9Vr1B"
+    },
+    {
+      "title": "C: Drive Emergency Kit",
+      "url": "https://claude.ai/artifact/Hp4auwLyH4a8NVqbAwJMNt"
+    }
+  ],
+  "extra_repos_online": [
+    "GBOGEB/DOCX_RTM_Automation",
+    "GBOGEB/GEMINI",
+    "GBOGEB/Q_engineering_tools",
+    "GBOGEB/cryo_leak_rate_dashboard",
+    "GBOGEB/cryogenic-accelerator-workspace",
+    "GBOGEB/document-organization-system",
+    "GBOGEB/Edit_WORD_Roundtrip"
+  ]
+}

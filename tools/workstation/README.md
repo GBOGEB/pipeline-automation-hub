@@ -123,3 +123,10 @@ For each PR, the script merges `origin/<base>` into the PR head in one reused sc
 | **NOOP** | The PR already contains the base, and regen changed nothing. |
 
 The script exits 1 if any PR ends FAIL or STALE. A JSON report is written to `-ReportPath`.
+
+# PC dashboard launcher
+
+`dashboards/` builds one local start page that links every HTML page in every clone on the workstation,
+plus the top dashboards, GitHub Pages sites and claude.ai artifacts. It is rebuilt daily by a scheduled task.
+Install it with `pwsh -NoProfile -File tools\workstation\dashboards\Install-Dashboards.ps1`; see
+[dashboards/README.md](dashboards/README.md).
