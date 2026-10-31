@@ -253,6 +253,39 @@ class Shipped(unittest.TestCase):
         for job, s in sig.items():
             self.assertEqual(s["actions_pinned"], s["actions_total"], job)
 
+    def test_reusable_deploy_readback_quotes_served_paths(self):
+        # Pages serves "# Notes.md" at "%23%20Notes.md"; an unquoted request asks for "/" and fails parity.
+        import hashlib, http.server, os, re, subprocess, threading
+        text = (REPO / ".github/workflows/jade-reusable-deploy.yml").read_text(encoding="utf-8")
+        body = re.search(r"Read back served files.*?<<'PY'\n(.*?)\n\s*PY\n", text, re.S).group(1)
+        script = "\n".join(line[10:] for line in body.splitlines())
+        with tempfile.TemporaryDirectory() as tmp:
+            site, work = Path(tmp, "site"), Path(tmp, "work")
+            names = ["# Code Citations.md", "a b/c%d.txt", "index.html"]
+            files = {}
+            for n in names:
+                (site / n).parent.mkdir(parents=True, exist_ok=True)
+                (site / n).write_bytes(n.encode())
+                files[n] = hashlib.sha256(n.encode()).hexdigest()
+            manifest = json.dumps({"files": files}).encode()
+            (work / "artifact").mkdir(parents=True)
+            (work / "artifact/jade-manifest.json").write_bytes(manifest)
+            (site / "jade-manifest.json").write_bytes(manifest)
+            handler = lambda *a, **k: http.server.SimpleHTTPRequestHandler(*a, directory=str(site), **k)
+            http.server.SimpleHTTPRequestHandler.log_message = lambda *a: None
+            srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
+            threading.Thread(target=srv.serve_forever, daemon=True).start()
+            env = dict(os.environ, BASE_URL=f"http://127.0.0.1:{srv.server_port}/", ENV_NAME="preview", TARGET="pages",
+                       DIGEST=hashlib.sha256(manifest).hexdigest(), ATTEMPTS="1", GITHUB_REPOSITORY="o/r",
+                       GITHUB_SHA="a" * 40, GITHUB_RUN_ID="1", GITHUB_RUN_ATTEMPT="1")
+            try:
+                r = subprocess.run([sys.executable, "-c", script], cwd=work, env=env, capture_output=True, text=True)
+            finally:
+                srv.shutdown()
+            self.assertEqual(r.returncode, 0, r.stdout + r.stderr)
+            receipt = json.loads((work / "jade-deploy-receipt.json").read_text(encoding="utf-8"))
+            self.assertEqual((receipt["verdict"], receipt["mismatches"], receipt["files_checked"]), ("PARITY", [], 4))
+
     def test_template_pins_are_the_documented_placeholder(self):
         text = (REPO / "mission-control/jade_temple/devops/templates/jade-cicd-caller.yml").read_text(encoding="utf-8")
         self.assertEqual(text.count("@" + "0" * 40), 3)
