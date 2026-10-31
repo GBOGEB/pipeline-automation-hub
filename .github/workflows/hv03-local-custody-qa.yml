@@ -1,0 +1,43 @@
+name: HV03 Local Custody Offline QA
+on:
+  pull_request:
+    paths:
+      - 'tools/workstation/hv03_custody.py'
+      - 'tools/workstation/test_hv03_custody.py'
+      - 'tools/workstation/HV03_CUSTODY_README.md'
+      - '.github/workflows/hv03-local-custody-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  hv03-offline-replay:
+    name: HV03 offline Python 3.12 / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2022]
+    steps:
+      - name: Checkout immutable candidate head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Set up Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Execute exact-head offline custody fixtures
+        shell: bash
+        env:
+          EXPECTED: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$EXPECTED"
+          python -m unittest discover -s tools/workstation -p 'test_hv03_custody.py' -v
+      - name: Explicit nonpromotion
+        shell: bash
+        run: |
+          echo 'HV03_PRIVATE_ASSETS=NOT_COLLECTED'
+          echo 'HV03_REMOTE_HEAD_AUTHENTICATION=UNKNOWN'
+          echo 'HV03_MERGE_ADMISSION=HOLD'

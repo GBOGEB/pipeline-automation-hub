@@ -1,0 +1,321 @@
+{
+  "schema": "jade.devops.ci_bundle_catalog.v1",
+  "version": "0.1.0",
+  "status": "ADVISORY_CANDIDATE_OVERLAY_NOT_CANONICAL",
+  "effective_branch": "none",
+  "merge_authorized": false,
+  "provenance": "Advisory candidate overlay, NOT a replacement for merged #992 B00-B09 design, JADE parser, GOGREEN ledger or governed required checks. Candidate Bxx IDs intentionally occupy a separate namespace; no semantic identity or promotion by number.",
+  "lifecycle_stages": [
+    "S0_PLAN",
+    "S1_CODE",
+    "S2_BUILD",
+    "S3_TEST",
+    "S4_SECURE",
+    "S5_RELEASE",
+    "S6_DEPLOY",
+    "S7_OPERATE",
+    "S8_MONITOR",
+    "S9_CONTROL"
+  ],
+  "phase_order": [
+    "P0",
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5",
+    "P6"
+  ],
+  "bundles": [
+    {
+      "id": "B00",
+      "key": "source-preflight",
+      "lifecycle_stage": "S2_BUILD",
+      "lane": "L0_INTAKE",
+      "phase": "P0",
+      "planning_dependencies": [],
+      "signal_hints": [
+        "ref_bound"
+      ],
+      "name_hints": [
+        "exact-head",
+        "source-bound",
+        "pin-ratchet",
+        "branch-hygiene"
+      ],
+      "existing_authority": "JADE workflow parser",
+      "limitation": "Independent source and workflow preflight; binding detection is heuristic, not attestation"
+    },
+    {
+      "id": "B01",
+      "key": "static-quality",
+      "lifecycle_stage": "S1_CODE",
+      "lane": "L1_STATIC",
+      "phase": "P1",
+      "planning_dependencies": [
+        "B00"
+      ],
+      "signal_hints": [
+        "lint",
+        "typecheck",
+        "precommit"
+      ],
+      "name_hints": [
+        "lint",
+        "format",
+        "actionlint",
+        "shellcheck"
+      ],
+      "existing_authority": "Source owner per repository",
+      "limitation": "Static lint, formatting, typing and workflow syntax"
+    },
+    {
+      "id": "B02",
+      "key": "unit-test",
+      "lifecycle_stage": "S3_TEST",
+      "lane": "L2_TEST",
+      "phase": "P2",
+      "planning_dependencies": [
+        "B00"
+      ],
+      "signal_hints": [
+        "tests"
+      ],
+      "name_hints": [
+        "unit-test",
+        "unit_tests"
+      ],
+      "existing_authority": "Existing local tests and JADE reusable CI",
+      "limitation": "Any detected test command, not a verified unit-test population"
+    },
+    {
+      "id": "B03",
+      "key": "contract-test",
+      "lifecycle_stage": "S3_TEST",
+      "lane": "L2_TEST",
+      "phase": "P2",
+      "planning_dependencies": [
+        "B02"
+      ],
+      "signal_hints": [],
+      "name_hints": [
+        "contract",
+        "parser",
+        "schema",
+        "checksum",
+        "regression"
+      ],
+      "existing_authority": "Existing contract test owners",
+      "limitation": "Name hints only; exact test selection requires an owner manifest"
+    },
+    {
+      "id": "B04",
+      "key": "integration",
+      "lifecycle_stage": "S3_TEST",
+      "lane": "L3_INTEGRATE",
+      "phase": "P3",
+      "planning_dependencies": [
+        "B03"
+      ],
+      "signal_hints": [],
+      "name_hints": [
+        "integration",
+        "e2e",
+        "end-to-end",
+        "recursive-build"
+      ],
+      "existing_authority": "Existing integration test owners",
+      "limitation": "Integration and pipeline qualification candidate"
+    },
+    {
+      "id": "B05",
+      "key": "federation-replay",
+      "lifecycle_stage": "S3_TEST",
+      "lane": "L3_INTEGRATE",
+      "phase": "P3",
+      "planning_dependencies": [
+        "B03"
+      ],
+      "signal_hints": [],
+      "name_hints": [
+        "federation",
+        "golden-thread",
+        "replay",
+        "dependency-spine",
+        "lineage"
+      ],
+      "existing_authority": "JADE DAG and rolling5 adapters",
+      "limitation": "Cross-repository, replay and temporal-source qualification candidate"
+    },
+    {
+      "id": "B06",
+      "key": "async-concurrency",
+      "lifecycle_stage": "S3_TEST",
+      "lane": "L3_INTEGRATE",
+      "phase": "P3",
+      "planning_dependencies": [
+        "B02"
+      ],
+      "signal_hints": [],
+      "name_hints": [
+        "asyncio",
+        "concurrency",
+        "race-condition",
+        "async-test"
+      ],
+      "existing_authority": "Runtime test owners",
+      "limitation": "Async task, cancellation and ordering candidate; no coverage implied"
+    },
+    {
+      "id": "B07",
+      "key": "scientific-math",
+      "lifecycle_stage": "S3_TEST",
+      "lane": "L3_INTEGRATE",
+      "phase": "P3",
+      "planning_dependencies": [
+        "B03"
+      ],
+      "signal_hints": [],
+      "name_hints": [
+        "math",
+        "pca",
+        "monte-carlo",
+        "uncertainty",
+        "hepak",
+        "bradley"
+      ],
+      "existing_authority": "gg_MATH and scientific repository owners",
+      "limitation": "Scientific and numerical method candidate"
+    },
+    {
+      "id": "B08",
+      "key": "visual-document",
+      "lifecycle_stage": "S3_TEST",
+      "lane": "L3_INTEGRATE",
+      "phase": "P3",
+      "planning_dependencies": [
+        "B04"
+      ],
+      "signal_hints": [],
+      "name_hints": [
+        "playwright",
+        "visual",
+        "browser",
+        "render",
+        "docx",
+        "pptx",
+        "svg"
+      ],
+      "existing_authority": "Browser and document producers",
+      "limitation": "Visual browser, SVG and document-system checks candidate"
+    },
+    {
+      "id": "B09",
+      "key": "security-supply-chain",
+      "lifecycle_stage": "S4_SECURE",
+      "lane": "L1_STATIC",
+      "phase": "P1",
+      "planning_dependencies": [
+        "B00"
+      ],
+      "signal_hints": [
+        "security",
+        "provenance"
+      ],
+      "name_hints": [
+        "codeql",
+        "zizmor",
+        "bandit",
+        "semgrep",
+        "security",
+        "dependabot"
+      ],
+      "existing_authority": "Native security workflows",
+      "limitation": "Security and provenance signals, not a certification"
+    },
+    {
+      "id": "B10",
+      "key": "build-release-deploy",
+      "lifecycle_stage": "S5_RELEASE",
+      "lane": "L4_RELEASE",
+      "phase": "P4",
+      "planning_dependencies": [
+        "B02",
+        "B09"
+      ],
+      "signal_hints": [
+        "build",
+        "release",
+        "deploy"
+      ],
+      "name_hints": [
+        "build",
+        "deploy",
+        "publish",
+        "release"
+      ],
+      "existing_authority": "JADE reusable build and deploy",
+      "limitation": "Build and delivery action signals; test admission is independent"
+    },
+    {
+      "id": "B11",
+      "key": "telemetry-census",
+      "lifecycle_stage": "S8_MONITOR",
+      "lane": "L5_MEASURE",
+      "phase": "P5",
+      "planning_dependencies": [
+        "B00"
+      ],
+      "signal_hints": [],
+      "name_hints": [
+        "census",
+        "telemetry",
+        "metric",
+        "pulse",
+        "everred",
+        "red-trace"
+      ],
+      "existing_authority": "actions_metrics.py, scale_dock.py, rolling5.py",
+      "limitation": "Descriptive observation only; no new metric authority"
+    },
+    {
+      "id": "B12",
+      "key": "admission-governance",
+      "lifecycle_stage": "S9_CONTROL",
+      "lane": "L6_ADMISSION",
+      "phase": "P6",
+      "planning_dependencies": [
+        "B01",
+        "B02",
+        "B09"
+      ],
+      "signal_hints": [],
+      "name_hints": [
+        "required-gate",
+        "first-pass",
+        "admission",
+        "closure",
+        "governor",
+        "gate-guard"
+      ],
+      "existing_authority": "GOGREEN required gate and repository rulesets",
+      "limitation": "Candidate gating concern; actual required population is base policy"
+    }
+  ],
+  "namespace": "jade.devops.ci_candidate",
+  "prior_design_owner": {
+    "source_pr": 992,
+    "design_path": "docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json",
+    "source_sha": "ca623ab83793df6edd245942884ad5428a5fe079",
+    "source_blob_oid": "7ff3fba10633b1f271e024ce2ccde8121417c9cb",
+    "prior_bundle_namespace": "ci-spine:bundle",
+    "prior_bundle_ids": "B00..B09"
+  },
+  "reconciliation": {
+    "mapping_path": "docs/ci-spine/BUNDLE_B00_B09_TO_CANDIDATE_B00_B12_V1.json",
+    "relation": "MANY_TO_MANY_CANDIDATES_NO_EQUIVALENCE",
+    "owner_approved": false,
+    "consumer_migration_authorized": false,
+    "legacy_ids_and_edges_untouched": true
+  }
+}

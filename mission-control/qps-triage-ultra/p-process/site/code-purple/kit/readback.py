@@ -18,16 +18,25 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import re
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 import yaml
 
 
+TRANSIENT = re.compile(r"timeout|timed out|TLS handshake|connection (reset|refused|attempt failed)|connectex|error connecting to|unexpected EOF|HTTP 5\d\d", re.I)
+
+
 def gh(path: str, paginate: bool = False):
     cmd = ["gh", "api", path] + (["--paginate"] if paginate else [])
-    out = subprocess.run(cmd, capture_output=True, text=True)
+    for attempt in range(5):  # retry network blips only; 4xx and auth errors fail at once
+        out = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+        if out.returncode == 0 or not TRANSIENT.search(out.stderr):
+            break
+        time.sleep(3 * (attempt + 1))
     if out.returncode != 0:
         raise RuntimeError(f"gh api {path}: {out.stderr.strip()[:300]}")
     txt = out.stdout.strip()
@@ -116,8 +125,18 @@ def classify(pr_reds: list[str], inherited: list[str]) -> dict:
 
 
 def merges_since(repo: str, iso: str, inclusive: bool = False) -> list[dict]:
-    pulls = gh(f"repos/{repo}/pulls?state=closed&sort=updated&direction=desc&per_page=100")
-    keep = [p for p in pulls if p["merged_at"] and (p["merged_at"] >= iso if inclusive else p["merged_at"] > iso)]
+    """Every PR merged after iso, across all pages of closed pulls.
+
+    Pages come newest-updated first. A merge never post-dates its PR's last
+    update, so the first page that reaches updated_at < iso is the last needed.
+    """
+    keep, page = [], 1
+    while True:
+        pulls = gh(f"repos/{repo}/pulls?state=closed&sort=updated&direction=desc&per_page=100&page={page}")
+        keep += [p for p in pulls if p["merged_at"] and (p["merged_at"] >= iso if inclusive else p["merged_at"] > iso)]
+        if len(pulls) < 100 or pulls[-1]["updated_at"] < iso:
+            break
+        page += 1
     return sorted([{"number": p["number"], "merged_at": p["merged_at"], "title": p["title"]} for p in keep], key=lambda x: x["merged_at"])
 
 
@@ -187,8 +206,8 @@ def run(incident_path: Path, out_dir: Path) -> dict:
         census["follow_ups"].append({"repo": f["repo"], "number": f["number"], "state": i["state"], "title": i["title"], "check": f["check"]})
 
     out_dir.mkdir(parents=True, exist_ok=True)
-    (out_dir / "census.json").write_text(json.dumps(census, indent=2), encoding="utf-8")
-    (out_dir / "after_action.md").write_text(render_md(inc, census), encoding="utf-8")
+    (out_dir / "census.json").write_text(json.dumps(census, indent=2), encoding="utf-8", newline="\n")
+    (out_dir / "after_action.md").write_text(render_md(inc, census), encoding="utf-8", newline="\n")
     return census
 
 

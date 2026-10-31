@@ -297,10 +297,44 @@ def fetch_repo(cache: Path, repo: str, branch: str, baseline: str | None, url: s
                   f"+refs/heads/{branch}:refs/heads/{branch}", check=False)
     refresh_tags(d)
     shas =[head] + ([baseline] if base_ok and baseline != head else [])
-    want = sorted({oid for s in shas for (_m, t, oid, path) in g.ls_tree(s) if t == "blob" and wanted(path)}
-                  & set().union(*(g.missing(s) for s in shas)))
-    g.fetch_blobs(want)
+    # Fail closed: a blob that never arrived (network timeout) would otherwise be scanned as an absent file.
+    # A timeout anywhere in the blob phase (fetch or the missing-object probes) is a blob failure too,
+    # not the generic UNKNOWN row that lets 'fetch' exit 0.
+    want: list[str] = []
+    try:
+        want = sorted({oid for s in shas for (_m, t, oid, path) in g.ls_tree(s) if t == "blob" and wanted(path)}
+                      & set().union(*(g.missing(s) for s in shas)))
+        left = want
+        for _attempt in range(2):
+            g.fetch_blobs(left)
+            left = sorted(set(left) & set().union(*(g.missing(s) for s in shas)))
+            if not left:
+                break
+    except subprocess.TimeoutExpired:
+        return {"repo": repo, "ok": False, "head": head,
+                "error": f"BLOBS_UNFETCHED: timeout in blob phase ({len(want)} wanted blobs known)",
+                "blobs_unfetched": max(1, len(want))}
+    if left:
+        return {"repo": repo, "ok": False, "head": head, "error": f"BLOBS_UNFETCHED: {len(left)} of {len(want)} wanted blobs",
+                "blobs_unfetched": len(left)}
     return {"repo": repo, "ok": True, "head": head, "baseline_fetched": base_ok, "blobs_fetched": len(want)}
+
+
+def unread_errors(census: dict) -> list[str]:
+    """A fresh scan must have read every wanted blob, at HEAD and at the delta baseline.
+
+    An unread blob is not evidence of absence: an unread baseline blob would turn into a
+    test, workflow, stage or outcome delta computed against an incomplete baseline.
+    """
+    errs = []
+    for r in census["repos"]:
+        if not r.get("reachable"):
+            continue
+        if r.get("blobs_unread"):
+            errs.append(f"BLOBS_UNREAD:{r['repo']}:{r['blobs_unread']}")
+        if (r.get("delta") or {}).get("baseline_unread"):
+            errs.append(f"BASELINE_BLOBS_UNREAD:{r['repo']}:{r['delta']['baseline_unread']}")
+    return errs
 
 
 # --------------------------------------------------------------------------- classification
@@ -1282,7 +1316,9 @@ def main(argv=None) -> int:
             log[row["repo"]] = info
             print(json.dumps(info, sort_keys=True), flush=True)
         write_json(log_path, log)
-        return 0
+        # An unreachable repo is scanned as UNKNOWN; unfetched blobs would be scanned as absent files, so they fail.
+        return 1 if any(log[r["repo"]].get("blobs_unfetched") for r in roster["repositories"] if r["repo"] in log
+                        and (not only or r["repo"] in only)) else 0
     observed = a.observed_at or datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
     log = json.loads(log_path.read_text(encoding="utf-8")) if log_path.exists() else {}
     token = os.environ.get(a.api_token_env) if a.api_token_env else None
@@ -1292,7 +1328,7 @@ def main(argv=None) -> int:
                        api_budget=900 if token else 55, iteration=a.iteration, baseline=baseline)
     write_json(a.out, census)
     write_json(a.objects, obj)
-    errs = check(census, obj)
+    errs = check(census, obj) + unread_errors(census)
     print(json.dumps({"out": str(a.out), "digest_sha256": census["digest_sha256"], "reachable": census["fleet"]["reachable"],
                       "errors": errs}, sort_keys=True))
     return 1 if errs else 0

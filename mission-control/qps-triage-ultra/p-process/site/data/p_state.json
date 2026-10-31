@@ -1,15 +1,15 @@
 {
   "schema": "p-process.state/1.0",
-  "generated_at": "2026-10-18T13:33:21+00:00",
-  "census_at": "2026-10-18T13:27:47+00:00",
-  "everred_at": "2026-10-18T13:29:56+00:00",
-  "drift_at": "2026-10-18T13:29:50+00:00",
+  "generated_at": "2026-10-30T13:25:00+00:00",
+  "census_at": "2026-10-30T12:47:06+00:00",
+  "everred_at": "2026-10-30T13:14:25+00:00",
+  "drift_at": "2026-10-30T13:14:05+00:00",
   "lifted": false,
   "repos": {
     "GBOGEB/ABACUS": {
       "mode": "CODE_PURPLE",
       "reasons": [
-        "E2: Code Purple case open, 2 of 5 lift criteria met",
+        "E2: Code Purple case open, 3 of 5 lift criteria met",
         "E1: ABACUS-RC-2026-0001 P0 control-plane probe red"
       ],
       "ruleset": "RED",
@@ -25,10 +25,11 @@
       "reasons": [],
       "ruleset": "RED",
       "ruleset_gaps": [
-        "deletion missing",
-        "non_fast_forward missing",
-        "pull_request missing",
-        "required_status_checks missing"
+        "review-thread resolution off",
+        "required check 'lint' missing",
+        "required check 'self-smoke (3.12)' missing",
+        "required check 'bandit' missing",
+        "required check 'governance-adversary' missing"
       ],
       "open_roots": 2,
       "worst": "P1"
@@ -51,9 +52,7 @@
       "reasons": [],
       "ruleset": "RED",
       "ruleset_gaps": [
-        "deletion missing",
-        "non_fast_forward missing",
-        "pull_request missing",
+        "review-thread resolution off",
         "required_status_checks missing"
       ],
       "open_roots": 1,
@@ -64,9 +63,7 @@
       "reasons": [],
       "ruleset": "RED",
       "ruleset_gaps": [
-        "deletion missing",
-        "non_fast_forward missing",
-        "pull_request missing",
+        "review-thread resolution off",
         "required_status_checks missing"
       ],
       "open_roots": 1,
@@ -75,17 +72,10 @@
     "GBOGEB/pipeline-automation-hub": {
       "mode": "EVERRED",
       "reasons": [],
-      "ruleset": "RED",
-      "ruleset_gaps": [
-        "deletion missing",
-        "non_fast_forward missing",
-        "pull_request missing",
-        "required_status_checks missing",
-        "required_linear_history missing",
-        "copilot_code_review missing"
-      ],
-      "open_roots": 1,
-      "worst": "P2"
+      "ruleset": "GREEN",
+      "ruleset_gaps": [],
+      "open_roots": 0,
+      "worst": null
     }
   },
   "incident": "CP-2026-10-12-ABACUS-MERGE-STALL"

@@ -55,9 +55,9 @@
   },
   "inputs": {
     "../qps-triage-ultra/p-process/p_process.yaml": "1425383354ae1f5da29e21ce94842a879f54ccc9b9ff1596bd65109bfb807b66",
-    "../qps-triage-ultra/p-process/site/code-purple/kit/census.json": "d638ad8dc530ea272ce96c36d370d46a32f61d608392076402f918af42429a20",
-    "../qps-triage-ultra/p-process/site/data/p_state.json": "98cfa8ed19755bfc2172cfcda6f1267ec7f78c7779c2920a60a97fcb9045a45e",
-    "../qps-triage-ultra/p-process/site/everred/data/everred.json": "0eb4b3c5287ee352f15669e8f8d500bc17c63d8da3617f76392e8f6b8ac25120",
+    "../qps-triage-ultra/p-process/site/code-purple/kit/census.json": "c4ae2b831015466a463c97bc63234f9c0e80c6a7c8d2dc69b24faa72501bbfbb",
+    "../qps-triage-ultra/p-process/site/data/p_state.json": "3e17163fa46bd7e375c593f57d04c9ac4258c6513ce9343ed90c9e5e44c0a5a9",
+    "../qps-triage-ultra/p-process/site/everred/data/everred.json": "f7e7f137cdf2938bc1cd1c47a1dc70053bee7ff886c3b1abbb26e432fcf5a65d",
     "data/BD_QUEUE.csv": "67174e9266bcd308fc90fbfa85d61d9e936e30f7b51d135106227fe9f0f56b8f",
     "data/CICD_DAG_POLICY.json": "1461988c949d81470b7cd00cfbb908ba300b025e8f10d455e1e3d1db67152050",
     "data/COHORT_CROSSWALK_NPLUS1.json": "8e22c5963cc165b2ec8e83383a7469aebd177335eaddca8043b1692bf10e2cbc",
@@ -1193,7 +1193,7 @@
       "function": "Per-repo mode (CODE_PURPLE / EVERRED), ruleset gaps, open roots",
       "id": "OBJ.P_STATE",
       "kind": "data",
-      "oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+      "oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
       "path": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
       "symbol": null
     },
@@ -1201,7 +1201,7 @@
       "function": "Harvests failing-job occurrences into signatures",
       "id": "OBJ.EVERRED_HARVEST",
       "kind": "code",
-      "oid": "43fb4a07e804ddb56c9859a22d13c6e088a9162d",
+      "oid": "d785c4a4bd10a67615f066065a0657f66d8c47a6",
       "path": "mission-control/qps-triage-ultra/p-process/everred/harvest.py",
       "symbol": "harvest"
     },
@@ -1209,7 +1209,7 @@
       "function": "Fail-closed control-plane (ruleset drift) probe per root",
       "id": "OBJ.EVERRED_PROBE",
       "kind": "code",
-      "oid": "43fb4a07e804ddb56c9859a22d13c6e088a9162d",
+      "oid": "d785c4a4bd10a67615f066065a0657f66d8c47a6",
       "path": "mission-control/qps-triage-ultra/p-process/everred/harvest.py",
       "symbol": "probe_root"
     },
@@ -1217,7 +1217,7 @@
       "function": "EVERRED 3.0 root ledger with 7 independent dimensions",
       "id": "OBJ.EVERRED_ROOTS",
       "kind": "spec",
-      "oid": "3c6ffd77f7256f1880f58f6a5aac915fdd039758",
+      "oid": "c4a962de5767ab036503f3da96a6c00b02234e8a",
       "path": "mission-control/qps-triage-ultra/p-process/everred/roots.yaml",
       "symbol": null
     },
@@ -1225,7 +1225,7 @@
       "function": "EVERRED census: occurrences, signatures, roots, probes",
       "id": "OBJ.EVERRED_CENSUS",
       "kind": "data",
-      "oid": "598302afb690cb97e44070eeb0e72e582729a8a9",
+      "oid": "902f1548efe8a1f9c015fad88f633c224efb0ae6",
       "path": "mission-control/qps-triage-ultra/p-process/site/everred/data/everred.json",
       "symbol": null
     },
@@ -1233,7 +1233,7 @@
       "function": "Code Purple L5: gate state at merge time",
       "id": "OBJ.CP_READBACK",
       "kind": "code",
-      "oid": "e67a1609fb57dfa4af7adf639449270c43633349",
+      "oid": "4a0ecd516a182f8f1cd682c37982d4ff662253b6",
       "path": "mission-control/qps-triage-ultra/p-process/kit/readback.py",
       "symbol": "gate_at_merge"
     },
@@ -1297,7 +1297,7 @@
       "function": "Code Purple census v2: lift criteria, admission audit, follow-ups",
       "id": "OBJ.CP_CENSUS",
       "kind": "data",
-      "oid": "f1dc5a64310756e4a8130c7033f5da54904e7538",
+      "oid": "dd818e9715fb6e51ae496e40b72259a698a9e5ca",
       "path": "mission-control/qps-triage-ultra/p-process/site/code-purple/kit/census.json",
       "symbol": null
     },
@@ -1313,7 +1313,7 @@
       "function": "JADE read-only QA: tests, coverage floors, --check parity",
       "id": "OBJ.JADE_QA_WF",
       "kind": "workflow",
-      "oid": "3143e6d1dd61e323d9b89d62c48d19be4664297c",
+      "oid": "a27995304c2002d0a2ffbc4179b43085b8b0b7da",
       "path": ".github/workflows/jade-temple-readonly-qa.yml",
       "symbol": null
     },
@@ -1321,7 +1321,7 @@
       "function": "P-process offline tests, TypeScript check, site zip",
       "id": "OBJ.P_PROCESS_WF",
       "kind": "workflow",
-      "oid": "90d6f28fad369b20831965092e668159d2acff37",
+      "oid": "9cae7086cd433f4dcc65e97804225be8293e1f3b",
       "path": ".github/workflows/p-process.yml",
       "symbol": null
     },
@@ -2372,29 +2372,29 @@
             "ABACUS"
           ],
           "consumer_replay_coverage": "UNKNOWN",
-          "control_plane_red": "6/6",
+          "control_plane_red": "5/6",
           "dock_consistency": "CONSISTENT_WHERE_OBSERVED",
           "everred_roots_open_by_priority": {
             "P0": 1,
             "P1": 5,
-            "P2": 4,
+            "P2": 3,
             "P3": 2
           },
-          "failure_amplification": 1.538,
-          "gate_green_rate": 0.0,
-          "lift": "2/5",
+          "failure_amplification": 1.077,
+          "gate_green_rate": 0.0016,
+          "lift": "3/5",
           "lifted": false,
           "modes": {
             "CODE_PURPLE": 1,
             "EVERRED": 5
           },
-          "open_roots": 12,
+          "open_roots": 11,
           "recurrence_rate": 0.0,
-          "red_merge_rate": 1.0,
-          "root_closure_rate": 0.2,
-          "ruleset_red": 6,
-          "ruleset_red_rate": 1.0,
-          "signature_match_rate": 0.0588,
+          "red_merge_rate": 0.8361,
+          "root_closure_rate": 0.267,
+          "ruleset_red": 5,
+          "ruleset_red_rate": 0.8333,
+          "signature_match_rate": 0.055,
           "source": "scale_dock.py (#781) docks",
           "worst_priority": "P0"
         },
@@ -3118,23 +3118,23 @@
         },
         {
           "colour": "EVERRED",
-          "detail": "375 occurrences · 68 signatures · 15 roots",
+          "detail": "494 occurrences · 109 signatures · 15 roots",
           "id": "I.EVERRED_CENSUS",
           "kind": "I",
           "label": "EVERRED census (PR + nightly)",
           "layer": 1,
           "metrics": {
-            "distinct_signatures": 68,
-            "occurrences_total": 375,
+            "distinct_signatures": 109,
+            "occurrences_total": 494,
             "roots_independent": 15,
-            "unmatched_signatures": 64
+            "unmatched_signatures": 103
           },
           "oids": [
             {
               "at": null,
               "jade_oid": null,
               "object": "OBJ.EVERRED_CENSUS",
-              "oid": "598302afb690cb97e44070eeb0e72e582729a8a9",
+              "oid": "902f1548efe8a1f9c015fad88f633c224efb0ae6",
               "path": "mission-control/qps-triage-ultra/p-process/site/everred/data/everred.json",
               "status": "BOUND",
               "symbol": null
@@ -3143,7 +3143,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.EVERRED_HARVEST",
-              "oid": "43fb4a07e804ddb56c9859a22d13c6e088a9162d",
+              "oid": "d785c4a4bd10a67615f066065a0657f66d8c47a6",
               "path": "mission-control/qps-triage-ultra/p-process/everred/harvest.py",
               "status": "BOUND",
               "symbol": "harvest"
@@ -3959,7 +3959,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.JADE_QA_WF",
-              "oid": "3143e6d1dd61e323d9b89d62c48d19be4664297c",
+              "oid": "a27995304c2002d0a2ffbc4179b43085b8b0b7da",
               "path": ".github/workflows/jade-temple-readonly-qa.yml",
               "status": "BOUND",
               "symbol": null
@@ -3984,17 +3984,16 @@
         },
         {
           "colour": "CODE_PURPLE",
-          "detail": "CP-2026-10-12-ABACUS-MERGE-STALL · lifted=False · lift 2/5 (unmet L2, L4, L5) · gate green 0/97 merges · repos: ABACUS",
+          "detail": "CP-2026-10-12-ABACUS-MERGE-STALL · lifted=False · lift 3/5 (unmet L2, L5) · gate green 1/610 merges · repos: ABACUS",
           "id": "P.CODE_PURPLE",
           "kind": "P",
           "label": "Code Purple (acute mode)",
           "layer": 9,
           "metrics": {
-            "lift_met": 2,
+            "lift_met": 3,
             "lift_total": 5,
             "lift_unmet": [
               "L2",
-              "L4",
               "L5"
             ],
             "lifted": false,
@@ -4034,7 +4033,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.CP_READBACK",
-              "oid": "e67a1609fb57dfa4af7adf639449270c43633349",
+              "oid": "4a0ecd516a182f8f1cd682c37982d4ff662253b6",
               "path": "mission-control/qps-triage-ultra/p-process/kit/readback.py",
               "status": "BOUND",
               "symbol": "gate_at_merge"
@@ -4052,7 +4051,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.CP_CENSUS",
-              "oid": "f1dc5a64310756e4a8130c7033f5da54904e7538",
+              "oid": "dd818e9715fb6e51ae496e40b72259a698a9e5ca",
               "path": "mission-control/qps-triage-ultra/p-process/site/code-purple/kit/census.json",
               "status": "BOUND",
               "symbol": null
@@ -4104,13 +4103,13 @@
         },
         {
           "colour": "P_PROCESS",
-          "detail": "64 signatures unmatched to a root",
+          "detail": "103 signatures unmatched to a root",
           "id": "P.classify",
           "kind": "P",
           "label": "P · classify",
           "layer": 3,
           "metrics": {
-            "unmatched": 64
+            "unmatched": 103
           },
           "oids": [
             {
@@ -4140,14 +4139,14 @@
         },
         {
           "colour": "EVERRED",
-          "detail": "control-plane red 6/6 · UNCONTROLLED 11 · UNDER_OBSERVATION 4",
+          "detail": "control-plane red 5/6 · UNCONTROLLED 10 · UNDER_OBSERVATION 5",
           "id": "P.control",
           "kind": "P",
           "label": "P · control",
           "layer": 8,
           "metrics": {
-            "UNCONTROLLED": 11,
-            "UNDER_OBSERVATION": 4
+            "UNCONTROLLED": 10,
+            "UNDER_OBSERVATION": 5
           },
           "oids": [
             {
@@ -4177,13 +4176,13 @@
         },
         {
           "colour": "P_PROCESS",
-          "detail": "375 occurrences → 68 signatures",
+          "detail": "494 occurrences → 109 signatures",
           "id": "P.harvest",
           "kind": "P",
           "label": "P · harvest",
           "layer": 2,
           "metrics": {
-            "occurrences": 375
+            "occurrences": 494
           },
           "oids": [
             {
@@ -4213,13 +4212,13 @@
         },
         {
           "colour": "P_PROCESS",
-          "detail": "closure 0.2 · recurrence 0.0 · replay UNKNOWN",
+          "detail": "closure 0.267 · recurrence 0.0 · replay UNKNOWN",
           "id": "P.recurse",
           "kind": "P",
           "label": "P · recurse",
           "layer": 9,
           "metrics": {
-            "root_closure_rate": 0.2
+            "root_closure_rate": 0.267
           },
           "oids": [
             {
@@ -4249,7 +4248,7 @@
         },
         {
           "colour": "P_PROCESS",
-          "detail": "COMMITTED 1 · NONE 4 · PRODUCER_VERIFIED 3 · PROPOSED 7",
+          "detail": "COMMITTED 1 · NONE 4 · PRODUCER_VERIFIED 4 · PROPOSED 6",
           "id": "P.repair_lane",
           "kind": "P",
           "label": "P · repair_lane",
@@ -4257,8 +4256,8 @@
           "metrics": {
             "COMMITTED": 1,
             "NONE": 4,
-            "PRODUCER_VERIFIED": 3,
-            "PROPOSED": 7
+            "PRODUCER_VERIFIED": 4,
+            "PROPOSED": 6
           },
           "oids": [
             {
@@ -4288,7 +4287,7 @@
         },
         {
           "colour": "P_PROCESS",
-          "detail": "15 independent roots · amplification 1.538",
+          "detail": "15 independent roots · amplification 1.077",
           "id": "P.root",
           "kind": "P",
           "label": "P · root",
@@ -4382,7 +4381,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.P_STATE",
-              "oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+              "oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
               "path": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
               "status": "BOUND",
               "symbol": null
@@ -4422,7 +4421,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.P_STATE",
-              "oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+              "oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
               "path": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
               "status": "BOUND",
               "symbol": null
@@ -4462,7 +4461,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.P_STATE",
-              "oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+              "oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
               "path": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
               "status": "BOUND",
               "symbol": null
@@ -4536,7 +4535,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.P_STATE",
-              "oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+              "oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
               "path": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
               "status": "BOUND",
               "symbol": null
@@ -4576,7 +4575,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.P_STATE",
-              "oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+              "oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
               "path": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
               "status": "BOUND",
               "symbol": null
@@ -4616,7 +4615,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.P_STATE",
-              "oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+              "oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
               "path": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
               "status": "BOUND",
               "symbol": null
@@ -4686,20 +4685,20 @@
               },
               {
                 "check": "open roots: everred == p_process",
-                "left": 12,
-                "right": 12,
+                "left": 11,
+                "right": 11,
                 "state": "AGREE"
               },
               {
                 "check": "snapshot: everred.generated_at == p_process.everred_at",
-                "left": "2026-10-18T13:29:56+00:00",
-                "right": "2026-10-18T13:29:56+00:00",
+                "left": "2026-10-30T13:14:25+00:00",
+                "right": "2026-10-30T13:14:25+00:00",
                 "state": "AGREE"
               },
               {
                 "check": "snapshot: code_purple.generated_at == p_process.census_at",
-                "left": "2026-10-18T13:27:47+00:00",
-                "right": "2026-10-18T13:27:47+00:00",
+                "left": "2026-10-30T12:47:06+00:00",
+                "right": "2026-10-30T12:47:06+00:00",
                 "state": "AGREE"
               },
               {
@@ -4731,7 +4730,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.CP_CENSUS",
-              "oid": "f1dc5a64310756e4a8130c7033f5da54904e7538",
+              "oid": "dd818e9715fb6e51ae496e40b72259a698a9e5ca",
               "path": "mission-control/qps-triage-ultra/p-process/site/code-purple/kit/census.json",
               "status": "BOUND",
               "symbol": null
@@ -5851,10 +5850,10 @@
         },
         "p_process": {
           "mode": "EVERRED",
-          "open_roots": 1,
-          "ruleset": "RED",
-          "ruleset_gaps": 6,
-          "worst": "P2"
+          "open_roots": 0,
+          "ruleset": "GREEN",
+          "ruleset_gaps": 0,
+          "worst": null
         },
         "pulse_mismatch": true
       },
@@ -6508,9 +6507,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:wf:pipeline-automation-hub:.github/workflows/mission-control-n3-evidence.yml",
+              "jade_oid": null,
               "object": null,
-              "oid": "1e46a1953e2e1ca436c3a888f1b514a3537d0538",
+              "oid": "d01410cae197955f6d3d3e6570e14ceba828e8f3",
               "path": ".github/workflows/mission-control-n3-evidence.yml",
               "status": "BOUND",
               "symbol": null
@@ -6728,9 +6727,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:wf:pipeline-automation-hub:.github/workflows/zero-test-gate-guard.yml",
+              "jade_oid": null,
               "object": null,
-              "oid": "a19c1295232f1aa3730a68f293a72178dc5ef870",
+              "oid": "0d904c0ee23a692ebc6c5e32ed6feb88a173da59",
               "path": ".github/workflows/zero-test-gate-guard.yml",
               "status": "BOUND",
               "symbol": null
@@ -8101,7 +8100,7 @@
         },
         {
           "colour": "ISSUE_BD",
-          "detail": "0 blockers · 33 issues · 5 PRs · 1 EVERRED roots",
+          "detail": "0 blockers · 33 issues · 5 PRs · 0 EVERRED roots",
           "id": "O.BD",
           "kind": "O",
           "label": "Blockers / issues / PRs",
@@ -8339,7 +8338,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.P_STATE",
-              "oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+              "oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
               "path": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
               "status": "BOUND",
               "symbol": null
@@ -9182,7 +9181,7 @@
           "mode": "EVERRED",
           "open_roots": 1,
           "ruleset": "RED",
-          "ruleset_gaps": 4,
+          "ruleset_gaps": 2,
           "worst": "P1"
         },
         "pulse_mismatch": false
@@ -11701,7 +11700,7 @@
           "mode": "EVERRED",
           "open_roots": 1,
           "ruleset": "RED",
-          "ruleset_gaps": 4,
+          "ruleset_gaps": 2,
           "worst": "P2"
         },
         "pulse_mismatch": false
@@ -13447,7 +13446,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.P_STATE",
-              "oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+              "oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
               "path": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
               "status": "BOUND",
               "symbol": null
@@ -15942,7 +15941,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.P_STATE",
-              "oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+              "oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
               "path": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
               "status": "BOUND",
               "symbol": null
@@ -18036,7 +18035,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.P_STATE",
-              "oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+              "oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
               "path": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
               "status": "BOUND",
               "symbol": null
@@ -18409,15 +18408,15 @@
             "lifecycle_min_level": 1,
             "mode": "EVERRED",
             "observation_in": 4,
-            "open_roots": 1,
+            "open_roots": 0,
             "out_degree": 4,
             "red_now": 6,
             "role": "ORCHESTRATOR",
-            "ruleset": "RED",
+            "ruleset": "GREEN",
             "weighted_in": 8,
             "weighted_out": 0,
             "workflows_traced": 78,
-            "worst_root": "P2"
+            "worst_root": null
           },
           "GBOGEB/yaml-grammar": {
             "authority_bound_in": 0,
@@ -18454,7 +18453,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.EVERRED_HARVEST",
-              "oid": "43fb4a07e804ddb56c9859a22d13c6e088a9162d",
+              "oid": "d785c4a4bd10a67615f066065a0657f66d8c47a6",
               "path": "mission-control/qps-triage-ultra/p-process/everred/harvest.py",
               "status": "BOUND",
               "symbol": "harvest"
@@ -18463,7 +18462,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.EVERRED_PROBE",
-              "oid": "43fb4a07e804ddb56c9859a22d13c6e088a9162d",
+              "oid": "d785c4a4bd10a67615f066065a0657f66d8c47a6",
               "path": "mission-control/qps-triage-ultra/p-process/everred/harvest.py",
               "status": "BOUND",
               "symbol": "probe_root"
@@ -18472,7 +18471,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.EVERRED_ROOTS",
-              "oid": "3c6ffd77f7256f1880f58f6a5aac915fdd039758",
+              "oid": "c4a962de5767ab036503f3da96a6c00b02234e8a",
               "path": "mission-control/qps-triage-ultra/p-process/everred/roots.yaml",
               "status": "BOUND",
               "symbol": null
@@ -18481,7 +18480,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.EVERRED_CENSUS",
-              "oid": "598302afb690cb97e44070eeb0e72e582729a8a9",
+              "oid": "902f1548efe8a1f9c015fad88f633c224efb0ae6",
               "path": "mission-control/qps-triage-ultra/p-process/site/everred/data/everred.json",
               "status": "BOUND",
               "symbol": null
@@ -18594,7 +18593,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.JADE_QA_WF",
-              "oid": "3143e6d1dd61e323d9b89d62c48d19be4664297c",
+              "oid": "a27995304c2002d0a2ffbc4179b43085b8b0b7da",
               "path": ".github/workflows/jade-temple-readonly-qa.yml",
               "status": "BOUND",
               "symbol": null
@@ -18637,7 +18636,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.P_STATE",
-              "oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+              "oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
               "path": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
               "status": "BOUND",
               "symbol": null
@@ -18646,7 +18645,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.CP_READBACK",
-              "oid": "e67a1609fb57dfa4af7adf639449270c43633349",
+              "oid": "4a0ecd516a182f8f1cd682c37982d4ff662253b6",
               "path": "mission-control/qps-triage-ultra/p-process/kit/readback.py",
               "status": "BOUND",
               "symbol": "gate_at_merge"
@@ -18712,9 +18711,9 @@
           "oids": [
             {
               "at": null,
-              "jade_oid": "jade:wf:pipeline-automation-hub:.github/workflows/p-process.yml",
+              "jade_oid": null,
               "object": "OBJ.P_PROCESS_WF",
-              "oid": "90d6f28fad369b20831965092e668159d2acff37",
+              "oid": "9cae7086cd433f4dcc65e97804225be8293e1f3b",
               "path": ".github/workflows/p-process.yml",
               "status": "BOUND",
               "symbol": null
@@ -18859,7 +18858,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.P_STATE",
-              "oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+              "oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
               "path": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
               "status": "BOUND",
               "symbol": null
@@ -18917,7 +18916,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.P_STATE",
-              "oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+              "oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
               "path": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
               "status": "BOUND",
               "symbol": null
@@ -18951,15 +18950,15 @@
             "lifecycle_min_level": 1,
             "mode": "EVERRED",
             "observation_in": 4,
-            "open_roots": 1,
+            "open_roots": 0,
             "out_degree": 4,
             "red_now": 6,
             "role": "ORCHESTRATOR",
-            "ruleset": "RED",
+            "ruleset": "GREEN",
             "weighted_in": 8,
             "weighted_out": 0,
             "workflows_traced": 78,
-            "worst_root": "P2"
+            "worst_root": null
           },
           "oids": [
             {
@@ -18975,7 +18974,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.P_STATE",
-              "oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+              "oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
               "path": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
               "status": "BOUND",
               "symbol": null
@@ -19033,7 +19032,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.P_STATE",
-              "oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+              "oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
               "path": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
               "status": "BOUND",
               "symbol": null
@@ -19143,7 +19142,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.P_STATE",
-              "oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+              "oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
               "path": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
               "status": "BOUND",
               "symbol": null
@@ -19201,7 +19200,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.P_STATE",
-              "oid": "9a6d0e42ce0be0acfe66872f59d7216ffedb967d",
+              "oid": "19c1be9b7fcd0863e47ae1d9c740951158e2d4d9",
               "path": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
               "status": "BOUND",
               "symbol": null
