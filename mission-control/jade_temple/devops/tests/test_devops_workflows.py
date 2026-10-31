@@ -338,7 +338,7 @@ class Cli(unittest.TestCase):
             leak = Path(td, "leak.yml")
             leak.write_text(PR_JOB.format(cond="", val="${{ secrets.READ_TOKEN }}"), encoding="utf-8", newline="\n")
             rc, out = self.run_main("secrets-lint", str(leak))
-            self.assertEqual((rc, out["verdict"], out["result"][0]["secret"]), (1, "PR_SECRET_EXPOSURE", "READ_TOKEN"))
+            self.assertEqual((rc, out["verdict"], out["result"][0]["store_ref"]), (1, "PR_SECRET_EXPOSURE", "READ_TOKEN"))
             good = Path(td, "good.yml")
             good.write_text(GOOD, encoding="utf-8", newline="\n")
             self.assertEqual(self.run_main("secrets-lint", str(good))[:1], (0,))
@@ -361,12 +361,12 @@ jobs:
 
 
 def exposure(cond="", val="${{ secrets.READ_TOKEN }}", text=None):
-    return W.pr_secret_exposure(text if text is not None else PR_JOB.format(cond=cond, val=val), path="w.yml")
+    return W.pr_exposure(text if text is not None else PR_JOB.format(cond=cond, val=val), path="w.yml")
 
 
 class PrSecretExposure(unittest.TestCase):
     def test_unguarded_step_secret_is_reachable_from_a_pr(self):
-        self.assertEqual(exposure(), [{"path": "w.yml", "job": "scan", "step": "read", "secret": "READ_TOKEN"}])
+        self.assertEqual(exposure(), [{"path": "w.yml", "job": "scan", "step": "read", "store_ref": "READ_TOKEN"}])
 
     def test_step_condition_or_expression_that_rejects_prs_guards_it(self):
         self.assertEqual(exposure(cond="if: github.event_name != 'pull_request'"), [])
@@ -385,7 +385,7 @@ class PrSecretExposure(unittest.TestCase):
     def test_secret_in_run_text_and_job_env_are_found(self):
         text = PR_JOB.format(cond="", val="plain").replace("run: python scan.py", "run: echo ${{ secrets.RUN_TOKEN }}")
         text = text.replace("    runs-on:", "    env: {J: '${{ secrets.JOB_TOKEN }}'}\n    runs-on:")
-        self.assertEqual(sorted(f["secret"] for f in exposure(text=text)), ["JOB_TOKEN", "RUN_TOKEN"])
+        self.assertEqual(sorted(f["store_ref"] for f in exposure(text=text)), ["JOB_TOKEN", "RUN_TOKEN"])
 
     def test_github_token_and_non_pr_workflows_are_not_exposures(self):
         self.assertEqual(exposure(val="${{ secrets.GITHUB_TOKEN }}"), [])
@@ -395,12 +395,12 @@ class PrSecretExposure(unittest.TestCase):
 
     def test_pull_request_target_and_inherited_secrets_are_flagged(self):
         text = "on: pull_request_target\njobs:\n  call:\n    uses: o/r/.github/workflows/x.yml@" + PIN + "\n    secrets: inherit\n"
-        self.assertEqual(exposure(text=text), [{"path": "w.yml", "job": "call", "step": None, "secret": "INHERIT"}])
+        self.assertEqual(exposure(text=text), [{"path": "w.yml", "job": "call", "step": None, "store_ref": "INHERIT"}])
 
     def test_shipped_hub_workflows_expose_no_secret_to_prs(self):
         files = sorted((REPO / ".github" / "workflows").glob("*.yml"))
         self.assertGreater(len(files), 100)
-        rc, report = W.secrets_lint([str(f) for f in files])
+        rc, report = W.exposure_lint([str(f) for f in files])
         self.assertEqual((rc, report), (0, []))
 
 
