@@ -1,5 +1,7 @@
 # Proposed draft PR — JADE_TEMPLE bootstrap (Mission Control authority)
 
+> **Doc** JT-08 · **Status** HISTORICAL · **Release** UNNAMED (owner sets SemVer) · **Admission** `MERGE_ADMISSION=HOLD` · **Updated** 2026-10-31
+
 **Repository:** `GBOGEB/pipeline-automation-hub`  
 **Suggested base:** `master` (re-read head before branching)  
 **Suggested branch:** `docs/jade-temple-top21-bootstrap-20261018`  
@@ -21,3 +23,7 @@ New, additive `mission-control/jade_temple/` project docs, snapshot links, tests
 ## Out-of-scope
 
 No repo root file relocation, branch ruleset edits, GitHub Pages deployment, actual next release, worker dispatch, security waiver or owner transfer. This PR is a bootstrap presentation and planning surface only.
+
+---
+
+**Nav:** [← 07 Handover recursion](07_HANDOVER_RECURSION.md) · [Index](00_START_HERE.md) · [09 Project upload guide →](09_PROJECT_UPLOAD_GUIDE.md)

@@ -1,5 +1,7 @@
 # JADE_TEMPLE — Instructions for every project chat
 
+> **Doc** JT-01 · **Status** ACTIVE · **Release** UNNAMED (owner sets SemVer) · **Admission** `MERGE_ADMISSION=HOLD` · **Updated** 2026-10-31
+
 The project name is `JADE_TEMPLE`; the readiness/organization programme is `JADE_CASTE`. The goal is owner-approved, source-proven next-point-release readiness for the canonical Mission Control `MISSION_SELECTED_TOP21` cohort. The five candidates in ABACUS EVERRED V3 are a **different ranking capacity**, not a substitute roster.
 
 ## Source & authority
@@ -31,3 +33,7 @@ Each session: `CP.RESUME` source verify → fresh Top21/PR/rulesets/pages/action
 Stop scaling after terminal proof and target exit, or when the next slice has no independently verifiable expected value, blocked P0 authority, or repeated comparable zero-yield improvements. Declare `STABLE` only after repeated independent matched observations with an explicit statistical/control basis; three green local tests do not establish Six Sigma capability. Re-trigger for changed heads, owners, failures, evidence denominators, security/ruleset changes or new user scope.
 
 Every response should include progress toward 21 repo readiness, current vs prior dates, remaining blockers, next owner action, latest GitHub receipt or explicit UNKNOWN, and a reproducible lossless handover. New project chats must be able to begin from GitHub links and the 1-page DROPIN without large ZIP re-uploads.
+
+---
+
+**Nav:** [← 00 Start here](00_START_HERE.md) · [Index](00_START_HERE.md) · [02 Charter →](02_CHARTER.md)

@@ -1,5 +1,7 @@
 # JADE_CASTE iterative waves — N0 to N+3 and controlled scale-up
 
+> **Doc** JT-06 · **Status** ACTIVE · **Release** UNNAMED (owner sets SemVer) · **Admission** `MERGE_ADMISSION=HOLD` · **Updated** 2026-10-31
+
 ## J0 (current): Project and source reconnaissance
 
 - Preserved SHA/CRC-verified CODE PURPLE N+2 predecessor archive, 32 member files.
@@ -67,3 +69,7 @@ Narrative hooks:
 - Scale 1→2→4 disjoint owner slices only after admissible exits; escalate critical blocker remediation, not speculative runner fan-out. No staged runner is counted until authenticated execution.
 - Required metrics per pulse: J-level verified N/D, root accepted/remaining (not 706 auto-defects), source SHA, first-red root IDs, hosted/asset SHA, terminal jobs, queue p50/p95 if timestamps, security, approvals, denominator eligibility, evidence yield and diff coverage.
 - **Stop/pause** when all targeted J4 requirements are fulfilled or current proofs are blocked, no owner allows the next action, new head invalidates comparable baseline, or three matched pulses show no useful progress. `PAUSE_NO_VALUE` does not prove Six Sigma stability.
+
+---
+
+**Nav:** [← 05 MACH tiers](05_MACH_TIERS.md) · [Index](00_START_HERE.md) · [07 Handover recursion →](07_HANDOVER_RECURSION.md)

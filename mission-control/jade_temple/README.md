@@ -1,45 +1,32 @@
-**Owner-facing H01-H12 DoV cockpit (SOURCE CANDIDATE; not hosted):** [single navigation desk](site/gate12_hub.html) · [content quality, code health, Pages/deployment and runtime actions](notes/GATE12_DOV_OPERATING_PLAYBOOK.md) · [source-bound KPI projection](site/gate12_data.json) · [252-slot Top21 x H01-H12 owner queue](site/gate12_bd_queue.csv). The observed focus-five 14/60 historical PASS remains separate from the 192 unassessed Top21 slots; live Pages parity, operational health and owner acceptance are unqualified.
-
-**CI/CD DAG + SIPOC update (23 October 2026):** [Interactive DAG / SIPOC](site/cicd_dag.html) · [model JSON](site/cicd_dag.json) · [function ⇄ SHA ⇄ OID crosswalk CSV](site/cicd_dag_crosswalk.csv) · [Mermaid total](diagrams/CICD_DAG_TOTAL_FUNCTION.mmd) ([SHA](diagrams/CICD_DAG_TOTAL_SHA.mmd), [OID](diagrams/CICD_DAG_TOTAL_OID.mmd)) · [Mermaid orchestrators](diagrams/CICD_DAG_ORCHESTRATORS_FUNCTION.mmd) · [policy](data/CICD_DAG_POLICY.json). One process model in seven views: the federation total, each focus repo, and the orchestrating/federating assets (hub, ABACUS, CODEX). Each view has three lenses. FUNCTION shows what the step means. SHA shows the exact commit or snapshot sha256 it was observed on. OID shows the git blob id of the Python, workflow or data object that produces it, plus its `def` symbol. Colour classes: CODE_PURPLE > ROOT_RED (SOURCE_RED / first red) > EVERRED > FAIL > UNKNOWN > PASS, plus P-PROCESS, ISSUE/BD and CROSSWALK. New metrics: ready frontier, blocked-by-ancestor, measurement debt, DMAIC phase yield and rolled throughput yield, critical-path PASS depth, EVERRED ratio, recovery and flake rate, median red age, Code Purple and control-plane state, BD burn-down, and OID/SHA coverage. **N+9 census join:** the DevOps lifecycle census from #784 (`data/DEVOPS_CENSUS_N9.json`, digest-pinned in the policy) adds an S0..S9 lifecycle chain to the total and per-repo views, linked by crosswalk edges to the H gates and the P-loop. It also adds a 21-repo maturity heatmap, and test-inventory and deploy-contract (DP1-DP10) nodes. External workflows, input paths and first-red workflows now carry real git blob ids, bound at each repo's census HEAD (shown as `@sha`). Where that HEAD differs from the gate SHA, it is flagged rather than hidden. **#781 reconciliation:** EVERRED, P-process and Code Purple metrics are computed by `mission-control/gogreen/scale_dock.py` (#781) dock functions, not a parallel copy. Its seven cross-source checks show as the *Source consistency* node; a `HOLD_SOURCE_DISAGREEMENT` turns that node FAIL. Validated JADE child, **not staged into Pages** (owner review first). Inputs from `qps-triage-ultra/p-process` are OID-bound, so a change there needs a `--write` here.
-
-```bash
-python mission-control/jade_temple/tools/cicd_dag.py --check
-python mission-control/jade_temple/site/build_cicd_dag.py --check
-```
-
-**Regenerating after OID / digest drift.** The generated DAG outputs (`site/cicd_dag.json`, `site/cicd_dag_crosswalk.csv`, `site/cicd_dag.html`, `diagrams/CICD_DAG_*.mmd`) pin the git blob OIDs of the p-process files (`mission-control/qps-triage-ultra/p-process/**`), `mission-control/gogreen/scale_dock.py`, the workflows and the census, plus sha256 digests of every input. A change to any of them makes the JADE QA check red. The failure names each drifted source file with its old and new OID or digest (`drifted sources: ...`) and prints the one command that fixes it. Run it from the repo root and commit the outputs:
-
-```bash
-python mission-control/jade_temple/tools/cicd_dag.py --write && python mission-control/jade_temple/site/build_cicd_dag.py
-```
-
-A census refresh changes `data/DEVOPS_CENSUS_N9.json` and its digest. Re-pin `devops_census.digest_sha256` in `data/CICD_DAG_POLICY.json` first; the load error names the file and the command. When two open PRs both touch pinned inputs, whichever merges second must re-run the command on top of the first.
-
-**One pulse (census vs gate snapshot).** The census and the latest gate snapshot (`data/ROLLING5_PULSES.json`) are two reads of the same focus repos. `pulse_alignment` in `site/cicd_dag.json` gives each focus repo `pulse_mismatch` (census SHA ≠ gate SHA, or not in the census) and a `mismatch_count`. Each REPO scope carries the same `pulse_mismatch`, and the page shows a *Pulse alignment* table. Pass `--strict-pulse` to either builder to fail on any mismatch. CI leaves it off for now, because the current census was read at newer commits than gate pulse P0001 for 4 of 5 focus repos. Turn it on in `.github/workflows/jade-temple-readonly-qa.yml` once both snapshots are re-taken in one pulse.
-
-**Option: generate in CI (not enabled).** CI could regenerate the outputs instead of only checking them. A workflow step would run the regen command on the PR head and fail with the resulting `git diff` (or upload it as an artifact), so contributors never hand-regenerate. Alternatively, a bot commit could push the regenerated files to the PR branch. Neither is wired up: the current contract keeps generated outputs committed, reviewed and byte-checked (`--check`). A bot commit would also need `contents: write` on a workflow that is read-only today.
-
-**N+8 update (20 October 2026):** [Red-trace federation ledger](site/redtrace.html) · [16:9 slides](site/redtrace-slides.html) · [interactive PDF](site/redtrace-slides.pdf) · [federation snapshot](data/RED_TRACE_FEDERATION_N8.json) · [gap analysis](data/GAP_ANALYSIS_N8.json). EVERRED / GREEN→RED / RED→GREEN for the 5 core repos (hub, ABACUS, CODEX, cryoplant-project, gg_MATH), break windows to the first red run, stale/pinned flags, a gap analysis of what our own tooling could not answer, and explicit `AGENT` / `OWNER` / `CI` actor badges. Validated JADE child, **not yet staged into Pages** (gap G13: the hosted-parity contract pins the public asset set; owner review first).
-
-```bash
-python mission-control/jade_temple/tools/build_redtrace_data.py --reports <dir-with-repo/red_trace.json>
-python mission-control/jade_temple/site/build_redtrace.py --check
-python mission-control/jade_temple/tools/render_redtrace_pdf.py
-python mission-control/jade_temple/tools/run_redtrace_browser_qa.py
-```
-
-**N+3 update:** [8-point MIP audit](site/eightpoint.html) · [full source decisions](notes/EIGHT_POINT_MIP_DOV.md) · [current frozen 21-repo technical queue](notes/TOP21_TECHNICAL_QUEUE_NPLUS3.md) · [8-point deterministic manifest](site/eightpoint-manifest.json) · [CP.RESUME](DROPIN_NEXT_CHAT.md). It is a separate candidate from newer Mission Control main after JADE N+2 #733 merged; NOT an accepted point release or hard gate.
-
 # JADE_TEMPLE / JADE_CASTE — Top21 GoGREEN launch-readiness pilot
 
-**N+2 update (19 October 2026):** [Measured burn-down and stop rules](site/burndown.html) · [Current 21-source readback](data/READBACK_NPLUS2.json) · [First-red / GoGREEN evidence events](data/EVIDENCE_EVENTS_NPLUS2.json) · [Source-bound stop model](data/STOP_MODEL_NPLUS2.json). The N+1 PR #732 merged, and native JADE plus current-main Method Atlas succeeded; independent JADE hosted SHA and effective human approval remain separate HOLD gates.
+> **Doc** JT-R · **Status** ACTIVE · **Release** UNNAMED (owner sets SemVer) · **Admission** `MERGE_ADMISSION=HOLD` · **Updated** 2026-10-31
 
+JADE_TEMPLE is the read-only presentation and handover project for owner-approved next point-release readiness of the Mission Control `MISSION_SELECTED_TOP21` cohort. JADE_CASTE is its readiness ladder, J0 to J5 ([method](03_JADE_CASTE_METHOD.md)). JADE is **not** a second cohort source, CI scheduler, issue/BD root ledger, QPS engineering SSOT, or Pages publisher.
 
-**N+1 source-owned Mission Control pilot.** Bootstrap PR [#729](https://github.com/GBOGEB/pipeline-automation-hub/pull/729) is merged. Later implementation must remain separately qualified on its exact PR head. JADE is **not** a second cohort source, CI scheduler, issue/BD root ledger, QPS engineering SSOT, or Pages publisher.
+## Release status
 
-## Start in one click
+| Item | State | Where |
+|---|---|---|
+| Merge admission | `MERGE_ADMISSION=HOLD` | [05 MACH tiers](05_MACH_TIERS.md), P0 factual guard |
+| Point release | Unnamed; qualified denominator UNKNOWN | Owner names the SemVer |
+| Hosted Pages | N+1 and N+2 children are staged at `/jade/` through the existing publisher; hosted HTTPS SHA parity UNKNOWN. H01–H12, CI/CD DAG and red-trace children are **not staged** | [Pages contract](notes/NAVIGATION_PAGES_STYLE_CONTRACT.md) |
+| Latest checkpoint | FOCUS5 pulse P0003, 2026-10-31 | [DROPIN_NEXT_CHAT.md](DROPIN_NEXT_CHAT.md) |
+| History | J0 bootstrap to N+11, newest first | [CHANGELOG.md](CHANGELOG.md) |
 
-**[GoGREEN interactive 21-repo dashboard](site/green.html)** · **[Top21 overview / N0](site/index.html)** · **[21 owner TODOs and source identity](notes/REPO_TECHNICAL_NEEDS_NPLUS1.md)** · **[MIP/DMAIC control analysis](notes/MIP_ANALYSIS_NPLUS1.md)** · **[Navigation, styling and Pages implementation contract](notes/NAVIGATION_PAGES_STYLE_CONTRACT.md)** · **[Machine CSV queue](site/top21_bd_queue.csv)** · **[Recursive next-chat drop-in](DROPIN_NEXT_CHAT.md)**
+## Start here
+
+| I want to… | Open |
+|---|---|
+| Review all H01–H12 gates as owner | [Gate12 DoV cockpit](site/gate12_hub.html) · [playbook](notes/GATE12_DOV_OPERATING_PLAYBOOK.md) · [KPI projection](site/gate12_data.json) · [252-slot owner queue](site/gate12_bd_queue.csv) |
+| See the CI/CD process model | [Interactive DAG / SIPOC](site/cicd_dag.html) · [model JSON](site/cicd_dag.json) · [crosswalk CSV](site/cicd_dag_crosswalk.csv) · [policy](data/CICD_DAG_POLICY.json) |
+| Trace reds across the federation | [Red-trace ledger](site/redtrace.html) · [16:9 slides](site/redtrace-slides.html) · [interactive PDF](site/redtrace-slides.pdf) |
+| Check eight-point MIP acceptance | [8-point MIP audit](site/eightpoint.html) · [decisions](notes/EIGHT_POINT_MIP_DOV.md) · [Top21 owner queue](notes/TOP21_TECHNICAL_QUEUE_NPLUS3.md) |
+| Follow burn-down and stop rules | [Burn-down](site/burndown.html) · [stop model](data/STOP_MODEL_NPLUS2.json) |
+| Browse the 21-repo GoGREEN view | **[GoGREEN interactive 21-repo dashboard](site/green.html)** · **[Top21 overview / N0](site/index.html)** · **[21 owner TODOs and source identity](notes/REPO_TECHNICAL_NEEDS_NPLUS1.md)** · **[MIP/DMAIC control analysis](notes/MIP_ANALYSIS_NPLUS1.md)** · **[Machine CSV queue](site/top21_bd_queue.csv)** |
+| Read the DevOps lifecycle census | [Architecture / SIPOC](devops/DEPLOY_PRODUCTION_ARCHITECTURE_N9.md) · [N11 census reading](devops/DEVOPS_CENSUS_N11_READING.md) |
+| Apply the shared look and Pages rules | **[Navigation, styling and Pages implementation contract](notes/NAVIGATION_PAGES_STYLE_CONTRACT.md)** |
+| Resume in a new chat | [00 Start here](00_START_HERE.md) · **[Recursive next-chat drop-in](DROPIN_NEXT_CHAT.md)** |
 
 ## What is authoritative
 
@@ -52,38 +39,61 @@ python mission-control/jade_temple/tools/run_redtrace_browser_qa.py
 | CODEX federation and ABACUS evidence/admission | Their owner repositories | Typed reference-only |
 | Pages release | Existing `federation-atlas/pages_portal.py` and method-atlas workflow | Static hash-checked child `/jade/`, no second publisher |
 
-## How to rebuild and test without network
+## Build, check and regenerate (offline)
+
+All commands run from the repo root without network.
 
 ```bash
+# N+1 dashboards and the full JADE test suite
 python mission-control/jade_temple/site/build_dashboard.py --check
 python mission-control/jade_temple/site/build_green.py --check
 python -m unittest discover -s mission-control/jade_temple/tests -p 'test_*.py' -v
+# N+2 burn-down, stop rules and browser QA
+python mission-control/jade_temple/site/build_burndown.py --check
+python mission-control/jade_temple/tools/stop_rules.py
+python mission-control/jade_temple/tools/run_nplus2_browser_qa.py
+# CI/CD DAG + SIPOC
+python mission-control/jade_temple/tools/cicd_dag.py --check
+python mission-control/jade_temple/site/build_cicd_dag.py --check
+# N+8 red-trace
+python mission-control/jade_temple/tools/build_redtrace_data.py --reports <dir-with-repo/red_trace.json>
+python mission-control/jade_temple/site/build_redtrace.py --check
+python mission-control/jade_temple/tools/render_redtrace_pdf.py
+python mission-control/jade_temple/tools/run_redtrace_browser_qa.py
+# Root docs: masthead, nav footer and relative links of README, 00-09 and CHANGELOG
+python mission-control/jade_temple/tools/root_docs.py --check
 ```
 
 Deterministic sources are in `data/`. `site/green_template.html`, `site/jade.css` and `site/jade.js` are the editable presentation inputs. `site/green.html`, `site/jade_data.js`, `site/snapshot.json`, `site/top21_bd_queue.csv` and `site/site-manifest.json` are deterministic read-only outputs; do not hand edit the generated assets. `portal_bridge.py` validates and stages them as one scoped subtree in the existing publisher.
 
-## Current acceptance
-
-Local N+1 source/negative tests **44/44 PASS**, browser three responsive viewports **3/3 PASS** using exact HTML/CSS/JS assets inlined in an admin-blocked browser environment; native exact-head and hosted Pages proof **pending**. The existing N11 source provides 26,836 tracked file atoms, 880 root files and 706 filename/path review candidates. `MERGE_ADMISSION=HOLD` and point-release qualified denominator UNKNOWN.
-
-## N+2 build and native verification
-
-```bash
-python mission-control/jade_temple/site/build_burndown.py --check
-python mission-control/jade_temple/tools/stop_rules.py
-python -m unittest discover -s mission-control/jade_temple/tests -p "test_*.py" -v
-python mission-control/jade_temple/tools/run_nplus2_browser_qa.py
-```
-
 An existing-portal-only child at `/jade/burndown.html`; hosted verification is performed independently **after** `deploy-pages` and hashes actual served files against the exact source-bound publisher artifact. No alternate workflow publishes Pages.
 
-## N+6 read-only point-release dependency and mop-up candidate
+### Regenerating after OID / digest drift
 
-This **staged branch**, not the accepted JADE publisher or a governed merge, adds a source-bound Top21 dependency/neuron/GOLDEN thread ledger. It does not create a competing scheduler, Pages deployment, automatic release or authority transfer.
+The generated DAG outputs (`site/cicd_dag.json`, `site/cicd_dag_crosswalk.csv`, `site/cicd_dag.html`, `diagrams/CICD_DAG_*.mmd`) pin the git blob OIDs of the p-process files (`mission-control/qps-triage-ultra/p-process/**`), `mission-control/gogreen/scale_dock.py`, the workflows and the census, plus sha256 digests of every input. A change to any of them makes the JADE QA check red. The failure names each drifted source file with its old and new OID or digest (`drifted sources: ...`) and prints the one command that fixes it. Run it from the repo root and commit the outputs:
 
-- [N+6 owner-based mop-up / parked release checkpoint](notes/NPLUS6_POINT_RELEASE_MOPUP.md)
-- [N+6 neural/parallel-lane Mermaid SPINE](diagrams/JADE_TOP21_NEURAL_NPLUS6.mmd)
-- [N+6 machine-readable typed nodes/edges/Golden thread](data/POINT_RELEASE_NPLUS6_NEURAL_READONLY.json)
-- Existing `sprint/Start-JadeSprint.ps1` and `sprint/cli.py` remain the sole bounded local sprint entrypoints.
+```bash
+python mission-control/jade_temple/tools/cicd_dag.py --write && python mission-control/jade_temple/site/build_cicd_dag.py
+```
 
-Readback: 21/21 non-atomic HEAD identities, 146 ordinary open issues, 18 ordinary open PRs; canonical root counts and J5 owner-accepted releases remain **UNKNOWN**. A separately generated interactive HTML atlas passed local responsive QA, but **is not currently part of the published source-controlled Pages child**. Port its visualization through the existing single-publisher generator only after owner review, exact-source parity and noncompensating J3/J4 acceptance. `MERGE_ADMISSION=HOLD`.
+A census refresh changes `data/DEVOPS_CENSUS_N9.json` and its digest. Re-pin `devops_census.digest_sha256` in `data/CICD_DAG_POLICY.json` first; the load error names the file and the command. When two open PRs both touch pinned inputs, whichever merges second must re-run the command on top of the first.
+
+### One pulse (census vs gate snapshot)
+
+The census and the latest gate snapshot (`data/ROLLING5_PULSES.json`) are two reads of the same focus repos. `pulse_alignment` in `site/cicd_dag.json` gives each focus repo `pulse_mismatch` (census SHA ≠ gate SHA, or not in the census) and a `mismatch_count`. Each REPO scope carries the same `pulse_mismatch`, and the page shows a *Pulse alignment* table. Pass `--strict-pulse` to either builder to fail on any mismatch. CI leaves it off for now, because the current census was read at newer commits than gate pulse P0001 for 4 of 5 focus repos. Turn it on in `.github/workflows/jade-temple-readonly-qa.yml` once both snapshots are re-taken in one pulse.
+
+### Option: generate in CI (not enabled)
+
+CI could regenerate the outputs instead of only checking them. A workflow step would run the regen command on the PR head and fail with the resulting `git diff` (or upload it as an artifact), so contributors never hand-regenerate. Alternatively, a bot commit could push the regenerated files to the PR branch. Neither is wired up: the current contract keeps generated outputs committed, reviewed and byte-checked (`--check`). A bot commit would also need `contents: write` on a workflow that is read-only today.
+
+## Recent changes
+
+Newest first; the full history, with the original dated banners, is in [CHANGELOG.md](CHANGELOG.md).
+
+- **2026-10-31** — FOCUS5 pulse P0003 checkpoint; W1 root-docs launch look (this masthead, nav footer and `root_docs.py`).
+- **2026-10-26** — N+11 re-census and private boundary.
+- **2026-10-23** — H01–H12 DoV owner cockpit, CI/CD DAG + SIPOC, N+9 DevOps lifecycle and deploy contract.
+
+---
+
+**Nav:** [Index](00_START_HERE.md) · [00 Start here →](00_START_HERE.md)

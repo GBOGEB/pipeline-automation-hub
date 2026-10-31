@@ -1,5 +1,7 @@
 # JADE_CASTE readiness ladder v0 — additive, non-authoritative
 
+> **Doc** JT-03 · **Status** PROPOSAL · **Release** UNNAMED (owner sets SemVer) · **Admission** `MERGE_ADMISSION=HOLD` · **Updated** 2026-10-31
+
 | Level | Meaning | Minimum source-bound exit |
 |---|---|---|
 | J0 — INVENTORIED | Repo in canonical Top21 roster | Real owner/name, default branch, dated exact commit identity and non-atomic readback disclosed |
@@ -28,3 +30,7 @@
 3. **No-value stop:** three comparable eligible pulses show N+1=N for readiness *and* blocker closure *and* proof acquisition, or existing blockers cannot be changed by current authority. Label `PAUSE_NO_NEW_EVIDENCE`, not automatically statistically STABLE.
 4. **Stable release eligibility:** only after repeated qualified independent observations and owner-adopted control thresholds. Never assert Six Sigma from a handful of tests.
 5. **Retrigger:** new exact SHA, changed ruleset, fresh CI first-red, new source owner, release candidate/tag, verified hosted page, issue disposition or explicit instruction.
+
+---
+
+**Nav:** [← 02 Charter](02_CHARTER.md) · [Index](00_START_HERE.md) · [04 Root SPINE contract →](04_REPO_ROOT_SPINE_CONTRACT.md)
