@@ -1,0 +1,40 @@
+name: SIPOC N+2 scale qualification (advisory)
+on:
+  pull_request:
+    paths:
+      - mission-control/gogreen/sipoc_scale_gate.py
+      - mission-control/gogreen/tests/test_sipoc_scale_gate.py
+      - mission-control/gogreen/SIPOC_SCALE_N2.md
+      - .github/workflows/gogreen-sipoc-scale-gate.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: sipoc-scale-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  scale-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact triggering commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Confirm exact source identity
+        shell: bash
+        run: |
+          actual=$(git rev-parse HEAD)
+          expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          test "$actual" = "$expected"
+          echo "SIPOC_TESTED_SHA=$actual" >> "$GITHUB_ENV"
+      - name: Setup Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: '3.12'
+      - name: Fail-closed synthetic attack-vector regression
+        run: |
+          python -m py_compile mission-control/gogreen/sipoc_scale_gate.py mission-control/gogreen/tests/test_sipoc_scale_gate.py
+          python -m unittest discover -s mission-control/gogreen/tests -p test_sipoc_scale_gate.py -v
+# Synthetic tests validate contracts, not actual worker dispatch or acceptance.

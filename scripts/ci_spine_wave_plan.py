@@ -11,6 +11,7 @@ import argparse
 import json
 import re
 import sys
+from collections import deque
 from pathlib import PurePosixPath, Path
 
 POLICY_SCHEMA = "jade.devops.ci-spine.waves.v1"
@@ -18,19 +19,42 @@ INDEX_SCHEMA = "jade.devops.ci-spine.index.v1"
 OUTPUT_SCHEMA = "jade.devops.ci-spine.wave-plan.v1"
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
 TASK_ID = re.compile(r"^[A-Z][A-Z0-9-]{2,63}$")
+SHORT_NAME_MARKER = re.compile(r"~[0-9]")
 STAGES = ("DISCOVER", "PREPARE", "BUILD", "VERIFY", "INTEGRATE", "CONTROL")
 
 
 def valid_path(name):
     if not isinstance(name, str) or not name or "\\" in name or "\x00" in name:
         return False
-    p = PurePosixPath(name)
-    return not p.is_absolute() and str(p) == name and all(x not in (".", "..") for x in p.parts)
+    # Ownership supports exact paths or a terminal "/**" subtree only.
+    # All other glob syntax would evade the literal overlap detector.
+    raw = name[:-3] if name.endswith("/**") else name
+    if not raw or any(char in raw for char in "*?[]{}!"):
+        return False
+    p = PurePosixPath(raw)
+    if p.is_absolute() or str(p) != raw:
+        return False
+    # Win32 aliases: trailing spaces/dots are discarded, device names are
+    # reserved even when followed by an extension, and ':' is an ADS separator.
+    # Refuse these claims rather than silently allocating overlapping workers.
+    # 8.3 short names (PROGRA~1, LONGFI~12.TXT) alias a long-named sibling on
+    # NTFS and cannot be expanded without the target filesystem, so any
+    # component carrying the "~<digit>" short-name marker is refused.
+    for component in p.parts:
+        if (component in (".", "..") or (component.rstrip(" .") != component or component.lstrip(" ") != component)
+                or SHORT_NAME_MARKER.search(component)
+                or any(ord(c) < 32 or c in '<>:"|\\' for c in component)
+                or re.fullmatch(r"(?:con|conin\$|conout\$|prn|aux|nul|com[1-9\u00b9\u00b2\u00b3]|lpt[1-9\u00b9\u00b2\u00b3])(?:\..*)?",
+                                component, re.IGNORECASE)):
+            return False
+    return True
 
 
 def collision(left, right):
     """Two workers may not own a file/ancestor subtree simultaneously."""
-    x, y = left.rstrip("/"), right.rstrip("/")
+    # Conservative cross-platform overlap: Windows worktrees are case-insensitive.
+    # Case-folding also makes Linux planning safe for Windows downstream workers.
+    x, y = left.rstrip("/").casefold(), right.rstrip("/").casefold()
     if x.endswith("/**"):
         x = x[:-3]
     if y.endswith("/**"):
@@ -39,34 +63,45 @@ def collision(left, right):
 
 
 def cycles(nodes):
-    graph = {x["id"]: x["depends"] for x in nodes}
-    visiting, done = set(), set()
-
-    def dfs(i):
-        if i in visiting:
-            return True
-        if i in done:
-            return False
-        visiting.add(i)
-        if any(dfs(dep) for dep in graph[i]):
-            return True
-        visiting.remove(i)
-        done.add(i)
-        return False
-
-    return any(dfs(i) for i in graph if i not in done)
+    """Iterative Kahn traversal: deterministic O(nodes + edges), no recursion limit."""
+    indegree = {task["id"]: len(task["depends"]) for task in nodes}
+    downstream = {task["id"]: [] for task in nodes}
+    for task in nodes:
+        for prerequisite in task["depends"]:
+            # build() verifies references before calling this function.
+            downstream[prerequisite].append(task["id"])
+    frontier = deque(sorted(tid for tid, degree in indegree.items() if degree == 0))
+    completed = 0
+    while frontier:
+        tid = frontier.popleft()
+        completed += 1
+        for child in sorted(downstream[tid]):
+            indegree[child] -= 1
+            if indegree[child] == 0:
+                frontier.append(child)
+    return completed != len(indegree)
 
 
 def build(index, policy, receipts=None):
     errors = []
-    receipts = receipts or {}
+    if receipts is None:
+        receipts = {}
     if not isinstance(index, dict) or index.get("schema") != INDEX_SCHEMA:
         errors.append("invalid source index schema")
         index = {}
     if not isinstance(policy, dict) or policy.get("schema") != POLICY_SCHEMA:
         errors.append("invalid wave policy schema")
         policy = {}
-    source = index.get("source") or {}
+    source = index.get("source")
+    if not isinstance(source, dict):
+        errors.append("malformed source object")
+        source = {}
+    assurance = index.get("assurance")
+    if not isinstance(assurance, dict):
+        errors.append("malformed assurance object")
+        assurance = {}
+    if not isinstance(index.get("errors"), list):
+        errors.append("malformed index errors list")
     sha = source.get("checkout_sha")
     if not isinstance(sha, str) or not SHA40.fullmatch(sha):
         errors.append("missing exact source SHA")
@@ -76,7 +111,7 @@ def build(index, policy, receipts=None):
         errors.append("index expected-head mismatch")
     if index.get("errors"):
         errors.append("source index reports errors")
-    if index.get("assurance", {}).get("merge_admission") != "HOLD":
+    if assurance.get("merge_admission") != "HOLD":
         errors.append("source index incorrectly claims merge admission")
     max_workers = policy.get("max_workers")
     if not isinstance(max_workers, int) or isinstance(max_workers, bool) or not (1 <= max_workers <= 12):
@@ -122,7 +157,9 @@ def build(index, policy, receipts=None):
     if not isinstance(receipts, dict):
         errors.append("receipt input must be a mapping")
         receipts = {}
-    unknown = sorted(set(receipts) - ids)
+    if any(not isinstance(k, str) for k in receipts):
+        errors.append("receipt keys must be strings")
+    unknown = sorted(str(k) for k in receipts if k not in ids)
     if unknown:
         errors.append("unknown receipt tasks: " + ", ".join(unknown))
     accepted = set()

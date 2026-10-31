@@ -137,7 +137,7 @@ def run(html_path,manifest_path,out):
                 record["negative"].append({"seed":signal,"result":"EXPECTED_FAIL"});page.close()
         finally:browser.close()
     check(len(record["viewports"])==3 and len(record["negative"])==2,"MC_QA_INCOMPLETE")
-    (out/"visual_qa.json").write_text(json.dumps(record,indent=2,sort_keys=True)+"\n",encoding="utf-8")
+    (out/"visual_qa.json").write_text(json.dumps(record,indent=2,sort_keys=True)+"\n",encoding="utf-8",newline="\n")
     print("MISSIONCONTROL_LAUNCHPAD_BROWSER=PASS",len(record["viewports"]),"viewports, 2 seeded negatives, admission HOLD")
     return record
 if __name__=="__main__":
