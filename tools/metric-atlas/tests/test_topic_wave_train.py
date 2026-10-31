@@ -116,6 +116,16 @@ class TrainTests(unittest.TestCase):
         self.bad(lambda x:x.update(partitions=[]),"UNBOUNDED_PARTITION_COUNT")
         self.bad(lambda x:x.update(partitions=x["partitions"]*3),"UNBOUNDED_PARTITION_COUNT")
 
+    def test_aliases_restart_their_own_sequence_chain(self):
+        six=sample()
+        row=six["waves"][0]["packets"][0];p=row["packet"]
+        keep={k:p[k] for k in ("topic","producer_repo","producer_head","scope_sha256","source_sha256",
+              "receipt_sha256","recipients","observed_at","expires_at","evidence_class")}
+        row["packet"]=m.topic_exchange.create_packet(sequence=3,prior_packet_sha256="b"*64,**keep)
+        twin=m.synthetic_twin(six)["partitions"][1]
+        packets=[r["packet"] for w in twin["waves"] for r in w["packets"]]
+        self.assertTrue(all(x["sequence"]==1 and x["prior_packet_sha256"] is None for x in packets))
+
     def test_no_cross_partition_topic_alias_collisions(self):
         def mutation(d):
             d["partitions"][1]["waves"][0]["packets"][0]=copy.deepcopy(

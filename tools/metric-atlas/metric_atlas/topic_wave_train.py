@@ -37,9 +37,10 @@ def synthetic_twin(six):
                 topic="w380." + p["topic"], producer_repo=p["producer_repo"],
                 producer_head=p["producer_head"], scope_sha256=p["scope_sha256"],
                 source_sha256=p["source_sha256"], receipt_sha256=p["receipt_sha256"],
-                recipients=p["recipients"], sequence=p["sequence"],
+                # An alias is a new topic: its chain starts at 1, never mid-chain of the original.
+                recipients=p["recipients"], sequence=1,
                 observed_at=p["observed_at"], expires_at=p["expires_at"],
-                prior_packet_sha256=p["prior_packet_sha256"],
+                prior_packet_sha256=None,
                 evidence_class=p["evidence_class"])
     # The old PR and issue IDs are not new independent outcomes.
     second["bd_targets"] = []
