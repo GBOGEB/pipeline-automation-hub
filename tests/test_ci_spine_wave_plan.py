@@ -1,6 +1,9 @@
 """Offline wave scheduler safety, precedence and disjointness tests."""
+import contextlib
 import importlib.util
+import io
 import json
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -84,6 +87,135 @@ class WaveContract(unittest.TestCase):
             self.assertFalse(M.valid_path(bad))
         self.assertTrue(M.collision("src/**", "src/a.py"))
         self.assertFalse(M.collision("src/a.py", "src2/a.py"))
+
+    def test_malformed_nested_index_fails_closed_with_structured_receipt(self):
+        for field, value in (("source", ["bad"]), ("source", "not-a-mapping"),
+                             ("assurance", ["bad"]), ("assurance", "bad"),
+                             ("errors", None)):
+            with self.subTest(field=field, value=value):
+                i, p = sample()
+                i[field] = value
+                result = M.build(i, p)
+                self.assertEqual(result["verdict"], "WAVE_POLICY_FIRST_RED")
+                self.assertEqual(result["candidate_workers"], [])
+                self.assertTrue(result["errors"])
+                self.assertEqual(result["authority"]["merge"], "HOLD")
+
+    def test_unsupported_glob_cannot_hide_two_worker_ownership(self):
+        for bad in ("src/*.py", "src/a?.py", "src/[ab].py",
+                    "src/{a,b}.py", "src/**/a.py", "src/**/nested"):
+            with self.subTest(bad=bad):
+                self.assertFalse(M.valid_path(bad))
+                i, p = sample()
+                p["tasks"][0]["owns"] = [bad]
+                result = M.build(i, p)
+                self.assertEqual(result["candidate_workers"], [])
+                self.assertIn("invalid ownership paths", " ".join(result["errors"]))
+        self.assertTrue(M.valid_path("src/**"))
+        i, p = sample()
+        p["tasks"][0]["owns"] = ["src/**"]
+        self.assertEqual({x["id"]: x["disposition"] for x in M.build(i, p)["rows"]}["CI-N-C"],
+                         "DEFER_OWNERSHIP_COLLISION")
+
+    def test_cli_malformed_nested_source_emits_first_red_receipt(self):
+        index, policy = sample()
+        index["source"] = ["invalid"]
+        with tempfile.TemporaryDirectory() as td:
+            src, pol, out = (Path(td) / name for name in ("index.json", "policy.json", "receipt.json"))
+            src.write_text(json.dumps(index), encoding="utf-8")
+            pol.write_text(json.dumps(policy), encoding="utf-8")
+            with contextlib.redirect_stdout(io.StringIO()):
+                rc = M.main(["--index", str(src), "--policy", str(pol),
+                             "--out", str(out), "--check"])
+            self.assertEqual(rc, 1)
+            result = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual(result["verdict"], "WAVE_POLICY_FIRST_RED")
+            self.assertEqual(result["candidate_workers"], [])
+            self.assertIn("malformed source object", result["errors"])
+
+    def test_receipt_mapping_with_nonstring_keys_fails_closed(self):
+        i, p = sample()
+        out = M.build(i, p, {42: receipt()})
+        self.assertEqual(out["candidate_workers"], [])
+        self.assertIn("receipt keys must be strings", out["errors"])
+
+    def test_windows_casefold_aliases_cannot_run_concurrently(self):
+        self.assertTrue(M.collision("src/A.py", "src/a.py"))
+        self.assertTrue(M.collision("SRC/**", "src/subdir/a.py"))
+        self.assertFalse(M.collision("src/a.py", "src-extra/a.py"))
+        i, p = sample()
+        p["tasks"][2]["owns"] = ["SRC/A.py"]
+        p["tasks"][0]["owns"] = ["src/a.py"]
+        result = M.build(i, p)
+        self.assertEqual({t["id"]: t["disposition"] for t in result["rows"]}["CI-N-C"],
+                         "DEFER_OWNERSHIP_COLLISION")
+        self.assertEqual(result["candidate_workers"], ["CI-N-A", "CI-N-B"])
+
+    def test_thousand_task_chain_and_cycle_have_structured_outcomes(self):
+        i, p = sample()
+        p["tasks"] = [job("CI-L-" + str(n).zfill(4), "WORKER-A",
+                          ["src/" + str(n).zfill(4) + ".py"],
+                          ["CI-L-" + str(n - 1).zfill(4)] if n else [])
+                      for n in range(1200)]
+        good = M.build(i, p)
+        self.assertEqual(good["errors"], [])
+        self.assertEqual(good["candidate_workers"], ["CI-L-0000"])
+        p["tasks"][0]["depends"] = ["CI-L-1199"]
+        bad = M.build(i, p)
+        self.assertEqual(bad["candidate_workers"], [])
+        self.assertIn("cycle", " ".join(bad["errors"]))
+        with tempfile.TemporaryDirectory() as td:
+            src, pol, out = (Path(td) / name for name in ("index.json", "policy.json", "result.json"))
+            src.write_text(json.dumps(i), encoding="utf-8")
+            pol.write_text(json.dumps(p), encoding="utf-8")
+            with contextlib.redirect_stdout(io.StringIO()):
+                rc = M.main(["--index", str(src), "--policy", str(pol),
+                             "--out", str(out), "--check"])
+            self.assertEqual(rc, 1)
+            self.assertEqual(json.loads(out.read_text())["verdict"], "WAVE_POLICY_FIRST_RED")
+
+    def test_win32_alias_component_rejected_before_worker_allocation(self):
+        # Windows strips trailing dot/space, reserves devices, and uses colon for ADS.
+        bad_paths = (
+            "src/a.py.", "src/a.py ", "src/a.py. ",
+            "src/ a.py", "src/  a.py", " src/a.py", "src/ folder/a.py",
+            "src/subfolder./a.py", "src/subfolder /a.py",
+            "SRC/CON", "src/con.txt", "src/PRN.log", "src/COM1.csv",
+            "src/lpt9", "src/COM\u00b9.txt", "src/COM\u00b2.log",
+            "src/CoM\u00b3", "src/LPT\u00b9.txt", "src/lpt\u00b2.log",
+            "src/Lpt\u00b3", "src/CONIN$", "src/conout$.txt",
+            "src/a.py:malicious", "src/a|b.py",
+            "src/tab\\tname.py", "src/review\\nname.py",
+        )
+        for candidate in bad_paths:
+            with self.subTest(candidate=candidate):
+                self.assertFalse(M.valid_path(candidate))
+                i, policy = sample()
+                policy["tasks"][0]["owns"] = [candidate]
+                outcome = M.build(i, policy)
+                self.assertEqual(outcome["candidate_workers"], [])
+                self.assertEqual(outcome["authority"]["merge"], "HOLD")
+                self.assertIn("invalid ownership paths", " ".join(outcome["errors"]))
+        for valid in ("src/a.py", "src/reports/R1.2.md",
+                      ".github/workflows/**", "docs/Specification 1.txt"):
+            with self.subTest(valid=valid):
+                self.assertTrue(M.valid_path(valid))
+
+    def test_win32_short_name_alias_rejected(self):
+        # On NTFS src/PROGRA~1/a can be the same object as src/Program Files/a.
+        for alias in ("src/PROGRA~1/a", "src/progra~1/a", "src/LONGFI~12.TXT",
+                      "PROGRA~1/**", "docs/SPECIF~1.MD", "src/A~9"):
+            with self.subTest(alias=alias):
+                self.assertFalse(M.valid_path(alias))
+                i, policy = sample()
+                policy["tasks"][0]["owns"] = [alias]
+                outcome = M.build(i, policy)
+                self.assertEqual(outcome["candidate_workers"], [])
+                self.assertIn("invalid ownership paths", " ".join(outcome["errors"]))
+        # Long-name claims and a tilde without a digit stay valid.
+        for valid in ("src/Program Files/a", "src/backup~/a.py", "src/~notes.md"):
+            with self.subTest(valid=valid):
+                self.assertTrue(M.valid_path(valid))
 
     def test_same_lane_and_worker_capacity(self):
         i, p = sample()

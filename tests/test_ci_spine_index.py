@@ -1,5 +1,8 @@
 """Read-only CI spine adapter: determinism, safety, scope and negative controls."""
+import fnmatch
 import importlib.util
+import json
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -87,6 +90,32 @@ class Contract(unittest.TestCase):
     def test_exact_head_mismatch_first_red(self):
         r = M.build(self.root, self.c, "a" * 40, owners=(StubWorkflows, StubActions))
         self.assertIn("exact-head mismatch", " ".join(r["errors"]))
+
+    def test_qa_filter_covers_all_anchor_workflows_and_imported_owners(self):
+        qa = (ROOT / ".github/workflows/ci-spine-governed-qa.yml").read_text(encoding="utf-8")
+        self.assertIn("  push:", qa)
+        pr = qa.split("  pull_request:", 1)[1].split("  push:", 1)[0]
+        push = qa.split("  push:", 1)[1].split("  workflow_dispatch:", 1)[0]
+        contract = json.loads((ROOT / "governance/ci_spine/CI_SPINE_BINDINGS_V1.json").read_text())
+        anchors = contract["anchors"]
+        owners = contract["metric_owner_bindings"]
+        self.assertIsInstance(owners, dict)
+        self.assertTrue(owners)
+        # Bind to the current contract, not a fixed tuple. A newly declared
+        # canonical owner must appear in both trigger sets or this fails.
+        required = {".github/workflows/**", "AGENTS.md", contract["workflow_parser_owner"],
+                    *owners.values()}
+        self.assertTrue(all(isinstance(path, str) and path for path in required))
+        for block in (pr, push):
+            patterns = re.findall(r"^\s+- '([^']+)'$", block, re.M)
+            self.assertIn(".github/workflows/**", patterns)
+            for path in sorted(required):
+                self.assertTrue(any(fnmatch.fnmatchcase(path, pattern) for pattern in patterns),
+                                "uncovered canonical source: " + path)
+            for anchor in anchors:
+                self.assertTrue(any(fnmatch.fnmatchcase(anchor["path"], pattern)
+                                    for pattern in patterns), anchor["path"])
+
 
     def test_injected_identity_cannot_escape(self):
         for p in ("/etc/passwd", "../escape.yml", ".github/workflows/../../x.yml",

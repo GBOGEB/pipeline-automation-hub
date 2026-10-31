@@ -389,6 +389,8 @@ def resolve_refs(gh, snap: dict, batch: int = 80) -> dict[str, dict | None]:
 def fetch(gh, repos: list[str], owner: str = OWNER, window_days: int = 14, now: datetime | None = None) -> dict:
     """One snapshot: open issues and PRs, issues closed in the window, and each
     repo's default-branch head SHA (read once: one pulse per snapshot)."""
+    if type(window_days) is not int or window_days <= 0:
+        raise ValueError("INVALID_FLOW_WINDOW: window_days must be a positive integer")
     t0 = time.monotonic()
     at = (now or datetime.now(timezone.utc)).replace(microsecond=0)
     since = (at - timedelta(days=window_days)).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -973,8 +975,10 @@ def flow(snap: dict, repos: set[str], level: float = 0.90) -> dict | None:
     positive. None when the snapshot has no window (v1 snapshots)."""
     win = snap.get("window") or {}
     days, since = win.get("days"), win.get("since")
-    if not days or not since:
+    if not win:
         return None
+    if type(days) is not int or days <= 0 or not isinstance(since, str) or not since:
+        raise ValueError("INVALID_FLOW_WINDOW: positive integer days and since timestamp required")
     wip = arrivals = closed = 0
     reasons = Counter()
     for repo in sorted(repos):
@@ -1505,7 +1509,7 @@ def redact(model: dict, delta: dict | None = None, private_repos=None):
     def private_row(value):
         return (isinstance(value, dict) and
                 (value.get("repo") in priv or
-                 any(private_key(value.get(k)) for k in ("key", "source", "target", "pr"))))
+                 any(private_key(value.get(k)) for k in ("key", "source", "target", "pr", "root"))))
 
     def export_public(value):
         if isinstance(value, dict):
@@ -1518,7 +1522,45 @@ def redact(model: dict, delta: dict | None = None, private_repos=None):
             return "<private aggregate>"
         return value
 
+    # Freeze public-only lineage while private pseudonyms are still visible to
+    # the detector. export_public() strips those hops, so scanning afterwards
+    # would silently join public nodes across a private intermediary.
+    safe_public_threads = {}
+    for item in m["items"]:
+        if item["repo"] in priv:
+            continue
+        item_key = item["key"]
+        source_path = item.get("lineage") or [item_key]
+        last_private = max(
+            (n for n, node in enumerate(source_path) if private_key(node)),
+            default=-1,
+        )
+        safe_path = [node for node in source_path[last_private + 1:]
+                     if not private_key(node)]
+        safe_public_threads[item_key] = (
+            safe_path if safe_path and safe_path[-1] == item_key else [item_key]
+        )
+
     out = export_public(out)
+    # Preserve public closed/stub ancestors only when the full source path
+    # contains no intervening private node. No graph bridge through secrecy.
+    public_model = out["model"]
+    public_items = {i["key"]: i for i in public_model["items"]}
+    public_threads = {key: safe_public_threads.get(key, [key])
+                      for key in public_items}
+    public_roots = defaultdict(list)
+    for item_key, thread in public_threads.items():
+        public_roots[thread[0]].append((item_key, len(thread)))
+    for item_key, item in public_items.items():
+        item["lineage"] = public_threads[item_key]
+    public_model["views"]["lineage_roots"] = sorted(
+        ({"root": root, "open_root": root in public_items,
+          "descendants": len(children),
+          "longest": max(length for _, length in children)}
+         for root, children in public_roots.items()
+         if len(children) > 1 or root not in {key_ for key_, _ in children}),
+        key=lambda x: (-x["descendants"], x["root"]))[:25]
+    public_model["privacy_projection"]["public_lineage_recomputed"] = True
     if out.get("delta") is not None:
         out["delta"]["private_item_movement"] = "UNKNOWN_AGGREGATE_ONLY"
     boundary = pb.Boundary(sorted(priv))
@@ -1799,6 +1841,16 @@ def _repos(args, gh) -> list[str]:
     return list(FOCUS_REPOS)
 
 
+def _positive_window_days(raw: str) -> int:
+    try:
+        value = int(raw)
+    except (TypeError, ValueError) as exc:
+        raise argparse.ArgumentTypeError("window-days must be a positive integer") from exc
+    if value <= 0:
+        raise argparse.ArgumentTypeError("window-days must be a positive integer")
+    return value
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -1807,7 +1859,7 @@ def main(argv=None) -> int:
         p.add_argument("--owner", default=OWNER)
         p.add_argument("--scope", choices=("focus", "jade", "user"), default="focus",
                        help="focus: the four federated repos; jade: TOP21 roster; user: every repo with open items")
-        p.add_argument("--window-days", type=int, default=14)
+        p.add_argument("--window-days", type=_positive_window_days, default=14)
         p.add_argument("--repos", nargs="*")
         p.add_argument("--out", type=Path, default=DEFAULT_OUT)
     r = sub.add_parser("rank")
