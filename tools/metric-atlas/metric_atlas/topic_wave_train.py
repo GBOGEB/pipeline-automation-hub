@@ -73,6 +73,9 @@ def plan(doc):
     previous = None
     clock_waves = 0
     source_fingerprints = set()
+    # One pulse per snapshot (AGENTS.md): a repo recurring in another partition must
+    # carry the same heads there; the train never mixes commits of one repository.
+    repo_heads = {}
     for index,part in enumerate(partitions,1):
         require(type(part) is dict and part.get("max_parallel_readers") ==
                 doc["max_parallel_readers"], "INCONSISTENT_READER_CAP")
@@ -83,6 +86,7 @@ def plan(doc):
             pinned_graph = p1["source_graph_sha256"]
         require(p1["source_graph_sha256"] == pinned_graph, "CROSS_PARTITION_GRAPH_DRIFT")
         group_topics = set()
+        part_heads = {}
         for wave in part["waves"]:
             for row in wave["packets"]:
                 pkt = topic_exchange.verify_packet(row["packet"])
@@ -90,12 +94,15 @@ def plan(doc):
                 require(key not in topics and key not in group_topics,
                         "CROSS_PARTITION_TOPIC_COLLISION")
                 group_topics.add(key)
+                part_heads.setdefault(pkt["producer_repo"], set()).add(pkt["producer_head"])
                 source_fingerprints.add((pkt["producer_repo"], pkt["producer_head"],
                     pkt["scope_sha256"], pkt["source_sha256"]))
         for target in part["bd_targets"]:
             key = (target["kind"],target["repo"],target["number"])
             require(key not in target_ids,"CROSS_PARTITION_TARGET_COLLISION")
             target_ids.add(key)
+        for repo, heads in part_heads.items():
+            require(repo_heads.setdefault(repo, heads) == heads, "CROSS_PARTITION_HEAD_DRIFT")
         topics.update(group_topics)
         clock_waves += 2
         receipt = {"partition":index, "state":"DECLARED_PLAN_NOT_DISPATCHED",

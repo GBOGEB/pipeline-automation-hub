@@ -135,6 +135,19 @@ class TrainTests(unittest.TestCase):
                 w["nodes"][0]["function"]="rewritten-owner"
         self.bad(mutation,"CROSS_PARTITION_GRAPH_DRIFT")
 
+    def test_repository_head_drift_between_partitions_rejected(self):
+        def mutation(d):
+            # Re-signed so each partition stays P1-valid on its own; only the train sees the drift.
+            for w in d["partitions"][1]["waves"]:
+                for row in w["packets"]:
+                    p=row["packet"]
+                    if p["producer_repo"]=="GBOGEB/cryoplant-project":
+                        keep={k:p[k] for k in ("topic","producer_repo","scope_sha256","source_sha256",
+                              "receipt_sha256","recipients","sequence","observed_at","expires_at",
+                              "prior_packet_sha256","evidence_class")}
+                        row["packet"]=m.topic_exchange.create_packet(producer_head="e"*40,**keep)
+        self.bad(mutation,"CROSS_PARTITION_HEAD_DRIFT")
+
     def test_inner_p1_reader_limit_is_not_bypassed(self):
         self.bad(lambda x:x["partitions"][1].update(max_parallel_readers=1),"INCONSISTENT_READER_CAP")
 
