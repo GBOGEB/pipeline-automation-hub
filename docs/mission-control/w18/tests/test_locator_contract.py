@@ -14,8 +14,8 @@ class LocatorContracts(unittest.TestCase):
     def setUpClass(cls):
         cls.raw=(BASE/'snapshot.json').read_bytes()
         cls.master=json.loads(cls.raw)
-        cls.index=json.loads((BASE/'locator_index.json').read_text())
-        cls.runtime=(BASE/'runtime.js').read_text()
+        cls.index=json.loads((BASE/'locator_index.json').read_text(encoding='utf-8'))
+        cls.runtime=(BASE/'runtime.js').read_text(encoding='utf-8')
 
     def test_frozen_master_identity_is_unmodified(self):
         self.assertEqual(hashlib.sha256(self.raw).hexdigest(),
@@ -66,7 +66,7 @@ class LocatorContracts(unittest.TestCase):
 
     def test_comment_composer_has_no_post_api(self):
         self.assertIn('Draft only — nothing is posted automatically',self.runtime)
-        self.assertIn('Copy GitHub comment',(BASE/'index.html').read_text())
+        self.assertIn('Copy GitHub comment',(BASE/'index.html').read_text(encoding='utf-8'))
         self.assertIn('CP-W18/',self.runtime)
         self.assertIn('MASTER_SHA',self.runtime)
         self.assertIn("window.open(url,'_blank','noopener,noreferrer')",self.runtime)
@@ -75,19 +75,19 @@ class LocatorContracts(unittest.TestCase):
 
     def test_generated_documents_have_toolbar_dialog_and_lineage(self):
         for name in ('index.html','cards.html','deck.html'):
-            s=(BASE/name).read_text()
+            s=(BASE/name).read_text(encoding='utf-8')
             self.assertIn('id="devops-toggle"',s)
             self.assertIn('id="devops-dialog"',s)
             self.assertIn('id="devops-copy-comment"',s)
             self.assertIn('id="devops-copy-location"',s)
             self.assertIn('id="source-master"',s)
-        self.assertIn('Recursive TODO',(BASE/'index.html').read_text())
+        self.assertIn('Recursive TODO',(BASE/'index.html').read_text(encoding='utf-8'))
         self.assertIn('RECURSIVE_W17_W18_FOCUS', (BASE/'RECURSIVE_W17_W18_FOCUS.md').name)
 
     def test_generated_locator_index_rebuild_is_byte_for_byte(self):
         m,b=render.load_contract()
         self.assertEqual(render.locator_index(m,b),(BASE/'locator_index.json').read_bytes())
-        man=json.loads((BASE/'manifest.json').read_text())
+        man=json.loads((BASE/'manifest.json').read_text(encoding='utf-8'))
         for path,value in man['generated_sha256'].items():
             self.assertEqual(value,hashlib.sha256((BASE/path).read_bytes()).hexdigest())
 
