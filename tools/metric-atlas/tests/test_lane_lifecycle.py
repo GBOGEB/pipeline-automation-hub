@@ -156,6 +156,13 @@ class PilotBindingTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "W378_PILOT_GRAPH_HEAD_MISMATCH"):
             M.project(self.snap, self.pilot)
 
+    def test_graph_node_owner_repo_unbound_by_snapshot_rejected(self):
+        # Borrows a bound head, but names a repository the snapshot never recorded.
+        node = next(n for n in self.pilot["nodes"] if n["owner"] in self.snap["source_heads"])
+        node["owner"] = "GBOGEB/unbound-repo"
+        with self.assertRaisesRegex(ValueError, "W378_PILOT_GRAPH_HEAD_MISMATCH"):
+            M.project(self.snap, self.pilot)
+
     def test_pilot_repo_unbound_by_snapshot_rejected(self):
         self.snap["source_heads"] = {REPO: SHA}
         with self.assertRaisesRegex(ValueError, "W378_PILOT_SOURCE_HEAD_MISMATCH"):

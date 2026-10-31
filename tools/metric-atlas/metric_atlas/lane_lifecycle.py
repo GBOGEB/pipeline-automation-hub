@@ -189,11 +189,13 @@ def project(snapshot, pilot_input=None):
         heads = snapshot["source_heads"]
         require(all(t["producer_repo"] in heads and t["producer_head"] == heads[t["producer_repo"]]
                     for t in wave["topics"]), "W378_PILOT_SOURCE_HEAD_MISMATCH")
-        # Graph nodes carry heads too: each must be a snapshot head, and the head of
-        # its owner when the owner is a bound repository.
-        require(all(n["head_sha"] is None or (n["head_sha"] in heads.values() and
-                    heads.get(n["owner"], n["head_sha"]) == n["head_sha"])
-                    for n in wave["graph"]["nodes"]), "W378_PILOT_GRAPH_HEAD_MISMATCH")
+        # Graph nodes carry heads too: each must be a snapshot head; a repository-named
+        # owner must be bound by the snapshot and the node must carry that repo's head.
+        require(all(n["head_sha"] is None or n["head_sha"] in heads.values()
+                    for n in wave["graph"]["nodes"]) and
+                all(n["owner"] in heads and n["head_sha"] in (None, heads[n["owner"]])
+                    for n in wave["graph"]["nodes"] if REPOSITORY.fullmatch(n["owner"])),
+                "W378_PILOT_GRAPH_HEAD_MISMATCH")
         pilot = {"schema": wave["schema"],
                  "declared_source_pulse_sha256": wave["source_pulse_sha256"],
                  "declared_pilot_cohort": wave["cohort"],
