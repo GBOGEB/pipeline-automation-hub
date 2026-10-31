@@ -1,5 +1,13 @@
+import importlib.util
 import unittest
-from scripts.mach_iii_federation import evaluate
+from pathlib import Path
+
+# Load by path: an installed `scripts` package would shadow the repo's namespace `scripts/`.
+ROOT = Path(__file__).resolve().parents[1] / "scripts"
+spec = importlib.util.spec_from_file_location("mach_iii_federation", ROOT / "mach_iii_federation.py")
+mach = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(mach)
+evaluate = mach.evaluate
 
 
 class FederationTests(unittest.TestCase):
