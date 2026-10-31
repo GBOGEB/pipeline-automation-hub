@@ -131,6 +131,16 @@ class SprintPreflightTests(unittest.TestCase):
             self.assertEqual(y["status"],"LOCAL_CACHE_HIT")
             self.assertIsNone(y["native_proof"])
             self.assertEqual(y["release_credit"],0)
+    def test_queue_wait_is_float_when_clock_does_not_tick(self):
+        # A coarse monotonic clock (Windows) can give a zero or negative delta; the
+        # clamp must still yield a float so local_queue_p95_seconds keeps its type.
+        with tempfile.TemporaryDirectory() as d:
+            path=Path(d)
+            job={"id":"TEST","pool":"LOCAL_PYTHON",
+                 "argv":[sys.executable,"-c","print('pass')"],"timeout":10}
+            x=cli.run_one(job,path,path,path/"cache","a"*40,"b"*64,12,True,float("inf"))
+            self.assertIsInstance(x["queue_wait_seconds"],float)
+            self.assertEqual(x["queue_wait_seconds"],0.0)
     def test_local_cache_stales_on_content_change(self):
         with tempfile.TemporaryDirectory() as d:
             path=Path(d)
