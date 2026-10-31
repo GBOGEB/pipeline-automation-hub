@@ -1,3 +1,5 @@
+import contextlib
+import io
 import sys
 import tempfile
 import unittest
@@ -23,6 +25,12 @@ def junit(*kinds):
     return path
 
 
+def run(*argv):
+    # Keep the guard's report lines out of the job log, so `grep COLLECTION_PARITY` finds only the real run.
+    with contextlib.redirect_stdout(io.StringIO()):
+        return g.main([str(a) for a in argv])
+
+
 class ParityGuardTest(unittest.TestCase):
     def test_counts_each_outcome_separately(self):
         c = g.count(junit(*CASES))["counts"]
@@ -30,19 +38,19 @@ class ParityGuardTest(unittest.TestCase):
                              "skipped": 1, "xfailed": 1, "xpassed": 1})
 
     def test_zero_collected_is_a_failure(self):
-        self.assertEqual(g.main([str(junit()), "--expected-min", "0"]), 1)
+        self.assertEqual(run(junit(), "--expected-min", "0"), 1)
 
     def test_below_expected_min_fails(self):
-        self.assertEqual(g.main([str(junit("pass")), "--expected-min", "2"]), 1)
+        self.assertEqual(run(junit("pass"), "--expected-min", "2"), 1)
 
     def test_xfail_is_not_a_pass_and_missing_xfail_fails(self):
-        self.assertEqual(g.main([str(junit("pass", "xfail")), "--expected-min", "2", "--expect-xfail", "1"]), 0)
-        self.assertEqual(g.main([str(junit("pass", "pass")), "--expected-min", "2", "--expect-xfail", "1"]), 1)
+        self.assertEqual(run(junit("pass", "xfail"), "--expected-min", "2", "--expect-xfail", "1"), 0)
+        self.assertEqual(run(junit("pass", "pass"), "--expected-min", "2", "--expect-xfail", "1"), 1)
 
     def test_strict_xpass_and_skip_fail(self):
-        self.assertEqual(g.main([str(junit("pass", "xpass")), "--expected-min", "2"]), 1)
-        self.assertEqual(g.main([str(junit("pass", "skip")), "--expected-min", "2"]), 1)
-        self.assertEqual(g.main([str(junit("pass", "skip")), "--expected-min", "2", "--max-skips", "1"]), 0)
+        self.assertEqual(run(junit("pass", "xpass"), "--expected-min", "2"), 1)
+        self.assertEqual(run(junit("pass", "skip"), "--expected-min", "2"), 1)
+        self.assertEqual(run(junit("pass", "skip"), "--expected-min", "2", "--max-skips", "1"), 0)
 
 
 if __name__ == "__main__":
