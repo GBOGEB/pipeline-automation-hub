@@ -200,6 +200,16 @@ class GoldenThread(unittest.TestCase):
 
 
 class Flow(unittest.TestCase):
+    def test_invalid_flow_window_rejected_before_fetch_or_measurement(self):
+        snap = self.snap()
+        for days in (0, -1, 14.0, True):
+            with self.subTest(days=days):
+                snap["window"]["days"] = days
+                with self.assertRaisesRegex(ValueError, "INVALID_FLOW_WINDOW"):
+                    ir.flow(snap, {HUB})
+                with self.assertRaisesRegex(ValueError, "INVALID_FLOW_WINDOW"):
+                    ir.fetch(None, ["pipeline-automation-hub"], window_days=days)
+
     def snap(self):
         s = snapshot([issue(HUB, i, created="2026-10-20T00:00:00Z") for i in range(1, 4)])
         s["window"] = {"days": 14, "since": "2026-10-12T00:00:00Z"}
@@ -276,6 +286,75 @@ class SourceCompleteness(unittest.TestCase):
 
 
 class Privacy(unittest.TestCase):
+    def test_private_descendants_do_not_inflate_a_public_lineage_root(self):
+        snap = fixture()
+        snap["repos"][QPS]["issues"][0]["body"] = f"see {HUB}#1"
+        snap["repos"][QPS]["issues"].append(
+            issue(QPS, 8, f"see {HUB}#1", created="2026-10-04T00:00:00Z"))
+        raw = ir.rank(snap, draws=0)
+        self.assertTrue(any(row["root"] == f"{HUB}#1" and row["descendants"] >= 3
+                            for row in raw["views"]["lineage_roots"]))
+        public = ir.redact(raw)
+        self.assertFalse(any(row["root"] == f"{HUB}#1"
+                             for row in public["views"]["lineage_roots"]))
+        self.assertTrue(public["privacy_projection"]["public_lineage_recomputed"])
+
+    def test_private_hop_cannot_bridge_two_public_nodes_or_inflate_root(self):
+        snap = fixture()
+        raw = ir.rank(snap, draws=0)
+        stub = f"{HUB}#90"
+        private_node = f"{QPS}#7"
+        public = by_key(raw)
+        # Explicit synthetic lineage: a public stub can legitimately root #1,
+        # but the same stub must not root #2 through a private #7.
+        public[k(1)]["lineage"] = [stub, k(1)]
+        public[k(2)]["lineage"] = [stub, private_node, k(2)]
+        output = ir.redact(raw)
+        visible = by_key(output)
+        self.assertEqual(visible[k(1)]["lineage"], [stub, k(1)])
+        self.assertEqual(visible[k(2)]["lineage"], [k(2)])
+        root = next(row for row in output["views"]["lineage_roots"]
+                    if row["root"] == stub)
+        self.assertEqual((root["descendants"], root["longest"], root["open_root"]),
+                         (1, 2, False))
+        self.assertNotIn("PRIVATE-", json.dumps(output["views"]["lineage_roots"]))
+        self.assertNotIn("<private aggregate>", json.dumps(visible[k(2)]["lineage"]))
+
+    def test_private_hop_without_other_public_child_has_no_false_root(self):
+        raw = ir.rank(fixture(), draws=0)
+        stub = f"{HUB}#90"
+        by_key(raw)[k(2)]["lineage"] = [stub, f"{QPS}#7", k(2)]
+        output = ir.redact(raw)
+        self.assertEqual(by_key(output)[k(2)]["lineage"], [k(2)])
+        self.assertFalse(any(row["root"] == stub
+                             for row in output["views"]["lineage_roots"]))
+
+    def test_public_closed_stub_ancestor_is_kept_without_private_influence(self):
+        snap = fixture()
+        snap["repos"][HUB]["issues"][0]["body"] = "see #90"
+        snap["repos"][HUB]["issues"][1]["body"] = "see #90"
+        snap["refs"] = {f"{HUB}#90": {"type": "Issue", "state": "CLOSED",
+                                      "created_at": "2026-08-01T00:00:00Z"}}
+        raw = ir.rank(snap, draws=0)
+        public = ir.redact(raw)
+        self.assertEqual(next(i for i in public["items"] if i["key"] == k(1))["lineage"][0], f"{HUB}#90")
+        self.assertTrue(any(r["root"] == f"{HUB}#90" and not r["open_root"]
+                            for r in public["views"]["lineage_roots"]))
+        self.assertTrue(public["privacy_projection"]["public_lineage_recomputed"])
+
+    def test_private_lineage_root_rows_do_not_escape(self):
+        snap = fixture()
+        snap["repos"][QPS]["issues"].extend([
+            issue(QPS, 8, "see #7", created="2026-10-03T00:00:00Z"),
+            issue(QPS, 9, "see #7", created="2026-10-04T00:00:00Z")])
+        raw = ir.rank(snap, draws=0)
+        self.assertTrue(any(row["root"] == f"{QPS}#7"
+                            for row in raw["views"]["lineage_roots"]))
+        public = ir.redact(raw)
+        self.assertFalse(any(str(row.get("root", "")).startswith(QPS + "#")
+                             for row in public["views"]["lineage_roots"]))
+        self.assertNotIn("PRIVATE-", json.dumps(public["views"]["lineage_roots"]))
+
     def test_redacted_model_and_delta_are_boundary_fixed_points(self):
         before = ir.rank(fixture(), draws=0)
         after_snap = fixture()

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-18T13:29:50+00:00",
+  "generated_at": "2026-10-30T13:14:05+00:00",
   "repos": {
     "GBOGEB/ABACUS": {
       "branch": "main",
@@ -7,83 +7,159 @@
       "effective_rules": [
         "deletion",
         "pull_request",
-        "non_fast_forward"
+        "non_fast_forward",
+        "code_quality",
+        "copilot_code_review"
       ],
+      "untargeted_rulesets": [],
+      "probe_status": "CONFIRMED_DRIFT",
+      "red": true,
       "gaps": [
         "review-thread resolution off",
         "required_status_checks missing"
       ],
-      "untargeted_rulesets": [],
-      "red": true
+      "unknown_readbacks": [],
+      "observation_coverage": {
+        "observed": 3,
+        "required": 3,
+        "qualification": "COMPLETE"
+      },
+      "hard_gate": {
+        "probe_status": "CONFIRMED_DRIFT",
+        "red": true,
+        "gaps": [
+          "required approvals below 1",
+          "last-push approval off",
+          "review-thread resolution off",
+          "required_status_checks missing"
+        ],
+        "unknown_readbacks": [],
+        "observation_coverage": {
+          "observed": 3,
+          "required": 3,
+          "qualification": "COMPLETE"
+        }
+      }
     },
     "GBOGEB/CODEX": {
       "branch": "main",
-      "protected": false,
-      "effective_rules": [],
-      "gaps": [
-        "deletion missing",
-        "non_fast_forward missing",
-        "pull_request missing",
-        "required_status_checks missing"
+      "protected": true,
+      "effective_rules": [
+        "deletion",
+        "non_fast_forward",
+        "required_status_checks",
+        "pull_request"
       ],
       "untargeted_rulesets": [],
-      "red": true
+      "probe_status": "CONFIRMED_DRIFT",
+      "red": true,
+      "gaps": [
+        "review-thread resolution off",
+        "required check 'lint' missing",
+        "required check 'self-smoke (3.12)' missing",
+        "required check 'bandit' missing",
+        "required check 'governance-adversary' missing"
+      ],
+      "unknown_readbacks": [],
+      "observation_coverage": {
+        "observed": 3,
+        "required": 3,
+        "qualification": "COMPLETE"
+      }
     },
     "GBOGEB/cryoplant-project": {
       "branch": "main",
-      "protected": false,
-      "effective_rules": [],
-      "gaps": [
-        "deletion missing",
-        "non_fast_forward missing",
-        "pull_request missing",
-        "required_status_checks missing"
+      "protected": true,
+      "effective_rules": [
+        "deletion",
+        "non_fast_forward",
+        "pull_request"
       ],
       "untargeted_rulesets": [],
-      "red": true
+      "probe_status": "CONFIRMED_DRIFT",
+      "red": true,
+      "gaps": [
+        "review-thread resolution off",
+        "required_status_checks missing"
+      ],
+      "unknown_readbacks": [],
+      "observation_coverage": {
+        "observed": 3,
+        "required": 3,
+        "qualification": "COMPLETE"
+      }
     },
     "GBOGEB/gg_MATH": {
       "branch": "main",
-      "protected": false,
-      "effective_rules": [],
-      "gaps": [
-        "deletion missing",
-        "non_fast_forward missing",
-        "pull_request missing",
-        "required_status_checks missing"
+      "protected": true,
+      "effective_rules": [
+        "deletion",
+        "non_fast_forward",
+        "code_scanning",
+        "code_quality",
+        "copilot_code_review",
+        "pull_request"
       ],
       "untargeted_rulesets": [],
-      "red": true
+      "probe_status": "CONFIRMED_DRIFT",
+      "red": true,
+      "gaps": [
+        "review-thread resolution off",
+        "required_status_checks missing"
+      ],
+      "unknown_readbacks": [],
+      "observation_coverage": {
+        "observed": 3,
+        "required": 3,
+        "qualification": "COMPLETE"
+      }
     },
     "GBOGEB/pipeline-automation-hub": {
       "branch": "master",
-      "protected": false,
-      "effective_rules": [],
-      "gaps": [
-        "deletion missing",
-        "non_fast_forward missing",
-        "pull_request missing",
-        "required_status_checks missing",
-        "required_linear_history missing",
-        "copilot_code_review missing"
+      "protected": true,
+      "effective_rules": [
+        "deletion",
+        "non_fast_forward",
+        "pull_request",
+        "required_status_checks",
+        "required_linear_history",
+        "copilot_code_review",
+        "deletion",
+        "non_fast_forward",
+        "required_linear_history",
+        "copilot_code_review",
+        "code_quality"
       ],
-      "untargeted_rulesets": [
-        "ruleset 25252917 'QPS TRAIGE project' is active but targets no branch"
-      ],
-      "red": true
+      "untargeted_rulesets": [],
+      "probe_status": "VERIFIED_EFFECTIVE",
+      "red": false,
+      "gaps": [],
+      "unknown_readbacks": [],
+      "observation_coverage": {
+        "observed": 3,
+        "required": 3,
+        "qualification": "COMPLETE"
+      }
     },
     "GBOGEB/Q_engineering_tools": {
       "branch": "main",
       "protected": false,
       "effective_rules": [],
+      "untargeted_rulesets": [],
+      "probe_status": "CONFIRMED_DRIFT",
+      "red": true,
       "gaps": [
         "deletion missing",
         "non_fast_forward missing",
         "pull_request missing",
         "required_status_checks missing"
       ],
-      "untargeted_rulesets": [],
-      "red": true
+      "unknown_readbacks": [],
+      "observation_coverage": {
+        "observed": 3,
+        "required": 3,
+        "qualification": "COMPLETE"
+      }
     }
   }
 }

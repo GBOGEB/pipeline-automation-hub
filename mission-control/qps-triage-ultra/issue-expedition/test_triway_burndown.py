@@ -130,6 +130,32 @@ class ParserN2(unittest.TestCase):
   self.assertEqual(self.refs("Does not fix #12",pr=True),[(B+"#12","PR_ASSOCIATION")])
  def test_alias_relation_does_not_leak_across_sentence(self):
   self.assertEqual(self.refs("blocked by ABACUS #1. See CODEX #2"),[(A+"#1","DECLARED_BLOCKER_CANDIDATE"),("GBOGEB/CODEX#2","TEXT_ASSOCIATION")])
+ def test_n5_sentence_final_abbreviation_does_not_carry_relation(self):
+  self.assertEqual(self.refs("Blocked by old rollout, etc. See #3"),[(B+"#3","TEXT_ASSOCIATION")])
+  self.assertEqual(self.refs("Fixes old bug, etc. See #12",pr=True),[(B+"#12","PR_ASSOCIATION")])
+  self.assertEqual(self.refs("Blocked by e.g. rollout in #3"),[(B+"#3","DECLARED_BLOCKER_CANDIDATE")])
+ def test_n5_dotted_versions_nearest_closure_and_direction(self):
+  self.assertEqual(self.refs("Blocked by v2.0 work in #2"),[(B+"#2","DECLARED_BLOCKER_CANDIDATE")])
+  self.assertEqual(self.refs("Blocked by e.g. rollout in #3"),[(B+"#3","DECLARED_BLOCKER_CANDIDATE")])
+  self.assertEqual(self.refs("Does not fix old behavior, but closes #12",pr=True),[(B+"#12","PR_CLOSURE_CLAIM")])
+  self.assertEqual(self.refs("Fix old behavior, but does not close #12",pr=True),[(B+"#12","PR_ASSOCIATION")])
+  self.assertEqual(self.refs("This depends on rollout but now blocks #2"),[(B+"#2","DECLARED_BLOCKS_CANDIDATE")])
+ def test_n5_contrastive_negation_and_coordinated_closures(self):
+  self.assertEqual(self.refs("Does not depend on old rollout, but now blocks #2"),[(B+"#2","DECLARED_BLOCKS_CANDIDATE")])
+  self.assertEqual(self.refs("Does not close or resolve #12",pr=True),[(B+"#12","PR_ASSOCIATION")])
+  self.assertEqual(self.refs("Never fixes or resolves #12",pr=True),[(B+"#12","PR_ASSOCIATION")])
+  self.assertEqual(self.refs("Does not fix old behavior, but closes #12",pr=True),[(B+"#12","PR_CLOSURE_CLAIM")])
+ def test_n6_contrast_scope_and_repeated_relations(self):
+  self.assertEqual(self.refs("We depend on #7"),[(B+"#7","DECLARED_BLOCKER_CANDIDATE")])
+  self.assertEqual(self.refs("We do not depend on #7"),[(B+"#7","TEXT_ASSOCIATION")])
+  self.assertEqual(self.refs("Does not depend on old rollout, but requires #3"),[(B+"#3","DECLARED_BLOCKER_CANDIDATE")])
+  self.assertEqual(self.refs("Requires old work, but does not depend on #3"),[(B+"#3","TEXT_ASSOCIATION")])
+  self.assertEqual(self.refs("Does not depend on old rollout, however now blocks #4"),[(B+"#4","DECLARED_BLOCKS_CANDIDATE")])
+  self.assertEqual(self.refs("Does not depend on old rollout, but closes #12",pr=True),[(B+"#12","PR_CLOSURE_CLAIM")])
+ def test_n5_abbreviations_with_uppercase_alias(self):
+  self.assertEqual(self.refs("Blocked by e.g. CODEX #3"),[("GBOGEB/CODEX#3","DECLARED_BLOCKER_CANDIDATE")])
+  self.assertEqual(self.refs("Blocked by i.e. ABACUS #3"),[(A+"#3","DECLARED_BLOCKER_CANDIDATE")])
+  self.assertEqual(self.refs("Blocked by old rollout, etc. See #3"),[(B+"#3","TEXT_ASSOCIATION")])
  def test_blockquote_continuation_is_one_criterion(self):
   c=m.checklist("## DoD\n> - [ ] Implement foo\n>   with native test")
   self.assertEqual(c["DoD"]["progress"]["total"],1)

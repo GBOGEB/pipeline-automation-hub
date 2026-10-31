@@ -73,30 +73,60 @@ REF = re.compile(
     r"|/(?:(?i:pr)\s*)?#(?P<chainnum>\d+)"
     r"|(?<![A-Za-z0-9/&])#(?P<localnum>\d+)"
 )
-CLAIM = re.compile(r"\b(?:fix(?:es|ed)?|clos(?:e|es|ed)|resolv(?:e|es|ed))\b.{0,40}\Z", re.I)
-# Issue-body reference kinds, first match wins. The words between the previous
+CLAIM = re.compile(r"\b(?:fix(?:es|ed)?|clos(?:e|es|ed)|resolv(?:e|es|ed))\b", re.I)
+# Issue-body reference kinds, nearest lexical match wins; tie retains tuple order.
+# The words between the previous
 # reference on the line and this one type it, so a keyword binds to the next
 # reference only; a run joined by commas or "and" keeps the kind of its head.
 KINDS = (
     ("DECLARED_BLOCKER_CANDIDATE", re.compile(
-        r"\b(?:blocked by|depends on|waiting (?:for|on)|waits (?:for|on)|requires|needs)\b.{0,72}\Z", re.I)),
+        r"\b(?:blocked by|depends? on|waiting (?:for|on)|waits (?:for|on)|requires|needs)\b", re.I)),
     ("DECLARED_BLOCKS_CANDIDATE", re.compile(
-        r"\b(?:blocks|blocking|unblocks|prerequisite (?:for|of))\b.{0,72}\Z", re.I)),
+        r"\b(?:blocks|blocking|unblocks|prerequisite (?:for|of))\b", re.I)),
     ("DECLARED_PREDECESSOR", re.compile(
-        r"\b(?:supersedes|replaces|successor (?:of|to)|follow-?up (?:of|to)|continues)\b.{0,72}\Z", re.I)),
+        r"\b(?:supersedes|replaces|successor (?:of|to)|follow-?up (?:of|to)|continues)\b", re.I)),
     ("DECLARED_SUCCESSOR", re.compile(
-        r"\b(?:superseded by|successor|replaced by|routed to|moved to|continued in|carried (?:to|into))\b.{0,72}\Z",
+        r"\b(?:superseded by|successor|replaced by|routed to|moved to|continued in|carried (?:to|into))\b",
         re.I)),
     ("DECLARED_PARENT_CANDIDATE", re.compile(
-        r"\b(?:parent|epic|umbrella|part of|child of|tracked (?:in|by))\b.{0,72}\Z", re.I)),
-    ("DECLARED_DUPLICATE_OF", re.compile(r"\b(?:duplicate of|dup of)\b.{0,72}\Z", re.I)),
+        r"\b(?:parent|epic|umbrella|part of|child of|tracked (?:in|by))\b", re.I)),
+    ("DECLARED_DUPLICATE_OF", re.compile(r"\b(?:duplicate of|dup of)\b", re.I)),
 )
 QUOTE = re.compile(r"^(?:\s*>)*\s*")
 # A code span opens and closes with backtick runs of equal length (CommonMark).
 CODE_SPAN = re.compile(r"(`+)(?!`)([\s\S]+?)(?<!`)\1(?!`)")
 META = re.compile(r"^\s*(?:related|refs?|references|see also|sources?|links?)\s*:", re.I)
 NEGATED = re.compile(r"\b(?:not|no longer|never|unrelated|instead of)\b", re.I)
+_CONTRAST = re.compile(r"\b(?:but|however|instead(?!\s+of))\b", re.I)
 JOINER = re.compile(r"[\s,;&+]*(?:(?:and|or)\b[\s,;&+]*)?\Z", re.I)
+_SENTENCE_END = re.compile(r"[!?;]|\.(?=\s|$)")
+_ABBREVIATIONS = frozenset(("e.g", "i.e", "etc", "vs", "dr", "mr", "mrs", "ms", "u.s", "u.k"))
+
+
+def _clause_tail(text):
+    """Preserve dotted versions and abbreviations, split at sentence punctuation."""
+    start = 0
+    for match in _SENTENCE_END.finditer(text):
+        if match.group() == ".":
+            token = re.search(r"([A-Za-z]+(?:\.[A-Za-z]+)*)$", text[:match.start()])
+            if token and token.group(1).lower() in _ABBREVIATIONS:
+                following = text[match.end():].lstrip()
+                abbreviation = token.group(1).lower()
+                # "e.g. rollout" continues; "etc. See" starts a new sentence.
+                # Honorifics such as "Dr. Smith" continue before proper names.
+                if following and (following[0].islower() or
+                                  abbreviation in ("dr", "mr", "mrs", "ms", "e.g", "i.e") and following[0].isupper()):
+                    continue
+        start = match.end()
+    return text[start:]
+
+def _relation_negated(before, relation_start):
+    """A contrastive connector resets inherited, but not local, negation."""
+    contrasts = list(_CONTRAST.finditer(before[:relation_start]))
+    scope_start = contrasts[-1].end() if contrasts else 0
+    return bool(NEGATED.search(before[scope_start:relation_start]))
+
+
 PRIORITY = re.compile(r"(?:^|[/:\s_-])P([0-4])(?:$|[/:\s_-])", re.I)
 
 
@@ -189,7 +219,7 @@ def checklist(body):
                 continue
             b = BULLET.match(line)
             if b:
-                declared[section].append({"text": b.group(1)[:300], "form": "BULLET"})
+                declared[section].append({"text": b.group(1)[:300], "match_text": b.group(1)[:300], "form": "BULLET"})
                 continuation = declared[section][-1]
             elif not prose and not META.match(line):  # one prose criterion per paragraph
                 declared[section].append({"text": line.strip()[:300], "form": "PROSE"})
@@ -262,14 +292,15 @@ def references(body, repo, pr=False):
             if num <= 0:
                 continue
             target = identity("GBOGEB/" + name, num)
-            before = re.split(r"[.!?;]", window[-90:])[-1]
+            before = _clause_tail(window[-90:])
             join_window = (line[previous_end:m.start("alias")]
                            if m.group("aliasnum") is not None else window)
             if withdrawn:
                 kind = "PR_ASSOCIATION" if pr else "TEXT_ASSOCIATION"
             elif pr:
-                claim = CLAIM.search(before)
-                kind = ("PR_CLOSURE_CLAIM" if claim and not NEGATED.search(before[:claim.start()])
+                verbs = list(CLAIM.finditer(before))
+                claim = verbs[-1] if verbs and len(before) - verbs[-1].end() <= 40 else None
+                kind = ("PR_CLOSURE_CLAIM" if claim and not _relation_negated(before, claim.start())
                         else "PR_ASSOCIATION")
                 if last_kind == "PR_CLOSURE_CLAIM" and JOINER.fullmatch(join_window):
                     kind = last_kind
@@ -277,11 +308,17 @@ def references(body, repo, pr=False):
                 kind = last_kind
             else:
                 kind = "TEXT_ASSOCIATION"
-                for label, rx in KINDS:
-                    hit = rx.search(before)
-                    if hit:
-                        kind = "TEXT_ASSOCIATION" if NEGATED.search(before[:hit.start()]) else label
-                        break
+                candidates = [(hit.start(), -i, label, hit)
+                              for i, (label, rx) in enumerate(KINDS)
+                              for hit in rx.finditer(before)
+                              if len(before) - hit.end() <= 72]
+                if candidates:
+                    # The final lexical relation in the active clause controls the reference.
+                    # A preceding negation cannot cross an explicit contrastive connector.
+                    candidates.sort(key=lambda row: (row[0], row[1]))
+                    _, _, label, hit = candidates[-1]
+                    kind = ("TEXT_ASSOCIATION" if _relation_negated(before, hit.start())
+                            else label)
                 if item and item.group(1) in "xX " and kind == "TEXT_ASSOCIATION":
                     kind = "DECLARED_CHILD_CANDIDATE"  # a live checkbox only; [~] #N stays text
             last_repo, last_kind = name, kind
