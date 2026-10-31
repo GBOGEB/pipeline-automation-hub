@@ -1,0 +1,400 @@
+{
+  "authority_transfer": false,
+  "cohort": "N11_MISSION_SELECTED_TOP21",
+  "current_main_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+  "current_owner_actions": null,
+  "current_owner_actions_note": "21-repo owner actions not re-measured in N+10; N+2 counts stay in STOP_MODEL_NPLUS2.json (null is not zero)",
+  "evidence_refs": [
+    "data/STOP_MODEL_NPLUS2.json",
+    "notes/JADE_STOP_RULES_CONTRACT.md",
+    "mission-control/qps-triage-ultra/p-process/rulesets/pipeline-automation-hub.basic.json"
+  ],
+  "first_red_current_head": [],
+  "gate_receipts": {
+    "blocked_red_canary": {
+      "evidence": [
+        {
+          "closed_unmerged": true,
+          "deliberate_failure": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40114878628/job/120933995774",
+          "kind": "red_canary_pr",
+          "mergeable_state_observed": "blocked",
+          "required_check_failed": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40114878668/job/120933996552",
+          "source_sha": "9dfa4373d1551832e2f58a2b1c9dda48e9027621",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/840"
+        }
+      ],
+      "state": "PASS"
+    },
+    "hosted_parity": {
+      "evidence": [
+        {
+          "conclusion": "success",
+          "kind": "hosted_parity",
+          "origin": "https://gbogeb.github.io/pipeline-automation-hub/",
+          "result": {
+            "members": 27,
+            "rounds": 2,
+            "status": "PASS"
+          },
+          "run_id": 40114688162,
+          "source_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40114688162/job/120934179293"
+        }
+      ],
+      "state": "PASS"
+    },
+    "independent_review": {
+      "evidence": [
+        {
+          "kind": "automated_review",
+          "kind_detail": "codeql",
+          "source_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40114687357/job/120933429699"
+        }
+      ],
+      "note": "solo owner; qualified only while required_checks is PASS (see review_waiver)",
+      "state": "WAIVED_MACH_II"
+    },
+    "matched_coverage": {
+      "evidence": [
+        {
+          "branches": [
+            598,
+            642
+          ],
+          "kind": "coverage_gate",
+          "run_id": 40115673062,
+          "source_scope_files": 9,
+          "source_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+          "statements": [
+            1670,
+            1699
+          ],
+          "thresholds": {
+            "branches_pct": 80,
+            "min_branches": 608,
+            "min_statements": 1615,
+            "statements_pct": 90
+          },
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40115673062/job/120936323731"
+        }
+      ],
+      "state": "PASS"
+    },
+    "native_tests": {
+      "evidence": [
+        {
+          "conclusion": "success",
+          "kind": "native_job",
+          "run_id": 40115673062,
+          "source_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+          "tests_ran": 292,
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40115673062/job/120936323731"
+        },
+        {
+          "conclusion": "success",
+          "kind": "native_job",
+          "run_id": 40115675657,
+          "source_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40115675657/job/120936331825"
+        },
+        {
+          "conclusion": "success",
+          "kind": "native_job",
+          "run_id": 40115675657,
+          "source_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40115675657/job/120936332114"
+        }
+      ],
+      "state": "PASS"
+    },
+    "owner_release": {
+      "evidence": [],
+      "note": "separate owner decision; never inferred from green CI",
+      "state": "UNKNOWN"
+    },
+    "required_checks": {
+      "evidence": [
+        {
+          "integration_id": 15368,
+          "kind": "ruleset_readback",
+          "observed_at": "2026-10-24T17:25:10Z",
+          "required_status_checks": [
+            "validate-ultra-control",
+            "canonical-self-test-and-mutation",
+            "GOGREEN required gate"
+          ],
+          "ruleset_id": 25789280,
+          "source": "GET /repos/GBOGEB/pipeline-automation-hub/rules/branches/master",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/rules/25789280"
+        }
+      ],
+      "state": "PASS"
+    },
+    "security": {
+      "evidence": [
+        {
+          "conclusion": "success",
+          "kind": "codeql_analysis",
+          "name": "Analyze (actions)",
+          "source_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40114687357/job/120933429527"
+        },
+        {
+          "conclusion": "success",
+          "kind": "codeql_analysis",
+          "name": "Analyze (javascript-typescript)",
+          "source_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40114687357/job/120933429699"
+        },
+        {
+          "conclusion": "success",
+          "kind": "codeql_analysis",
+          "name": "Analyze (python)",
+          "source_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40114687357/job/120933429639"
+        },
+        {
+          "conclusion": "success",
+          "kind": "codeql_analysis",
+          "name": "Analyze (ruby)",
+          "source_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40114687357/job/120933429719"
+        },
+        {
+          "kind": "open_code_scanning_alert",
+          "number": 54,
+          "path": "mission-control/jade_temple/devops/tests/test_devops_census.py",
+          "rule": "py/incomplete-url-substring-sanitization",
+          "severity": "high",
+          "source_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/security/code-scanning/54"
+        },
+        {
+          "kind": "open_code_scanning_alert",
+          "number": 49,
+          "path": "mission-control/jade_temple/site/qps_superstitch.html",
+          "rule": "js/xss-through-dom",
+          "severity": "high",
+          "source_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/security/code-scanning/49"
+        },
+        {
+          "kind": "open_code_scanning_alert",
+          "number": 48,
+          "path": "mission-control/jade_temple/site/qps_superstitch.html",
+          "rule": "js/xss-through-dom",
+          "severity": "high",
+          "source_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/security/code-scanning/48"
+        }
+      ],
+      "note": "3 open CodeQL alerts on mission-control/jade_temple/ at the head (34 open repo-wide); no security waiver",
+      "state": "FAIL"
+    },
+    "source_integrity": {
+      "evidence": [
+        {
+          "conclusion": "success",
+          "kind": "native_job",
+          "note": "workflow_dispatch on master; deterministic bundle, negative controls and builder --check replays",
+          "run_id": 40115673062,
+          "source_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40115673062/job/120936323731"
+        }
+      ],
+      "state": "PASS"
+    }
+  },
+  "gates": {
+    "blocked_red_canary": "PASS",
+    "hosted_parity": "PASS",
+    "independent_review": "WAIVED_MACH_II",
+    "matched_coverage": "PASS",
+    "native_tests": "PASS",
+    "owner_release": "UNKNOWN",
+    "required_checks": "PASS",
+    "security": "FAIL",
+    "source_integrity": "PASS"
+  },
+  "merge_admission": "HOLD",
+  "native_pending": false,
+  "observed_reds_outside_scope": [
+    {
+      "conclusion": "failure",
+      "name": "Master red/green transition ledger",
+      "source_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40114688144/job/120933430003",
+      "why_not_first_red": "not a JADE gate; job reported no steps and its log was unavailable (HTTP 502) at readback, root UNKNOWN",
+      "workflow": "GOGREEN Red-Trace Ledger (read-only)"
+    }
+  ],
+  "population": 21,
+  "pulses": [
+    {
+      "cohort_sha": "4b5bc76e6b4ceefa032c1c89e485755cf9326884",
+      "eligible_denominator": 21,
+      "heads": {
+        "GBOGEB/ABACUS": "2246c7bd3a9bda6a3d43b9a9116cb7088cfbcc88",
+        "GBOGEB/CODEX": "0653007cf68fe20824beb937329f8b567ff27f35",
+        "GBOGEB/DOCX_RTM_Automation": "252a6845821ac3981d680730f22beb0b0cae8440",
+        "GBOGEB/GEMINI": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+        "GBOGEB/Q_engineering_tools": "911e0058045e4edd125ad2b67b412275b3329e8f",
+        "GBOGEB/ariana": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+        "GBOGEB/cli": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+        "GBOGEB/cryo_leak_rate_dashboard": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+        "GBOGEB/cryogenic-accelerator-workspace": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+        "GBOGEB/cryoplant-project": "PRIVATE_AGGREGATE_ONLY",
+        "GBOGEB/docker-stacks": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+        "GBOGEB/document-organization-system": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+        "GBOGEB/gg_MATH": "b9efad57e1985a6e54cb776130b8a70fa9357e0a",
+        "GBOGEB/github-mcp-server": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+        "GBOGEB/github_documentorganisatiesysteem_GBOGEB": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+        "GBOGEB/pipeline-automation-hub": "d3d450fbdbb34403e22589188a877560fb147b29",
+        "GBOGEB/prettier": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+        "GBOGEB/python-sdk": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+        "GBOGEB/skills": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+        "GBOGEB/vscode-powershell": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+        "GBOGEB/yaml-grammar": "75083c2aaabd0d7453d72de895666b21021826c1"
+      },
+      "id": "N+1_HISTORICAL",
+      "instrumentor": "JADE_GOGREEN_FROZEN_N11_V1",
+      "metrics": {
+        "accepted_owner_actions": 0,
+        "comparable_new_branches_covered": null,
+        "deduplicated_owner_roots_closed": 0,
+        "new_evidence_edges_qualified": null
+      },
+      "native_state": "INCOMPLETE",
+      "observed_date": "2026-10-18",
+      "pending_roots": null,
+      "qualification": "HISTORICAL_LOCAL_SNAPSHOT_NOT_RELEASE",
+      "scope": "N11_MISSION_SELECTED_TOP21"
+    },
+    {
+      "cohort_sha": "4b5bc76e6b4ceefa032c1c89e485755cf9326884",
+      "eligible_denominator": 21,
+      "heads": {
+        "GBOGEB/ABACUS": "a13c5f4edaca814e4a80e5b902dfe44fecf39361",
+        "GBOGEB/CODEX": "13ed167963312b897ba7e489bb5a81c80db104f7",
+        "GBOGEB/DOCX_RTM_Automation": "252a6845821ac3981d680730f22beb0b0cae8440",
+        "GBOGEB/GEMINI": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+        "GBOGEB/Q_engineering_tools": "911e0058045e4edd125ad2b67b412275b3329e8f",
+        "GBOGEB/ariana": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+        "GBOGEB/cli": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+        "GBOGEB/cryo_leak_rate_dashboard": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+        "GBOGEB/cryogenic-accelerator-workspace": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+        "GBOGEB/cryoplant-project": "PRIVATE_AGGREGATE_ONLY",
+        "GBOGEB/docker-stacks": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+        "GBOGEB/document-organization-system": "6b4529cc746bb1cbdd938d564cc7b01ff719e0c2",
+        "GBOGEB/gg_MATH": "b9efad57e1985a6e54cb776130b8a70fa9357e0a",
+        "GBOGEB/github-mcp-server": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+        "GBOGEB/github_documentorganisatiesysteem_GBOGEB": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+        "GBOGEB/pipeline-automation-hub": "ae0c652ccaa3dc0d55cd4edc4ad83dc491de917e",
+        "GBOGEB/prettier": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+        "GBOGEB/python-sdk": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+        "GBOGEB/skills": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+        "GBOGEB/vscode-powershell": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+        "GBOGEB/yaml-grammar": "75083c2aaabd0d7453d72de895666b21021826c1"
+      },
+      "id": "N+2_READBACK",
+      "instrumentor": "JADE_GOGREEN_FROZEN_N11_V1",
+      "metrics": {
+        "accepted_owner_actions": 0,
+        "comparable_new_branches_covered": null,
+        "deduplicated_owner_roots_closed": 0,
+        "new_evidence_edges_qualified": null
+      },
+      "native_state": "TERMINAL_WITH_FIRST_RED",
+      "observed_date": "2026-10-19",
+      "pending_roots": 1,
+      "qualification": "NONATOMIC_HEADS_CURRENT_MAIN_FIRST_RED",
+      "scope": "N11_MISSION_SELECTED_TOP21"
+    },
+    {
+      "cohort_sha": "4b5bc76e6b4ceefa032c1c89e485755cf9326884",
+      "eligible_denominator": 21,
+      "heads": {
+        "GBOGEB/ABACUS": "3c4cb0decaf83ee28625e18cd5cb21416c723dff",
+        "GBOGEB/CODEX": "4f1a0025181eab8b4fca219b7647f38abb12959a",
+        "GBOGEB/DOCX_RTM_Automation": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
+        "GBOGEB/GEMINI": "188cb7cc055ba9e23a8d4366060b995cb0879640",
+        "GBOGEB/Q_engineering_tools": "396184d0f43ff011156cd4812a820bfde5760e31",
+        "GBOGEB/ariana": "39fd717518fbdc3c1bce643731c8b22cc4c6b9db",
+        "GBOGEB/cli": "f96972ce1c11fdb8eaa556257fde962a363dffde",
+        "GBOGEB/cryo_leak_rate_dashboard": "e0c28fb293f7e07eb23d6e1adcfb547d12483cf9",
+        "GBOGEB/cryogenic-accelerator-workspace": "43a49c26e07254ac5413d095b0a039e2c52a8c74",
+        "GBOGEB/cryoplant-project": "PRIVATE_AGGREGATE_ONLY",
+        "GBOGEB/docker-stacks": "edaf65ba4ecfe8c2ddd04b8e86e0735926c6140f",
+        "GBOGEB/document-organization-system": "6f27f7e28e265e37538c4645edc7fd9adcbde0fa",
+        "GBOGEB/gg_MATH": "61ce59f754d23e010958927a731432672abf7621",
+        "GBOGEB/github-mcp-server": "df4bb90eaa31756a1d854b20604c5997eb2a3a2c",
+        "GBOGEB/github_documentorganisatiesysteem_GBOGEB": "eb7484f488b327b4d71e37dcc52ea4bd6b6c25f8",
+        "GBOGEB/pipeline-automation-hub": "737fdcea1e941366dce9d61aade011f652148eb9",
+        "GBOGEB/prettier": "9a571e44dc80059c63608bc71ad5f4733931d4a9",
+        "GBOGEB/python-sdk": "c47c767ff437ee88a19e6b9001e2472cb6f7d5ed",
+        "GBOGEB/skills": "0ec8539b264587c3a58a2a558fe4a1602374ddb8",
+        "GBOGEB/vscode-powershell": "f3ee7362f11f70c2daf43a621cdc301cbde3f989",
+        "GBOGEB/yaml-grammar": "75083c2aaabd0d7453d72de895666b21021826c1"
+      },
+      "heads_read_window": [
+        "2026-10-24T17:24:11Z",
+        "2026-10-24T17:24:56Z"
+      ],
+      "id": "N+10_READBACK",
+      "instrumentor": "JADE_STOP_N10_V1",
+      "metrics": {
+        "accepted_owner_actions": null,
+        "comparable_new_branches_covered": null,
+        "deduplicated_owner_roots_closed": null,
+        "new_evidence_edges_qualified": null
+      },
+      "native_state": "TERMINAL",
+      "observed_date": "2026-10-24",
+      "pending_roots": 0,
+      "qualification": "EXACT_HEAD_NATIVE_RECEIPTS_NOT_RELEASE",
+      "scope": "N11_MISSION_SELECTED_TOP21"
+    }
+  ],
+  "release_repeat_proofs": [
+    {
+      "conclusion": "success",
+      "run_id": 40115673062,
+      "source_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40115673062"
+    },
+    {
+      "conclusion": "success",
+      "run_id": 40115675657,
+      "source_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40115675657"
+    },
+    {
+      "conclusion": "success",
+      "run_id": 40114688162,
+      "source_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40114688162"
+    }
+  ],
+  "review_waiver": {
+    "automated_review": {
+      "head_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+      "kind": "codeql",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40114687357/job/120933429699"
+    },
+    "level": "MACH-II",
+    "policy": "https://github.com/GBOGEB/ABACUS/blob/0e76f635fb201b54055b199bbee2fc5db6f8a09c/docs/governance/CODE_PURPLE_MACH_LADDER.md"
+  },
+  "schema": "jade.temple.stopping_model.v2",
+  "security_waiver": false,
+  "stop_rules": {
+    "admission": "HOLD until all independent noncompensating gates source-authorized",
+    "drift": "changed default head, changed scope/instrumentor or null matched coverage blocks plateau",
+    "first_red": "source owner repair with same test denominator and no suppressed canaries",
+    "plateau": "3 consecutive comparable terminal pulses, exact identical head/cohort/instrumentor/denominator, 0 pending roots, all numeric nonnegative metrics identical; stop redundant recensus and pivot to owner",
+    "target_met": "all nine gates PASS plus >=2 distinct source-bound native run receipts, none first-red, no pending, owner admission separate",
+    "unknown": "NULL is not zero, skipped checks not pass, J0 README presence not J1 verified navigation",
+    "wait": "native pending on unchanged exact head: stop duplicate dispatch, wait for terminal job/attempt"
+  },
+  "supersedes": "data/STOP_MODEL_NPLUS2.json (kept frozen)"
+}

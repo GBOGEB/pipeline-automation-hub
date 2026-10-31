@@ -109,17 +109,60 @@ def evaluate(gates: dict, pulses: list[dict], current_first_red: list[dict],
     return {"action": action, "reason": reason, "merge_admission": "HOLD", "stop_repetitive_waves": action in ("WAIT_NATIVE", "OWNER_BLOCKED", "PIVOT_DISJOINT_OWNER"), "formal_release_credit": False, "owner_action": "Obtain outstanding native, protection and owner receipts", **basis}
 
 
+# Gates whose receipt is not a run on the exact head: the blocked-RED canary is a deliberately red PR
+# on its own head, and the required-checks receipt is a ruleset read-back with no commit.
+UNBOUND_RECEIPT_GATES = ("blocked_red_canary", "required_checks")
+POSITIVE_STATES = ("PASS", REVIEW_WAIVER)
+
+
+def bound_gates(data: dict) -> dict:
+    """Gate states a snapshot may use: each one must agree with its exact-head receipt.
+
+    A snapshot with `gate_receipts` must carry one receipt per gate whose state equals the gate state,
+    and a PASS (or waiver) must cite GitHub evidence bound to the current head. Any disagreement fails
+    closed. A legacy snapshot without receipts keeps its non-PASS states, but its PASS states are
+    unproven and count as UNKNOWN, so it can never reach TARGET_MET_STOP_ENGINEERING.
+    """
+    gates = data["gates"]
+    require(isinstance(gates, dict), "gates must be an object")
+    receipts = data.get("gate_receipts")
+    if receipts is None:
+        return {k: "UNKNOWN" if v == "PASS" else v for k, v in gates.items()}
+    head = data.get("current_main_sha")
+    require(isinstance(receipts, dict) and set(receipts) == set(gates), "gate receipts do not cover the gates")
+    for gate, state in gates.items():
+        rec = receipts[gate]
+        require(isinstance(rec, dict) and rec.get("state") == state,
+                f"gate receipt disagrees with gate state: {gate}")
+        evidence = rec.get("evidence")
+        require(isinstance(evidence, list), f"gate receipt evidence must be a list: {gate}")
+        if state in POSITIVE_STATES:
+            require(bool(evidence), f"positive gate without receipt evidence: {gate}")
+        for e in evidence:
+            require(isinstance(e, dict) and str(e.get("url", "")).startswith("https://github.com/"),
+                    f"untrusted gate receipt: {gate}")
+            if gate in UNBOUND_RECEIPT_GATES:
+                require("source_sha" not in e or bool(SHA40.fullmatch(e["source_sha"] or "")),
+                        f"untrusted gate receipt: {gate}")
+            else:
+                require(e.get("source_sha") == head, f"gate receipt not bound to the current head: {gate}")
+            if state in POSITIVE_STATES and "conclusion" in e:
+                require(e["conclusion"] == "success", f"positive gate with unsuccessful receipt: {gate}")
+    return gates
+
+
 def from_snapshot(data: dict):
     require(data.get("schema") == "jade.temple.stopping_model.v2", "model schema")
     require(data.get("authority_transfer") is False and data.get("merge_admission") == "HOLD", "unsafe authority or admission")
-    return evaluate(data["gates"], data["pulses"], data["first_red_current_head"],
+    return evaluate(bound_gates(data), data["pulses"], data["first_red_current_head"],
                     data["native_pending"], data["current_main_sha"],
                     data["release_repeat_proofs"], data.get("review_waiver"))
 
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--model", default=str(Path(__file__).resolve().parents[1]/"data/STOP_MODEL_NPLUS2.json"))
+    p.add_argument("--model", default=str(Path(__file__).resolve().parents[1]/"data/STOP_MODEL_N10.json"),
+                   help="stop model to replay (default: the current pulse, data/STOP_MODEL_N10.json)")
     p.add_argument("--receipt")
     a = p.parse_args()
     model = json.loads(Path(a.model).read_text(encoding="utf-8"))
