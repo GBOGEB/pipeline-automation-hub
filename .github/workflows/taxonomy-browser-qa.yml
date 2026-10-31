@@ -31,20 +31,43 @@ jobs:
         env:
           HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: test "$(git rev-parse HEAD)" = "$HEAD"
+      # B02 P1_CACHE_PILOT: pip download store and the Chromium build, both keyed only on the
+      # source-controlled Playwright pin. pull_request (never pull_request_target) runs save to
+      # their own PR ref scope and read only that scope or the base branch, so one PR cannot
+      # seed another's cache. Neither path holds credentials (persist-credentials: false).
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        id: python
         with:
           python-version: '3.12'
+          cache: pip
+          cache-dependency-path: mission-control/issue_rank/browser-qa-requirements.txt
+      - name: Restore pinned Playwright browser cache
+        id: browsers
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-ubuntu-24.04-${{ runner.arch }}-${{ hashFiles('mission-control/issue_rank/browser-qa-requirements.txt') }}
       - name: Install pinned local QA tools
+        # Same command on hit or miss: Playwright skips a browser already present, and OS
+        # packages (--with-deps) are always installed fresh, never restored from cache.
         run: |
-          python -m pip install --disable-pip-version-check playwright==1.56.0
+          python -m pip install --disable-pip-version-check -r mission-control/issue_rank/browser-qa-requirements.txt
           python -m playwright install --with-deps chromium
+      - name: Record cache hits
+        env:
+          PIP_HIT: ${{ steps.python.outputs.cache-hit }}
+          BROWSERS_HIT: ${{ steps.browsers.outputs.cache-hit }}
+        run: |
+          echo "pip_cache_hit=${PIP_HIT:-false} browser_cache_hit=${BROWSERS_HIT:-false}"
+          printf '| cache | hit |\n|---|---|\n| pip | %s |\n| playwright chromium | %s |\n' \
+            "${PIP_HIT:-false}" "${BROWSERS_HIT:-false}" >> "$GITHUB_STEP_SUMMARY"
       - name: Execute synthetic no-network browser QA
         working-directory: mission-control/issue_rank
         run: python taxonomy_browser_qa.py
 
   cache-ab:
     name: taxonomy opt-in pip cache A/B / ${{ matrix.mode }}
-    # The original browser-qa job above is unchanged and remains the PR check.
+    # The browser-qa job above remains the PR check (pip + browser cached since P1_CACHE_PILOT).
     # This is a separate, OBSERVED, manually opted-in experiment only.
     if: github.event_name == 'workflow_dispatch' && inputs.cache_pilot == true
     runs-on: ubuntu-24.04
