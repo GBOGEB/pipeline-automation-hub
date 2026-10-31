@@ -27,7 +27,7 @@
     "MUTATION_OR_FAULT_PROOF_PASS",
     "EXACT_HEAD_CI_PROOF_PASS",
     "CODEX_REVIEW_COMPLETED_ON_EXACT_HEAD",
-    "CODEX_FINDING_REVIEW_COUNT_ON_EXACT_HEAD_EQUALS_ZERO"
+    "OPEN_P0_P1_CODEX_FINDINGS_ON_EXACT_HEAD_EQUALS_ZERO"
   ],
   "pr_body_receipt": {
     "marker": "FPC_RECEIPT_V1",
@@ -45,16 +45,23 @@
     "required_run_fields": [
       "repo",
       "run_id"
-    ]
+    ],
+    "optional": true,
+    "when_absent": "DERIVED_EXACT_HEAD: the trusted controller takes the newest run of each allowlisted proof workflow on the PR head and validates it exactly as a body-receipt run"
   },
   "codex_contract": {
     "summary_marker": "<!-- codex-pull-request-review-summary -->",
     "reviewer_login": "chatgpt-codex-connector",
-    "clean_rule": "SUMMARY_COMPLETED_FOR_EXACT_HEAD_AND_NO_COMMENTED_CODEX_REVIEW_BOUND_TO_EXACT_HEAD",
+    "clean_rule": "SUMMARY_COMPLETED_FOR_EXACT_HEAD_AND_NO_OPEN_P0_P1_CODEX_FINDING_RAISED_ON_EXACT_HEAD",
     "summary_author_login": "chatgpt-codex-connector",
     "recheck_on": [
       "pull_request_review"
-    ]
+    ],
+    "blocking_priorities": [
+      "P0",
+      "P1"
+    ],
+    "finding_rule": "Codex inline findings raised on the exact head (original_commit_id) with a blocking priority badge and an unresolved review thread block; a finding without a badge blocks; P2/P3 findings and resolved threads are counted in the pass receipt but do not block. Owner decision 2026-10-30."
   },
   "fail_closed_on": [
     "MISSING_RECEIPT",
@@ -77,7 +84,11 @@
     "FINAL_RECEIPT_BASE_MISMATCH",
     "FINAL_RECEIPT_CONTROLLER_REVISION_MISMATCH",
     "LIVE_PR_RESOLUTION_FAILED_AFTER_TRIGGER_HEAD_CAPTURE",
-    "TRIGGER_LIVE_HEAD_MISMATCH"
+    "TRIGGER_LIVE_HEAD_MISMATCH",
+    "NO_ALLOWLISTED_PROOF_RUN_ON_EXACT_HEAD",
+    "POLICY_DEPENDENCY_EXEMPTION_INVALID",
+    "POLICY_CODEX_BLOCKING_PRIORITIES_INVALID",
+    "REVIEW_THREADS_UNAVAILABLE"
   ],
   "non_compensation": {
     "r3_release_credit": "NONE",
@@ -172,5 +183,24 @@
     "r8_bootstrap_reason": "R7_CANARY_MERGED_BEFORE_FROZEN_REVIEW_AND_HEAD_STATUS_ACCEPTANCE; R7_LIVE_PR_LOOKUP_COULD_LEAVE_PRIOR_SUCCESS_STALE",
     "r8_postmerge_canary_required": true,
     "owner_admin_gate_after_clean_canary": "REQUIRED_STATUS_OR_RULESET_REQUIRED_TO_PREVENT_MANUAL_BYPASS"
+  },
+  "dependency_update_exemption": {
+    "author_login": "dependabot[bot]",
+    "applies_when": "PR_AUTHOR_AND_EVERY_COMMIT_AUTHOR_EQUAL_author_login_AND_EVERY_CHANGED_PATH_MATCHES",
+    "allowed_path_patterns": [
+      ".github/workflows/*.yml",
+      "scripts/requirements*.txt",
+      "excel_schedule_engine/requirements*.txt",
+      "mission-control/jade_temple/sprint/requirements*.txt",
+      "app/package.json",
+      "app/package-lock.json"
+    ],
+    "waives": [
+      "CODEX_REVIEW"
+    ],
+    "never_waives": [
+      "EXACT_HEAD_PROOF_RUNS",
+      "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP"
+    ]
   }
 }

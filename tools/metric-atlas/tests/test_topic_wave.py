@@ -145,5 +145,18 @@ class GraphTests(unittest.TestCase):
         a=m.pilot(self.p);b=copy.deepcopy(a);b['topics'][0]['packet_sha256']='f'*64
         self.assertEqual(m.compare(a,b)['delta']['changed_packet_sha'],1)
         self.assertEqual(b['formal_credit_delta'],0)
+    def test_label_line_break_rejected(self):
+        forged='legit"]\n  EVIL["forged node'
+        self.broken(lambda p:p['nodes'][0].__setitem__('function',forged),'CONTROL_CHARACTER_IN_LABEL')
+        self.broken(lambda p:p['nodes'][0].__setitem__('owner','lane\r%%{init: {}}%%'),'CONTROL_CHARACTER_IN_LABEL')
+        self.broken(lambda p:p['nodes'][0].__setitem__('function','a b'),'CONTROL_CHARACTER_IN_LABEL')
+    def test_projection_keeps_validated_population(self):
+        # Defence in depth: even an unvalidated label cannot add Mermaid statements.
+        nodes=copy.deepcopy(self.p['nodes']);nodes[0]['function']='legit"]\n  EVIL["forged node'
+        for view in m.VIEWS:
+            for lens in m.LENSES:
+                out=m.make_mermaid(nodes,self.p['edges'],lens,view)
+                self.assertEqual(len(out.splitlines()),2+len(nodes)+len(self.p['edges']))
+                self.assertFalse(any(l.lstrip().startswith('EVIL') for l in out.splitlines()))
 
 if __name__=='__main__':unittest.main()

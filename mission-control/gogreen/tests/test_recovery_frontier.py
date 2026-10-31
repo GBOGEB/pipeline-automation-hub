@@ -126,7 +126,10 @@ class FrontierSafety(unittest.TestCase):
         file = (Path(__file__).resolve().parents[2] /
                 "qps-triage-ultra/p-process/site/everred/data/everred.json")
         raw = json.loads(file.read_text(encoding="utf-8"))
-        report = rf.build(raw, now=NOW, max_waves=20, capacity=8, per_repo=2)
+        # The committed register is refreshed by p-process pulses, so a fixed NOW can fall
+        # before its generated_at (SOURCE_FROM_FUTURE). Read it just past the 48 h window.
+        historical = datetime.fromisoformat(raw["generated_at"]) + timedelta(hours=49)
+        report = rf.build(raw, now=historical, max_waves=20, capacity=8, per_repo=2)
         self.assertGreater(report["candidate_count"], 4)
         self.assertGreaterEqual(len(report["waves"]), 4)
         self.assertEqual(report["status"], "STALE_SOURCE_NEEDS_RECENSUS")
