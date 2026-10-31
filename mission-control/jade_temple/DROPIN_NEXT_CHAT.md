@@ -1,3 +1,19 @@
+# JADE FOCUS5 PULSE P0003 + LOSSLESS HANDOVER — CP.HANDOFF CHECKPOINT (2026-10-31, newest)
+
+**Entry:** [full handover](notes/HANDOVER_JADE5_P0003_20261031.md) · [P0003 snapshot](data/FOCUS5_POINT_RELEASE_P0003.json) · [gate evidence registry](data/FOCUS5_GATE_EVIDENCE_REGISTRY.json) · [pulse tool](tools/focus5_pulse.py). Earlier checkpoints follow below, unchanged.
+
+1. **Pulse.** P0003 at 2026-10-31 heads: 21 PASS / 1 FAIL / 38 UNKNOWN of 60 (P0002 17/2/41). gg_MATH, DOCX_RTM_Automation and yaml-grammar 5/12; cryoplant 4/12; hub 2/12. Only FAIL: yaml-grammar H08 (unprotected). Owner gates are `unattended` after three pulses.
+2. **Tooling.** #983 declared H04-H06 evidence per repo (all declared workflows must succeed on the exact head). #984 a run whose jobs never started is UNKNOWN, not FAIL.
+3. **Open PRs, merge in order.** CODEX #1237 (empty HTML QA baseline) -> CODEX #1238 (RR-1.4.1 at P0003, blocker B4) -> hub #1078 (this pulse and handover).
+4. **Owner.** yaml-grammar ruleset + RED canary; DOCX pull request rule; delete 5 leftover DOCX canary/tmp branches; hub H04 scope (jade_temple only or whole repo); DOCX unused requirements files; CODEX private SHA in RR-1.4.1 history.
+5. **Next admissible action.** CODEX B4: Pages red on e462125 (run 41172462223, build step exit 2, last green 61cfb48). Then hub H05/H06 path filters, then P0004 (steps in the handover, section 5).
+
+### Drop-in message for the next session
+
+> Continue the JADE focus-five point-release slice from hub `mission-control/jade_temple/notes/HANDOVER_JADE5_P0003_20261031.md`. First re-read PR state for CODEX #1237, #1238 and hub #1078 (the owner merges fast). Then: (1) diagnose CODEX blocker B4 (Deploy GitHub Pages red, run 41172462223) and repair only that invariant; (2) make the hub's declared H05/H06 workflows run on every master SHA; (3) after merges, take pulse P0004 per handover section 5. Rules: one head SHA per repo per pulse, UNKNOWN never PASS, RELEASE_CREDIT=0, drafts only, one root cause per PR, CODEX PR bodies start with `## PR CLASSIFICATION`, never push a default branch, private repos aggregate-only in public outputs.
+
+---
+
 # JADE N+11 RE-CENSUS + PRIVATE BOUNDARY — CP.HANDOFF CHECKPOINT (2026-10-26, newest)
 
 **Entry:** [N11 census reading](devops/DEVOPS_CENSUS_N11_READING.md) · [private boundary](tools/private_boundary.py) · [BD queue](data/BD_QUEUE.csv) · [J09 CODEX receipt](data/J09_CODEX_MAIN_20261026.json). Earlier checkpoints follow below, unchanged.

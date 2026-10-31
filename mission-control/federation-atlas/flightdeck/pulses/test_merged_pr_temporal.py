@@ -16,7 +16,7 @@ SPEC.loader.exec_module(MOD)
 class TemporalTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.data=json.loads(SOURCE.read_text())
+        cls.data=json.loads(SOURCE.read_text(encoding="utf-8"))
 
     def test_source_and_main_vs_feature_destinations(self):
         MOD.validate(self.data)
@@ -28,7 +28,7 @@ class TemporalTests(unittest.TestCase):
             a=MOD.build(SOURCE,tmp)
             b=MOD.build(SOURCE,tmp)
             self.assertEqual(a,b)
-            page=(Path(tmp)/"index.html").read_text()
+            page=(Path(tmp)/"index.html").read_text(encoding="utf-8")
             self.assertIn("UNKNOWN",page)
             self.assertIn("RECURSIVE_DOWNSTREAM_REPLAY",page)
             self.assertIn("40e3c128ccdc",page)
