@@ -1,9 +1,18 @@
 name: Taxonomy N5 Coverage Zero-File Front
+# Single owner of the taxonomy source/branch coverage and zero-covered-file metric.
+# N5 measured 3 modules; N15 (#981) extends the same cohort to the 10 source-present
+# modules. N5's 90% per-file floor is kept for its original 3; the 7 N15 additions
+# carry an 85% floor; the combined floor stays 90%.
 on:
   pull_request:
     paths:
-      - 'mission-control/issue_rank/test_taxonomy_coverage_n5.py'
       - '.github/workflows/taxonomy-n5-coverage.yml'
+      - 'mission-control/issue_rank/test_taxonomy_coverage_n5.py'
+      - 'mission-control/issue_rank/test_taxonomy_coverage_n15.py'
+      - 'mission-control/issue_rank/title_taxonomy.py'
+      - 'mission-control/issue_rank/test_title_taxonomy.py'
+      - 'mission-control/issue_rank/taxonomy_*.py'
+      - 'mission-control/issue_rank/test_taxonomy_*.py'
   workflow_dispatch: {}
 permissions:
   contents: read
@@ -14,7 +23,7 @@ jobs:
   coverage:
     name: N5 source/branch coverage (py${{ matrix.python }})
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 12
     strategy:
       fail-fast: false
       matrix:
@@ -36,23 +45,37 @@ jobs:
         run: |
           set -euo pipefail
           python -m pip install --disable-pip-version-check coverage==7.13.3
-          python -m coverage run --branch --source=title_taxonomy,taxonomy_pulse,taxonomy_explorer -m unittest -v test_title_taxonomy test_taxonomy_pulse test_taxonomy_explorer test_taxonomy_coverage_n5
+          python -m coverage run --branch \
+            --source=title_taxonomy,taxonomy_pulse,taxonomy_explorer,taxonomy_metadata_plan,taxonomy_public_ingress,taxonomy_root_occurrence,taxonomy_dmaic_efficacy,taxonomy_slowburn_crew,taxonomy_peer_confidence,taxonomy_successor_audit \
+            -m unittest -v test_title_taxonomy test_taxonomy_pulse test_taxonomy_explorer \
+            test_taxonomy_metadata_plan test_taxonomy_public_ingress \
+            test_taxonomy_root_occurrence test_taxonomy_dmaic_efficacy \
+            test_taxonomy_slowburn_crew test_taxonomy_peer_confidence \
+            test_taxonomy_successor_audit test_taxonomy_coverage_n5 test_taxonomy_coverage_n15
           python -m coverage report --fail-under=90
           python -m coverage json -o coverage-n5.json
           python - <<'PY'
           import json
-          d=json.load(open('coverage-n5.json'))
+          d=json.load(open('coverage-n5.json',encoding='utf-8'))
           files=d['files']
-          assert len(files)==3, ('COVERAGE_COHORT_DRIFT',sorted(files))
+          floors={'title_taxonomy.py':90,'taxonomy_pulse.py':90,'taxonomy_explorer.py':90,
+                  'taxonomy_metadata_plan.py':85,'taxonomy_public_ingress.py':85,
+                  'taxonomy_root_occurrence.py':85,'taxonomy_dmaic_efficacy.py':85,
+                  'taxonomy_slowburn_crew.py':85,'taxonomy_peer_confidence.py':85,
+                  'taxonomy_successor_audit.py':85}
+          assert set(files)==set(floors), ('COVERAGE_COHORT_DRIFT',sorted(files),sorted(floors))
           zero=[p for p,v in files.items() if v['summary']['covered_lines']==0]
           assert not zero, ('ZERO_COVERED_FILES',zero)
-          below=[(p,v['summary']['percent_covered']) for p,v in files.items()
-                 if v['summary']['percent_covered']<90]
-          assert not below, ('PER_FILE_COVERAGE_BELOW_90',below)
+          below=[(p,v['summary']['percent_covered'],floors[p]) for p,v in files.items()
+                 if v['summary']['percent_covered']<floors[p]]
+          assert not below, ('PER_FILE_COVERAGE_BELOW_FLOOR',below)
           assert d['totals']['percent_covered']>=90, d['totals']
           print('N5_COVERAGE_RECEIPT',json.dumps({
-              'files':sorted(files),'zero_covered_files':0,'per_file_floor':90,
+              'files':sorted(files),'zero_covered_files':0,'per_file_floor':floors,
+              'combined_floor':90,
               'percent_covered':d['totals']['percent_covered'],
+              'per_file_percent':{p:round(v['summary']['percent_covered'],2)
+                                  for p,v in sorted(files.items())},
               'line_count':d['totals']['num_statements'],
               'covered_lines':d['totals']['covered_lines'],
               'branch_coverage':True,'formal_credit_delta':0},sort_keys=True))
