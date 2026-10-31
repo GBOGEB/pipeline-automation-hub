@@ -47,14 +47,20 @@ param(
                                  'C:\Users\gbonthuy\ABACUS', 'C:\Users\gbonthuy\cryoplant-project'),
     [double]   $LiveMinutes  = 30,
     [string]   $ReportPath   = $env:TEMP,
-    [switch]   $ShowThreads
+    [switch]   $ShowThreads,
+    # Run the offline checks of the security rule and exit. No gh calls, no installs.
+    [switch]   $SelfTest
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $now = [DateTimeOffset]::UtcNow
 $tokenNames = 'GITHUB_TOKEN', 'GH_TOKEN'
-$securityPattern = 'secur|inject|token|secret|poison|traversal|XSS|untrusted|privilege|CodeQL|ReDoS|backtracking'
+# Security words. "token" alone is not one (token census, tokenise); it counts only next to leak/exposure words.
+$securityPattern = 'secur|inject|secret|credential|poison|traversal|XSS|untrusted|privilege|CodeQL|ReDoS|backtracking'
+# Explicit vulnerability classes. These are security findings at any priority (P2, P3 or no badge).
+$vulnPattern = 'inject|traversal|XSS|cross-site|privilege escalation|escalat\w* privilege|cache.poison|SSRF|CSRF|\bRCE\b|remote code|ReDoS|vulnerab'
+$tokenLeakPattern = 'token.{0,40}(leak|expos|secret|credential|hardcod)|(leak|expos|hardcod)\w*.{0,40}token'
 $classOrder = 'LIVE', 'THREAD-P1', 'CONFLICT', 'RED', 'OUTDATED', 'THREAD', 'PENDING', 'CLEAN'
 
 # ---------------------------------------------------------------- helpers --
@@ -82,6 +88,16 @@ function Get-Priority([string]$Body) {
     # Codex badges read "![P1 Badge]"; CodeQL alerts carry no badge and are security by author.
     if ($Body -match '!\[(P[0-3])\b') { return $Matches[1] }
     '--'
+}
+
+function Test-SecurityThread([string]$Login, [string]$Body) {
+    <# Security when CodeQL raised it, when the body names a token leak or an explicit vulnerability class
+       (any priority), or when a P0/P1 badge names a security word. A P2/P3 that only says "token" or
+       "untrusted" in passing stays out of THREAD-P1. #>
+    if ($Login -eq 'github-advanced-security') { return $true }
+    if ($Body -match $tokenLeakPattern) { return $true }
+    if ($Body -match $vulnPattern) { return $true }
+    ((Get-Priority $Body) -in 'P0', 'P1') -and ($Body -match $securityPattern)
 }
 
 function Get-Title([string]$Body) {
@@ -139,6 +155,28 @@ function Get-ReviewThreads([string]$Owner, [string]$Name, [int]$Number) {
     $all
 }
 
+if ($SelfTest) {
+    $cases = @(
+        @{ Login = 'chatgpt-codex-connector'; Body = '![P2 Badge] Count the token census once per snapshot'; Want = $false }
+        @{ Login = 'chatgpt-codex-connector'; Body = '![P2 Badge] tokenise the body before matching'; Want = $false }
+        @{ Login = 'chatgpt-codex-connector'; Body = '![P1 Badge] The leaked token is printed to the job log'; Want = $true }
+        @{ Login = 'chatgpt-codex-connector'; Body = '![P2 Badge] GITHUB_TOKEN is exposed in the artifact'; Want = $true }
+        @{ Login = 'chatgpt-codex-connector'; Body = '![P1 Badge] Path traversal in the report path'; Want = $true }
+        @{ Login = 'chatgpt-codex-connector'; Body = '![P1 Badge] Off-by-one in the page loop'; Want = $false }
+        @{ Login = 'github-advanced-security'; Body = 'Checkout of untrusted code in a privileged context'; Want = $true }
+        @{ Login = 'chatgpt-codex-connector'; Body = '![P2 Badge] SQL injection through the repo filter'; Want = $true }
+        @{ Login = 'chatgpt-codex-connector'; Body = '![P3 Badge] Path traversal when ReportPath is relative'; Want = $true }
+        @{ Login = 'copilot-pull-request-reviewer'; Body = 'Rendering the title as HTML allows XSS'; Want = $true }
+        @{ Login = 'chatgpt-codex-connector'; Body = '![P2 Badge] Privilege escalation via the runner group'; Want = $true }
+        @{ Login = 'chatgpt-codex-connector'; Body = '![P2 Badge] Skip untrusted forks in the count'; Want = $false }
+        @{ Login = 'chatgpt-codex-connector'; Body = '![P2 Badge] Force the source list to sort once'; Want = $false }
+    )
+    $bad = @($cases | Where-Object { (Test-SecurityThread $_.Login $_.Body) -ne $_.Want })
+    foreach ($b in $bad) { Write-Host "FAIL want=$($b.Want): $($b.Login) :: $($b.Body)" }
+    Write-Host ("SELFTEST {0}/{1} passed" -f ($cases.Count - $bad.Count), $cases.Count)
+    exit [int][bool]$bad.Count
+}
+
 # ------------------------------------------------------------------ scan --
 $state = @(if (-not $IncludeReady) { '--draft' })
 $repos = @(if ($Repo.Count) { $Repo | ForEach-Object { "$Owner/$_" } } else {
@@ -159,7 +197,7 @@ foreach ($slug in $repos) {
             $pri = Get-Priority $c.body
             [pscustomobject]@{
                 Id = $_.id; Priority = $pri; Author = $login; Outdated = [bool]$_.isOutdated
-                Security = ($login -eq 'github-advanced-security') -or ($c.body -match $securityPattern)
+                Security = Test-SecurityThread $login $c.body
                 Where = "$($_.path):$($_.line)"; Title = Get-Title $c.body; Url = $c.url
             } })
         $failing = @($pr.statusCheckRollup | Where-Object {
