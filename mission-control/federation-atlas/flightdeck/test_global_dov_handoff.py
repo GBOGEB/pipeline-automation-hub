@@ -22,11 +22,18 @@ class GlobalDOVHandoffTests(unittest.TestCase):
         )
 
     def test_all_children_pending_exact_main_proof(self):
-        self.assertTrue(all(
-            x["source_state"] == "PR_CANDIDATE"
-            and x["native_test_gate"] == "UNVERIFIED_DEDICATED"
-            for x in self.data["children"]
-        ))
+        # 919b9c9b9 and 5d9c906b9 replaced UNVERIFIED_DEDICATED with the gate each
+        # child PR head actually reached. A PR-head gate is still not main proof:
+        # every child stays a PR candidate with a non-promoting decision.
+        self.assertEqual(
+            {"GBOGEB/cryoplant-project": "EXACT_HEAD_GUARDS_VERIFIED",
+             "GBOGEB/CODEX": "TERMINAL_PENDING_LATEST_HEAD",
+             "GBOGEB/ABACUS": "TERMINAL_PENDING"},
+            {x["repo"]: x["native_test_gate"] for x in self.data["children"]},
+        )
+        for x in self.data["children"]:
+            self.assertEqual("PR_CANDIDATE", x["source_state"])
+            self.assertIn(x["decision"], ("DEFER", "NO_AUTHORITY"))
 
     def test_purge_denied_by_default(self):
         self.assertEqual("DO_NOT_EXECUTE_YET",
