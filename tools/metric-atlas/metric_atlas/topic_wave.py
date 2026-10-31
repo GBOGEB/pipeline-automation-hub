@@ -52,12 +52,16 @@ def validate(pulse):
     packets = pulse.get('packets')
     require(type(packets) is list and 1 <= len(packets) <= 3, 'PILOT_PACKET_CAP')
     topics = set()
+    producer_heads = {}
     for row in packets:
         require(type(row) is dict and set(row) == {'packet', 'recipient', 'current_head',
                 'current_source_sha256', 'current_scope_sha256'}, 'INVALID_PACKET_INPUT')
         pkt = exchange.verify_packet(row['packet'])
         require(pkt['topic'] not in topics, 'DUPLICATE_TOPIC_OWNER')
         topics.add(pkt['topic'])
+        # One pulse per snapshot (AGENTS.md): one producer head per repository; retake, never mix.
+        require(producer_heads.setdefault(pkt['producer_repo'], pkt['producer_head']) == pkt['producer_head'],
+                'MIXED_PRODUCER_HEAD')
         require(row['recipient'] in pkt['recipients'], 'UNSUBSCRIBED_RECIPIENT')
         for name, length in (('current_head',40),('current_source_sha256',64),('current_scope_sha256',64)):
             require(isinstance(row[name], str) and bool((exchange.SHA40 if length == 40 else exchange.SHA64).fullmatch(row[name])), 'INVALID_CURRENT_IDENTITY')
@@ -137,7 +141,7 @@ def pilot(pulse):
             current_source_sha256=row['current_source_sha256'],current_scope_sha256=row['current_scope_sha256'],
             at=pulse['observed_at'])
         plans.append({'topic':pkt['topic'],'producer_repo':pkt['producer_repo'],
-            'packet_sha256':pkt['packet_sha256'],'reader_lane':i%pulse['max_readers'],
+            'producer_head':pkt['producer_head'],'packet_sha256':pkt['packet_sha256'],'reader_lane':i%pulse['max_readers'],
             'recipient':row['recipient'],'decision':decision['decision'],
             'source_recensus_required':decision['producer_recensus_required'],
             'recipient_pull_required':decision['recipient_pull_required'],

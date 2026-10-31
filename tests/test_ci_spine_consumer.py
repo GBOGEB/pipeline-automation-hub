@@ -33,7 +33,8 @@ def sample():
     delta = {"schema": M.DELTA_SCHEMA, "verdict": "DIFFERENCE_REVIEW_REQUIRED", "errors": [],
              "source": {"previous_sha": "b" * 40, "current_sha": SHA},
              "workflow_changes": [{"path": ".github/workflows/check.yml", "change": "MODIFIED",
-                                   "safety_attention": True, "changed_fields": ["permissions"]}]}
+                                   "safety_attention": True, "changed_fields": ["permissions"]}],
+             "authority_changes": []}
     wave = {"schema": M.WAVE_SCHEMA, "max_workers": 3,
             "tasks": [{"id": "CI-N7-A", "stage": "DISCOVER", "lane": "SOURCE"}]}
     return index, control, metrics, delta, wave
@@ -77,6 +78,100 @@ class Consumer(unittest.TestCase):
         page, receipt = M.render(i, c, m, d, w)
         self.assertEqual(receipt["delta_binding"], "STALE_DIFFERENT_SOURCE_NOT_JOINED")
         self.assertIn("STALE_DIFFERENT_SOURCE_NOT_JOINED", page)
+
+    def test_authority_only_rebind_is_visible_and_never_promotes(self):
+        i, c, m, d, w = sample()
+        d["workflow_changes"] = []
+        d["authority_changes"] = [{
+            "id": "CI-FPC", "status": "AUTHORITY_REVIEW_REQUIRED",
+            "before": {"path": ".github/workflows/old-fpc.yml", "phase": "CONTROL"},
+            "after": {"path": ".github/workflows/new-fpc.yml", "phase": "CONTROL"},
+        }]
+        page, receipt = M.render(i, c, m, d, w, SHA)
+        self.assertIn("Authority-binding changes", page)
+        self.assertIn("AUTHORITY_REVIEW_REQUIRED", page)
+        self.assertIn("old-fpc.yml", page)
+        self.assertIn("new-fpc.yml", page)
+        self.assertEqual(receipt["authority_changes_count"], 1)
+        self.assertEqual(receipt["delta_binding"], "SAME_CURRENT_SOURCE_REVIEW_ONLY")
+        self.assertEqual(receipt["admission"], "HOLD")
+        self.assertFalse(receipt["dispatch_authorized"])
+
+    def test_authority_rebind_stale_source_is_explicitly_not_joined(self):
+        i, c, m, d, w = sample()
+        d["workflow_changes"] = []
+        d["authority_changes"] = [{
+            "id": "CI-SOURCE", "status": "AUTHORITY_REVIEW_REQUIRED",
+            "before": None, "after": {"path": ".github/workflows/historical.yml"},
+        }]
+        d["source"]["current_sha"] = "c" * 40
+        page, receipt = M.render(i, c, m, d, w)
+        self.assertEqual(receipt["delta_binding"], "STALE_DIFFERENT_SOURCE_NOT_JOINED")
+        self.assertIn("historical or mismatched sources are not joined", page)
+        self.assertIn("historical.yml", page)
+
+    def test_malformed_authority_records_and_false_no_delta_fail_closed(self):
+        i, c, m, d, w = sample()
+        bad = [None, {}, "bad", [None], [{"id": "a"}],
+               [{"id": "a", "status": "PASS", "before": {}, "after": {}}],
+               [{"id": "a", "status": "AUTHORITY_REVIEW_REQUIRED",
+                 "before": [], "after": {}}],
+               [{"id": "a", "status": "AUTHORITY_REVIEW_REQUIRED",
+                 "before": None, "after": None}],
+               [{"id": "a", "status": "AUTHORITY_REVIEW_REQUIRED",
+                 "before": {"path": ".github/workflows/same.yml"}, "after": {"path": ".github/workflows/same.yml"}}],
+               [{"id": "a", "status": "AUTHORITY_REVIEW_REQUIRED",
+                 "before": None, "after": {}}],
+               [{"id": "a", "status": "AUTHORITY_REVIEW_REQUIRED",
+                 "before": None, "after": {"path": ""}}]]
+        for value in bad:
+            with self.subTest(value=value):
+                trial = copy.deepcopy(d)
+                trial["authority_changes"] = value
+                with self.assertRaisesRegex(ValueError, "CI_SPINE_VIEW_HOLD"):
+                    M.render(i, c, m, trial, w)
+        d["authority_changes"] = [{
+            "id": "a", "status": "AUTHORITY_REVIEW_REQUIRED",
+            "before": None, "after": {"path": ".github/workflows/new.yml"},
+        }]
+        d["verdict"] = "NO_OBSERVED_SOURCE_DELTA"
+        with self.assertRaisesRegex(ValueError, "contradictory delta verdict"):
+            M.render(i, c, m, d, w)
+
+    def test_authority_binding_payload_escapes_html(self):
+        i, c, m, d, w = sample()
+        injection = "<img src=x onerror=alert(1)>"
+        d["authority_changes"] = [{
+            "id": injection, "status": "AUTHORITY_REVIEW_REQUIRED",
+            "before": {"path": ".github/workflows/old.yml", "purpose": injection},
+            "after": {"path": ".github/workflows/safe.yml"},
+        }]
+        page, receipt = M.render(i, c, m, d, w)
+        self.assertNotIn(injection, page)
+        self.assertIn("&lt;img src=x onerror=alert(1)&gt;", page)
+        self.assertEqual(receipt["authority_changes_count"], 1)
+
+    def test_only_canonical_top_level_workflow_yaml_paths_are_accepted(self):
+        valid = (".github/workflows/canonical.yml", ".github/workflows/fpc.yaml")
+        for path in valid:
+            with self.subTest(valid_path=path):
+                self.assertTrue(M.canonical_workflow_binding(path))
+        invalid = (" ", "unrelated.txt", ".github/workflows/ ",
+                   ".github/workflows/ .yaml", ".github/workflows/a.yml ",
+                   ".github/workflows/sub/a.yml", ".github/workflows//a.yml",
+                   ".github/workflows/a\\b.yml", ".github/workflows/a\\\\b.yml",
+                   ".github/workflows/../a.yml", ".github/workflows/a.json",
+                   ".github\\\\workflows\\\\a.yml")
+        for path in invalid:
+            with self.subTest(invalid_path=path):
+                self.assertFalse(M.canonical_workflow_binding(path))
+                i, c, m, d, w = sample()
+                d["authority_changes"] = [{
+                    "id": "CI-FAIL", "status": "AUTHORITY_REVIEW_REQUIRED",
+                    "before": None, "after": {"path": path},
+                }]
+                with self.assertRaisesRegex(ValueError, "CI_SPINE_VIEW_HOLD"):
+                    M.render(i, c, m, d, w)
 
     def test_static_index_never_grants_admission(self):
         i, c, m, d, w = sample()

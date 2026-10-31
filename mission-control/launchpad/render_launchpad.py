@@ -48,7 +48,7 @@ def build(out,sha):
               "native_qa":None,"browser_qa":None,"hosted_http_verified":False,
               "authority_transfer":False,"security_waiver":False,
               "qps_engineering_acceptance":False,"merge_admission":"HOLD"}
-    (out/"manifest.json").write_text(json.dumps(manifest,indent=2,sort_keys=True)+"\n",encoding="utf-8")
+    (out/"manifest.json").write_bytes((json.dumps(manifest,indent=2,sort_keys=True)+"\n").encode("utf-8"))
     return manifest
 
 if __name__=="__main__":
