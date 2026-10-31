@@ -82,23 +82,24 @@ class RealDataTests(unittest.TestCase):
 
     def test_reproduces_focus5_denominator_without_credit(self):
         m = self.model["metrics"]
-        # Latest pulse P0002 (2026-10-25); P0001 was 14/60.
-        self.assertEqual((m["verified_pass"], m["gate_denominator"]), (17, 60))
-        self.assertEqual(m["verified_completion_pct"], 28.33)
+        # Latest pulse P0003 (2026-10-31); P0002 was 17/60, P0001 14/60.
+        self.assertEqual((m["verified_pass"], m["gate_denominator"]), (21, 60))
+        self.assertEqual(m["verified_completion_pct"], 35.0)
         self.assertEqual(m["nirvana_count"], 0)
         self.assertEqual(self.model["merge_admission"], "HOLD")
         self.assertFalse(self.model["release_credit"])
         self.assertFalse(self.model["authority_transfer"])
 
     def test_h08_is_core_focus(self):
-        # P0001: H08 FAIL in all five (COMMON_CAUSE). P0002: protection is active on
-        # hub, cryoplant-project and gg_MATH (H08 UNKNOWN until a RED canary), so the
-        # remaining H08 red is LOCAL to the two unprotected repos.
+        # P0001: H08 FAIL in all five (COMMON_CAUSE). P0002: LOCAL to DOCX_RTM_Automation
+        # and yaml-grammar. P0003: DOCX main is protected (H08 UNKNOWN until a pull request
+        # rule and a RED canary), so the remaining H08 red is LOCAL to yaml-grammar.
         red = self.model["source_red"]
         self.assertEqual(red["core_focus"], "H08")
         top = red["ranked_gates"][0]
         self.assertEqual((top["gate"], top["repo_count"], top["class"]),
-                         ("H08", 2, "LOCAL"))
+                         ("H08", 1, "LOCAL"))
+        self.assertEqual(top["repos"], ["GBOGEB/yaml-grammar"])
 
     def test_h03_is_common_unknown_breaking_every_golden_thread(self):
         unknown = {u["gate"]: u for u in self.model["source_red"]["common_unknown"]}
@@ -112,12 +113,15 @@ class RealDataTests(unittest.TestCase):
         self.assertEqual(w["next"], w["current"])
         self.assertEqual(w["admitted"], [])
 
-    def test_short_history_is_declared_not_extrapolated(self):
-        # Two pulses: fewer than three, so 'unattended' is never inferred.
-        self.assertEqual(self.model["history_depth"], 2)
+    def test_unattended_is_inferred_only_from_three_pulses(self):
+        # Three pulses (P0001-P0003): 'unattended' is now inferred, and only for gates
+        # UNKNOWN in all three. Owner gates were never evidenced; H01 is always read back.
+        self.assertEqual(self.model["history_depth"], 3)
         for repo in self.model["repos"]:
-            for s in repo["streaks"].values():
-                self.assertIsNone(s["unattended"])
+            s = repo["streaks"]
+            for gid in ("H03", "H09", "H12"):
+                self.assertIs(s[gid]["unattended"], True, (repo["repo"], gid))
+            self.assertIs(s["H01"]["unattended"], False, repo["repo"])
 
     def test_committed_outputs_are_in_parity(self):
         with redirect_stdout(io.StringIO()):

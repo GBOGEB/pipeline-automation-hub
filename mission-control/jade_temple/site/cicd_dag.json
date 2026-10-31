@@ -66,11 +66,11 @@
     "data/HEAD_CROSSWALK.json": "70d2ca8d6fb2364e6d385f43b2043fea5157edd96cbafb233362b3b1254c70bc",
     "data/RED_TRACE_FEDERATION_N8.json": "3238f61bd0bac44656f454d3d59d92610df4cc9157a56df67bf59c99a1ee0e89",
     "data/ROLLING5_POLICY.json": "77228bf9f0f54b2a9d3567ddef28c340d3ddf89fe333926b1b70d77a9bbd2d85",
-    "data/ROLLING5_PULSES.json": "28301d47c5e75d77acd235b0c2bc32ee270e3f17a7d11d1857aa898c2e728b96",
+    "data/ROLLING5_PULSES.json": "4bceef717c9db739c0c01bb1db52614173a810b146f445fd1bc840fcbb1a4730",
     "site/redtrace-manifest.json": "baf9381db9814c2293394f97408a2e5ae6cb9e0b4186dc6b58b0e023b7e5e7a9",
-    "site/rolling5.json": "7faacce27169f31dbc8b458f74381619f08f2703d5b9ddbf28f49ed67562a492"
+    "site/rolling5.json": "ca8b6de9592f88d64bed0159998acf13cdfb355d11f8f9ef2a2ab073a8874c00"
   },
-  "latest_pulse": "P0002",
+  "latest_pulse": "P0003",
   "lenses": [
     "FUNCTION",
     "SHA",
@@ -186,7 +186,7 @@
         }
       },
       {
-        "focus_sha": "49a4486bc24c97be25ce44a8ecea2a4856d38007",
+        "focus_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
         "head_sha": "e4b901afa7706dee862730c4a468a96b7b07bcfc",
         "lane": "CORE",
         "levels": {
@@ -318,7 +318,7 @@
         }
       },
       {
-        "focus_sha": "61ce59f754d23e010958927a731432672abf7621",
+        "focus_sha": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8",
         "head_sha": "61ce59f754d23e010958927a731432672abf7621",
         "lane": "CORE",
         "levels": {
@@ -347,7 +347,7 @@
         },
         "rank": 5,
         "repo": "GBOGEB/gg_MATH",
-        "sha_drift": false,
+        "sha_drift": true,
         "status": {
           "S0_PLAN": "FAIL",
           "S1_CODE": "FAIL",
@@ -450,7 +450,7 @@
         }
       },
       {
-        "focus_sha": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
+        "focus_sha": "7c1da80f2acc229fee11707d0500c1cf11482721",
         "head_sha": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
         "lane": "EXPAND",
         "levels": {
@@ -479,7 +479,7 @@
         },
         "rank": 8,
         "repo": "GBOGEB/DOCX_RTM_Automation",
-        "sha_drift": false,
+        "sha_drift": true,
         "status": {
           "S0_PLAN": "FAIL",
           "S1_CODE": "FAIL",
@@ -802,7 +802,7 @@
         }
       },
       {
-        "focus_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
+        "focus_sha": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7",
         "head_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
         "lane": "SUPPORT",
         "levels": {
@@ -831,7 +831,7 @@
         },
         "rank": 16,
         "repo": "GBOGEB/yaml-grammar",
-        "sha_drift": false,
+        "sha_drift": true,
         "status": {
           "S0_PLAN": "FAIL",
           "S1_CODE": "FAIL",
@@ -1121,7 +1121,7 @@
       "function": "Append-only pulse ledger pinning each focus snapshot",
       "id": "OBJ.ROLLING5_LEDGER",
       "kind": "data",
-      "oid": "f19a7519f340d9d69ae20e0c1646debb45c54862",
+      "oid": "2be5309efdaae8f1bdf24ebada87acfbbb0f0604",
       "path": "mission-control/jade_temple/data/ROLLING5_PULSES.json",
       "symbol": null
     },
@@ -1346,21 +1346,24 @@
     "census_digest_sha256": "35bf393ddcd6b4886b43d384e956f3540bae7e0ee3f4925b178bf49b637b806b",
     "census_observed_at_utc": "2026-10-25T23:31:24Z",
     "focus_repos": 5,
-    "gate_observed_date": "2026-10-25",
-    "gate_pulse": "P0002",
-    "gate_snapshot": "data/FOCUS5_POINT_RELEASE_P0002.json",
-    "mismatch_count": 1,
+    "gate_observed_date": "2026-10-31",
+    "gate_pulse": "P0003",
+    "gate_snapshot": "data/FOCUS5_POINT_RELEASE_P0003.json",
+    "mismatch_count": 4,
     "mismatched": [
-      "pipeline-automation-hub"
+      "pipeline-automation-hub",
+      "gg_MATH",
+      "DOCX_RTM_Automation",
+      "yaml-grammar"
     ],
     "one_pulse": false,
     "repos": {
       "DOCX_RTM_Automation": {
         "census_sha": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
-        "gate_sha": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
-        "pulse_mismatch": false,
+        "gate_sha": "7c1da80f2acc229fee11707d0500c1cf11482721",
+        "pulse_mismatch": true,
         "repo": "GBOGEB/DOCX_RTM_Automation",
-        "state": "ALIGNED"
+        "state": "MISMATCH"
       },
       "cryoplant-project": {
         "census_sha": "PRIVATE_AGGREGATE_ONLY",
@@ -1371,24 +1374,24 @@
       },
       "gg_MATH": {
         "census_sha": "61ce59f754d23e010958927a731432672abf7621",
-        "gate_sha": "61ce59f754d23e010958927a731432672abf7621",
-        "pulse_mismatch": false,
+        "gate_sha": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8",
+        "pulse_mismatch": true,
         "repo": "GBOGEB/gg_MATH",
-        "state": "ALIGNED"
+        "state": "MISMATCH"
       },
       "pipeline-automation-hub": {
         "census_sha": "e4b901afa7706dee862730c4a468a96b7b07bcfc",
-        "gate_sha": "49a4486bc24c97be25ce44a8ecea2a4856d38007",
+        "gate_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
         "pulse_mismatch": true,
         "repo": "GBOGEB/pipeline-automation-hub",
         "state": "MISMATCH"
       },
       "yaml-grammar": {
         "census_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
-        "gate_sha": "75083c2aaabd0d7453d72de895666b21021826c1",
-        "pulse_mismatch": false,
+        "gate_sha": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7",
+        "pulse_mismatch": true,
         "repo": "GBOGEB/yaml-grammar",
-        "state": "ALIGNED"
+        "state": "MISMATCH"
       }
     }
   },
@@ -2176,7 +2179,10 @@
         "devops": {
           "actions_pinned_pct": 43.66,
           "census_sha_drift": [
-            "pipeline-automation-hub"
+            "DOCX_RTM_Automation",
+            "gg_MATH",
+            "pipeline-automation-hub",
+            "yaml-grammar"
           ],
           "deploy_contract_core": "2/30",
           "deploy_env": 23,
@@ -2249,7 +2255,7 @@
           "workflows_traced": 340
         },
         "gates": {
-          "blocked_by_ancestor": 21,
+          "blocked_by_ancestor": 16,
           "critical_path": {
             "gates": [
               "H01",
@@ -2260,18 +2266,18 @@
               "H12"
             ],
             "length": 6,
-            "mean_pass_depth": 2.4,
+            "mean_pass_depth": 3.2,
             "pass_depth": {
-              "DOCX_RTM_Automation": 2,
+              "DOCX_RTM_Automation": 4,
               "cryoplant-project": 2,
               "gg_MATH": 4,
               "pipeline-automation-hub": 2,
-              "yaml-grammar": 2
+              "yaml-grammar": 4
             }
           },
-          "fail": 2,
-          "measurement_debt_pct": 68.33,
-          "pass": 17,
+          "fail": 1,
+          "measurement_debt_pct": 63.33,
+          "pass": 21,
           "phase_yield": {
             "ANALYZE": {
               "gates": [
@@ -2316,14 +2322,14 @@
                 "H05",
                 "H06"
               ],
-              "pass": 7,
+              "pass": 11,
               "total": 15,
-              "yield": 0.4667
+              "yield": 0.7333
             }
           },
           "ready_frontier": [
             "DOCX_RTM_Automation:H03",
-            "DOCX_RTM_Automation:H04",
+            "DOCX_RTM_Automation:H07",
             "DOCX_RTM_Automation:H08",
             "DOCX_RTM_Automation:H10",
             "DOCX_RTM_Automation:H11",
@@ -2333,7 +2339,6 @@
             "cryoplant-project:H10",
             "cryoplant-project:H11",
             "gg_MATH:H03",
-            "gg_MATH:H06",
             "gg_MATH:H07",
             "gg_MATH:H08",
             "gg_MATH:H10",
@@ -2342,13 +2347,15 @@
             "pipeline-automation-hub:H04",
             "pipeline-automation-hub:H08",
             "yaml-grammar:H03",
-            "yaml-grammar:H04",
-            "yaml-grammar:H08"
+            "yaml-grammar:H07",
+            "yaml-grammar:H08",
+            "yaml-grammar:H10",
+            "yaml-grammar:H11"
           ],
           "rolled_throughput_yield": 0.0,
           "total": 60,
-          "unknown": 41,
-          "verified_completion_pct": 28.33
+          "unknown": 38,
+          "verified_completion_pct": 35.0
         },
         "issue_bd": {
           "bd_open": 11,
@@ -2404,7 +2411,6 @@
           ],
           "common_unknown": [
             "H03",
-            "H04",
             "H07",
             "H08",
             "H09",
@@ -2414,7 +2420,6 @@
           ],
           "core_focus": "H08",
           "top_instances": [
-            "DOCX_RTM_Automation:H08:4",
             "yaml-grammar:H08:3"
           ]
         }
@@ -2531,8 +2536,8 @@
           "shas": [
             {
               "kind": "sha256",
-              "label": "pulse P0002 snapshot",
-              "value": "2d93727a1ec98bb79934f3ec449fc0bd88fffec9e7625fa7ca3fcd673b6fcc4c"
+              "label": "pulse P0003 snapshot",
+              "value": "1444be3a88df60b8bba571392e516a1f45f0f9c157e722e916fc0f15a5e052a7"
             }
           ],
           "status": "PASS",
@@ -2576,8 +2581,8 @@
           "shas": [
             {
               "kind": "sha256",
-              "label": "pulse P0002 snapshot",
-              "value": "2d93727a1ec98bb79934f3ec449fc0bd88fffec9e7625fa7ca3fcd673b6fcc4c"
+              "label": "pulse P0003 snapshot",
+              "value": "1444be3a88df60b8bba571392e516a1f45f0f9c157e722e916fc0f15a5e052a7"
             }
           ],
           "status": "PASS",
@@ -2627,8 +2632,8 @@
           "shas": [
             {
               "kind": "sha256",
-              "label": "pulse P0002 snapshot",
-              "value": "2d93727a1ec98bb79934f3ec449fc0bd88fffec9e7625fa7ca3fcd673b6fcc4c"
+              "label": "pulse P0003 snapshot",
+              "value": "1444be3a88df60b8bba571392e516a1f45f0f9c157e722e916fc0f15a5e052a7"
             }
           ],
           "status": "UNKNOWN",
@@ -2637,21 +2642,19 @@
         },
         {
           "colour": "UNKNOWN",
-          "detail": "PASS 1 · FAIL 0 · UNKNOWN 4 · common unknown · ready: DOCX_RTM_Automation, cryoplant-project, pipeline-automation-hub, yaml-grammar",
+          "detail": "PASS 3 · FAIL 0 · UNKNOWN 2 · ready: cryoplant-project, pipeline-automation-hub",
           "id": "H04",
           "kind": "P",
           "label": "H04 Reproducible dependency/build contract qualified",
           "layer": 4,
           "metrics": {
             "fail": 0,
-            "pass": 1,
+            "pass": 3,
             "ready_frontier": [
-              "DOCX_RTM_Automation",
               "cryoplant-project",
-              "pipeline-automation-hub",
-              "yaml-grammar"
+              "pipeline-automation-hub"
             ],
-            "unknown": 4
+            "unknown": 2
           },
           "oids": [
             {
@@ -2677,8 +2680,8 @@
           "shas": [
             {
               "kind": "sha256",
-              "label": "pulse P0002 snapshot",
-              "value": "2d93727a1ec98bb79934f3ec449fc0bd88fffec9e7625fa7ca3fcd673b6fcc4c"
+              "label": "pulse P0003 snapshot",
+              "value": "1444be3a88df60b8bba571392e516a1f45f0f9c157e722e916fc0f15a5e052a7"
             }
           ],
           "status": "UNKNOWN",
@@ -2687,16 +2690,16 @@
         },
         {
           "colour": "UNKNOWN",
-          "detail": "PASS 3 · FAIL 0 · UNKNOWN 2",
+          "detail": "PASS 4 · FAIL 0 · UNKNOWN 1",
           "id": "H05",
           "kind": "P",
           "label": "H05 Native primary B0/test equivalent terminal PASS",
           "layer": 5,
           "metrics": {
             "fail": 0,
-            "pass": 3,
+            "pass": 4,
             "ready_frontier": [],
-            "unknown": 2
+            "unknown": 1
           },
           "oids": [
             {
@@ -2722,8 +2725,8 @@
           "shas": [
             {
               "kind": "sha256",
-              "label": "pulse P0002 snapshot",
-              "value": "2d93727a1ec98bb79934f3ec449fc0bd88fffec9e7625fa7ca3fcd673b6fcc4c"
+              "label": "pulse P0003 snapshot",
+              "value": "1444be3a88df60b8bba571392e516a1f45f0f9c157e722e916fc0f15a5e052a7"
             }
           ],
           "status": "UNKNOWN",
@@ -2732,18 +2735,16 @@
         },
         {
           "colour": "UNKNOWN",
-          "detail": "PASS 3 · FAIL 0 · UNKNOWN 2 · ready: gg_MATH",
+          "detail": "PASS 4 · FAIL 0 · UNKNOWN 1",
           "id": "H06",
           "kind": "P",
           "label": "H06 Independent domain/integration smoke terminal PASS",
           "layer": 5,
           "metrics": {
             "fail": 0,
-            "pass": 3,
-            "ready_frontier": [
-              "gg_MATH"
-            ],
-            "unknown": 2
+            "pass": 4,
+            "ready_frontier": [],
+            "unknown": 1
           },
           "oids": [
             {
@@ -2769,8 +2770,8 @@
           "shas": [
             {
               "kind": "sha256",
-              "label": "pulse P0002 snapshot",
-              "value": "2d93727a1ec98bb79934f3ec449fc0bd88fffec9e7625fa7ca3fcd673b6fcc4c"
+              "label": "pulse P0003 snapshot",
+              "value": "1444be3a88df60b8bba571392e516a1f45f0f9c157e722e916fc0f15a5e052a7"
             }
           ],
           "status": "UNKNOWN",
@@ -2779,7 +2780,7 @@
         },
         {
           "colour": "UNKNOWN",
-          "detail": "PASS 0 · FAIL 0 · UNKNOWN 5 · common unknown · ready: gg_MATH",
+          "detail": "PASS 0 · FAIL 0 · UNKNOWN 5 · common unknown · ready: DOCX_RTM_Automation, gg_MATH, yaml-grammar",
           "id": "H07",
           "kind": "P",
           "label": "H07 Security and supply-chain gates accepted",
@@ -2788,7 +2789,9 @@
             "fail": 0,
             "pass": 0,
             "ready_frontier": [
-              "gg_MATH"
+              "DOCX_RTM_Automation",
+              "gg_MATH",
+              "yaml-grammar"
             ],
             "unknown": 5
           },
@@ -2816,8 +2819,8 @@
           "shas": [
             {
               "kind": "sha256",
-              "label": "pulse P0002 snapshot",
-              "value": "2d93727a1ec98bb79934f3ec449fc0bd88fffec9e7625fa7ca3fcd673b6fcc4c"
+              "label": "pulse P0003 snapshot",
+              "value": "1444be3a88df60b8bba571392e516a1f45f0f9c157e722e916fc0f15a5e052a7"
             }
           ],
           "status": "UNKNOWN",
@@ -2826,13 +2829,13 @@
         },
         {
           "colour": "ROOT_RED",
-          "detail": "PASS 0 · FAIL 2 · UNKNOWN 3 · common unknown · ready: DOCX_RTM_Automation, cryoplant-project, gg_MATH, pipeline-automation-hub, yaml-grammar",
+          "detail": "PASS 0 · FAIL 1 · UNKNOWN 4 · common unknown · ready: DOCX_RTM_Automation, cryoplant-project, gg_MATH, pipeline-automation-hub, yaml-grammar",
           "id": "H08",
           "kind": "P",
           "label": "H08 Effective protection and rejected RED canary",
           "layer": 3,
           "metrics": {
-            "fail": 2,
+            "fail": 1,
             "pass": 0,
             "ready_frontier": [
               "DOCX_RTM_Automation",
@@ -2841,7 +2844,7 @@
               "pipeline-automation-hub",
               "yaml-grammar"
             ],
-            "unknown": 3
+            "unknown": 4
           },
           "oids": [
             {
@@ -2876,8 +2879,8 @@
           "shas": [
             {
               "kind": "sha256",
-              "label": "pulse P0002 snapshot",
-              "value": "2d93727a1ec98bb79934f3ec449fc0bd88fffec9e7625fa7ca3fcd673b6fcc4c"
+              "label": "pulse P0003 snapshot",
+              "value": "1444be3a88df60b8bba571392e516a1f45f0f9c157e722e916fc0f15a5e052a7"
             }
           ],
           "status": "FAIL",
@@ -2921,8 +2924,8 @@
           "shas": [
             {
               "kind": "sha256",
-              "label": "pulse P0002 snapshot",
-              "value": "2d93727a1ec98bb79934f3ec449fc0bd88fffec9e7625fa7ca3fcd673b6fcc4c"
+              "label": "pulse P0003 snapshot",
+              "value": "1444be3a88df60b8bba571392e516a1f45f0f9c157e722e916fc0f15a5e052a7"
             }
           ],
           "status": "UNKNOWN",
@@ -2931,7 +2934,7 @@
         },
         {
           "colour": "UNKNOWN",
-          "detail": "PASS 0 · FAIL 0 · UNKNOWN 5 · common unknown · ready: DOCX_RTM_Automation, cryoplant-project, gg_MATH",
+          "detail": "PASS 0 · FAIL 0 · UNKNOWN 5 · common unknown · ready: DOCX_RTM_Automation, cryoplant-project, gg_MATH, yaml-grammar",
           "id": "H10",
           "kind": "P",
           "label": "H10 Matched coverage and negative tests accepted",
@@ -2942,7 +2945,8 @@
             "ready_frontier": [
               "DOCX_RTM_Automation",
               "cryoplant-project",
-              "gg_MATH"
+              "gg_MATH",
+              "yaml-grammar"
             ],
             "unknown": 5
           },
@@ -2970,8 +2974,8 @@
           "shas": [
             {
               "kind": "sha256",
-              "label": "pulse P0002 snapshot",
-              "value": "2d93727a1ec98bb79934f3ec449fc0bd88fffec9e7625fa7ca3fcd673b6fcc4c"
+              "label": "pulse P0003 snapshot",
+              "value": "1444be3a88df60b8bba571392e516a1f45f0f9c157e722e916fc0f15a5e052a7"
             }
           ],
           "status": "UNKNOWN",
@@ -2980,7 +2984,7 @@
         },
         {
           "colour": "UNKNOWN",
-          "detail": "PASS 0 · FAIL 0 · UNKNOWN 5 · common unknown · ready: DOCX_RTM_Automation, cryoplant-project, gg_MATH",
+          "detail": "PASS 0 · FAIL 0 · UNKNOWN 5 · common unknown · ready: DOCX_RTM_Automation, cryoplant-project, gg_MATH, yaml-grammar",
           "id": "H11",
           "kind": "P",
           "label": "H11 Source-bound binary/site artifact QA and hashes",
@@ -2991,7 +2995,8 @@
             "ready_frontier": [
               "DOCX_RTM_Automation",
               "cryoplant-project",
-              "gg_MATH"
+              "gg_MATH",
+              "yaml-grammar"
             ],
             "unknown": 5
           },
@@ -3019,8 +3024,8 @@
           "shas": [
             {
               "kind": "sha256",
-              "label": "pulse P0002 snapshot",
-              "value": "2d93727a1ec98bb79934f3ec449fc0bd88fffec9e7625fa7ca3fcd673b6fcc4c"
+              "label": "pulse P0003 snapshot",
+              "value": "1444be3a88df60b8bba571392e516a1f45f0f9c157e722e916fc0f15a5e052a7"
             }
           ],
           "status": "UNKNOWN",
@@ -3064,8 +3069,8 @@
           "shas": [
             {
               "kind": "sha256",
-              "label": "pulse P0002 snapshot",
-              "value": "2d93727a1ec98bb79934f3ec449fc0bd88fffec9e7625fa7ca3fcd673b6fcc4c"
+              "label": "pulse P0003 snapshot",
+              "value": "1444be3a88df60b8bba571392e516a1f45f0f9c157e722e916fc0f15a5e052a7"
             }
           ],
           "status": "UNKNOWN",
@@ -3226,14 +3231,15 @@
         },
         {
           "colour": "FAIL",
-          "detail": "failure 4 · success 41",
+          "detail": "failure 3 · skipped 1 · success 42",
           "id": "I.NATIVE_RUNS",
           "kind": "I",
           "label": "Native Actions runs on exact SHA",
           "layer": 1,
           "metrics": {
-            "failure": 4,
-            "success": 41
+            "failure": 3,
+            "skipped": 1,
+            "success": 42
           },
           "oids": [
             {
@@ -3340,8 +3346,8 @@
           "shas": [
             {
               "kind": "sha256",
-              "label": "pulse P0002 snapshot",
-              "value": "2d93727a1ec98bb79934f3ec449fc0bd88fffec9e7625fa7ca3fcd673b6fcc4c"
+              "label": "pulse P0003 snapshot",
+              "value": "1444be3a88df60b8bba571392e516a1f45f0f9c157e722e916fc0f15a5e052a7"
             }
           ],
           "status": "UNKNOWN",
@@ -3975,7 +3981,7 @@
             {
               "kind": "sha256",
               "label": "site/rolling5.json",
-              "value": "7faacce27169f31dbc8b458f74381619f08f2703d5b9ddbf28f49ed67562a492"
+              "value": "ca8b6de9592f88d64bed0159998acf13cdfb355d11f8f9ef2a2ab073a8874c00"
             }
           ],
           "status": null,
@@ -4472,7 +4478,7 @@
             {
               "kind": "commit",
               "label": "default head",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": null,
@@ -4546,7 +4552,7 @@
             {
               "kind": "commit",
               "label": "default head",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": null,
@@ -4586,7 +4592,7 @@
             {
               "kind": "commit",
               "label": "default head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": null,
@@ -4626,7 +4632,7 @@
             {
               "kind": "commit",
               "label": "default head",
-              "value": "75083c2aaabd0d7453d72de895666b21021826c1"
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
             }
           ],
           "status": null,
@@ -4846,30 +4852,30 @@
         "by_colour": {
           "CROSSWALK": 3,
           "EVERRED": 2,
-          "FAIL": 12,
+          "FAIL": 11,
           "ISSUE_BD": 1,
           "NEUTRAL": 7,
-          "PASS": 28,
+          "PASS": 22,
           "ROOT_RED": 5,
-          "UNKNOWN": 11
+          "UNKNOWN": 13
         },
         "by_sipoc": {
           "C": 1,
-          "I": 35,
+          "I": 30,
           "O": 4,
           "P": 22,
           "S": 7
         },
         "crosswalk_edges": 13,
         "depth": 13,
-        "edges": 113,
-        "nodes": 69,
-        "oid_coverage": 0.8986,
-        "sha_coverage": 0.6522,
+        "edges": 103,
+        "nodes": 64,
+        "oid_coverage": 0.8906,
+        "sha_coverage": 0.625,
         "sinks": 2,
         "sources": 7,
         "temporal_edges": 1,
-        "width_max": 35
+        "width_max": 30
       },
       "edges": [
         {
@@ -5154,41 +5160,6 @@
         },
         {
           "from": "I.RUN2",
-          "label": "native B0",
-          "state": null,
-          "to": "H05",
-          "type": "FLOW"
-        },
-        {
-          "from": "I.RUN20",
-          "label": "native B0",
-          "state": null,
-          "to": "H05",
-          "type": "FLOW"
-        },
-        {
-          "from": "I.RUN21",
-          "label": "native B0",
-          "state": null,
-          "to": "H05",
-          "type": "FLOW"
-        },
-        {
-          "from": "I.RUN22",
-          "label": "native B0",
-          "state": null,
-          "to": "H05",
-          "type": "FLOW"
-        },
-        {
-          "from": "I.RUN23",
-          "label": "native B0",
-          "state": null,
-          "to": "H05",
-          "type": "FLOW"
-        },
-        {
-          "from": "I.RUN24",
           "label": "native B0",
           "state": null,
           "to": "H05",
@@ -5660,41 +5631,6 @@
           "from": "S.self",
           "label": "",
           "state": null,
-          "to": "I.RUN20",
-          "type": "FLOW"
-        },
-        {
-          "from": "S.self",
-          "label": "",
-          "state": null,
-          "to": "I.RUN21",
-          "type": "FLOW"
-        },
-        {
-          "from": "S.self",
-          "label": "",
-          "state": null,
-          "to": "I.RUN22",
-          "type": "FLOW"
-        },
-        {
-          "from": "S.self",
-          "label": "",
-          "state": null,
-          "to": "I.RUN23",
-          "type": "FLOW"
-        },
-        {
-          "from": "S.self",
-          "label": "",
-          "state": null,
-          "to": "I.RUN24",
-          "type": "FLOW"
-        },
-        {
-          "from": "S.self",
-          "label": "",
-          "state": null,
           "to": "I.RUN3",
           "type": "FLOW"
         },
@@ -5821,6 +5757,7 @@
         "gates": {
           "blocked_by_ancestor": [
             "H05",
+            "H06",
             "H07",
             "H09",
             "H10",
@@ -5828,7 +5765,7 @@
             "H12"
           ],
           "fail": 0,
-          "pass": 3,
+          "pass": 2,
           "ready_frontier": [
             "H03",
             "H04",
@@ -5836,7 +5773,7 @@
           ],
           "root_red": [],
           "source_red": [],
-          "unknown": 9
+          "unknown": 10
         },
         "golden_thread": {
           "first_break": "OWNER_SCOPE",
@@ -5919,12 +5856,12 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "PASS",
           "type": "GATE",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/commit/49a4486bc24c97be25ce44a8ecea2a4856d38007"
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/commit/3bbee1143e6349d770f56720870710e4d0e562b0"
         },
         {
           "colour": "PASS",
@@ -5962,12 +5899,12 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "PASS",
           "type": "GATE",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/tree/49a4486bc24c97be25ce44a8ecea2a4856d38007"
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/tree/3bbee1143e6349d770f56720870710e4d0e562b0"
         },
         {
           "colour": "UNKNOWN",
@@ -6005,7 +5942,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "UNKNOWN",
@@ -6048,7 +5985,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "UNKNOWN",
@@ -6057,7 +5994,7 @@
         },
         {
           "colour": "UNKNOWN",
-          "detail": "UNKNOWN · blocked · No workflow evidence for this gate in the previous pulse",
+          "detail": "UNKNOWN · blocked · Declared evidence incomplete on this exact SHA: .github/workflows/jade-temple-readonly-qa.yml not completed (declared in gate evidence registry)",
           "id": "H05",
           "kind": "P",
           "label": "H05 Native primary B0/test equivalent terminal PASS",
@@ -6091,7 +6028,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "UNKNOWN",
@@ -6099,14 +6036,14 @@
           "url": null
         },
         {
-          "colour": "PASS",
-          "detail": "PASS · done · Dependency SPINE Peer Source Census (HUB) success on this exact SHA (same workflow as previous pulse)",
+          "colour": "UNKNOWN",
+          "detail": "UNKNOWN · blocked · Declared evidence incomplete on this exact SHA: .github/workflows/dependency-spine-peer-census.yml not completed (declared in gate evidence registry)",
           "id": "H06",
           "kind": "P",
           "label": "H06 Independent domain/integration smoke terminal PASS",
           "layer": 5,
           "metrics": {
-            "frontier": "done",
+            "frontier": "blocked",
             "unlock_score": 0
           },
           "oids": [
@@ -6134,12 +6071,12 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
-          "status": "PASS",
+          "status": "UNKNOWN",
           "type": "GATE",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40170856356"
+          "url": null
         },
         {
           "colour": "UNKNOWN",
@@ -6177,7 +6114,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "UNKNOWN",
@@ -6220,7 +6157,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "UNKNOWN",
@@ -6263,7 +6200,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "UNKNOWN",
@@ -6306,7 +6243,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "UNKNOWN",
@@ -6349,7 +6286,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "UNKNOWN",
@@ -6392,7 +6329,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "UNKNOWN",
@@ -6439,7 +6376,7 @@
             {
               "kind": "commit",
               "label": "gate source",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": null,
@@ -6763,7 +6700,7 @@
         },
         {
           "colour": "FAIL",
-          "detail": "run 40184865554 · failure",
+          "detail": "run 41224152185 · failure",
           "id": "I.RUN1",
           "kind": "I",
           "label": "CODE PURPLE Disjoint Live Census (read-only)",
@@ -6785,172 +6722,17 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "FAIL",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40184865554"
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41224152185"
         },
         {
           "colour": "PASS",
-          "detail": "run 40135215920 · success",
+          "detail": "run 41221272033 · success",
           "id": "I.RUN10",
-          "kind": "I",
-          "label": "GM-FLEET-03 F01 Pilot",
-          "layer": 1,
-          "metrics": {},
-          "oids": [
-            {
-              "at": null,
-              "jade_oid": null,
-              "object": "OBJ.FOCUS5",
-              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
-              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
-              "status": "BOUND",
-              "symbol": null
-            }
-          ],
-          "phase": null,
-          "shas": [
-            {
-              "kind": "commit",
-              "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
-            }
-          ],
-          "status": "PASS",
-          "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40135215920"
-        },
-        {
-          "colour": "PASS",
-          "detail": "run 40135215890 · success",
-          "id": "I.RUN11",
-          "kind": "I",
-          "label": "GM-FLEET-03 F03 Pilot",
-          "layer": 1,
-          "metrics": {},
-          "oids": [
-            {
-              "at": null,
-              "jade_oid": null,
-              "object": "OBJ.FOCUS5",
-              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
-              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
-              "status": "BOUND",
-              "symbol": null
-            }
-          ],
-          "phase": null,
-          "shas": [
-            {
-              "kind": "commit",
-              "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
-            }
-          ],
-          "status": "PASS",
-          "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40135215890"
-        },
-        {
-          "colour": "PASS",
-          "detail": "run 40135215914 · success",
-          "id": "I.RUN12",
-          "kind": "I",
-          "label": "GM-FLEET-03 Ring1 Recon",
-          "layer": 1,
-          "metrics": {},
-          "oids": [
-            {
-              "at": null,
-              "jade_oid": null,
-              "object": "OBJ.FOCUS5",
-              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
-              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
-              "status": "BOUND",
-              "symbol": null
-            }
-          ],
-          "phase": null,
-          "shas": [
-            {
-              "kind": "commit",
-              "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
-            }
-          ],
-          "status": "PASS",
-          "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40135215914"
-        },
-        {
-          "colour": "PASS",
-          "detail": "run 40135215892 · success",
-          "id": "I.RUN13",
-          "kind": "I",
-          "label": "GM-FLEET-03 Ring2 Recon",
-          "layer": 1,
-          "metrics": {},
-          "oids": [
-            {
-              "at": null,
-              "jade_oid": null,
-              "object": "OBJ.FOCUS5",
-              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
-              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
-              "status": "BOUND",
-              "symbol": null
-            }
-          ],
-          "phase": null,
-          "shas": [
-            {
-              "kind": "commit",
-              "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
-            }
-          ],
-          "status": "PASS",
-          "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40135215892"
-        },
-        {
-          "colour": "FAIL",
-          "detail": "run 40165886031 · failure",
-          "id": "I.RUN14",
-          "kind": "I",
-          "label": "GOGREEN Federation Spine (read-only)",
-          "layer": 1,
-          "metrics": {},
-          "oids": [
-            {
-              "at": null,
-              "jade_oid": null,
-              "object": "OBJ.FOCUS5",
-              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
-              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
-              "status": "BOUND",
-              "symbol": null
-            }
-          ],
-          "phase": null,
-          "shas": [
-            {
-              "kind": "commit",
-              "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
-            }
-          ],
-          "status": "FAIL",
-          "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40165886031"
-        },
-        {
-          "colour": "PASS",
-          "detail": "run 40182054000 · success",
-          "id": "I.RUN15",
           "kind": "I",
           "label": "GOGREEN Red-Trace Ledger (read-only)",
           "layer": 1,
@@ -6971,19 +6753,19 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40182054000"
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272033"
         },
         {
-          "colour": "PASS",
-          "detail": "run 40170804973 · success",
-          "id": "I.RUN16",
+          "colour": "UNKNOWN",
+          "detail": "run 41224775411 · skipped",
+          "id": "I.RUN11",
           "kind": "I",
-          "label": "GOGREEN Replay Lane (bounded)",
+          "label": "GOGREEN Required Gate Re-check",
           "layer": 1,
           "metrics": {},
           "oids": [
@@ -7002,48 +6784,17 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
-          "status": "PASS",
+          "status": "UNKNOWN",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40170804973"
-        },
-        {
-          "colour": "FAIL",
-          "detail": "run 40170957849 · failure",
-          "id": "I.RUN17",
-          "kind": "I",
-          "label": "GOGREEN Token Census Telemetry",
-          "layer": 1,
-          "metrics": {},
-          "oids": [
-            {
-              "at": null,
-              "jade_oid": null,
-              "object": "OBJ.FOCUS5",
-              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
-              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
-              "status": "BOUND",
-              "symbol": null
-            }
-          ],
-          "phase": null,
-          "shas": [
-            {
-              "kind": "commit",
-              "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
-            }
-          ],
-          "status": "FAIL",
-          "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40170957849"
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41224775411"
         },
         {
           "colour": "PASS",
-          "detail": "run 40135215921 · success",
-          "id": "I.RUN18",
+          "detail": "run 41221272002 · success",
+          "id": "I.RUN12",
           "kind": "I",
           "label": "QPS TRIAGE ULTRA Federation Control",
           "layer": 1,
@@ -7064,17 +6815,17 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40135215921"
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272002"
         },
         {
           "colour": "PASS",
-          "detail": "run 40135215925 · success",
-          "id": "I.RUN19",
+          "detail": "run 41221272190 · success",
+          "id": "I.RUN13",
           "kind": "I",
           "label": "W3-11 Non-Origin Math Consumer",
           "layer": 1,
@@ -7095,48 +6846,17 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40135215925"
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272190"
         },
         {
           "colour": "PASS",
-          "detail": "run 40173135561 · success",
-          "id": "I.RUN2",
-          "kind": "I",
-          "label": "MissionControl Temporal 3PR MIP Control Surface",
-          "layer": 1,
-          "metrics": {},
-          "oids": [
-            {
-              "at": null,
-              "jade_oid": null,
-              "object": "OBJ.FOCUS5",
-              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
-              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
-              "status": "BOUND",
-              "symbol": null
-            }
-          ],
-          "phase": null,
-          "shas": [
-            {
-              "kind": "commit",
-              "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
-            }
-          ],
-          "status": "PASS",
-          "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40173135561"
-        },
-        {
-          "colour": "PASS",
-          "detail": "run 40135215880 · success",
-          "id": "I.RUN20",
+          "detail": "run 41221272139 · success",
+          "id": "I.RUN14",
           "kind": "I",
           "label": "W3-13 Measured Fleet Telemetry",
           "layer": 1,
@@ -7157,17 +6877,17 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40135215880"
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272139"
         },
         {
           "colour": "PASS",
-          "detail": "run 40135215912 · success",
-          "id": "I.RUN21",
+          "detail": "run 41221272102 · success",
+          "id": "I.RUN15",
           "kind": "I",
           "label": "W3-14 Measured PCA",
           "layer": 1,
@@ -7188,17 +6908,17 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40135215912"
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272102"
         },
         {
           "colour": "PASS",
-          "detail": "run 40135215889 · success",
-          "id": "I.RUN22",
+          "detail": "run 41221272058 · success",
+          "id": "I.RUN16",
           "kind": "I",
           "label": "W3-16 M03 W0 Recon",
           "layer": 1,
@@ -7219,17 +6939,17 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40135215889"
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272058"
         },
         {
           "colour": "PASS",
-          "detail": "run 40135215877 · success",
-          "id": "I.RUN23",
+          "detail": "run 41221272101 · success",
+          "id": "I.RUN17",
           "kind": "I",
           "label": "Zero-Test Gate Guard",
           "layer": 1,
@@ -7250,17 +6970,48 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40135215877"
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272101"
         },
         {
           "colour": "PASS",
-          "detail": "run 40135215680 · success",
-          "id": "I.RUN24",
+          "detail": "run 41224413550 · success",
+          "id": "I.RUN18",
+          "kind": "I",
+          "label": "pip in /tests/coverage_waves for Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, nbconvert, nbconvert, nbconvert, nbconvert, pillow, pillow, pillow, pillow, pillow, pillow, pillow, pillow, pillow, pillow, pillow, pillow - Update #1668243951",
+          "layer": 1,
+          "metrics": {},
+          "oids": [
+            {
+              "at": null,
+              "jade_oid": null,
+              "object": "OBJ.FOCUS5",
+              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
+              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+              "status": "BOUND",
+              "symbol": null
+            }
+          ],
+          "phase": null,
+          "shas": [
+            {
+              "kind": "commit",
+              "label": "run head",
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
+            }
+          ],
+          "status": "PASS",
+          "type": "NATIVE_RUN",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41224413550"
+        },
+        {
+          "colour": "PASS",
+          "detail": "run 41221271529 · success",
+          "id": "I.RUN19",
           "kind": "I",
           "label": "Push on master",
           "layer": 1,
@@ -7281,172 +7032,48 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40135215680"
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221271529"
+        },
+        {
+          "colour": "FAIL",
+          "detail": "run 41223999662 · failure",
+          "id": "I.RUN2",
+          "kind": "I",
+          "label": "First-Pass Closure Gate",
+          "layer": 1,
+          "metrics": {},
+          "oids": [
+            {
+              "at": null,
+              "jade_oid": null,
+              "object": "OBJ.FOCUS5",
+              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
+              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+              "status": "BOUND",
+              "symbol": null
+            }
+          ],
+          "phase": null,
+          "shas": [
+            {
+              "kind": "commit",
+              "label": "run head",
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
+            }
+          ],
+          "status": "FAIL",
+          "type": "NATIVE_RUN",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41223999662"
         },
         {
           "colour": "PASS",
-          "detail": "run 40173135586 · success",
+          "detail": "run 41221272038 · success",
           "id": "I.RUN3",
-          "kind": "I",
-          "label": "MissionControl Temporal 3PSTAR MIP Burndown",
-          "layer": 1,
-          "metrics": {},
-          "oids": [
-            {
-              "at": null,
-              "jade_oid": null,
-              "object": "OBJ.FOCUS5",
-              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
-              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
-              "status": "BOUND",
-              "symbol": null
-            }
-          ],
-          "phase": null,
-          "shas": [
-            {
-              "kind": "commit",
-              "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
-            }
-          ],
-          "status": "PASS",
-          "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40173135586"
-        },
-        {
-          "colour": "PASS",
-          "detail": "run 40173011688 · success",
-          "id": "I.RUN4",
-          "kind": "I",
-          "label": "MissionControl Temporal Allocation Policy",
-          "layer": 1,
-          "metrics": {},
-          "oids": [
-            {
-              "at": null,
-              "jade_oid": null,
-              "object": "OBJ.FOCUS5",
-              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
-              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
-              "status": "BOUND",
-              "symbol": null
-            }
-          ],
-          "phase": null,
-          "shas": [
-            {
-              "kind": "commit",
-              "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
-            }
-          ],
-          "status": "PASS",
-          "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40173011688"
-        },
-        {
-          "colour": "PASS",
-          "detail": "run 40173135573 · success",
-          "id": "I.RUN5",
-          "kind": "I",
-          "label": "MissionControl Temporal Effect Diagnostics",
-          "layer": 1,
-          "metrics": {},
-          "oids": [
-            {
-              "at": null,
-              "jade_oid": null,
-              "object": "OBJ.FOCUS5",
-              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
-              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
-              "status": "BOUND",
-              "symbol": null
-            }
-          ],
-          "phase": null,
-          "shas": [
-            {
-              "kind": "commit",
-              "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
-            }
-          ],
-          "status": "PASS",
-          "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40173135573"
-        },
-        {
-          "colour": "PASS",
-          "detail": "run 40170856356 · success",
-          "id": "I.RUN6",
-          "kind": "I",
-          "label": "Dependency SPINE Peer Source Census (HUB)",
-          "layer": 1,
-          "metrics": {},
-          "oids": [
-            {
-              "at": null,
-              "jade_oid": null,
-              "object": "OBJ.FOCUS5",
-              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
-              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
-              "status": "BOUND",
-              "symbol": null
-            }
-          ],
-          "phase": null,
-          "shas": [
-            {
-              "kind": "commit",
-              "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
-            }
-          ],
-          "status": "PASS",
-          "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40170856356"
-        },
-        {
-          "colour": "PASS",
-          "detail": "run 40170165447 · success",
-          "id": "I.RUN7",
-          "kind": "I",
-          "label": "GM Evidence Binding Guard (read-only)",
-          "layer": 1,
-          "metrics": {},
-          "oids": [
-            {
-              "at": null,
-              "jade_oid": null,
-              "object": "OBJ.FOCUS5",
-              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
-              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
-              "status": "BOUND",
-              "symbol": null
-            }
-          ],
-          "phase": null,
-          "shas": [
-            {
-              "kind": "commit",
-              "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
-            }
-          ],
-          "status": "PASS",
-          "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40170165447"
-        },
-        {
-          "colour": "PASS",
-          "detail": "run 40135215933 · success",
-          "id": "I.RUN8",
           "kind": "I",
           "label": "GM-FLEET-02B Closeout",
           "layer": 1,
@@ -7467,17 +7094,17 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40135215933"
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272038"
         },
         {
           "colour": "PASS",
-          "detail": "run 40135215911 · success",
-          "id": "I.RUN9",
+          "detail": "run 41221272353 · success",
+          "id": "I.RUN4",
           "kind": "I",
           "label": "GM-FLEET-03 Capacity Gate",
           "layer": 1,
@@ -7498,12 +7125,167 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/40135215911"
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272353"
+        },
+        {
+          "colour": "PASS",
+          "detail": "run 41221272075 · success",
+          "id": "I.RUN5",
+          "kind": "I",
+          "label": "GM-FLEET-03 F01 Pilot",
+          "layer": 1,
+          "metrics": {},
+          "oids": [
+            {
+              "at": null,
+              "jade_oid": null,
+              "object": "OBJ.FOCUS5",
+              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
+              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+              "status": "BOUND",
+              "symbol": null
+            }
+          ],
+          "phase": null,
+          "shas": [
+            {
+              "kind": "commit",
+              "label": "run head",
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
+            }
+          ],
+          "status": "PASS",
+          "type": "NATIVE_RUN",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272075"
+        },
+        {
+          "colour": "PASS",
+          "detail": "run 41221272260 · success",
+          "id": "I.RUN6",
+          "kind": "I",
+          "label": "GM-FLEET-03 F03 Pilot",
+          "layer": 1,
+          "metrics": {},
+          "oids": [
+            {
+              "at": null,
+              "jade_oid": null,
+              "object": "OBJ.FOCUS5",
+              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
+              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+              "status": "BOUND",
+              "symbol": null
+            }
+          ],
+          "phase": null,
+          "shas": [
+            {
+              "kind": "commit",
+              "label": "run head",
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
+            }
+          ],
+          "status": "PASS",
+          "type": "NATIVE_RUN",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272260"
+        },
+        {
+          "colour": "PASS",
+          "detail": "run 41221272077 · success",
+          "id": "I.RUN7",
+          "kind": "I",
+          "label": "GM-FLEET-03 Ring1 Recon",
+          "layer": 1,
+          "metrics": {},
+          "oids": [
+            {
+              "at": null,
+              "jade_oid": null,
+              "object": "OBJ.FOCUS5",
+              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
+              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+              "status": "BOUND",
+              "symbol": null
+            }
+          ],
+          "phase": null,
+          "shas": [
+            {
+              "kind": "commit",
+              "label": "run head",
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
+            }
+          ],
+          "status": "PASS",
+          "type": "NATIVE_RUN",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272077"
+        },
+        {
+          "colour": "PASS",
+          "detail": "run 41221272131 · success",
+          "id": "I.RUN8",
+          "kind": "I",
+          "label": "GM-FLEET-03 Ring2 Recon",
+          "layer": 1,
+          "metrics": {},
+          "oids": [
+            {
+              "at": null,
+              "jade_oid": null,
+              "object": "OBJ.FOCUS5",
+              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
+              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+              "status": "BOUND",
+              "symbol": null
+            }
+          ],
+          "phase": null,
+          "shas": [
+            {
+              "kind": "commit",
+              "label": "run head",
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
+            }
+          ],
+          "status": "PASS",
+          "type": "NATIVE_RUN",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272131"
+        },
+        {
+          "colour": "PASS",
+          "detail": "run 41221272175 · success",
+          "id": "I.RUN9",
+          "kind": "I",
+          "label": "GOGREEN launcher",
+          "layer": 1,
+          "metrics": {},
+          "oids": [
+            {
+              "at": null,
+              "jade_oid": null,
+              "object": "OBJ.FOCUS5",
+              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
+              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+              "status": "BOUND",
+              "symbol": null
+            }
+          ],
+          "phase": null,
+          "shas": [
+            {
+              "kind": "commit",
+              "label": "run head",
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
+            }
+          ],
+          "status": "PASS",
+          "type": "NATIVE_RUN",
+          "url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272175"
         },
         {
           "colour": "PASS",
@@ -7538,7 +7320,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             },
             {
               "kind": "commit",
@@ -8349,7 +8131,7 @@
             {
               "kind": "commit",
               "label": "default head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": null,
@@ -8399,11 +8181,6 @@
           "I.RUN18",
           "I.RUN19",
           "I.RUN2",
-          "I.RUN20",
-          "I.RUN21",
-          "I.RUN22",
-          "I.RUN23",
-          "I.RUN24",
           "I.RUN3",
           "I.RUN4",
           "I.RUN5",
@@ -8461,30 +8238,30 @@
         "by_colour": {
           "CROSSWALK": 3,
           "EVERRED": 7,
-          "FAIL": 10,
+          "FAIL": 11,
           "ISSUE_BD": 1,
           "NEUTRAL": 5,
-          "PASS": 10,
+          "PASS": 12,
           "ROOT_RED": 1,
           "UNKNOWN": 12
         },
         "by_sipoc": {
           "C": 2,
-          "I": 17,
+          "I": 20,
           "O": 4,
           "P": 22,
           "S": 4
         },
         "crosswalk_edges": 13,
         "depth": 13,
-        "edges": 74,
-        "nodes": 49,
-        "oid_coverage": 0.898,
+        "edges": 80,
+        "nodes": 52,
+        "oid_coverage": 0.9038,
         "sha_coverage": 0.0,
         "sinks": 4,
         "sources": 4,
         "temporal_edges": 1,
-        "width_max": 17
+        "width_max": 20
       },
       "edges": [
         {
@@ -8727,6 +8504,27 @@
         },
         {
           "from": "I.RUN5",
+          "label": "native B0",
+          "state": null,
+          "to": "H05",
+          "type": "FLOW"
+        },
+        {
+          "from": "I.RUN6",
+          "label": "native B0",
+          "state": null,
+          "to": "H05",
+          "type": "FLOW"
+        },
+        {
+          "from": "I.RUN7",
+          "label": "native B0",
+          "state": null,
+          "to": "H05",
+          "type": "FLOW"
+        },
+        {
+          "from": "I.RUN8",
           "label": "native B0",
           "state": null,
           "to": "H05",
@@ -9086,6 +8884,27 @@
           "from": "S.self",
           "label": "",
           "state": null,
+          "to": "I.RUN6",
+          "type": "FLOW"
+        },
+        {
+          "from": "S.self",
+          "label": "",
+          "state": null,
+          "to": "I.RUN7",
+          "type": "FLOW"
+        },
+        {
+          "from": "S.self",
+          "label": "",
+          "state": null,
+          "to": "I.RUN8",
+          "type": "FLOW"
+        },
+        {
+          "from": "S.self",
+          "label": "",
+          "state": null,
           "to": "I.SOURCE_SHA",
           "type": "FLOW"
         },
@@ -9377,7 +9196,7 @@
         },
         {
           "colour": "PASS",
-          "detail": "PASS · done · qps-canonicalization success on this exact SHA (same workflow as previous pulse)",
+          "detail": "PASS · done · JADE CI (core suite, fail-closed), JADE CI (burn-down suite, fail-closed) success on this exact SHA (declared in gate evidence registry)",
           "id": "H05",
           "kind": "P",
           "label": "H05 Native primary B0/test equivalent terminal PASS",
@@ -9414,7 +9233,7 @@
         },
         {
           "colour": "PASS",
-          "detail": "PASS · done · QPS PR binary refresh success on this exact SHA (same workflow as previous pulse)",
+          "detail": "PASS · done · qps-canonicalization success on this exact SHA (declared in gate evidence registry)",
           "id": "H06",
           "kind": "P",
           "label": "H06 Independent domain/integration smoke terminal PASS",
@@ -10000,19 +9819,10 @@
           "detail": "run none · success",
           "id": "I.RUN1",
           "kind": "I",
-          "label": "Branch hygiene (lossless)",
+          "label": "JADE CI (burn-down suite, fail-closed)",
           "layer": 1,
           "metrics": {},
           "oids": [
-            {
-              "at": "PRIVATE_AGGREGATE_ONLY",
-              "jade_oid": "jade:wf:cryoplant-project:.github/workflows/branch-hygiene.yml",
-              "object": null,
-              "oid": "PRIVATE_AGGREGATE_ONLY",
-              "path": "GBOGEB/cryoplant-project:.github/workflows/branch-hygiene.yml",
-              "status": "BOUND_AT_CENSUS_HEAD",
-              "symbol": null
-            },
             {
               "at": null,
               "jade_oid": null,
@@ -10068,6 +9878,40 @@
           "detail": "run none · success",
           "id": "I.RUN3",
           "kind": "I",
+          "label": "QPS BD Queue Integrity",
+          "layer": 1,
+          "metrics": {},
+          "oids": [
+            {
+              "at": "PRIVATE_AGGREGATE_ONLY",
+              "jade_oid": "jade:wf:cryoplant-project:.github/workflows/qps-bd-queue-integrity.yml",
+              "object": null,
+              "oid": "PRIVATE_AGGREGATE_ONLY",
+              "path": "GBOGEB/cryoplant-project:.github/workflows/qps-bd-queue-integrity.yml",
+              "status": "BOUND_AT_CENSUS_HEAD",
+              "symbol": null
+            },
+            {
+              "at": null,
+              "jade_oid": null,
+              "object": "OBJ.FOCUS5",
+              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
+              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+              "status": "BOUND",
+              "symbol": null
+            }
+          ],
+          "phase": null,
+          "shas": [],
+          "status": "PASS",
+          "type": "NATIVE_RUN",
+          "url": "PRIVATE_AGGREGATE_ONLY"
+        },
+        {
+          "colour": "PASS",
+          "detail": "run none · success",
+          "id": "I.RUN4",
+          "kind": "I",
           "label": "qps-canonicalization",
           "layer": 1,
           "metrics": {},
@@ -10100,7 +9944,41 @@
         {
           "colour": "PASS",
           "detail": "run none · success",
-          "id": "I.RUN4",
+          "id": "I.RUN5",
+          "kind": "I",
+          "label": "QPS TRIAGE Debug DAG Pilot",
+          "layer": 1,
+          "metrics": {},
+          "oids": [
+            {
+              "at": "PRIVATE_AGGREGATE_ONLY",
+              "jade_oid": "jade:wf:cryoplant-project:.github/workflows/qps-debug-dag.yml",
+              "object": null,
+              "oid": "PRIVATE_AGGREGATE_ONLY",
+              "path": "GBOGEB/cryoplant-project:.github/workflows/qps-debug-dag.yml",
+              "status": "BOUND_AT_CENSUS_HEAD",
+              "symbol": null
+            },
+            {
+              "at": null,
+              "jade_oid": null,
+              "object": "OBJ.FOCUS5",
+              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
+              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+              "status": "BOUND",
+              "symbol": null
+            }
+          ],
+          "phase": null,
+          "shas": [],
+          "status": "PASS",
+          "type": "NATIVE_RUN",
+          "url": "PRIVATE_AGGREGATE_ONLY"
+        },
+        {
+          "colour": "PASS",
+          "detail": "run none · success",
+          "id": "I.RUN6",
           "kind": "I",
           "label": "QPS PR binary refresh",
           "layer": 1,
@@ -10132,9 +10010,43 @@
           "url": "PRIVATE_AGGREGATE_ONLY"
         },
         {
+          "colour": "FAIL",
+          "detail": "run none · failure",
+          "id": "I.RUN7",
+          "kind": "I",
+          "label": "QPS Triage Console Refresh",
+          "layer": 1,
+          "metrics": {},
+          "oids": [
+            {
+              "at": "PRIVATE_AGGREGATE_ONLY",
+              "jade_oid": "jade:wf:cryoplant-project:.github/workflows/qps-triage-console-refresh.yml",
+              "object": null,
+              "oid": "PRIVATE_AGGREGATE_ONLY",
+              "path": "GBOGEB/cryoplant-project:.github/workflows/qps-triage-console-refresh.yml",
+              "status": "BOUND_AT_CENSUS_HEAD",
+              "symbol": null
+            },
+            {
+              "at": null,
+              "jade_oid": null,
+              "object": "OBJ.FOCUS5",
+              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
+              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+              "status": "BOUND",
+              "symbol": null
+            }
+          ],
+          "phase": null,
+          "shas": [],
+          "status": "FAIL",
+          "type": "NATIVE_RUN",
+          "url": "PRIVATE_AGGREGATE_ONLY"
+        },
+        {
           "colour": "PASS",
           "detail": "run none · success",
-          "id": "I.RUN5",
+          "id": "I.RUN8",
           "kind": "I",
           "label": "TRIAGE Repository Census",
           "layer": 1,
@@ -10986,6 +10898,9 @@
           "I.RUN3",
           "I.RUN4",
           "I.RUN5",
+          "I.RUN6",
+          "I.RUN7",
+          "I.RUN8",
           "I.SOURCE_SHA",
           "I.TESTS"
         ],
@@ -11035,26 +10950,26 @@
           "FAIL": 10,
           "ISSUE_BD": 1,
           "NEUTRAL": 4,
-          "PASS": 14,
-          "UNKNOWN": 11
+          "PASS": 16,
+          "UNKNOWN": 10
         },
         "by_sipoc": {
           "C": 3,
-          "I": 13,
+          "I": 14,
           "O": 4,
           "P": 22,
           "S": 1
         },
         "crosswalk_edges": 13,
         "depth": 13,
-        "edges": 65,
-        "nodes": 43,
-        "oid_coverage": 0.9302,
-        "sha_coverage": 0.5349,
+        "edges": 67,
+        "nodes": 44,
+        "oid_coverage": 0.9318,
+        "sha_coverage": 0.5455,
         "sinks": 4,
         "sources": 1,
         "temporal_edges": 1,
-        "width_max": 13
+        "width_max": 14
       },
       "edges": [
         {
@@ -11283,6 +11198,13 @@
         },
         {
           "from": "I.RUN8",
+          "label": "native B0",
+          "state": null,
+          "to": "H05",
+          "type": "FLOW"
+        },
+        {
+          "from": "I.RUN9",
           "label": "native B0",
           "state": null,
           "to": "H05",
@@ -11600,6 +11522,13 @@
           "from": "S.self",
           "label": "",
           "state": null,
+          "to": "I.RUN9",
+          "type": "FLOW"
+        },
+        {
+          "from": "S.self",
+          "label": "",
+          "state": null,
           "to": "I.SOURCE_SHA",
           "type": "FLOW"
         },
@@ -11647,7 +11576,7 @@
             "zero_case_files_net": 0
           },
           "py_untested": "6/54",
-          "sha_drift": false,
+          "sha_drift": true,
           "test_cases": 412,
           "tests_ci": 13,
           "unguarded_test_jobs": 10,
@@ -11673,10 +11602,9 @@
             "H12"
           ],
           "fail": 0,
-          "pass": 4,
+          "pass": 5,
           "ready_frontier": [
             "H03",
-            "H06",
             "H07",
             "H08",
             "H10",
@@ -11684,7 +11612,7 @@
           ],
           "root_red": [],
           "source_red": [],
-          "unknown": 8
+          "unknown": 7
         },
         "golden_thread": {
           "first_break": "OWNER_SCOPE",
@@ -11703,7 +11631,7 @@
           "ruleset_gaps": 2,
           "worst": "P2"
         },
-        "pulse_mismatch": false
+        "pulse_mismatch": true
       },
       "nodes": [
         {
@@ -11797,12 +11725,12 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "PASS",
           "type": "GATE",
-          "url": "https://github.com/GBOGEB/gg_MATH/commit/61ce59f754d23e010958927a731432672abf7621"
+          "url": "https://github.com/GBOGEB/gg_MATH/commit/1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
         },
         {
           "colour": "PASS",
@@ -11840,12 +11768,12 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "PASS",
           "type": "GATE",
-          "url": "https://github.com/GBOGEB/gg_MATH/tree/61ce59f754d23e010958927a731432672abf7621"
+          "url": "https://github.com/GBOGEB/gg_MATH/tree/1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
         },
         {
           "colour": "UNKNOWN",
@@ -11883,7 +11811,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "UNKNOWN",
@@ -11892,7 +11820,7 @@
         },
         {
           "colour": "PASS",
-          "detail": "PASS · done · Release Infrastructure v1 success on this exact SHA (same workflow as previous pulse)",
+          "detail": "PASS · done · Release Infrastructure v1 success on this exact SHA (declared in gate evidence registry)",
           "id": "H04",
           "kind": "P",
           "label": "H04 Reproducible dependency/build contract qualified",
@@ -11926,16 +11854,16 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "PASS",
           "type": "GATE",
-          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/40100359892"
+          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908675"
         },
         {
           "colour": "PASS",
-          "detail": "PASS · done · Release Infrastructure v1 success on this exact SHA (same workflow as previous pulse)",
+          "detail": "PASS · done · Release Infrastructure v1 success on this exact SHA (declared in gate evidence registry)",
           "id": "H05",
           "kind": "P",
           "label": "H05 Native primary B0/test equivalent terminal PASS",
@@ -11969,22 +11897,22 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "PASS",
           "type": "GATE",
-          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/40100359892"
+          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908675"
         },
         {
-          "colour": "UNKNOWN",
-          "detail": "UNKNOWN · ready · No workflow evidence for this gate in the previous pulse",
+          "colour": "PASS",
+          "detail": "PASS · done · M02B Math Bunker Smoke success on this exact SHA (declared in gate evidence registry)",
           "id": "H06",
           "kind": "P",
           "label": "H06 Independent domain/integration smoke terminal PASS",
           "layer": 5,
           "metrics": {
-            "frontier": "ready",
+            "frontier": "done",
             "unlock_score": 0
           },
           "oids": [
@@ -12012,12 +11940,12 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
-          "status": "UNKNOWN",
+          "status": "PASS",
           "type": "GATE",
-          "url": null
+          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908402"
         },
         {
           "colour": "UNKNOWN",
@@ -12055,7 +11983,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "UNKNOWN",
@@ -12098,7 +12026,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "UNKNOWN",
@@ -12141,7 +12069,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "UNKNOWN",
@@ -12184,7 +12112,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "UNKNOWN",
@@ -12227,7 +12155,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "UNKNOWN",
@@ -12270,7 +12198,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "UNKNOWN",
@@ -12279,13 +12207,13 @@
         },
         {
           "colour": "CROSSWALK",
-          "detail": "census HEAD = gate SHA",
+          "detail": "census HEAD differs from gate SHA: census OIDs describe a different tree",
           "id": "I.CENSUS_HEAD",
           "kind": "I",
           "label": "Census HEAD vs gate SHA",
           "layer": 1,
           "metrics": {
-            "sha_drift": false
+            "sha_drift": true
           },
           "oids": [
             {
@@ -12317,7 +12245,7 @@
             {
               "kind": "commit",
               "label": "gate source",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": null,
@@ -12376,7 +12304,7 @@
         },
         {
           "colour": "PASS",
-          "detail": "run 40171145035 · success",
+          "detail": "run 41193908351 · success",
           "id": "I.RUN1",
           "kind": "I",
           "label": "Dependency SPINE Peer Source Census (MATH)",
@@ -12407,16 +12335,16 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/40171145035"
+          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908351"
         },
         {
           "colour": "PASS",
-          "detail": "run 40100359968 · success",
+          "detail": "run 41193909040 · success",
           "id": "I.RUN2",
           "kind": "I",
           "label": "Deploy Jekyll with GitHub Pages dependencies preinstalled",
@@ -12447,16 +12375,16 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/40100359968"
+          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193909040"
         },
         {
           "colour": "PASS",
-          "detail": "run 40100359921 · success",
+          "detail": "run 41193908448 · success",
           "id": "I.RUN3",
           "kind": "I",
           "label": "LM-10 Signal Stack",
@@ -12487,16 +12415,16 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/40100359921"
+          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908448"
         },
         {
           "colour": "PASS",
-          "detail": "run 40100359930 · success",
+          "detail": "run 41193908402 · success",
           "id": "I.RUN4",
           "kind": "I",
           "label": "M02B Math Bunker Smoke",
@@ -12527,16 +12455,16 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/40100359930"
+          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908402"
         },
         {
           "colour": "PASS",
-          "detail": "run 40100359892 · success",
+          "detail": "run 41193908675 · success",
           "id": "I.RUN5",
           "kind": "I",
           "label": "Release Infrastructure v1",
@@ -12567,16 +12495,16 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/40100359892"
+          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908675"
         },
         {
           "colour": "PASS",
-          "detail": "run 40100359906 · success",
+          "detail": "run 41193908390 · success",
           "id": "I.RUN6",
           "kind": "I",
           "label": "Semgrep code scanning",
@@ -12607,17 +12535,57 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/40100359906"
+          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908390"
         },
         {
           "colour": "PASS",
-          "detail": "run 40100359929 · success",
+          "detail": "run 41193908456 · success",
           "id": "I.RUN7",
+          "kind": "I",
+          "label": "W260 uncertainty and H05 repair",
+          "layer": 1,
+          "metrics": {},
+          "oids": [
+            {
+              "at": "61ce59f754d23e010958927a731432672abf7621",
+              "jade_oid": "jade:wf:gg_MATH:.github/workflows/w260-uncertainty.yml",
+              "object": null,
+              "oid": "d221090caf4294c9b8253d8c314f06f4087093bd",
+              "path": "GBOGEB/gg_MATH:.github/workflows/w260-uncertainty.yml",
+              "status": "BOUND_AT_CENSUS_HEAD",
+              "symbol": null
+            },
+            {
+              "at": null,
+              "jade_oid": null,
+              "object": "OBJ.FOCUS5",
+              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
+              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+              "status": "BOUND",
+              "symbol": null
+            }
+          ],
+          "phase": null,
+          "shas": [
+            {
+              "kind": "commit",
+              "label": "run head",
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
+            }
+          ],
+          "status": "PASS",
+          "type": "NATIVE_RUN",
+          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908456"
+        },
+        {
+          "colour": "PASS",
+          "detail": "run 41193908458 · success",
+          "id": "I.RUN8",
           "kind": "I",
           "label": "W3-10 Monte Carlo Breadth",
           "layer": 1,
@@ -12647,17 +12615,17 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/40100359929"
+          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908458"
         },
         {
           "colour": "PASS",
-          "detail": "run 40100359778 · success",
-          "id": "I.RUN8",
+          "detail": "run 41193907613 · success",
+          "id": "I.RUN9",
           "kind": "I",
           "label": "Push on main",
           "layer": 1,
@@ -12678,12 +12646,12 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/40100359778"
+          "url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193907613"
         },
         {
           "colour": "PASS",
@@ -12718,7 +12686,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             },
             {
               "kind": "commit",
@@ -13457,7 +13425,7 @@
             {
               "kind": "commit",
               "label": "default head",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": null,
@@ -13484,6 +13452,7 @@
           "I.RUN6",
           "I.RUN7",
           "I.RUN8",
+          "I.RUN9",
           "I.SOURCE_SHA",
           "I.TESTS"
         ],
@@ -13527,30 +13496,29 @@
       "dag": {
         "by_colour": {
           "CROSSWALK": 4,
-          "FAIL": 12,
+          "FAIL": 11,
           "ISSUE_BD": 1,
           "NEUTRAL": 4,
-          "PASS": 12,
-          "ROOT_RED": 1,
+          "PASS": 13,
           "UNKNOWN": 11
         },
         "by_sipoc": {
           "C": 3,
-          "I": 15,
+          "I": 14,
           "O": 4,
           "P": 22,
           "S": 1
         },
         "crosswalk_edges": 13,
         "depth": 13,
-        "edges": 68,
-        "nodes": 45,
-        "oid_coverage": 0.9333,
-        "sha_coverage": 0.5111,
+        "edges": 66,
+        "nodes": 44,
+        "oid_coverage": 0.9318,
+        "sha_coverage": 0.5,
         "sinks": 5,
         "sources": 1,
         "temporal_edges": 1,
-        "width_max": 15
+        "width_max": 14
       },
       "edges": [
         {
@@ -13779,13 +13747,6 @@
         },
         {
           "from": "I.RUN7",
-          "label": "native B0",
-          "state": null,
-          "to": "H05",
-          "type": "FLOW"
-        },
-        {
-          "from": "I.RUN8",
           "label": "native B0",
           "state": null,
           "to": "H05",
@@ -14110,13 +14071,6 @@
           "from": "S.self",
           "label": "",
           "state": null,
-          "to": "I.RUN8",
-          "type": "FLOW"
-        },
-        {
-          "from": "S.self",
-          "label": "",
-          "state": null,
           "to": "I.SOURCE_SHA",
           "type": "FLOW"
         },
@@ -14129,7 +14083,7 @@
         }
       ],
       "metrics": {
-        "critical_path_pass_depth": 2,
+        "critical_path_pass_depth": 4,
         "devops": {
           "actions_pinned": "0/0",
           "census_head": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9",
@@ -14164,7 +14118,7 @@
             "zero_case_files_net": 0
           },
           "py_untested": "409/409",
-          "sha_drift": false,
+          "sha_drift": true,
           "test_cases": 0,
           "tests_ci": 0,
           "unguarded_test_jobs": 0,
@@ -14173,25 +14127,20 @@
         "everred": null,
         "gates": {
           "blocked_by_ancestor": [
-            "H07",
             "H09",
             "H12"
           ],
-          "fail": 1,
-          "pass": 4,
+          "fail": 0,
+          "pass": 5,
           "ready_frontier": [
             "H03",
-            "H04",
+            "H07",
             "H08",
             "H10",
             "H11"
           ],
-          "root_red": [
-            "H08"
-          ],
-          "source_red": [
-            "H08"
-          ],
+          "root_red": [],
+          "source_red": [],
           "unknown": 7
         },
         "golden_thread": {
@@ -14200,7 +14149,7 @@
           "position": 1
         },
         "issue_bd": {
-          "blockers": 1,
+          "blockers": 0,
           "open_issues": 1,
           "open_prs": 0
         },
@@ -14211,7 +14160,7 @@
           "ruleset_gaps": 0,
           "worst": null
         },
-        "pulse_mismatch": false
+        "pulse_mismatch": true
       },
       "nodes": [
         {
@@ -14305,12 +14254,12 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": "PASS",
           "type": "GATE",
-          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/commit/aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/commit/7c1da80f2acc229fee11707d0500c1cf11482721"
         },
         {
           "colour": "PASS",
@@ -14348,12 +14297,12 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": "PASS",
           "type": "GATE",
-          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/tree/aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/tree/7c1da80f2acc229fee11707d0500c1cf11482721"
         },
         {
           "colour": "UNKNOWN",
@@ -14391,7 +14340,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": "UNKNOWN",
@@ -14399,14 +14348,14 @@
           "url": null
         },
         {
-          "colour": "UNKNOWN",
-          "detail": "UNKNOWN · ready · No workflow evidence for this gate in the previous pulse",
+          "colour": "PASS",
+          "detail": "PASS · done · Dependency lock contract success on this exact SHA (declared in gate evidence registry)",
           "id": "H04",
           "kind": "P",
           "label": "H04 Reproducible dependency/build contract qualified",
           "layer": 4,
           "metrics": {
-            "frontier": "ready",
+            "frontier": "done",
             "unlock_score": 0
           },
           "oids": [
@@ -14434,16 +14383,16 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
-          "status": "UNKNOWN",
+          "status": "PASS",
           "type": "GATE",
-          "url": null
+          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390604"
         },
         {
           "colour": "PASS",
-          "detail": "PASS · done · Python CI success on this exact SHA (same workflow as previous pulse)",
+          "detail": "PASS · done · Python CI success on this exact SHA (declared in gate evidence registry)",
           "id": "H05",
           "kind": "P",
           "label": "H05 Native primary B0/test equivalent terminal PASS",
@@ -14477,16 +14426,16 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": "PASS",
           "type": "GATE",
-          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/40107322377"
+          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390693"
         },
         {
           "colour": "PASS",
-          "detail": "PASS · done · TypeScript orchestration CI success on this exact SHA (same workflow as previous pulse)",
+          "detail": "PASS · done · TypeScript orchestration CI success on this exact SHA (declared in gate evidence registry)",
           "id": "H06",
           "kind": "P",
           "label": "H06 Independent domain/integration smoke terminal PASS",
@@ -14520,22 +14469,22 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": "PASS",
           "type": "GATE",
-          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/40107322313"
+          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390555"
         },
         {
           "colour": "UNKNOWN",
-          "detail": "UNKNOWN · blocked · Not independently accepted; observed security runs on this SHA: none",
+          "detail": "UNKNOWN · ready · Not independently accepted; observed security runs on this SHA: none",
           "id": "H07",
           "kind": "P",
           "label": "H07 Security and supply-chain gates accepted",
           "layer": 5,
           "metrics": {
-            "frontier": "blocked",
+            "frontier": "ready",
             "unlock_score": 0
           },
           "oids": [
@@ -14563,7 +14512,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": "UNKNOWN",
@@ -14571,26 +14520,17 @@
           "url": null
         },
         {
-          "colour": "ROOT_RED",
-          "detail": "FAIL · ready · unlocks 4 · Default branch unprotected (no protection, no ruleset)",
+          "colour": "UNKNOWN",
+          "detail": "UNKNOWN · ready · Protected without a pull request rule (copilot_code_review, deletion, non_fast_forward)",
           "id": "H08",
           "kind": "P",
           "label": "H08 Effective protection and rejected RED canary",
           "layer": 3,
           "metrics": {
             "frontier": "ready",
-            "unlock_score": 4
+            "unlock_score": 0
           },
           "oids": [
-            {
-              "at": null,
-              "jade_oid": null,
-              "object": "OBJ.SOURCE_RED",
-              "oid": "c07b56a31225591bbfb40595a045d19b7944fa15",
-              "path": "mission-control/jade_temple/tools/rolling5.py",
-              "status": "BOUND",
-              "symbol": "source_red"
-            },
             {
               "at": null,
               "jade_oid": null,
@@ -14615,10 +14555,10 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
-          "status": "FAIL",
+          "status": "UNKNOWN",
           "type": "GATE",
           "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/settings/branches"
         },
@@ -14658,7 +14598,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": "UNKNOWN",
@@ -14701,7 +14641,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": "UNKNOWN",
@@ -14744,7 +14684,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": "UNKNOWN",
@@ -14787,7 +14727,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": "UNKNOWN",
@@ -14796,13 +14736,13 @@
         },
         {
           "colour": "CROSSWALK",
-          "detail": "census HEAD = gate SHA",
+          "detail": "census HEAD differs from gate SHA: census OIDs describe a different tree",
           "id": "I.CENSUS_HEAD",
           "kind": "I",
           "label": "Census HEAD vs gate SHA",
           "layer": 1,
           "metrics": {
-            "sha_drift": false
+            "sha_drift": true
           },
           "oids": [
             {
@@ -14834,7 +14774,7 @@
             {
               "kind": "commit",
               "label": "gate source",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": null,
@@ -14951,8 +14891,8 @@
           "url": null
         },
         {
-          "colour": "FAIL",
-          "detail": "run 40107322362 · failure",
+          "colour": "PASS",
+          "detail": "run 41189390585 · success",
           "id": "I.RUN1",
           "kind": "I",
           "label": "Repository admission policy",
@@ -14974,19 +14914,19 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
-          "status": "FAIL",
+          "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/40107322362"
+          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390585"
         },
         {
           "colour": "PASS",
-          "detail": "run 40107322433 · success",
+          "detail": "run 41189390604 · success",
           "id": "I.RUN2",
           "kind": "I",
-          "label": "Deploy Jekyll with GitHub Pages dependencies preinstalled",
+          "label": "Dependency lock contract",
           "layer": 1,
           "metrics": {},
           "oids": [
@@ -15005,17 +14945,48 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/40107322433"
+          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390604"
         },
         {
           "colour": "PASS",
-          "detail": "run 40107322377 · success",
+          "detail": "run 41189390884 · success",
           "id": "I.RUN3",
+          "kind": "I",
+          "label": "pages",
+          "layer": 1,
+          "metrics": {},
+          "oids": [
+            {
+              "at": null,
+              "jade_oid": null,
+              "object": "OBJ.FOCUS5",
+              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
+              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+              "status": "BOUND",
+              "symbol": null
+            }
+          ],
+          "phase": null,
+          "shas": [
+            {
+              "kind": "commit",
+              "label": "run head",
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
+            }
+          ],
+          "status": "PASS",
+          "type": "NATIVE_RUN",
+          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390884"
+        },
+        {
+          "colour": "PASS",
+          "detail": "run 41189390693 · success",
+          "id": "I.RUN4",
           "kind": "I",
           "label": "Python CI",
           "layer": 1,
@@ -15036,17 +15007,17 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/40107322377"
+          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390693"
         },
         {
           "colour": "PASS",
-          "detail": "run 40107322415 · success",
-          "id": "I.RUN4",
+          "detail": "run 41189390608 · success",
+          "id": "I.RUN5",
           "kind": "I",
           "label": "Release identity guard",
           "layer": 1,
@@ -15067,17 +15038,17 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/40107322415"
+          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390608"
         },
         {
           "colour": "PASS",
-          "detail": "run 40107322345 · success",
-          "id": "I.RUN5",
+          "detail": "run 41189390649 · success",
+          "id": "I.RUN6",
           "kind": "I",
           "label": "Repository integrity",
           "layer": 1,
@@ -15098,47 +15069,16 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/40107322345"
+          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390649"
         },
         {
           "colour": "PASS",
-          "detail": "run 40107322426 · success",
-          "id": "I.RUN6",
-          "kind": "I",
-          "label": "Deploy static content to Pages",
-          "layer": 1,
-          "metrics": {},
-          "oids": [
-            {
-              "at": null,
-              "jade_oid": null,
-              "object": "OBJ.FOCUS5",
-              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
-              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
-              "status": "BOUND",
-              "symbol": null
-            }
-          ],
-          "phase": null,
-          "shas": [
-            {
-              "kind": "commit",
-              "label": "run head",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
-            }
-          ],
-          "status": "PASS",
-          "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/40107322426"
-        },
-        {
-          "colour": "PASS",
-          "detail": "run 40107322313 · success",
+          "detail": "run 41189390555 · success",
           "id": "I.RUN7",
           "kind": "I",
           "label": "TypeScript orchestration CI",
@@ -15160,43 +15100,12 @@
             {
               "kind": "commit",
               "label": "run head",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": "PASS",
           "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/40107322313"
-        },
-        {
-          "colour": "PASS",
-          "detail": "run 40107327137 · success",
-          "id": "I.RUN8",
-          "kind": "I",
-          "label": "Graph Update: pip in /config #1650112569",
-          "layer": 1,
-          "metrics": {},
-          "oids": [
-            {
-              "at": null,
-              "jade_oid": null,
-              "object": "OBJ.FOCUS5",
-              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
-              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
-              "status": "BOUND",
-              "symbol": null
-            }
-          ],
-          "phase": null,
-          "shas": [
-            {
-              "kind": "commit",
-              "label": "run head",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
-            }
-          ],
-          "status": "PASS",
-          "type": "NATIVE_RUN",
-          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/40107327137"
+          "url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390555"
         },
         {
           "colour": "PASS",
@@ -15231,7 +15140,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": "PASS",
@@ -15794,15 +15703,13 @@
         },
         {
           "colour": "ISSUE_BD",
-          "detail": "1 blockers · 1 issues · 0 PRs · 0 EVERRED roots",
+          "detail": "0 blockers · 1 issues · 0 PRs · 0 EVERRED roots",
           "id": "O.BD",
           "kind": "O",
           "label": "Blockers / issues / PRs",
           "layer": 4,
           "metrics": {
-            "blockers": [
-              "H08: Default branch unprotected (no protection, no ruleset)"
-            ],
+            "blockers": [],
             "open_issues": 1,
             "open_prs": 0
           },
@@ -15952,7 +15859,7 @@
             {
               "kind": "commit",
               "label": "default head",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": null,
@@ -15980,7 +15887,6 @@
           "I.RUN5",
           "I.RUN6",
           "I.RUN7",
-          "I.RUN8",
           "I.SOURCE_SHA",
           "I.TESTS"
         ],
@@ -16027,27 +15933,27 @@
           "FAIL": 10,
           "ISSUE_BD": 1,
           "NEUTRAL": 4,
-          "PASS": 3,
+          "PASS": 9,
           "ROOT_RED": 1,
-          "UNKNOWN": 14
+          "UNKNOWN": 11
         },
         "by_sipoc": {
           "C": 3,
-          "I": 7,
+          "I": 10,
           "O": 4,
           "P": 22,
           "S": 1
         },
         "crosswalk_edges": 13,
         "depth": 13,
-        "edges": 52,
-        "nodes": 37,
-        "oid_coverage": 0.8649,
-        "sha_coverage": 0.4054,
+        "edges": 58,
+        "nodes": 40,
+        "oid_coverage": 0.875,
+        "sha_coverage": 0.45,
         "sinks": 5,
         "sources": 1,
         "temporal_edges": 1,
-        "width_max": 7
+        "width_max": 10
       },
       "edges": [
         {
@@ -16230,6 +16136,27 @@
           "label": "root source / entrypoint",
           "state": null,
           "to": "H02",
+          "type": "FLOW"
+        },
+        {
+          "from": "I.RUN1",
+          "label": "native B0",
+          "state": null,
+          "to": "H05",
+          "type": "FLOW"
+        },
+        {
+          "from": "I.RUN2",
+          "label": "native B0",
+          "state": null,
+          "to": "H05",
+          "type": "FLOW"
+        },
+        {
+          "from": "I.RUN3",
+          "label": "native B0",
+          "state": null,
+          "to": "H05",
           "type": "FLOW"
         },
         {
@@ -16502,6 +16429,27 @@
           "from": "S.self",
           "label": "",
           "state": null,
+          "to": "I.RUN1",
+          "type": "FLOW"
+        },
+        {
+          "from": "S.self",
+          "label": "",
+          "state": null,
+          "to": "I.RUN2",
+          "type": "FLOW"
+        },
+        {
+          "from": "S.self",
+          "label": "",
+          "state": null,
+          "to": "I.RUN3",
+          "type": "FLOW"
+        },
+        {
+          "from": "S.self",
+          "label": "",
+          "state": null,
           "to": "I.SOURCE_SHA",
           "type": "FLOW"
         },
@@ -16514,7 +16462,7 @@
         }
       ],
       "metrics": {
-        "critical_path_pass_depth": 2,
+        "critical_path_pass_depth": 4,
         "devops": {
           "actions_pinned": "0/0",
           "census_head": "75083c2aaabd0d7453d72de895666b21021826c1",
@@ -16549,7 +16497,7 @@
             "zero_case_files_net": 0
           },
           "py_untested": "0/0",
-          "sha_drift": false,
+          "sha_drift": true,
           "test_cases": 0,
           "tests_ci": 0,
           "unguarded_test_jobs": 0,
@@ -16558,20 +16506,17 @@
         "everred": null,
         "gates": {
           "blocked_by_ancestor": [
-            "H05",
-            "H06",
-            "H07",
             "H09",
-            "H10",
-            "H11",
             "H12"
           ],
           "fail": 1,
-          "pass": 2,
+          "pass": 5,
           "ready_frontier": [
             "H03",
-            "H04",
-            "H08"
+            "H07",
+            "H08",
+            "H10",
+            "H11"
           ],
           "root_red": [
             "H08"
@@ -16579,7 +16524,7 @@
           "source_red": [
             "H08"
           ],
-          "unknown": 9
+          "unknown": 6
         },
         "golden_thread": {
           "first_break": "OWNER_SCOPE",
@@ -16598,7 +16543,7 @@
           "ruleset_gaps": 0,
           "worst": null
         },
-        "pulse_mismatch": false
+        "pulse_mismatch": true
       },
       "nodes": [
         {
@@ -16692,12 +16637,12 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "75083c2aaabd0d7453d72de895666b21021826c1"
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
             }
           ],
           "status": "PASS",
           "type": "GATE",
-          "url": "https://github.com/GBOGEB/yaml-grammar/commit/75083c2aaabd0d7453d72de895666b21021826c1"
+          "url": "https://github.com/GBOGEB/yaml-grammar/commit/d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
         },
         {
           "colour": "PASS",
@@ -16735,12 +16680,12 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "75083c2aaabd0d7453d72de895666b21021826c1"
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
             }
           ],
           "status": "PASS",
           "type": "GATE",
-          "url": "https://github.com/GBOGEB/yaml-grammar/tree/75083c2aaabd0d7453d72de895666b21021826c1"
+          "url": "https://github.com/GBOGEB/yaml-grammar/tree/d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
         },
         {
           "colour": "UNKNOWN",
@@ -16778,7 +16723,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "75083c2aaabd0d7453d72de895666b21021826c1"
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
             }
           ],
           "status": "UNKNOWN",
@@ -16786,14 +16731,14 @@
           "url": null
         },
         {
-          "colour": "UNKNOWN",
-          "detail": "UNKNOWN · ready · No workflow evidence for this gate in the previous pulse",
+          "colour": "PASS",
+          "detail": "PASS · done · Build contract (stdlib-only, SHA-pinned) success on this exact SHA (declared in gate evidence registry)",
           "id": "H04",
           "kind": "P",
           "label": "H04 Reproducible dependency/build contract qualified",
           "layer": 4,
           "metrics": {
-            "frontier": "ready",
+            "frontier": "done",
             "unlock_score": 0
           },
           "oids": [
@@ -16821,22 +16766,22 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "75083c2aaabd0d7453d72de895666b21021826c1"
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
             }
           ],
-          "status": "UNKNOWN",
+          "status": "PASS",
           "type": "GATE",
-          "url": null
+          "url": "https://github.com/GBOGEB/yaml-grammar/actions/runs/40585699667"
         },
         {
-          "colour": "UNKNOWN",
-          "detail": "UNKNOWN · blocked · No workflow evidence for this gate in the previous pulse",
+          "colour": "PASS",
+          "detail": "PASS · done · YAML grammar offline source smoke success on this exact SHA (declared in gate evidence registry)",
           "id": "H05",
           "kind": "P",
           "label": "H05 Native primary B0/test equivalent terminal PASS",
           "layer": 5,
           "metrics": {
-            "frontier": "blocked",
+            "frontier": "done",
             "unlock_score": 0
           },
           "oids": [
@@ -16864,22 +16809,22 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "75083c2aaabd0d7453d72de895666b21021826c1"
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
             }
           ],
-          "status": "UNKNOWN",
+          "status": "PASS",
           "type": "GATE",
-          "url": null
+          "url": "https://github.com/GBOGEB/yaml-grammar/actions/runs/40585699771"
         },
         {
-          "colour": "UNKNOWN",
-          "detail": "UNKNOWN · blocked · No workflow evidence for this gate in the previous pulse",
+          "colour": "PASS",
+          "detail": "PASS · done · YAML grammar user-side smoke success on this exact SHA (declared in gate evidence registry)",
           "id": "H06",
           "kind": "P",
           "label": "H06 Independent domain/integration smoke terminal PASS",
           "layer": 5,
           "metrics": {
-            "frontier": "blocked",
+            "frontier": "done",
             "unlock_score": 0
           },
           "oids": [
@@ -16907,22 +16852,22 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "75083c2aaabd0d7453d72de895666b21021826c1"
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
             }
           ],
-          "status": "UNKNOWN",
+          "status": "PASS",
           "type": "GATE",
-          "url": null
+          "url": "https://github.com/GBOGEB/yaml-grammar/actions/runs/40585699817"
         },
         {
           "colour": "UNKNOWN",
-          "detail": "UNKNOWN · blocked · Not independently accepted; observed security runs on this SHA: none",
+          "detail": "UNKNOWN · ready · Not independently accepted; observed security runs on this SHA: none",
           "id": "H07",
           "kind": "P",
           "label": "H07 Security and supply-chain gates accepted",
           "layer": 5,
           "metrics": {
-            "frontier": "blocked",
+            "frontier": "ready",
             "unlock_score": 0
           },
           "oids": [
@@ -16950,7 +16895,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "75083c2aaabd0d7453d72de895666b21021826c1"
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
             }
           ],
           "status": "UNKNOWN",
@@ -17002,7 +16947,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "75083c2aaabd0d7453d72de895666b21021826c1"
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
             }
           ],
           "status": "FAIL",
@@ -17045,7 +16990,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "75083c2aaabd0d7453d72de895666b21021826c1"
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
             }
           ],
           "status": "UNKNOWN",
@@ -17054,13 +16999,13 @@
         },
         {
           "colour": "UNKNOWN",
-          "detail": "UNKNOWN · blocked · Matched coverage and negative tests not evidenced in this pulse",
+          "detail": "UNKNOWN · ready · Matched coverage and negative tests not evidenced in this pulse",
           "id": "H10",
           "kind": "P",
           "label": "H10 Matched coverage and negative tests accepted",
           "layer": 6,
           "metrics": {
-            "frontier": "blocked",
+            "frontier": "ready",
             "unlock_score": 0
           },
           "oids": [
@@ -17088,7 +17033,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "75083c2aaabd0d7453d72de895666b21021826c1"
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
             }
           ],
           "status": "UNKNOWN",
@@ -17097,13 +17042,13 @@
         },
         {
           "colour": "UNKNOWN",
-          "detail": "UNKNOWN · blocked · Source-bound artifact QA and hashes not evidenced in this pulse",
+          "detail": "UNKNOWN · ready · Source-bound artifact QA and hashes not evidenced in this pulse",
           "id": "H11",
           "kind": "P",
           "label": "H11 Source-bound binary/site artifact QA and hashes",
           "layer": 6,
           "metrics": {
-            "frontier": "blocked",
+            "frontier": "ready",
             "unlock_score": 0
           },
           "oids": [
@@ -17131,7 +17076,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "75083c2aaabd0d7453d72de895666b21021826c1"
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
             }
           ],
           "status": "UNKNOWN",
@@ -17174,7 +17119,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "75083c2aaabd0d7453d72de895666b21021826c1"
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
             }
           ],
           "status": "UNKNOWN",
@@ -17183,13 +17128,13 @@
         },
         {
           "colour": "CROSSWALK",
-          "detail": "census HEAD = gate SHA",
+          "detail": "census HEAD differs from gate SHA: census OIDs describe a different tree",
           "id": "I.CENSUS_HEAD",
           "kind": "I",
           "label": "Census HEAD vs gate SHA",
           "layer": 1,
           "metrics": {
-            "sha_drift": false
+            "sha_drift": true
           },
           "oids": [
             {
@@ -17221,7 +17166,7 @@
             {
               "kind": "commit",
               "label": "gate source",
-              "value": "75083c2aaabd0d7453d72de895666b21021826c1"
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
             }
           ],
           "status": null,
@@ -17339,6 +17284,99 @@
         },
         {
           "colour": "PASS",
+          "detail": "run 40585699667 · success",
+          "id": "I.RUN1",
+          "kind": "I",
+          "label": "Build contract (stdlib-only, SHA-pinned)",
+          "layer": 1,
+          "metrics": {},
+          "oids": [
+            {
+              "at": null,
+              "jade_oid": null,
+              "object": "OBJ.FOCUS5",
+              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
+              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+              "status": "BOUND",
+              "symbol": null
+            }
+          ],
+          "phase": null,
+          "shas": [
+            {
+              "kind": "commit",
+              "label": "run head",
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
+            }
+          ],
+          "status": "PASS",
+          "type": "NATIVE_RUN",
+          "url": "https://github.com/GBOGEB/yaml-grammar/actions/runs/40585699667"
+        },
+        {
+          "colour": "PASS",
+          "detail": "run 40585699771 · success",
+          "id": "I.RUN2",
+          "kind": "I",
+          "label": "YAML grammar offline source smoke",
+          "layer": 1,
+          "metrics": {},
+          "oids": [
+            {
+              "at": null,
+              "jade_oid": null,
+              "object": "OBJ.FOCUS5",
+              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
+              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+              "status": "BOUND",
+              "symbol": null
+            }
+          ],
+          "phase": null,
+          "shas": [
+            {
+              "kind": "commit",
+              "label": "run head",
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
+            }
+          ],
+          "status": "PASS",
+          "type": "NATIVE_RUN",
+          "url": "https://github.com/GBOGEB/yaml-grammar/actions/runs/40585699771"
+        },
+        {
+          "colour": "PASS",
+          "detail": "run 40585699817 · success",
+          "id": "I.RUN3",
+          "kind": "I",
+          "label": "YAML grammar user-side smoke",
+          "layer": 1,
+          "metrics": {},
+          "oids": [
+            {
+              "at": null,
+              "jade_oid": null,
+              "object": "OBJ.FOCUS5",
+              "oid": "7c18ada07240096c5bf077f08923d450b1a7db57",
+              "path": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+              "status": "BOUND",
+              "symbol": null
+            }
+          ],
+          "phase": null,
+          "shas": [
+            {
+              "kind": "commit",
+              "label": "run head",
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
+            }
+          ],
+          "status": "PASS",
+          "type": "NATIVE_RUN",
+          "url": "https://github.com/GBOGEB/yaml-grammar/actions/runs/40585699817"
+        },
+        {
+          "colour": "PASS",
           "detail": "crosswalk changed=None",
           "id": "I.SOURCE_SHA",
           "kind": "I",
@@ -17370,7 +17408,7 @@
             {
               "kind": "commit",
               "label": "source",
-              "value": "75083c2aaabd0d7453d72de895666b21021826c1"
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
             }
           ],
           "status": "PASS",
@@ -18046,7 +18084,7 @@
             {
               "kind": "commit",
               "label": "default head",
-              "value": "75083c2aaabd0d7453d72de895666b21021826c1"
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
             }
           ],
           "status": null,
@@ -18067,6 +18105,9 @@
           "I.PATH2",
           "I.PATH3",
           "I.RED_GAP",
+          "I.RUN1",
+          "I.RUN2",
+          "I.RUN3",
           "I.SOURCE_SHA",
           "I.TESTS"
         ],
@@ -18568,7 +18609,7 @@
               "at": null,
               "jade_oid": null,
               "object": "OBJ.ROLLING5_LEDGER",
-              "oid": "f19a7519f340d9d69ae20e0c1646debb45c54862",
+              "oid": "2be5309efdaae8f1bdf24ebada87acfbbb0f0604",
               "path": "mission-control/jade_temple/data/ROLLING5_PULSES.json",
               "status": "BOUND",
               "symbol": null
@@ -18985,7 +19026,7 @@
             {
               "kind": "commit",
               "label": "default head",
-              "value": "49a4486bc24c97be25ce44a8ecea2a4856d38007"
+              "value": "3bbee1143e6349d770f56720870710e4d0e562b0"
             }
           ],
           "status": null,
@@ -19043,7 +19084,7 @@
             {
               "kind": "commit",
               "label": "default head",
-              "value": "aae0ff361a7e75b092fe14c33722bb4db2b0d9c9"
+              "value": "7c1da80f2acc229fee11707d0500c1cf11482721"
             }
           ],
           "status": null,
@@ -19153,7 +19194,7 @@
             {
               "kind": "commit",
               "label": "default head",
-              "value": "61ce59f754d23e010958927a731432672abf7621"
+              "value": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8"
             }
           ],
           "status": null,
@@ -19211,7 +19252,7 @@
             {
               "kind": "commit",
               "label": "default head",
-              "value": "75083c2aaabd0d7453d72de895666b21021826c1"
+              "value": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7"
             }
           ],
           "status": null,

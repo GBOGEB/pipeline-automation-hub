@@ -1,0 +1,1061 @@
+{
+  "schema": "jade.temple.focus5.readonly/1.0",
+  "name": "QPS TRIAGE JADE_TEMPLE focus five parallel lanes",
+  "requisites": [
+    {
+      "id": "H01",
+      "label": "Exact default-branch SHA observed",
+      "phase": "DEFINE"
+    },
+    {
+      "id": "H02",
+      "label": "Root source and entrypoint located",
+      "phase": "DEFINE"
+    },
+    {
+      "id": "H03",
+      "label": "Release applicability and owner signed",
+      "phase": "DEFINE"
+    },
+    {
+      "id": "H04",
+      "label": "Reproducible dependency/build contract qualified",
+      "phase": "MEASURE"
+    },
+    {
+      "id": "H05",
+      "label": "Native primary B0/test equivalent terminal PASS",
+      "phase": "MEASURE"
+    },
+    {
+      "id": "H06",
+      "label": "Independent domain/integration smoke terminal PASS",
+      "phase": "MEASURE"
+    },
+    {
+      "id": "H07",
+      "label": "Security and supply-chain gates accepted",
+      "phase": "CONTROL"
+    },
+    {
+      "id": "H08",
+      "label": "Effective protection and rejected RED canary",
+      "phase": "CONTROL"
+    },
+    {
+      "id": "H09",
+      "label": "Eligible independent human approval",
+      "phase": "CONTROL"
+    },
+    {
+      "id": "H10",
+      "label": "Matched coverage and negative tests accepted",
+      "phase": "ANALYZE"
+    },
+    {
+      "id": "H11",
+      "label": "Source-bound binary/site artifact QA and hashes",
+      "phase": "IMPROVE"
+    },
+    {
+      "id": "H12",
+      "label": "Owner point-release tag, assets and rollback signed",
+      "phase": "CONTROL"
+    }
+  ],
+  "edges": [
+    {
+      "from": "GBOGEB/DOCX_RTM_Automation",
+      "to": "GBOGEB/cryoplant-project",
+      "type": "CANDIDATE_RTM_SOURCE_INPUT",
+      "state": "EVIDENCE_ONLY",
+      "causal_root_proof": false,
+      "guard": "No canonical RTM promotion",
+      "weight": null
+    },
+    {
+      "from": "GBOGEB/yaml-grammar",
+      "to": "GBOGEB/cryoplant-project",
+      "type": "YAML_GRAMMAR_REFERENCE",
+      "state": "REFERENCE_ONLY",
+      "causal_root_proof": false,
+      "guard": "Upstream grammar usage is not an admitted runtime dependency",
+      "weight": null
+    },
+    {
+      "from": "GBOGEB/gg_MATH",
+      "to": "GBOGEB/cryoplant-project",
+      "type": "METHOD_PROVIDER",
+      "state": "PROVIDER_ONLY",
+      "causal_root_proof": false,
+      "guard": "QPS engineering authority does not transfer",
+      "weight": null
+    },
+    {
+      "from": "GBOGEB/cryoplant-project",
+      "to": "GBOGEB/pipeline-automation-hub",
+      "type": "QPS_TRIAGE_RECEIPT",
+      "state": "OBSERVATION_ONLY",
+      "causal_root_proof": false,
+      "guard": "A failing QPS gate stays RED",
+      "weight": null
+    },
+    {
+      "from": "GBOGEB/DOCX_RTM_Automation",
+      "to": "GBOGEB/pipeline-automation-hub",
+      "type": "RTM_BUILD_TELEMETRY",
+      "state": "OBSERVATION_ONLY",
+      "causal_root_proof": false,
+      "guard": "No file-content transfer in dashboard",
+      "weight": null
+    },
+    {
+      "from": "GBOGEB/yaml-grammar",
+      "to": "GBOGEB/pipeline-automation-hub",
+      "type": "YAML_NATIVE_QA",
+      "state": "OBSERVATION_ONLY",
+      "causal_root_proof": false,
+      "guard": "No native runner proven",
+      "weight": null
+    },
+    {
+      "from": "GBOGEB/gg_MATH",
+      "to": "GBOGEB/pipeline-automation-hub",
+      "type": "MATH_PROOF_TELEMETRY",
+      "state": "OBSERVATION_ONLY",
+      "causal_root_proof": false,
+      "guard": "No automatic J5 release",
+      "weight": null
+    },
+    {
+      "from": "GBOGEB/ABACUS",
+      "to": "GBOGEB/pipeline-automation-hub",
+      "type": "DOW_ACCEPTANCE",
+      "state": "AUTHORITY_BOUND",
+      "causal_root_proof": false,
+      "guard": "Governance receipts independent",
+      "weight": null
+    },
+    {
+      "from": "GBOGEB/CODEX",
+      "to": "GBOGEB/pipeline-automation-hub",
+      "type": "KEB_FEDERATION",
+      "state": "AUTHORITY_BOUND",
+      "causal_root_proof": false,
+      "guard": "Crew must authenticate signed REX",
+      "weight": null
+    }
+  ],
+  "workflow": {
+    "authority": "READ_ONLY_PARALLEL_PLAN",
+    "dispatch_performed": false,
+    "merge_admission": "HOLD",
+    "max_local_parallel_lanes": 4,
+    "repository_owner_parallel_lanes": 5,
+    "next": [
+      "QPS W163 exact historic aliases -> qualified canonicalization",
+      "gg_MATH exact visual release dependency -> qualified full release",
+      "DOCX source/oracle & YAML offline native qualification in disjoint branches",
+      "MissionControl JADE focus5 evidence re-ingest and browser QA",
+      "Independent branch rules, review, security, owner tags (serial per repo)"
+    ]
+  },
+  "golden_thread": [
+    "SOURCE_SHA",
+    "OWNER_SCOPE",
+    "FIRST_RED_OR_NEGATIVE_TEST",
+    "DISJOINT_CANDIDATE_BRANCH",
+    "NATIVE_B0_RUN_JOB_ATTEMPT",
+    "SECURITY_AND_GOVERNANCE",
+    "HUMAN_REVIEW",
+    "POSTMERGE_SHA",
+    "RELEASE_TAG_AND_ROLLBACK"
+  ],
+  "source": {
+    "roster": "N11 Top21",
+    "roster_repositories": 21,
+    "focus_repositories": 5,
+    "observed_date": "2026-10-31",
+    "readback": "ONE_PULSE_GITHUB_API",
+    "hub_parent_sha": "8986c7fdbcc02b639bb476f28cb63559d7845198",
+    "source_truth": "REPOSITORY_OWNER_ONLY",
+    "release_authority_transfer": false
+  },
+  "metrics": {
+    "required_gate_count_per_repo": 12,
+    "required_gate_total": 60,
+    "passed": 21,
+    "failed": 1,
+    "unknown": 38,
+    "verified_completion_pct": 35.0,
+    "definition": "Only verified PASS increments completed numerator; FAIL and UNKNOWN remain in denominator, and coverage metrics never substitute release proof.",
+    "top21_master_population": 21,
+    "top21_unassessed_outside_focus": 16,
+    "globally_admitted_point_release": null,
+    "canonical_root_open": null,
+    "canonical_root_closed": null
+  },
+  "rows": [
+    {
+      "rank": 2,
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "name": "pipeline-automation-hub",
+      "role": "JADE_Temple Top21 read-only orchestration and single-publisher dashboard",
+      "owner_lane": "MissionControl JADE source and publisher owner",
+      "default_branch": "master",
+      "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+      "head_readback": "2026-10-31 one pulse",
+      "release": "HOLD",
+      "cohort": "FOCUS5_FROM_N11",
+      "gate_denominator": 12,
+      "verified_complete": 2,
+      "verified_failed": 0,
+      "unqualified": 10,
+      "percent": 16.67,
+      "gates": [
+        {
+          "id": "H01",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/commit/3bbee1143e6349d770f56720870710e4d0e562b0",
+          "reason": "Default branch exact SHA read back in this pulse"
+        },
+        {
+          "id": "H02",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/tree/3bbee1143e6349d770f56720870710e4d0e562b0",
+          "reason": "Root README present at this SHA"
+        },
+        {
+          "id": "H03",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Owner acceptance of release applicability not evidenced in this pulse"
+        },
+        {
+          "id": "H04",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "No workflow evidence for this gate in the previous pulse"
+        },
+        {
+          "id": "H05",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Declared evidence incomplete on this exact SHA: .github/workflows/jade-temple-readonly-qa.yml not completed (declared in gate evidence registry)"
+        },
+        {
+          "id": "H06",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Declared evidence incomplete on this exact SHA: .github/workflows/dependency-spine-peer-census.yml not completed (declared in gate evidence registry)"
+        },
+        {
+          "id": "H07",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not independently accepted; observed security runs on this SHA: dynamic/github-code-scanning/codeql=success"
+        },
+        {
+          "id": "H08",
+          "status": "UNKNOWN",
+          "evidence": "https://github.com/GBOGEB/pipeline-automation-hub/settings/rules",
+          "reason": "Pull request rule active (code_quality, copilot_code_review, deletion, non_fast_forward, pull_request, required_linear_history, required_status_checks); rejected RED canary not evidenced in this pulse"
+        },
+        {
+          "id": "H09",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Eligible independent human approval not evidenced in this pulse"
+        },
+        {
+          "id": "H10",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Matched coverage and negative tests not evidenced in this pulse"
+        },
+        {
+          "id": "H11",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Source-bound artifact QA and hashes not evidenced in this pulse"
+        },
+        {
+          "id": "H12",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Owner release tag, assets and rollback not signed in this pulse; tags on this SHA: none"
+        }
+      ],
+      "candidate_branch": null,
+      "candidate_sha": null,
+      "owner_action": null,
+      "blockers": [],
+      "open_github_issues": 33,
+      "open_github_prs": 5,
+      "native_observations": [
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41224152185,
+          "workflow_name": "CODE PURPLE Disjoint Live Census (read-only)",
+          "conclusion": "failure",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41224152185"
+        },
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41223999662,
+          "workflow_name": "First-Pass Closure Gate",
+          "conclusion": "failure",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41223999662"
+        },
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41221272038,
+          "workflow_name": "GM-FLEET-02B Closeout",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272038"
+        },
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41221272353,
+          "workflow_name": "GM-FLEET-03 Capacity Gate",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272353"
+        },
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41221272075,
+          "workflow_name": "GM-FLEET-03 F01 Pilot",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272075"
+        },
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41221272260,
+          "workflow_name": "GM-FLEET-03 F03 Pilot",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272260"
+        },
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41221272077,
+          "workflow_name": "GM-FLEET-03 Ring1 Recon",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272077"
+        },
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41221272131,
+          "workflow_name": "GM-FLEET-03 Ring2 Recon",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272131"
+        },
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41221272175,
+          "workflow_name": "GOGREEN launcher",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272175"
+        },
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41221272033,
+          "workflow_name": "GOGREEN Red-Trace Ledger (read-only)",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272033"
+        },
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41224775411,
+          "workflow_name": "GOGREEN Required Gate Re-check",
+          "conclusion": "skipped",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41224775411"
+        },
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41221272002,
+          "workflow_name": "QPS TRIAGE ULTRA Federation Control",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272002"
+        },
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41221272190,
+          "workflow_name": "W3-11 Non-Origin Math Consumer",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272190"
+        },
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41221272139,
+          "workflow_name": "W3-13 Measured Fleet Telemetry",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272139"
+        },
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41221272102,
+          "workflow_name": "W3-14 Measured PCA",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272102"
+        },
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41221272058,
+          "workflow_name": "W3-16 M03 W0 Recon",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272058"
+        },
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41221272101,
+          "workflow_name": "Zero-Test Gate Guard",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221272101"
+        },
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41224413550,
+          "workflow_name": "pip in /tests/coverage_waves for Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, Pillow, nbconvert, nbconvert, nbconvert, nbconvert, pillow, pillow, pillow, pillow, pillow, pillow, pillow, pillow, pillow, pillow, pillow, pillow - Update #1668243951",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41224413550"
+        },
+        {
+          "source_sha": "3bbee1143e6349d770f56720870710e4d0e562b0",
+          "run_id": 41221271529,
+          "workflow_name": "Push on master",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/41221271529"
+        }
+      ],
+      "input_paths": [
+        "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_NPLUS7.json",
+        "mission-control/jade_temple/site/focus5.html"
+      ],
+      "source_gate_status": "OWNER_GATE_REQUIRED",
+      "authenticated_crew": null,
+      "accepted_root_count": null,
+      "matched_coverage_delta": null
+    },
+    {
+      "rank": 4,
+      "repo": "GBOGEB/cryoplant-project",
+      "name": "cryoplant-project",
+      "role": "QPS TRIAGE engineering / canonical OCD ADR SSOT",
+      "owner_lane": "QPS/source namespace & artifact owner",
+      "default_branch": "main",
+      "source_sha": "PRIVATE_AGGREGATE_ONLY",
+      "head_readback": "2026-10-31 one pulse",
+      "release": "HOLD",
+      "cohort": "FOCUS5_FROM_N11",
+      "gate_denominator": 12,
+      "verified_complete": 4,
+      "verified_failed": 0,
+      "unqualified": 8,
+      "percent": 33.33,
+      "gates": [
+        {
+          "id": "H01",
+          "status": "PASS",
+          "evidence": "PRIVATE_AGGREGATE_ONLY",
+          "reason": "Default branch exact SHA read back in this pulse"
+        },
+        {
+          "id": "H02",
+          "status": "PASS",
+          "evidence": "PRIVATE_AGGREGATE_ONLY",
+          "reason": "Root README present at this SHA"
+        },
+        {
+          "id": "H03",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Owner acceptance of release applicability not evidenced in this pulse"
+        },
+        {
+          "id": "H04",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "No workflow evidence for this gate in the previous pulse"
+        },
+        {
+          "id": "H05",
+          "status": "PASS",
+          "evidence": "PRIVATE_AGGREGATE_ONLY",
+          "reason": "JADE CI (core suite, fail-closed), JADE CI (burn-down suite, fail-closed) success on this exact SHA (declared in gate evidence registry)"
+        },
+        {
+          "id": "H06",
+          "status": "PASS",
+          "evidence": "PRIVATE_AGGREGATE_ONLY",
+          "reason": "qps-canonicalization success on this exact SHA (declared in gate evidence registry)"
+        },
+        {
+          "id": "H07",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not independently accepted; observed security runs on this SHA: none"
+        },
+        {
+          "id": "H08",
+          "status": "UNKNOWN",
+          "evidence": "PRIVATE_AGGREGATE_ONLY",
+          "reason": "Pull request rule active (deletion, non_fast_forward, pull_request); rejected RED canary not evidenced in this pulse"
+        },
+        {
+          "id": "H09",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Eligible independent human approval not evidenced in this pulse"
+        },
+        {
+          "id": "H10",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Matched coverage and negative tests not evidenced in this pulse"
+        },
+        {
+          "id": "H11",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Source-bound artifact QA and hashes not evidenced in this pulse"
+        },
+        {
+          "id": "H12",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Owner release tag, assets and rollback not signed in this pulse; tags on this SHA: none"
+        }
+      ],
+      "candidate_branch": null,
+      "candidate_sha": null,
+      "owner_action": null,
+      "blockers": [],
+      "open_github_issues": 57,
+      "open_github_prs": 0,
+      "native_observations": [
+        {
+          "source_sha": "PRIVATE_AGGREGATE_ONLY",
+          "run_id": null,
+          "workflow_name": "JADE CI (burn-down suite, fail-closed)",
+          "conclusion": "success",
+          "evidence_url": "PRIVATE_AGGREGATE_ONLY"
+        },
+        {
+          "source_sha": "PRIVATE_AGGREGATE_ONLY",
+          "run_id": null,
+          "workflow_name": "JADE CI (core suite, fail-closed)",
+          "conclusion": "success",
+          "evidence_url": "PRIVATE_AGGREGATE_ONLY"
+        },
+        {
+          "source_sha": "PRIVATE_AGGREGATE_ONLY",
+          "run_id": null,
+          "workflow_name": "QPS BD Queue Integrity",
+          "conclusion": "success",
+          "evidence_url": "PRIVATE_AGGREGATE_ONLY"
+        },
+        {
+          "source_sha": "PRIVATE_AGGREGATE_ONLY",
+          "run_id": null,
+          "workflow_name": "qps-canonicalization",
+          "conclusion": "success",
+          "evidence_url": "PRIVATE_AGGREGATE_ONLY"
+        },
+        {
+          "source_sha": "PRIVATE_AGGREGATE_ONLY",
+          "run_id": null,
+          "workflow_name": "QPS TRIAGE Debug DAG Pilot",
+          "conclusion": "success",
+          "evidence_url": "PRIVATE_AGGREGATE_ONLY"
+        },
+        {
+          "source_sha": "PRIVATE_AGGREGATE_ONLY",
+          "run_id": null,
+          "workflow_name": "QPS PR binary refresh",
+          "conclusion": "success",
+          "evidence_url": "PRIVATE_AGGREGATE_ONLY"
+        },
+        {
+          "source_sha": "PRIVATE_AGGREGATE_ONLY",
+          "run_id": null,
+          "workflow_name": "QPS Triage Console Refresh",
+          "conclusion": "failure",
+          "evidence_url": "PRIVATE_AGGREGATE_ONLY"
+        },
+        {
+          "source_sha": "PRIVATE_AGGREGATE_ONLY",
+          "run_id": null,
+          "workflow_name": "TRIAGE Repository Census",
+          "conclusion": "success",
+          "evidence_url": "PRIVATE_AGGREGATE_ONLY"
+        }
+      ],
+      "input_paths": [
+        "controls/QPS_MISSION_CONTROL_LEGACY_ALIAS_REGISTRY_v1.yaml",
+        "tests/test_qps_w163_namespace_collisions.py"
+      ],
+      "source_gate_status": "OWNER_GATE_REQUIRED",
+      "authenticated_crew": null,
+      "accepted_root_count": null,
+      "matched_coverage_delta": null
+    },
+    {
+      "rank": 5,
+      "repo": "GBOGEB/gg_MATH",
+      "name": "gg_MATH",
+      "role": "QPS math method/provider evidence, not QPS engineering authority",
+      "owner_lane": "gg_MATH release/toolchain owner",
+      "default_branch": "main",
+      "source_sha": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8",
+      "head_readback": "2026-10-31 one pulse",
+      "release": "HOLD",
+      "cohort": "FOCUS5_FROM_N11",
+      "gate_denominator": 12,
+      "verified_complete": 5,
+      "verified_failed": 0,
+      "unqualified": 7,
+      "percent": 41.67,
+      "gates": [
+        {
+          "id": "H01",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/gg_MATH/commit/1e2caa69fedb253d7e4423e12d35c2f0536e8af8",
+          "reason": "Default branch exact SHA read back in this pulse"
+        },
+        {
+          "id": "H02",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/gg_MATH/tree/1e2caa69fedb253d7e4423e12d35c2f0536e8af8",
+          "reason": "Root README present at this SHA"
+        },
+        {
+          "id": "H03",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Owner acceptance of release applicability not evidenced in this pulse"
+        },
+        {
+          "id": "H04",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908675",
+          "reason": "Release Infrastructure v1 success on this exact SHA (declared in gate evidence registry)"
+        },
+        {
+          "id": "H05",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908675",
+          "reason": "Release Infrastructure v1 success on this exact SHA (declared in gate evidence registry)"
+        },
+        {
+          "id": "H06",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908402",
+          "reason": "M02B Math Bunker Smoke success on this exact SHA (declared in gate evidence registry)"
+        },
+        {
+          "id": "H07",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not independently accepted; observed security runs on this SHA: dynamic/github-code-scanning/codeql=success"
+        },
+        {
+          "id": "H08",
+          "status": "UNKNOWN",
+          "evidence": "https://github.com/GBOGEB/gg_MATH/settings/rules",
+          "reason": "Pull request rule active (code_quality, code_scanning, copilot_code_review, deletion, non_fast_forward, pull_request); rejected RED canary not evidenced in this pulse"
+        },
+        {
+          "id": "H09",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Eligible independent human approval not evidenced in this pulse"
+        },
+        {
+          "id": "H10",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Matched coverage and negative tests not evidenced in this pulse"
+        },
+        {
+          "id": "H11",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Source-bound artifact QA and hashes not evidenced in this pulse"
+        },
+        {
+          "id": "H12",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Owner release tag, assets and rollback not signed in this pulse; tags on this SHA: none"
+        }
+      ],
+      "candidate_branch": null,
+      "candidate_sha": null,
+      "owner_action": null,
+      "blockers": [],
+      "open_github_issues": 1,
+      "open_github_prs": 0,
+      "native_observations": [
+        {
+          "source_sha": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8",
+          "run_id": 41193908351,
+          "workflow_name": "Dependency SPINE Peer Source Census (MATH)",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908351"
+        },
+        {
+          "source_sha": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8",
+          "run_id": 41193909040,
+          "workflow_name": "Deploy Jekyll with GitHub Pages dependencies preinstalled",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193909040"
+        },
+        {
+          "source_sha": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8",
+          "run_id": 41193908448,
+          "workflow_name": "LM-10 Signal Stack",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908448"
+        },
+        {
+          "source_sha": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8",
+          "run_id": 41193908402,
+          "workflow_name": "M02B Math Bunker Smoke",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908402"
+        },
+        {
+          "source_sha": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8",
+          "run_id": 41193908675,
+          "workflow_name": "Release Infrastructure v1",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908675"
+        },
+        {
+          "source_sha": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8",
+          "run_id": 41193908390,
+          "workflow_name": "Semgrep code scanning",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908390"
+        },
+        {
+          "source_sha": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8",
+          "run_id": 41193908456,
+          "workflow_name": "W260 uncertainty and H05 repair",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908456"
+        },
+        {
+          "source_sha": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8",
+          "run_id": 41193908458,
+          "workflow_name": "W3-10 Monte Carlo Breadth",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193908458"
+        },
+        {
+          "source_sha": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8",
+          "run_id": 41193907613,
+          "workflow_name": "Push on main",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/gg_MATH/actions/runs/41193907613"
+        }
+      ],
+      "input_paths": [
+        "requirements-release.txt",
+        "tests/test_jade_release_dependency_contract.py"
+      ],
+      "source_gate_status": "OWNER_GATE_REQUIRED",
+      "authenticated_crew": null,
+      "accepted_root_count": null,
+      "matched_coverage_delta": null
+    },
+    {
+      "rank": 8,
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "name": "DOCX_RTM_Automation",
+      "role": "DOCX->RTM candidate traceability, no source-to-compliance promotion",
+      "owner_lane": "DOCX source/test and governance owner",
+      "default_branch": "main",
+      "source_sha": "7c1da80f2acc229fee11707d0500c1cf11482721",
+      "head_readback": "2026-10-31 one pulse",
+      "release": "HOLD",
+      "cohort": "FOCUS5_FROM_N11",
+      "gate_denominator": 12,
+      "verified_complete": 5,
+      "verified_failed": 0,
+      "unqualified": 7,
+      "percent": 41.67,
+      "gates": [
+        {
+          "id": "H01",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/DOCX_RTM_Automation/commit/7c1da80f2acc229fee11707d0500c1cf11482721",
+          "reason": "Default branch exact SHA read back in this pulse"
+        },
+        {
+          "id": "H02",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/DOCX_RTM_Automation/tree/7c1da80f2acc229fee11707d0500c1cf11482721",
+          "reason": "Root README present at this SHA"
+        },
+        {
+          "id": "H03",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Owner acceptance of release applicability not evidenced in this pulse"
+        },
+        {
+          "id": "H04",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390604",
+          "reason": "Dependency lock contract success on this exact SHA (declared in gate evidence registry)"
+        },
+        {
+          "id": "H05",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390693",
+          "reason": "Python CI success on this exact SHA (declared in gate evidence registry)"
+        },
+        {
+          "id": "H06",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390555",
+          "reason": "TypeScript orchestration CI success on this exact SHA (declared in gate evidence registry)"
+        },
+        {
+          "id": "H07",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not independently accepted; observed security runs on this SHA: none"
+        },
+        {
+          "id": "H08",
+          "status": "UNKNOWN",
+          "evidence": "https://github.com/GBOGEB/DOCX_RTM_Automation/settings/branches",
+          "reason": "Protected without a pull request rule (copilot_code_review, deletion, non_fast_forward)"
+        },
+        {
+          "id": "H09",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Eligible independent human approval not evidenced in this pulse"
+        },
+        {
+          "id": "H10",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Matched coverage and negative tests not evidenced in this pulse"
+        },
+        {
+          "id": "H11",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Source-bound artifact QA and hashes not evidenced in this pulse"
+        },
+        {
+          "id": "H12",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Owner release tag, assets and rollback not signed in this pulse; tags on this SHA: none"
+        }
+      ],
+      "candidate_branch": null,
+      "candidate_sha": null,
+      "owner_action": null,
+      "blockers": [],
+      "open_github_issues": 1,
+      "open_github_prs": 0,
+      "native_observations": [
+        {
+          "source_sha": "7c1da80f2acc229fee11707d0500c1cf11482721",
+          "run_id": 41189390585,
+          "workflow_name": "Repository admission policy",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390585"
+        },
+        {
+          "source_sha": "7c1da80f2acc229fee11707d0500c1cf11482721",
+          "run_id": 41189390604,
+          "workflow_name": "Dependency lock contract",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390604"
+        },
+        {
+          "source_sha": "7c1da80f2acc229fee11707d0500c1cf11482721",
+          "run_id": 41189390884,
+          "workflow_name": "pages",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390884"
+        },
+        {
+          "source_sha": "7c1da80f2acc229fee11707d0500c1cf11482721",
+          "run_id": 41189390693,
+          "workflow_name": "Python CI",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390693"
+        },
+        {
+          "source_sha": "7c1da80f2acc229fee11707d0500c1cf11482721",
+          "run_id": 41189390608,
+          "workflow_name": "Release identity guard",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390608"
+        },
+        {
+          "source_sha": "7c1da80f2acc229fee11707d0500c1cf11482721",
+          "run_id": 41189390649,
+          "workflow_name": "Repository integrity",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390649"
+        },
+        {
+          "source_sha": "7c1da80f2acc229fee11707d0500c1cf11482721",
+          "run_id": 41189390555,
+          "workflow_name": "TypeScript orchestration CI",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/DOCX_RTM_Automation/actions/runs/41189390555"
+        }
+      ],
+      "input_paths": [
+        "tests/test_jade_qps_bridge_penetration.py",
+        "parser/direct_docx.py",
+        "parser/source_extractor.py"
+      ],
+      "source_gate_status": "OWNER_GATE_REQUIRED",
+      "authenticated_crew": null,
+      "accepted_root_count": null,
+      "matched_coverage_delta": null
+    },
+    {
+      "rank": 16,
+      "repo": "GBOGEB/yaml-grammar",
+      "name": "yaml-grammar",
+      "role": "YAML 1.2 grammar source and parser reference, release applicability owner-bound",
+      "owner_lane": "YAML grammar/reproducibility owner",
+      "default_branch": "master",
+      "source_sha": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7",
+      "head_readback": "2026-10-31 one pulse",
+      "release": "HOLD",
+      "cohort": "FOCUS5_FROM_N11",
+      "gate_denominator": 12,
+      "verified_complete": 5,
+      "verified_failed": 1,
+      "unqualified": 6,
+      "percent": 41.67,
+      "gates": [
+        {
+          "id": "H01",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/yaml-grammar/commit/d6988d00f0b25ac3df75eea9e2535b7b15d838a7",
+          "reason": "Default branch exact SHA read back in this pulse"
+        },
+        {
+          "id": "H02",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/yaml-grammar/tree/d6988d00f0b25ac3df75eea9e2535b7b15d838a7",
+          "reason": "Root README present at this SHA"
+        },
+        {
+          "id": "H03",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Owner acceptance of release applicability not evidenced in this pulse"
+        },
+        {
+          "id": "H04",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/yaml-grammar/actions/runs/40585699667",
+          "reason": "Build contract (stdlib-only, SHA-pinned) success on this exact SHA (declared in gate evidence registry)"
+        },
+        {
+          "id": "H05",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/yaml-grammar/actions/runs/40585699771",
+          "reason": "YAML grammar offline source smoke success on this exact SHA (declared in gate evidence registry)"
+        },
+        {
+          "id": "H06",
+          "status": "PASS",
+          "evidence": "https://github.com/GBOGEB/yaml-grammar/actions/runs/40585699817",
+          "reason": "YAML grammar user-side smoke success on this exact SHA (declared in gate evidence registry)"
+        },
+        {
+          "id": "H07",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Not independently accepted; observed security runs on this SHA: none"
+        },
+        {
+          "id": "H08",
+          "status": "FAIL",
+          "evidence": "https://github.com/GBOGEB/yaml-grammar/settings/branches",
+          "reason": "Default branch unprotected (no protection, no ruleset)"
+        },
+        {
+          "id": "H09",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Eligible independent human approval not evidenced in this pulse"
+        },
+        {
+          "id": "H10",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Matched coverage and negative tests not evidenced in this pulse"
+        },
+        {
+          "id": "H11",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Source-bound artifact QA and hashes not evidenced in this pulse"
+        },
+        {
+          "id": "H12",
+          "status": "UNKNOWN",
+          "evidence": null,
+          "reason": "Owner release tag, assets and rollback not signed in this pulse; tags on this SHA: none"
+        }
+      ],
+      "candidate_branch": null,
+      "candidate_sha": null,
+      "owner_action": null,
+      "blockers": [
+        "H08: Default branch unprotected (no protection, no ruleset)"
+      ],
+      "open_github_issues": 0,
+      "open_github_prs": 0,
+      "native_observations": [
+        {
+          "source_sha": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7",
+          "run_id": 40585699667,
+          "workflow_name": "Build contract (stdlib-only, SHA-pinned)",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/yaml-grammar/actions/runs/40585699667"
+        },
+        {
+          "source_sha": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7",
+          "run_id": 40585699771,
+          "workflow_name": "YAML grammar offline source smoke",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/yaml-grammar/actions/runs/40585699771"
+        },
+        {
+          "source_sha": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7",
+          "run_id": 40585699817,
+          "workflow_name": "YAML grammar user-side smoke",
+          "conclusion": "success",
+          "evidence_url": "https://github.com/GBOGEB/yaml-grammar/actions/runs/40585699817"
+        }
+      ],
+      "input_paths": [
+        "yaml-spec-1.2.json",
+        "bin/jade-grammar-audit.mjs",
+        "tests/jade_grammar_audit.test.mjs"
+      ],
+      "source_gate_status": "OWNER_GATE_REQUIRED",
+      "authenticated_crew": null,
+      "accepted_root_count": null,
+      "matched_coverage_delta": null
+    }
+  ]
+}
