@@ -41,7 +41,9 @@ jobs:
           PY
       - name: Read-only merged-PR Actions census
         env:
-          GH_TOKEN: ${{ secrets.GOGREEN_TOP21_READ_TOKEN }}
+          # A pull_request run executes the PR's own scan.py, so it never gets the cross-repo
+          # token and takes the deferred branch below. Dispatch runs read live.
+          GH_TOKEN: ${{ github.event_name != 'pull_request' && secrets.GOGREEN_TOP21_READ_TOKEN || '' }}
         run: |
           set -euo pipefail
           if [ -z "${GH_TOKEN:-}" ]; then

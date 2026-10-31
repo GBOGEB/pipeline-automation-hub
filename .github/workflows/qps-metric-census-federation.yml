@@ -84,7 +84,9 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          QPS_FEDERATION_READ_TOKEN: ${{ secrets.QPS_FEDERATION_READ_TOKEN }}
+          # Kept off pull_request runs, which execute PR-supplied code; those fall back to
+          # GH_TOKEN and record HOLD_SOURCE_HEAD_UNKNOWN for private receivers.
+          QPS_FEDERATION_READ_TOKEN: ${{ github.event_name != 'pull_request' && secrets.QPS_FEDERATION_READ_TOKEN || '' }}
         run: |
           python - <<'PY'
           import json, os, urllib.error, urllib.request
