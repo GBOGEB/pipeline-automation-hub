@@ -9,6 +9,8 @@ deploy_gates : the deploy/production contract DP1..DP10 for one deploy job.
 
 CLI: python workflows.py lint FILE... [--require-deploy]
      exits 1 when a deploy job fails any DP gate (or no deploy job exists with --require-deploy).
+     python workflows.py secrets-lint FILE...
+     exits 1 when a pull_request run can reach a repository secret (pr_secret_exposure()).
 Nothing is executed; workflows are data. Heuristic signals are labelled as such in the census.
 """
 from __future__ import annotations
@@ -408,13 +410,90 @@ def lint(paths: list[str], require_deploy: bool = False) -> tuple[int, list[dict
     return (1 if failed else 0), report
 
 
+PR_EVENTS = {"pull_request", "pull_request_target"}
+SECRET_RX = re.compile(r"\bsecrets\.([A-Za-z_][A-Za-z0-9_]*)")
+EXPR_RX = re.compile(r"\$\{\{(.*?)\}\}", re.S)
+# A condition keeps a secret off pull-request runs when it rejects the PR events by name, or only
+# admits named non-PR events. Anything else (no condition, an unrelated one) counts as reachable.
+NOT_PR_RX = re.compile(r"github\.event_name\s*!=\s*'pull_request(_target)?'")
+ONLY_RX = re.compile(r"github\.event_name\s*==\s*'([a-z_]+)'")
+
+
+def _excludes_pr(cond: str) -> bool:
+    if NOT_PR_RX.search(cond or ""):
+        return True
+    named = ONLY_RX.findall(cond or "")
+    return bool(named) and "pull_request" not in (cond or "")
+
+
+def _secret_refs(value, guarded: bool) -> list[tuple[str, bool]]:
+    """(secret, guarded) for each `secrets.X` in value; an expression that itself rejects PR events guards it."""
+    out = []
+    for expr in EXPR_RX.findall(_text(value)):
+        safe = guarded or bool(NOT_PR_RX.search(expr))
+        out += [(name, safe) for name in SECRET_RX.findall(expr)]
+    return out
+
+
+def pr_secret_exposure(text: str, path: str = "") -> list[dict]:
+    """Repository secrets a pull-request run can reach. GITHUB_TOKEN is per-run and excluded.
+
+    On a same-repo pull_request, the PR head supplies both the workflow file and the code the job
+    runs, so a secret in such a job is readable by anyone who can push a branch. This is the
+    YAML half of the control: the owner half is to hold these secrets in an environment that only
+    admits the default branch.
+    """
+    try:
+        doc = yaml.safe_load(text)
+    except yaml.YAMLError:
+        return []
+    if not isinstance(doc, dict) or not isinstance(doc.get("jobs"), dict):
+        return []
+    triggers, _ = _triggers(_on(doc))
+    if not PR_EVENTS & set(triggers):
+        return []
+    found = []
+    for jid, job in doc["jobs"].items():
+        if not isinstance(job, dict):
+            continue
+        job_safe = _excludes_pr(_text(job.get("if")))
+        if job.get("secrets") == "inherit" and not job_safe:
+            found.append({"path": path, "job": str(jid), "step": None, "secret": "INHERIT"})
+        refs = _secret_refs([job.get("env"), job.get("with"), job.get("secrets")], job_safe)
+        for i, st in enumerate(_list(job.get("steps"))):
+            if isinstance(st, dict):
+                safe = job_safe or _excludes_pr(_text(st.get("if")))
+                name = _text(st.get("name")) or f"step {i + 1}"
+                refs += [(s, g, name) for s, g in _secret_refs([st.get("env"), st.get("with"), st.get("run")], safe)]
+        for ref in refs:
+            secret, guarded, step = (ref + (None,))[:3]
+            if secret != "GITHUB_TOKEN" and not guarded:
+                found.append({"path": path, "job": str(jid), "step": step, "secret": secret})
+    return found
+
+
+def secrets_lint(paths: list[str]) -> tuple[int, list[dict]]:
+    report = []
+    for p in paths:
+        with open(p, encoding="utf-8") as fh:
+            report += pr_secret_exposure(fh.read(), path=p)
+    return (1 if report else 0), report
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     lp = sub.add_parser("lint", help="check deploy jobs against DP1..DP10")
     lp.add_argument("files", nargs="+")
     lp.add_argument("--require-deploy", action="store_true")
+    sp = sub.add_parser("secrets-lint", help="fail when a pull-request run can reach a repository secret")
+    sp.add_argument("files", nargs="+")
     a = ap.parse_args(argv)
+    if a.cmd == "secrets-lint":
+        rc, report = secrets_lint(a.files)
+        print(json.dumps({"schema": "jade.devops.pr_secret_lint.v1", "result": report,
+                          "verdict": "PASS" if rc == 0 else "PR_SECRET_EXPOSURE"}, indent=1, sort_keys=True))
+        return rc
     rc, report = lint(a.files, a.require_deploy)
     print(json.dumps({"schema": "jade.devops.deploy_lint.v1", "gates": DP_GATES, "result": report,
                       "verdict": "PASS" if rc == 0 else "DEPLOY_CONTRACT_FIRST_RED"}, indent=1, sort_keys=True))
