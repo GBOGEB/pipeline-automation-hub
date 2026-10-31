@@ -6,6 +6,25 @@
 
 GitHub often shows an HTML file as source, not as an executed webpage. Clone the repository and open `docs/ci-spine/explorer.html` in a browser; it embeds the frozen data and makes **zero API/network requests**. The page offers five connected lenses (B00–B09 DAG, SIPOC, all 182 workflow records, eight measured GitHub run clocks, JQ-00..07 DoD/DoV), source links, zoom, selection hash links, SVG export and print-to-PDF.
 
+**Discover and open the assets (PowerShell, from a fresh window).** Set `$Repo` to your clone. Until #1002 merges, the assets exist only on its branch, so this checks them out into a detached worktree beside the clone, which keeps the clone itself clean. After the merge, set `$Branch = 'master'`.
+
+```powershell
+$Repo   = 'C:\path\to\pipeline-automation-hub'   # your clone
+$Branch = 'feat/ci-spine-jacquard-provenance-explorer-20261028'
+cd $Repo
+git fetch origin $Branch
+$Wt = Join-Path (Split-Path $Repo -Parent) 'pah-ci-spine-assets'
+if (Test-Path $Wt) { git -C $Wt checkout --detach "origin/$Branch" } else { git worktree add --detach $Wt "origin/$Branch" }
+cd (Join-Path $Wt 'docs\ci-spine')
+git log -1 --format='%h %cd %s' --date=iso
+Get-ChildItem -Recurse -Include *.html, *.md, *.json | Select-Object @{n = 'Asset'; e = { Resolve-Path -Relative $_.FullName } }, Length, LastWriteTime
+Start-Process .\explorer.html          # five-lens explorer (offline)
+Start-Process .\notebook.html          # companion notebook (#1017)
+Start-Process .\pointers\index.html    # pointer map
+```
+
+Remove the worktree when done: `git -C $Repo worktree remove $Wt`.
+
 **Deterministic static QA (Python standard library):**
 
 ```bash
