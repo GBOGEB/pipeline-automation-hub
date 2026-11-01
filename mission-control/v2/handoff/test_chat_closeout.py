@@ -106,7 +106,8 @@ class ChatCloseoutContractTests(unittest.TestCase):
         data["statistics"]["full_counts"] = {
             "user_prompts": 2, "assistant_replies": 1, "tool_calls": 1}
         result = validate(PROFILE, data, raw)
-        self.assertTrue(result["normalized_export_count_bytes_verified"])
+        self.assertTrue(result["exact_full_chat_counts_verified"])
+        self.assertFalse(result["full_chat_statistics_missing"])
 
     def test_export_bytes_mismatch_rejected(self):
         payload = {"schema": "code_purple.normalized_chat_export.v1",
