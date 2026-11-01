@@ -6,6 +6,7 @@ import hashlib
 import json
 import re
 from pathlib import Path
+from urllib.parse import unquote, urlsplit
 
 HERE=Path(__file__).resolve().parent
 CONFIG=HERE/"MISSIONCONTROL_NAV_SOURCES_v1.json"
@@ -19,13 +20,57 @@ MUTATION_FIELDS=("mutation_enabled","browser_apply_allowed","remote_dispatch_ena
 REPORT_FIELDS={"id","repo","title","path","generator","data_ssot","workflow","workflow_role","schedule","observed_sha","pages_url","metrics"}
 REPORT_ROLES={"REFRESH","CHECK","PUBLISH"}
 SLUG=re.compile(r"[a-z0-9][a-z0-9-]*\Z")
-CRON=re.compile(r"[0-9*/,-]+( [0-9*/,-]+){4}(;[0-9*/,-]+( [0-9*/,-]+){4})*\Z")
+SCHEME_PREFIX=re.compile(r"[A-Za-z][A-Za-z0-9+.-]*:")
+CRON_BOUNDS=((0,59),(0,23),(1,31),(1,12),(0,7))
 
 def require(ok,why):
     if not ok:raise ValueError("MC_NAV_HOLD:"+why)
 
 def repo_path(v):
-    return isinstance(v,str) and bool(v) and not v.startswith(("/","\\")) and ".." not in v.split("/") and "\\" not in v
+    return (isinstance(v,str) and bool(v) and not v.startswith(("/","\\")) and
+            "\\" not in v and SCHEME_PREFIX.match(v) is None and
+            all(part not in ("",".","..") for part in v.split("/")))
+
+def valid_cron_field(field,bounds):
+    low,high=bounds
+    for item in field.split(","):
+        parts=item.split("/")
+        if len(parts)>2:return False
+        base=parts[0]
+        if len(parts)==2 and (re.fullmatch(r"[0-9]+",parts[1]) is None or int(parts[1])<1):return False
+        if base=="*":continue
+        if "-" in base:
+            ends=base.split("-")
+            if len(ends)!=2 or any(re.fullmatch(r"[0-9]+",n) is None for n in ends):return False
+            start,end=map(int,ends)
+            if not low<=start<=end<=high:return False
+        elif re.fullmatch(r"[0-9]+",base) is None or not low<=int(base)<=high:return False
+    return True
+
+def valid_cron(value):
+    for schedule in value.split(";"):
+        fields=schedule.split(" ")
+        if len(fields)!=5 or any(not field for field in fields):return False
+        if not all(valid_cron_field(field,bounds) for field,bounds in zip(fields,CRON_BOUNDS)):return False
+    return True
+
+def pages_url_on_site(value,site):
+    if not isinstance(value,str) or any(ord(char)<32 or ord(char)==127 for char in value):return False
+    try:
+        parsed=urlsplit(value)
+        expected=urlsplit(site)
+    except ValueError:
+        return False
+    if parsed.scheme.lower()!="https" or parsed.netloc.lower()!=expected.netloc.lower():return False
+    path=parsed.path
+    for _ in range(8):
+        decoded=unquote(path)
+        if decoded==path:break
+        path=decoded
+    else:
+        return False
+    if "\\" in path or any(part in (".","..") for part in path.split("/")):return False
+    return path.startswith(expected.path)
 
 def validate_reports(d):
     repos={r["id"]:r["name"] for r in d.get("repositories",[])}
@@ -43,10 +88,10 @@ def validate_reports(d):
             require(x[k] is None or repo_path(x[k]),"report "+k)
         require(repo_path(x["workflow"]) and x["workflow"].startswith(".github/workflows/") and x["workflow"].endswith((".yml",".yaml")),"report workflow")
         require(x["workflow_role"] in REPORT_ROLES,"report workflow role")
-        require(x["schedule"] is None or (isinstance(x["schedule"],str) and CRON.fullmatch(x["schedule"]) is not None),"report schedule")
+        require(x["schedule"] is None or (isinstance(x["schedule"],str) and valid_cron(x["schedule"])),"report schedule")
         require(SHA.fullmatch(x["observed_sha"] or "") is not None,"report observed SHA")
         site="https://gbogeb.github.io/"+repos[x["repo"]].split("/",1)[1]+"/"
-        require(x["pages_url"] is None or (isinstance(x["pages_url"],str) and x["pages_url"].startswith(site)),"report Pages URL")
+        require(x["pages_url"] is None or pages_url_on_site(x["pages_url"],site),"report Pages URL")
         require(isinstance(x["metrics"],list),"report metrics")
         for m in x["metrics"]:
             require(isinstance(m,dict) and set(m)=={"name","owner"} and bool(m["name"]) and repo_path(m["owner"]),"report metric owner")

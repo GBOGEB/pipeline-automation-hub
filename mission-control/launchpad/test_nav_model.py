@@ -79,14 +79,26 @@ class ModelTests(unittest.TestCase):
     def test_report_sources_bound(self):
         self.reject(lambda d:d["reports"][0].update(repo="absent"),"report repo")
         self.reject(lambda d:d["reports"][0].update(path="../escape.html"),"report page")
+        self.reject(lambda d:d["reports"][0].update(path="docs/./index.html"),"report page")
         self.reject(lambda d:d["reports"][0].update(generator="C:\\tool.py"),"report generator")
+        self.reject(lambda d:d["reports"][0].update(generator="C:/tool.py"),"report generator")
+        self.reject(lambda d:d["reports"][0].update(generator="https://example.com/tool.py"),"report generator")
         self.reject(lambda d:d["reports"][0].update(workflow="scripts/run.yml"),"report workflow")
         self.reject(lambda d:d["reports"][0].update(workflow_role="DEPLOYED"),"report workflow role")
-        self.reject(lambda d:d["reports"][0].update(schedule="hourly"),"report schedule")
+        for schedule in ("/ / / / /","99 99 99 99 99","*/0 * * * *","1-60 * * * *"):
+            self.reject(lambda d,schedule=schedule:d["reports"][0].update(schedule=schedule),"report schedule")
         self.reject(lambda d:d["reports"][0].update(observed_sha="6fbda559"),"report observed SHA")
     def test_report_pages_url_stays_on_own_site(self):
         def wrong(d):
             r=next(x for x in d["reports"] if x["repo"]=="abacus");r["pages_url"]="https://gbogeb.github.io/CODEX/"
         self.reject(wrong,"report Pages URL")
         self.reject(lambda d:d["reports"][0].update(pages_url="https://example.com/"),"report Pages URL")
+        for url in (
+            "https://gbogeb.github.io/ABACUS/../CODEX/",
+            "https://gbogeb.github.io/ABACUS/%2e%2e/CODEX/",
+            "https://gbogeb.github.io/ABACUS/%252e%252e/CODEX/",
+            "https://gbogeb.github.io/ABACUS/..\\CODEX/",
+            "https://gbogeb.github.io/ABACUS/%5c..%5cCODEX/",
+        ):
+            self.reject(lambda d,url=url:next(x for x in d["reports"] if x["repo"]=="abacus").update(pages_url=url),"report Pages URL")
 if __name__=="__main__":unittest.main()
