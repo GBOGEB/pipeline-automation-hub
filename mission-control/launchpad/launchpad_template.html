@@ -119,10 +119,11 @@ function renderRepos(){
  if(!rows.length)text(out,"p","quiet","No repositories match. Reset filters.");
 }
 function renderReports(){
- const out=$("report-list");out.replaceChildren();
+ const out=$("report-list");out.replaceChildren();const selected=reportFromHash();
  const repo=id=>DATA.repositories.find(r=>r.id===id);
  const rows=DATA.reports.filter(x=>{const r=repo(x.repo);return (state.lane==="ALL"||r.lane===state.lane)&&highlight(x.title+" "+x.path+" "+r.name+" "+x.workflow_role)});
  rows.forEach(x=>{const r=repo(x.repo);const src="https://github.com/"+r.name+"/blob/"+x.observed_sha+"/";const c=text(out,"article","mini");c.id="report-"+x.repo+"-"+x.id;
+  if(x===selected)c.classList.add("sel");
   text(c,"div","eyebrow",r.lane+" / "+x.workflow_role);link(c,x.title+" ↗",src+x.path);text(c,"div","mono",x.path);
   const p=text(c,"p","");
   if(x.generator)link(p,"generator",src+x.generator);else text(p,"span","warn","generator UNKNOWN");
@@ -134,7 +135,15 @@ function renderReports(){
  $("report-count").textContent=rows.length+" / "+DATA.reports.length+" reports";
  if(!rows.length)text(out,"p","quiet","No reports match. Reset filters.");
 }
-function openDeepLink(){const id=decodeURIComponent(location.hash.slice(1));if(!id.startsWith("report-"))return;const t=document.getElementById(id);if(t){t.scrollIntoView();t.classList.add("sel")}}
+function reportFromHash(){try{const id=decodeURIComponent(location.hash.slice(1));return DATA.reports.find(x=>"report-"+x.repo+"-"+x.id===id)||null}catch{return null}}
+function openDeepLink(){
+ const x=reportFromHash();if(!x)return;
+ const r=DATA.repositories.find(r=>r.id===x.repo);if(!r)return;
+ if(state.lane!=="ALL"&&r.lane!==state.lane){state.lane="ALL";$("lane").value="ALL"}
+ if(state.query&&!highlight(x.title+" "+x.path+" "+r.name+" "+x.workflow_role)){state.query="";$("search").value=""}
+ renderReports();
+ const t=document.getElementById("report-"+x.repo+"-"+x.id);if(t)t.scrollIntoView();
+}
 function renderEdges(){
  const out=$("edges-list");out.replaceChildren();
  DATA.edges.filter(e=>(state.binding==="ALL"||e.binding===state.binding)&&highlight(e.from+" "+e.to+" "+e.detail+" "+e.relation)).forEach(e=>{const r=text(out,"div","record");const h=text(r,"div","recordhead");text(h,"b","",nodeLabel(e.from)+" → "+nodeLabel(e.to));text(h,"span","mono "+(e.binding==="DECLARED"?"warn":""),e.binding);text(r,"p","",e.relation+" · "+e.detail);text(r,"small","mono",e.basis)});
