@@ -119,6 +119,35 @@ class Focus5PulseTests(unittest.TestCase):
         self.assertEqual(self.gates(fp.observe_repo("O/R", PREV, fake_github(
             runs=[run(".github/workflows/ci.yml", "failure")], started=False)))["H05"], "UNKNOWN")
 
+    def test_started_job_on_a_later_page_keeps_the_failure(self):
+        # 150 jobs: page 1 holds 100 never-started jobs, page 2 one job that ran and failed.
+        calls = []
+
+        def jobs_lookup(path):
+            calls.append(path)
+            page = int(path.rsplit("page=", 1)[1])
+            idle = {"conclusion": "skipped", "steps": []}
+            ran = {"conclusion": "failure", "steps": [{"name": "Run tests"}]}
+            jobs = [idle] * 100 if page == 1 else [idle] * 49 + [ran]
+            return {"total_count": 150, "jobs": jobs}
+
+        self.assertTrue(fp.any_job_started("O/R", 9, jobs_lookup))
+        self.assertEqual(len(calls), 2)
+        latest = {"a.yml": run("a.yml", "failure")}
+        fp.mark_unstarted_failures("O/R", latest, ["a.yml"], jobs_lookup)
+        self.assertEqual(latest["a.yml"]["conclusion"], "failure")
+
+    def test_all_pages_unstarted_is_not_started_and_paging_stops(self):
+        calls = []
+
+        def jobs_lookup(path):
+            calls.append(path)
+            page = int(path.rsplit("page=", 1)[1])
+            return {"total_count": 130, "jobs": [{"steps": []}] * (100 if page == 1 else 30)}
+
+        self.assertFalse(fp.any_job_started("O/R", 9, jobs_lookup))
+        self.assertEqual(len(calls), 2)
+
     def test_registry_rejects_owner_gates_and_unstated_evidence(self):
         ok = {"schema": "jade.focus5.gate_evidence_registry.v1",
               "repos": {"O/R": {"H05": [{"workflow": ".github/workflows/a.yml", "proves": "tests"}]}}}
