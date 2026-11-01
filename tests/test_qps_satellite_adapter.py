@@ -1,9 +1,14 @@
+import importlib.util
 import json
 import tempfile
 import unittest
 from pathlib import Path
 
-from scripts import qps_satellite_adapter as adapter
+# Load by path: an installed `scripts` package would shadow the repo's namespace `scripts/`.
+ROOT = Path(__file__).resolve().parents[1] / "scripts"
+spec = importlib.util.spec_from_file_location("qps_satellite_adapter", ROOT / "qps_satellite_adapter.py")
+adapter = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(adapter)
 
 
 class AdapterTests(unittest.TestCase):
