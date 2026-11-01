@@ -20,6 +20,9 @@ on:
       - "federation/**"
       - "governance/**"
       - "tests/*.py"
+      - "tools/workstation/Invoke-DraftPrPass.ps1"
+      - "contracts/convergence-receipt.schema.json"
+      - ".github/PULL_REQUEST_TEMPLATE.md"
   push:
     branches: [master]
     paths:
@@ -32,6 +35,9 @@ on:
       - "federation/**"
       - "governance/**"
       - "tests/*.py"
+      - "tools/workstation/Invoke-DraftPrPass.ps1"
+      - "contracts/convergence-receipt.schema.json"
+      - ".github/PULL_REQUEST_TEMPLATE.md"
   workflow_dispatch:
 
 permissions:
