@@ -1,5 +1,7 @@
 # Recursive cross-chat continuity — JADE wrapper over canonical CP.HANDOFF/RESUME
 
+> **Doc** JT-07 · **Status** ACTIVE · **Release** UNNAMED (owner sets SemVer) · **Admission** `MERGE_ADMISSION=HOLD` · **Updated** 2026-10-31
+
 This is a **project-facing protocol**, not a parallel SSOT, API, dispatcher, or new Mission Control process. Canonical: ABACUS `handover/HANDOVER_MESSAGE_TEMPLATE.md`, `tools/handover_v2/process_spec.json`; Mission Control `mission-control/v2/handoff/CP_HANDOFF_RESUME_V1.json`. A local sealed bundle is GitHub-first operational fidelity, NOT canonical V2 schema + replay unless separately verified.
 
 ## At every chat beginning
@@ -25,3 +27,7 @@ This is a **project-facing protocol**, not a parallel SSOT, API, dispatcher, or 
 `project_id`, `wave_id`, `obs_utc`, `head_snapshot` array `{repo, branch, sha, read_at}`, `source_registry`, `native_receipts` (run, attempt, job, step, artifact sha), `metric_ledger` (numerator/denominator/instrumentor), `owners_and_leases`, `first_red_roots`, `governance_gates`, `pages_evidence`, `items_open`, `decisions`, `next_admissible_action`, `predecessor_root_hash`, `archive_manifest_hash`.
 
 GitHub-first is preferred; a sealed ZIP supplements indispensable local bytes. The user must create the ChatGPT Project manually because this tooling cannot create a ChatGPT Projects workspace directly.
+
+---
+
+**Nav:** [← 06 Wave plan](06_WAVE_PLAN.md) · [Index](00_START_HERE.md) · [08 Bootstrap PR →](08_PR_READY.md)

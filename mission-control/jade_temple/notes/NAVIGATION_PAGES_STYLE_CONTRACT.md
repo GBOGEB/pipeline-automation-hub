@@ -15,6 +15,16 @@ A project root may retain `README.md`, `ReadMe.md`, `index.md`, `GLOB.yaml`, or 
 
 Recommended nav (6–7 items, consistent order): **Overview | Architecture/SPINE | Build & test | Evidence/GoGREEN | Issues/BD | Release & Pages | Handover**. Keep visible focus, semantic landmarks, skip links, per-page breadcrumbs, and an immutable revision marker. Make broken links a publication blocker. Deeper domain pages remain local repo owners' responsibility.
 
+## JADE root markdown pages (W1, 2026-10-31)
+
+The root pages of `mission-control/jade_temple/` (README, `00`–`09`, `CHANGELOG.md`) share one layout. `tools/root_docs.py --check` enforces it in the JADE test suite, and `--write` applies it without touching the body.
+
+- **Line 1 is the H1.** Nothing sits above it. A wave's dated banner goes into `CHANGELOG.md`, newest first, and the README keeps a short *Recent changes* list.
+- **Line 3 is the masthead:** `Doc` id, `Status` (ACTIVE, PROPOSAL, REFERENCE or HISTORICAL), `Release`, `Admission` and `Updated` (ISO date). `Release` and `Admission` have one value for all pages, set in `root_docs.py`.
+- **The last line is the nav footer:** previous page, index (`00_START_HERE.md`) and next page, in reading order.
+- **Every relative link resolves.** A broken link fails the check.
+- `DROPIN_NEXT_CHAT.md` is deferred: it is an append-only handover log.
+
 ## Portable layout and design tokens
 
 Use the source-owned `site/jade.css` and `site/green_template.html` as a **reference**, not mandatory styling for every repo. User-facing page families: `Overview`, `Repo launch cards`, `Typed SPINE`, `GoGREEN vs EVERRED`, `Governance`, `Pages deploy`, `Recursive restart`.

@@ -1,5 +1,7 @@
 # JADE_TEMPLE charter — JADE_CASTE point-release readiness
 
+> **Doc** JT-02 · **Status** ACTIVE · **Release** UNNAMED (owner sets SemVer) · **Admission** `MERGE_ADMISSION=HOLD` · **Updated** 2026-10-31
+
 ## Mission / acceptance
 
 Bring an approved subset, eventually the Mission Control mission-selected Top21, to **release-candidate readiness** for the next owner-defined point release. The project is an additive presentation/process programme, not a global release controller. **J4 qualified** means an owner can evaluate the point-release candidate. **J5 admitted** requires a real owner-approved release and cannot be granted by this dashboard.
@@ -22,3 +24,7 @@ No automatic repo renames or file moves, no force-push, no change of protected s
 ## Portfolio accounting
 
 N11 (2026-10-17) = 21 repos, 26,836 tracked files, 880 root files and 706 root-review *candidates*. These are known historical counts from the existing source; candidates are heuristics, not defects. On 2026-10-18 a non-atomic readback refreshed 21 branch-head commit SHAs and root README file existence. The current exact full trees, production Pages status and release gates were not independently qualified. Keep all as separate denominators.
+
+---
+
+**Nav:** [← 01 Project instructions](01_PROJECT_INSTRUCTIONS.md) · [Index](00_START_HERE.md) · [03 JADE_CASTE method →](03_JADE_CASTE_METHOD.md)

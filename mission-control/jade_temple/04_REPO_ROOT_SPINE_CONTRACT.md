@@ -1,5 +1,7 @@
 # Proposed root entrypoint + repo SPINE contract v0 (soft pilot)
 
+> **Doc** JT-04 · **Status** PROPOSAL · **Release** UNNAMED (owner sets SemVer) · **Admission** `MERGE_ADMISSION=HOLD` · **Updated** 2026-10-31
+
 ## Discovered reality / compatibility
 
 GitHub displays repository README by its actual case-sensitive path; the 2026-10-18 root listing observed **20 `README.md` files and one `ReadMe.md` (`yaml-grammar`)**, not absence of a README. `CODEX` already contains `GLOB.yaml` and `GLOB_POLICY.md`; `GEMINI` has `repo_manifest.yaml`; `Q_engineering_tools` has root `index.html`. Do not overwrite or standardize these unilaterally.
@@ -48,3 +50,7 @@ governance:
 `DISCOVER → classify by ownership/use → propose manifest links → add alias/redirect → grep + import/URL/workflow consumer census → parallel owner review → test old and new paths → migrate one owner slice → recheck history+Pages+release → retire only after explicit approvals`.
 
 Forbidden: bulk root shuffle, any automatic deletion, rename without grep/import/Pages/CI consumer proof, moving engineering truth into JADE, using stem-matched formats as proof of duplicate content, editing upstream-derived replicas without an owner applicability decision. Existing N11 root steward recognizes `KEEP_JUSTIFIED`, `CANONICAL_ROOT`, `LINK_ALIAS_FIRST`, `MOVE_WITH_CONSUMER_REPLAY`, `ARCHIVE_PRESERVE_LINKS`, `WAIT_OWNER`.
+
+---
+
+**Nav:** [← 03 JADE_CASTE method](03_JADE_CASTE_METHOD.md) · [Index](00_START_HERE.md) · [05 MACH tiers →](05_MACH_TIERS.md)
