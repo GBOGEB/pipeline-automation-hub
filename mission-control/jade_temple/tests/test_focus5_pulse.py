@@ -24,7 +24,8 @@ def fake_github(protected=False, rules=(), runs=(), readme=True, tags=(), starte
         if path.startswith("repos/O/R/actions/runs/") and "/jobs" in path:
             # started: a runner executed steps; not started: billing/spending-limit refusal
             steps = [{"name": "Run tests", "conclusion": "failure"}] if started else []
-            return {"jobs": [{"conclusion": "failure", "runner_id": 7 if started else 0, "steps": steps}]}
+            return {"total_count": 1, "jobs": [{"conclusion": "failure", "run_attempt": 1,
+                                                "runner_id": 7 if started else 0, "steps": steps}]}
         if path == "repos/O/R":
             return {"default_branch": "main"}
         if path == "repos/O/R/commits/main":
@@ -54,7 +55,7 @@ PREV = {"repo": "O/R", "rank": 1, "gates": [
 
 def run(path, conclusion, created="2026-10-25T00:00:00Z"):
     return {"path": path, "name": "CI", "status": "completed", "conclusion": conclusion, "id": 9,
-            "html_url": "https://github.com/O/R/actions/runs/9", "created_at": created}
+            "run_attempt": 1, "html_url": "https://github.com/O/R/actions/runs/9", "created_at": created}
 
 
 class Focus5PulseTests(unittest.TestCase):
@@ -118,6 +119,68 @@ class Focus5PulseTests(unittest.TestCase):
         # previous-pulse fallback evidence gets the same treatment
         self.assertEqual(self.gates(fp.observe_repo("O/R", PREV, fake_github(
             runs=[run(".github/workflows/ci.yml", "failure")], started=False)))["H05"], "UNKNOWN")
+
+    def test_started_job_on_a_later_page_keeps_the_failure(self):
+        # 150 jobs: page 1 holds 100 never-started jobs, page 2 one job that ran and failed.
+        calls = []
+
+        def jobs_lookup(path):
+            calls.append(path)
+            page = int(path.rsplit("page=", 1)[1])
+            idle = {"conclusion": "skipped", "run_attempt": 1, "steps": []}
+            ran = {"conclusion": "failure", "run_attempt": 1, "steps": [{"name": "Run tests"}]}
+            jobs = [idle] * 100 if page == 1 else [idle] * 49 + [ran]
+            return {"total_count": 150, "jobs": jobs}
+
+        self.assertTrue(fp.any_job_started("O/R", 9, 1, jobs_lookup))
+        self.assertEqual(len(calls), 2)
+        self.assertTrue(all("/attempts/1/jobs?" in call for call in calls))
+        latest = {"a.yml": run("a.yml", "failure")}
+        fp.mark_unstarted_failures("O/R", latest, ["a.yml"], jobs_lookup)
+        self.assertEqual(latest["a.yml"]["conclusion"], "failure")
+
+    def test_job_from_another_attempt_cannot_clear_failure(self):
+        latest = {"a.yml": run("a.yml", "failure")}
+
+        def jobs_lookup(path):
+            page = int(path.rsplit("page=", 1)[1])
+            if page == 1:
+                jobs = [{"run_attempt": 1, "steps": []}] * 100
+            else:
+                jobs = [{"run_attempt": 2, "steps": []}]
+            return {"total_count": 101, "jobs": jobs}
+
+        fp.mark_unstarted_failures("O/R", latest, ["a.yml"], jobs_lookup)
+        self.assertEqual(latest["a.yml"]["conclusion"], "failure")
+
+    def test_all_pages_unstarted_is_not_started_and_paging_stops(self):
+        calls = []
+
+        def jobs_lookup(path):
+            calls.append(path)
+            page = int(path.rsplit("page=", 1)[1])
+            return {"total_count": 130, "jobs": [{"run_attempt": 1, "steps": []}] * (100 if page == 1 else 30)}
+
+        self.assertFalse(fp.any_job_started("O/R", 9, 1, jobs_lookup))
+        self.assertEqual(len(calls), 2)
+
+    def test_incomplete_pagination_keeps_failure(self):
+        responses = [
+            ("short page before total_count", [
+                {"total_count": 150, "jobs": [{"run_attempt": 1, "steps": []}] * 100},
+                {"total_count": 150, "jobs": [{"run_attempt": 1, "steps": []}] * 5},
+            ]),
+            ("missing total_count", [
+                {"jobs": [{"run_attempt": 1, "steps": []}] * 100},
+            ]),
+        ]
+        for label, pages in responses:
+            with self.subTest(response=label):
+                latest = {"a.yml": run("a.yml", "failure")}
+                fp.mark_unstarted_failures(
+                    "O/R", latest, ["a.yml"], lambda _path: pages.pop(0)
+                )
+                self.assertEqual(latest["a.yml"]["conclusion"], "failure")
 
     def test_registry_rejects_owner_gates_and_unstated_evidence(self):
         ok = {"schema": "jade.focus5.gate_evidence_registry.v1",

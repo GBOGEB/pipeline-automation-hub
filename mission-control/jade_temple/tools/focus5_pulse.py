@@ -101,9 +101,40 @@ def mark_unstarted_failures(repo: str, latest: dict[str, dict], paths, lookup=gh
     for path in paths:
         run = latest.get(path)
         if run and run["conclusion"] == "failure":
-            jobs = lookup(f"repos/{repo}/actions/runs/{run['id']}/jobs?per_page=100")["jobs"]
-            if not any(j.get("steps") for j in jobs):
+            if not any_job_started(repo, run["id"], run.get("run_attempt"), lookup):
                 latest[path] = dict(run, conclusion=NOT_STARTED)
+
+
+def any_job_started(repo: str, run_id, run_attempt, lookup=gh) -> bool:
+    """True if any job in the observed run attempt executed a step.
+
+    An invalid attempt or mismatched job is inconclusive, so retain the failure.
+    """
+    if type(run_attempt) is not int or run_attempt <= 0:
+        return True
+    page = 1
+    while True:
+        data = lookup(
+            f"repos/{repo}/actions/runs/{run_id}/attempts/{run_attempt}/jobs?per_page=100&page={page}"
+        )
+        if not isinstance(data, dict):
+            return True
+        jobs = data.get("jobs")
+        total_count = data.get("total_count")
+        if type(total_count) is not int or total_count < 0 or not isinstance(jobs, list):
+            return True
+        if any(not isinstance(job, dict) for job in jobs):
+            return True
+        if any(j.get("run_attempt") != run_attempt for j in jobs):
+            return True
+        if any(j.get("steps") for j in jobs):
+            return True
+        seen = (page - 1) * 100 + len(jobs)
+        if seen >= total_count:
+            return False
+        if len(jobs) != 100:
+            return True
+        page += 1
 
 
 def classify_run(conclusion: str | None) -> str:
