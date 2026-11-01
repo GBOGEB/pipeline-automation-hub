@@ -57,7 +57,7 @@ jobs:
       - name: Tests under branch coverage (zero-test and population guards)
         run: |
           set -euo pipefail
-          python -m pip install --disable-pip-version-check pyyaml==6.0.3 coverage==7.13.3
+          python -m pip install --disable-pip-version-check -c mission-control/jade_temple/sprint/requirements-optional.txt pyyaml==6.0.3 coverage
           python -m coverage run --branch --include='*/mission-control/jade_temple/devops/*.py' --omit='*/tests/*' \
             -m unittest discover -s mission-control/jade_temple/devops/tests -p 'test_devops_*.py' -v \
             2>&1 | tee "$RUNNER_TEMP/devops-tests.log"

@@ -74,9 +74,13 @@ class PinCoverage(unittest.TestCase):
         gaps = {p for p in dag_bound_paths() if not any(fnmatch.fnmatchcase(p, g) for g in pats)}
         self.assertEqual(gaps, set(), "pinned by the CI/CD DAG but not a trigger of JADE QA")
 
-    def test_master_runs_the_same_filter(self):
-        self.assertEqual(workflow_filters("push"), workflow_filters("pull_request"))
-        self.assertRegex(WORKFLOW.read_text(encoding="utf-8"), r"\n  push:\n    branches: \[master\]\n")
+    def test_master_runs_on_every_push(self):
+        # Owner decision 2026-11-01: every master SHA must carry JADE QA evidence (FOCUS5 H05), so the
+        # push trigger has no path filter; pull requests keep the complete filter checked above.
+        on = WORKFLOW.read_text(encoding="utf-8").split("\njobs:", 1)[0]
+        self.assertRegex(on, r"\n  push:\n    branches: \[master\]\n  workflow_dispatch:")
+        self.assertEqual(workflow_filters("push"), [])
+        self.assertTrue(workflow_filters("pull_request"))
 
     def test_launcher_runs_on_every_pr_and_on_master(self):
         wf = (ROOT / ".github/workflows/gogreen-launcher.yml").read_text(encoding="utf-8").split("\njobs:", 1)[0]

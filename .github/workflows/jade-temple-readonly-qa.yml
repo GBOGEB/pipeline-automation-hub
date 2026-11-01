@@ -21,29 +21,10 @@ on:
       - 'mission-control/federation-atlas/CODE_PURPLE_BEAMS_DAG_v1.json'
       - 'mission-control/gogreen/red_trace/README.md'
       - 'scripts/zero_test_gate_audit.py'
-  # master runs the same checks, so a pinned edit that slips through shows red at its own commit
+  # master runs on every push (no path filter): a pinned edit that slips through shows red at its own
+  # commit, and every master SHA carries JADE QA evidence for the FOCUS5 H05 gate
   push:
     branches: [master]
-    paths:
-      - 'mission-control/jade_temple/**'
-      - 'mission-control/federation-atlas/pages_portal.py'
-      - 'mission-control/qps-triage-ultra/p-process/**'
-      # the rest of tests/test_portability.py TREES (jade_temple and p-process are above)
-      - 'mission-control/gogreen/**'
-      - 'mission-control/v2/**'
-      - '.github/workflows/p-process.yml'
-      - 'mission-control/gogreen/scale_dock.py'
-      - '.github/workflows/jade-temple-readonly-qa.yml'
-      # every other path the CI/CD DAG binds by blob OID (tests/test_regen.py keeps this list complete)
-      - '.github/workflows/gm-iv-recon4-governor.yml'
-      - '.github/workflows/gm-v-3pstar-mip-control.yml'
-      - '.github/workflows/gm-v-governor-readiness.yml'
-      - '.github/workflows/mission-control-n3-evidence.yml'
-      - '.github/workflows/zero-test-gate-guard.yml'
-      - 'mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json'
-      - 'mission-control/federation-atlas/CODE_PURPLE_BEAMS_DAG_v1.json'
-      - 'mission-control/gogreen/red_trace/README.md'
-      - 'scripts/zero_test_gate_audit.py'
   workflow_dispatch: {}
 permissions:
   contents: read
@@ -73,7 +54,7 @@ jobs:
       - name: Contract, adversarial and hash-drift tests
         run: |
           set -euo pipefail
-          python -m pip install --disable-pip-version-check coverage==7.13.3
+          python -m pip install --disable-pip-version-check -c mission-control/jade_temple/sprint/requirements-optional.txt coverage
           python -m unittest discover -s mission-control/jade_temple/tests -p 'test_*.py' -v \
             2>&1 | tee "$RUNNER_TEMP/jade-nplus2-tests.log"
           python - <<'PYTEST'
@@ -148,7 +129,7 @@ jobs:
       - name: Install pinned Playwright / Chromium
         run: |
           [ -f "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh" ] && QA_TITLE="Install pinned Playwright / Chromium" . "$GITHUB_WORKSPACE/scripts/ci/qa_trap.sh"
-          python -m pip install --disable-pip-version-check playwright==1.56.0
+          python -m pip install --disable-pip-version-check -c mission-control/jade_temple/sprint/requirements-optional.txt playwright
           python -m playwright install --with-deps chromium
       - name: Responsive interactions and negative external-request check
         run: |

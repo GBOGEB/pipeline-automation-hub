@@ -4,6 +4,10 @@
   "gates": ["H04", "H05", "H06"],
   "repos": {
     "GBOGEB/pipeline-automation-hub": {
+      "H04": [
+        {"workflow": ".github/workflows/jade-temple-readonly-qa.yml",
+         "proves": "scope mission-control/jade_temple: tests/test_jade_build_contract.py (stdlib, local or declared imports only; coverage and playwright installed only via the Dependabot-owned manifest; Python floor 3.12)"}
+      ],
       "H05": [
         {"workflow": ".github/workflows/jade-temple-readonly-qa.yml",
          "proves": "jade_temple unittest suite under a statement and branch coverage floor"}
