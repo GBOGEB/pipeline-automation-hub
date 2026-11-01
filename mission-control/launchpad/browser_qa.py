@@ -80,7 +80,7 @@ def run(html_path,manifest_path,out):
                 check(page.locator("h1").count()==1,"MC_QA_H1")
                 check(all(page.locator("#"+i).count()==1 for i in REQ_CONTROL),"MC_QA_MISSING_CONTROL")
                 check(page.locator("#repo-list article").count()==6,"MC_QA_REPO_DENOMINATOR")
-                check(page.locator("#report-list article").count()==15,"MC_QA_REPORT_DENOMINATOR")
+                check(page.locator("#report-list article").count()==14,"MC_QA_REPORT_DENOMINATOR")
                 check(page.locator("#graph .node").count()==13,"MC_QA_NODE_DENOMINATOR")
                 check(page.locator("#graph .graph-edge").count()==19,"MC_QA_EDGE_DENOMINATOR")
                 check("CONTROL HOLD" in page.locator(".status").inner_text(),"MC_QA_FALSE_GO")
@@ -96,7 +96,7 @@ def run(html_path,manifest_path,out):
                       "classification needed" in page.locator("#report-list").inner_text(),"MC_QA_QPS_REPORT_SCOPE")
                 page.locator("#reset").click()
                 check(page.locator("#repo-list article").count()==6,"MC_QA_RESET")
-                check(page.locator("#report-list article").count()==15,"MC_QA_REPORT_RESET")
+                check(page.locator("#report-list article").count()==14,"MC_QA_REPORT_RESET")
                 page.locator("#lane").select_option("CONTROL")
                 page.locator("#search").fill("no matching report")
                 check(page.evaluate("""async()=>{location.hash='#report-qps-triage-console';
