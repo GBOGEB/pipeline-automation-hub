@@ -9,12 +9,6 @@ on:
       - 'tests/test_dependency_spine_peer_scan.py'
   push:
     branches: [master]
-    paths:
-      - '.github/workflows/**'
-      - '.github/dependabot.yml'
-      - '.github/dependabot.yaml'
-      - 'tools/ci/dependency_spine_peer_scan.py'
-      - 'tests/test_dependency_spine_peer_scan.py'
   workflow_dispatch:
   schedule:
     - cron: '39 6 * * 0'
