@@ -60,7 +60,7 @@ jobs:
           p=Path('build/missioncontrol/view')
           m=json.loads((p/'manifest.json').read_text())
           a=json.loads((p/'snapshot.json').read_text())
-          assert a['counts']=={'repositories':6,'nodes':13,'edges':19,'receipt_edges_historical':3,'declared_edges':16,'execution_dependencies':7}
+          assert a['counts']=={'repositories':6,'nodes':13,'edges':19,'reports':14,'receipt_edges_historical':3,'declared_edges':16,'execution_dependencies':7}
           assert a['admission']=='HOLD' and not a['policy']['mutation_enabled']
           for file,expected in m['files_sha256'].items():
               assert hashlib.sha256((p/file).read_bytes()).hexdigest()==expected

@@ -18,7 +18,7 @@ h1{font-size:clamp(30px,4.2vw,57px);line-height:1.06;letter-spacing:-.045em;marg
 .scope{display:flex;gap:7px;flex-wrap:wrap;margin-top:18px}.tag{display:inline-flex;border-radius:99px;border:1px solid var(--line);font-size:11px;padding:3px 10px;gap:5px;align-items:center;color:var(--muted)}.tag b{color:var(--text)}.warn{color:var(--amber)}.mono{font:11px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}
 .toolbar{padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--surf);display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin:15px 0 23px}.field{display:grid;gap:5px;min-width:140px}.field label{color:var(--muted);font-size:11px;font-weight:750}.field input{width:clamp(190px,25vw,320px)}.field select{width:100%}.grow{flex:1}
 .panelgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.panel{background:var(--surf);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:20px;min-width:0;scroll-margin-top:86px}.panel-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}.panel-header h2{margin:2px 0 0}.pn{font:800 12px ui-monospace,monospace;color:var(--accent);border:1px solid var(--line);border-radius:9px;padding:7px 9px}
-.wide{grid-column:1/-1}.cardgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.mini{border:1px solid var(--line);background:var(--surf2);padding:12px;border-radius:12px;min-width:0}.mini b{font-size:15px}.mini p{color:var(--muted);margin:6px 0;font-size:12px}.mini a{font-weight:750;text-decoration:none}.mini a:hover{text-decoration:underline}.mini .mono{font-size:10px}
+.wide{grid-column:1/-1}.cardgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.mini{border:1px solid var(--line);background:var(--surf2);padding:12px;border-radius:12px;min-width:0}.mini.sel{outline:2px solid var(--accent)}.mini b{font-size:15px}.mini p{color:var(--muted);margin:6px 0;font-size:12px}.mini a{font-weight:750;text-decoration:none}.mini a:hover{text-decoration:underline}.mini .mono{font-size:10px}
 .metricbar{display:flex;align-items:center;gap:10px;margin:8px 0}.metricbar .bar{height:9px;flex:1;background:var(--line);border-radius:99px;overflow:hidden}.metricbar .fill{height:100%;background:var(--accent);width:0}.metricbar span{font:700 12px ui-monospace,monospace}.stack{display:grid;gap:9px}.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.crumb{background:var(--surf2);border:1px solid var(--line);padding:9px 12px;border-radius:10px;min-width:90px}.crumb b{display:block}.crumb small{color:var(--muted)}.arrow{color:var(--accent);font-size:16px}
 .controls{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}.ctrl{display:flex;gap:8px;flex-wrap:wrap}.ctrl select{max-width:200px}.quiet{color:var(--muted);font-size:12px}.list{display:grid;gap:8px;max-height:390px;overflow:auto;padding-right:3px}.record{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surf2)}.recordhead{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.record p{color:var(--muted);font-size:12px;margin:4px 0}.split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .graph-panel{grid-column:1/-1}.graph-scroll{width:100%;overflow:auto;border:1px solid var(--line);border-radius:15px;background:linear-gradient(125deg,#0c1b32,#142e48);scrollbar-color:var(--line) transparent}.graph-scroll svg{display:block;width:100%;min-width:850px;height:auto;max-height:600px}.legend{display:flex;flex-wrap:wrap;gap:8px;position:sticky;top:0;background:var(--surf);z-index:3;border:1px solid var(--line);padding:7px 10px;border-radius:10px;margin:12px 0;font-size:11px}.legend span:before{display:inline-block;content:"";border-top:2px solid var(--accent);width:19px;margin-right:6px;vertical-align:middle}.legend .declared:before{border-top:2px dashed var(--amber)}.legend .feedback:before{border-top:2px dotted var(--rose)}
@@ -72,6 +72,10 @@ table{border-collapse:collapse;width:100%;font-size:12px}th,td{text-align:left;p
  <p class="quiet">Launch opens pinned GitHub source views, not a presumed Pages deployment. Private/engineering sources receive metadata-only classification.</p>
  <div class="cardgrid" id="repo-list"></div>
 </section>
+<section class="panel" id="reports" aria-labelledby="reports-title"><div class="panel-header"><div><div class="eyebrow">07 / reporting pages and refresh</div><h2 id="reports-title">Reports registry</h2></div><span class="pn" id="report-count">—</span></div>
+ <p class="quiet">One card per reporting page, read from the registry at the SHA shown. Links open the pinned page source, generator, workflow and its runs; values and run results stay on the owning page. Deep link: <span class="mono">#report-&lt;repo&gt;-&lt;id&gt;</span>.</p>
+ <div class="cardgrid" id="report-list"></div>
+</section>
 </div>
 <footer class="footer"><div><b>MissionControl / read-only</b><div>Single Pages publisher · disabled mutation · independent admission</div></div><div><a href="manifest.json">Artifact SHA-256 manifest</a> · <a href="SIPOC.md">SIPOC</a> · <a href="federation.mmd">Mermaid DAG</a> · <a href="snapshot.json">JSON</a></div></footer>
 </main>
@@ -114,6 +118,32 @@ function renderRepos(){
  $("repo-count").textContent=rows.length+" / "+DATA.repositories.length+" repos";
  if(!rows.length)text(out,"p","quiet","No repositories match. Reset filters.");
 }
+function renderReports(){
+ const out=$("report-list");out.replaceChildren();const selected=reportFromHash();
+ const repo=id=>DATA.repositories.find(r=>r.id===id);
+ const rows=DATA.reports.filter(x=>{const r=repo(x.repo);return (state.lane==="ALL"||r.lane===state.lane)&&highlight(x.title+" "+x.path+" "+r.name+" "+x.workflow_role)});
+ rows.forEach(x=>{const r=repo(x.repo);const src="https://github.com/"+r.name+"/blob/"+x.observed_sha+"/";const c=text(out,"article","mini");c.id="report-"+x.repo+"-"+x.id;
+  if(x===selected)c.classList.add("sel");
+  text(c,"div","eyebrow",r.lane+" / "+x.workflow_role);link(c,x.title+" ↗",src+x.path);text(c,"div","mono",x.path);
+  const p=text(c,"p","");
+  if(x.generator)link(p,"generator",src+x.generator);else text(p,"span","warn","generator UNKNOWN");
+  text(p,"span",""," · ");link(p,"workflow",src+x.workflow);text(p,"span",""," · ");link(p,"runs","https://github.com/"+r.name+"/actions/workflows/"+x.workflow.split("/").pop());
+  if(x.data_ssot){text(p,"span",""," · ");link(p,"data",src+x.data_ssot)}
+  text(c,"div","mono",(x.schedule?"cron "+x.schedule:"no schedule")+" · read at "+x.observed_sha.slice(0,8));
+  if(x.pages_url)text(c,"p","quiet","Pages: "+x.pages_url+" (not verified by this view)");
+  if(r.public_class!=="PUBLIC_METADATA")text(c,"p","warn","Public source content withheld: owner classification needed")});
+ $("report-count").textContent=rows.length+" / "+DATA.reports.length+" reports";
+ if(!rows.length)text(out,"p","quiet","No reports match. Reset filters.");
+}
+function reportFromHash(){try{const id=decodeURIComponent(location.hash.slice(1));return DATA.reports.find(x=>"report-"+x.repo+"-"+x.id===id)||null}catch{return null}}
+function openDeepLink(){
+ const x=reportFromHash();if(!x)return;
+ const r=DATA.repositories.find(r=>r.id===x.repo);if(!r)return;
+ if(state.lane!=="ALL"&&r.lane!==state.lane){state.lane="ALL";$("lane").value="ALL"}
+ if(state.query&&!highlight(x.title+" "+x.path+" "+r.name+" "+x.workflow_role)){state.query="";$("search").value=""}
+ renderAll();
+ const t=document.getElementById("report-"+x.repo+"-"+x.id);if(t)t.scrollIntoView();
+}
 function renderEdges(){
  const out=$("edges-list");out.replaceChildren();
  DATA.edges.filter(e=>(state.binding==="ALL"||e.binding===state.binding)&&highlight(e.from+" "+e.to+" "+e.detail+" "+e.relation)).forEach(e=>{const r=text(out,"div","record");const h=text(r,"div","recordhead");text(h,"b","",nodeLabel(e.from)+" → "+nodeLabel(e.to));text(h,"span","mono "+(e.binding==="DECLARED"?"warn":""),e.binding);text(r,"p","",e.relation+" · "+e.detail);text(r,"small","mono",e.basis)});
@@ -155,13 +185,13 @@ function renderGraph(){
 function mermaidText(){const labels=DATA.nodes.map(n=>'    '+n.id+'["'+n.label.replace(/"/g,"'")+'"]').join("\n");const edges=DATA.edges.map(e=>'    '+e.from+' '+(e.binding==="DECLARED"?"-.->":"-->")+' '+e.to).join("\n");return "flowchart LR\n"+labels+"\n"+edges+"\n"}
 async function copyMermaid(){const body=mermaidText();try{await navigator.clipboard.writeText(body);$("graph-copy").textContent="Copied Mermaid ✓"}catch(e){$("graph-copy").textContent="Use source link ↓";$("mermaid-src").focus()}}
 function reset(){state.query="";state.lane="ALL";state.mode="ALL";state.binding="ALL";$("search").value="";$("lane").value="ALL";$("graph-mode").value="ALL";$("edge-filter").value="ALL";renderAll()}
-function renderAll(){renderQueues();renderWorkers();renderRepos();renderEdges();renderGraph()}
+function renderAll(){renderQueues();renderWorkers();renderRepos();renderReports();renderEdges();renderGraph()}
 function init(){
  if(DATA.schema!=="missioncontrol.launchpad.public_projection.v1"||DATA.admission!=="HOLD"||DATA.policy.merge_admission!=="HOLD"||DATA.policy.authority_transfer!==false||DATA.policy.mutation_enabled!==false||DATA.policy.remote_dispatch_enabled!==false)throw new Error("CONTROL_GUARD_FAIL");
  paintHeader();renderHierarchy();renderShortcuts();text($("dmaic"),"span","crumb","DEFINE → MEASURE → ANALYZE → IMPROVE → CONTROL");
  renderAll();
  $("search").addEventListener("input",e=>{state.query=e.target.value.trim().toLowerCase();renderAll()});
- $("lane").addEventListener("change",e=>{state.lane=e.target.value;renderRepos()});
+ $("lane").addEventListener("change",e=>{state.lane=e.target.value;renderRepos();renderReports()});
  $("graph-mode").addEventListener("change",e=>{state.mode=e.target.value;renderGraph()});
  $("edge-filter").addEventListener("change",e=>{state.binding=e.target.value;renderEdges()});
  $("reset").addEventListener("click",reset);
@@ -169,6 +199,7 @@ function init(){
  $("graph-expand").addEventListener("click",()=>{const open=$("federation-graph").classList.toggle("fullgraph");$("graph-expand").setAttribute("aria-pressed",String(open));$("graph-expand").textContent=open?"Close full graph":"Expand graph"});
  $("graph-copy").addEventListener("click",copyMermaid);
  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("federation-graph").classList.contains("fullgraph"))$("graph-expand").click()});
+ window.addEventListener("hashchange",openDeepLink);openDeepLink();
 }
 init();
 </script></body></html>

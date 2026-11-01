@@ -57,6 +57,14 @@ class LauncherTests(unittest.TestCase):
         self.assertIn("keydown",html)
         self.assertNotIn("https://cdn.",html)
         self.assertNotIn("fetch(",html)
+    def test_reports_panel_and_deep_links(self):
+        html=mod.TEMPLATE.read_text(encoding="utf-8")
+        self.assertIn('id="report-list"',html)
+        self.assertIn('"report-"+x.repo+"-"+x.id',html)
+        self.assertIn("hashchange",html)
+        reports=json.loads(nav_model.CONFIG.read_text(encoding="utf-8"))["reports"]
+        page=mod.render(nav_model.project(json.loads(nav_model.CONFIG.read_text(encoding="utf-8"))),SHA)
+        for x in reports:self.assertIn('"id":"'+x["id"]+'"',page)
     def test_invalid_payload_cannot_promote(self):
         d=nav_model.project(json.loads(nav_model.CONFIG.read_text()))
         d["policy"]["remote_dispatch_enabled"]=True

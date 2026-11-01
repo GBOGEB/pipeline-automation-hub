@@ -80,6 +80,7 @@ def run(html_path,manifest_path,out):
                 check(page.locator("h1").count()==1,"MC_QA_H1")
                 check(all(page.locator("#"+i).count()==1 for i in REQ_CONTROL),"MC_QA_MISSING_CONTROL")
                 check(page.locator("#repo-list article").count()==6,"MC_QA_REPO_DENOMINATOR")
+                check(page.locator("#report-list article").count()==14,"MC_QA_REPORT_DENOMINATOR")
                 check(page.locator("#graph .node").count()==13,"MC_QA_NODE_DENOMINATOR")
                 check(page.locator("#graph .graph-edge").count()==19,"MC_QA_EDGE_DENOMINATOR")
                 check("CONTROL HOLD" in page.locator(".status").inner_text(),"MC_QA_FALSE_GO")
@@ -91,8 +92,34 @@ def run(html_path,manifest_path,out):
                 page.locator("#lane").select_option("ENGINEERING")
                 check(page.locator("#repo-list article").count()==1 and
                       "classification needed" in page.locator("#repo-list").inner_text(),"MC_QA_QPS_SCOPE")
+                check(page.locator("#report-list article").count()==4 and
+                      "classification needed" in page.locator("#report-list").inner_text(),"MC_QA_QPS_REPORT_SCOPE")
                 page.locator("#reset").click()
                 check(page.locator("#repo-list article").count()==6,"MC_QA_RESET")
+                check(page.locator("#report-list article").count()==14,"MC_QA_REPORT_RESET")
+                panels=("#repo-list article","#report-list article","#queue-list .record",
+                        "#worker-list .record","#edges-list .record","#graph .node")
+                unfiltered={selector:page.locator(selector).count() for selector in panels}
+                page.locator("#lane").select_option("CONTROL")
+                page.locator("#search").fill("no matching report")
+                check(page.evaluate("""async()=>{location.hash='#report-qps-triage-console';
+                    await new Promise(r=>setTimeout(r,50));
+                    return !!document.querySelector('#report-qps-triage-console.sel')}"""),"MC_QA_REPORT_DEEP_LINK")
+                check(page.locator("#lane").input_value()=="ALL" and
+                      page.locator("#search").input_value()=="","MC_QA_REPORT_FILTERED_DEEP_LINK")
+                check(all(page.locator(selector).count()==count for selector,count in unfiltered.items()),
+                      "MC_QA_REPORT_DEEP_LINK_ALL_PANELS")
+                report=page.locator("#report-qps-triage-console")
+                title=report.locator("a").first.inner_text().removesuffix(" ↗")
+                lane=report.locator(".eyebrow").inner_text().split(" / ",1)[0]
+                page.locator("#search").fill(title)
+                check(report.count()==1 and report.evaluate("(el)=>el.classList.contains('sel')"),
+                      "MC_QA_REPORT_SEARCH_RERENDER_SELECTION")
+                page.locator("#lane").select_option(lane)
+                check(report.count()==1 and report.evaluate("(el)=>el.classList.contains('sel')"),
+                      "MC_QA_REPORT_LANE_RERENDER_SELECTION")
+                page.locator("#search").fill("")
+                page.locator("#lane").select_option("ALL")
                 page.locator("#graph-mode").select_option("DEPENDS_ON")
                 check(page.locator("#graph .graph-edge").count()==7,"MC_QA_DAG_EDGES")
                 page.locator("#graph-mode").select_option("EVIDENCE")

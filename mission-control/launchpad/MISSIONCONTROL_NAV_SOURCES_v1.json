@@ -512,5 +512,222 @@
   "links": {
     "owner_issue": "https://github.com/GBOGEB/pipeline-automation-hub/issues/604",
     "mycelium": "https://github.com/GBOGEB/CODEX/blob/f8a179f8bf67bba4264364b5742c7c271f4041a6/mission_control/mycelium/control_manifest.yaml"
-  }
+  },
+  "reports": [
+    {
+      "id": "gogreen-launcher",
+      "repo": "hub",
+      "title": "GOGREEN launcher (PAH tiles)",
+      "path": "mission-control/gogreen/launcher/index.html",
+      "generator": "mission-control/gogreen/launcher/build_launcher.py",
+      "data_ssot": null,
+      "workflow": ".github/workflows/gogreen-launcher.yml",
+      "workflow_role": "CHECK",
+      "schedule": null,
+      "observed_sha": "6fbda5596dcd14ecdf4d6c834ca7a2948258a251",
+      "pages_url": null,
+      "metrics": []
+    },
+    {
+      "id": "everred-register",
+      "repo": "hub",
+      "title": "EVERRED register",
+      "path": "mission-control/qps-triage-ultra/p-process/site/everred/index.html",
+      "generator": "mission-control/qps-triage-ultra/p-process/everred/build_page.py",
+      "data_ssot": "mission-control/qps-triage-ultra/p-process/site/everred/data/everred.json",
+      "workflow": ".github/workflows/jade-temple-readonly-qa.yml",
+      "workflow_role": "CHECK",
+      "schedule": null,
+      "observed_sha": "6fbda5596dcd14ecdf4d6c834ca7a2948258a251",
+      "pages_url": null,
+      "metrics": [
+        {
+          "name": "everred.root_register",
+          "owner": "mission-control/qps-triage-ultra/p-process/everred/harvest.py"
+        }
+      ]
+    },
+    {
+      "id": "p-process-home",
+      "repo": "hub",
+      "title": "P-process home",
+      "path": "mission-control/qps-triage-ultra/p-process/site/index.html",
+      "generator": "mission-control/qps-triage-ultra/p-process/build_p_process.py",
+      "data_ssot": "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
+      "workflow": ".github/workflows/jade-temple-readonly-qa.yml",
+      "workflow_role": "CHECK",
+      "schedule": null,
+      "observed_sha": "6fbda5596dcd14ecdf4d6c834ca7a2948258a251",
+      "pages_url": null,
+      "metrics": [
+        {
+          "name": "p_process.mode_per_repo",
+          "owner": "mission-control/qps-triage-ultra/p-process/p_decide.py"
+        }
+      ]
+    },
+    {
+      "id": "jade-cicd-dag",
+      "repo": "hub",
+      "title": "JADE CI/CD DAG",
+      "path": "mission-control/jade_temple/site/cicd_dag.html",
+      "generator": "mission-control/jade_temple/site/build_cicd_dag.py",
+      "data_ssot": "mission-control/jade_temple/site/cicd_dag.json",
+      "workflow": ".github/workflows/jade-temple-readonly-qa.yml",
+      "workflow_role": "CHECK",
+      "schedule": null,
+      "observed_sha": "6fbda5596dcd14ecdf4d6c834ca7a2948258a251",
+      "pages_url": null,
+      "metrics": [
+        {
+          "name": "cicd_dag.dag_stats",
+          "owner": "mission-control/jade_temple/tools/cicd_dag.py"
+        },
+        {
+          "name": "cicd_dag.everred_ratios",
+          "owner": "mission-control/jade_temple/tools/cicd_dag.py"
+        }
+      ]
+    },
+    {
+      "id": "e2a-observatory",
+      "repo": "abacus",
+      "title": "Evidence-to-admission observatory",
+      "path": "MIP/EVIDENCE_TO_ADMISSION_OBSERVATORY/global/index.html",
+      "generator": "MIP/EVIDENCE_TO_ADMISSION_OBSERVATORY/global/render_global.py",
+      "data_ssot": null,
+      "workflow": ".github/workflows/ci-governance.yml",
+      "workflow_role": "CHECK",
+      "schedule": null,
+      "observed_sha": "309006bb649e43429e0d66706583b067b22d5c4d",
+      "pages_url": null,
+      "metrics": []
+    },
+    {
+      "id": "everred-v3-dashboard",
+      "repo": "abacus",
+      "title": "EVERRED v3 dashboard",
+      "path": "tools/everred_v3/dashboard/index.html",
+      "generator": "tools/everred_v3/scripts/build_dashboard.py",
+      "data_ssot": null,
+      "workflow": ".github/workflows/everred-v3-validation.yml",
+      "workflow_role": "REFRESH",
+      "schedule": "17 */6 * * *",
+      "observed_sha": "309006bb649e43429e0d66706583b067b22d5c4d",
+      "pages_url": null,
+      "metrics": []
+    },
+    {
+      "id": "handover-dashboard",
+      "repo": "abacus",
+      "title": "Federation Telemetry Dashboard",
+      "path": "docs/dashboard.html",
+      "generator": "build_federation_dashboard.py",
+      "data_ssot": null,
+      "workflow": ".github/workflows/dashboard-health.yml",
+      "workflow_role": "CHECK",
+      "schedule": "0 6 * * *",
+      "observed_sha": "309006bb649e43429e0d66706583b067b22d5c4d",
+      "pages_url": "https://gbogeb.github.io/ABACUS/dashboard.html",
+      "metrics": []
+    },
+    {
+      "id": "code-purple-dov",
+      "repo": "codex",
+      "title": "CODE PURPLE DoV",
+      "path": "docs/code-purple-dov.html",
+      "generator": null,
+      "data_ssot": "docs/data/code-purple-dov-w36.json",
+      "workflow": ".github/workflows/code-purple-dov-w36.yml",
+      "workflow_role": "CHECK",
+      "schedule": "25 7 * * *",
+      "observed_sha": "69232ad3eb900a052ab65021e79029b9f7846308",
+      "pages_url": "https://gbogeb.github.io/CODEX/code-purple-dov.html",
+      "metrics": []
+    },
+    {
+      "id": "codex-pages-root",
+      "repo": "codex",
+      "title": "CODEX Pages root",
+      "path": "docs/index.html",
+      "generator": null,
+      "data_ssot": null,
+      "workflow": ".github/workflows/pages.yml",
+      "workflow_role": "PUBLISH",
+      "schedule": "23 5 * * *",
+      "observed_sha": "69232ad3eb900a052ab65021e79029b9f7846308",
+      "pages_url": "https://gbogeb.github.io/CODEX/",
+      "metrics": []
+    },
+    {
+      "id": "triage-console",
+      "repo": "qps",
+      "title": "QPS triage console",
+      "path": "triage/code_purple/console/triage_console.html",
+      "generator": "triage/code_purple/console/render_console.py",
+      "data_ssot": "triage/code_purple/console/triage_data.json",
+      "workflow": ".github/workflows/qps-triage-console-refresh.yml",
+      "workflow_role": "REFRESH",
+      "schedule": "17 */6 * * *",
+      "observed_sha": "43da9fa0b2f624cd6849da4203f9573a63ebd1d7",
+      "pages_url": null,
+      "metrics": []
+    },
+    {
+      "id": "code-bnb-n3-daily",
+      "repo": "qps",
+      "title": "CODE BNB daily N3",
+      "path": "qps/engineering_hub/code_bnb/n3/dist/CODE_BNB_DAILY_N3.html",
+      "generator": "qps/engineering_hub/code_bnb/n3/src/build.py",
+      "data_ssot": "qps/engineering_hub/code_bnb/n3/data/DAILY_OWNER_CENSUS_N3.json",
+      "workflow": ".github/workflows/qps-code-bnb-n3-daily.yml",
+      "workflow_role": "CHECK",
+      "schedule": null,
+      "observed_sha": "43da9fa0b2f624cd6849da4203f9573a63ebd1d7",
+      "pages_url": null,
+      "metrics": []
+    },
+    {
+      "id": "dependency-spine-atlas",
+      "repo": "qps",
+      "title": "QPS dependency spine atlas",
+      "path": "docs/federation/dependency_spine/QPS_DEPENDENCY_SPINE_ATLAS.html",
+      "generator": "triage/code_purple/dependency_spine/render_architecture.py",
+      "data_ssot": null,
+      "workflow": ".github/workflows/qps-dependency-spine.yml",
+      "workflow_role": "CHECK",
+      "schedule": "23 5 * * 0",
+      "observed_sha": "43da9fa0b2f624cd6849da4203f9573a63ebd1d7",
+      "pages_url": null,
+      "metrics": []
+    },
+    {
+      "id": "engineering-hub",
+      "repo": "qps",
+      "title": "QPS engineering hub",
+      "path": "qps/engineering_hub/site/index.html",
+      "generator": "qps/engineering_hub/site/build.py",
+      "data_ssot": null,
+      "workflow": ".github/workflows/qps-jade-engineering-hub-qa.yml",
+      "workflow_role": "CHECK",
+      "schedule": null,
+      "observed_sha": "43da9fa0b2f624cd6849da4203f9573a63ebd1d7",
+      "pages_url": null,
+      "metrics": []
+    },
+    {
+      "id": "release-w1",
+      "repo": "math",
+      "title": "gg_MATH release W1",
+      "path": "release/code-purple-w1/index.html",
+      "generator": "release/build_release.py",
+      "data_ssot": null,
+      "workflow": ".github/workflows/release-infrastructure-v1.yml",
+      "workflow_role": "PUBLISH",
+      "schedule": null,
+      "observed_sha": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8",
+      "pages_url": null,
+      "metrics": []
+    }
+  ]
 }
