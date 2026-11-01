@@ -117,14 +117,23 @@ def any_job_started(repo: str, run_id, run_attempt, lookup=gh) -> bool:
         data = lookup(
             f"repos/{repo}/actions/runs/{run_id}/attempts/{run_attempt}/jobs?per_page=100&page={page}"
         )
-        jobs = data.get("jobs") or []
+        if not isinstance(data, dict):
+            return True
+        jobs = data.get("jobs")
+        total_count = data.get("total_count")
+        if type(total_count) is not int or total_count < 0 or not isinstance(jobs, list):
+            return True
+        if any(not isinstance(job, dict) for job in jobs):
+            return True
         if any(j.get("run_attempt") != run_attempt for j in jobs):
             return True
         if any(j.get("steps") for j in jobs):
             return True
         seen = (page - 1) * 100 + len(jobs)
-        if not jobs or len(jobs) < 100 or seen >= int(data.get("total_count") or 0):
+        if seen >= total_count:
             return False
+        if len(jobs) != 100:
+            return True
         page += 1
 
 

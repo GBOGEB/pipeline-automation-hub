@@ -24,8 +24,8 @@ def fake_github(protected=False, rules=(), runs=(), readme=True, tags=(), starte
         if path.startswith("repos/O/R/actions/runs/") and "/jobs" in path:
             # started: a runner executed steps; not started: billing/spending-limit refusal
             steps = [{"name": "Run tests", "conclusion": "failure"}] if started else []
-            return {"jobs": [{"conclusion": "failure", "run_attempt": 1,
-                              "runner_id": 7 if started else 0, "steps": steps}]}
+            return {"total_count": 1, "jobs": [{"conclusion": "failure", "run_attempt": 1,
+                                                "runner_id": 7 if started else 0, "steps": steps}]}
         if path == "repos/O/R":
             return {"default_branch": "main"}
         if path == "repos/O/R/commits/main":
@@ -163,6 +163,24 @@ class Focus5PulseTests(unittest.TestCase):
 
         self.assertFalse(fp.any_job_started("O/R", 9, 1, jobs_lookup))
         self.assertEqual(len(calls), 2)
+
+    def test_incomplete_pagination_keeps_failure(self):
+        responses = [
+            ("short page before total_count", [
+                {"total_count": 150, "jobs": [{"run_attempt": 1, "steps": []}] * 100},
+                {"total_count": 150, "jobs": [{"run_attempt": 1, "steps": []}] * 5},
+            ]),
+            ("missing total_count", [
+                {"jobs": [{"run_attempt": 1, "steps": []}] * 100},
+            ]),
+        ]
+        for label, pages in responses:
+            with self.subTest(response=label):
+                latest = {"a.yml": run("a.yml", "failure")}
+                fp.mark_unstarted_failures(
+                    "O/R", latest, ["a.yml"], lambda _path: pages.pop(0)
+                )
+                self.assertEqual(latest["a.yml"]["conclusion"], "failure")
 
     def test_registry_rejects_owner_gates_and_unstated_evidence(self):
         ok = {"schema": "jade.focus5.gate_evidence_registry.v1",
