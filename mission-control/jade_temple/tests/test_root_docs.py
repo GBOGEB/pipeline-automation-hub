@@ -54,6 +54,14 @@ class RootDocs(unittest.TestCase):
         self.assertEqual(rd.problems(root, ORDER, {}, TODAY),
                          ["A.md: broken link gone1.md", "A.md: broken link gone2.md"])
 
+    def test_parens_inline_code_and_percent_encoding(self):
+        root = self.canonical("[p](missing(v1).md) and `[c](code.md)` and ``[d](`x`.md)``\n\n"
+                              "[e](sp%20ace.txt) [f](gone%20too.md)\n\n[r]: refgone(v2).md\n")
+        (root / "sp ace.txt").write_text("x", encoding="utf-8", newline="\n")
+        self.assertEqual(rd.problems(root, ORDER, {}, TODAY), [
+            "A.md: broken link missing(v1).md", "A.md: broken link gone%20too.md",
+            "A.md: broken link refgone(v2).md"])
+
     def test_titled_angle_and_reference_links_are_checked(self):
         root = self.canonical('[t](gone.md "Title") [a](<sp ace.md>) [ok](00_START_HERE.md \'T\')\n\n'
                               "[ref][r]\n\n[r]: refgone.md\n[i]: <00_START_HERE.md> \"Index\"\n")

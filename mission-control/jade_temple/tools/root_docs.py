@@ -16,6 +16,7 @@ import datetime as dt
 import re
 import sys
 from pathlib import Path
+from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
 # One value for every page; the owner names the point release here, then --write.
@@ -46,7 +47,10 @@ NAV = "**Nav:** "
 MAST = re.compile(r"^> \*\*Doc\*\* \S+ · \*\*Status\*\* \S+ · \*\*Release\*\* .+ · "
                   r"\*\*Admission\*\* `[^`]+` · \*\*Updated\*\* (?P<updated>\S+)$")
 # Inline [text](dest "title") and reference definitions [ref]: dest; <dest> may hold spaces.
-DEST = r"(<[^>\n]*>|[^\s()<>]+)"
+# A bare destination may hold one level of balanced parentheses, e.g. missing(v1).md.
+DEST = r"(<[^>\n]*>|(?:[^\s()<>]|\([^\s()<>]*\))+)"
+# Inline code spans: a run of backticks closed by a run of the same length.
+CODE = re.compile(r"(?<!`)(`+)(?!`).*?(?<!`)\1(?!`)")
 LINK = re.compile(r"\]\(\s*" + DEST + r"""(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?\s*\)""")
 REFDEF = re.compile(r"^ {0,3}\[[^\]]+\]:\s*" + DEST)
 # A fence closes only on the same character, at least as long, with no info string.
@@ -116,6 +120,7 @@ def links(text: str):
             if m and not (m[1][0] == "`" and "`" in m[2]):
                 fence = m[1]
                 continue
+            line = CODE.sub("", line)
             found = LINK.findall(line) + REFDEF.findall(line)
             yield from (t[1:-1] if t.startswith("<") else t for t in found)
         elif m and m[1][0] == fence[0] and len(m[1]) >= len(fence) and not m[2].strip():
@@ -157,7 +162,7 @@ def problems(root: Path = ROOT, order=ORDER, deferred=DEFERRED, today: str | Non
         for target in links(text):
             if SCHEME.match(target) or target.startswith("#"):
                 continue
-            if not (root / target.split("#", 1)[0]).exists():
+            if not (root / unquote(target.split("#", 1)[0])).exists():
                 out.append(f"{name}: broken link {target}")
     return out
 
