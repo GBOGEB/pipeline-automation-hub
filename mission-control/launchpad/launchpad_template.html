@@ -141,7 +141,7 @@ function openDeepLink(){
  const r=DATA.repositories.find(r=>r.id===x.repo);if(!r)return;
  if(state.lane!=="ALL"&&r.lane!==state.lane){state.lane="ALL";$("lane").value="ALL"}
  if(state.query&&!highlight(x.title+" "+x.path+" "+r.name+" "+x.workflow_role)){state.query="";$("search").value=""}
- renderReports();
+ renderAll();
  const t=document.getElementById("report-"+x.repo+"-"+x.id);if(t)t.scrollIntoView();
 }
 function renderEdges(){

@@ -97,6 +97,9 @@ def run(html_path,manifest_path,out):
                 page.locator("#reset").click()
                 check(page.locator("#repo-list article").count()==6,"MC_QA_RESET")
                 check(page.locator("#report-list article").count()==14,"MC_QA_REPORT_RESET")
+                panels=("#repo-list article","#report-list article","#queue-list .record",
+                        "#worker-list .record","#edges-list .record","#graph .node")
+                unfiltered={selector:page.locator(selector).count() for selector in panels}
                 page.locator("#lane").select_option("CONTROL")
                 page.locator("#search").fill("no matching report")
                 check(page.evaluate("""async()=>{location.hash='#report-qps-triage-console';
@@ -104,6 +107,8 @@ def run(html_path,manifest_path,out):
                     return !!document.querySelector('#report-qps-triage-console.sel')}"""),"MC_QA_REPORT_DEEP_LINK")
                 check(page.locator("#lane").input_value()=="ALL" and
                       page.locator("#search").input_value()=="","MC_QA_REPORT_FILTERED_DEEP_LINK")
+                check(all(page.locator(selector).count()==count for selector,count in unfiltered.items()),
+                      "MC_QA_REPORT_DEEP_LINK_ALL_PANELS")
                 report=page.locator("#report-qps-triage-console")
                 title=report.locator("a").first.inner_text().removesuffix(" ↗")
                 lane=report.locator(".eyebrow").inner_text().split(" / ",1)[0]
