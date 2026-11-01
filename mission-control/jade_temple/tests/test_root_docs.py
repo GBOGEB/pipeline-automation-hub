@@ -48,6 +48,18 @@ class RootDocs(unittest.TestCase):
         root = self.canonical("[gone](site/missing.html) and [web](https://example.org)\n\n```\n[x](nope.md)\n```\n")
         self.assertEqual(rd.problems(root, ORDER, {}, TODAY), ["A.md: broken link site/missing.html"])
 
+    def test_titled_angle_and_reference_links_are_checked(self):
+        root = self.canonical('[t](gone.md "Title") [a](<sp ace.md>) [ok](00_START_HERE.md \'T\')\n\n'
+                              "[ref][r]\n\n[r]: refgone.md\n[i]: <00_START_HERE.md> \"Index\"\n")
+        self.assertEqual(rd.problems(root, ORDER, {}, TODAY),
+                         ["A.md: broken link gone.md", "A.md: broken link sp ace.md", "A.md: broken link refgone.md"])
+
+    def test_h1_only_page_reports_instead_of_crashing(self):
+        root = self.tmp({"A.md": "# A\n", "00_START_HERE.md": "# Index\n"})
+        found = rd.problems(root, ORDER, {}, TODAY)
+        self.assertIn("A.md: masthead/footer not canonical (run root_docs.py --write)", found)
+        self.assertIn("00_START_HERE.md: masthead/footer not canonical (run root_docs.py --write)", found)
+
     def test_unlisted_root_page_and_future_date_fail(self):
         root = self.canonical()
         (root / "NEW.md").write_text("# New\n", encoding="utf-8", newline="\n")

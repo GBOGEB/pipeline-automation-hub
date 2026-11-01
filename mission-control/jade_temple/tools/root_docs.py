@@ -45,7 +45,10 @@ INDEX = "00_START_HERE.md"
 NAV = "**Nav:** "
 MAST = re.compile(r"^> \*\*Doc\*\* \S+ · \*\*Status\*\* \S+ · \*\*Release\*\* .+ · "
                   r"\*\*Admission\*\* `[^`]+` · \*\*Updated\*\* (?P<updated>\S+)$")
-LINK = re.compile(r"\]\(([^)\s]+)\)")
+# Inline [text](dest "title") and reference definitions [ref]: dest; <dest> may hold spaces.
+DEST = r"(<[^>\n]*>|[^\s()<>]+)"
+LINK = re.compile(r"\]\(\s*" + DEST + r"""(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?\s*\)""")
+REFDEF = re.compile(r"^ {0,3}\[[^\]]+\]:\s*" + DEST)
 SCHEME = re.compile(r"^[a-z][a-z0-9+.-]*:", re.I)
 
 
@@ -110,7 +113,8 @@ def links(text: str):
             fenced = not fenced
             continue
         if not fenced:
-            yield from LINK.findall(line)
+            found = LINK.findall(line) + REFDEF.findall(line)
+            yield from (t[1:-1] if t.startswith("<") else t for t in found)
 
 
 def problems(root: Path = ROOT, order=ORDER, deferred=DEFERRED, today: str | None = None):
@@ -137,7 +141,8 @@ def problems(root: Path = ROOT, order=ORDER, deferred=DEFERRED, today: str | Non
             continue
         if want != text:
             out.append(f"{name}: masthead/footer not canonical (run root_docs.py --write)")
-        m = MAST.match(text.split("\n")[2])
+        lines = text.split("\n")
+        m = MAST.match(lines[2]) if len(lines) > 2 else None
         if m:
             try:
                 if dt.date.fromisoformat(m["updated"]).isoformat() > today:
