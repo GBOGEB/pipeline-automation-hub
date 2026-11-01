@@ -48,6 +48,12 @@ class RootDocs(unittest.TestCase):
         root = self.canonical("[gone](site/missing.html) and [web](https://example.org)\n\n```\n[x](nope.md)\n```\n")
         self.assertEqual(rd.problems(root, ORDER, {}, TODAY), ["A.md: broken link site/missing.html"])
 
+    def test_tilde_and_longer_fences_match_their_own_delimiter(self):
+        root = self.canonical("~~~md\n[x](t1.md)\n```\n[y](t2.md)\n~~~\n[a](gone1.md)\n\n"
+                              "````\n```\n[z](t3.md)\n```\n````\n[b](gone2.md)\n")
+        self.assertEqual(rd.problems(root, ORDER, {}, TODAY),
+                         ["A.md: broken link gone1.md", "A.md: broken link gone2.md"])
+
     def test_titled_angle_and_reference_links_are_checked(self):
         root = self.canonical('[t](gone.md "Title") [a](<sp ace.md>) [ok](00_START_HERE.md \'T\')\n\n'
                               "[ref][r]\n\n[r]: refgone.md\n[i]: <00_START_HERE.md> \"Index\"\n")

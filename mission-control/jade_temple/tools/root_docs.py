@@ -49,6 +49,8 @@ MAST = re.compile(r"^> \*\*Doc\*\* \S+ · \*\*Status\*\* \S+ · \*\*Release\*\* 
 DEST = r"(<[^>\n]*>|[^\s()<>]+)"
 LINK = re.compile(r"\]\(\s*" + DEST + r"""(?:\s+(?:"[^"]*"|'[^']*'|\([^)]*\)))?\s*\)""")
 REFDEF = re.compile(r"^ {0,3}\[[^\]]+\]:\s*" + DEST)
+# A fence closes only on the same character, at least as long, with no info string.
+FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
 SCHEME = re.compile(r"^[a-z][a-z0-9+.-]*:", re.I)
 
 
@@ -106,15 +108,18 @@ def render(i: int, text: str, today: str, order=ORDER):
 
 
 def links(text: str):
-    """Relative link targets outside fenced code."""
-    fenced = False
+    """Relative link targets outside fenced code (CommonMark ``` or ~~~ fences)."""
+    fence = None
     for line in text.split("\n"):
-        if line.lstrip().startswith("```"):
-            fenced = not fenced
-            continue
-        if not fenced:
+        m = FENCE.match(line)
+        if fence is None:
+            if m and not (m[1][0] == "`" and "`" in m[2]):
+                fence = m[1]
+                continue
             found = LINK.findall(line) + REFDEF.findall(line)
             yield from (t[1:-1] if t.startswith("<") else t for t in found)
+        elif m and m[1][0] == fence[0] and len(m[1]) >= len(fence) and not m[2].strip():
+            fence = None
 
 
 def problems(root: Path = ROOT, order=ORDER, deferred=DEFERRED, today: str | None = None):
