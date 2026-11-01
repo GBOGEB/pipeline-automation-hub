@@ -101,17 +101,25 @@ def mark_unstarted_failures(repo: str, latest: dict[str, dict], paths, lookup=gh
     for path in paths:
         run = latest.get(path)
         if run and run["conclusion"] == "failure":
-            if not any_job_started(repo, run["id"], lookup):
+            if not any_job_started(repo, run["id"], run.get("run_attempt"), lookup):
                 latest[path] = dict(run, conclusion=NOT_STARTED)
 
 
-def any_job_started(repo: str, run_id, lookup=gh) -> bool:
-    """True as soon as one job of the run executed a step; reads every page of jobs
-    (the endpoint caps per_page at 100), so a large matrix cannot hide a real failure."""
+def any_job_started(repo: str, run_id, run_attempt, lookup=gh) -> bool:
+    """True if any job in the observed run attempt executed a step.
+
+    An invalid attempt or mismatched job is inconclusive, so retain the failure.
+    """
+    if type(run_attempt) is not int or run_attempt <= 0:
+        return True
     page = 1
     while True:
-        data = lookup(f"repos/{repo}/actions/runs/{run_id}/jobs?per_page=100&page={page}")
+        data = lookup(
+            f"repos/{repo}/actions/runs/{run_id}/attempts/{run_attempt}/jobs?per_page=100&page={page}"
+        )
         jobs = data.get("jobs") or []
+        if any(j.get("run_attempt") != run_attempt for j in jobs):
+            return True
         if any(j.get("steps") for j in jobs):
             return True
         seen = (page - 1) * 100 + len(jobs)
