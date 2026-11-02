@@ -478,6 +478,15 @@ def aggregate(runs: list, jobs_by_run: dict) -> dict:
 # run-record share; the RF planner compares the value to a policy threshold but
 # may not recompute it or turn it into merge authority.
 RECHECK_WORKFLOW_NAME = "GOGREEN Required Gate Re-check"
+# Per-repo target of the run-record share: (metric, workflow name, event or None for any).
+# PAH's recheck is the B09 RF goal. ABACUS's evaluator fans in on workflow_run, a */5
+# cron and PR events, so every event counts. It is a separate baseline under its own
+# metric name, so the RF goal (matched on `metric`) never reads it as the PAH reading.
+PRESSURE_TARGETS = {
+    "GBOGEB/pipeline-automation-hub": ("recheck_workflow_record_share", RECHECK_WORKFLOW_NAME,
+                                       "workflow_run"),
+    "GBOGEB/ABACUS": ("gate_evaluator_record_share", "PR Feedback Gate Evaluator", None),
+}
 PRESSURE_SCHEMA = "jade.devops.recheck-pressure.v1"
 PRESSURE_SAMPLE_METHOD = "last_1000_repo_workflow_runs"
 
@@ -509,11 +518,17 @@ def recheck_pressure(runs: list[dict], repo: str, source_sha: str,
     (missing_days) keeps the observation PARTIAL_UNKNOWN with a null value, so
     an interrupted fetch cannot yield a stale "last 1000" cohort. The CLI
     also rejects a window ending before the observation UTC date.
+
+    The target workflow and event come from PRESSURE_TARGETS for the repo;
+    the `recheck_*` fields count that target's records in every repo.
     """
     if not isinstance(source_sha, str) or not re.fullmatch(r"[0-9a-f]{40}", source_sha):
         raise ValueError("pressure requires exact collector source_sha")
     if not isinstance(repo, str) or "/" not in repo or ".." in repo:
         raise ValueError("pressure requires owner/repo identity")
+    if repo not in PRESSURE_TARGETS:
+        raise ValueError("pressure has no target workflow for this repo")
+    metric, workflow, event = PRESSURE_TARGETS[repo]
     if not isinstance(sample_size, int) or isinstance(sample_size, bool) or sample_size != 1000:
         raise ValueError("pressure contract is the last 1000 runs, no silent denominator change")
     observed = BQ.utc(observed_at)
@@ -544,13 +559,15 @@ def recheck_pressure(runs: list[dict], repo: str, source_sha: str,
                rec.get("event"), rec.get("conclusion")] for rec in selected]
     cohort_sha = hashlib.sha256(json.dumps(cohort, separators=(",", ":"), ensure_ascii=True)
                                 .encode("utf-8")).hexdigest()
-    target = [rec for rec in selected if rec.get("name") == RECHECK_WORKFLOW_NAME and
-              rec.get("event") == "workflow_run"]
+    target = [rec for rec in selected if rec.get("name") == workflow and
+              (event is None or rec.get("event") == event)]
     conclusions = Counter(rec.get("conclusion") or rec.get("status") or "UNKNOWN" for rec in target)
+    events = Counter(rec.get("event") or "UNKNOWN" for rec in target)
     # A sub-1000 cohort is incomplete. Report counts, not a 0% success rate.
     doc = {"schema": PRESSURE_SCHEMA,
-           "metric": "recheck_workflow_record_share",
+           "metric": metric,
            "metric_owner": "mission-control/jade_temple/devops/actions_metrics.py",
+           "target_workflow": workflow, "target_event": event,
            "repository": repo, "source_sha": source_sha,
            "source_binding": "collector_repo_head_not_all_historical_run_heads",
            "observed_at": observed_at,
@@ -569,6 +586,7 @@ def recheck_pressure(runs: list[dict], repo: str, source_sha: str,
            "recheck_records": len(target),
            "recheck_cancelled": conclusions.get("cancelled", 0),
            "recheck_outcomes": dict(sorted(conclusions.items())),
+           "recheck_events": dict(sorted(events.items())),
            "cohort_earliest": selected[-1]["created_at"] if selected else None,
            "cohort_latest": selected[0]["created_at"] if selected else None,
            "method_note": "workflow-run records, not executed tests or billable job-minutes",
@@ -725,6 +743,9 @@ def main(argv=None) -> int:
     if a.cmd == "pressure":
         if not a.repo or len(a.repo) != 1:
             p.error("pressure requires exactly one --repo")
+        if a.repo[0] not in PRESSURE_TARGETS:
+            known = ", ".join(sorted(PRESSURE_TARGETS))
+            p.error(f"pressure has no target workflow for {a.repo[0]} (known: {known})")
         observed = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         verified_rows = []
         cache_issues, cache_digest = pressure_cache_evidence(

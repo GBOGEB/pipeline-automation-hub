@@ -599,5 +599,50 @@ class RecheckPressureRF(unittest.TestCase):
             self.assertIsNone(report["cache_readback_sha256"])
 
 
+class PressureTargets(unittest.TestCase):
+    """Each repo's run-record share counts its own target workflow, never another repo's."""
+
+    ABACUS = "GBOGEB/ABACUS"
+    EVALUATOR = "PR Feedback Gate Evaluator"
+
+    @classmethod
+    def abacus(cls):
+        events = ("workflow_run", "schedule", "pull_request")
+        return [run(i, name=cls.EVALUATOR if i <= 413 else "CI",
+                    event=events[i % 3] if i <= 413 else "push",
+                    conclusion="cancelled" if i <= 170 else "success")
+                for i in range(1, 1001)]
+
+    def test_abacus_evaluator_counts_every_event_under_its_own_metric(self):
+        doc = M.recheck_pressure(self.abacus(), self.ABACUS, SHA, "2026-10-28T16:00:00Z")
+        self.assertEqual((doc["metric"], doc["target_workflow"], doc["target_event"]),
+                         ("gate_evaluator_record_share", self.EVALUATOR, None))
+        self.assertEqual((doc["sample_n"], doc["recheck_records"], doc["recheck_cancelled"],
+                          doc["value"], doc["coverage"]), (1000, 413, 170, 0.413, "COMPLETE"))
+        self.assertEqual(doc["recheck_events"],
+                         {"pull_request": 138, "schedule": 138, "workflow_run": 137})
+        self.assertFalse(doc["merge_authorized"])
+
+    def test_pah_receipt_keeps_the_rf_goal_metric_and_names_its_target(self):
+        doc = M.recheck_pressure(RecheckPressureRF.synthetic(), REPO, SHA, "2026-10-28T16:00:00Z")
+        self.assertEqual((doc["metric"], doc["target_workflow"], doc["target_event"]),
+                         ("recheck_workflow_record_share", M.RECHECK_WORKFLOW_NAME, "workflow_run"))
+        self.assertEqual(doc["recheck_events"], {"workflow_run": 363})
+
+    def test_targets_do_not_cross_repos(self):
+        abacus = M.recheck_pressure(RecheckPressureRF.synthetic(), self.ABACUS, SHA,
+                                    "2026-10-28T16:00:00Z")
+        pah = M.recheck_pressure(self.abacus(), REPO, SHA, "2026-10-28T16:00:00Z")
+        self.assertEqual((abacus["recheck_records"], abacus["value"]), (0, 0.0))
+        self.assertEqual((pah["recheck_records"], pah["value"]), (0, 0.0))
+
+    def test_repo_without_a_target_is_refused_not_zero(self):
+        with self.assertRaisesRegex(ValueError, "no target workflow"):
+            M.recheck_pressure(self.abacus(), "GBOGEB/CODEX", SHA, "2026-10-28T16:00:00Z")
+        with tempfile.TemporaryDirectory() as td, self.assertRaises(SystemExit):
+            M.main(["pressure", "--cache", td, "--since", "2026-10-05", "--until", "2026-10-05",
+                    "--repo", "GBOGEB/CODEX", "--source-sha", SHA])
+
+
 if __name__ == "__main__":
     unittest.main()
