@@ -267,7 +267,7 @@ def formalization(levels: list[int], contract_present: bool) -> str:
 
 
 def topo_layers(nodes: list[str], edges: list[tuple]) -> list[list[str]]:
-    """Kahn layering over FEEDFORWARD edges; raises ValueError on a cycle or unknown node."""
+    """Kahn layering over FEEDFORWARD edges; ValueError on an unknown node or a cycle (names the stuck nodes)."""
     known = set(nodes)
     indeg = {n: 0 for n in nodes}
     out = {n: [] for n in nodes}
@@ -291,7 +291,8 @@ def topo_layers(nodes: list[str], edges: list[tuple]) -> list[list[str]]:
                     nxt.append(m)
         layer = sorted(nxt)
     if seen != len(nodes):
-        raise ValueError("cycle in feedforward graph")
+        placed = {n for wave in layers for n in wave}
+        raise ValueError("cycle in feedforward graph: " + ", ".join(sorted(known - placed)))
     return layers
 
 
