@@ -612,7 +612,8 @@ def _bound_recheck_relevance(reader, *, aggregator: dict, sha: str, trigger_run_
                 or triggered.get("conclusion") != "success"
                 or not isinstance(repo, dict) or repo.get("full_name") != reader.repo
                 or not isinstance(candidates, list)
-                or len(candidates) != 1 or candidates[0].get("number") != pr
+                or len(candidates) != 1 or not isinstance(candidates[0], dict)
+                or candidates[0].get("number") != pr
                 or not isinstance(raw_path, str)):
             out["reason"] = "trigger run not bound to exact SHA/repository/PR"
             return out
