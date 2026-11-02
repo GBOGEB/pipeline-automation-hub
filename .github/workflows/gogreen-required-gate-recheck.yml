@@ -117,6 +117,10 @@ on:
       - "Zero-Test Gate Guard"
       - "recursive-build"
       # END recheck-names
+    # Only PR heads can turn the required check green. A completion on master (push, schedule,
+    # dispatch) used to queue a run the job `if` then skipped: 278 of 300 sampled runs on
+    # 2026-11-02, about 100 per master commit. Filtering here means GitHub creates no run at all.
+    branches-ignore: [master]
 
 permissions:
   contents: read
