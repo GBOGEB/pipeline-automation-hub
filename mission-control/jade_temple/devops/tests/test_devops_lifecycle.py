@@ -53,6 +53,12 @@ class Graph(unittest.TestCase):
         with self.assertRaises(ValueError):
             L.topo_layers(["a"], [("a", "zz", "FEEDFORWARD")])
 
+    def test_cycle_error_names_the_stuck_nodes(self):
+        # c waits on the a<->b cycle, so it is stuck too; d is free and is not named.
+        with self.assertRaisesRegex(ValueError, r"^cycle in feedforward graph: a, b, c$"):
+            L.topo_layers(["a", "b", "c", "d"], [("a", "b", "FEEDFORWARD"), ("b", "a", "FEEDFORWARD"),
+                                                 ("b", "c", "FEEDFORWARD")])
+
     def test_every_stage_has_complete_sipoc(self):
         for k in L.STAGE_KEYS:
             self.assertEqual(sorted(L.SIPOC[k]), ["C", "I", "O", "P", "S"], k)
