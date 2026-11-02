@@ -158,9 +158,10 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
           GATE_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          GATE_RUN_ID: ${{ github.event.workflow_run.id }}
           GATE_RUN_URL: ${{ github.event.workflow_run.html_url }}
         run: |
           set -euo pipefail
           echo "triggered by $GATE_RUN_URL"
           python3 mission-control/gogreen/required_gate/gate.py recheck \
-            --sha "$HEAD_SHA" --conclusion "$GATE_CONCLUSION"
+            --sha "$HEAD_SHA" --conclusion "$GATE_CONCLUSION" --trigger-run-id "$GATE_RUN_ID"
