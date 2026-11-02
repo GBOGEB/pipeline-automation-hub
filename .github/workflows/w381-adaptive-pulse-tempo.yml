@@ -1,0 +1,47 @@
+name: W381 Adaptive Pulse Tempo (read-only)
+on:
+  pull_request:
+    paths:
+      - 'tools/metric-atlas/metric_atlas/adaptive_pulse_tempo.py'
+      - 'tools/metric-atlas/tests/test_adaptive_pulse_tempo.py'
+      - '.github/workflows/w381-adaptive-pulse-tempo.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: w381-tempo-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  proposal-only:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12']
+    steps:
+      - name: Checkout exact proposed head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Check exact source SHA
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+      - name: Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Source-safe coverage runner
+        run: python -m pip install --disable-pip-version-check coverage==7.10.7
+      - name: N-window candidate and adversarial tests
+        env:
+          PYTHONPATH: tools/metric-atlas
+        run: |
+          python -m coverage run --branch --include='*/metric_atlas/adaptive_pulse_tempo.py' -m unittest discover -s tools/metric-atlas/tests -p 'test_adaptive_pulse_tempo.py' -q
+          python -m coverage report --include='*/metric_atlas/adaptive_pulse_tempo.py' --fail-under=85 -m
+      - name: Python -O proof (assert is never an admission gate)
+        env:
+          PYTHONPATH: tools/metric-atlas
+        run: python -O -m unittest discover -s tools/metric-atlas/tests -p 'test_adaptive_pulse_tempo.py' -q
