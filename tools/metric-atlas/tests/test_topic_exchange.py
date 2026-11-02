@@ -465,9 +465,10 @@ class EventLedger(unittest.TestCase):
 
     def test_valid_staged_and_recipient_ack_events_remain_accepted(self):
         a=self.append(t.new_ledger())
-        b=self.append(a,kind="RECIPIENT_ACK",recipient="GBOGEB/pipeline-automation-hub",
-                      expected=a["tail_sha256"])
-        self.assertEqual(len(t.validate_ledger(b)["events"]),2)
+        p=self.append(a,kind="PUBLICATION_POSTED",expected=a["tail_sha256"])
+        b=self.append(p,kind="RECIPIENT_ACK",recipient="GBOGEB/pipeline-automation-hub",
+                      expected=p["tail_sha256"])
+        self.assertEqual(len(t.validate_ledger(b)["events"]),3)
 
 
 
