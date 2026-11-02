@@ -1,0 +1,28 @@
+{
+  "schema": "jade.temple.alkane-dag.v1",
+  "session_id": "20261102-kahn-c1-c14-dag",
+  "naming_rule": "Node key is C<n>_<alkane> with n unpadded 1..14; the alkane name, carbon and formula CnH(2n+2) must agree. Never shorten a key to a bare C<n>: federation/convergence/converge.py owns check ids C01..C19 (C14_hub531_event_stream).",
+  "lane_rule": "LANE-<id> is one worktree whose nodes form a dependency chain. MATRIX-<nn> is two or more peers in one Kahn wave that consume the same inputs.",
+  "task_rule": "task names the real task or item an alkane node stands for; null means not yet mapped.",
+  "lane_changes_from_1_2": {
+    "C9_nonane": {"was": "MATRIX-02", "now": "LANE-00", "why": "one-node matrix; it is the spine convergence gate"},
+    "C12_dodecane": {"was": "MATRIX-03", "now": "LANE-00", "why": "C13 depends on C12, so they run in series, not as a matrix"},
+    "C13_tridecane": {"was": "MATRIX-03", "now": "LANE-00", "why": "same as C12"}
+  },
+  "nodes": {
+    "C1_methane": {"carbon": 1, "formula": "CH4", "lane": "LANE-00", "depends_on": [], "sipoc_role": "Root Schema", "task": null},
+    "C2_ethane": {"carbon": 2, "formula": "C2H6", "lane": "LANE-00", "depends_on": ["C1_methane"], "sipoc_role": "Env & Config", "task": null},
+    "C3_propane": {"carbon": 3, "formula": "C3H8", "lane": "LANE-A", "depends_on": ["C2_ethane"], "sipoc_role": "Primary Input", "task": null},
+    "C4_butane": {"carbon": 4, "formula": "C4H10", "lane": "LANE-B", "depends_on": ["C2_ethane"], "sipoc_role": "Secondary Input", "task": null},
+    "C5_pentane": {"carbon": 5, "formula": "C5H12", "lane": "LANE-C", "depends_on": ["C2_ethane"], "sipoc_role": "Auxiliary Spec", "task": null},
+    "C6_hexane": {"carbon": 6, "formula": "C6H14", "lane": "MATRIX-01", "depends_on": ["C3_propane", "C4_butane"], "sipoc_role": "Matrix Transform Alpha", "task": null},
+    "C7_heptane": {"carbon": 7, "formula": "C7H16", "lane": "MATRIX-01", "depends_on": ["C3_propane", "C4_butane"], "sipoc_role": "Matrix Transform Beta", "task": null},
+    "C8_octane": {"carbon": 8, "formula": "C8H18", "lane": "LANE-C", "depends_on": ["C5_pentane"], "sipoc_role": "Process Validation", "task": null},
+    "C9_nonane": {"carbon": 9, "formula": "C9H20", "lane": "LANE-00", "depends_on": ["C6_hexane", "C7_heptane", "C8_octane"], "sipoc_role": "Convergence Gate", "task": null},
+    "C10_decane": {"carbon": 10, "formula": "C10H22", "lane": "LANE-D", "depends_on": ["C9_nonane"], "sipoc_role": "Output Stream 1", "task": null},
+    "C11_undecane": {"carbon": 11, "formula": "C11H24", "lane": "LANE-E", "depends_on": ["C9_nonane"], "sipoc_role": "Output Stream 2", "task": null},
+    "C12_dodecane": {"carbon": 12, "formula": "C12H26", "lane": "LANE-00", "depends_on": ["C10_decane", "C11_undecane"], "sipoc_role": "Compliance Audit", "task": null},
+    "C13_tridecane": {"carbon": 13, "formula": "C13H28", "lane": "LANE-00", "depends_on": ["C12_dodecane"], "sipoc_role": "Customer Gate", "task": null},
+    "C14_tetradecane": {"carbon": 14, "formula": "C14H30", "lane": "LANE-00", "depends_on": ["C13_tridecane"], "sipoc_role": "Canonical Archive", "task": null}
+  }
+}
