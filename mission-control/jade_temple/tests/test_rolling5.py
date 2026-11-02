@@ -82,9 +82,9 @@ class RealDataTests(unittest.TestCase):
 
     def test_reproduces_focus5_denominator_without_credit(self):
         m = self.model["metrics"]
-        # Latest pulse P0003 (2026-10-31); P0002 was 17/60, P0001 14/60.
-        self.assertEqual((m["verified_pass"], m["gate_denominator"]), (21, 60))
-        self.assertEqual(m["verified_completion_pct"], 35.0)
+        # Latest pulse P0004 (2026-11-02); P0003 21/60, P0002 17/60, P0001 14/60.
+        self.assertEqual((m["verified_pass"], m["gate_denominator"]), (24, 60))
+        self.assertEqual(m["verified_completion_pct"], 40.0)
         self.assertEqual(m["nirvana_count"], 0)
         self.assertEqual(self.model["merge_admission"], "HOLD")
         self.assertFalse(self.model["release_credit"])
@@ -114,9 +114,9 @@ class RealDataTests(unittest.TestCase):
         self.assertEqual(w["admitted"], [])
 
     def test_unattended_is_inferred_only_from_three_pulses(self):
-        # Three pulses (P0001-P0003): 'unattended' is now inferred, and only for gates
-        # UNKNOWN in all three. Owner gates were never evidenced; H01 is always read back.
-        self.assertEqual(self.model["history_depth"], 3)
+        # Four pulses (P0001-P0004): 'unattended' is inferred, and only for gates UNKNOWN in
+        # the last three. Owner gates were never evidenced; H01 is always read back.
+        self.assertEqual(self.model["history_depth"], 4)
         for repo in self.model["repos"]:
             s = repo["streaks"]
             for gid in ("H03", "H09", "H12"):

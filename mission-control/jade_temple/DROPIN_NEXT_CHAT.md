@@ -1,3 +1,15 @@
+# JADE FOCUS5 PULSE P0004 + LOSSLESS HANDOVER PACKAGE — CP.HANDOFF CHECKPOINT (2026-11-02, newest)
+
+**Entry:** [handover](notes/handover_20261102/HANDOVER.md) · [session PR trace](notes/handover_20261102/SESSION_PR_TRACE.json) · [local binaries script](notes/handover_20261102/Build-JadeHandover.ps1) · [P0004 snapshot](data/FOCUS5_POINT_RELEASE_P0004.json). Earlier checkpoints follow below, unchanged.
+
+1. **Pulse.** P0004 at 2026-11-02 heads: 24 PASS / 1 FAIL / 35 UNKNOWN of 60 (P0003 21/1/38). Hub 5/12 (H04 JADE build contract, H05/H06 on every master push, #1085 squash with #1086). Only FAIL: yaml-grammar H08.
+2. **Trace.** 68 session PRs since 2026-10-12 (62 merged, 4 DOCX RED canaries closed by design; cryoplant aggregate-only); none open, no issues.
+3. **Binaries.** `Build-JadeHandover.ps1` (run locally; default `C:\Downloads`): verified git bundles of every ref, source zips at the pinned heads, sparse worktrees, REST PR trace, pulse/suite/regen reproduction, SHA256SUMS and one zip. Not executed in the authoring session: run `-DryRun` first.
+4. **Owner.** CODEX Actions may create PRs (B3); yaml-grammar ruleset; DOCX pull request rule; delete 5 DOCX canary/tmp branches; Codex exact-head review for hub first-pass-closure (#983, #984, #1078).
+5. **Next.** RED canary per owner protection change, then P0005 (fetch first). Without owner: cryoplant H04 lock, DOCX pytest 9.0.3 re-lock. Drop-in message: handover section 7.
+
+---
+
 # JADE FOCUS5 PULSE P0003 + LOSSLESS HANDOVER — CP.HANDOFF CHECKPOINT (2026-10-31, newest)
 
 **Entry:** [full handover](notes/HANDOVER_JADE5_P0003_20261031.md) · [P0003 snapshot](data/FOCUS5_POINT_RELEASE_P0003.json) · [gate evidence registry](data/FOCUS5_GATE_EVIDENCE_REGISTRY.json) · [pulse tool](tools/focus5_pulse.py). Earlier checkpoints follow below, unchanged.
