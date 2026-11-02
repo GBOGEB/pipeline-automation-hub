@@ -730,3 +730,10 @@ class RecheckStormControl(unittest.TestCase):
         self.assertIn("--sha", job["steps"][-1]["run"])
         self.assertIn("--conclusion", job["steps"][-1]["run"])
         self.assertNotIn("continue-on-error", job)
+
+    def test_default_branch_completions_create_no_run(self):
+        """Push/schedule completions on master never reach a PR head; drop them at the trigger,
+        not in the job `if`, so no skipped run is queued (about 100 per master commit before)."""
+        trigger = yaml.safe_load((ROOT / g.RECHECK).read_text(encoding="utf-8"))[True]["workflow_run"]
+        self.assertEqual(trigger["branches-ignore"], ["master"])
+        self.assertNotIn("branches", trigger, "branches and branches-ignore cannot be combined")
