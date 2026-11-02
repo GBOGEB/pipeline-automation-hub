@@ -99,6 +99,13 @@ class LiveSelectorTests(unittest.TestCase):
                 r.trigger[key] = value
                 self.assertEqual(g.recheck(r, SHA, trigger_run_id=TRIGGER)["action"], "rerun")
 
+    def test_malformed_trigger_identity_remains_unknown_and_recoverable(self):
+        r = Reader(g.PASS)
+        r.trigger["pull_requests"] = [None]
+        out = g.recheck(r, SHA, trigger_run_id=TRIGGER)
+        self.assertEqual(out["receipt_relevance"], g.RECHECK_UNKNOWN)
+        self.assertEqual(r.posts, [AGG])
+
     def test_wrong_attempt_artifact_never_suppresses(self):
         r = Reader(g.PASS)
         r.metadata["name"] = f"gogreen-required-gate-{PR}-2"
