@@ -683,7 +683,8 @@ def recheck(reader, sha: str, conclusion: str = "success", dry_run: bool = False
         out["reason"] = "latest aggregator run is still in progress; it re-reads every poll"
     elif run.get("conclusion") != "failure":
         out["reason"] = f"latest aggregator run concluded {run.get('conclusion')}; nothing to re-run"
-    elif (run.get("run_attempt") or 1) >= RECHECK_MAX_ATTEMPT:
+    elif (isinstance(run.get("run_attempt"), int) and not isinstance(run.get("run_attempt"), bool)
+          and run["run_attempt"] >= RECHECK_MAX_ATTEMPT):
         out["reason"] = f"latest aggregator run is at attempt {run.get('run_attempt')} (cap {RECHECK_MAX_ATTEMPT})"
     else:
         # A VERIFIED prior PASS/NA cannot have contributed to the failed
