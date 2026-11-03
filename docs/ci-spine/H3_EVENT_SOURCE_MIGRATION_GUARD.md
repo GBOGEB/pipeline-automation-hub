@@ -42,7 +42,8 @@ python mission-control/gogreen/required_gate/h3_event_retirement_guard.py \
 
 Optional `--proposed /tmp/proposed_names.json` accepts a JSON string list.
 A candidate trigger removal, policy demotion, absent/unparseable enforced
-source, or marker-vs-actual-workflow_run mismatch must remain HOLD.
+source, malformed recheck YAML, changed branch-filter scope, dirty pinned
+base checkout, or marker-vs-actual-workflow_run mismatch must remain HOLD.
 
 Native two-checkout pilot `MIP H3 Base-Bound Retirement Preflight` completed
 successfully in Actions run `41615589717` at PR #1112 head
