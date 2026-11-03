@@ -46,7 +46,7 @@ permissions:
   actions: read
 jobs:
   render:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # Same-PR/ref rebuilds share one render slot. This is not a fleet-wide
     # capacity claim; the local broker separately bounds generator workers.
     concurrency:
