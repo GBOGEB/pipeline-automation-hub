@@ -28,12 +28,30 @@ records from being created.
 
 ## H3 migration preflight
 
-Run `python mission-control/gogreen/required_gate/h3_event_retirement_guard.py
---root . --out /tmp/h3_guard.json`.
-The optional `--proposed /tmp/proposed_names.json` accepts a JSON list of
-workflow names. The script validates the current generated names against
-`ADMISSION.json` and **HOLDs every proposed removal**. It is not a substitute
-for native successor-dispatch evidence or an approval plane.
+The guard requires two distinct checked-out Git worktrees: candidate source
+(`--root`) and the independently pinned base (`--base-root`) whose exact
+`git rev-parse HEAD` matches `--base-sha`. No candidate-controlled
+`ADMISSION.json` can reclassify the base. Read-only example:
+
+```bash
+python mission-control/gogreen/required_gate/h3_event_retirement_guard.py \
+  --root . --base-root ../owner-base-checkout \
+  --base-sha "<40-character exact GitHub base SHA>" \
+  --out /tmp/h3_guard.json
+```
+
+Optional `--proposed /tmp/proposed_names.json` accepts a JSON string list.
+A candidate trigger removal, policy demotion, absent/unparseable enforced
+source, or marker-vs-actual-workflow_run mismatch must remain HOLD.
+
+Native two-checkout pilot `MIP H3 Base-Bound Retirement Preflight` completed
+successfully in Actions run `41615589717` at PR #1112 head
+`f14ddd65476bbcdc394d8b61c870e39ba33d8802`. The dedicated
+proof-only workflow was removed after that testflight instead of adding a
+persistent extra workflow to an already-stale ADMISSION census (21 unlisted
+versus a maximum of 20 under the existing test). The source guard and its
+unittest suite remain for governed checks. This proof does **not** certify
+an event-source retirement or merge.
 
 Future source-owned implementation requires:
 1. A source-side candidate notifier/dispatcher that fires **only** when
