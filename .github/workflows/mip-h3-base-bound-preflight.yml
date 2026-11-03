@@ -1,0 +1,39 @@
+name: MIP H3 Base-Bound Retirement Preflight
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/gogreen/required_gate/h3_event_retirement_guard.py'
+      - 'mission-control/gogreen/required_gate/test_h3_event_retirement_guard.py'
+      - '.github/workflows/mip-h3-base-bound-preflight.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  source-bound-guard:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: candidate
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: baseline
+          persist-credentials: false
+      - name: Test guard and exact pinned authority
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m pip install 'PyYAML==6.0.2'
+          python3 -m unittest discover -v -s candidate/mission-control/gogreen/required_gate \
+            -p test_h3_event_retirement_guard.py
+          python3 candidate/mission-control/gogreen/required_gate/h3_event_retirement_guard.py \
+            --root candidate --base-root baseline --base-sha "$BASE_SHA" \
+            --out "$RUNNER_TEMP/h3-source-bound.json"
