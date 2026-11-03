@@ -76,6 +76,28 @@ class ScaleTests(unittest.TestCase):
         self.assertTrue(all(x['topic_ids'] for x in r['waves']))
     def test_method_drift_between_waves_rejected(self):
         self.bad(lambda p:p['waves'][1].__setitem__('method_version','2.0.0'),'METHOD_DRIFT_ACROSS_WAVES')
+    def test_distinct_topic_names_cannot_lease_identical_source_scope(self):
+        def overlap(doc):
+            original=doc['waves'][0]['packets'][1]['packet']
+            duplicate=doc['waves'][1]['packets'][0]['packet']
+            self.assertNotEqual(original['topic'],duplicate['topic'])
+            duplicate['scope_sha256']=original['scope_sha256']
+            duplicate['packet_sha256']=m.topic_wave.exchange.digest(
+                {key:value for key,value in duplicate.items() if key!='packet_sha256'})
+        self.bad(overlap,'OVERLAPPING_SOURCE_SCOPE')
+
+    def test_distinct_topics_same_scope_and_source_still_overlap(self):
+        def overlap(doc):
+            original=doc['waves'][0]['packets'][1]['packet']
+            row=doc['waves'][1]['packets'][0]
+            duplicate=row['packet']
+            duplicate['scope_sha256']=original['scope_sha256']
+            duplicate['source_sha256']=original['source_sha256']
+            row['current_source_sha256']=original['source_sha256']
+            duplicate['packet_sha256']=m.topic_wave.exchange.digest(
+                {key:value for key,value in duplicate.items() if key!='packet_sha256'})
+        self.bad(overlap,'OVERLAPPING_SOURCE_SCOPE')
+
     def test_common_method_version_retained(self):
         self.assertEqual(m.plan(self.p)['method_version'],self.p['waves'][0]['method_version'])
 
