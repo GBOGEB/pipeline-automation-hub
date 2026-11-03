@@ -21,21 +21,25 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          # Run the entire collector and all imports from one trusted,
+          # event-pinned base commit, never from a contributor-modified head.
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: collector
           persist-credentials: false
-      - name: Prove collector file has not diverged from default branch
+      - name: Verify complete collector checkout against exact GitHub base
         shell: bash
+        env:
+          DEFAULT_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           set -euo pipefail
-          DEFAULT_SHA="$(git ls-remote origin refs/heads/master | cut -f1)"
           test "$DEFAULT_SHA" != ""
-          git fetch --no-tags --depth=1 origin "$DEFAULT_SHA"
-          OUR="$(git hash-object mission-control/jade_temple/devops/actions_metrics.py)"
-          DEFAULT="$(git rev-parse "FETCH_HEAD:mission-control/jade_temple/devops/actions_metrics.py")"
-          test "$OUR" = "$DEFAULT"
+          test "$(git -C collector rev-parse HEAD)" = "$DEFAULT_SHA"
+          test -f collector/mission-control/jade_temple/devops/actions_metrics.py
+          test -f collector/mission-control/jade_temple/tools/bd_queue_wave.py
           echo "DEFAULT_SHA=$DEFAULT_SHA" >> "$GITHUB_ENV"
-          echo "Default collector source sha: $DEFAULT_SHA"
+          echo "Pinned full collector checkout: $DEFAULT_SHA"
       - name: Fetch complete UTC-day run caches (no job API calls)
+        working-directory: collector
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -49,6 +53,7 @@ jobs:
             --cache "$RUNNER_TEMP/mip-t1/cache" --since "$SINCE" --until "$UNTIL" \
             --repo GBOGEB/pipeline-automation-hub --job-budget 0
       - name: Canonical pressure projection and strict qualification
+        working-directory: collector
         run: |
           set -euo pipefail
           python3 mission-control/jade_temple/devops/actions_metrics.py pressure \
@@ -73,13 +78,13 @@ jobs:
           assert receipt["value"] is not None and receipt["cache_readback_sha256"]
           assert not receipt["cache_source_issues"] and not receipt["missing_source_days"]
           PY
-      - name: Upload source-bound T1 and cache digest receipts
+      - name: Upload source-bound T1 and full raw-cache replay evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: mip-h1-canonical-recheck-t1
           path: |
             ${{ runner.temp }}/mip-t1/t1.json
-            ${{ runner.temp }}/mip-t1/cache/**/*.receipt.json
+            ${{ runner.temp }}/mip-t1/cache/**/*.json
           if-no-files-found: warn
           retention-days: 14
