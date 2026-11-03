@@ -126,8 +126,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: gogreen-required-gate-recheck-${{ github.event.workflow_run.head_sha }}
-  cancel-in-progress: true
+  # Each triggering completion remains runnable. Head-wide cancel-in-progress
+  # could cancel the only eligible recovery while a later irrelevant PASS event
+  # skipped the re-run. Keep failures independently observable; bounded API
+  # retry/collision handling requires separate review, not bypass.
+  group: gogreen-required-gate-recheck-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}
+  cancel-in-progress: false
 
 jobs:
   recheck:
@@ -159,9 +163,11 @@ jobs:
           HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
           GATE_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
           GATE_RUN_ID: ${{ github.event.workflow_run.id }}
+          GATE_RUN_ATTEMPT: ${{ github.event.workflow_run.run_attempt }}
           GATE_RUN_URL: ${{ github.event.workflow_run.html_url }}
         run: |
           set -euo pipefail
           echo "triggered by $GATE_RUN_URL"
           python3 mission-control/gogreen/required_gate/gate.py recheck \
-            --sha "$HEAD_SHA" --conclusion "$GATE_CONCLUSION" --trigger-run-id "$GATE_RUN_ID"
+            --sha "$HEAD_SHA" --conclusion "$GATE_CONCLUSION" \
+            --trigger-run-id "$GATE_RUN_ID" --trigger-run-attempt "$GATE_RUN_ATTEMPT"
