@@ -1,11 +1,9 @@
 name: MIP H2 Receipt Selector Shadow Replay
 
 # One-PR read-only replay. No workflow_run listener, reruns, branch writes or schedule.
+# Historical artifact is ephemeral; replay must be explicitly requested.
 on:
-  pull_request:
-    paths:
-      - '.github/workflows/mip-h2-recheck-shadow-replay.yml'
-      - 'mission-control/gogreen/required_gate/gate.py'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -21,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.sha }}
           persist-credentials: false
       - name: Replay exact historical GitHub artifact in read-only mode
         env:
@@ -47,7 +45,8 @@ jobs:
           assert run.get("id") == aggregator_id and run.get("run_attempt") == 2
           assert run.get("head_sha") == sha and run.get("conclusion") == "failure"
           result = gate._bound_recheck_relevance(
-              reader, aggregator=run, sha=sha, trigger_run_id=trigger_id)
+              reader, aggregator=run, sha=sha, trigger_run_id=trigger_id,
+              trigger_run_attempt=1)
           output = {
               "schema": "mip.h2.shadow-exact-run.v1",
               "aggregator_run": aggregator_id, "attempt": 2,
