@@ -90,11 +90,11 @@ def active_trigger_scope(root: Path, gate) -> dict:
 
     source = root / gate.RECHECK
     raw = source.read_text(encoding="utf-8")
-    markers = gate.declared_recheck_names(raw)
     try:
         doc = yaml.safe_load(raw)
     except yaml.YAMLError as exc:
         raise ValueError("invalid recheck workflow YAML") from exc
+    markers = gate.declared_recheck_names(raw)
     if not isinstance(doc, dict):
         raise ValueError("recheck workflow YAML is not an object")
     events = doc.get("on", doc.get(True))
