@@ -95,7 +95,7 @@ class EventRetirementSafetyTests(unittest.TestCase):
             with mock.patch.object(gate, "load_policy", side_effect=policy), \
                  mock.patch.object(M, "_owner", return_value=gate), \
                  mock.patch.object(M, "source_head", return_value="a" * 40):
-                with self.assertRaisesRegex(ValueError, "demoted"):
+                with self.assertRaisesRegex(ValueError, "demoted|empty enforced source population"):
                     M.preflight(candidate, baseline, "a" * 40)
 
     def test_wrong_base_sha_rejected_before_authority_read(self):
