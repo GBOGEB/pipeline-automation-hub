@@ -33,6 +33,21 @@ def source_head(root: Path) -> str:
     return result.stdout.strip()
 
 
+def require_clean_checkout(root: Path) -> None:
+    """Fail closed if the pinned base worktree contains staged, unstaged or untracked edits.
+
+    HEAD identity alone cannot authenticate policy and workflow bytes on disk.
+    The clean checkout check binds files subsequently read to the pinned commit.
+    """
+    result = subprocess.run(
+        ["git", "-C", str(root), "status", "--porcelain=v1",
+         "--untracked-files=all"],
+        check=True, capture_output=True, text=True, timeout=10,
+    )
+    if result.stdout.strip():
+        raise ValueError("pinned base checkout is dirty; refused authority read")
+
+
 def strict_enforced_names(root: Path, gate) -> tuple[list[str], set[str]]:
     """Reject missing, malformed, duplicated or non-PR ENFORCED source paths."""
     policy = gate.load_policy(None, None, root, "head")
@@ -64,30 +79,50 @@ def strict_enforced_names(root: Path, gate) -> tuple[list[str], set[str]]:
     return sorted(names), paths
 
 
-def active_trigger_names(root: Path, gate) -> list[str]:
-    """Marker must equal the *live* workflow_run.workflows trigger (GitHub YAML)."""
+def active_trigger_scope(root: Path, gate) -> dict:
+    """Return actual names AND branch/type filters, rejecting invalid YAML as HOLD.
+
+    The entire workflow_run subscription must match the independently pinned
+    base. A branch-ignore change can otherwise suppress all RED recovery while
+    keeping the generated workflow names unchanged.
+    """
     import yaml
 
     source = root / gate.RECHECK
     raw = source.read_text(encoding="utf-8")
     markers = gate.declared_recheck_names(raw)
-    doc = yaml.safe_load(raw)
+    try:
+        doc = yaml.safe_load(raw)
+    except yaml.YAMLError as exc:
+        raise ValueError("invalid recheck workflow YAML") from exc
     if not isinstance(doc, dict):
         raise ValueError("recheck workflow YAML is not an object")
     events = doc.get("on", doc.get(True))
     block = events.get("workflow_run") if isinstance(events, dict) else None
     if not isinstance(block, dict):
         raise ValueError("recheck workflow_run trigger missing")
-    actual = block.get("workflows")
-    types = block.get("types")
+    actual, types = block.get("workflows"), block.get("types")
     if (not isinstance(actual, list) or not actual
             or any(not isinstance(s, str) or not s for s in actual)
             or len(actual) != len(set(actual))
             or not isinstance(types, list) or "completed" not in types):
         raise ValueError("actual workflow_run subscription malformed")
+    for name in ("branches", "branches-ignore"):
+        if name in block:
+            values = block[name]
+            if (not isinstance(values, list) or not values
+                    or any(not isinstance(s, str) or not s for s in values)
+                    or len(values) != len(set(values))):
+                raise ValueError(f"invalid recheck {name} filter")
+    if "branches" in block and "branches-ignore" in block:
+        raise ValueError("ambiguous workflow_run branches and branches-ignore")
     if actual != markers:
         raise ValueError("recheck marker differs from real workflow_run subscriptions")
-    return actual
+    return block
+
+
+def active_trigger_names(root: Path, gate) -> list[str]:
+    return active_trigger_scope(root, gate)["workflows"]
 
 
 def assess(required: list[str], live: list[str], proposed: list[str]) -> dict:
@@ -124,18 +159,29 @@ def preflight(root: Path, base_root: Path, base_sha: str,
         raise ValueError("invalid pinned base SHA")
     if source_head(base_root) != base_sha:
         raise ValueError("base checkout does not match expected GitHub base SHA")
+    require_clean_checkout(base_root)
     gate = _owner()
     required, paths = strict_enforced_names(base_root, gate)
     candidate_names, candidate_paths = strict_enforced_names(root, gate)
     # A demotion is also a reduction, even if the generated listener survives.
     if not paths <= candidate_paths or not set(required) <= set(candidate_names):
         raise ValueError("candidate has demoted or removed enforced source")
-    base_actual = active_trigger_names(base_root, gate)
-    if base_actual != required:
+    base_scope = active_trigger_scope(base_root, gate)
+    if base_scope["workflows"] != required:
         raise ValueError("base owner listener/authority disagreement")
-    live = active_trigger_names(root, gate)
+    live_scope = active_trigger_scope(root, gate)
+    if live_scope != base_scope:
+        raise ValueError("candidate workflow_run scope differs from pinned base")
+    live = live_scope["workflows"]
     result = assess(required, live, live if proposed is None else proposed)
     result["base_sha"] = base_sha
+    result["source_checkout_clean"] = True
+    result["bound_workflow_run_filter"] = {
+        "branches": base_scope.get("branches"),
+        "branches-ignore": base_scope.get("branches-ignore"),
+        "types": base_scope.get("types"),
+        "workflow_count": len(base_scope["workflows"]),
+    }
     result["authority_source"] = "independently_pinned_base_checkout"
     result["candidate_head"] = source_head(root)
     return result
