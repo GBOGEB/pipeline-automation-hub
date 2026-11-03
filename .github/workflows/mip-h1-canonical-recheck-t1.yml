@@ -35,7 +35,8 @@ jobs:
           test "$DEFAULT_SHA" != ""
           test "$(git -C collector rev-parse HEAD)" = "$DEFAULT_SHA"
           test -f collector/mission-control/jade_temple/devops/actions_metrics.py
-          test -f collector/mission-control/jade_temple/tools/bd_queue_wave.py
+          test -f collector/mission-control/jade_temple/tools/private_boundary.py
+          test -f collector/mission-control/gogreen/bd_queue_wave.py
           echo "DEFAULT_SHA=$DEFAULT_SHA" >> "$GITHUB_ENV"
           echo "Pinned full collector checkout: $DEFAULT_SHA"
       - name: Fetch complete UTC-day run caches (no job API calls)
