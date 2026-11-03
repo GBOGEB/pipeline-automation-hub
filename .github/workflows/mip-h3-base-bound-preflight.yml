@@ -26,14 +26,15 @@ jobs:
           path: baseline
           persist-credentials: false
       - name: Test guard and exact pinned authority
+        working-directory: candidate
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         shell: bash
         run: |
           set -euo pipefail
           python3 -m pip install 'PyYAML==6.0.2'
-          python3 -m unittest discover -v -s candidate/mission-control/gogreen/required_gate \
+          python3 -m unittest discover -v -s mission-control/gogreen/required_gate \
             -p test_h3_event_retirement_guard.py
-          python3 candidate/mission-control/gogreen/required_gate/h3_event_retirement_guard.py \
-            --root candidate --base-root baseline --base-sha "$BASE_SHA" \
+          python3 mission-control/gogreen/required_gate/h3_event_retirement_guard.py \
+            --root . --base-root ../baseline --base-sha "$BASE_SHA" \
             --out "$RUNNER_TEMP/h3-source-bound.json"
