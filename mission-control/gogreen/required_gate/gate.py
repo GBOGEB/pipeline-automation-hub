@@ -577,7 +577,8 @@ def main_recheck_receipt(argv) -> int:
     return 0 if result["decision"] != RECHECK_UNKNOWN else 2
 
 
-def _bound_recheck_relevance(reader, *, aggregator: dict, sha: str, trigger_run_id: int) -> dict:
+def _bound_recheck_relevance(reader, *, aggregator: dict, sha: str, trigger_run_id: int,
+                             trigger_run_attempt: int | None = None) -> dict:
     """Use GitHub-owned identities and digest-verified latest-attempt ZIP only.
 
     UNKNOWN must *never* suppress recovery. The old recheck fallback remains
@@ -589,10 +590,15 @@ def _bound_recheck_relevance(reader, *, aggregator: dict, sha: str, trigger_run_
     if not isinstance(trigger_run_id, int) or isinstance(trigger_run_id, bool) or trigger_run_id <= 0:
         out["reason"] = "missing trusted trigger run identity"
         return out
-    attempt = aggregator.get("run_attempt") or 1
+    if (not isinstance(trigger_run_attempt, int) or isinstance(trigger_run_attempt, bool)
+            or trigger_run_attempt <= 0):
+        out["reason"] = "missing or invalid triggering run attempt identity"
+        return out
+    attempt = aggregator.get("run_attempt")
     agg_id = aggregator.get("id")
     prs = aggregator.get("pull_requests")
-    if (not isinstance(agg_id, int) or not isinstance(attempt, int)
+    if (not isinstance(agg_id, int) or isinstance(agg_id, bool)
+            or not isinstance(attempt, int) or isinstance(attempt, bool)
             or not isinstance(prs, list) or len(prs) != 1
             or not isinstance(prs[0], dict) or not isinstance(prs[0].get("number"), int)):
         out["reason"] = "aggregator PR/attempt identity ambiguous"
@@ -610,6 +616,7 @@ def _bound_recheck_relevance(reader, *, aggregator: dict, sha: str, trigger_run_
                 or triggered.get("head_sha") != sha or triggered.get("event") != "pull_request"
                 or triggered.get("status") != "completed"
                 or triggered.get("conclusion") != "success"
+                or triggered.get("run_attempt") != trigger_run_attempt
                 or not isinstance(repo, dict) or repo.get("full_name") != reader.repo
                 or not isinstance(candidates, list)
                 or len(candidates) != 1 or not isinstance(candidates[0], dict)
@@ -645,6 +652,7 @@ def _bound_recheck_relevance(reader, *, aggregator: dict, sha: str, trigger_run_
         out["receipt_sha256"] = verified["archive_sha256"]
         out["verified_aggregator_run"] = agg_id
         out["verified_attempt"] = attempt
+        out["verified_trigger_attempt"] = trigger_run_attempt
     except (OSError, ValueError, TypeError, KeyError, urllib.error.URLError,
             urllib.error.HTTPError, json.JSONDecodeError) as exc:
         out["reason"] = f"source receipt unavailable: {type(exc).__name__}"
@@ -652,7 +660,8 @@ def _bound_recheck_relevance(reader, *, aggregator: dict, sha: str, trigger_run_
 
 
 def recheck(reader, sha: str, conclusion: str = "success", dry_run: bool = False,
-            trigger_run_id: int | None = None) -> dict:
+            trigger_run_id: int | None = None,
+            trigger_run_attempt: int | None = None) -> dict:
     """Re-run the latest FAILED aggregator run on `sha` after an enforced gate succeeded there.
     Nothing happens when the gate did not succeed, the aggregator never ran on this head, is
     still running (it re-reads every poll), already passed, or hit RECHECK_MAX_ATTEMPT."""
@@ -681,7 +690,8 @@ def recheck(reader, sha: str, conclusion: str = "success", dry_run: bool = False
         # aggregator verdict; no rerun needed for this successful gate event.
         # UNKNOWN and FAIL/WAIT preserve the existing recovery behavior.
         relevance = _bound_recheck_relevance(
-            reader, aggregator=run, sha=sha, trigger_run_id=trigger_run_id)
+            reader, aggregator=run, sha=sha, trigger_run_id=trigger_run_id,
+            trigger_run_attempt=trigger_run_attempt)
         out["receipt_relevance"] = relevance["decision"]
         out["receipt_reason"] = relevance["reason"]
         if relevance["decision"] == RECHECK_ALREADY_SATISFIED:
@@ -701,11 +711,13 @@ def main_recheck(argv) -> int:
     ap.add_argument("--conclusion", default="success", help="conclusion of the gate run that completed")
     ap.add_argument("--dry-run", action="store_true", help="decide, but do not re-run")
     ap.add_argument("--trigger-run-id", type=int, help="trusted triggering workflow_run id")
+    ap.add_argument("--trigger-run-attempt", type=int, help="trusted workflow_run attempt")
     a = ap.parse_args(argv)
     if not a.repo:
         raise SystemExit("--repo or GITHUB_REPOSITORY is required")
     reader = Reader(a.repo)
-    out = recheck(reader, a.sha, a.conclusion, a.dry_run, trigger_run_id=a.trigger_run_id)
+    out = recheck(reader, a.sha, a.conclusion, a.dry_run,
+                  trigger_run_id=a.trigger_run_id, trigger_run_attempt=a.trigger_run_attempt)
     ref = out["aggregator_run"]
     line = f"recheck {out['action']}: {out['reason']}" + (f" ({ref['url']})" if ref and ref.get("url") else "")
     print(line)
