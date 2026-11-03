@@ -101,7 +101,7 @@ def propose(doc):
         anchors[k] is not None and anchors[k]["metrics"]["queue_p95_s"] is not None
         and anchors[k]["metrics"]["unique_roots"] is not None
         for k in anchors)
-    nonregression = complete and all(
+    nonregression = complete and not missing and all(
         current["queue_p95_s"] <= anchors[k]["metrics"]["queue_p95_s"]
         and current["unique_roots"] <= anchors[k]["metrics"]["unique_roots"]
         for k in anchors)
