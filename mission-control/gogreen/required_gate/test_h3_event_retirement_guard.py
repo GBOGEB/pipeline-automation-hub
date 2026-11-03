@@ -1,5 +1,6 @@
 """H3 native guard: source-bound authority and real trigger negative controls."""
 import importlib.util
+import subprocess
 import json
 import tempfile
 import unittest
@@ -94,9 +95,65 @@ class EventRetirementSafetyTests(unittest.TestCase):
                                     gate.ENFORCED if source == baseline else gate.OBSERVED}}
             with mock.patch.object(gate, "load_policy", side_effect=policy), \
                  mock.patch.object(M, "_owner", return_value=gate), \
-                 mock.patch.object(M, "source_head", return_value="a" * 40):
+                 mock.patch.object(M, "source_head", return_value="a" * 40), \
+                 mock.patch.object(M, "require_clean_checkout"):
                 with self.assertRaisesRegex(ValueError, "demoted|empty enforced source population"):
                     M.preflight(candidate, baseline, "a" * 40)
+
+    def test_invalid_recheck_yaml_raises_valueerror_for_structured_hold(self):
+        gate = M._owner()
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            f = root / gate.RECHECK
+            f.parent.mkdir(parents=True, exist_ok=True)
+            f.write_text('on: [\n', encoding="utf-8", newline="\n")
+            with self.assertRaisesRegex(ValueError, "invalid recheck workflow YAML"):
+                M.active_trigger_scope(root, gate)
+
+    def test_recheck_branch_filter_scope_reduction_is_hold(self):
+        gate = M._owner()
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            base, candidate = root / "base", root / "candidate"
+            template = ('on:\n  workflow_run:\n    types: [completed]\n'
+                        '    branches-ignore: [{branch}]\n    workflows:\n'
+                        '      # BEGIN recheck-names\n      - "A"\n'
+                        '      # END recheck-names\n')
+            for directory, branch in ((base, "master"), (candidate, "'**'")):
+                f = directory / gate.RECHECK
+                f.parent.mkdir(parents=True, exist_ok=True)
+                f.write_text(template.format(branch=branch),
+                             encoding="utf-8", newline="\n")
+            with mock.patch.object(M, "_owner", return_value=gate), \
+                 mock.patch.object(M, "source_head", return_value="a" * 40), \
+                 mock.patch.object(M, "require_clean_checkout"), \
+                 mock.patch.object(M, "strict_enforced_names",
+                                   return_value=(["A"], {".github/workflows/a.yml"})):
+                with self.assertRaisesRegex(ValueError, "scope differs"):
+                    M.preflight(candidate, base, "a" * 40)
+
+    def test_modified_pinned_base_worktree_never_authenticates_authority(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            def git(*args):
+                subprocess.run(["git", "-C", str(root), *args],
+                               check=True, capture_output=True, text=True, timeout=10)
+            git("init", "-q")
+            git("config", "user.email", "test@example.invalid")
+            git("config", "user.name", "H3 Integrity Test")
+            f = root / "policy.json"
+            f.write_text("original\n", encoding="utf-8", newline="\n")
+            git("add", "policy.json")
+            git("commit", "-qm", "baseline")
+            M.require_clean_checkout(root)
+            f.write_text("tampered\n", encoding="utf-8", newline="\n")
+            with self.assertRaisesRegex(ValueError, "dirty"):
+                M.require_clean_checkout(root)
+            f.write_text("original\n", encoding="utf-8", newline="\n")
+            extra = root / "untracked.json"
+            extra.write_text("{}\n", encoding="utf-8", newline="\n")
+            with self.assertRaisesRegex(ValueError, "dirty"):
+                M.require_clean_checkout(root)
 
     def test_wrong_base_sha_rejected_before_authority_read(self):
         with tempfile.TemporaryDirectory() as td:
