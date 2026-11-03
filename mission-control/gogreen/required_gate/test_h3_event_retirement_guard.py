@@ -39,13 +39,13 @@ class EventRetirementSafetyTests(unittest.TestCase):
             f = root / ".github/workflows/gogreen-required-gate-recheck.yml"
             f.parent.mkdir(parents=True)
             doc = """on:\n  workflow_run:\n    types: [completed]\n    workflows:\n      # BEGIN recheck-names\n      - "A"\n      # END recheck-names\n"""
-            f.write_text(doc, encoding="utf-8")
+            f.write_text(doc, encoding="utf-8", newline="\n")
             gate = M._owner()
             self.assertEqual(M.active_trigger_names(root, gate), ["A"])
-            f.write_text("""on: workflow_dispatch\n# BEGIN recheck-names\n# - "A"\n# END recheck-names\n""")
+            f.write_text("""on: workflow_dispatch\n# BEGIN recheck-names\n# - "A"\n# END recheck-names\n""", encoding="utf-8", newline="\n")
             with self.assertRaises(ValueError):
                 M.active_trigger_names(root, gate)
-            f.write_text(doc.replace('      - "A"', '      - "B"') + '# END\n')
+            f.write_text(doc.replace('      - "A"', '      - "B"') + '# END\n', encoding="utf-8", newline="\n")
             # Marker also changes with the trigger; a separately pinned base
             # is the authority that rejects a would-be listener rename.
             self.assertEqual(M.active_trigger_names(root, gate), ["B"])
@@ -60,10 +60,10 @@ class EventRetirementSafetyTests(unittest.TestCase):
                     M.strict_enforced_names(root, gate)
                 f = root / ".github/workflows/a.yml"
                 f.parent.mkdir(parents=True)
-                f.write_text("name: bad\non: [\n", encoding="utf-8")
+                f.write_text("name: bad\non: [\n", encoding="utf-8", newline="\n")
                 with self.assertRaises(ValueError):
                     M.strict_enforced_names(root, gate)
-                f.write_text("name: A\non: push\n", encoding="utf-8")
+                f.write_text("name: A\non: push\n", encoding="utf-8", newline="\n")
                 with self.assertRaisesRegex(ValueError, "non-PR"):
                     M.strict_enforced_names(root, gate)
 
@@ -76,18 +76,18 @@ class EventRetirementSafetyTests(unittest.TestCase):
             for r in (baseline, candidate):
                 wf = r / ".github/workflows/a.yml"
                 wf.parent.mkdir(parents=True)
-                wf.write_text("name: A\non: pull_request\n", encoding="utf-8")
+                wf.write_text("name: A\non: pull_request\n", encoding="utf-8", newline="\n")
                 recheck = r / gate.RECHECK
-                recheck.parent.mkdir(parents=True)
+                recheck.parent.mkdir(parents=True, exist_ok=True)
                 recheck.write_text(
                     'on:\n  workflow_run:\n    types: [completed]\n    workflows:\n'
                     '      # BEGIN recheck-names\n      - "A"\n      # END recheck-names\n',
-                    encoding="utf-8",
+                    encoding="utf-8", newline="\n",
                 )
             (candidate / gate.RECHECK).write_text(
                 'on:\n  workflow_run:\n    types: [completed]\n    workflows:\n'
                 '      # BEGIN recheck-names\n      - "Other"\n      # END recheck-names\n',
-                encoding="utf-8",
+                encoding="utf-8", newline="\n",
             )
             def policy(_, __, source, ___):
                 return {"entries": {".github/workflows/a.yml":
