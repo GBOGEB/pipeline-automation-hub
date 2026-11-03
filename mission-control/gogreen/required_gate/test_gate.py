@@ -716,12 +716,13 @@ if __name__ == "__main__":
 
 
 class RecheckStormControl(unittest.TestCase):
-    def test_concurrency_cancels_overlaps_but_does_not_prevent_workflow_run_events(self):
-        """Cancellation reduces overlapping jobs but NOT the number of triggered workflow runs."""
+    def test_each_eligible_completion_can_execute_without_cancellation(self):
+        """Noncancelling per-event jobs preserve genuine RED recovery; no event-rate claim."""
         workflow = yaml.safe_load((ROOT / g.RECHECK).read_text(encoding="utf-8"))
         concurrency = workflow["concurrency"]
-        self.assertIn("github.event.workflow_run.head_sha", concurrency["group"])
-        self.assertIs(concurrency["cancel-in-progress"], True)
+        self.assertIn("github.event.workflow_run.id", concurrency["group"])
+        self.assertIn("github.event.workflow_run.run_attempt", concurrency["group"])
+        self.assertIs(concurrency["cancel-in-progress"], False)
         job = workflow["jobs"]["recheck"]
         self.assertEqual(job["permissions"]["actions"], "write")
         self.assertEqual(workflow["permissions"]["contents"], "read")
