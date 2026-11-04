@@ -209,8 +209,8 @@ jobs:
       - name: Collection parity guard per family
         # EXPECTED_MIN per family = local `pytest --collect-only` at 8fbf7347 (Python 3.12.7, both
         # on Windows and in a clean venv with requirements.txt), 735 in total. Skipped tests are
-        # still collected, so the floor is the same on both OSes. tests-root pins PD-GPAH-001
-        # (w19 burndown.html is a tool-error string) as 3 strict expected failures.
+        # still collected, so the floor is the same on both OSes. tests-root requires the W19 source-bound
+        # regenerated HTML and explicitly forbids retained expected failures.
         run: |
           set -uo pipefail
           bad=0
@@ -225,7 +225,7 @@ jobs:
           g mc-runner-economics --expected-min 11
           g mc-v2 --expected-min 70
           g scripts --expected-min 76 --max-skips "${{ matrix.scripts_skips }}"
-          g tests-root --expected-min 20 --expect-xfail 3
+          g tests-root --expected-min 22 --expect-xfail 0
           test "$bad" = 0
           test "$PYTEST_RC" = 0
       - name: Upload JUnit and parity receipts
