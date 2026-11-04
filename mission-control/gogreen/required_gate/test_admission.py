@@ -134,6 +134,78 @@ class Ledger(unittest.TestCase):
         self.assertEqual(a.resolve_runtime("not a ref"), "UNRESOLVED")
 
 
+
+class OwnerHold(unittest.TestCase):
+    """Disjoint admission-census lane: no owner permission is inferred from telemetry."""
+
+    @staticmethod
+    def fixture():
+        previous = {"schema": g.ADMISSION_SCHEMA, "ledger_sha256": "f" * 64, "entries": [
+            {"path": "a.yml", "disposition": g.ENFORCED},
+            {"path": "b.yml", "disposition": g.OBSERVED},
+            {"path": "c.yml", "disposition": g.EXCLUDED},
+        ]}
+        proposed = {"schema": g.ADMISSION_SCHEMA, "authority": {"merge_authorized": False},
+                    "coverage": {"enforced_of_pr_scoped": 4},
+                    "entries": [
+                        {"path": "a.yml", "disposition": g.ENFORCED, "reasons": ["INCUMBENT_RATCHET"]},
+                        {"path": "b.yml", "disposition": g.ENFORCED, "reasons": ["EVIDENCE_HEALTHY"]},
+                        {"path": "c.yml", "disposition": g.EXCLUDED, "reasons": ["NO_PULL_REQUEST_TRIGGER"]},
+                        {"path": "d.yml", "disposition": g.ENFORCED, "reasons": ["EVIDENCE_HEALTHY"]},
+                        {"path": "e.yml", "disposition": g.EXCLUDED, "reasons": ["NO_PULL_REQUEST_TRIGGER"]},
+                    ]}
+        return proposed, previous
+
+    def test_preserves_old_enforcement_and_holds_new_promotions(self):
+        proposed, previous = self.fixture()
+        held = a.hold_unapproved_changes(proposed, previous)
+        by = {e["path"]: e for e in held["entries"]}
+        self.assertEqual([by[f"{k}.yml"]["disposition"] for k in "abcde"],
+                         [g.ENFORCED, g.OBSERVED, g.EXCLUDED, g.OBSERVED, g.EXCLUDED])
+        self.assertEqual(held["counts"], {g.ENFORCED: 1, g.OBSERVED: 2, g.EXCLUDED: 2})
+        self.assertEqual(held["coverage"]["enforced_of_pr_scoped"], 1)
+        self.assertEqual(held["owner_review_hold"]["held_paths"], ["b.yml", "d.yml"])
+        self.assertEqual(held["owner_review_hold"]["new_entries"], 2)
+        self.assertIs(held["authority"]["merge_authorized"], False)
+        self.assertEqual(held["owner_review_hold"]["root_closure_credit"], 0)
+        digest = held.pop("ledger_sha256")
+        import hashlib
+        self.assertEqual(digest, hashlib.sha256(json.dumps(held, sort_keys=True).encode()).hexdigest())
+        self.assertEqual(proposed["entries"][1]["disposition"], g.ENFORCED)
+        self.assertEqual(previous["entries"][0]["disposition"], g.ENFORCED)
+
+    def test_rerun_is_deterministic_and_source_observation_unchanged(self):
+        proposed, previous = self.fixture()
+        p1 = a.hold_unapproved_changes(proposed, previous)
+        p2 = a.hold_unapproved_changes(proposed, previous)
+        self.assertEqual(p1, p2)
+        self.assertEqual(p1["owner_review_hold"]["previous_ledger_sha256"], "f" * 64)
+
+    def test_incumbent_demotion_is_rejected(self):
+        proposed, previous = self.fixture()
+        proposed["entries"][0]["disposition"] = g.EXCLUDED
+        with self.assertRaisesRegex(ValueError, "incumbent ENFORCED demotion"):
+            a.hold_unapproved_changes(proposed, previous)
+
+    def test_missing_or_repeated_workflows_are_rejected(self):
+        proposed, previous = self.fixture()
+        proposed["entries"] = proposed["entries"][1:]
+        with self.assertRaisesRegex(ValueError, "prior workflows missing"):
+            a.hold_unapproved_changes(proposed, previous)
+        proposed, previous = self.fixture()
+        proposed["entries"].append(dict(proposed["entries"][0]))
+        with self.assertRaisesRegex(ValueError, "repeated proposed"):
+            a.hold_unapproved_changes(proposed, previous)
+
+    def test_missing_previous_or_forged_authority_is_rejected(self):
+        proposed, previous = self.fixture()
+        with self.assertRaises(ValueError):
+            a.hold_unapproved_changes(proposed, None)
+        proposed["authority"]["merge_authorized"] = True
+        with self.assertRaisesRegex(ValueError, "non-authorizing"):
+            a.hold_unapproved_changes(proposed, previous)
+
+
 class Backtest(unittest.TestCase):
     def test_replay_uses_gate_logic_and_policies(self):
         with tempfile.TemporaryDirectory() as d:
