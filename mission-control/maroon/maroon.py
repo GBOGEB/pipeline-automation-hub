@@ -209,8 +209,9 @@ def build(raw: dict, review: dict | None = None) -> dict:
     totals = collections.Counter()
     for m in manifestations:
         totals[(m["source"], m["disposition"])] += 1
+    fetched_at = raw["fetched_at"] if raw["repos"] or not review else review["fetched_at"]  # a review-only read
     return {
-        "schema": SCHEMA, "programme": "CODE_MAROON", "owner": raw["owner"], "fetched_at": raw["fetched_at"],
+        "schema": SCHEMA, "programme": "CODE_MAROON", "owner": raw["owner"], "fetched_at": fetched_at,
         "closes_findings": False, "merge_authority": False,
         "totals": {s: {d: totals[(s, d)] for d in ("outstanding", "closed", "deferred")} for s in SOURCES},
         "roots_outstanding": sum(1 for r in roots if r["outstanding"]),

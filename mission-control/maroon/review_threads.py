@@ -62,6 +62,9 @@ THEMES = [
     ("ci-repro", r"workflow|\bci\b|runner|lockfile|\bnpm\b|\bpip\b|reproduc|deterministic"),
     ("security", r"secur|inject|\bsql\b|xss|csrf|ssrf|secret|credential|traversal|privilege|cve-\d|ghsa-|sanitiz|deserializ|shell=True"),
 ]
+# CodeQL's PR comments project code-scanning alerts that the `code_scanning` source already reads, with
+# their real state, from the alert API. Counting the threads too would count those findings twice.
+DEFERRED_FAMILIES = {"codeql"}
 SEVERITY = {"P0": "critical", "P1": "high", "P2": "medium", "P3": "low",
             "high": "high", "medium": "medium", "low": "low"}
 COPILOT_SEVERITY_RE = re.compile(r'alt="(High|Medium|Low) severity".*?discussion_r(\d+)')
@@ -190,13 +193,18 @@ def fetch(repos: list[str], limit: int, gh=run_gh, resolved=resolved_via_graphql
     for repo in repos:
         try:
             head = gh_json(gh, f"repos/{repo}/commits/HEAD")["sha"]  # L6: one head per pulse, recorded with the data
-            alerts, prs = [], recent_closed(gh, repo, limit)
+            alerts, prs, deferred = [], recent_closed(gh, repo, limit), 0
             for pr in prs:
                 comments = gh_json(gh, f"repos/{repo}/pulls/{pr['number']}/comments?per_page=100", paginate=True)
                 reviews = gh_json(gh, f"repos/{repo}/pulls/{pr['number']}/reviews?per_page=100", paginate=True)
-                alerts += threads_of(pr, comments, reviews, resolved(gh, repo, pr["number"]) if comments else set())
+                for thread in threads_of(pr, comments, reviews, resolved(gh, repo, pr["number"]) if comments else set()):
+                    if thread["reviewer_family"] in DEFERRED_FAMILIES:
+                        deferred += 1
+                    else:
+                        alerts.append(thread)
             window = [prs[-1].get("merged_at") or prs[-1].get("closed_at"), prs[0].get("merged_at") or prs[0].get("closed_at")] if prs else None
-            raw["repos"][repo] = {"coverage": "ok", "head_sha": head, "prs_read": len(prs), "window": window, "alerts": alerts}
+            raw["repos"][repo] = {"coverage": "ok", "head_sha": head, "prs_read": len(prs), "window": window, "alerts": alerts,
+                                  "threads_deferred_to_code_scanning": deferred}
         except (RuntimeError, FPC.GateError) as error:
             raw["repos"][repo] = {"coverage": "not_readable", "error": str(error)[:200]}
     return raw

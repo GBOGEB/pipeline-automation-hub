@@ -112,6 +112,10 @@ class Receipt(unittest.TestCase):
             self.assertNotIn(secret, text)
         self.assertIn("review_threads", text)
 
+    def test_review_only_build_takes_the_review_read_time(self):
+        receipt = M.build({"owner": "O", "fetched_at": "none", "repos": {}}, review_raw())
+        self.assertEqual(receipt["fetched_at"], "2026-11-04T19:00:00+00:00")
+
     def test_build_command_reads_the_review_file(self):
         with tempfile.TemporaryDirectory() as tmp:
             raw, review, out = Path(tmp) / "raw.json", Path(tmp) / "raw_review.json", Path(tmp) / "out"
@@ -145,6 +149,24 @@ class Fetch(unittest.TestCase):
         self.assertEqual((entry["coverage"], entry["head_sha"], entry["prs_read"]), ("ok", "d" * 40, 2))
         self.assertEqual(entry["window"], ["2026-11-01T00:00:00Z", "2026-11-04T18:00:00Z"])
         self.assertEqual(len(entry["alerts"]), 4)
+        self.assertEqual(entry["threads_deferred_to_code_scanning"], 0)
+
+    def test_codeql_threads_are_left_to_the_code_scanning_source(self):
+        codeql = comment(9, "github-advanced-security[bot]", "## Clear-text logging of sensitive information")
+
+        def gh(args):
+            path = args[1]
+            if path.endswith("commits/HEAD"):
+                return 0, json.dumps({"sha": "d" * 40}), ""
+            if "pulls?state=closed" in path:
+                return 0, json.dumps([PR] if path.endswith("&page=1") else []), ""
+            if path.endswith("/comments?per_page=100"):
+                return 0, json.dumps([COMMENTS + [codeql]]), ""
+            return 0, json.dumps([[]]), ""
+
+        entry = RT.fetch(["O/pub"], limit=1, gh=gh, resolved=lambda *a: set())["repos"]["O/pub"]
+        self.assertEqual(entry["threads_deferred_to_code_scanning"], 1)
+        self.assertNotIn(9, [t["number"] for t in entry["alerts"]])
 
     def test_unreadable_repo_is_a_gap_not_zero(self):
         raw = RT.fetch(["O/x"], limit=5, gh=lambda args: (1, "", "HTTP 404: Not Found"), resolved=lambda *a: set())
