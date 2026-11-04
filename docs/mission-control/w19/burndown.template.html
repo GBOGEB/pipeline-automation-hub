@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="source-path" content="docs/mission-control/w19/observations.json">
+<meta name="source-git-blob" content="__SOURCE_BLOB__">
+<title>W19 | Source-bound integer issue burndown</title>
+<style>
+:root{color-scheme:light;--ink:#291c39;--muted:#625a6e;--purple:#3c215b;--magenta:#ae347a;--border:#e5dae8;--paper:#fff;--wash:#faf6fa;--soft:#f0e7f0}
+*{box-sizing:border-box}body{margin:0;background:var(--wash);color:var(--ink);font:15px/1.55 Aptos,"Segoe UI",system-ui,sans-serif}
+main{width:min(1100px,calc(100% - 32px));margin:28px auto 64px}h1{font-size:clamp(1.55rem,3vw,2.4rem);line-height:1.1;margin:.2em 0 .5em}h2{font-size:1.14rem;margin:.2em 0 .65em}
+header{border-top:6px solid var(--purple);padding:24px 26px;background:var(--paper);border-radius:10px;box-shadow:0 1px 6px #22142c0e}
+.eyebrow{color:var(--magenta);font-weight:750;letter-spacing:.085em;font-size:.8rem;text-transform:uppercase}
+.lead{max-width:85ch;color:var(--muted);margin:0}.pill{display:inline-block;font-size:.76rem;border:1px solid #c5a5bc;color:#733c65;padding:2px 9px;border-radius:30px;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}
+.tile,.panel{border:1px solid var(--border);background:var(--paper);border-radius:10px;padding:18px}
+.tile small{display:block;color:var(--muted)}.tile strong{font-size:1.7rem;font-variant-numeric:tabular-nums}
+.panel{margin:16px 0 0}.panel p{color:var(--muted)}.row{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}
+.controls{display:flex;flex-wrap:wrap;gap:8px}
+button{cursor:pointer;background:var(--purple);color:#fff;border:1px solid var(--purple);border-radius:7px;padding:8px 12px;font:inherit;font-size:.9rem}
+button.secondary{background:#fff;color:var(--purple)}button:focus-visible,a:focus-visible{outline:3px solid var(--magenta);outline-offset:2px}
+#chart svg{width:100%;height:auto;display:block;overflow:visible}#plotly{min-height:300px}
+.legend{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:.86rem}
+.legend span:before{content:"";width:22px;display:inline-block;vertical-align:middle;border-top:3px solid var(--purple);margin-right:6px}
+.legend span.scenario:before{border-top:3px dashed var(--magenta)}
+table{border-collapse:collapse;width:100%;font-size:.88rem}th,td{text-align:left;padding:9px;border-bottom:1px solid var(--border);overflow-wrap:anywhere}th{background:#f5eaf1}
+.notice{border-left:4px solid var(--magenta);padding:7px 12px;background:var(--soft);font-size:.9rem}
+a{color:#743163}a:hover{text-decoration:none}
+@media(max-width:740px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}main{width:calc(100% - 20px);margin:10px auto}header{padding:18px}.panel{padding:13px}th,td{padding:7px 5px}}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="eyebrow">CODE PURPLE / W19 / Read-only source projection</div>
+  <h1>Integer issue burndown</h1>
+  <p class="lead">Historical snapshots from the 17 October 2026 governed issue census. Counts are tickets, not accepted engineering roots. Source identity and authority restrictions are retained.</p>
+  <p><span class="pill">MERGE_ADMISSION: HOLD</span> <span class="pill">No authority transfer</span></p>
+</header>
+<section class="grid" aria-label="Governed status">
+  <div class="tile"><small>Historic first observation</small><strong id="first">—</strong></div>
+  <div class="tile"><small>Historic latest observation</small><strong id="last">—</strong></div>
+  <div class="tile"><small>Current source membership</small><strong id="member">—</strong></div>
+  <div class="tile"><small>Engineering closure credit</small><strong>0</strong></div>
+</section>
+<section class="panel" aria-labelledby="chart-title">
+  <div class="row"><h2 id="chart-title">Observed tickets and separately gated scenarios</h2>
+  <div class="controls"><button id="show-scenario" type="button" aria-pressed="false">Show illustrative scenarios</button><button id="reset" class="secondary" type="button">Reset</button><button id="csv" class="secondary" type="button">Copy/export CSV</button></div></div>
+  <div class="legend"><span>Observed historical ticket counts</span><span class="scenario">Illustrative, not-observed</span></div>
+  <div id="chart" role="img" aria-label="Historical issue counts; integer only"></div>
+  <div id="plotly" hidden aria-hidden="true"></div>
+  <p class="notice">No-unblock plateau: 141 → 141 in the last two snapshots. Scenario paths are <strong>not a prediction</strong>, not-observed and not eligible for compliance or root-closure credit. They are hidden by default.</p>
+</section>
+<section class="panel"><h2>Source completeness and classifications</h2>
+<p id="source-summary"></p><p><strong>Controls:</strong> later-main qualification unknown; A10 HOLD; B9 unproven; protected-main / independent-review proof HOLD.</p>
+<div style="overflow-x:auto"><table><thead><tr><th>Historical sample cohort</th><th>Read-only source count</th><th>Required route</th></tr></thead><tbody id="cohorts"></tbody></table></div>
+</section>
+<section class="panel"><h2>Provenance and limitations</h2>
+<p>Governed input: <code>docs/mission-control/w19/observations.json</code>. Source Git blob: <code id="blob">__SOURCE_BLOB__</code>. Reconstructed renderer, not recovery of lost original HTML. No live API, mutation, forecasting or engineering acceptance. Historical 12 ticket closures are not twelve causal-root closures.</p>
+</section>
+</main>
+<script id="source-data" type="application/json">__SOURCE_JSON__</script>
+<script>
+"use strict";
+const d=JSON.parse(document.getElementById("source-data").textContent);
+const counts=d.counts, horizon=d.scenario.horizon;
+const chart=document.getElementById("chart");
+const scenarioBtn=document.getElementById("show-scenario");
+let showScenario=false;
+function addSvg(parent,tag,attributes,text){
+  const e=document.createElementNS("http://www.w3.org/2000/svg",tag);
+  for(const [k,v] of Object.entries(attributes||{}))e.setAttribute(k,String(v));
+  if(text!==undefined)e.textContent=String(text);
+  parent.appendChild(e);return e;
+}
+function drawSvg(){
+  chart.replaceChildren();
+  const width=900,height=360,left=63,right=22,top=22,bottom=55;
+  const chartW=width-left-right,chartH=height-top-bottom;
+  const future=showScenario?horizon:0;
+  const lower=showScenario?Math.min(...counts)-Math.max(...d.scenario.future_total_reductions):Math.min(...counts);
+  const min=Math.floor((lower-4)/2)*2,max=Math.ceil((Math.max(...counts)+4)/2)*2;
+  const ticks=[];for(let n=min;n<=max;n+=2)ticks.push(n);
+  const x=i=>left+(i/(counts.length-1+future))*chartW;
+  const y=n=>top+((max-n)/(max-min))*chartH;
+  const svg=addSvg(chart,"svg",{viewBox:"0 0 900 360",role:"img","aria-label":"Integer-only W19 historical issue burndown"});
+  addSvg(svg,"title",{},"W19 historical issue burndown. Last two counts 141 and 141. Scenarios are not observations.");
+  ticks.forEach(t=>{const yy=y(t);addSvg(svg,"line",{x1:left,y1:yy,x2:width-right,y2:yy,stroke:"#e7dce7"});
+    addSvg(svg,"text",{x:left-10,y:yy+4,"text-anchor":"end",fill:"#625a6e","font-size":12},t)});
+  const observed=counts.map((v,i)=>x(i)+","+y(v)).join(" ");
+  addSvg(svg,"polyline",{points:observed,fill:"none",stroke:"#3c215b","stroke-width":4,"stroke-linejoin":"round"});
+  counts.forEach((v,i)=>{
+    const p=addSvg(svg,"circle",{cx:x(i),cy:y(v),r:5,fill:"#3c215b",tabindex:0});
+    addSvg(p,"title",{},"Observed snapshot "+(i+1)+": "+v+" tickets");
+    addSvg(svg,"text",{x:x(i),y:height-24,"text-anchor":"middle",fill:"#625a6e","font-size":12},String(i+1));
+  });
+  if(showScenario){
+    const palette=["#ae347a","#c37191","#7f4a80"];
+    const logistic=z=>1/(1+Math.exp(-z));
+    const lo=logistic(-4),hi=logistic(4);
+    d.scenario.future_total_reductions.forEach((reduction,j)=>{
+      const pts=[x(counts.length-1)+","+y(counts[counts.length-1])];
+      for(let k=1;k<=horizon;k++){
+        const eased=(logistic(8*k/horizon-4)-lo)/(hi-lo);
+        const v=counts[counts.length-1]-Math.round(reduction*eased);
+        pts.push(x(counts.length-1+k)+","+y(v));
+      }
+      addSvg(svg,"polyline",{points:pts.join(" "),fill:"none",stroke:palette[j%palette.length],"stroke-width":2.5,"stroke-dasharray":"7 5"});
+      addSvg(svg,"text",{x:width-right-2,y:y(counts[counts.length-1]-reduction)-6,"text-anchor":"end",fill:palette[j%palette.length],"font-size":11},"Illustrative -"+reduction);
+    });
+  }
+  addSvg(svg,"text",{x:width/2,y:height-5,"text-anchor":"middle",fill:"#625a6e","font-size":13},"Historical snapshot index (scenario horizon is illustrative)");
+  addSvg(svg,"text",{transform:"translate(18 180) rotate(-90)","text-anchor":"middle",fill:"#625a6e","font-size":13},"Open issue tickets — integers");
+  // The optional Plotly adapter requires an explicitly local/bundled Plotly instance.
+  // The offline SVG remains fully functional when no Plotly library is installed.
+  if(typeof window.Plotly!=="undefined" && window.ENABLE_LOCAL_PLOTLY){
+    const p=document.getElementById("plotly");
+    p.hidden=false;chart.hidden=true;
+    window.Plotly.newPlot(p,[{x:counts.map((_,i)=>i+1),y:counts,mode:"lines+markers",
+      hovertemplate:"Snapshot %{x}: %{y:.0f} tickets<extra></extra>"}],
+      {yaxis:{tickmode:"array",tickvals:ticks,ticktext:ticks.map(String),title:"Tickets"},margin:{t:16,b:45}}, {displayModeBar:false});
+  }
+}
+function csv(){
+  let rows=["kind,snapshot,tickets"];
+  counts.forEach((v,i)=>rows.push("OBSERVED,"+(i+1)+","+v));
+  if(showScenario)rows.push("# ILLUSTRATIVE_NOT_FORECAST; scenario values deliberately excluded from observed CSV");
+  const blob=new Blob([rows.join("\n")+"\n"],{type:"text/csv"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;a.download="W19_observed_integer_burndown.csv";
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+scenarioBtn.addEventListener("click",()=>{showScenario=!showScenario;scenarioBtn.setAttribute("aria-pressed",String(showScenario));scenarioBtn.textContent=showScenario?"Hide illustrative scenarios":"Show illustrative scenarios";drawSvg()});
+document.getElementById("reset").addEventListener("click",()=>{showScenario=false;scenarioBtn.setAttribute("aria-pressed","false");scenarioBtn.textContent="Show illustrative scenarios";drawSvg()});
+document.getElementById("csv").addEventListener("click",csv);
+document.getElementById("first").textContent=counts[0];
+document.getElementById("last").textContent=counts[counts.length-1];
+document.getElementById("member").textContent=d.membership.current;
+document.getElementById("source-summary").textContent="Historical issue search: "+d.search.total+" complete records in "+d.search.pages.length+" pages; "+d.membership.retained+" retained, "+d.membership.added+" added, "+d.membership.removed+" removed, "+d.membership.updated_metadata+" metadata updates. Historical ticket closures: "+(d.historical_ticket_closures.dashboard_duplicates+d.historical_ticket_closures.dab_worker_items+d.historical_ticket_closures.closed_dashboard_canonical_ticket)+"; accepted causal roots: "+d.historical_ticket_closures.accepted_causal_roots_from_this_wave+".";
+const cohorts=d.triage.reduce((o,x)=>(o[x.cohort]=(o[x.cohort]||0)+1,o),{});
+for(const [k,label] of [["HOT","Priority source return"],["COLD","Follow-up/owner route"],["GATE","Governance/engineering gate"]]){
+ const tr=document.createElement("tr");
+ for(const value of [k,cohorts[k]||0,label]){const td=document.createElement("td");td.textContent=value;tr.appendChild(td)}
+ document.getElementById("cohorts").appendChild(tr);
+}
+drawSvg();
+</script>
+</body>
+</html>
