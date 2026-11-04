@@ -142,7 +142,6 @@ class TodoContinuityTests(unittest.TestCase):
         links["intent_links"][0]["revision_evidence_url"] = "https://github.com/GBOGEB/pipeline-automation-hub/issues/358"
         self.assertEqual("PASS_LINEAGE_ONLY_NOT_ADMISSION", mod.reconcile(self.before, later, links)["acceptance"])
 
-
     def test_manifest_privacy_and_main_admission_markers_fail_closed(self):
         for key, bad in (("verbatim_transcript_claim", True),
                          ("authority_transfer", True),
