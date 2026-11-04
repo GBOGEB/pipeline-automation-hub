@@ -30,6 +30,10 @@ jobs:
           python-version: '3.12'
       - name: Run CP.CLOSE negative/contract tests
         run: python -m unittest discover -s mission-control/v2/handoff/closeout -p 'test_cp_close.py' -v
+      - name: Verify TODO and intent continuity (native negative and real committed records)
+        env:
+          CP_TODO_REQUIRE_REAL_PACKET: '1'
+        run: python -m unittest discover -s mission-control/v2/handoff/closeout -p 'test_todo_continuity_guard.py' -v
       - name: Build, verify and optionally check committed closeout bytes
         shell: bash
         run: |
