@@ -7,43 +7,46 @@
  },
  "counts": {
   "ENFORCED": 100,
-  "EXCLUDED": 7,
-  "OBSERVED": 74
+  "EXCLUDED": 8,
+  "OBSERVED": 94
  },
  "coverage": {
-  "dispositioned": 181,
+  "dispositioned": 202,
   "enforced_of_pr_scoped": 100,
-  "pull_request_scoped": 175,
-  "with_any_evidence": 171,
+  "pull_request_scoped": 195,
+  "with_any_evidence": 176,
   "with_evidence": {
-   "master": 138,
-   "pr": 114
+   "master": 142,
+   "pr": 65
   },
-  "workflow_files": 181
+  "workflow_files": 202
  },
  "entries": [
   {
+   "demotion_candidate": [
+    "NONDETERMINISTIC_PR"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 41,
-     "latest_age_days": 0.6,
-     "latest_pr": 959,
-     "latest_sha": "b6751cda6c661454d3f3428ab4b65a1a3a805780",
+     "green_streak": 37,
+     "latest_age_days": 0.0,
+     "latest_pr": 1120,
+     "latest_sha": "0b75a1e59b996e52c0eb7ed91e57b84fcc8987fa",
      "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
+     "nondeterministic": true,
+     "rerun_rescues": 1,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "Actions pin ratchet",
    "node20_uses": [],
    "path": ".github/workflows/actions-pin-ratchet.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -61,9 +64,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 5,
-     "latest_age_days": 1.2,
-     "latest_sha": "3ed30b2b9ae53a24ec72780b4e01df484c0fb591",
+     "green_streak": 6,
+     "latest_age_days": 2.2,
+     "latest_sha": "75b7278f108dfda20c8ce1cbbb8459f2eb9ec790",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -94,7 +97,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 15.4,
+     "latest_age_days": 23.4,
      "latest_sha": "d4f203afd369559ddbff7e833e74f2a6b7a43f70",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -117,7 +120,43 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
+    "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 4,
+     "latest_age_days": 2.0,
+     "latest_pr": 1101,
+     "latest_sha": "f50e409754badd9c427fe75f841898eeb64306f3",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "JADE CI Bundle Shadow (read-only)",
+   "node20_uses": [],
+   "path": ".github/workflows/ci-bundle-shadow.yml",
+   "proposed_disposition": "ENFORCED",
+   "reasons": [
+    "OWNER_PROMOTION_PENDING"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -128,9 +167,9 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 1.6,
-     "latest_pr": 851,
-     "latest_sha": "4c9bc39f96a211b9b7e0ebffa0296e4cdace21df",
+     "latest_age_days": 4.6,
+     "latest_pr": 1012,
+     "latest_sha": "3e558837f24e272e8d40fe82cc783b28379d09ec",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -138,9 +177,9 @@
     }
    },
    "incumbent": false,
-   "name": "CODE PURPLE ABACUS MIP Readonly Consumer",
+   "name": "JADE Candidate Title Crosswalk (advisory)",
    "node20_uses": [],
-   "path": ".github/workflows/code-purple-abacus-mip-readonly.yml",
+   "path": ".github/workflows/ci-bundle-title-shadow.yml",
    "reasons": [
     "GREEN_STREAK_SHORT"
    ],
@@ -150,9 +189,144 @@
     "pull_request": true,
     "types": null
    },
+   "uses": []
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 4,
+     "latest_age_days": 0.5,
+     "latest_pr": 1112,
+     "latest_sha": "4885daa9305ad4811845a6c92859f7b6d9252a4d",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "test(ci-spine): provenance explorer QA",
+   "node20_uses": [],
+   "path": ".github/workflows/ci-spine-explorer-qa.yml",
+   "reasons": [
+    "DECLARED_INFORMATIONAL"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
+    "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 41,
+     "latest_age_days": 0.5,
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 35,
+     "latest_age_days": 0.0,
+     "latest_pr": 1120,
+     "latest_sha": "0b75a1e59b996e52c0eb7ed91e57b84fcc8987fa",
+     "merged_red_prs": 0,
+     "nondeterministic": true,
+     "rerun_rescues": 1,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "CI Spine Source-Bound QA",
+   "node20_uses": [],
+   "path": ".github/workflows/ci-spine-governed-qa.yml",
+   "reasons": [
+    "NONDETERMINISTIC_PR"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
+    "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 2.0,
+     "latest_pr": 1101,
+     "latest_sha": "f50e409754badd9c427fe75f841898eeb64306f3",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "CODE MAROON runner",
+   "node20_uses": [],
+   "path": ".github/workflows/code-maroon-runner.yml",
+   "proposed_disposition": "ENFORCED",
+   "reasons": [
+    "OWNER_PROMOTION_PENDING"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "CODE PURPLE ABACUS MIP Readonly Consumer",
+   "node20_uses": [],
+   "path": ".github/workflows/code-purple-abacus-mip-readonly.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -163,8 +337,20 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 2.8,
+     "latest_pr": 1073,
+     "latest_sha": "a1a71f96ecf7bea5e6cea76c84b281dfe9c8897b",
+     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -174,8 +360,9 @@
    "name": "CODE PURPLE CBQ CH-BD Readonly Pulse",
    "node20_uses": [],
    "path": ".github/workflows/code-purple-cbq-ch-bd-pulse.yml",
+   "proposed_disposition": "ENFORCED",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "OWNER_DISPOSITION_PENDING"
    ],
    "trigger": {
     "branches": null,
@@ -185,32 +372,22 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "demotion_candidate": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
    "disposition": "ENFORCED",
-   "evidence": {
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.0,
-     "latest_pr": 919,
-     "latest_sha": "5794f7ad6ffa52e77868ef7834b38884398beaa7",
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
-   "incumbent": false,
+   "evidence": {},
+   "incumbent": true,
    "name": "CODE PURPLE Governed Landing Readback (advisory HOLD only)",
    "node20_uses": [],
    "path": ".github/workflows/code-purple-governed-landing-readback.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -220,7 +397,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -231,23 +408,11 @@
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
-     "class": "GREEN_TO_RED",
+     "class": "EVERRED",
      "current": "RED",
      "green_streak": 0,
      "latest_age_days": 0.0,
-     "latest_sha": "fd7e8177c2a24ee784f2f6211a00e5d909a41203",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.9,
-     "latest_pr": 921,
-     "latest_sha": "ea3f76f00312b9c08fca9e4e3c8d469ebbb57b0c",
-     "merged_red_prs": 0,
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -269,31 +434,22 @@
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
     "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "demotion_candidate": [
+    "NOT_EXERCISED_RECENTLY"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 2,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -304,7 +460,7 @@
    "node20_uses": [],
    "path": ".github/workflows/code-purple-m3-lossless.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -314,33 +470,37 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "demotion_candidate": [
+    "RED_NOW_PR",
+    "NONDETERMINISTIC_PR"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "FLAKY",
      "current": "GREEN",
-     "green_streak": 56,
-     "latest_age_days": 0.6,
-     "latest_sha": "84a375e218cd897c6b4892133623068e1465d1fa",
+     "green_streak": 93,
+     "latest_age_days": 0.5,
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     },
     "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 32,
-     "latest_age_days": 0.6,
-     "latest_pr": 966,
-     "latest_sha": "b07578500c458ae6d969b63f8d9f1ffa80bf524f",
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
+     "class": "GREEN_TO_RED",
+     "current": "RED",
+     "green_streak": 0,
+     "latest_age_days": 0.5,
+     "latest_pr": 1115,
+     "latest_sha": "2b5833f49a5be438ba7926d63b6a0679ab165fcd",
+     "merged_red_prs": 2,
+     "nondeterministic": true,
+     "rerun_rescues": 1,
      "same_head_disagreements": 0
     }
    },
@@ -349,7 +509,7 @@
    "node20_uses": [],
    "path": ".github/workflows/code-purple-method-atlas.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -359,10 +519,10 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b",
+    "actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d",
     "actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346",
     "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9",
     "actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9"
    ]
@@ -373,21 +533,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 7,
-     "latest_age_days": 1.3,
-     "latest_sha": "c6024cb6f60d3f1931bb6622f2dfd5e3b826da57",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
-     "merged_red_prs": 0,
+     "green_streak": 8,
+     "latest_age_days": 4.8,
+     "latest_sha": "1328baf794a7f3f0c2eea6bcf6109d8364d5f4f4",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -408,7 +556,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -419,20 +567,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -443,6 +579,7 @@
    "node20_uses": [],
    "path": ".github/workflows/code-purple-session-hook.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -453,32 +590,22 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "demotion_candidate": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
    "disposition": "ENFORCED",
-   "evidence": {
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.2,
-     "latest_pr": 902,
-     "latest_sha": "c384d23877330eaa682f5e2176ee396818b3761f",
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
-   "incumbent": false,
+   "evidence": {},
+   "incumbent": true,
    "name": "CODE PURPLE Watch N2 source-bound flightdeck QA",
    "node20_uses": [],
    "path": ".github/workflows/code-purple-watch-flightdeck-qa.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -488,7 +615,54 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
+    "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 15,
+     "latest_age_days": 0.5,
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "FLAKY",
+     "current": "GREEN",
+     "green_streak": 17,
+     "latest_age_days": 0.0,
+     "latest_pr": 1120,
+     "latest_sha": "0b75a1e59b996e52c0eb7ed91e57b84fcc8987fa",
+     "merged_red_prs": 2,
+     "nondeterministic": true,
+     "rerun_rescues": 1,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Coverage Waves Collection",
+   "node20_uses": [],
+   "path": ".github/workflows/coverage-waves.yml",
+   "reasons": [
+    "NONDETERMINISTIC_PR"
+   ],
+   "trigger": {
+    "branches": [
+     "master"
+    ],
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -498,9 +672,9 @@
     "master": {
      "class": "RED_TO_GREEN",
      "current": "GREEN",
-     "green_streak": 14,
-     "latest_age_days": 1.0,
-     "latest_sha": "52101559277cd5efe10ef666b82d381b4562476c",
+     "green_streak": 17,
+     "latest_age_days": 2.8,
+     "latest_sha": "cecbd1ffeadacb762e3e2430618df18b5dca642f",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -508,10 +682,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 4,
-     "latest_age_days": 1.0,
-     "latest_pr": 885,
-     "latest_sha": "9188a5422cfb655ae41019c00f47a1e1eefac1e5",
+     "green_streak": 2,
+     "latest_age_days": 2.8,
+     "latest_pr": 1073,
+     "latest_sha": "a1a71f96ecf7bea5e6cea76c84b281dfe9c8897b",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -533,7 +707,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -543,10 +717,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 4,
-     "latest_age_days": 1.0,
-     "latest_pr": 885,
-     "latest_sha": "9188a5422cfb655ae41019c00f47a1e1eefac1e5",
+     "green_streak": 2,
+     "latest_age_days": 2.8,
+     "latest_pr": 1073,
+     "latest_sha": "a1a71f96ecf7bea5e6cea76c84b281dfe9c8897b",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -568,7 +742,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -578,21 +752,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 6,
-     "latest_age_days": 1.0,
-     "latest_sha": "52101559277cd5efe10ef666b82d381b4562476c",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.0,
-     "latest_pr": 885,
-     "latest_sha": "9188a5422cfb655ae41019c00f47a1e1eefac1e5",
-     "merged_red_prs": 0,
+     "green_streak": 7,
+     "latest_age_days": 4.8,
+     "latest_sha": "1328baf794a7f3f0c2eea6bcf6109d8364d5f4f4",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -613,7 +775,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -624,20 +786,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 61,
-     "latest_age_days": 0.9,
+     "latest_age_days": 8.9,
      "latest_sha": "7063a02fcbfa23e49d7dbf8074b96172eb48baa1",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.9,
-     "latest_pr": 933,
-     "latest_sha": "2a3ea872a2e959b8c7010f70066794544b495282",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -670,26 +820,14 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 43,
-     "latest_age_days": 0.9,
+     "latest_age_days": 8.9,
      "latest_sha": "7063a02fcbfa23e49d7dbf8074b96172eb48baa1",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.9,
-     "latest_pr": 933,
-     "latest_sha": "2a3ea872a2e959b8c7010f70066794544b495282",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "Crew Exposure Instrumentation",
    "node20_uses": [],
    "path": ".github/workflows/crew-exposure-instrumentation.yml",
@@ -714,7 +852,7 @@
      "class": "GREEN_TO_RED",
      "current": "RED",
      "green_streak": 0,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -748,20 +886,8 @@
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 43,
-     "latest_age_days": 0.9,
+     "latest_age_days": 8.9,
      "latest_sha": "7063a02fcbfa23e49d7dbf8074b96172eb48baa1",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 0.9,
-     "latest_pr": 933,
-     "latest_sha": "2a3ea872a2e959b8c7010f70066794544b495282",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -789,26 +915,17 @@
    ]
   },
   {
+   "demotion_candidate": [
+    "GREEN_STREAK_SHORT"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
-     "class": "STABLE_GREEN",
+     "class": "RED_TO_GREEN",
      "current": "GREEN",
-     "green_streak": 8,
-     "latest_age_days": 0.9,
-     "latest_sha": "3c9a2d896fbe80d758f5323fd9359bcfe4c9a210",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 0.9,
-     "latest_pr": 921,
-     "latest_sha": "ea3f76f00312b9c08fca9e4e3c8d469ebbb57b0c",
-     "merged_red_prs": 0,
+     "green_streak": 1,
+     "latest_age_days": 1.6,
+     "latest_sha": "908a34cf54cdd19c15730bf3931515e6a4642833",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -819,7 +936,7 @@
    "node20_uses": [],
    "path": ".github/workflows/crew-pc3-conditional-bt.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": [
@@ -832,7 +949,7 @@
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
     "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -842,21 +959,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 10,
-     "latest_age_days": 3.7,
-     "latest_sha": "1662606b98348ec84e5661d0fe7a311637f2680d",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
+     "green_streak": 11,
+     "latest_age_days": 4.8,
+     "latest_sha": "1328baf794a7f3f0c2eea6bcf6109d8364d5f4f4",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -879,31 +984,18 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {
-    "pr": {
-     "class": "EVERRED",
-     "current": "RED",
-     "green_streak": 0,
-     "latest_age_days": 0.9,
-     "latest_pr": 921,
-     "latest_sha": "ea3f76f00312b9c08fca9e4e3c8d469ebbb57b0c",
-     "merged_red_prs": 1,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": false,
    "name": "MissionControl Crew Skill Federated Pulse",
    "node20_uses": [],
    "path": ".github/workflows/crew-skill-federated-pulse.yml",
    "reasons": [
-    "RED_NOW_PR"
+    "NO_TERMINAL_EVIDENCE"
    ],
    "trigger": {
     "branches": [
@@ -921,26 +1013,13 @@
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 1.6,
-     "latest_pr": 851,
-     "latest_sha": "4c9bc39f96a211b9b7e0ebffa0296e4cdace21df",
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": false,
    "name": "MissionControl Crew Skill Resolution",
    "node20_uses": [],
    "path": ".github/workflows/crew-skill-resolution.yml",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "NO_TERMINAL_EVIDENCE"
    ],
    "trigger": {
     "branches": [
@@ -962,20 +1041,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.9,
-     "latest_pr": 933,
-     "latest_sha": "2a3ea872a2e959b8c7010f70066794544b495282",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -986,6 +1053,7 @@
    "node20_uses": [],
    "path": ".github/workflows/crew-telemetry-role-gap.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -1008,21 +1076,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 61,
+     "green_streak": 76,
      "latest_age_days": 0.1,
-     "latest_sha": "70bb16b0bad5863177b8b11772b0722c6ee2ee78",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.9,
-     "latest_pr": 921,
-     "latest_sha": "ea3f76f00312b9c08fca9e4e3c8d469ebbb57b0c",
-     "merged_red_prs": 0,
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1055,21 +1111,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 65,
+     "green_streak": 75,
      "latest_age_days": 0.1,
-     "latest_sha": "70bb16b0bad5863177b8b11772b0722c6ee2ee78",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.9,
-     "latest_pr": 921,
-     "latest_sha": "ea3f76f00312b9c08fca9e4e3c8d469ebbb57b0c",
-     "merged_red_prs": 0,
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1100,26 +1144,14 @@
    "disposition": "OBSERVED",
    "evidence": {
     "master": {
-     "class": "STABLE_GREEN",
+     "class": "FLAKY",
      "current": "GREEN",
-     "green_streak": 94,
+     "green_streak": 11,
      "latest_age_days": 0.1,
-     "latest_sha": "70bb16b0bad5863177b8b11772b0722c6ee2ee78",
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
      "nondeterministic": true,
      "rerun_rescues": 0,
      "same_head_disagreements": 3
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 0.9,
-     "latest_pr": 921,
-     "latest_sha": "ea3f76f00312b9c08fca9e4e3c8d469ebbb57b0c",
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
     }
    },
    "incumbent": false,
@@ -1140,7 +1172,7 @@
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
     "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -1151,14 +1183,14 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 4,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "0d1c0571033d2ea8e7952d4ebc237ca70b219dce",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "MissionControl Temporal CONTROL Acceptance",
    "node20_uses": [],
    "path": ".github/workflows/crew-temporal-control-acceptance.yml",
@@ -1183,21 +1215,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 61,
+     "green_streak": 76,
      "latest_age_days": 0.1,
-     "latest_sha": "70bb16b0bad5863177b8b11772b0722c6ee2ee78",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.9,
-     "latest_pr": 921,
-     "latest_sha": "ea3f76f00312b9c08fca9e4e3c8d469ebbb57b0c",
-     "merged_red_prs": 0,
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1225,14 +1245,17 @@
    ]
   },
   {
+   "demotion_candidate": [
+    "NONDETERMINISTIC_PR"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 67,
-     "latest_age_days": 0.6,
-     "latest_sha": "8e10ff2dc3705c05ec2dd0903ff2141f5dc26d2a",
+     "green_streak": 108,
+     "latest_age_days": 0.0,
+     "latest_sha": "4945eec0470a1d400fe19fbbf453618d74c23995",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1240,13 +1263,13 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 41,
-     "latest_age_days": 0.6,
-     "latest_pr": 959,
-     "latest_sha": "b6751cda6c661454d3f3428ab4b65a1a3a805780",
+     "green_streak": 37,
+     "latest_age_days": 0.0,
+     "latest_pr": 1120,
+     "latest_sha": "0b75a1e59b996e52c0eb7ed91e57b84fcc8987fa",
      "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
+     "nondeterministic": true,
+     "rerun_rescues": 1,
      "same_head_disagreements": 0
     }
    },
@@ -1255,7 +1278,7 @@
    "node20_uses": [],
    "path": ".github/workflows/dependency-spine-peer-census.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -1265,7 +1288,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -1276,20 +1299,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1300,6 +1311,7 @@
    "node20_uses": [],
    "path": ".github/workflows/dependency-spine-temporal.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -1310,7 +1322,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -1320,9 +1332,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 10,
-     "latest_age_days": 3.7,
-     "latest_sha": "1662606b98348ec84e5661d0fe7a311637f2680d",
+     "green_streak": 11,
+     "latest_age_days": 4.8,
+     "latest_sha": "1328baf794a7f3f0c2eea6bcf6109d8364d5f4f4",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1330,10 +1342,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.5,
-     "latest_pr": 853,
-     "latest_sha": "597956c19f6ef5c873176f74859ec50de7c790b2",
+     "green_streak": 1,
+     "latest_age_days": 4.0,
+     "latest_pr": 1002,
+     "latest_sha": "a5fef725df8ddd77186bc6f3b712484c6405f980",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1355,31 +1367,18 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.7,
-     "latest_pr": 952,
-     "latest_sha": "8cc6d64264ad8103dd7131bacb6f9ba7c21e724b",
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": false,
    "name": "federation-exact-head-receipts",
    "node20_uses": [],
    "path": ".github/workflows/federation-exact-head-receipts.yml",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "NO_TERMINAL_EVIDENCE"
    ],
    "trigger": {
     "branches": null,
@@ -1389,21 +1388,21 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
    "disposition": "EXCLUDED",
    "evidence": {
     "master": {
-     "class": "EVERRED",
+     "class": "FLAKY",
      "current": "RED",
      "green_streak": 0,
-     "latest_age_days": 1.2,
-     "latest_sha": "3ed30b2b9ae53a24ec72780b4e01df484c0fb591",
-     "nondeterministic": false,
+     "latest_age_days": 0.0,
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
+     "nondeterministic": true,
      "rerun_rescues": 0,
-     "same_head_disagreements": 0
+     "same_head_disagreements": 3
     }
    },
    "incumbent": false,
@@ -1425,6 +1424,9 @@
    ]
   },
   {
+   "demotion_candidate": [
+    "NONDETERMINISTIC_PR"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "pr": {
@@ -1432,11 +1434,11 @@
      "current": "GREEN",
      "green_streak": 98,
      "latest_age_days": 0.0,
-     "latest_pr": 971,
-     "latest_sha": "09618f4e40646e6fc36529ce1ad4fdcb2982339d",
+     "latest_pr": 1120,
+     "latest_sha": "0b75a1e59b996e52c0eb7ed91e57b84fcc8987fa",
      "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
+     "nondeterministic": true,
+     "rerun_rescues": 2,
      "same_head_disagreements": 0
     }
    },
@@ -1445,7 +1447,7 @@
    "node20_uses": [],
    "path": ".github/workflows/first-pass-closure-proof.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": [
@@ -1466,7 +1468,7 @@
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 11,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1500,20 +1502,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1524,6 +1514,7 @@
    "node20_uses": [],
    "path": ".github/workflows/g3a-metric-consumer.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -1534,7 +1525,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -1545,7 +1536,7 @@
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 3.8,
+     "latest_age_days": 11.8,
      "latest_sha": "38b2d824ccbe171a194aeb39e30309619e9630dc",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -1567,7 +1558,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -1577,21 +1568,21 @@
     "master": {
      "class": "RED_TO_GREEN",
      "current": "GREEN",
-     "green_streak": 3,
-     "latest_age_days": 1.4,
-     "latest_sha": "57f08d221bc68f4e691591336ee49c71014fdbb0",
+     "green_streak": 5,
+     "latest_age_days": 0.5,
+     "latest_sha": "7abe0f0db90c1dd5988c544ba8492a97aab807a8",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     },
     "pr": {
-     "class": "RED_TO_GREEN",
+     "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 3,
-     "latest_age_days": 1.4,
-     "latest_pr": 865,
-     "latest_sha": "164ca71e2fc9e8d26cf0cf82459b8c154f829c2a",
-     "merged_red_prs": 1,
+     "green_streak": 1,
+     "latest_age_days": 0.5,
+     "latest_pr": 1117,
+     "latest_sha": "832ae742154a712f58f6670f4712a7ab5aa581db",
+     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1612,32 +1603,22 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "demotion_candidate": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
    "disposition": "ENFORCED",
-   "evidence": {
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.4,
-     "latest_pr": 865,
-     "latest_sha": "164ca71e2fc9e8d26cf0cf82459b8c154f829c2a",
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": true,
    "name": "MissionControl gg_MATH convergence read-only bridge",
    "node20_uses": [],
    "path": ".github/workflows/gg-math-convergence-bridge.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -1647,7 +1628,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -1657,21 +1638,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 5,
-     "latest_age_days": 3.7,
-     "latest_sha": "1662606b98348ec84e5661d0fe7a311637f2680d",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
+     "green_streak": 6,
+     "latest_age_days": 4.8,
+     "latest_sha": "1328baf794a7f3f0c2eea6bcf6109d8364d5f4f4",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1694,7 +1663,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
@@ -1703,21 +1672,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 9,
-     "latest_age_days": 3.7,
-     "latest_sha": "1662606b98348ec84e5661d0fe7a311637f2680d",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
+     "green_streak": 10,
+     "latest_age_days": 4.8,
+     "latest_sha": "1328baf794a7f3f0c2eea6bcf6109d8364d5f4f4",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1740,7 +1697,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -1750,27 +1707,15 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 8,
+     "green_streak": 17,
      "latest_age_days": 0.1,
-     "latest_sha": "70bb16b0bad5863177b8b11772b0722c6ee2ee78",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GM Evidence Binding Guard (read-only)",
    "node20_uses": [],
    "path": ".github/workflows/gm-evidence-binding.yml",
@@ -1785,7 +1730,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -1797,7 +1742,7 @@
      "current": "GREEN",
      "green_streak": 200,
      "latest_age_days": 0.0,
-     "latest_sha": "fd7e8177c2a24ee784f2f6211a00e5d909a41203",
+     "latest_sha": "4945eec0470a1d400fe19fbbf453618d74c23995",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1829,19 +1774,7 @@
      "current": "GREEN",
      "green_streak": 200,
      "latest_age_days": 0.0,
-     "latest_sha": "fd7e8177c2a24ee784f2f6211a00e5d909a41203",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.9,
-     "latest_pr": 933,
-     "latest_sha": "2a3ea872a2e959b8c7010f70066794544b495282",
-     "merged_red_prs": 0,
+     "latest_sha": "4945eec0470a1d400fe19fbbf453618d74c23995",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1873,7 +1806,7 @@
      "current": "GREEN",
      "green_streak": 200,
      "latest_age_days": 0.0,
-     "latest_sha": "fd7e8177c2a24ee784f2f6211a00e5d909a41203",
+     "latest_sha": "4945eec0470a1d400fe19fbbf453618d74c23995",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1901,11 +1834,11 @@
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
-     "class": "STABLE_GREEN",
+     "class": "RED_TO_GREEN",
      "current": "GREEN",
-     "green_streak": 200,
+     "green_streak": 110,
      "latest_age_days": 0.0,
-     "latest_sha": "fd7e8177c2a24ee784f2f6211a00e5d909a41203",
+     "latest_sha": "4945eec0470a1d400fe19fbbf453618d74c23995",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1937,7 +1870,7 @@
      "current": "GREEN",
      "green_streak": 200,
      "latest_age_days": 0.0,
-     "latest_sha": "fd7e8177c2a24ee784f2f6211a00e5d909a41203",
+     "latest_sha": "4945eec0470a1d400fe19fbbf453618d74c23995",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -1969,7 +1902,7 @@
      "current": "GREEN",
      "green_streak": 200,
      "latest_age_days": 0.0,
-     "latest_sha": "fd7e8177c2a24ee784f2f6211a00e5d909a41203",
+     "latest_sha": "4945eec0470a1d400fe19fbbf453618d74c23995",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2000,7 +1933,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 7,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2032,7 +1965,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 5,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2064,14 +1997,14 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 5,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GM Fleet 3PSTAR MIP v4",
    "node20_uses": [],
    "path": ".github/workflows/gm-fleet-3pstar-mip-v4.yml",
@@ -2096,20 +2029,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2120,6 +2041,7 @@
    "node20_uses": [],
    "path": ".github/workflows/gm-i-a-federation-sentinel.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -2132,7 +2054,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -2143,20 +2065,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2167,6 +2077,7 @@
    "node20_uses": [],
    "path": ".github/workflows/gm-i-a-multiclock-3pstar-mip.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -2179,7 +2090,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -2190,20 +2101,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2214,6 +2113,7 @@
    "node20_uses": [],
    "path": ".github/workflows/gm-i-a-multiclock-measurement.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -2226,7 +2126,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -2237,7 +2137,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2249,6 +2149,7 @@
    "node20_uses": [],
    "path": ".github/workflows/gm-i-b-cycle3-propagation-contract.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -2269,7 +2170,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2281,6 +2182,7 @@
    "node20_uses": [],
    "path": ".github/workflows/gm-i-b-cycle3-propagation-proof-relay.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -2303,8 +2205,8 @@
      "class": "EVERRED",
      "current": "RED",
      "green_streak": 0,
-     "latest_age_days": 0.8,
-     "latest_sha": "5d949f69aee14d8454fa536bfda0f4c1fc5eae74",
+     "latest_age_days": 2.3,
+     "latest_sha": "75b7278f108dfda20c8ce1cbbb8459f2eb9ec790",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2335,7 +2237,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2347,6 +2249,7 @@
    "node20_uses": [],
    "path": ".github/workflows/gm-i-b-fleet-sync.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -2367,20 +2270,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2391,6 +2282,7 @@
    "node20_uses": [],
    "path": ".github/workflows/gm-i-c-3pr-mip.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -2401,7 +2293,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -2412,20 +2304,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2436,6 +2316,7 @@
    "node20_uses": [],
    "path": ".github/workflows/gm-i-c-registration.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -2446,7 +2327,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -2457,7 +2338,7 @@
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 84,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2489,7 +2370,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2501,6 +2382,7 @@
    "node20_uses": [],
    "path": ".github/workflows/gm-iv-active8-promotion.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -2521,7 +2403,7 @@
      "class": "FLAKY",
      "current": "GREEN",
      "green_streak": 7,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2553,8 +2435,8 @@
      "class": "EVERRED",
      "current": "RED",
      "green_streak": 0,
-     "latest_age_days": 0.8,
-     "latest_sha": "5d949f69aee14d8454fa536bfda0f4c1fc5eae74",
+     "latest_age_days": 2.3,
+     "latest_sha": "75b7278f108dfda20c8ce1cbbb8459f2eb9ec790",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2585,7 +2467,7 @@
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 6,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2617,20 +2499,8 @@
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 98,
-     "latest_age_days": 0.9,
+     "latest_age_days": 8.9,
      "latest_sha": "7063a02fcbfa23e49d7dbf8074b96172eb48baa1",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.9,
-     "latest_pr": 933,
-     "latest_sha": "2a3ea872a2e959b8c7010f70066794544b495282",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2663,7 +2533,7 @@
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 105,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2695,7 +2565,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2707,6 +2577,7 @@
    "node20_uses": [],
    "path": ".github/workflows/gm-iv-post-active8-repeat-control.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -2727,7 +2598,7 @@
      "class": "GREEN_TO_RED",
      "current": "RED",
      "green_streak": 0,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2759,7 +2630,7 @@
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 6,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2790,9 +2661,9 @@
     "master": {
      "class": "RED_TO_GREEN",
      "current": "GREEN",
-     "green_streak": 3,
-     "latest_age_days": 1.1,
-     "latest_sha": "b565a5d53b21c4d434d3382b6e8be4e5995baf44",
+     "green_streak": 4,
+     "latest_age_days": 2.1,
+     "latest_sha": "75b7278f108dfda20c8ce1cbbb8459f2eb9ec790",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2824,21 +2695,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 6,
-     "latest_age_days": 3.7,
-     "latest_sha": "1662606b98348ec84e5661d0fe7a311637f2680d",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
+     "green_streak": 7,
+     "latest_age_days": 4.8,
+     "latest_sha": "1328baf794a7f3f0c2eea6bcf6109d8364d5f4f4",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2861,7 +2720,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -2872,8 +2731,8 @@
      "class": "FLAKY",
      "current": "RED",
      "green_streak": 0,
-     "latest_age_days": 0.6,
-     "latest_sha": "8e10ff2dc3705c05ec2dd0903ff2141f5dc26d2a",
+     "latest_age_days": 2.1,
+     "latest_sha": "75b7278f108dfda20c8ce1cbbb8459f2eb9ec790",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2905,15 +2764,15 @@
     "master": {
      "class": "RED_TO_GREEN",
      "current": "GREEN",
-     "green_streak": 5,
-     "latest_age_days": 3.7,
-     "latest_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
+     "green_streak": 7,
+     "latest_age_days": 0.1,
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GM-V Governor Readiness",
    "node20_uses": [],
    "path": ".github/workflows/gm-v-governor-readiness.yml",
@@ -2941,7 +2800,7 @@
      "current": "RED",
      "green_streak": 0,
      "latest_age_days": 0.1,
-     "latest_sha": "70bb16b0bad5863177b8b11772b0722c6ee2ee78",
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -2950,9 +2809,9 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 6,
-     "latest_age_days": 0.8,
-     "latest_pr": 945,
-     "latest_sha": "ea006a1bdb7a76b6386a0b919cd2786513a67ee9",
+     "latest_age_days": 0.0,
+     "latest_pr": 1120,
+     "latest_sha": "0b75a1e59b996e52c0eb7ed91e57b84fcc8987fa",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -2974,42 +2833,34 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "demotion_candidate": [
+    "NOT_EXERCISED_RECENTLY",
+    "GREEN_STREAK_SHORT"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GOGREEN G5 Federation Census",
    "node20_uses": [],
    "path": ".github/workflows/gogreen-federation.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -3019,7 +2870,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -3027,13 +2878,13 @@
    "disposition": "ENFORCED",
    "evidence": {
     "pr": {
-     "class": "STABLE_GREEN",
+     "class": "RED_TO_GREEN",
      "current": "GREEN",
-     "green_streak": 27,
-     "latest_age_days": 0.6,
-     "latest_pr": 960,
-     "latest_sha": "5de46019b0fccc287a829c79a122f8f7a942ee2b",
-     "merged_red_prs": 0,
+     "green_streak": 12,
+     "latest_age_days": 0.0,
+     "latest_pr": 1120,
+     "latest_sha": "0b75a1e59b996e52c0eb7ed91e57b84fcc8987fa",
+     "merged_red_prs": 1,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -3054,7 +2905,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -3062,13 +2913,13 @@
    "disposition": "ENFORCED",
    "evidence": {
     "pr": {
-     "class": "STABLE_GREEN",
+     "class": "RED_TO_GREEN",
      "current": "GREEN",
-     "green_streak": 27,
-     "latest_age_days": 0.6,
-     "latest_pr": 960,
-     "latest_sha": "5de46019b0fccc287a829c79a122f8f7a942ee2b",
-     "merged_red_prs": 0,
+     "green_streak": 12,
+     "latest_age_days": 0.0,
+     "latest_pr": 1120,
+     "latest_sha": "0b75a1e59b996e52c0eb7ed91e57b84fcc8987fa",
+     "merged_red_prs": 1,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -3089,42 +2940,34 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "demotion_candidate": [
+    "NOT_EXERCISED_RECENTLY",
+    "GREEN_STREAK_SHORT"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GOGREEN G1 Native Rollup and HTML",
    "node20_uses": [],
    "path": ".github/workflows/gogreen-g1-native-rollup.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -3134,42 +2977,34 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "demotion_candidate": [
+    "NOT_EXERCISED_RECENTLY",
+    "GREEN_STREAK_SHORT"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GOGREEN G10 Graph Visual QA and Coverage",
    "node20_uses": [],
    "path": ".github/workflows/gogreen-g10-graph-qa.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -3179,42 +3014,34 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "demotion_candidate": [
+    "NOT_EXERCISED_RECENTLY",
+    "GREEN_STREAK_SHORT"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GOGREEN G11 Cross-Lane Exact-Run Convergence",
    "node20_uses": [],
    "path": ".github/workflows/gogreen-g11-convergence.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -3224,7 +3051,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -3234,21 +3061,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 7,
-     "latest_age_days": 1.3,
-     "latest_sha": "c6024cb6f60d3f1931bb6622f2dfd5e3b826da57",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
-     "merged_red_prs": 0,
+     "green_streak": 8,
+     "latest_age_days": 4.8,
+     "latest_sha": "1328baf794a7f3f0c2eea6bcf6109d8364d5f4f4",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -3269,7 +3084,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -3277,13 +3092,13 @@
    "disposition": "ENFORCED",
    "evidence": {
     "pr": {
-     "class": "STABLE_GREEN",
+     "class": "RED_TO_GREEN",
      "current": "GREEN",
-     "green_streak": 26,
-     "latest_age_days": 0.6,
-     "latest_pr": 960,
-     "latest_sha": "5de46019b0fccc287a829c79a122f8f7a942ee2b",
-     "merged_red_prs": 0,
+     "green_streak": 12,
+     "latest_age_days": 0.0,
+     "latest_pr": 1120,
+     "latest_sha": "0b75a1e59b996e52c0eb7ed91e57b84fcc8987fa",
+     "merged_red_prs": 1,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -3308,37 +3123,29 @@
    ]
   },
   {
+   "demotion_candidate": [
+    "NOT_EXERCISED_RECENTLY",
+    "GREEN_STREAK_SHORT"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GOGREEN G5 Matched Coverage",
    "node20_uses": [],
    "path": ".github/workflows/gogreen-g5-coverage.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -3348,42 +3155,34 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "demotion_candidate": [
+    "NOT_EXERCISED_RECENTLY",
+    "GREEN_STREAK_SHORT"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GOGREEN G7 Native Success Temporal and SIPOC",
    "node20_uses": [],
    "path": ".github/workflows/gogreen-g7-success-graph.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -3393,42 +3192,34 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "demotion_candidate": [
+    "NOT_EXERCISED_RECENTLY",
+    "GREEN_STREAK_SHORT"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GOGREEN G8 Comparative Native N+1",
    "node20_uses": [],
    "path": ".github/workflows/gogreen-g8-comparative.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -3438,7 +3229,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -3449,20 +3240,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -3473,6 +3252,7 @@
    "node20_uses": [],
    "path": ".github/workflows/gogreen-g9-outcome-convergence.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -3483,7 +3263,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -3494,20 +3274,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -3518,6 +3286,7 @@
    "node20_uses": [],
    "path": ".github/workflows/gogreen-governed-executor.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -3528,76 +3297,81 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "demotion_candidate": [
+    "NONDETERMINISTIC_PR"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
-    "pr": {
+    "master": {
      "class": "FLAKY",
      "current": "GREEN",
-     "green_streak": 4,
-     "latest_age_days": 0.7,
-     "latest_pr": 861,
-     "latest_sha": "2b981403edb23024a904576d3b34136fd86e1cc3",
-     "merged_red_prs": 2,
+     "green_streak": 55,
+     "latest_age_days": 0.0,
+     "latest_sha": "4945eec0470a1d400fe19fbbf453618d74c23995",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "FLAKY",
+     "current": "GREEN",
+     "green_streak": 67,
+     "latest_age_days": 0.0,
+     "latest_pr": 1120,
+     "latest_sha": "0b75a1e59b996e52c0eb7ed91e57b84fcc8987fa",
+     "merged_red_prs": 14,
+     "nondeterministic": true,
+     "rerun_rescues": 2,
+     "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GOGREEN launcher",
    "node20_uses": [],
    "path": ".github/workflows/gogreen-launcher.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
-    "filter": "PATHS",
+    "filter": "ALL",
     "pull_request": true,
     "types": null
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
+   "demotion_candidate": [
+    "NOT_EXERCISED_RECENTLY",
+    "GREEN_STREAK_SHORT"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GOGREEN N3 Governed Three-Pulse Continuation",
    "node20_uses": [],
    "path": ".github/workflows/gogreen-n3-continuation.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -3607,7 +3381,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -3615,13 +3389,13 @@
    "disposition": "ENFORCED",
    "evidence": {
     "pr": {
-     "class": "STABLE_GREEN",
+     "class": "RED_TO_GREEN",
      "current": "GREEN",
-     "green_streak": 27,
-     "latest_age_days": 0.6,
-     "latest_pr": 960,
-     "latest_sha": "5de46019b0fccc287a829c79a122f8f7a942ee2b",
-     "merged_red_prs": 0,
+     "green_streak": 12,
+     "latest_age_days": 0.0,
+     "latest_pr": 1120,
+     "latest_sha": "0b75a1e59b996e52c0eb7ed91e57b84fcc8987fa",
+     "merged_red_prs": 1,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -3642,7 +3416,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -3653,19 +3427,19 @@
      "class": "FLAKY",
      "current": "RED",
      "green_streak": 0,
-     "latest_age_days": 0.0,
-     "latest_sha": "fd7e8177c2a24ee784f2f6211a00e5d909a41203",
+     "latest_age_days": 0.1,
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
      "nondeterministic": true,
      "rerun_rescues": 0,
-     "same_head_disagreements": 3
+     "same_head_disagreements": 4
     },
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 6,
-     "latest_age_days": 0.8,
-     "latest_pr": 945,
-     "latest_sha": "ea006a1bdb7a76b6386a0b919cd2786513a67ee9",
+     "green_streak": 5,
+     "latest_age_days": 0.5,
+     "latest_pr": 1113,
+     "latest_sha": "a3a4b2014030a8e658dfec8f0ba6b00a61108b5d",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3687,7 +3461,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -3697,27 +3471,15 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 15,
+     "green_streak": 34,
      "latest_age_days": 0.1,
-     "latest_sha": "70bb16b0bad5863177b8b11772b0722c6ee2ee78",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
-     "merged_red_prs": 0,
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GOGREEN Replay Lane (bounded)",
    "node20_uses": [],
    "path": ".github/workflows/gogreen-replay-lane.yml",
@@ -3732,7 +3494,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -3742,12 +3504,12 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 1,
+     "green_streak": 3,
      "latest_age_days": 0.0,
-     "latest_sha": "70bb16b0bad5863177b8b11772b0722c6ee2ee78",
-     "nondeterministic": false,
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
+     "nondeterministic": true,
      "rerun_rescues": 0,
-     "same_head_disagreements": 0
+     "same_head_disagreements": 1
     }
    },
    "incumbent": false,
@@ -3771,15 +3533,15 @@
    "disposition": "EXCLUDED",
    "evidence": {
     "pr": {
-     "class": "RED_TO_GREEN",
-     "current": "GREEN",
-     "green_streak": 93,
+     "class": "FLAKY",
+     "current": "RED",
+     "green_streak": 0,
      "latest_age_days": 0.0,
-     "latest_pr": 971,
-     "latest_sha": "09618f4e40646e6fc36529ce1ad4fdcb2982339d",
-     "merged_red_prs": 1,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
+     "latest_pr": 1120,
+     "latest_sha": "0b75a1e59b996e52c0eb7ed91e57b84fcc8987fa",
+     "merged_red_prs": 24,
+     "nondeterministic": true,
+     "rerun_rescues": 3,
      "same_head_disagreements": 0
     }
    },
@@ -3798,7 +3560,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -3806,12 +3568,12 @@
    "disposition": "OBSERVED",
    "evidence": {
     "pr": {
-     "class": "EVERRED",
-     "current": "RED",
-     "green_streak": 0,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 2.0,
+     "latest_pr": 1101,
+     "latest_sha": "f50e409754badd9c427fe75f841898eeb64306f3",
      "merged_red_prs": 1,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3819,11 +3581,12 @@
     }
    },
    "incumbent": false,
-   "name": "CBD Subtype Worker Orchestrator",
+   "name": "GOGREEN Root Recovery Frontier (read-only)",
    "node20_uses": [],
-   "path": ".github/workflows/gogreen-subtype-workers.yml",
+   "path": ".github/workflows/gogreen-root-frontier.yml",
+   "proposed_disposition": "ENFORCED",
    "reasons": [
-    "RED_NOW_PR"
+    "OWNER_PROMOTION_PENDING"
    ],
    "trigger": {
     "branches": null,
@@ -3833,7 +3596,63 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 2.0,
+     "latest_pr": 1101,
+     "latest_sha": "f50e409754badd9c427fe75f841898eeb64306f3",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "SIPOC N+2 scale qualification (advisory)",
+   "node20_uses": [],
+   "path": ".github/workflows/gogreen-sipoc-scale-gate.yml",
+   "proposed_disposition": "ENFORCED",
+   "reasons": [
+    "OWNER_PROMOTION_PENDING"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "CBD Subtype Worker Orchestrator",
+   "node20_uses": [],
+   "path": ".github/workflows/gogreen-subtype-workers.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -3845,19 +3664,7 @@
      "current": "RED",
      "green_streak": 0,
      "latest_age_days": 0.1,
-     "latest_sha": "70bb16b0bad5863177b8b11772b0722c6ee2ee78",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 4,
-     "latest_age_days": 0.9,
-     "latest_pr": 937,
-     "latest_sha": "995a21e945a341068e03c1b654e8d78cb70dfeb0",
-     "merged_red_prs": 0,
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -3878,18 +3685,21 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "demotion_candidate": [
+    "GREEN_STREAK_SHORT"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 3.9,
+     "latest_age_days": 11.9,
      "latest_sha": "18a04fb9901dd32ebead4be65254b4e21e9e029b",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3898,22 +3708,22 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
+     "green_streak": 1,
+     "latest_age_days": 3.5,
+     "latest_pr": 1065,
+     "latest_sha": "d52bc06e4c4658fa50512d078529e9cf12146bc2",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "GOGREEN TOP21 Merged Evidence Scanner",
    "node20_uses": [],
    "path": ".github/workflows/gogreen-top21-merged-evidence.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -3923,7 +3733,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -3934,7 +3744,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -3946,6 +3756,7 @@
    "node20_uses": [],
    "path": ".github/workflows/gogreen-top21-merged-outcomes.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -3961,26 +3772,13 @@
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": false,
    "name": "Golden Thread Control",
    "node20_uses": [],
    "path": ".github/workflows/golden-thread-control.yml",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "NO_TERMINAL_EVIDENCE"
    ],
    "trigger": {
     "branches": null,
@@ -3990,7 +3788,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
@@ -4000,20 +3798,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -4024,6 +3810,7 @@
    "node20_uses": [],
    "path": ".github/workflows/golden-thread-p4-fleet-import.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -4034,7 +3821,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -4045,7 +3832,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 26,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4077,20 +3864,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -4101,6 +3876,7 @@
    "node20_uses": [],
    "path": ".github/workflows/gt-bd-003-3pc-prepare.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -4111,7 +3887,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -4122,7 +3898,7 @@
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 12,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "0d1c0571033d2ea8e7952d4ebc237ca70b219dce",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4153,7 +3929,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4165,6 +3941,7 @@
    "node20_uses": [],
    "path": ".github/workflows/hm01-r3-dmaic-control.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -4187,7 +3964,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4199,6 +3976,7 @@
    "node20_uses": [],
    "path": ".github/workflows/hm01-r3-dmaic-kpi.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -4221,7 +3999,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4233,6 +4011,7 @@
    "node20_uses": [],
    "path": ".github/workflows/hm01-r3-dmaic-premerge.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -4255,7 +4034,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4267,6 +4046,7 @@
    "node20_uses": [],
    "path": ".github/workflows/hm01-r3-dmaic-w285-3pr.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -4283,15 +4063,15 @@
    ]
   },
   {
-   "disposition": "ENFORCED",
+   "disposition": "OBSERVED",
    "evidence": {
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 2,
-     "latest_age_days": 0.6,
-     "latest_pr": 957,
-     "latest_sha": "01ed7dc44a011bed37ed8db1727f4ee2149b5d32",
+     "latest_age_days": 2.0,
+     "latest_pr": 1101,
+     "latest_sha": "f50e409754badd9c427fe75f841898eeb64306f3",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4299,11 +4079,12 @@
     }
    },
    "incumbent": false,
-   "name": "Issue expedition triway burndown (read-only contract tests)",
+   "name": "HV03 Local Custody Offline QA",
    "node20_uses": [],
-   "path": ".github/workflows/issue-expedition.yml",
+   "path": ".github/workflows/hv03-local-custody-qa.yml",
+   "proposed_disposition": "ENFORCED",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "OWNER_PROMOTION_PENDING"
    ],
    "trigger": {
     "branches": null,
@@ -4313,7 +4094,44 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+   ]
+  },
+  {
+   "demotion_candidate": [
+    "GREEN_STREAK_SHORT"
+   ],
+   "disposition": "ENFORCED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 4.6,
+     "latest_pr": 988,
+     "latest_sha": "a66e5e65b314e010c90791fbd73d07f1b5c0fd2c",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": true,
+   "name": "Issue expedition triway burndown (read-only contract tests)",
+   "node20_uses": [],
+   "path": ".github/workflows/issue-expedition.yml",
+   "reasons": [
+    "INCUMBENT_RATCHET"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
@@ -4322,17 +4140,17 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 18,
-     "latest_age_days": 0.5,
-     "latest_pr": 934,
-     "latest_sha": "c02acfb50395859851b91cdda04fa77b6e507278",
+     "green_streak": 4,
+     "latest_age_days": 4.0,
+     "latest_pr": 981,
+     "latest_sha": "dea26031ea64ec8ffdd69a571b7cf636c640d207",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "Issue burndown ranking (read-only contract tests)",
    "node20_uses": [],
    "path": ".github/workflows/issue-rank.yml",
@@ -4347,30 +4165,18 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
    "disposition": "OBSERVED",
    "evidence": {
     "master": {
-     "class": "STABLE_GREEN",
+     "class": "RED_TO_GREEN",
      "current": "GREEN",
-     "green_streak": 1,
+     "green_streak": 6,
      "latest_age_days": 0.2,
-     "latest_sha": "70bb16b0bad5863177b8b11772b0722c6ee2ee78",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.6,
-     "latest_pr": 963,
-     "latest_sha": "05c8c8aa194a800e194c5fc054f23e7a651cc68b",
-     "merged_red_prs": 0,
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -4380,8 +4186,9 @@
    "name": "JADE CREW slow-burn disjoint proof lanes",
    "node20_uses": [],
    "path": ".github/workflows/jade-crew-slowburn.yml",
+   "proposed_disposition": "ENFORCED",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "OWNER_DISPOSITION_PENDING"
    ],
    "trigger": {
     "branches": null,
@@ -4391,7 +4198,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -4399,23 +4206,23 @@
    "disposition": "OBSERVED",
    "evidence": {
     "master": {
-     "class": "GREEN_TO_RED",
-     "current": "RED",
-     "green_streak": 0,
-     "latest_age_days": 0.7,
-     "latest_sha": "2e7dd0386e48ba93ff7346dc28f0f91f7fa92bde",
+     "class": "RED_TO_GREEN",
+     "current": "GREEN",
+     "green_streak": 16,
+     "latest_age_days": 0.5,
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     },
     "pr": {
-     "class": "GREEN_TO_RED",
-     "current": "RED",
-     "green_streak": 0,
-     "latest_age_days": 0.7,
-     "latest_pr": 956,
-     "latest_sha": "933ef0afd2ed6aaa13ff5fb3fd52cd9be48958a3",
-     "merged_red_prs": 1,
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 24,
+     "latest_age_days": 0.0,
+     "latest_pr": 1120,
+     "latest_sha": "0b75a1e59b996e52c0eb7ed91e57b84fcc8987fa",
+     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -4425,9 +4232,9 @@
    "name": "JADE N+9 DevOps census (read-only)",
    "node20_uses": [],
    "path": ".github/workflows/jade-devops-census.yml",
+   "proposed_disposition": "ENFORCED",
    "reasons": [
-    "RED_NOW_MASTER",
-    "RED_NOW_PR"
+    "OWNER_DISPOSITION_PENDING"
    ],
    "trigger": {
     "branches": null,
@@ -4437,32 +4244,22 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "demotion_candidate": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
    "disposition": "ENFORCED",
-   "evidence": {
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 4,
-     "latest_age_days": 1.0,
-     "latest_pr": 923,
-     "latest_sha": "9f5a26be35c9d22bef966d96c065e3101fcea145",
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
-   "incumbent": false,
+   "evidence": {},
+   "incumbent": true,
    "name": "JADE H01-H12 DoV preview and browser QA (read-only)",
    "node20_uses": [],
    "path": ".github/workflows/jade-gate12-preview.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -4472,7 +4269,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -4494,7 +4291,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -4515,7 +4312,7 @@
     "types": null
    },
    "uses": [
-    "actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b",
+    "actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d",
     "actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346",
     "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9",
@@ -4523,37 +4320,40 @@
    ]
   },
   {
+   "demotion_candidate": [
+    "RED_NOW_PR"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 2.7,
+     "latest_age_days": 10.6,
      "latest_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     },
     "pr": {
-     "class": "RED_TO_GREEN",
-     "current": "GREEN",
-     "green_streak": 3,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
-     "merged_red_prs": 1,
+     "class": "EVERRED",
+     "current": "RED",
+     "green_streak": 0,
+     "latest_age_days": 3.8,
+     "latest_pr": 1060,
+     "latest_sha": "a4ae310d5067fed61a3d8acca8db2d06c4ed4976",
+     "merged_red_prs": 2,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "JADE_CASTE N+3 point-release sprint readiness QA",
    "node20_uses": [],
    "path": ".github/workflows/jade-sprint-n3-qualification.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -4563,33 +4363,36 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "demotion_candidate": [
+    "NONDETERMINISTIC_PR"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
-     "class": "STABLE_GREEN",
+     "class": "FLAKY",
      "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 2.7,
-     "latest_sha": "737fdcea1e941366dce9d61aade011f652148eb9",
+     "green_streak": 42,
+     "latest_age_days": 0.0,
+     "latest_sha": "4945eec0470a1d400fe19fbbf453618d74c23995",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     },
     "pr": {
-     "class": "RED_TO_GREEN",
+     "class": "FLAKY",
      "current": "GREEN",
-     "green_streak": 31,
-     "latest_age_days": 0.6,
-     "latest_pr": 960,
-     "latest_sha": "5de46019b0fccc287a829c79a122f8f7a942ee2b",
-     "merged_red_prs": 1,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
+     "green_streak": 18,
+     "latest_age_days": 0.0,
+     "latest_pr": 1120,
+     "latest_sha": "0b75a1e59b996e52c0eb7ed91e57b84fcc8987fa",
+     "merged_red_prs": 6,
+     "nondeterministic": true,
+     "rerun_rescues": 1,
      "same_head_disagreements": 0
     }
    },
@@ -4598,7 +4401,7 @@
    "node20_uses": [],
    "path": ".github/workflows/jade-temple-readonly-qa.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -4608,12 +4411,13 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
    "demotion_candidate": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "disposition": "ENFORCED",
@@ -4622,7 +4426,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4653,9 +4457,9 @@
     "master": {
      "class": "FLAKY",
      "current": "GREEN",
-     "green_streak": 20,
-     "latest_age_days": 1.0,
-     "latest_sha": "52101559277cd5efe10ef666b82d381b4562476c",
+     "green_streak": 23,
+     "latest_age_days": 0.5,
+     "latest_sha": "7abe0f0db90c1dd5988c544ba8492a97aab807a8",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -4663,10 +4467,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 7,
-     "latest_age_days": 0.9,
-     "latest_pr": 921,
-     "latest_sha": "ea3f76f00312b9c08fca9e4e3c8d469ebbb57b0c",
+     "green_streak": 3,
+     "latest_age_days": 0.5,
+     "latest_pr": 1117,
+     "latest_sha": "832ae742154a712f58f6670f4712a7ab5aa581db",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4688,7 +4492,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -4699,7 +4503,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 8,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4733,7 +4537,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4745,6 +4549,7 @@
    "node20_uses": [],
    "path": ".github/workflows/lm11-qps-wave-federation-proof.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -4763,9 +4568,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 1.2,
-     "latest_sha": "2d12e3f810b00fca6ac03c0739b7a09a78a830bf",
+     "green_streak": 2,
+     "latest_age_days": 2.2,
+     "latest_sha": "75b7278f108dfda20c8ce1cbbb8459f2eb9ec790",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -4775,8 +4580,9 @@
    "name": "Master_Input Pipeline Runtime (read-only)",
    "node20_uses": [],
    "path": ".github/workflows/master-input-runtime.yml",
+   "proposed_disposition": "ENFORCED",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "OWNER_DISPOSITION_PENDING"
    ],
    "trigger": {
     "branches": null,
@@ -4786,19 +4592,22 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "demotion_candidate": [
+    "NONDETERMINISTIC_PR"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 8,
-     "latest_age_days": 1.4,
-     "latest_sha": "57f08d221bc68f4e691591336ee49c71014fdbb0",
+     "green_streak": 12,
+     "latest_age_days": 0.5,
+     "latest_sha": "7abe0f0db90c1dd5988c544ba8492a97aab807a8",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -4807,12 +4616,12 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 2,
-     "latest_age_days": 1.4,
-     "latest_pr": 865,
-     "latest_sha": "164ca71e2fc9e8d26cf0cf82459b8c154f829c2a",
+     "latest_age_days": 2.5,
+     "latest_pr": 1081,
+     "latest_sha": "4e222ece3348d5e9c21731e9e7d17c98bf9ccf2c",
      "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
+     "nondeterministic": true,
+     "rerun_rescues": 1,
      "same_head_disagreements": 0
     }
    },
@@ -4821,7 +4630,7 @@
    "node20_uses": [],
    "path": ".github/workflows/mc-makeover-launchpad-qa.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -4831,7 +4640,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -4842,7 +4651,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4854,6 +4663,7 @@
    "node20_uses": [],
    "path": ".github/workflows/mc-mip-consumer.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -4864,7 +4674,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -4875,7 +4685,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4887,6 +4697,7 @@
    "node20_uses": [],
    "path": ".github/workflows/mc-mip-maturity.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -4897,7 +4708,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -4908,7 +4719,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -4920,6 +4731,7 @@
    "node20_uses": [],
    "path": ".github/workflows/mc-mip-native-bridge.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -4930,7 +4742,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -4940,21 +4752,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 14,
-     "latest_age_days": 1.3,
-     "latest_sha": "c6024cb6f60d3f1931bb6622f2dfd5e3b826da57",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 3,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
-     "merged_red_prs": 0,
+     "green_streak": 15,
+     "latest_age_days": 4.8,
+     "latest_sha": "1328baf794a7f3f0c2eea6bcf6109d8364d5f4f4",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -4975,7 +4775,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -4985,21 +4785,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 10,
-     "latest_age_days": 1.3,
-     "latest_sha": "c6024cb6f60d3f1931bb6622f2dfd5e3b826da57",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
-     "merged_red_prs": 0,
+     "green_streak": 11,
+     "latest_age_days": 4.8,
+     "latest_sha": "1328baf794a7f3f0c2eea6bcf6109d8364d5f4f4",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5020,20 +4808,31 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {},
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 4.8,
+     "latest_pr": 924,
+     "latest_sha": "b7c8672c612251c11368ab3d56ee57a8bd1d55aa",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
    "incumbent": false,
    "name": "MCEX-W1 00 stage-only factorial branch",
-   "node20_uses": [
-    "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
-   ],
+   "node20_uses": [],
    "path": ".github/workflows/mcex-w1-00.yml",
    "reasons": [
-    "NO_TERMINAL_EVIDENCE"
+    "GREEN_STREAK_SHORT"
    ],
    "trigger": {
     "branches": null,
@@ -5043,21 +4842,32 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+    "actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {},
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 4.8,
+     "latest_pr": 924,
+     "latest_sha": "b7c8672c612251c11368ab3d56ee57a8bd1d55aa",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
    "incumbent": false,
    "name": "MCEX-W1 01 stage-only factorial branch",
-   "node20_uses": [
-    "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
-   ],
+   "node20_uses": [],
    "path": ".github/workflows/mcex-w1-01.yml",
    "reasons": [
-    "NO_TERMINAL_EVIDENCE"
+    "GREEN_STREAK_SHORT"
    ],
    "trigger": {
     "branches": null,
@@ -5067,21 +4877,32 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+    "actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {},
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 4.8,
+     "latest_pr": 924,
+     "latest_sha": "b7c8672c612251c11368ab3d56ee57a8bd1d55aa",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
    "incumbent": false,
    "name": "MCEX-W1 10 stage-only factorial branch",
-   "node20_uses": [
-    "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
-   ],
+   "node20_uses": [],
    "path": ".github/workflows/mcex-w1-10.yml",
    "reasons": [
-    "NO_TERMINAL_EVIDENCE"
+    "GREEN_STREAK_SHORT"
    ],
    "trigger": {
     "branches": null,
@@ -5091,21 +4912,32 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+    "actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {},
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 4.8,
+     "latest_pr": 924,
+     "latest_sha": "b7c8672c612251c11368ab3d56ee57a8bd1d55aa",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
    "incumbent": false,
    "name": "MCEX-W1 11 stage-only factorial branch",
-   "node20_uses": [
-    "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
-   ],
+   "node20_uses": [],
    "path": ".github/workflows/mcex-w1-11.yml",
    "reasons": [
-    "NO_TERMINAL_EVIDENCE"
+    "GREEN_STREAK_SHORT"
    ],
    "trigger": {
     "branches": null,
@@ -5115,7 +4947,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+    "actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -5126,20 +4958,8 @@
      "class": "FLAKY",
      "current": "GREEN",
      "green_streak": 11,
-     "latest_age_days": 0.9,
+     "latest_age_days": 8.9,
      "latest_sha": "7063a02fcbfa23e49d7dbf8074b96172eb48baa1",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.9,
-     "latest_pr": 933,
-     "latest_sha": "2a3ea872a2e959b8c7010f70066794544b495282",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5166,6 +4986,74 @@
    ]
   },
   {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "GREEN_TO_RED",
+     "current": "RED",
+     "green_streak": 0,
+     "latest_age_days": 0.5,
+     "latest_pr": 1114,
+     "latest_sha": "cb3cfe193a5b8bacb4a34e299e5395b6daebbbff",
+     "merged_red_prs": 1,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MIP H1 Canonical Recheck T1 Pilot",
+   "node20_uses": [],
+   "path": ".github/workflows/mip-h1-canonical-recheck-t1.yml",
+   "reasons": [
+    "RED_NOW_PR"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+   ]
+  },
+  {
+   "disposition": "EXCLUDED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 1.0,
+     "latest_pr": 1108,
+     "latest_sha": "58f1e386ea48f14904bc40632e01addcbe8c5acc",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "MIP H2 Receipt Selector Shadow Replay",
+   "node20_uses": [],
+   "path": ".github/workflows/mip-h2-recheck-shadow-replay.yml",
+   "reasons": [
+    "NO_PULL_REQUEST_TRIGGER"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "ALL",
+    "pull_request": false,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+   ]
+  },
+  {
    "demotion_candidate": [
     "GREEN_STREAK_SHORT"
    ],
@@ -5175,9 +5063,9 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.9,
-     "latest_pr": 921,
-     "latest_sha": "ea3f76f00312b9c08fca9e4e3c8d469ebbb57b0c",
+     "latest_age_days": 4.8,
+     "latest_pr": 924,
+     "latest_sha": "b7c8672c612251c11368ab3d56ee57a8bd1d55aa",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5186,9 +5074,7 @@
    },
    "incumbent": true,
    "name": "Mission Control M3 graph and portal contract",
-   "node20_uses": [
-    "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
-   ],
+   "node20_uses": [],
    "path": ".github/workflows/mission-control-m3-graph.yml",
    "reasons": [
     "INCUMBENT_RATCHET"
@@ -5202,19 +5088,22 @@
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
     "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333",
-    "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "demotion_candidate": [
+    "GREEN_STREAK_SHORT"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 3.6,
+     "latest_age_days": 11.6,
      "latest_sha": "1662606b98348ec84e5661d0fe7a311637f2680d",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5223,22 +5112,22 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 3,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
+     "green_streak": 1,
+     "latest_age_days": 0.5,
+     "latest_pr": 1117,
+     "latest_sha": "832ae742154a712f58f6670f4712a7ab5aa581db",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "Mission Control GM MACH-II Mycelium and MIP",
    "node20_uses": [],
    "path": ".github/workflows/mission-control-mach2-mip.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -5248,7 +5137,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -5259,7 +5148,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5269,9 +5158,9 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 1.6,
-     "latest_pr": 857,
-     "latest_sha": "99d3db8198394136e2c7f5e91448296bc4e7a9e3",
+     "latest_age_days": 4.8,
+     "latest_pr": 924,
+     "latest_sha": "b7c8672c612251c11368ab3d56ee57a8bd1d55aa",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5280,9 +5169,7 @@
    },
    "incumbent": false,
    "name": "Mission Control N11 Top-21 Census",
-   "node20_uses": [
-    "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
-   ],
+   "node20_uses": [],
    "path": ".github/workflows/mission-control-n11-census.yml",
    "reasons": [
     "GREEN_STREAK_SHORT"
@@ -5295,7 +5182,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+    "actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -5306,20 +5193,20 @@
      "class": "RED_TO_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.6,
+     "latest_age_days": 8.6,
      "latest_sha": "8e10ff2dc3705c05ec2dd0903ff2141f5dc26d2a",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     },
     "pr": {
-     "class": "RED_TO_GREEN",
+     "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.8,
-     "latest_pr": 938,
-     "latest_sha": "e324aef7f15598d5912b9c56ab56a91130acd54a",
-     "merged_red_prs": 3,
+     "latest_age_days": 0.5,
+     "latest_pr": 1117,
+     "latest_sha": "832ae742154a712f58f6670f4712a7ab5aa581db",
+     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5340,7 +5227,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -5350,27 +5237,15 @@
     "master": {
      "class": "RED_TO_GREEN",
      "current": "GREEN",
-     "green_streak": 7,
-     "latest_age_days": 1.3,
-     "latest_sha": "c6024cb6f60d3f1931bb6622f2dfd5e3b826da57",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
-     "merged_red_prs": 0,
+     "green_streak": 8,
+     "latest_age_days": 4.8,
+     "latest_sha": "1328baf794a7f3f0c2eea6bcf6109d8364d5f4f4",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "Mission Control N3 Evidence Metrics",
    "node20_uses": [],
    "path": ".github/workflows/mission-control-n3-evidence.yml",
@@ -5385,7 +5260,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -5395,9 +5270,9 @@
     "master": {
      "class": "FLAKY",
      "current": "GREEN",
-     "green_streak": 44,
-     "latest_age_days": 0.8,
-     "latest_sha": "4a42b8c25b43e5c6fb129be2270b35cf363a9285",
+     "green_streak": 49,
+     "latest_age_days": 2.8,
+     "latest_sha": "cecbd1ffeadacb762e3e2430618df18b5dca642f",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5405,10 +5280,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 5,
-     "latest_age_days": 0.8,
-     "latest_pr": 938,
-     "latest_sha": "e324aef7f15598d5912b9c56ab56a91130acd54a",
+     "green_streak": 3,
+     "latest_age_days": 2.8,
+     "latest_pr": 1073,
+     "latest_sha": "a1a71f96ecf7bea5e6cea76c84b281dfe9c8897b",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5439,9 +5314,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 7,
-     "latest_age_days": 1.3,
-     "latest_sha": "c6024cb6f60d3f1931bb6622f2dfd5e3b826da57",
+     "green_streak": 10,
+     "latest_age_days": 4.7,
+     "latest_sha": "f8e85045c989cad901f3621a3f2bfe662a34f3da",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5449,10 +5324,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
+     "green_streak": 1,
+     "latest_age_days": 4.7,
+     "latest_pr": 1048,
+     "latest_sha": "354eb47b428d714ebcf468d31e7e7153537dfc9d",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5474,7 +5349,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -5484,9 +5359,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 1,
+     "green_streak": 9,
      "latest_age_days": 0.2,
-     "latest_sha": "70bb16b0bad5863177b8b11772b0722c6ee2ee78",
+     "latest_sha": "e596c5297cedaa46fcdb4e7b14a3fb49c2f09a48",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5494,10 +5369,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.6,
-     "latest_pr": 961,
-     "latest_sha": "1e6f8a9d03c871a0f5835d6a80177ade07cfcf75",
+     "green_streak": 6,
+     "latest_age_days": 2.0,
+     "latest_pr": 1100,
+     "latest_sha": "d6a1f8b107cb36da7327eeeaaa7fe653bbe1ca51",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5506,12 +5381,11 @@
    },
    "incumbent": false,
    "name": "MissionControl CREW slow-burn ZERO frontier (bounded N+6)",
-   "node20_uses": [
-    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
-   ],
+   "node20_uses": [],
    "path": ".github/workflows/missioncontrol-slowburn-coverage.yml",
+   "proposed_disposition": "ENFORCED",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "OWNER_DISPOSITION_PENDING"
    ],
    "trigger": {
     "branches": null,
@@ -5521,8 +5395,8 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
-    "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
+    "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
@@ -5549,14 +5423,36 @@
    ]
   },
   {
+   "disposition": "OBSERVED",
+   "evidence": {},
+   "incumbent": false,
+   "name": "N6 CREW Slow-Burn Disjoint Testflight",
+   "node20_uses": [],
+   "path": ".github/workflows/n6-crew-slow-burn.yml",
+   "reasons": [
+    "NO_TERMINAL_EVIDENCE"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
+    "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+   ]
+  },
+  {
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 10,
-     "latest_age_days": 0.9,
-     "latest_sha": "881794f6a949e91580140cafbefed024c6a0abd4",
+     "green_streak": 14,
+     "latest_age_days": 4.8,
+     "latest_sha": "e360fd74834f059ec5af834e9eb8ff99fd9035ae",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5564,10 +5460,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 4,
-     "latest_age_days": 0.9,
-     "latest_pr": 931,
-     "latest_sha": "cb9310b42733b06f38c13e6c82e4a1544f12c40e",
+     "green_streak": 2,
+     "latest_age_days": 4.8,
+     "latest_pr": 1037,
+     "latest_sha": "d66f2d9f54b0df104baf13c43ae42d3af0ec8ce7",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5576,9 +5472,7 @@
    },
    "incumbent": true,
    "name": "P process (Code Purple x EVERRED) offline tests",
-   "node20_uses": [
-    "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020"
-   ],
+   "node20_uses": [],
    "path": ".github/workflows/p-process.yml",
    "reasons": [
     "EVIDENCE_HEALTHY"
@@ -5593,8 +5487,8 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -5605,20 +5499,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 1.3,
-     "latest_pr": 877,
-     "latest_sha": "458bd2fcbe2a8a9969092304199dea2851f6e29a",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5629,6 +5511,7 @@
    "node20_uses": [],
    "path": ".github/workflows/qbd-public-three-observer.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -5643,13 +5526,16 @@
    ]
   },
   {
+   "demotion_candidate": [
+    "GREEN_STREAK_SHORT"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5658,22 +5544,22 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 1.5,
-     "latest_pr": 853,
-     "latest_sha": "597956c19f6ef5c873176f74859ec50de7c790b2",
+     "green_streak": 1,
+     "latest_age_days": 4.0,
+     "latest_pr": 1002,
+     "latest_sha": "a5fef725df8ddd77186bc6f3b712484c6405f980",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "QPS M09 Legacy Processor Repair Probe",
    "node20_uses": [],
    "path": ".github/workflows/qps-m09-legacy-processor-truth.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": null,
@@ -5683,7 +5569,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -5694,7 +5580,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5706,6 +5592,7 @@
    "node20_uses": [],
    "path": ".github/workflows/qps-math-wormhole-plan.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -5718,7 +5605,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
@@ -5728,7 +5615,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 2.8,
+     "latest_age_days": 10.8,
      "latest_sha": "b92f5403cac21f9769108a60d49ba613bd4519e1",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5737,10 +5624,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 0.9,
-     "latest_pr": 921,
-     "latest_sha": "ea3f76f00312b9c08fca9e4e3c8d469ebbb57b0c",
+     "green_streak": 8,
+     "latest_age_days": 0.5,
+     "latest_pr": 1111,
+     "latest_sha": "b868b4107372b1c0c3fb7958f71be1bd22118c89",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5765,7 +5652,7 @@
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
     "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -5797,7 +5684,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 7,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "0d1c0571033d2ea8e7952d4ebc237ca70b219dce",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5827,27 +5714,15 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 6,
-     "latest_age_days": 2.5,
-     "latest_sha": "040b5837d000579cc1df1b460f3fb204ba482204",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 2,
-     "latest_age_days": 2.5,
-     "latest_pr": 845,
-     "latest_sha": "d2bdea1c9d4b2a82f0fc5f4821bf9f579f0323c4",
-     "merged_red_prs": 0,
+     "green_streak": 7,
+     "latest_age_days": 4.8,
+     "latest_sha": "1328baf794a7f3f0c2eea6bcf6109d8364d5f4f4",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "QPS TRIAGE gg_MATH Bridge",
    "node20_uses": [],
    "path": ".github/workflows/qps-triage-ggmath-bridge.yml",
@@ -5862,11 +5737,14 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "demotion_candidate": [
+    "NONDETERMINISTIC_PR"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
@@ -5874,7 +5752,7 @@
      "current": "GREEN",
      "green_streak": 200,
      "latest_age_days": 0.0,
-     "latest_sha": "fd7e8177c2a24ee784f2f6211a00e5d909a41203",
+     "latest_sha": "4945eec0470a1d400fe19fbbf453618d74c23995",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5884,11 +5762,11 @@
      "current": "GREEN",
      "green_streak": 98,
      "latest_age_days": 0.0,
-     "latest_pr": 971,
-     "latest_sha": "09618f4e40646e6fc36529ce1ad4fdcb2982339d",
+     "latest_pr": 1120,
+     "latest_sha": "0b75a1e59b996e52c0eb7ed91e57b84fcc8987fa",
      "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
+     "nondeterministic": true,
+     "rerun_rescues": 2,
      "same_head_disagreements": 0
     }
    },
@@ -5897,7 +5775,7 @@
    "node20_uses": [],
    "path": ".github/workflows/qps-triage-ultra-w0.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": [
@@ -5919,20 +5797,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 8,
-     "latest_age_days": 2.5,
+     "latest_age_days": 10.5,
      "latest_sha": "040b5837d000579cc1df1b460f3fb204ba482204",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 2.5,
-     "latest_pr": 845,
-     "latest_sha": "d2bdea1c9d4b2a82f0fc5f4821bf9f579f0323c4",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5962,9 +5828,9 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 21,
-     "latest_age_days": 0.8,
-     "latest_sha": "8595ef57d02020586607a066b75de60eaa07fed2",
+     "green_streak": 29,
+     "latest_age_days": 2.0,
+     "latest_sha": "093970ef8af2d78fe1f6c9514898f819d569d71c",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -5972,10 +5838,10 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 8,
-     "latest_age_days": 0.8,
-     "latest_pr": 914,
-     "latest_sha": "866fb7b1be553d973e72f6e505693c6b2861f2df",
+     "green_streak": 7,
+     "latest_age_days": 2.0,
+     "latest_pr": 1098,
+     "latest_sha": "d4adf0f028c5a2d83a2bc4a2c09336b2fa4e1770",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -5997,9 +5863,9 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9",
-    "ruby/setup-ruby@26e5b7d197ebf60545ee9667bcbace0be11ccaec"
+    "ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94"
    ]
   },
   {
@@ -6009,26 +5875,14 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 7,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "83b62724cd8eb34f3fb3206c758aba2d6444678f",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "recursive-build",
    "node20_uses": [],
    "path": ".github/workflows/recursive-build.yml",
@@ -6043,7 +5897,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
@@ -6053,20 +5907,8 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -6077,6 +5919,7 @@
    "node20_uses": [],
    "path": ".github/workflows/recursive-doc-ke-gate.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -6087,7 +5930,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
@@ -6108,7 +5951,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
@@ -6118,7 +5961,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 8,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -6151,13 +5994,58 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.7,
-     "latest_pr": 950,
-     "latest_sha": "24e772cea23d07d05c0833da25cfb310bd60015a",
+     "green_streak": 2,
+     "latest_age_days": 2.0,
+     "latest_pr": 1101,
+     "latest_sha": "f50e409754badd9c427fe75f841898eeb64306f3",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Taxonomy Admission Audit — evidence only",
+   "node20_uses": [],
+   "path": ".github/workflows/taxonomy-admission-audit.yml",
+   "proposed_disposition": "ENFORCED",
+   "reasons": [
+    "OWNER_PROMOTION_PENDING"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 6.0,
+     "latest_sha": "83a4afecdad5ed41677591922c8f239316a8f638",
+     "nondeterministic": true,
+     "rerun_rescues": 1,
+     "same_head_disagreements": 0
+    },
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 4.0,
+     "latest_pr": 1051,
+     "latest_sha": "3989fa225fae7690d5b1a3d4d1d9fc1441ceb781",
+     "merged_red_prs": 0,
+     "nondeterministic": true,
+     "rerun_rescues": 1,
      "same_head_disagreements": 0
     }
    },
@@ -6166,6 +6054,8 @@
    "node20_uses": [],
    "path": ".github/workflows/taxonomy-browser-qa.yml",
    "reasons": [
+    "NONDETERMINISTIC_MASTER",
+    "NONDETERMINISTIC_PR",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -6175,32 +6065,21 @@
     "types": null
    },
    "uses": [
+    "actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9",
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
+    "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.8,
-     "latest_pr": 941,
-     "latest_sha": "09344609401dae48588931b94f7310324b080e17",
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": false,
    "name": "Taxonomy Explorer (read-only privacy contract)",
    "node20_uses": [],
    "path": ".github/workflows/taxonomy-explorer.yml",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "NO_TERMINAL_EVIDENCE"
    ],
    "trigger": {
     "branches": null,
@@ -6210,31 +6089,18 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.7,
-     "latest_pr": 949,
-     "latest_sha": "4cdb9ccdae41d4e8bb48f64455470b004320182d",
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": false,
    "name": "Taxonomy Metadata Plan (pure dry-run)",
    "node20_uses": [],
    "path": ".github/workflows/taxonomy-metadata-plan.yml",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "NO_TERMINAL_EVIDENCE"
    ],
    "trigger": {
     "branches": null,
@@ -6244,31 +6110,18 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.6,
-     "latest_pr": 974,
-     "latest_sha": "400a7276e9c706c25a3301cc81a2ffe31d1eb3b9",
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": false,
    "name": "Taxonomy N10 Root Successor Proof",
    "node20_uses": [],
    "path": ".github/workflows/taxonomy-n10-successor.yml",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "NO_TERMINAL_EVIDENCE"
    ],
    "trigger": {
     "branches": null,
@@ -6278,7 +6131,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
@@ -6288,9 +6141,9 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 0.6,
-     "latest_pr": 959,
-     "latest_sha": "b6751cda6c661454d3f3428ab4b65a1a3a805780",
+     "latest_age_days": 4.0,
+     "latest_pr": 981,
+     "latest_sha": "dea26031ea64ec8ffdd69a571b7cf636c640d207",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -6312,31 +6165,18 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.6,
-     "latest_pr": 962,
-     "latest_sha": "881cc7b2ef46d4221753d00007e00e0e101fd5bc",
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": false,
    "name": "Taxonomy N6 Root and Occurrence",
    "node20_uses": [],
    "path": ".github/workflows/taxonomy-n6-root.yml",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "NO_TERMINAL_EVIDENCE"
    ],
    "trigger": {
     "branches": null,
@@ -6346,31 +6186,18 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.6,
-     "latest_pr": 969,
-     "latest_sha": "6ca327dc8e4a3ed9751d3c46ff2c7d7eefe5c8a9",
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": false,
    "name": "Taxonomy N7-N12 MIP DMAIC Efficacy",
    "node20_uses": [],
    "path": ".github/workflows/taxonomy-n7-dmaic.yml",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "NO_TERMINAL_EVIDENCE"
    ],
    "trigger": {
     "branches": null,
@@ -6380,31 +6207,18 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.6,
-     "latest_pr": 972,
-     "latest_sha": "98c9f31bf9c8eb7373229621b9b9b3110a5f5272",
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": false,
    "name": "MissionControl CREW N8 12-wave slow-burn",
    "node20_uses": [],
    "path": ".github/workflows/taxonomy-n8-crew-slowburn.yml",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "NO_TERMINAL_EVIDENCE"
    ],
    "trigger": {
     "branches": null,
@@ -6414,32 +6228,19 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {
-    "pr": {
-     "class": "EVERRED",
-     "current": "RED",
-     "green_streak": 0,
-     "latest_age_days": 0.6,
-     "latest_pr": 973,
-     "latest_sha": "ae5a8921c117e4064970ded3838238ff3eba0d28",
-     "merged_red_prs": 1,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": false,
    "name": "Taxonomy N9 Peer Cohort Confidence",
    "node20_uses": [],
    "path": ".github/workflows/taxonomy-n9-peer.yml",
    "reasons": [
-    "RED_NOW_PR"
+    "NO_TERMINAL_EVIDENCE"
    ],
    "trigger": {
     "branches": null,
@@ -6449,31 +6250,18 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 0.7,
-     "latest_pr": 954,
-     "latest_sha": "b3c31fb595cc75cb720420b1b039625b2a823c5c",
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": false,
    "name": "Taxonomy Public Census Ingress (read-only)",
    "node20_uses": [],
    "path": ".github/workflows/taxonomy-public-ingress.yml",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "NO_TERMINAL_EVIDENCE"
    ],
    "trigger": {
     "branches": null,
@@ -6483,31 +6271,18 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
    "disposition": "OBSERVED",
-   "evidence": {
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    }
-   },
+   "evidence": {},
    "incumbent": false,
    "name": "TRIAGE Renegade Smoke",
    "node20_uses": [],
    "path": ".github/workflows/triage-renegade-smoke.yml",
    "reasons": [
-    "GREEN_STREAK_SHORT"
+    "NO_TERMINAL_EVIDENCE"
    ],
    "trigger": {
     "branches": null,
@@ -6517,7 +6292,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
    ]
   },
   {
@@ -6527,7 +6302,7 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 1,
-     "latest_age_days": 6.8,
+     "latest_age_days": 14.8,
      "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -6539,6 +6314,7 @@
    "node20_uses": [],
    "path": ".github/workflows/unbound-transfer-intake-control.yml",
    "reasons": [
+    "NOT_EXERCISED_RECENTLY",
     "GREEN_STREAK_SHORT"
    ],
    "trigger": {
@@ -6572,7 +6348,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -6582,27 +6358,15 @@
     "master": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 5,
-     "latest_age_days": 3.7,
-     "latest_sha": "1662606b98348ec84e5661d0fe7a311637f2680d",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
-    "pr": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
-     "merged_red_prs": 0,
+     "green_streak": 6,
+     "latest_age_days": 4.8,
+     "latest_sha": "1328baf794a7f3f0c2eea6bcf6109d8364d5f4f4",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "W189RF Exact Federation Sample 4 Return",
    "node20_uses": [],
    "path": ".github/workflows/w189rf-federation-sample4-return-exact.yml",
@@ -6617,7 +6381,7 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
@@ -6628,14 +6392,14 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 4,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "W280RF Exact Federation Sample 5 Return",
    "node20_uses": [],
    "path": ".github/workflows/w280rf-federation-sample5-return.yml",
@@ -6660,14 +6424,14 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 4,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "W283F2 Exact Federation Surface Proof",
    "node20_uses": [],
    "path": ".github/workflows/w283f2-federation-surface-exact.yml",
@@ -6692,14 +6456,14 @@
      "class": "STABLE_GREEN",
      "current": "GREEN",
      "green_streak": 4,
-     "latest_age_days": 3.7,
+     "latest_age_days": 11.7,
      "latest_sha": "b2adcf96a2a5b2ce728ca2f093dc150ab478f293",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
     }
    },
-   "incumbent": false,
+   "incumbent": true,
    "name": "W283RF2 Exact Federation Surface Authority Proof",
    "node20_uses": [],
    "path": ".github/workflows/w283rf2-federation-surface-authority-exact.yml",
@@ -6725,7 +6489,7 @@
      "current": "GREEN",
      "green_streak": 200,
      "latest_age_days": 0.0,
-     "latest_sha": "fd7e8177c2a24ee784f2f6211a00e5d909a41203",
+     "latest_sha": "4945eec0470a1d400fe19fbbf453618d74c23995",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -6759,7 +6523,7 @@
      "current": "GREEN",
      "green_streak": 200,
      "latest_age_days": 0.0,
-     "latest_sha": "fd7e8177c2a24ee784f2f6211a00e5d909a41203",
+     "latest_sha": "4945eec0470a1d400fe19fbbf453618d74c23995",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -6792,7 +6556,7 @@
      "current": "GREEN",
      "green_streak": 200,
      "latest_age_days": 0.0,
-     "latest_sha": "fd7e8177c2a24ee784f2f6211a00e5d909a41203",
+     "latest_sha": "4945eec0470a1d400fe19fbbf453618d74c23995",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -6819,6 +6583,9 @@
    ]
   },
   {
+   "demotion_candidate": [
+    "NONDETERMINISTIC_PR"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
@@ -6826,7 +6593,7 @@
      "current": "GREEN",
      "green_streak": 200,
      "latest_age_days": 0.0,
-     "latest_sha": "fd7e8177c2a24ee784f2f6211a00e5d909a41203",
+     "latest_sha": "4945eec0470a1d400fe19fbbf453618d74c23995",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -6836,11 +6603,11 @@
      "current": "GREEN",
      "green_streak": 98,
      "latest_age_days": 0.0,
-     "latest_pr": 971,
-     "latest_sha": "09618f4e40646e6fc36529ce1ad4fdcb2982339d",
+     "latest_pr": 1120,
+     "latest_sha": "0b75a1e59b996e52c0eb7ed91e57b84fcc8987fa",
      "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
+     "nondeterministic": true,
+     "rerun_rescues": 2,
      "same_head_disagreements": 0
     }
    },
@@ -6849,7 +6616,7 @@
    "node20_uses": [],
    "path": ".github/workflows/w3-16-m03-w0-recon.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": [
@@ -6867,23 +6634,13 @@
   {
    "disposition": "OBSERVED",
    "evidence": {
-    "master": {
-     "class": "STABLE_GREEN",
-     "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 6.8,
-     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
-     "nondeterministic": false,
-     "rerun_rescues": 0,
-     "same_head_disagreements": 0
-    },
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 1,
-     "latest_age_days": 3.7,
-     "latest_pr": 815,
-     "latest_sha": "8429fe4e750c1992e99ed52ac2ad5af308117875",
+     "green_streak": 4,
+     "latest_age_days": 1.0,
+     "latest_pr": 1109,
+     "latest_sha": "54eb5314ac50915aa38e6e7b99d0195c3448506f",
      "merged_red_prs": 0,
      "nondeterministic": false,
      "rerun_rescues": 0,
@@ -6891,9 +6648,223 @@
     }
    },
    "incumbent": false,
-   "name": "W5 GitHub-first lossless telemetry and graph QA",
+   "name": "W377 Topic Census ACK and Reuse",
    "node20_uses": [],
-   "path": ".github/workflows/w5-handover-telemetry-qa.yml",
+   "path": ".github/workflows/w377-topic-exchange.yml",
+   "proposed_disposition": "ENFORCED",
+   "reasons": [
+    "OWNER_PROMOTION_PENDING"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 6,
+     "latest_age_days": 1.0,
+     "latest_pr": 1110,
+     "latest_sha": "607723d448e28ca0187395d4437ed33621f1435d",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "W378 P1 Six-Topic Two-Wave Fan-In",
+   "node20_uses": [],
+   "path": ".github/workflows/w378-topic-wave-scale.yml",
+   "proposed_disposition": "ENFORCED",
+   "reasons": [
+    "OWNER_PROMOTION_PENDING"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
+    "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 5,
+     "latest_age_days": 1.0,
+     "latest_pr": 1109,
+     "latest_sha": "54eb5314ac50915aa38e6e7b99d0195c3448506f",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "W378 Topic Wave Graph Pilot",
+   "node20_uses": [],
+   "path": ".github/workflows/w378-topic-wave.yml",
+   "proposed_disposition": "ENFORCED",
+   "reasons": [
+    "OWNER_PROMOTION_PENDING"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
+    "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 6,
+     "latest_age_days": 1.0,
+     "latest_pr": 1109,
+     "latest_sha": "54eb5314ac50915aa38e6e7b99d0195c3448506f",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "W379 Lane Lifecycle Evidence Matrix",
+   "node20_uses": [],
+   "path": ".github/workflows/w379-lane-lifecycle.yml",
+   "proposed_disposition": "ENFORCED",
+   "reasons": [
+    "OWNER_PROMOTION_PENDING"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 6,
+     "latest_age_days": 1.0,
+     "latest_pr": 1109,
+     "latest_sha": "54eb5314ac50915aa38e6e7b99d0195c3448506f",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "W380 Lane Lifecycle SIPOC DAG",
+   "node20_uses": [],
+   "path": ".github/workflows/w380-lane-process-graph.yml",
+   "proposed_disposition": "ENFORCED",
+   "reasons": [
+    "OWNER_PROMOTION_PENDING"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
+    "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 4,
+     "latest_age_days": 1.0,
+     "latest_pr": 1110,
+     "latest_sha": "607723d448e28ca0187395d4437ed33621f1435d",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "W380 P2 Bounded Topic Train",
+   "node20_uses": [],
+   "path": ".github/workflows/w380-topic-train.yml",
+   "proposed_disposition": "ENFORCED",
+   "reasons": [
+    "OWNER_PROMOTION_PENDING"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
+    "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 0.5,
+     "latest_pr": 1111,
+     "latest_sha": "b868b4107372b1c0c3fb7958f71be1bd22118c89",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "W381 Adaptive Pulse Tempo (read-only)",
+   "node20_uses": [],
+   "path": ".github/workflows/w381-adaptive-pulse-tempo.yml",
    "reasons": [
     "GREEN_STREAK_SHORT"
    ],
@@ -6905,19 +6876,90 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97"
+   ]
+  },
+  {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "master": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 1,
+     "latest_age_days": 14.8,
+     "latest_sha": "d3b82b130bd81e1bcee9cc0a7e7a25245e7a8b9e",
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "W5 GitHub-first lossless telemetry and graph QA",
+   "node20_uses": [],
+   "path": ".github/workflows/w5-handover-telemetry-qa.yml",
+   "reasons": [
+    "NOT_EXERCISED_RECENTLY",
+    "GREEN_STREAK_SHORT"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   },
   {
+   "disposition": "OBSERVED",
+   "evidence": {
+    "pr": {
+     "class": "STABLE_GREEN",
+     "current": "GREEN",
+     "green_streak": 2,
+     "latest_age_days": 2.0,
+     "latest_pr": 1101,
+     "latest_sha": "f50e409754badd9c427fe75f841898eeb64306f3",
+     "merged_red_prs": 0,
+     "nondeterministic": false,
+     "rerun_rescues": 0,
+     "same_head_disagreements": 0
+    }
+   },
+   "incumbent": false,
+   "name": "Workstation Dashboards Offline QA",
+   "node20_uses": [],
+   "path": ".github/workflows/workstation-dashboards-qa.yml",
+   "proposed_disposition": "ENFORCED",
+   "reasons": [
+    "OWNER_PROMOTION_PENDING"
+   ],
+   "trigger": {
+    "branches": null,
+    "filter": "PATHS",
+    "pull_request": true,
+    "types": null
+   },
+   "uses": [
+    "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0"
+   ]
+  },
+  {
+   "demotion_candidate": [
+    "NONDETERMINISTIC_PR"
+   ],
    "disposition": "ENFORCED",
    "evidence": {
     "master": {
-     "class": "FLAKY",
+     "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 117,
+     "green_streak": 200,
      "latest_age_days": 0.0,
-     "latest_sha": "fd7e8177c2a24ee784f2f6211a00e5d909a41203",
+     "latest_sha": "4945eec0470a1d400fe19fbbf453618d74c23995",
      "nondeterministic": false,
      "rerun_rescues": 0,
      "same_head_disagreements": 0
@@ -6925,13 +6967,13 @@
     "pr": {
      "class": "STABLE_GREEN",
      "current": "GREEN",
-     "green_streak": 72,
+     "green_streak": 74,
      "latest_age_days": 0.0,
-     "latest_pr": 971,
-     "latest_sha": "09618f4e40646e6fc36529ce1ad4fdcb2982339d",
+     "latest_pr": 1120,
+     "latest_sha": "0b75a1e59b996e52c0eb7ed91e57b84fcc8987fa",
      "merged_red_prs": 0,
-     "nondeterministic": false,
-     "rerun_rescues": 0,
+     "nondeterministic": true,
+     "rerun_rescues": 2,
      "same_head_disagreements": 0
     }
    },
@@ -6940,7 +6982,7 @@
    "node20_uses": [],
    "path": ".github/workflows/zero-test-gate-guard.yml",
    "reasons": [
-    "EVIDENCE_HEALTHY"
+    "INCUMBENT_RATCHET"
    ],
    "trigger": {
     "branches": [
@@ -6952,37 +6994,65 @@
    },
    "uses": [
     "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
-    "actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97",
+    "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
     "actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9"
    ]
   }
  ],
  "generated_from": {
   "master_lane": {
-   "digest_sha256": "40be67e1d9f7a414ae4f77624c227aa5157adeef8b53843fa7e45aa715ea9406",
-   "observed_at_utc": "2026-10-27T08:58:15Z",
+   "digest_sha256": "efde230937fb64694bdde8ba84402bda98fa1a303ed469dff2a07390ec76e510",
+   "observed_at_utc": "2026-11-04T08:53:55Z",
    "schema": "gogreen.red_trace.v1",
    "window": {
-    "oldest_run_at": "2025-09-19T05:49:32Z",
-    "runs": 5919,
+    "oldest_run_at": "2025-10-29T11:37:24Z",
+    "runs": 6586,
     "truncated": true,
     "truncated_workflows": 21
    }
   },
   "pr_lane": {
-   "digest_sha256": "2c25dc13de983d2969c2f03a92cc455ed20a5eb2454a5d60b5d1f167d8102bc1",
-   "observed_at_utc": "2026-10-27T09:00:20Z",
+   "digest_sha256": "6276c98f4084ba721baabc2c3f57dba575a410ae0787406457795e152afef11d",
+   "observed_at_utc": "2026-11-04T08:55:37Z",
    "schema": "gogreen.red_trace.pr_lane.v1",
    "window": {
     "merged_prs": 100,
-    "newest_merged_at": "2026-10-27T08:39:19Z",
-    "oldest_merged_at": "2026-10-23T16:10:47Z",
-    "runs_premerge": 952
+    "newest_merged_at": "2026-11-04T08:49:43Z",
+    "oldest_merged_at": "2026-10-30T08:26:16Z",
+    "runs_premerge": 1024
    }
   },
-  "previous_ledger_sha256": "8f6c06f0c60fff9add1657caa07bfce456309f4654e017bf24d1e08bb2ff3551"
+  "previous_ledger_sha256": "709de944ad3f9ea69473a7cd6c63d3042d6b64daa2288d8bd936b9f694dd7b2a"
  },
- "ledger_sha256": "709de944ad3f9ea69473a7cd6c63d3042d6b64daa2288d8bd936b9f694dd7b2a",
+ "ledger_sha256": "c3cd1e0eac3beebed77a17303c83513b9b6ffdd91b98251168557f7e51e963e6",
+ "owner_review_hold": {
+  "held_paths": [
+   ".github/workflows/ci-bundle-shadow.yml",
+   ".github/workflows/code-maroon-runner.yml",
+   ".github/workflows/code-purple-cbq-ch-bd-pulse.yml",
+   ".github/workflows/gogreen-root-frontier.yml",
+   ".github/workflows/gogreen-sipoc-scale-gate.yml",
+   ".github/workflows/hv03-local-custody-qa.yml",
+   ".github/workflows/jade-crew-slowburn.yml",
+   ".github/workflows/jade-devops-census.yml",
+   ".github/workflows/master-input-runtime.yml",
+   ".github/workflows/missioncontrol-slowburn-coverage.yml",
+   ".github/workflows/taxonomy-admission-audit.yml",
+   ".github/workflows/w377-topic-exchange.yml",
+   ".github/workflows/w378-topic-wave-scale.yml",
+   ".github/workflows/w378-topic-wave.yml",
+   ".github/workflows/w379-lane-lifecycle.yml",
+   ".github/workflows/w380-lane-process-graph.yml",
+   ".github/workflows/w380-topic-train.yml",
+   ".github/workflows/workstation-dashboards-qa.yml"
+  ],
+  "merge_authorized": false,
+  "new_entries": 21,
+  "old_entries": 181,
+  "previous_ledger_sha256": "709de944ad3f9ea69473a7cd6c63d3042d6b64daa2288d8bd936b9f694dd7b2a",
+  "root_closure_credit": 0,
+  "state": "PROPOSED_NOT_ADMITTED"
+ },
  "rules": {
   "FRESH_DAYS": 14,
   "MIN_STREAK": 2,
@@ -6990,18 +7060,17 @@
   "ratchet": "an ENFORCED entry is never auto-demoted; bad evidence -> demotion_candidate (OWNER)"
  },
  "runtime_debt": {
-  "node20_refs": [
-   "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
-   "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
-  ],
-  "node20_workflows": 8,
+  "node20_refs": [],
+  "node20_workflows": 0,
   "unresolved_refs": [
-   "actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b",
+   "actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9",
+   "actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d",
    "actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346",
    "actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333",
-   "actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1",
+   "actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+   "actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0",
    "actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9",
-   "ruby/setup-ruby@26e5b7d197ebf60545ee9667bcbace0be11ccaec"
+   "ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94"
   ]
  },
  "runtimes": {
