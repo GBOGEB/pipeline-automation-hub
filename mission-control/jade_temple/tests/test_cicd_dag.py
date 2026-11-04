@@ -186,8 +186,15 @@ class Projection(unittest.TestCase):
     def test_source_red_and_code_purple_are_visible(self):
         total = {x["id"]: x for x in SCOPES["TOTAL"]["nodes"]}
         core = SCOPES["TOTAL"]["metrics"]["source_red"]["core_focus"]
-        self.assertEqual(total[core]["colour"], "ROOT_RED")
-        self.assertIn("rolling5.py", total[core]["oids"][0]["path"])
+        if core is None:
+            # P0005 has no FAIL gate: no gate node (H01-H12) may be painted root red.
+            # (I.FIRST_RED stays red from the workflow red-trace ledger, a separate source.)
+            gates = [f"H{i:02d}" for i in range(1, 13)]
+            self.assertFalse([g for g in gates if g in total and total[g]["colour"] == "ROOT_RED"])
+            self.assertTrue(set(gates) <= set(total))
+        else:
+            self.assertEqual(total[core]["colour"], "ROOT_RED")
+            self.assertIn("rolling5.py", total[core]["oids"][0]["path"])
         self.assertEqual(total["P.CODE_PURPLE"]["colour"], "CODE_PURPLE")
         self.assertEqual(total["S.ABACUS"]["colour"], "CODE_PURPLE")
 

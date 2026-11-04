@@ -1,22 +1,22 @@
 {
   "authority": "READ_ONLY_PROJECTION",
   "authority_transfer": false,
-  "history_depth": 4,
+  "history_depth": 5,
   "history_note": "Streaks need history: with fewer pulses than 3, 'unattended' is null and a nevergreen flag only means never PASS within the observed pulses.",
   "inputs": {
     "data/ROLLING5_POLICY.json": "77228bf9f0f54b2a9d3567ddef28c340d3ddf89fe333926b1b70d77a9bbd2d85",
-    "data/ROLLING5_PULSES.json": "6bbd59a7bb9acdd383e0397c2be2cb2d1dd504127d537a6e0e60141d539cc82d",
+    "data/ROLLING5_PULSES.json": "10aba0a7fa435934e6f5b7e15b54c7f9ca53aaad22af77e6eff8c3a8eb333226",
     "data/TOP21_PORTFOLIO.json": "b3f711c33e878ce290e9e38c42d7e5028c5b5f58b2313efa2b43ef677a680a29"
   },
-  "latest_pulse": "P0004",
+  "latest_pulse": "P0005",
   "merge_admission": "HOLD",
   "metrics": {
-    "fail_gate_instances": 1,
+    "fail_gate_instances": 0,
     "gate_denominator": 60,
-    "nevergreen_gate_instances": 36,
+    "nevergreen_gate_instances": 35,
     "nirvana_count": 0,
-    "verified_completion_pct": 40.0,
-    "verified_pass": 24
+    "verified_completion_pct": 41.67,
+    "verified_pass": 25
   },
   "nirvana_ledger": [],
   "pulses": [
@@ -39,6 +39,11 @@
       "id": "P0004",
       "observed_date": "2026-11-02",
       "snapshot_sha256": "45ddf41d766bddc788c5c58914f9b7f88035c38a2e247886b75ac8575779320f"
+    },
+    {
+      "id": "P0005",
+      "observed_date": "2026-11-04",
+      "snapshot_sha256": "cfc1e68c77dbd973abc06df05257c1030f7aee0e8f9b5dc5e5d4885de1d7bdfd"
     }
   ],
   "race": [
@@ -55,6 +60,15 @@
       "fail": 0,
       "pass": 5,
       "position": 2,
+      "rank": 4,
+      "remaining": 7,
+      "repo": "GBOGEB/cryoplant-project",
+      "unknown": 7
+    },
+    {
+      "fail": 0,
+      "pass": 5,
+      "position": 3,
       "rank": 5,
       "remaining": 7,
       "repo": "GBOGEB/gg_MATH",
@@ -63,35 +77,26 @@
     {
       "fail": 0,
       "pass": 5,
-      "position": 3,
+      "position": 4,
       "rank": 8,
       "remaining": 7,
       "repo": "GBOGEB/DOCX_RTM_Automation",
       "unknown": 7
     },
     {
-      "fail": 1,
+      "fail": 0,
       "pass": 5,
-      "position": 4,
+      "position": 5,
       "rank": 16,
       "remaining": 7,
       "repo": "GBOGEB/yaml-grammar",
-      "unknown": 6
-    },
-    {
-      "fail": 0,
-      "pass": 4,
-      "position": 5,
-      "rank": 4,
-      "remaining": 8,
-      "repo": "GBOGEB/cryoplant-project",
-      "unknown": 8
+      "unknown": 7
     }
   ],
   "release_credit": false,
   "repos": [
     {
-      "best_current_streak": 4,
+      "best_current_streak": 5,
       "blockers": [],
       "gate_denominator": 12,
       "golden_thread": {
@@ -150,33 +155,33 @@
       "rank": 2,
       "regressions": 1,
       "repo": "GBOGEB/pipeline-automation-hub",
-      "source_sha": "75b7278f108dfda20c8ce1cbbb8459f2eb9ec790",
+      "source_sha": "7626f721f36828d4ac449f37fa156c7d7ee85ad4",
       "streaks": {
         "H01": {
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 4,
-          "streak_record": 4,
+          "streak_on_current": 5,
+          "streak_record": 5,
           "unattended": false
         },
         "H02": {
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 4,
-          "streak_record": 4,
+          "streak_on_current": 5,
+          "streak_record": 5,
           "unattended": false
         },
         "H03": {
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -186,29 +191,29 @@
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 1,
-          "streak_record": 1,
+          "streak_on_current": 2,
+          "streak_record": 2,
           "unattended": false
         },
         "H05": {
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 1,
-          "streak_record": 1,
+          "streak_on_current": 2,
+          "streak_record": 2,
           "unattended": false
         },
         "H06": {
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": 2,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 1,
-          "streak_on_current": 1,
+          "streak_on_current": 2,
           "streak_record": 2,
           "unattended": false
         },
@@ -216,7 +221,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -226,7 +231,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -236,7 +241,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -246,7 +251,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -256,7 +261,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -266,7 +271,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -285,7 +290,7 @@
       "verified_pass": 5
     },
     {
-      "best_current_streak": 4,
+      "best_current_streak": 5,
       "blockers": [],
       "gate_denominator": 12,
       "golden_thread": {
@@ -333,7 +338,6 @@
       },
       "nevergreen_gates": [
         "H03",
-        "H04",
         "H07",
         "H08",
         "H09",
@@ -351,67 +355,67 @@
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 4,
-          "streak_record": 4,
+          "streak_on_current": 5,
+          "streak_record": 5,
           "unattended": false
         },
         "H02": {
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 4,
-          "streak_record": 4,
+          "streak_on_current": 5,
+          "streak_record": 5,
           "unattended": false
         },
         "H03": {
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
           "unattended": true
         },
         "H04": {
-          "latest": "UNKNOWN",
-          "nevergreen": true,
+          "latest": "PASS",
+          "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 0,
-          "streak_record": 0,
-          "unattended": true
+          "streak_on_current": 1,
+          "streak_record": 1,
+          "unattended": false
         },
         "H05": {
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 3,
-          "streak_record": 3,
+          "streak_on_current": 4,
+          "streak_record": 4,
           "unattended": false
         },
         "H06": {
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 3,
-          "streak_record": 3,
+          "streak_on_current": 4,
+          "streak_record": 4,
           "unattended": false
         },
         "H07": {
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -421,7 +425,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -431,7 +435,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -441,7 +445,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -451,7 +455,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -461,7 +465,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -470,7 +474,6 @@
       },
       "unattended_gates": [
         "H03",
-        "H04",
         "H07",
         "H08",
         "H09",
@@ -478,10 +481,10 @@
         "H11",
         "H12"
       ],
-      "verified_pass": 4
+      "verified_pass": 5
     },
     {
-      "best_current_streak": 4,
+      "best_current_streak": 5,
       "blockers": [],
       "gate_denominator": 12,
       "golden_thread": {
@@ -540,33 +543,33 @@
       "rank": 5,
       "regressions": 1,
       "repo": "GBOGEB/gg_MATH",
-      "source_sha": "1e2caa69fedb253d7e4423e12d35c2f0536e8af8",
+      "source_sha": "7533f0eb96edcdd3aa20d98baf5bbd3242e7a597",
       "streaks": {
         "H01": {
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 4,
-          "streak_record": 4,
+          "streak_on_current": 5,
+          "streak_record": 5,
           "unattended": false
         },
         "H02": {
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 4,
-          "streak_record": 4,
+          "streak_on_current": 5,
+          "streak_record": 5,
           "unattended": false
         },
         "H03": {
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -576,37 +579,37 @@
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 3,
-          "streak_record": 3,
+          "streak_on_current": 4,
+          "streak_record": 4,
           "unattended": false
         },
         "H05": {
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 3,
-          "streak_record": 3,
+          "streak_on_current": 4,
+          "streak_record": 4,
           "unattended": false
         },
         "H06": {
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": 1,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 1,
-          "streak_on_current": 2,
-          "streak_record": 2,
+          "streak_on_current": 3,
+          "streak_record": 3,
           "unattended": false
         },
         "H07": {
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -616,7 +619,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -626,7 +629,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -636,7 +639,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -646,7 +649,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -656,7 +659,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -675,7 +678,7 @@
       "verified_pass": 5
     },
     {
-      "best_current_streak": 4,
+      "best_current_streak": 5,
       "blockers": [],
       "gate_denominator": 12,
       "golden_thread": {
@@ -734,33 +737,33 @@
       "rank": 8,
       "regressions": 0,
       "repo": "GBOGEB/DOCX_RTM_Automation",
-      "source_sha": "67b5c8754d5a9b11be814a8e2a3552f13dde9c50",
+      "source_sha": "7dd2bb48a74ece47b42cb7acbf08f43a51529543",
       "streaks": {
         "H01": {
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 4,
-          "streak_record": 4,
+          "streak_on_current": 5,
+          "streak_record": 5,
           "unattended": false
         },
         "H02": {
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 4,
-          "streak_record": 4,
+          "streak_on_current": 5,
+          "streak_record": 5,
           "unattended": false
         },
         "H03": {
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -770,37 +773,37 @@
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 2,
-          "streak_record": 2,
+          "streak_on_current": 3,
+          "streak_record": 3,
           "unattended": false
         },
         "H05": {
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 4,
-          "streak_record": 4,
+          "streak_on_current": 5,
+          "streak_record": 5,
           "unattended": false
         },
         "H06": {
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 4,
-          "streak_record": 4,
+          "streak_on_current": 5,
+          "streak_record": 5,
           "unattended": false
         },
         "H07": {
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -810,17 +813,17 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
-          "unattended": false
+          "unattended": true
         },
         "H09": {
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -830,7 +833,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -840,7 +843,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -850,7 +853,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -860,6 +863,7 @@
       "unattended_gates": [
         "H03",
         "H07",
+        "H08",
         "H09",
         "H10",
         "H11",
@@ -868,10 +872,8 @@
       "verified_pass": 5
     },
     {
-      "best_current_streak": 4,
-      "blockers": [
-        "H08: Default branch unprotected (no protection, no ruleset)"
-      ],
+      "best_current_streak": 5,
+      "blockers": [],
       "gate_denominator": 12,
       "golden_thread": {
         "first_break": "OWNER_SCOPE",
@@ -899,7 +901,7 @@
             "step": "NATIVE_B0_RUN_JOB_ATTEMPT"
           },
           {
-            "status": "FAIL",
+            "status": "UNKNOWN",
             "step": "SECURITY_AND_GOVERNANCE"
           },
           {
@@ -935,27 +937,27 @@
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 4,
-          "streak_record": 4,
+          "streak_on_current": 5,
+          "streak_record": 5,
           "unattended": false
         },
         "H02": {
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 4,
-          "streak_record": 4,
+          "streak_on_current": 5,
+          "streak_record": 5,
           "unattended": false
         },
         "H03": {
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -965,47 +967,47 @@
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 2,
-          "streak_record": 2,
+          "streak_on_current": 3,
+          "streak_record": 3,
           "unattended": false
         },
         "H05": {
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 2,
-          "streak_record": 2,
+          "streak_on_current": 3,
+          "streak_record": 3,
           "unattended": false
         },
         "H06": {
           "latest": "PASS",
           "nevergreen": false,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
-          "streak_on_current": 2,
-          "streak_record": 2,
+          "streak_on_current": 3,
+          "streak_record": 3,
           "unattended": false
         },
         "H07": {
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
           "unattended": true
         },
         "H08": {
-          "latest": "FAIL",
+          "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -1015,7 +1017,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -1025,7 +1027,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -1035,7 +1037,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -1045,7 +1047,7 @@
           "latest": "UNKNOWN",
           "nevergreen": true,
           "previous_streak": null,
-          "pulses_observed": 4,
+          "pulses_observed": 5,
           "regressions": 0,
           "streak_on_current": 0,
           "streak_record": 0,
@@ -1066,6 +1068,21 @@
   "schema": "jade.temple.rolling5.projection/1.0",
   "source_red": {
     "common_unknown": [
+      {
+        "blocks": [
+          "H09",
+          "H12"
+        ],
+        "gate": "H08",
+        "repo_count": 5,
+        "repos": [
+          "GBOGEB/DOCX_RTM_Automation",
+          "GBOGEB/cryoplant-project",
+          "GBOGEB/gg_MATH",
+          "GBOGEB/pipeline-automation-hub",
+          "GBOGEB/yaml-grammar"
+        ]
+      },
       {
         "blocks": [
           "H12"
@@ -1147,46 +1164,11 @@
           "GBOGEB/pipeline-automation-hub",
           "GBOGEB/yaml-grammar"
         ]
-      },
-      {
-        "blocks": [
-          "H09",
-          "H12"
-        ],
-        "gate": "H08",
-        "repo_count": 4,
-        "repos": [
-          "GBOGEB/DOCX_RTM_Automation",
-          "GBOGEB/cryoplant-project",
-          "GBOGEB/gg_MATH",
-          "GBOGEB/pipeline-automation-hub"
-        ]
       }
     ],
-    "core_focus": "H08",
-    "instances": [
-      {
-        "blocks": [
-          "H09",
-          "H12"
-        ],
-        "edge_score": 1,
-        "gate": "H08",
-        "repo": "GBOGEB/yaml-grammar",
-        "unlock_score": 3
-      }
-    ],
-    "ranked_gates": [
-      {
-        "class": "LOCAL",
-        "gate": "H08",
-        "repo_count": 1,
-        "repos": [
-          "GBOGEB/yaml-grammar"
-        ],
-        "unlock_score": 3
-      }
-    ]
+    "core_focus": null,
+    "instances": [],
+    "ranked_gates": []
   },
   "window": {
     "admitted": [],
