@@ -323,6 +323,22 @@ class Scope(unittest.TestCase):
         d = M.diff(old, new)
         self.assertEqual((d["alerts_evicted"], d["alerts_left"]), (0, 1))
 
+    def test_missing_repository_sample_keeps_the_old_behaviour(self):
+        def without_prs(alerts_by_pr, prs):
+            review = scoped(alerts_by_pr, prs)
+            del review["repos"]["O/pub"]["prs"]
+            return M.build(self.EMPTY, review)
+
+        old = M.build(self.EMPTY, scoped({7: [1]}, [7]))
+        new = without_prs({}, [])
+        d = M.diff(old, new)
+        self.assertEqual((d["alerts_evicted"], d["alerts_left"], d["roots_cleared"]), (0, 1, 1))
+
+        old = without_prs({7: [1]}, [7])
+        new = M.build(self.EMPTY, scoped({}, []))
+        d = M.diff(old, new)
+        self.assertEqual((d["alerts_evicted"], d["alerts_left"], d["roots_cleared"]), (0, 1, 1))
+
     def test_build_command_reads_overrides(self):
         with tempfile.TemporaryDirectory() as tmp:
             raw, review, over, out = (Path(tmp) / n for n in ("raw.json", "review.json", "over.json", "out"))

@@ -315,7 +315,8 @@ def diff(old: dict, new: dict) -> dict:
         was, now = set(a.get(rid, {}).get("alerts", [])), set(b.get(rid, {}).get("alerts", []))
         root = b.get(rid) or a[rid]
         gone, aged_out = was - now, set()
-        if root["source"] == "review_threads" and old_scope is not None and new_scope is not None:
+        if (root["source"] == "review_threads" and old_scope is not None and new_scope is not None
+                and root["repo"] in old_scope and root["repo"] in new_scope):
             sampled = set((new_scope.get(root["repo"]) or {}).get("prs", []))
             prs = a[rid].get("alert_prs", {}) if rid in a else {}
             aged_out = {n for n in gone if str(n) in prs and prs[str(n)] not in sampled}
