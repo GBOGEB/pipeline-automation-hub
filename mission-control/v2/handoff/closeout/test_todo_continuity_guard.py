@@ -174,6 +174,46 @@ class TodoContinuityTests(unittest.TestCase):
                     packet(self.root / ("bad_intent_" + str(len(str(change)))),
                            intents=its + [invalid])
 
+    def test_github_evidence_rejects_encoded_org_escape(self):
+        good = "https://github.com/GBOGEB/pipeline-automation-hub/issues/358"
+        self.assertTrue(mod.github_owner_url(good))
+        for url in ("https://github.com/GBOGEB/../attacker/issues/1",
+                    "https://github.com/GBOGEB/%2e%2e/attacker/issues/1",
+                    "https://github.com/GBOGEB/%252e%252e/attacker/issues/1",
+                    "https://github.com/GBOGEB/repo%5c..%5cattacker/issues/1",
+                    "https://github.com/GBOGEB//attacker/issues/1"):
+            with self.subTest(url=url):
+                self.assertFalse(mod.github_owner_url(url))
+                after = packet(self.root / ("traversal" + str(len(url))), alias="CP-NEXT-20261104")
+                links = sidecar(self.before, after)
+                links["action_links"][0]["evidence_url"] = url
+                with self.assertRaisesRegex(ValueError, "invalid/duplicate source-bound"):
+                    mod.reconcile(self.before, after, links)
+
+    def test_supersession_preserves_unique_mapped_dependency_edges(self):
+        a1 = copy.deepcopy(self.before["actions"]["SC-A001"])
+        a2 = copy.deepcopy(a1); a2["id"] = "SC-A002"
+        a3 = copy.deepcopy(a1); a3["id"] = "SC-A003"
+        a3["depends_on"] = ["SC-A001", "SC-A002"]
+        its = [{"id": "SC-I001", "summary": "Original intent",
+                "source_class": "USER_VISIBLE_RECONSTRUCTED",
+                "actions": ["SC-A001", "SC-A002", "SC-A003"]}]
+        earlier = packet(self.root / "merged_edges_before", actions=[a1, a2, a3], intents=its)
+        new_a3 = copy.deepcopy(a3); new_a3["depends_on"] = ["SC-A001"]
+        new_its = copy.deepcopy(its); new_its[0]["actions"] = ["SC-A001", "SC-A003"]
+        later = packet(self.root / "merged_edges_after", alias="CP-NEXT-20261104",
+                       actions=[a1, new_a3], intents=new_its)
+        links = sidecar(earlier, later)
+        links["action_links"][1]["to"] = "SC-A001"
+        links["action_links"][1]["disposition"] = "SUPERSEDED_WITH_LINEAGE"
+        links["action_links"].append({"from": "SC-A003", "to": "SC-A003",
+                                      "disposition": "CONTINUED",
+                                      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/358"})
+        report = mod.reconcile(earlier, later, links)
+        self.assertEqual([], report["unproven_semantic_revisions"])
+        self.assertEqual("PASS_LINEAGE_ONLY_NOT_ADMISSION", report["acceptance"])
+        self.assertIsNone(report["accepted_distinct_root_closures"])
+
     def test_digest_valid_excess_manifest_member_rejected(self):
         directory = self.root / "inject_extra_member"
         packet(directory)
