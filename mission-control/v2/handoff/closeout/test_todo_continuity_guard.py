@@ -52,8 +52,11 @@ def packet(directory: Path, alias="CP-DEMO-20261103", actions=None, intents=None
     return mod.load_packet(directory)
 
 
-def sidecar(old_alias, new_alias):
-    return {"schema": mod.LINK_SCHEMA, "from_session": old_alias, "to_session": new_alias,
+def sidecar(before, after):
+    return {"schema": mod.LINK_SCHEMA,
+            "from_session": before["alias"], "to_session": after["alias"],
+            "from_manifest_sha256": before["manifest_digest"],
+            "to_manifest_sha256": after["manifest_digest"],
             "action_links": [
                 {"from": "SC-A001", "to": "SC-A001", "disposition": "CONTINUED",
                  "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/358"},
@@ -97,7 +100,7 @@ class TodoContinuityTests(unittest.TestCase):
         r = mod.reconcile(self.before, a)
         self.assertEqual(["SC-A001"], r["unproven_semantic_revisions"])
         self.assertEqual("HOLD_LINEAGE_GAPS", r["acceptance"])
-        links = sidecar(self.before["alias"], a["alias"])
+        links = sidecar(self.before, a)
         links["revisions"] = [{"kind": "action", "id": "SC-A001", "reason": "Owner reassigned",
                                "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/358"}]
         self.assertEqual("PASS_LINEAGE_ONLY_NOT_ADMISSION", mod.reconcile(self.before, a, links)["acceptance"])
@@ -116,7 +119,7 @@ class TodoContinuityTests(unittest.TestCase):
         acts = copy.deepcopy(list(self.before["actions"].values()))
         acts[0]["evidence_urls"] = ["https://github.com/GBOGEB/pipeline-automation-hub/issues/358"]
         later = packet(self.root / "evidence_after", alias="CP-NEXT-20261104", actions=acts)
-        links = sidecar(self.before["alias"], later["alias"])
+        links = sidecar(self.before, later)
         report = mod.reconcile(self.before, later, links)
         self.assertIn("action:SC-A001>SC-A001", report["unproven_semantic_revisions"])
         links["action_links"][0]["revision_reason"] = "New evidence attached"
@@ -127,7 +130,7 @@ class TodoContinuityTests(unittest.TestCase):
         its = copy.deepcopy(list(self.before["intents"].values()))
         its[0]["source_class"] = "SOURCE_BOUND_REFERENCE"
         later = packet(self.root / "source_class_after", alias="CP-NEXT-20261104", intents=its)
-        links = sidecar(self.before["alias"], later["alias"])
+        links = sidecar(self.before, later)
         report = mod.reconcile(self.before, later, links)
         self.assertIn("intent:SC-I001>SC-I001", report["unproven_semantic_revisions"])
         links["intent_links"][0]["revision_reason"] = "Reclassified after authenticated source"
@@ -156,6 +159,49 @@ class TodoContinuityTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "canonical BD provenance"):
             mod.load_packet(self.root / "before")
 
+    def test_cross_session_sidecar_bound_to_both_packet_digests(self):
+        first = packet(self.root / "digest_first", alias="CP-NEXT-20261104")
+        links = sidecar(self.before, first)
+        changed_actions = copy.deepcopy(list(first["actions"].values()))
+        changed_actions[0]["summary"] = "Newer packet uses same session alias"
+        latest = packet(self.root / "digest_latest", alias="CP-NEXT-20261104", actions=changed_actions)
+        with self.assertRaisesRegex(ValueError, "packet digest mismatch"):
+            mod.reconcile(self.before, latest, links)
+        links.pop("to_manifest_sha256")
+        with self.assertRaisesRegex(ValueError, "packet digest mismatch"):
+            mod.reconcile(self.before, first, links)
+
+    def test_three_to_one_supersession_order_invariant(self):
+        old_actions = copy.deepcopy(list(self.before["actions"].values()))
+        old_actions[1]["depends_on"] = []
+        extra = copy.deepcopy(old_actions[0])
+        extra["id"] = "SC-A003"
+        old_actions.append(extra)
+        earlier = packet(self.root / "three_old", actions=old_actions)
+        successor = packet(self.root / "one_new", alias="CP-NEXT-20261104",
+                           actions=[copy.deepcopy(old_actions[0])],
+                           intents=[{"id": "SC-I001", "summary": "Original intent",
+                                     "actions": ["SC-A001"], "source_class": "USER_VISIBLE_RECONSTRUCTED"}])
+        links = sidecar(earlier, successor)
+        links["action_links"][1]["to"] = "SC-A001"
+        links["action_links"][1]["disposition"] = "SUPERSEDED_WITH_LINEAGE"
+        links["action_links"].append({"from": "SC-A003", "to": "SC-A001", "disposition": "CONTINUED",
+                                      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/358"})
+        original = mod.reconcile(earlier, successor, links)
+        links["action_links"].reverse()
+        reversed_order = mod.reconcile(earlier, successor, links)
+        self.assertEqual(original, reversed_order)
+        self.assertEqual("HOLD_LINEAGE_GAPS", original["acceptance"])
+
+    def test_intent_provenance_field_change_blocks_without_revision(self):
+        its = copy.deepcopy(list(self.before["intents"].values()))
+        its[0]["original_chat_message_id"] = "declared-but-not-verified"
+        later = packet(self.root / "intent_provenance_after", alias="CP-NEXT-20261104", intents=its)
+        links = sidecar(self.before, later)
+        report = mod.reconcile(self.before, later, links)
+        self.assertEqual(["intent:SC-I001>SC-I001"], report["unproven_semantic_revisions"])
+        self.assertEqual("HOLD_LINEAGE_GAPS", report["acceptance"])
+
     def test_done_transition_is_not_accepted_closure(self):
         acts = copy.deepcopy(list(self.before["actions"].values()))
         acts[0]["state"] = "DONE"
@@ -174,13 +220,13 @@ class TodoContinuityTests(unittest.TestCase):
 
     def test_cross_session_all_historical_items_explicitly_linked(self):
         a = packet(self.root / "after", alias="CP-NEXT-20261104")
-        r = mod.reconcile(self.before, a, sidecar(self.before["alias"], a["alias"]))
+        r = mod.reconcile(self.before, a, sidecar(self.before, a))
         self.assertEqual("PASS_LINEAGE_ONLY_NOT_ADMISSION", r["acceptance"])
         self.assertFalse(r["complete_transcript_certified"])
 
     def test_cross_session_duplicate_source_mapping_rejected(self):
         a = packet(self.root / "after", alias="CP-NEXT-20261104")
-        links = sidecar(self.before["alias"], a["alias"])
+        links = sidecar(self.before, a)
         links["action_links"].append(links["action_links"][0])
         with self.assertRaisesRegex(ValueError, "duplicate"):
             mod.reconcile(self.before, a, links)
@@ -189,7 +235,7 @@ class TodoContinuityTests(unittest.TestCase):
         acts = copy.deepcopy(list(self.before["actions"].values()))
         acts[0]["owner"] = "OTHER"
         a = packet(self.root / "after", actions=acts)
-        links = sidecar(self.before["alias"], a["alias"])
+        links = sidecar(self.before, a)
         links["revisions"] = [{"kind": "action", "id": "SC-A999", "reason": "false claim",
                                "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/358"}]
         with self.assertRaisesRegex(ValueError, "unmatched revision"):
@@ -199,7 +245,7 @@ class TodoContinuityTests(unittest.TestCase):
         acts = copy.deepcopy(list(self.before["actions"].values()))
         acts[0]["done_when"] = "Scope reduced silently"
         a = packet(self.root / "after", alias="CP-NEXT-20261104", actions=acts)
-        links = sidecar(self.before["alias"], a["alias"])
+        links = sidecar(self.before, a)
         r = mod.reconcile(self.before, a, links)
         self.assertEqual("HOLD_LINEAGE_GAPS", r["acceptance"])
         self.assertIn("action:SC-A001>SC-A001", r["unproven_semantic_revisions"])
@@ -211,7 +257,7 @@ class TodoContinuityTests(unittest.TestCase):
         acts = copy.deepcopy(list(self.before["actions"].values()))
         acts[1]["depends_on"] = []
         a = packet(self.root / "after", alias="CP-NEXT-20261104", actions=acts)
-        links = sidecar(self.before["alias"], a["alias"])
+        links = sidecar(self.before, a)
         self.assertIn("action:SC-A002>SC-A002", mod.reconcile(self.before, a, links)["unproven_semantic_revisions"])
 
     def test_archive_closed_without_successor_does_not_erase_original(self):
@@ -219,7 +265,7 @@ class TodoContinuityTests(unittest.TestCase):
         its = copy.deepcopy(list(self.before["intents"].values()))
         its[0]["actions"] = ["SC-A001"]
         a = packet(self.root / "after", alias="CP-NEXT-20261104", actions=acts, intents=its)
-        links = sidecar(self.before["alias"], a["alias"])
+        links = sidecar(self.before, a)
         links["action_links"][1]["disposition"] = "ARCHIVED_CLOSED"
         links["action_links"][1]["to"] = None
         r = mod.reconcile(self.before, a, links)
@@ -229,14 +275,14 @@ class TodoContinuityTests(unittest.TestCase):
 
     def test_many_to_one_continued_rejected(self):
         a = packet(self.root / "after", alias="CP-NEXT-20261104")
-        links = sidecar(self.before["alias"], a["alias"])
+        links = sidecar(self.before, a)
         links["action_links"][1]["to"] = "SC-A001"
         with self.assertRaisesRegex(ValueError, "many-to-one"):
             mod.reconcile(self.before, a, links)
 
     def test_unproven_archive_of_open_action_rejected(self):
         a = packet(self.root / "after", alias="CP-NEXT-20261104")
-        links = sidecar(self.before["alias"], a["alias"])
+        links = sidecar(self.before, a)
         links["action_links"][0]["disposition"] = "ARCHIVED_CLOSED"
         links["action_links"][0]["to"] = None
         with self.assertRaisesRegex(ValueError, "archive"):
@@ -244,7 +290,7 @@ class TodoContinuityTests(unittest.TestCase):
 
     def test_unowned_private_url_does_not_authorize_link(self):
         a = packet(self.root / "after", alias="CP-NEXT-20261104")
-        links = sidecar(self.before["alias"], a["alias"])
+        links = sidecar(self.before, a)
         links["action_links"][0]["evidence_url"] = "https://example.org/private"
         with self.assertRaisesRegex(ValueError, "source-bound"):
             mod.reconcile(self.before, a, links)
