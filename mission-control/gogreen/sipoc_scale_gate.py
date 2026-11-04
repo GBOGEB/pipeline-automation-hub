@@ -94,7 +94,7 @@ def assess(observation):
         if not isinstance(pairs, list) or len(pairs) != 2:
             reasons.append("TWO_WORKER_VERIFIER_PAIRS_REQUIRED")
             continue
-        active, seen = [], set()
+        active, seen, pair_actors = [], set(), {}
         for pair in pairs:
             if not isinstance(pair, dict) or not isinstance(pair.get("id"), str):
                 reasons.append("INVALID_PAIR_ID")
@@ -111,9 +111,20 @@ def assess(observation):
             if not isinstance(worker, dict) or not isinstance(verifier, dict):
                 reasons.append("INVALID_PAIR_ACTOR")
                 continue
-            if (not worker.get("actor") or not verifier.get("actor")
-                    or worker["actor"] == verifier["actor"]):
+            worker_actor, verifier_actor = worker.get("actor"), verifier.get("actor")
+            if (not isinstance(worker_actor, str) or not worker_actor.strip()
+                    or not isinstance(verifier_actor, str) or not verifier_actor.strip()
+                    or worker_actor == verifier_actor):
                 reasons.append("INDEPENDENT_VERIFIER_MISSING")
+            # Actor leases are disjoint across both pairs of this pulse.
+            # Claimed names are not native/authenticated runner identities.
+            for actor in (worker_actor, verifier_actor):
+                if not isinstance(actor, str) or not actor.strip():
+                    continue
+                other_pair = pair_actors.get(actor)
+                if other_pair is not None and other_pair != pair["id"]:
+                    reasons.append("NON_DISJOINT_PAIR_ACTORS")
+                pair_actors.setdefault(actor, pair["id"])
             wp, vp = worker.get("native"), verifier.get("native")
             if not _native_proof(wp, sha) or not _native_proof(vp, sha):
                 reasons.append("EXACT_HEAD_NATIVE_PAIR_PROOF_MISSING")

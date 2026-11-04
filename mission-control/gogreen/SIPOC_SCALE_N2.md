@@ -23,6 +23,16 @@
 
 All role names are **logical CREW assignments**. A name on the matrix is not an authenticated dispatched agent. The existing canonical CREW registry determines actual eligible actors. Do not invent runner identities.
 
+## N+3 disjoint-actor lease guard (source-owned)
+
+The two-pair gate now rejects a worker or verifier actor reused in another
+pair of the **same pulse**, even if the roles differ. Invalid/blank actor labels
+return HOLD. These are claimed labels, not authenticated GitHub identities.
+Across pulses, a recurring actor still needs independent nonreused native
+run/job/attempt and receipt hashes. No real worker, CI run or dispatch is
+launched by the advisory gate. A positive gate result still requires external
+readback, queue p95 proof, independent owner approval and source-head review.
+
 ## Scale pulses and deliberately noncompensating stop rules
 
 | Gate | Mutating concurrency | Prerequisite to advance | Next legal action |
