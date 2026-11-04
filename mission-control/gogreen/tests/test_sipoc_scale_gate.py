@@ -73,6 +73,30 @@ class ScaleGateTest(unittest.TestCase):
         record["pulses"][0]["pairs"][0]["verifier"]["native"] = record["pulses"][0]["pairs"][0]["worker"]["native"]
         self.assertIn("VERIFIER_REUSES_WORKER_EVIDENCE", m.assess(record)["reasons"])
 
+    def test_cross_pair_actor_reuse_blocks_four_worker_advisory(self):
+        for source_role, target_role in (("worker", "worker"),
+                                         ("worker", "verifier"),
+                                         ("verifier", "verifier"),
+                                         ("verifier", "worker")):
+            record = sample()
+            pairs = record["pulses"][1]["pairs"]
+            pairs[1][target_role]["actor"] = pairs[0][source_role]["actor"]
+            with self.subTest(src=source_role, dst=target_role):
+                out = m.assess(record)
+                self.assertEqual(out["classification"], "HOLD")
+                self.assertIn("NON_DISJOINT_PAIR_ACTORS", out["reasons"])
+                self.assertEqual(out["target_mutators"], 2)
+                self.assertFalse(out["dispatch_authorized"])
+
+    def test_malformed_claimed_actor_cannot_qualify_scaling(self):
+        for bad in ([], {}, 7, "  "):
+            record = sample()
+            record["pulses"][1]["pairs"][1]["worker"]["actor"] = bad
+            with self.subTest(actor=bad):
+                out = m.assess(record)
+                self.assertIn("INDEPENDENT_VERIFIER_MISSING", out["reasons"])
+                self.assertEqual(out["classification"], "HOLD")
+
     def test_native_identity_reuse_across_records_blocks(self):
         # Same run/attempt/job with an irrelevant field changed: wp != vp.
         record = sample()
