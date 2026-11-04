@@ -33,12 +33,16 @@ def packet(directory: Path, alias="CP-DEMO-20261103", actions=None, intents=None
     ])
     state = {"schema": "missioncontrol.cp_close.state.v1", "session_alias": alias,
              "source": {"observed_main_sha": SHA},
-             "intent_count_reconstructed": len(intents), "action_count_reconstructed": len(actions)}
+             "intent_count_reconstructed": len(intents), "action_count_reconstructed": len(actions),
+             "security_waiver": False, "authority_transfer": False,
+             "full_chat_message_count": None, "full_chat_prompt_count": None,
+             "release_gate": "INDEPENDENT_PR_AND_MAIN_ADMISSION"}
     ledger = {"schema": "missioncontrol.cp_close.semantic_ledger.v1",
               "actions": actions, "intents": intents, "decisions": [], "insights": [],
               "metrics": [], "prs": [], "issues": []}
     bd = {"schema": "missioncontrol.cp_close.bd_projection.v1", "source_sha256": BD_SHA,
-          "read_only_historical": True, "focus": [{"id": "CPQ-001"}], "global_item_count": 1}
+          "read_only_historical": True, "authority_transfer": False,
+          "new_canonical_bd_items": 0, "focus": [{"id": "CPQ-001"}], "global_item_count": 1}
     directory.mkdir(parents=True, exist_ok=True)
     blobs = {}
     for name, obj in (("STATE.json", state), ("INTENT_ACTION_LEDGER.json", ledger), ("BD_QUEUE_READONLY.json", bd)):
@@ -46,7 +50,8 @@ def packet(directory: Path, alias="CP-DEMO-20261103", actions=None, intents=None
         (directory / name).write_bytes(content)
         blobs[name] = hashlib.sha256(content).hexdigest()
     manifest = {"schema": "missioncontrol.cp_close.manifest.v1", "session_alias": alias,
-                "authority_transfer": False, "observed_main_sha": SHA,
+                "authority_transfer": False, "verbatim_transcript_claim": False,
+                "main_merge_admission": "INDEPENDENT_REVIEW_REQUIRED", "observed_main_sha": SHA,
                 "canonical_bd_sha256": BD_SHA, "member_sha256": blobs}
     (directory / "MANIFEST.json").write_text(json.dumps(manifest, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     return mod.load_packet(directory)
@@ -136,6 +141,63 @@ class TodoContinuityTests(unittest.TestCase):
         links["intent_links"][0]["revision_reason"] = "Reclassified after authenticated source"
         links["intent_links"][0]["revision_evidence_url"] = "https://github.com/GBOGEB/pipeline-automation-hub/issues/358"
         self.assertEqual("PASS_LINEAGE_ONLY_NOT_ADMISSION", mod.reconcile(self.before, later, links)["acceptance"])
+
+
+    def test_manifest_privacy_and_main_admission_markers_fail_closed(self):
+        for key, bad in (("verbatim_transcript_claim", True),
+                         ("authority_transfer", True),
+                         ("main_merge_admission", "ADMITTED"),
+                         ("verbatim_transcript_claim", None)):
+            with self.subTest(field=key, value=bad):
+                first = packet(self.root / ("manifest_" + key + "_" + str(bad)))
+                manifestfile = self.root / ("manifest_" + key + "_" + str(bad)) / "MANIFEST.json"
+                doc = json.loads(manifestfile.read_text(encoding="utf-8"))
+                if bad is None:
+                    doc.pop(key)
+                else:
+                    doc[key] = bad
+                manifestfile.write_text(json.dumps(doc) + "\n", encoding="utf-8", newline="\n")
+                with self.assertRaisesRegex(ValueError, "manifest/authority/privacy"):
+                    mod.load_packet(manifestfile.parent)
+
+    def test_digest_valid_state_privacy_invariant_fail_closed(self):
+        for key, bad in (("security_waiver", True), ("authority_transfer", True),
+                         ("full_chat_prompt_count", 4), ("full_chat_message_count", 5),
+                         ("release_gate", "ADMITTED"), ("security_waiver", None)):
+            with self.subTest(field=key, value=bad):
+                source = packet(self.root / ("state_" + key + "_" + str(bad)))
+                directory = self.root / ("state_" + key + "_" + str(bad))
+                statefile = directory / "STATE.json"
+                state = json.loads(statefile.read_text(encoding="utf-8"))
+                if bad is None:
+                    state.pop(key)
+                else:
+                    state[key] = bad
+                raw = (json.dumps(state) + "\n").encode("utf-8")
+                statefile.write_bytes(raw)
+                manifestfile = directory / "MANIFEST.json"
+                doc = json.loads(manifestfile.read_text(encoding="utf-8"))
+                doc["member_sha256"]["STATE.json"] = hashlib.sha256(raw).hexdigest()
+                manifestfile.write_text(json.dumps(doc) + "\n", encoding="utf-8", newline="\n")
+                with self.assertRaisesRegex(ValueError, "privacy/non-admission"):
+                    mod.load_packet(directory)
+
+    def test_digest_valid_bd_non_authority_fail_closed(self):
+        for key, bad in (("authority_transfer", True), ("new_canonical_bd_items", 1)):
+            with self.subTest(field=key):
+                directory = self.root / ("bd_" + key)
+                packet(directory)
+                bdfile = directory / "BD_QUEUE_READONLY.json"
+                bd = json.loads(bdfile.read_text(encoding="utf-8"))
+                bd[key] = bad
+                raw = (json.dumps(bd) + "\n").encode("utf-8")
+                bdfile.write_bytes(raw)
+                manifestfile = directory / "MANIFEST.json"
+                m = json.loads(manifestfile.read_text(encoding="utf-8"))
+                m["member_sha256"]["BD_QUEUE_READONLY.json"] = hashlib.sha256(raw).hexdigest()
+                manifestfile.write_text(json.dumps(m) + "\n", encoding="utf-8", newline="\n")
+                with self.assertRaisesRegex(ValueError, "privacy/non-admission"):
+                    mod.load_packet(directory)
 
     def test_absent_canonical_bd_digest_rejected(self):
         path = self.root / "before" / "MANIFEST.json"
