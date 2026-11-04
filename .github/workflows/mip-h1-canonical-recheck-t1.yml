@@ -45,7 +45,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          SINCE="$(date -u -d '1 day ago' +%F)"
+          # Post-filter event creation is low: two UTC days yielded only
+          # 980 completed records. Extend the SOURCE window, never denominator.
+          SINCE="$(date -u -d '2 days ago' +%F)"
           UNTIL="$(date -u +%F)"
           mkdir -p "$RUNNER_TEMP/mip-t2"
           echo "SINCE=$SINCE" >> "$GITHUB_ENV"
