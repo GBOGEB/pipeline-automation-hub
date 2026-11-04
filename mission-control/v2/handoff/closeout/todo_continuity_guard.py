@@ -84,9 +84,16 @@ def check_dag(actions: dict) -> None:
         require(isinstance(deps, list) and len(deps) == len(set(deps))
                 and all(isinstance(x, str) and x in actions and x != key for x in deps),
                 "orphan/self/duplicate action dependency " + key)
-        require(item.get("state") in STATES and isinstance(item.get("done_when"), str)
-                and item["done_when"].strip() and isinstance(item.get("owner"), str)
-                and item["owner"].strip(), "incomplete action " + key)
+        require(item.get("state") in STATES
+                and item.get("priority") in {"P0", "P1", "P2", "P3"}
+                and isinstance(item.get("done_when"), str) and item["done_when"].strip()
+                and isinstance(item.get("owner"), str) and item["owner"].strip()
+                and isinstance(item.get("summary"), str) and item["summary"].strip(),
+                "incomplete action " + key)
+        evidence_urls = item.get("evidence_urls")
+        require(isinstance(evidence_urls, list)
+                and all(github_owner_url(x) for x in evidence_urls),
+                "invalid action evidence URLs " + key)
         graph[key] = deps
     children = {key: [] for key in graph}
     indegree = {key: len(parents) for key, parents in graph.items()}
@@ -170,6 +177,12 @@ def load_packet(directory: Path) -> dict:
     check_dag(actions)
     for key, item in intents.items():
         ids = item.get("actions")
+        require(isinstance(item.get("summary"), str) and item["summary"].strip()
+                and item.get("source_class") in
+                {"USER_VISIBLE_RECONSTRUCTED", "SOURCE_BOUND_REFERENCE", "USER_EXPLICIT_INTAKE"}
+                and item.get("original_chat_message_id") is None
+                and item.get("original_chat_timestamp") is None,
+                "invalid intent provenance " + key)
         require(isinstance(ids, list) and len(ids) == len(set(ids))
                 and all(x in actions for x in ids), "orphan intent-action edge " + key)
     require(state.get("action_count_reconstructed") == len(actions)
