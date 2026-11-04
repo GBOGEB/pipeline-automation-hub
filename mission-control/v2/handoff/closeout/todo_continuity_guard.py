@@ -25,7 +25,7 @@ INTENT = re.compile(r"SC-I[0-9]{3}\Z")
 STATES = frozenset(("TODO", "ACTIVE", "IN_PR", "HOLD", "DEFER", "DONE", "CONTROL"))
 CLOSED = frozenset(("DONE", "CONTROL"))
 DISPOSITIONS = frozenset(("CONTINUED", "SUPERSEDED_WITH_LINEAGE", "DEFERRED_WITH_OWNER", "ARCHIVED_CLOSED"))
-FIELDS = ("owner", "summary", "done_when", "depends_on", "priority")
+FIELDS = ("owner", "summary", "done_when", "depends_on", "priority", "evidence_urls")
 MAX_FILE_BYTES = 2_000_000
 MAX_MANIFEST_MEMBERS = 32
 MAX_PACKET_BYTES = 16_000_000
@@ -148,7 +148,11 @@ def load_packet(directory: Path) -> dict:
             and SHA40.fullmatch(source["observed_main_sha"])
             and source["observed_main_sha"] == manifest.get("observed_main_sha"),
             "session or observed-main identity mismatch")
-    require(bd.get("source_sha256") == manifest.get("canonical_bd_sha256")
+    require(isinstance(bd.get("source_sha256"), str)
+            and SHA64.fullmatch(bd["source_sha256"])
+            and isinstance(manifest.get("canonical_bd_sha256"), str)
+            and SHA64.fullmatch(manifest["canonical_bd_sha256"])
+            and bd["source_sha256"] == manifest["canonical_bd_sha256"]
             and bd.get("read_only_historical") is True,
             "canonical BD provenance mismatch")
     actions = indexed(ledger.get("actions"), ACTION, "action")
@@ -275,7 +279,7 @@ def reconcile(before: dict, after: dict, links: dict | None = None) -> dict:
             expected_deps = sorted(action_links[d]["to"] for d in was["depends_on"]
                                    if d in action_links and action_links[d]["to"] is not None)
             different = any(was.get(f) != new.get(f)
-                            for f in ("owner", "summary", "done_when", "priority")) \
+                            for f in ("owner", "summary", "done_when", "priority", "evidence_urls")) \
                 or sorted(new.get("depends_on", [])) != expected_deps
             if different and not (isinstance(link.get("revision_reason"), str)
                                   and link["revision_reason"].strip()
@@ -295,6 +299,7 @@ def reconcile(before: dict, after: dict, links: dict | None = None) -> dict:
             expected = sorted(action_links[d]["to"] for d in was.get("actions", [])
                               if d in action_links and action_links[d]["to"] is not None)
             different = was.get("summary") != new.get("summary") \
+                or was.get("source_class") != new.get("source_class") \
                 or sorted(new.get("actions", [])) != expected
             if different and not (isinstance(link.get("revision_reason"), str)
                                   and link["revision_reason"].strip()
@@ -342,7 +347,7 @@ def main(argv=None) -> int:
     raw = json.dumps(report, ensure_ascii=True, sort_keys=True, indent=2) + "\n"
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
-        args.out.write_text(raw, encoding="utf-8")
+        args.out.write_text(raw, encoding="utf-8", newline="\n")
     else:
         print(raw, end="")
     return 2 if report["acceptance"].startswith("HOLD") else 0
