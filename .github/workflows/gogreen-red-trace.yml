@@ -49,11 +49,8 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
         with:
           python-version: '3.12'
-      - name: Offline classification and guard tests
-        run: |
-          python -m pip install --disable-pip-version-check pyyaml==6.0.3
-          python -m unittest discover -s mission-control/gogreen/red_trace -p 'test_*.py' -v
-          python -m unittest discover -s mission-control/gogreen/required_gate -p 'test_*.py' -v
+      - name: Install source-owned offline YAML parser
+        run: python -m pip install --disable-pip-version-check pyyaml==6.0.3
       - name: Trace master history (GET only)
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -101,6 +98,13 @@ jobs:
           python mission-control/gogreen/required_gate/depth.py --root . \
             --ledger "$RUNNER_TEMP/red-trace/admission_proposed.json" --out "$RUNNER_TEMP/red-trace"
           cat "$RUNNER_TEMP/red-trace/depth.md" >> "$GITHUB_STEP_SUMMARY"
+      - name: Offline classification and guard tests (fail closed)
+        # Run *after* source-bound traces and proposal are captured. Still RED
+        # on every failed test, without dropping the independent test population.
+        if: always()
+        run: |
+          python -m unittest discover -s mission-control/gogreen/red_trace -p 'test_*.py' -v
+          python -m unittest discover -s mission-control/gogreen/required_gate -p 'test_*.py' -v
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v6.0.0 (node24)
         if: always()
         with:
