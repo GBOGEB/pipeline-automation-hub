@@ -48,7 +48,7 @@ def packet(directory: Path, alias="CP-DEMO-20261103", actions=None, intents=None
     manifest = {"schema": "missioncontrol.cp_close.manifest.v1", "session_alias": alias,
                 "authority_transfer": False, "observed_main_sha": SHA,
                 "canonical_bd_sha256": BD_SHA, "member_sha256": blobs}
-    (directory / "MANIFEST.json").write_text(json.dumps(manifest, sort_keys=True) + "\n")
+    (directory / "MANIFEST.json").write_text(json.dumps(manifest, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     return mod.load_packet(directory)
 
 
@@ -101,6 +101,60 @@ class TodoContinuityTests(unittest.TestCase):
         links["revisions"] = [{"kind": "action", "id": "SC-A001", "reason": "Owner reassigned",
                                "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/358"}]
         self.assertEqual("PASS_LINEAGE_ONLY_NOT_ADMISSION", mod.reconcile(self.before, a, links)["acceptance"])
+
+    def test_action_evidence_url_deletion_requires_revision_same_session(self):
+        acts = copy.deepcopy(list(self.before["actions"].values()))
+        acts[0]["evidence_urls"] = ["https://github.com/GBOGEB/pipeline-automation-hub/issues/358"]
+        first = packet(self.root / "evidence_before", actions=acts)
+        acts[0]["evidence_urls"] = []
+        second = packet(self.root / "evidence_after", actions=acts)
+        report = mod.reconcile(first, second)
+        self.assertEqual(["SC-A001"], report["unproven_semantic_revisions"])
+        self.assertEqual("HOLD_LINEAGE_GAPS", report["acceptance"])
+
+    def test_action_evidence_rewrite_requires_source_cross_session(self):
+        acts = copy.deepcopy(list(self.before["actions"].values()))
+        acts[0]["evidence_urls"] = ["https://github.com/GBOGEB/pipeline-automation-hub/issues/358"]
+        later = packet(self.root / "evidence_after", alias="CP-NEXT-20261104", actions=acts)
+        links = sidecar(self.before["alias"], later["alias"])
+        report = mod.reconcile(self.before, later, links)
+        self.assertIn("action:SC-A001>SC-A001", report["unproven_semantic_revisions"])
+        links["action_links"][0]["revision_reason"] = "New evidence attached"
+        links["action_links"][0]["revision_evidence_url"] = "https://github.com/GBOGEB/pipeline-automation-hub/issues/358"
+        self.assertEqual("PASS_LINEAGE_ONLY_NOT_ADMISSION", mod.reconcile(self.before, later, links)["acceptance"])
+
+    def test_cross_session_intent_source_class_rewrite_requires_revision(self):
+        its = copy.deepcopy(list(self.before["intents"].values()))
+        its[0]["source_class"] = "SOURCE_BOUND_REFERENCE"
+        later = packet(self.root / "source_class_after", alias="CP-NEXT-20261104", intents=its)
+        links = sidecar(self.before["alias"], later["alias"])
+        report = mod.reconcile(self.before, later, links)
+        self.assertIn("intent:SC-I001>SC-I001", report["unproven_semantic_revisions"])
+        links["intent_links"][0]["revision_reason"] = "Reclassified after authenticated source"
+        links["intent_links"][0]["revision_evidence_url"] = "https://github.com/GBOGEB/pipeline-automation-hub/issues/358"
+        self.assertEqual("PASS_LINEAGE_ONLY_NOT_ADMISSION", mod.reconcile(self.before, later, links)["acceptance"])
+
+    def test_absent_canonical_bd_digest_rejected(self):
+        path = self.root / "before" / "MANIFEST.json"
+        m = json.loads(path.read_text(encoding="utf-8"))
+        m.pop("canonical_bd_sha256")
+        path.write_text(json.dumps(m) + "\n", encoding="utf-8", newline="\n")
+        with self.assertRaisesRegex(ValueError, "canonical BD provenance"):
+            mod.load_packet(self.root / "before")
+
+    def test_invalid_matching_bd_digest_rejected(self):
+        bdfile = self.root / "before" / "BD_QUEUE_READONLY.json"
+        bd = json.loads(bdfile.read_text(encoding="utf-8"))
+        bd["source_sha256"] = "invalid-but-equal"
+        raw = (json.dumps(bd) + "\n").encode("utf-8")
+        bdfile.write_bytes(raw)
+        manifestfile = self.root / "before" / "MANIFEST.json"
+        m = json.loads(manifestfile.read_text(encoding="utf-8"))
+        m["canonical_bd_sha256"] = "invalid-but-equal"
+        m["member_sha256"]["BD_QUEUE_READONLY.json"] = hashlib.sha256(raw).hexdigest()
+        manifestfile.write_text(json.dumps(m) + "\n", encoding="utf-8", newline="\n")
+        with self.assertRaisesRegex(ValueError, "canonical BD provenance"):
+            mod.load_packet(self.root / "before")
 
     def test_done_transition_is_not_accepted_closure(self):
         acts = copy.deepcopy(list(self.before["actions"].values()))
@@ -162,7 +216,8 @@ class TodoContinuityTests(unittest.TestCase):
 
     def test_archive_closed_without_successor_does_not_erase_original(self):
         acts = copy.deepcopy(list(self.before["actions"].values()))[:1]
-        its = [{"id": "SC-I001", "summary": "Original intent", "actions": ["SC-A001"]}]
+        its = copy.deepcopy(list(self.before["intents"].values()))
+        its[0]["actions"] = ["SC-A001"]
         a = packet(self.root / "after", alias="CP-NEXT-20261104", actions=acts, intents=its)
         links = sidecar(self.before["alias"], a["alias"])
         links["action_links"][1]["disposition"] = "ARCHIVED_CLOSED"
@@ -196,7 +251,7 @@ class TodoContinuityTests(unittest.TestCase):
 
     def test_tampered_member_rejected(self):
         p = self.root / "before" / "INTENT_ACTION_LEDGER.json"
-        p.write_text(p.read_text() + "\n")
+        p.write_text(p.read_text(encoding="utf-8") + "\n", encoding="utf-8", newline="\n")
         with self.assertRaisesRegex(ValueError, "drifted"):
             mod.load_packet(self.root / "before")
 
@@ -215,7 +270,7 @@ class TodoContinuityTests(unittest.TestCase):
 
     def test_duplicate_json_fields_rejected(self):
         p = self.root / "duplicated.json"
-        p.write_text('{"id":"one","id":"two"}', encoding="utf-8")
+        p.write_text('{"id":"one","id":"two"}', encoding="utf-8", newline="\n")
         with self.assertRaisesRegex(ValueError, "duplicate JSON field"):
             mod.read_json(p)
 
@@ -255,7 +310,7 @@ class TodoContinuityTests(unittest.TestCase):
         rc = mod.main(["--before", str(self.root / "before"),
                        "--after", str(self.root / "after"), "--out", str(out)])
         self.assertEqual(0, rc)
-        self.assertEqual("PASS_LINEAGE_ONLY_NOT_ADMISSION", json.loads(out.read_text())["acceptance"])
+        self.assertEqual("PASS_LINEAGE_ONLY_NOT_ADMISSION", json.loads(out.read_text(encoding="utf-8"))["acceptance"])
 
     def test_cli_unmapped_session_fails_with_exit_two(self):
         packet(self.root / "after", alias="CP-NEXT-20261104")
@@ -263,7 +318,7 @@ class TodoContinuityTests(unittest.TestCase):
         rc = mod.main(["--before", str(self.root / "before"),
                        "--after", str(self.root / "after"), "--out", str(out)])
         self.assertEqual(2, rc)
-        self.assertEqual("HOLD_LINEAGE_GAPS", json.loads(out.read_text())["acceptance"])
+        self.assertEqual("HOLD_LINEAGE_GAPS", json.loads(out.read_text(encoding="utf-8"))["acceptance"])
 
     def test_bd_focus_drift_is_not_closure(self):
         a = packet(self.root / "after")
