@@ -160,7 +160,7 @@ class OwnerHold(unittest.TestCase):
         proposed, previous = self.fixture()
         held = a.hold_unapproved_changes(proposed, previous)
         by = {e["path"]: e for e in held["entries"]}
-        self.assertEqual([by[k]["disposition"] for k in "abcde"],
+        self.assertEqual([by[f"{k}.yml"]["disposition"] for k in "abcde"],
                          [g.ENFORCED, g.OBSERVED, g.EXCLUDED, g.OBSERVED, g.EXCLUDED])
         self.assertEqual(held["counts"], {g.ENFORCED: 1, g.OBSERVED: 2, g.EXCLUDED: 2})
         self.assertEqual(held["coverage"]["enforced_of_pr_scoped"], 1)
