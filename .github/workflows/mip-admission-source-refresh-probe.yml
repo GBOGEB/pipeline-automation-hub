@@ -1,0 +1,73 @@
+name: MIP Admission Ledger Source-Owner Refresh Probe
+
+# Disposable, read-only proposal. It never edits the protected ADMISSION ledger.
+# Run trusted BASE checkout, not PR-head code, and do not waive failing tests.
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/mip-admission-source-refresh-probe.yml'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  source-owned-proposal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: owner
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
+        with:
+          python-version: '3.12'
+      - name: Verify independent original owner source
+        working-directory: owner
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          test -f mission-control/gogreen/required_gate/admission.py
+          test -f mission-control/gogreen/red_trace/red_trace.py
+          python -m pip install --disable-pip-version-check pyyaml==6.0.3
+          mkdir -p "$RUNNER_TEMP/admission-probe"
+          printf '{"source_sha":"%s","merge_authorized":false}\n' "$SOURCE_SHA" > "$RUNNER_TEMP/admission-probe/source.json"
+      - name: Refresh both red-trace evidence lanes (GitHub GET only)
+        working-directory: owner
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/red_trace/red_trace.py \
+            --repo "$GITHUB_REPOSITORY" --branch master \
+            --per-workflow 100 --pr-lane 40 --root . \
+            --out "$RUNNER_TEMP/admission-probe"
+      - name: Generate canonical source-owned proposed ADMISSION ledger
+        working-directory: owner
+        run: |
+          set -euo pipefail
+          python mission-control/gogreen/required_gate/admission.py --root . \
+            --master-trace "$RUNNER_TEMP/admission-probe/red_trace.json" \
+            --pr-trace "$RUNNER_TEMP/admission-probe/red_trace_pr.json" \
+            --out "$RUNNER_TEMP/admission-probe/admission_proposed.json" \
+            --summary "$RUNNER_TEMP/admission-probe/admission.md"
+          cat "$RUNNER_TEMP/admission-probe/admission.md" >> "$GITHUB_STEP_SUMMARY"
+      - name: Report original offline guard without waiver
+        working-directory: owner
+        run: |
+          python -m unittest discover -s mission-control/gogreen/required_gate -p 'test_*.py' -v
+      - name: Upload immutable proposal and both source traces
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: mip-admission-source-reconciliation
+          path: ${{ runner.temp }}/admission-probe/
+          if-no-files-found: warn
+          retention-days: 14
