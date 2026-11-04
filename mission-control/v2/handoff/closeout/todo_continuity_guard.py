@@ -112,8 +112,10 @@ def load_packet(directory: Path) -> dict:
     require(manifest_path.is_file(), "missing MANIFEST")
     manifest = read_json(manifest_path)
     require(manifest.get("schema") == "missioncontrol.cp_close.manifest.v1"
-            and manifest.get("authority_transfer") is False,
-            "canonical CP.CLOSE manifest/authority required")
+            and manifest.get("authority_transfer") is False
+            and manifest.get("verbatim_transcript_claim") is False
+            and manifest.get("main_merge_admission") == "INDEPENDENT_REVIEW_REQUIRED",
+            "canonical CP.CLOSE manifest/authority/privacy required")
     members = manifest.get("member_sha256")
     require(isinstance(members, dict) and members
             and len(members) <= MAX_MANIFEST_MEMBERS,
@@ -140,6 +142,14 @@ def load_packet(directory: Path) -> dict:
             and ledger.get("schema") == "missioncontrol.cp_close.semantic_ledger.v1"
             and bd.get("schema") == "missioncontrol.cp_close.bd_projection.v1",
             "wrong packet schema")
+    require(state.get("security_waiver") is False
+            and state.get("authority_transfer") is False
+            and state.get("full_chat_message_count") is None
+            and state.get("full_chat_prompt_count") is None
+            and state.get("release_gate") == "INDEPENDENT_PR_AND_MAIN_ADMISSION"
+            and bd.get("authority_transfer") is False
+            and bd.get("new_canonical_bd_items") == 0,
+            "canonical CP.CLOSE privacy/non-admission required")
     alias = state.get("session_alias")
     source = state.get("source")
     require(isinstance(alias, str) and alias == manifest.get("session_alias")
