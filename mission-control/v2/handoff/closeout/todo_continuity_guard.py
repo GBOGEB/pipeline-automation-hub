@@ -182,6 +182,13 @@ def _links(doc: dict | None, before: dict, after: dict) -> tuple[dict, dict, set
             and doc.get("from_session") == before["alias"]
             and doc.get("to_session") == after["alias"],
             "sidecar session/schema mismatch")
+    require(isinstance(doc.get("from_manifest_sha256"), str)
+            and SHA64.fullmatch(doc["from_manifest_sha256"])
+            and isinstance(doc.get("to_manifest_sha256"), str)
+            and SHA64.fullmatch(doc["to_manifest_sha256"])
+            and doc["from_manifest_sha256"] == before["manifest_digest"]
+            and doc["to_manifest_sha256"] == after["manifest_digest"],
+            "sidecar packet digest mismatch or missing")
     maps = []
     for name, old, new in (("action_links", before["actions"], after["actions"]),
                             ("intent_links", before["intents"], after["intents"])):
@@ -217,14 +224,12 @@ def _links(doc: dict | None, before: dict, after: dict) -> tuple[dict, dict, set
     for kind, rows in (("action", maps[0]), ("intent", maps[1])):
         targets = {}
         for item in rows.values():
-            if item["to"] is None:
-                continue
-            target = item["to"]
-            if target in targets:
-                require(item["disposition"] == "SUPERSEDED_WITH_LINEAGE"
-                        or targets[target] == "SUPERSEDED_WITH_LINEAGE",
-                        "unjustified many-to-one " + kind + " successor")
-            targets[target] = item["disposition"]
+            if item["to"] is not None:
+                targets.setdefault(item["to"], []).append(item["disposition"])
+        for target, dispositions in targets.items():
+            if len(dispositions) > 1:
+                require("SUPERSEDED_WITH_LINEAGE" in dispositions,
+                        "unjustified many-to-one " + kind + " successor " + target)
     revisions = doc.get("revisions", [])
     require(isinstance(revisions, list), "revision list required")
     approved = set()
@@ -298,8 +303,9 @@ def reconcile(before: dict, after: dict, links: dict | None = None) -> dict:
             was, new = b_intents[old], a_intents[link["to"]]
             expected = sorted(action_links[d]["to"] for d in was.get("actions", [])
                               if d in action_links and action_links[d]["to"] is not None)
-            different = was.get("summary") != new.get("summary") \
-                or was.get("source_class") != new.get("source_class") \
+            old_provenance = {k: v for k, v in was.items() if k not in ("id", "actions")}
+            new_provenance = {k: v for k, v in new.items() if k not in ("id", "actions")}
+            different = old_provenance != new_provenance \
                 or sorted(new.get("actions", [])) != expected
             if different and not (isinstance(link.get("revision_reason"), str)
                                   and link["revision_reason"].strip()
