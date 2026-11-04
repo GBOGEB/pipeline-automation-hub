@@ -305,16 +305,30 @@ def diff(old: dict, new: dict) -> dict:
 
     Review threads are read from a moving window of recent PRs. A thread whose PR is no longer in the
     new receipt's sample was evicted, not resolved: it is listed under `evicted` and never counted as
-    left or as clearing its root. Without a recorded sample on both sides, nothing is called evicted."""
+    left or as clearing its root. A thread moved to another root is reclassified, not resolved or new.
+    Without a recorded sample on both sides, nothing is called evicted."""
     def outstanding(receipt):
         return {r["id"]: r for r in receipt["roots"] if r["outstanding"]}
     a, b = outstanding(old), outstanding(new)
     old_scope, new_scope = old.get("review_scope"), new.get("review_scope")
+
+    def review_assignments(roots):
+        return {(r["repo"], alert): rid for rid, r in roots.items() if r["source"] == "review_threads"
+                for alert in r["alerts"]}
+    old_assignments, new_assignments = review_assignments(a), review_assignments(b)
+    reclassified = {key for key, rid in old_assignments.items()
+                    if key in new_assignments and new_assignments[key] != rid}
     left, joined, evicted = [], [], []
     for rid in sorted(set(a) | set(b)):
         was, now = set(a.get(rid, {}).get("alerts", [])), set(b.get(rid, {}).get("alerts", []))
         root = b.get(rid) or a[rid]
-        gone, aged_out = was - now, set()
+        moved_from = ({alert for repo, alert in reclassified if repo == root["repo"]
+                       and old_assignments[(repo, alert)] == rid}
+                      if root["source"] == "review_threads" else set())
+        moved_to = ({alert for repo, alert in reclassified if repo == root["repo"]
+                     and new_assignments[(repo, alert)] == rid}
+                    if root["source"] == "review_threads" else set())
+        gone, aged_out = was - now - moved_from, set()
         if (root["source"] == "review_threads" and old_scope is not None and new_scope is not None
                 and root["repo"] in old_scope and root["repo"] in new_scope):
             sampled = set((new_scope.get(root["repo"]) or {}).get("prs", []))
@@ -324,9 +338,10 @@ def diff(old: dict, new: dict) -> dict:
             evicted.append({"id": rid, "repo": root["repo"], "source": root["source"], "alerts": sorted(aged_out)})
         if gone - aged_out:
             left.append({"id": rid, "repo": root["repo"], "source": root["source"], "alerts": sorted(gone - aged_out),
-                         "root_cleared": rid not in b and not aged_out})
-        if now - was:
-            joined.append({"id": rid, "repo": root["repo"], "source": root["source"], "alerts": sorted(now - was),
+                         "root_cleared": rid not in b and not aged_out and not moved_from})
+        if now - was - moved_to:
+            joined.append({"id": rid, "repo": root["repo"], "source": root["source"],
+                           "alerts": sorted(now - was - moved_to),
                            "root_new": rid not in a})
     coverage = []
     for repo in sorted(set(old["coverage"]) | set(new["coverage"])):

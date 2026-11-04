@@ -295,6 +295,14 @@ class Scope(unittest.TestCase):
         roots = {r["subject"]: r["alerts"] for r in receipt["roots"]}
         self.assertEqual((roots["path-alias"], roots["wave-claims"]), ([1], [2]))
 
+    def test_rethemed_thread_is_not_counted_as_resolved_or_new(self):
+        review = scoped({7: [1]}, [7])
+        old = M.build(self.EMPTY, review)
+        new = M.build(self.EMPTY, review, {"1": {"theme": "wave-claims"}})
+        delta = M.diff(old, new)
+        self.assertEqual((delta["alerts_left"], delta["alerts_joined"], delta["roots_cleared"],
+                          delta["roots_new"]), (0, 0, 0, 0))
+
     def test_receipt_records_the_sample_and_each_alerts_pr(self):
         receipt = M.build(self.EMPTY, scoped({7: [1], 8: [2]}, [7, 8]))
         self.assertEqual(receipt["review_scope"]["O/pub"]["prs"], [7, 8])
