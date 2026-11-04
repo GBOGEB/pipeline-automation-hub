@@ -79,6 +79,7 @@ jobs:
             --master-trace "$RUNNER_TEMP/red-trace/red_trace.json" \
             --pr-trace "$RUNNER_TEMP/red-trace/red_trace_pr.json" \
             --out "$RUNNER_TEMP/red-trace/admission_proposed.json" \
+            --review-out "$RUNNER_TEMP/red-trace/admission_owner_hold.json" \
             --summary "$RUNNER_TEMP/red-trace/admission.md"
           cat "$RUNNER_TEMP/red-trace/admission.md" >> "$GITHUB_STEP_SUMMARY"
       - name: Required-gate backtest against merged history (GET only)
