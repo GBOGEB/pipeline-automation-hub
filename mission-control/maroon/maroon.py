@@ -44,6 +44,9 @@ SOURCES = {
                       {"open": "outstanding", "fixed": "closed", "dismissed": "deferred"}),
     "secret_scanning": ("secret-scanning/alerts", ("open", "resolved"),
                         {"open": "outstanding", "resolved": "closed"}),
+    # Review findings left on closed PRs. Not an alert API: review_threads.py fetches them into their own
+    # raw file (`build --review`), for named repositories only; others are recorded as not_in_scope.
+    "review_threads": (None, ("open", "resolved"), {"open": "outstanding", "resolved": "closed"}),
 }
 
 
@@ -68,6 +71,8 @@ def fetch(owner: str, gh=run_gh) -> dict:
         name = repo["nameWithOwner"]
         entry = {"visibility": repo["visibility"].lower(), "sources": {}}
         for source, (path, states, _) in SOURCES.items():
+            if path is None:
+                continue  # read by its own fetcher
             got = {"alerts": []}
             for state in states:
                 code, out, err = gh(["api", "--paginate", "--slurp", f"repos/{name}/{path}?state={state}&per_page=100"])
@@ -103,6 +108,12 @@ def manifestation(repo: str, source: str, a: dict) -> dict:
         return {"repo": repo, "source": source, "number": a["number"], "disposition": disposition,
                 "severity": rule.get("security_severity_level") or rule.get("severity") or "note",
                 "family": a["tool"]["name"], "subject": rule["id"], "path": loc.get("path"), "advisory": None, "patched": None}
+    if source == "review_threads":
+        # One root per theme in a repository: Copilot and Codex flagging the same defect is one fix.
+        # `advisory` carries the PR, so a root lists the PRs its threads came from.
+        return {"repo": repo, "source": source, "number": a["number"], "disposition": disposition,
+                "severity": a["severity"], "family": a["theme"], "subject": a["theme"], "path": a.get("path"),
+                "advisory": f"#{a['pr']}", "patched": None}
     if a.get("state") == "resolved" and a.get("resolution") != "revoked":
         disposition = "deferred"  # false positive, won't fix, used in tests: set aside, not closed
     return {"repo": repo, "source": source, "number": a["number"], "disposition": disposition, "severity": "high",
@@ -138,6 +149,10 @@ def roots_of(manifestations: list[dict]) -> list[dict]:
             root["fix"] = f"fix or dismiss with a reason: {family} {subject} at {len(root['paths'])} path(s)"
         elif source == "secret_scanning" and open_ms:
             root["fix"] = "revoke and rotate the secret, then resolve as revoked"
+        elif source == "review_threads" and open_ms:
+            root["fix"] = (f"one follow-up PR: deep-read {len(open_ms)} unresolved {subject} finding(s) from "
+                           f"{' '.join(root['advisories'])} on the default branch, fix failing-before then passing-after, "
+                           "reply on each thread")
         roots.append(root)
     return sorted(roots, key=lambda r: (-RANK.get(r["severity"], -1), -r["outstanding"], r["id"]))
 
@@ -154,14 +169,15 @@ def lanes_of(roots: list[dict]) -> list[dict]:
             groups[(r["repo"], r["source"], r["family"])].append(r)
     lanes = []
     for (repo, source, family), rs in groups.items():
-        prefix = {"dependabot": "deps", "code_scanning": "code", "secret_scanning": "secrets"}[source]
+        prefix = {"dependabot": "deps", "code_scanning": "code", "secret_scanning": "secrets",
+                  "review_threads": "review"}[source]
         lanes.append({"id": re.sub(r"[^a-z0-9:._-]+", "-", f"{repo.split('/')[-1]}:{prefix}-{family}".lower()), "repo": repo, "source": source,
                       "family": family, "severity": rs[0]["severity"], "roots": [r["id"] for r in rs],
                       "outstanding": sum(r["outstanding"] for r in rs),
                       "paths": sorted({p for r in rs for p in r["paths"]})})
     by_repo = collections.defaultdict(list)
     for lane in lanes:
-        if lane["source"] == "code_scanning":
+        if lane["source"] in ("code_scanning", "review_threads"):
             by_repo[lane["repo"]].append(lane)
     for group in by_repo.values():
         for lane in group:
@@ -170,11 +186,23 @@ def lanes_of(roots: list[dict]) -> list[dict]:
     return sorted(lanes, key=lambda l: (-RANK.get(l["severity"], -1), -l["outstanding"], l["id"]))
 
 
-def build(raw: dict) -> dict:
+def build(raw: dict, review: dict | None = None) -> dict:
+    """Receipt from raw alerts and, optionally, raw review threads (review_threads.py fetch).
+
+    Every repository gets a coverage entry for every source: a repository outside the review read is
+    `not_in_scope`, and one only in the review read is `absent` for the alert sources."""
     manifestations, coverage = [], {}
-    for repo, entry in raw["repos"].items():
+    review_repos = (review or {}).get("repos", {})
+    entries = {repo: dict(entry["sources"], visibility=entry["visibility"]) for repo, entry in raw["repos"].items()}
+    for repo in review_repos:
+        entries.setdefault(repo, {"visibility": "unknown"})
+    for repo, entry in entries.items():
         coverage[repo] = {"visibility": entry["visibility"]}
-        for source, got in entry["sources"].items():
+        for source in SOURCES:
+            if source == "review_threads":
+                got = review_repos.get(repo, {"coverage": "not_in_scope"})
+            else:
+                got = entry.get(source, {"coverage": "absent"})
             coverage[repo][source] = got["coverage"]
             manifestations += [manifestation(repo, source, a) for a in got.get("alerts", [])]
     roots = roots_of(manifestations)
@@ -283,6 +311,7 @@ def main(argv=None) -> int:
     f.add_argument("--out", required=True, type=Path)
     b = sub.add_parser("build", help="build receipt, fix list, lanes and public projection from raw alerts")
     b.add_argument("--raw", required=True, type=Path)
+    b.add_argument("--review", type=Path, help="raw_review.json from review_threads.py fetch")
     b.add_argument("--out", required=True, type=Path)
     d = sub.add_parser("diff", help="alerts and roots that left or joined the outstanding set between two receipts")
     d.add_argument("--old", required=True, type=Path)
@@ -304,7 +333,8 @@ def main(argv=None) -> int:
                                     ("alerts_left", "alerts_joined", "roots_cleared", "roots_new")),
               "coverage_changes=%d" % len(delta["coverage_changes"]), "out=%s" % (args.out / "MAROON_DELTA.json"))
         return 0
-    receipt = build(json.loads(args.raw.read_text(encoding="utf-8")))
+    review = json.loads(args.review.read_text(encoding="utf-8")) if args.review else None
+    receipt = build(json.loads(args.raw.read_text(encoding="utf-8")), review)
     write_outputs(receipt, args.out)
     print("MAROON_BUILD=PASS", "roots_outstanding=%d" % receipt["roots_outstanding"], "lanes=%d" % len(receipt["lanes"]),
           "out=%s" % args.out)
