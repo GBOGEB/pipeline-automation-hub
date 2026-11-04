@@ -120,6 +120,23 @@ python mission-control/maroon/maroon.py build --raw <private dir>/raw.json --rev
 | Lane | `<repo>:review-<theme>`. Review lanes in one repository name their `shared_paths`, as code-scanning lanes do |
 | Coverage | `ok`, `not_readable`, or `not_in_scope` for a repository outside the review read |
 
+The window is the `--limit` most recently *closed* PRs. The API only sorts by update time, so the read
+pages on until the window is proven: `--limit` PRs closed no earlier than the oldest update time read. A
+PR never closes after its last update, so no later page can hold a newer closure. If the page budget
+runs out first, coverage is `window_unproven`, a gap rather than a silent short read.
+
+Each repository's raw entry lists the sampled PRs. Each entry gives the PR's number, merge state, close
+time, merge commit and the `#refs` in its body. The receipt keeps that sample as `review_scope`, and
+each review root maps its threads to their PRs (`alert_prs`). `diff` then splits what moved:
+- **Left:** the thread's PR is still sampled, so the thread was resolved.
+- **Evicted:** the PR aged out of the window. `alerts_evicted` counts these, and they never clear a root.
+
+A thread on a PR that closed without merging is `deferred`, not outstanding. The change never landed.
+
+`build --review-overrides <json>` applies deep-read corrections before roots are formed, as
+`{"<thread id>": {"theme": "<theme>"}}`. A re-themed finding then leaves the wrong lane and joins the
+right one.
+
 The theme is a triage heuristic over the finding's first line (`THEMES` in `review_threads.py`). An
 unresolved thread is not proof that the defect is still on the default branch: a later commit may have
 fixed it without a reply. Each root needs a deep read before anyone calls it fixed or open.
