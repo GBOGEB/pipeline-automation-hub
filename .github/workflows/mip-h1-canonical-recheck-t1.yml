@@ -80,6 +80,7 @@ jobs:
           assert receipt["coverage"] == "COMPLETE" and receipt["sample_n"] == 1000
           assert receipt["value"] is not None and receipt["cache_readback_sha256"]
           assert not receipt["cache_source_issues"] and not receipt["missing_source_days"]
+          assert receipt["cohort_earliest"] > "2026-11-02T13:06:43Z"
           PY
       - name: Upload source-bound T2 and full raw-cache replay evidence
         if: always()
