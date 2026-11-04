@@ -29,6 +29,10 @@ FIELDS = ("owner", "summary", "done_when", "depends_on", "priority", "evidence_u
 MAX_FILE_BYTES = 2_000_000
 MAX_MANIFEST_MEMBERS = 32
 MAX_PACKET_BYTES = 16_000_000
+CANONICAL_MEMBERS = frozenset(("START_HERE.md", "LOSSLESS_HANDOVER.md",
+                               "NEXT_CHAT_DROPIN.md", "STATE.json", "CHAT_STATS.json",
+                               "INTENT_ACTION_LEDGER.json", "BD_QUEUE_READONLY.json",
+                               "TODO_BD_QUEUE.csv"))
 MAX_ITEMS_PER_PACKET = 999  # CP.CLOSE format has exactly three numeric digits.
 
 
@@ -127,8 +131,8 @@ def load_packet(directory: Path) -> dict:
     require(isinstance(members, dict) and members
             and len(members) <= MAX_MANIFEST_MEMBERS,
             "bounded manifest member digest map required")
-    required = {"STATE.json", "INTENT_ACTION_LEDGER.json", "BD_QUEUE_READONLY.json"}
-    require(required <= set(members), "missing required manifest members")
+    require(set(members) == CANONICAL_MEMBERS,
+            "noncanonical manifest member set (privacy/sanitization boundary)")
     total_bytes = 0
     for name, expected in members.items():
         require(isinstance(name, str) and name not in ("", ".", "..")
@@ -161,6 +165,8 @@ def load_packet(directory: Path) -> dict:
     source = state.get("source")
     require(isinstance(alias, str) and alias == manifest.get("session_alias")
             and isinstance(source, dict)
+            and source.get("repository") == "GBOGEB/pipeline-automation-hub"
+            and source.get("default_branch") == "master"
             and isinstance(source.get("observed_main_sha"), str)
             and SHA40.fullmatch(source["observed_main_sha"])
             and source["observed_main_sha"] == manifest.get("observed_main_sha"),
