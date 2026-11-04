@@ -32,7 +32,8 @@ def packet(directory: Path, alias="CP-DEMO-20261103", actions=None, intents=None
          "source_class": "USER_VISIBLE_RECONSTRUCTED"},
     ])
     state = {"schema": "missioncontrol.cp_close.state.v1", "session_alias": alias,
-             "source": {"observed_main_sha": SHA},
+             "source": {"repository": "GBOGEB/pipeline-automation-hub",
+                        "default_branch": "master", "observed_main_sha": SHA},
              "intent_count_reconstructed": len(intents), "action_count_reconstructed": len(actions),
              "security_waiver": False, "authority_transfer": False,
              "full_chat_message_count": None, "full_chat_prompt_count": None,
@@ -47,6 +48,10 @@ def packet(directory: Path, alias="CP-DEMO-20261103", actions=None, intents=None
     blobs = {}
     for name, obj in (("STATE.json", state), ("INTENT_ACTION_LEDGER.json", ledger), ("BD_QUEUE_READONLY.json", bd)):
         content = (json.dumps(obj, sort_keys=True) + "\n").encode()
+        (directory / name).write_bytes(content)
+        blobs[name] = hashlib.sha256(content).hexdigest()
+    for name in mod.CANONICAL_MEMBERS - set(blobs):
+        content = ("Sanitized canonical placeholder for " + name + "\n").encode("utf-8")
         (directory / name).write_bytes(content)
         blobs[name] = hashlib.sha256(content).hexdigest()
     manifest = {"schema": "missioncontrol.cp_close.manifest.v1", "session_alias": alias,
@@ -168,6 +173,40 @@ class TodoContinuityTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "invalid intent provenance"):
                     packet(self.root / ("bad_intent_" + str(len(str(change)))),
                            intents=its + [invalid])
+
+    def test_digest_valid_excess_manifest_member_rejected(self):
+        directory = self.root / "inject_extra_member"
+        packet(directory)
+        raw = b"RAW USER TRANSCRIPT SHOULD NEVER ENTER THE PUBLIC PACKET\n"
+        (directory / "RAW_TRANSCRIPT.txt").write_bytes(raw)
+        manifestfile = directory / "MANIFEST.json"
+        m = json.loads(manifestfile.read_text(encoding="utf-8"))
+        m["member_sha256"]["RAW_TRANSCRIPT.txt"] = hashlib.sha256(raw).hexdigest()
+        manifestfile.write_text(json.dumps(m) + "\n", encoding="utf-8", newline="\n")
+        with self.assertRaisesRegex(ValueError, "noncanonical manifest member set"):
+            mod.load_packet(directory)
+
+    def test_digest_valid_cross_repository_source_rejected(self):
+        for key, value in (("repository", "OTHER/NOT_CANONICAL"),
+                           ("default_branch", "main"),
+                           ("repository", None), ("default_branch", None)):
+            with self.subTest(key=key, value=value):
+                directory = self.root / ("bad_source_" + key + "_" + str(value))
+                packet(directory)
+                statefile = directory / "STATE.json"
+                state = json.loads(statefile.read_text(encoding="utf-8"))
+                if value is None:
+                    state["source"].pop(key)
+                else:
+                    state["source"][key] = value
+                raw = (json.dumps(state) + "\n").encode("utf-8")
+                statefile.write_bytes(raw)
+                manifestfile = directory / "MANIFEST.json"
+                m = json.loads(manifestfile.read_text(encoding="utf-8"))
+                m["member_sha256"]["STATE.json"] = hashlib.sha256(raw).hexdigest()
+                manifestfile.write_text(json.dumps(m) + "\n", encoding="utf-8", newline="\n")
+                with self.assertRaisesRegex(ValueError, "session or observed-main identity mismatch"):
+                    mod.load_packet(directory)
 
     def test_manifest_privacy_and_main_admission_markers_fail_closed(self):
         for key, bad in (("verbatim_transcript_claim", True),
