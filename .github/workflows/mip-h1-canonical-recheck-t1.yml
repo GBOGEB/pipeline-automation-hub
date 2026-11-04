@@ -1,6 +1,6 @@
-name: MIP H1 Canonical Recheck T1 Pilot
+name: MIP H3 Canonical Post-Filter T2 Pulse
 
-# Read-only, one-PR pilot. No schedule, gate reruns, cancellation or merge rights.
+# Read-only, one-PR T2 pulse. No schedule, gate reruns, cancellation or merge rights.
 # Uses existing JADE Actions Metrics as the sole metric producer.
 # Nov 4 H3 T2: source-bound native follow-up, no change to metric or production gate.
 on:
@@ -13,7 +13,7 @@ permissions:
   actions: read
 
 jobs:
-  source-qualified-t1:
+  source-qualified-t2:
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     permissions:
@@ -46,23 +46,25 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          SINCE="$(date -u -d '1 day ago' +%F)"
+          # Post-filter event creation is low: two UTC days yielded only
+          # 980 completed records. Extend the SOURCE window, never denominator.
+          SINCE="$(date -u -d '2 days ago' +%F)"
           UNTIL="$(date -u +%F)"
-          mkdir -p "$RUNNER_TEMP/mip-t1"
+          mkdir -p "$RUNNER_TEMP/mip-t2"
           echo "SINCE=$SINCE" >> "$GITHUB_ENV"
           echo "UNTIL=$UNTIL" >> "$GITHUB_ENV"
           python3 mission-control/jade_temple/devops/actions_metrics.py fetch \
-            --cache "$RUNNER_TEMP/mip-t1/cache" --since "$SINCE" --until "$UNTIL" \
+            --cache "$RUNNER_TEMP/mip-t2/cache" --since "$SINCE" --until "$UNTIL" \
             --repo GBOGEB/pipeline-automation-hub --job-budget 0
       - name: Canonical pressure projection and strict qualification
         working-directory: collector
         run: |
           set -euo pipefail
           python3 mission-control/jade_temple/devops/actions_metrics.py pressure \
-            --cache "$RUNNER_TEMP/mip-t1/cache" --since "$SINCE" --until "$UNTIL" \
+            --cache "$RUNNER_TEMP/mip-t2/cache" --since "$SINCE" --until "$UNTIL" \
             --repo GBOGEB/pipeline-automation-hub --source-sha "$DEFAULT_SHA" \
-            --out "$RUNNER_TEMP/mip-t1/t1.json"
-          python3 - "$RUNNER_TEMP/mip-t1/t1.json" <<'PY'
+            --out "$RUNNER_TEMP/mip-t2/t2.json"
+          python3 - "$RUNNER_TEMP/mip-t2/t2.json" <<'PY'
           import json
           import sys
           from pathlib import Path
@@ -79,14 +81,15 @@ jobs:
           assert receipt["coverage"] == "COMPLETE" and receipt["sample_n"] == 1000
           assert receipt["value"] is not None and receipt["cache_readback_sha256"]
           assert not receipt["cache_source_issues"] and not receipt["missing_source_days"]
+          assert receipt["cohort_earliest"] > "2026-11-02T13:06:43Z"
           PY
-      - name: Upload source-bound T1 and full raw-cache replay evidence
+      - name: Upload source-bound T2 and full raw-cache replay evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: mip-h1-canonical-recheck-t1
+          name: mip-h3-canonical-postfilter-t2
           path: |
-            ${{ runner.temp }}/mip-t1/t1.json
-            ${{ runner.temp }}/mip-t1/cache/**/*.json
+            ${{ runner.temp }}/mip-t2/t2.json
+            ${{ runner.temp }}/mip-t2/cache/**/*.json
           if-no-files-found: warn
           retention-days: 14
