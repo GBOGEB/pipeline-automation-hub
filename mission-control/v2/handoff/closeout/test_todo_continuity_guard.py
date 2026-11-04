@@ -92,7 +92,8 @@ class TodoContinuityTests(unittest.TestCase):
 
     def test_removed_action_is_not_silent(self):
         acts = copy.deepcopy(list(self.before["actions"].values()))[:1]
-        intent = [{"id": "SC-I001", "summary": "Original intent", "actions": ["SC-A001"]}]
+        intent = [{"id": "SC-I001", "summary": "Original intent", "actions": ["SC-A001"],
+                   "source_class": "USER_VISIBLE_RECONSTRUCTED"}]
         a = packet(self.root / "after", actions=acts, intents=intent)
         r = mod.reconcile(self.before, a)
         self.assertEqual(["SC-A002"], r["unmapped_historical_actions"])
@@ -141,6 +142,32 @@ class TodoContinuityTests(unittest.TestCase):
         links["intent_links"][0]["revision_reason"] = "Reclassified after authenticated source"
         links["intent_links"][0]["revision_evidence_url"] = "https://github.com/GBOGEB/pipeline-automation-hub/issues/358"
         self.assertEqual("PASS_LINEAGE_ONLY_NOT_ADMISSION", mod.reconcile(self.before, later, links)["acceptance"])
+
+    def test_new_action_source_schema_rejects_private_evidence_and_bad_priority(self):
+        acts = copy.deepcopy(list(self.before["actions"].values()))
+        added = copy.deepcopy(acts[0]); added["id"] = "SC-A003"
+        for change in ({"evidence_urls": ["https://private.example/secret"]},
+                       {"priority": "ROOT-CLOSED"},
+                       {"summary": ""},
+                       {"evidence_urls": None}):
+            with self.subTest(case=change):
+                invalid = copy.deepcopy(added); invalid.update(change)
+                with self.assertRaisesRegex(ValueError, "invalid action evidence URLs|incomplete action"):
+                    packet(self.root / ("bad_action_" + str(len(str(change)))),
+                           actions=acts + [invalid])
+
+    def test_new_intent_requires_canonical_source_and_no_fabricated_original_id(self):
+        its = copy.deepcopy(list(self.before["intents"].values()))
+        added = {"id": "SC-I002", "summary": "New obligation", "actions": ["SC-A001"],
+                 "source_class": "USER_EXPLICIT_INTAKE"}
+        for change in ({"source_class": None}, {"source_class": "UNKNOWN"},
+                       {"original_chat_timestamp": "2026-11-04T09:30:00Z"},
+                       {"summary": ""}):
+            with self.subTest(case=change):
+                invalid = copy.deepcopy(added); invalid.update(change)
+                with self.assertRaisesRegex(ValueError, "invalid intent provenance"):
+                    packet(self.root / ("bad_intent_" + str(len(str(change)))),
+                           intents=its + [invalid])
 
     def test_manifest_privacy_and_main_admission_markers_fail_closed(self):
         for key, bad in (("verbatim_transcript_claim", True),
@@ -255,13 +282,11 @@ class TodoContinuityTests(unittest.TestCase):
         self.assertEqual("HOLD_LINEAGE_GAPS", original["acceptance"])
 
     def test_intent_provenance_field_change_blocks_without_revision(self):
+        # Canonical CP.CLOSE forbids importing a fabricated original-message pointer.
         its = copy.deepcopy(list(self.before["intents"].values()))
         its[0]["original_chat_message_id"] = "declared-but-not-verified"
-        later = packet(self.root / "intent_provenance_after", alias="CP-NEXT-20261104", intents=its)
-        links = sidecar(self.before, later)
-        report = mod.reconcile(self.before, later, links)
-        self.assertEqual(["intent:SC-I001>SC-I001"], report["unproven_semantic_revisions"])
-        self.assertEqual("HOLD_LINEAGE_GAPS", report["acceptance"])
+        with self.assertRaisesRegex(ValueError, "invalid intent provenance"):
+            packet(self.root / "intent_provenance_after", alias="CP-NEXT-20261104", intents=its)
 
     def test_done_transition_is_not_accepted_closure(self):
         acts = copy.deepcopy(list(self.before["actions"].values()))
@@ -395,7 +420,9 @@ class TodoContinuityTests(unittest.TestCase):
         graph = {}
         for n in range(1, 850):
             key = f"SC-A{n:03d}"
-            graph[key] = {"state": "HOLD", "owner": "owner", "done_when": "native proof",
+            graph[key] = {"state": "HOLD", "priority": "P1", "owner": "owner",
+                          "summary": "Deep source-bound dependency", "done_when": "native proof",
+                          "evidence_urls": [],
                           "depends_on": [f"SC-A{n-1:03d}"] if n > 1 else []}
         mod.check_dag(graph)
 
