@@ -87,6 +87,37 @@ class TodoContinuityTests(unittest.TestCase):
     def tearDown(self):
         self.t.cleanup()
 
+    def test_digest_valid_noncanonical_session_alias_rejected(self):
+        # Both state and manifest agree; the forged alias must still be held.
+        for index, alias in enumerate(("", "xy", "cp-lowercase-20261104", "CP/UNSAFE-20261104")):
+            with self.subTest(alias=alias):
+                with self.assertRaisesRegex(ValueError, "session or observed-main identity mismatch"):
+                    packet(self.root / ("invalid_alias_" + str(index)), alias=alias)
+
+    def test_same_session_edge_reordering_preserves_lineage(self):
+        previous_actions = copy.deepcopy(list(self.before["actions"].values()))
+        third = copy.deepcopy(previous_actions[1])
+        third["id"] = "SC-A003"
+        third["depends_on"] = ["SC-A001", "SC-A002"]
+        earlier_intents = [
+            {"id": "SC-I001", "summary": "Original intent",
+             "actions": ["SC-A001", "SC-A002", "SC-A003"],
+             "source_class": "USER_VISIBLE_RECONSTRUCTED"},
+        ]
+        earlier = packet(self.root / "reordered_old",
+                         actions=previous_actions + [third], intents=earlier_intents)
+        next_actions = copy.deepcopy(list(earlier["actions"].values()))
+        next_actions[2]["depends_on"] = ["SC-A002", "SC-A001"]
+        next_intents = copy.deepcopy(list(earlier["intents"].values()))
+        next_intents[0]["actions"] = ["SC-A003", "SC-A001", "SC-A002"]
+        later = packet(self.root / "reordered_new",
+                       actions=next_actions, intents=next_intents)
+        report = mod.reconcile(earlier, later)
+        self.assertEqual([], report["unproven_semantic_revisions"])
+        self.assertEqual([], report["unproven_state_transitions"])
+        self.assertEqual("PASS_LINEAGE_ONLY_NOT_ADMISSION", report["acceptance"])
+        self.assertIsNone(report["accepted_distinct_root_closures"])
+
     def test_stable_revision_passes_lineage_not_admission(self):
         a = packet(self.root / "after")
         report = mod.reconcile(self.before, a)

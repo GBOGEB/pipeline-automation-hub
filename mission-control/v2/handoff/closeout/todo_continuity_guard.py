@@ -20,6 +20,8 @@ SCHEMA = "missioncontrol.cp_close.todo-continuity-review.v1"
 LINK_SCHEMA = "missioncontrol.cp_close.continuity-links.v1"
 SHA40 = re.compile(r"[a-f0-9]{40}\Z")
 SHA64 = re.compile(r"[a-f0-9]{64}\Z")
+# Mirror the CP.CLOSE source-owner alias contract in cp_close.validate().
+SESSION_ALIAS = re.compile(r"[A-Z0-9][A-Z0-9_.-]{2,80}\Z")
 ACTION = re.compile(r"SC-A[0-9]{3}\Z")
 INTENT = re.compile(r"SC-I[0-9]{3}\Z")
 STATES = frozenset(("TODO", "ACTIVE", "IN_PR", "HOLD", "DEFER", "DONE", "CONTROL"))
@@ -176,7 +178,8 @@ def load_packet(directory: Path) -> dict:
             "canonical CP.CLOSE privacy/non-admission required")
     alias = state.get("session_alias")
     source = state.get("source")
-    require(isinstance(alias, str) and alias == manifest.get("session_alias")
+    require(isinstance(alias, str) and SESSION_ALIAS.fullmatch(alias)
+            and alias == manifest.get("session_alias")
             and isinstance(source, dict)
             and source.get("repository") == "GBOGEB/pipeline-automation-hub"
             and source.get("default_branch") == "master"
@@ -308,14 +311,20 @@ def reconcile(before: dict, after: dict, links: dict | None = None) -> dict:
     if same:
         for key in sorted(old_actions & new_actions):
             was, now = b_actions[key], a_actions[key]
-            if any(was.get(f) != now.get(f) for f in FIELDS) and ("action", key) not in revisions:
+            # Dependency lists are DAG edge sets; their order carries no meaning.
+            action_changed = (any(was.get(f) != now.get(f) for f in FIELDS if f != "depends_on")
+                              or sorted(was["depends_on"]) != sorted(now["depends_on"]))
+            if action_changed and ("action", key) not in revisions:
                 altered.append(key)
             if was.get("state") not in CLOSED and now.get("state") in CLOSED:
                 promotions.append(key)
             elif was.get("state") != now.get("state") and ("action", key) not in revisions:
                 state_transitions.append(key)
         for key in sorted(old_intents & new_intents):
-            if b_intents[key] != a_intents[key] and ("intent", key) not in revisions:
+            # Intent action references are edge sets as well, not an ordered narrative.
+            old_intent = {**b_intents[key], "actions": sorted(b_intents[key]["actions"])}
+            new_intent = {**a_intents[key], "actions": sorted(a_intents[key]["actions"])}
+            if old_intent != new_intent and ("intent", key) not in revisions:
                 altered.append(key)
     else:
         for old, link in action_links.items():
