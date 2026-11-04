@@ -13,7 +13,7 @@ import hashlib
 import json
 import re
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 from collections import deque
 
 SCHEMA = "missioncontrol.cp_close.todo-continuity-review.v1"
@@ -46,10 +46,23 @@ def digest(raw: bytes) -> str:
 
 
 def github_owner_url(value: object) -> bool:
+    """Reject dot-segment / encoded traversal before trusting GitHub evidence authority."""
     if not isinstance(value, str):
         return False
     p = urlparse(value)
-    return p.scheme == "https" and p.netloc == "github.com" and p.path.startswith("/GBOGEB/") and not p.username
+    if p.scheme != "https" or p.netloc != "github.com" or p.username:
+        return False
+    path = p.path
+    for _ in range(4):
+        decoded = unquote(path)
+        if decoded == path:
+            break
+        path = decoded
+    if re.search(r"%[0-9a-fA-F]{2}", path) or "\\" in path:
+        return False
+    parts = path.rstrip("/").split("/")
+    return (len(parts) >= 3 and parts[:2] == ["", "GBOGEB"]
+            and all(seg not in ("", ".", "..") for seg in parts[2:]))
 
 
 def _unique_keys(pairs):
@@ -310,8 +323,8 @@ def reconcile(before: dict, after: dict, links: dict | None = None) -> dict:
                 continue
             new = a_actions[link["to"]]
             was = b_actions[old]
-            expected_deps = sorted(action_links[d]["to"] for d in was["depends_on"]
-                                   if d in action_links and action_links[d]["to"] is not None)
+            expected_deps = sorted({action_links[d]["to"] for d in was["depends_on"]
+                                    if d in action_links and action_links[d]["to"] is not None})
             different = any(was.get(f) != new.get(f)
                             for f in ("owner", "summary", "done_when", "priority", "evidence_urls")) \
                 or sorted(new.get("depends_on", [])) != expected_deps
@@ -330,8 +343,8 @@ def reconcile(before: dict, after: dict, links: dict | None = None) -> dict:
             if link["disposition"] == "ARCHIVED_CLOSED":
                 continue
             was, new = b_intents[old], a_intents[link["to"]]
-            expected = sorted(action_links[d]["to"] for d in was.get("actions", [])
-                              if d in action_links and action_links[d]["to"] is not None)
+            expected = sorted({action_links[d]["to"] for d in was.get("actions", [])
+                               if d in action_links and action_links[d]["to"] is not None})
             old_provenance = {k: v for k, v in was.items() if k not in ("id", "actions")}
             new_provenance = {k: v for k, v in new.items() if k not in ("id", "actions")}
             different = old_provenance != new_provenance \
