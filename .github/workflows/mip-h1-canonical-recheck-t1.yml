@@ -2,6 +2,7 @@ name: MIP H1 Canonical Recheck T1 Pilot
 
 # Read-only, one-PR pilot. No schedule, gate reruns, cancellation or merge rights.
 # Uses existing JADE Actions Metrics as the sole metric producer.
+# Nov 4 H3 T2: source-bound native follow-up, no change to metric or production gate.
 on:
   pull_request:
     paths:
