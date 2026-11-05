@@ -140,8 +140,9 @@ def anchor_of(hunk: str | None) -> dict | None:
 
     Whatever its length or side, no other line is substituted. `side` tells a deep read what to look for:
     a deleted target being back on the default branch means something else than an added one still there.
-    A short or blank target is weak evidence, and the consumer decides how much to trust it."""
-    lines = [line for line in (hunk or "").splitlines() if not line.startswith("@@")]
+    A short or blank target is weak evidence, and the consumer decides how much to trust it. Diff markers
+    such as `\\ No newline at end of file` are not lines of the file and are skipped (#1129 review)."""
+    lines = [line for line in (hunk or "").splitlines() if not line.startswith(("@@", "\\"))]
     if not lines or lines[-1][:1] not in ANCHOR_SIDES:
         return None
     text = lines[-1][1:].strip()
