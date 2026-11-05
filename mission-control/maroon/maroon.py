@@ -110,7 +110,10 @@ def manifestation(repo: str, source: str, a: dict) -> dict:
                 "family": a["tool"]["name"], "subject": rule["id"], "path": loc.get("path"), "advisory": None, "patched": None}
     if source == "review_threads":
         # One root per theme in a repository: Copilot and Codex flagging the same defect is one fix.
-        # `advisory` carries the PR, so a root lists the PRs its threads came from.
+        # `advisory` carries the PR, so a root lists the PRs its threads came from. A thread on a PR that
+        # closed without merging is about a change that never landed: set aside, not post-merge debt.
+        if disposition == "outstanding" and a.get("pr_merged") is False:
+            disposition = "deferred"
         return {"repo": repo, "source": source, "number": a["number"], "disposition": disposition,
                 "severity": a["severity"], "family": a["theme"], "subject": a["theme"], "path": a.get("path"),
                 "advisory": f"#{a['pr']}", "patched": None}
@@ -186,12 +189,39 @@ def lanes_of(roots: list[dict]) -> list[dict]:
     return sorted(lanes, key=lambda l: (-RANK.get(l["severity"], -1), -l["outstanding"], l["id"]))
 
 
-def build(raw: dict, review: dict | None = None) -> dict:
+def apply_review_overrides(review: dict | None, overrides: dict | None) -> dict | None:
+    """Copy of the review read with deep-read corrections applied: `{thread id: {"theme": ...}}`.
+
+    A deep read can show that the heuristic theme is wrong (a wave-claim "alias" is not a file-path
+    alias). The correction must reach the roots and lanes, or the fix list sends work to the wrong root."""
+    if not review or not overrides:
+        return review
+    review = json.loads(json.dumps(review))
+    for entry in review.get("repos", {}).values():
+        for a in entry.get("alerts", []):
+            theme = (overrides.get(str(a["number"])) or {}).get("theme")
+            if theme:
+                a["theme"] = theme
+    return review
+
+
+def review_scope(review: dict | None) -> dict:
+    """Per repository: the PRs the review read sampled. Lets `diff` tell an eviction from a fix.
+
+    `proven` is True only for a window read in full (coverage `ok`). A partial sample is recorded but
+    proves nothing: a PR missing from it may simply not have been read."""
+    return {repo: {"prs": sorted(p["number"] for p in entry.get("prs", [])), "window": entry.get("window"),
+                   "head_sha": entry.get("head_sha"), "proven": entry.get("coverage") == "ok"}
+            for repo, entry in (review or {}).get("repos", {}).items() if "prs" in entry}
+
+
+def build(raw: dict, review: dict | None = None, overrides: dict | None = None) -> dict:
     """Receipt from raw alerts and, optionally, raw review threads (review_threads.py fetch).
 
     Every repository gets a coverage entry for every source: a repository outside the review read is
     `not_in_scope`, and one only in the review read is `absent` for the alert sources."""
     manifestations, coverage = [], {}
+    review = apply_review_overrides(review, overrides)
     review_repos = (review or {}).get("repos", {})
     entries = {repo: dict(entry["sources"], visibility=entry["visibility"]) for repo, entry in raw["repos"].items()}
     for repo in review_repos:
@@ -206,17 +236,24 @@ def build(raw: dict, review: dict | None = None) -> dict:
             coverage[repo][source] = got["coverage"]
             manifestations += [manifestation(repo, source, a) for a in got.get("alerts", [])]
     roots = roots_of(manifestations)
+    thread_prs = {(m["repo"], m["number"]): int(m["advisory"][1:]) for m in manifestations if m["source"] == "review_threads"}
+    for r in roots:
+        if r["source"] == "review_threads":
+            r["alert_prs"] = {str(n): thread_prs[(r["repo"], n)] for n in r["alerts"]}
     totals = collections.Counter()
     for m in manifestations:
         totals[(m["source"], m["disposition"])] += 1
     fetched_at = raw["fetched_at"] if raw["repos"] or not review else review["fetched_at"]  # a review-only read
-    return {
+    receipt = {
         "schema": SCHEMA, "programme": "CODE_MAROON", "owner": raw["owner"], "fetched_at": fetched_at,
         "closes_findings": False, "merge_authority": False,
         "totals": {s: {d: totals[(s, d)] for d in ("outstanding", "closed", "deferred")} for s in SOURCES},
         "roots_outstanding": sum(1 for r in roots if r["outstanding"]),
         "coverage": coverage, "roots": roots, "lanes": lanes_of(roots),
     }
+    if review:
+        receipt["review_scope"] = review_scope(review)
+    return receipt
 
 
 def public_projection(receipt: dict) -> dict:
@@ -267,19 +304,49 @@ def diff(old: dict, new: dict) -> dict:
 
     An alert leaves when GitHub marks it fixed (for example after a merged PR lands the fix on the
     default branch), dismissed or resolved, or when its repository drops out of the read. Coverage
-    changes are listed so a source that became unreadable is not mistaken for a fix."""
+    changes are listed so a source that became unreadable is not mistaken for a fix.
+
+    Review threads are read from a moving window of recent PRs. A thread whose PR is no longer in the
+    new receipt's sample was evicted, not resolved: it is listed under `evicted` and never counted as
+    left or as clearing its root. A thread moved to another root is reclassified, not resolved or new.
+    Without a recorded sample on both sides, nothing is called evicted."""
     def outstanding(receipt):
         return {r["id"]: r for r in receipt["roots"] if r["outstanding"]}
     a, b = outstanding(old), outstanding(new)
-    left, joined = [], []
+    old_scope, new_scope = old.get("review_scope"), new.get("review_scope")
+
+    def review_assignments(roots):
+        return {(r["repo"], alert): rid for rid, r in roots.items() if r["source"] == "review_threads"
+                for alert in r["alerts"]}
+    old_assignments, new_assignments = review_assignments(a), review_assignments(b)
+    reclassified = {key for key, rid in old_assignments.items()
+                    if key in new_assignments and new_assignments[key] != rid}
+    left, joined, evicted = [], [], []
     for rid in sorted(set(a) | set(b)):
         was, now = set(a.get(rid, {}).get("alerts", [])), set(b.get(rid, {}).get("alerts", []))
         root = b.get(rid) or a[rid]
-        if was - now:
-            left.append({"id": rid, "repo": root["repo"], "source": root["source"], "alerts": sorted(was - now),
-                         "root_cleared": rid not in b})
-        if now - was:
-            joined.append({"id": rid, "repo": root["repo"], "source": root["source"], "alerts": sorted(now - was),
+        moved_from = ({alert for repo, alert in reclassified if repo == root["repo"]
+                       and old_assignments[(repo, alert)] == rid}
+                      if root["source"] == "review_threads" else set())
+        moved_to = ({alert for repo, alert in reclassified if repo == root["repo"]
+                     and new_assignments[(repo, alert)] == rid}
+                    if root["source"] == "review_threads" else set())
+        gone, aged_out = was - now - moved_from, set()
+        if (root["source"] == "review_threads" and old_scope is not None and new_scope is not None
+                and (old_scope.get(root["repo"]) or {}).get("proven", True)
+                and (new_scope.get(root["repo"]) or {}).get("proven", True)
+                and root["repo"] in old_scope and root["repo"] in new_scope):
+            sampled = set((new_scope.get(root["repo"]) or {}).get("prs", []))
+            prs = a[rid].get("alert_prs", {}) if rid in a else {}
+            aged_out = {n for n in gone if str(n) in prs and prs[str(n)] not in sampled}
+        if aged_out:
+            evicted.append({"id": rid, "repo": root["repo"], "source": root["source"], "alerts": sorted(aged_out)})
+        if gone - aged_out:
+            left.append({"id": rid, "repo": root["repo"], "source": root["source"], "alerts": sorted(gone - aged_out),
+                         "root_cleared": rid not in b and not aged_out and not moved_from})
+        if now - was - moved_to:
+            joined.append({"id": rid, "repo": root["repo"], "source": root["source"],
+                           "alerts": sorted(now - was - moved_to),
                            "root_new": rid not in a})
     coverage = []
     for repo in sorted(set(old["coverage"]) | set(new["coverage"])):
@@ -292,15 +359,16 @@ def diff(old: dict, new: dict) -> dict:
             "old_fetched_at": old["fetched_at"], "new_fetched_at": new["fetched_at"],
             "closes_findings": False, "merge_authority": False,
             "alerts_left": sum(len(x["alerts"]) for x in left), "alerts_joined": sum(len(x["alerts"]) for x in joined),
+            "alerts_evicted": sum(len(x["alerts"]) for x in evicted),
             "roots_cleared": sum(x["root_cleared"] for x in left), "roots_new": sum(x["root_new"] for x in joined),
             "roots_outstanding": {"old": old["roots_outstanding"], "new": new["roots_outstanding"]},
-            "coverage_changes": coverage, "left": left, "joined": joined}
+            "coverage_changes": coverage, "left": left, "joined": joined, "evicted": evicted}
 
 
 def delta_counts(delta: dict) -> dict:
     """Counts only, with no root ids, so the delta can be shown wherever MAROON_PUBLIC.json can."""
     keep = ("schema", "programme", "owner", "old_fetched_at", "new_fetched_at", "closes_findings", "merge_authority",
-            "alerts_left", "alerts_joined", "roots_cleared", "roots_new", "roots_outstanding")
+            "alerts_left", "alerts_joined", "alerts_evicted", "roots_cleared", "roots_new", "roots_outstanding")
     return {**{k: delta[k] for k in keep}, "coverage_changes": len(delta["coverage_changes"])}
 
 
@@ -313,6 +381,7 @@ def main(argv=None) -> int:
     b = sub.add_parser("build", help="build receipt, fix list, lanes and public projection from raw alerts")
     b.add_argument("--raw", required=True, type=Path)
     b.add_argument("--review", type=Path, help="raw_review.json from review_threads.py fetch")
+    b.add_argument("--review-overrides", type=Path, help='JSON {thread id: {"theme": ...}} from a deep read')
     b.add_argument("--out", required=True, type=Path)
     d = sub.add_parser("diff", help="alerts and roots that left or joined the outstanding set between two receipts")
     d.add_argument("--old", required=True, type=Path)
@@ -331,11 +400,12 @@ def main(argv=None) -> int:
         (args.out / "MAROON_DELTA.json").write_text(json.dumps(delta, indent=1, sort_keys=True) + "\n",
                                                     encoding="utf-8", newline="\n")
         print("MAROON_DIFF=PASS", *("%s=%s" % (k, delta[k]) for k in
-                                    ("alerts_left", "alerts_joined", "roots_cleared", "roots_new")),
+                                    ("alerts_left", "alerts_joined", "alerts_evicted", "roots_cleared", "roots_new")),
               "coverage_changes=%d" % len(delta["coverage_changes"]), "out=%s" % (args.out / "MAROON_DELTA.json"))
         return 0
     review = json.loads(args.review.read_text(encoding="utf-8")) if args.review else None
-    receipt = build(json.loads(args.raw.read_text(encoding="utf-8")), review)
+    overrides = json.loads(args.review_overrides.read_text(encoding="utf-8")) if args.review_overrides else None
+    receipt = build(json.loads(args.raw.read_text(encoding="utf-8")), review, overrides)
     write_outputs(receipt, args.out)
     print("MAROON_BUILD=PASS", "roots_outstanding=%d" % receipt["roots_outstanding"], "lanes=%d" % len(receipt["lanes"]),
           "out=%s" % args.out)

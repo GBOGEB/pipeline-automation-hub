@@ -126,8 +126,39 @@ def threads_of(pr: dict, comments: list[dict], reviews: list[dict], resolved: se
             "path": c.get("path"), "line": c.get("line") or c.get("original_line"), "url": c.get("html_url"),
             "commented_commit": c.get("original_commit_id"), "pr_head": (pr.get("head") or {}).get("sha"),
             "replies": len(rs), "human_replied": any(reviewer_family((r.get("user") or {}).get("login")) == "human" for r in rs),
+            "anchor": (anchor_of(c.get("diff_hunk")) or {}).get("text"),
+            "anchor_side": (anchor_of(c.get("diff_hunk")) or {}).get("side"),
         })
     return out
+
+
+ANCHOR_SIDES = {"+": "added", "-": "deleted", " ": "context"}
+
+
+def anchor_of(hunk: str | None) -> dict | None:
+    """The line the comment targets: the last line of its diff hunk, as it read in the PR.
+
+    Whatever its length or side, no other line is substituted. `side` tells a deep read what to look for:
+    a deleted target being back on the default branch means something else than an added one still there.
+    A short or blank target is weak evidence, and the consumer decides how much to trust it. Diff markers
+    such as `\\ No newline at end of file` are not lines of the file and are skipped (#1129 review)."""
+    lines = [line for line in (hunk or "").splitlines() if not line.startswith(("@@", "\\"))]
+    if not lines or lines[-1][:1] not in ANCHOR_SIDES:
+        return None
+    text = lines[-1][1:].strip()
+    return {"text": text, "side": ANCHOR_SIDES[lines[-1][:1]]} if text else None
+
+
+def closed_at(pr: dict) -> str:
+    return pr.get("merged_at") or pr.get("closed_at") or ""
+
+
+PR_REF_RE = re.compile(r"(?<![\w/])#([1-9]\d*)\b")
+
+
+def refs_of(body: str | None, number: int) -> list[int]:
+    """Same-repository `#N` references in a PR body, any length, the PR itself excluded."""
+    return sorted({int(n) for n in PR_REF_RE.findall(body or "") if int(n) != number})
 
 
 def run_gh(args: list[str]) -> tuple[int, str, str]:
@@ -173,17 +204,29 @@ def resolved_via_ccr(gh, repo: str, number: int) -> set[int]:
     return {t["comment_ids"][0] for t in threads if t.get("resolved") and t.get("comment_ids")}
 
 
-def recent_closed(gh, repo: str, limit: int) -> list[dict]:
-    """The `limit` most recently closed PRs, newest first by merge or close time."""
-    prs, page = [], 1
-    while len(prs) < limit * 2 and page <= 10:
+MAX_PAGES = 30
+
+
+def recent_closed(gh, repo: str, limit: int, max_pages: int = MAX_PAGES) -> tuple[list[dict], bool]:
+    """The `limit` most recently closed PRs, newest first by merge or close time, and whether that is proven.
+
+    The API sorts closed PRs by update time, not closure time. A PR never closes after its last update,
+    so once `limit` PRs closed at or after the oldest update time read so far, no later page can hold a
+    newer closure and the window is proven. Running out of pages proves it too. Hitting `max_pages`
+    first does not: the caller records that as a coverage gap.
+    """
+    seen: dict[int, dict] = {}
+    for page in range(1, max_pages + 1):
         batch = gh_json(gh, f"repos/{repo}/pulls?state=closed&sort=updated&direction=desc&per_page=100&page={page}")
-        if not batch:
-            break
-        prs += batch
-        page += 1
-    prs.sort(key=lambda p: p.get("merged_at") or p.get("closed_at") or "", reverse=True)
-    return prs[:limit]
+        for pr in batch:
+            seen[pr["number"]] = pr
+        newest = sorted(seen.values(), key=closed_at, reverse=True)
+        if len(batch) < 100:
+            return newest[:limit], True
+        floor = batch[-1].get("updated_at") or ""
+        if len(newest) >= limit and closed_at(newest[limit - 1]) >= floor:
+            return newest[:limit], True
+    return sorted(seen.values(), key=closed_at, reverse=True)[:limit], False
 
 
 def fetch(repos: list[str], limit: int, gh=run_gh, resolved=resolved_via_graphql) -> dict:
@@ -193,7 +236,8 @@ def fetch(repos: list[str], limit: int, gh=run_gh, resolved=resolved_via_graphql
     for repo in repos:
         try:
             head = gh_json(gh, f"repos/{repo}/commits/HEAD")["sha"]  # L6: one head per pulse, recorded with the data
-            alerts, prs, deferred = [], recent_closed(gh, repo, limit), 0
+            prs, proven = recent_closed(gh, repo, limit)
+            alerts, deferred = [], 0
             for pr in prs:
                 comments = gh_json(gh, f"repos/{repo}/pulls/{pr['number']}/comments?per_page=100", paginate=True)
                 reviews = gh_json(gh, f"repos/{repo}/pulls/{pr['number']}/reviews?per_page=100", paginate=True)
@@ -202,8 +246,15 @@ def fetch(repos: list[str], limit: int, gh=run_gh, resolved=resolved_via_graphql
                         deferred += 1
                     else:
                         alerts.append(thread)
-            window = [prs[-1].get("merged_at") or prs[-1].get("closed_at"), prs[0].get("merged_at") or prs[0].get("closed_at")] if prs else None
-            raw["repos"][repo] = {"coverage": "ok", "head_sha": head, "prs_read": len(prs), "window": window, "alerts": alerts,
+            window = [closed_at(prs[-1]), closed_at(prs[0])] if prs else None
+            # Sample membership, so a later diff can tell a thread that aged out of the window from one
+            # that was resolved.
+            sample = [{"number": pr["number"], "merged": bool(pr.get("merged_at")), "closed_at": closed_at(pr),
+                       "merge_commit_sha": pr.get("merge_commit_sha"),
+                       "refs": refs_of(pr.get("body"), pr["number"])}
+                      for pr in prs]
+            raw["repos"][repo] = {"coverage": "ok" if proven else "window_unproven", "head_sha": head, "prs_read": len(prs),
+                                  "window": window, "prs": sample, "alerts": alerts,
                                   "threads_deferred_to_code_scanning": deferred}
         except (RuntimeError, FPC.GateError) as error:
             raw["repos"][repo] = {"coverage": "not_readable", "error": str(error)[:200]}
