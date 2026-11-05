@@ -126,22 +126,38 @@ def threads_of(pr: dict, comments: list[dict], reviews: list[dict], resolved: se
             "path": c.get("path"), "line": c.get("line") or c.get("original_line"), "url": c.get("html_url"),
             "commented_commit": c.get("original_commit_id"), "pr_head": (pr.get("head") or {}).get("sha"),
             "replies": len(rs), "human_replied": any(reviewer_family((r.get("user") or {}).get("login")) == "human" for r in rs),
-            "anchor": anchor_line(c.get("diff_hunk")),
+            "anchor": (anchor_of(c.get("diff_hunk")) or {}).get("text"),
+            "anchor_side": (anchor_of(c.get("diff_hunk")) or {}).get("side"),
         })
     return out
 
 
-def anchor_line(hunk: str | None) -> str | None:
-    """The last line the comment points at, as it read in the PR, for a later default-branch check."""
-    lines = [line[1:] for line in (hunk or "").splitlines() if line[:1] in "+ " and not line.startswith("+++")]
-    return next((line.strip() for line in reversed(lines) if len(line.strip()) >= 12), None)
+ANCHOR_SIDES = {"+": "added", "-": "deleted", " ": "context"}
+
+
+def anchor_of(hunk: str | None) -> dict | None:
+    """The line the comment targets: the last line of its diff hunk, as it read in the PR.
+
+    Whatever its length or side, no other line is substituted. `side` tells a deep read what to look for:
+    a deleted target being back on the default branch means something else than an added one still there.
+    A short or blank target is weak evidence, and the consumer decides how much to trust it."""
+    lines = [line for line in (hunk or "").splitlines() if not line.startswith("@@")]
+    if not lines or lines[-1][:1] not in ANCHOR_SIDES:
+        return None
+    text = lines[-1][1:].strip()
+    return {"text": text, "side": ANCHOR_SIDES[lines[-1][:1]]} if text else None
 
 
 def closed_at(pr: dict) -> str:
     return pr.get("merged_at") or pr.get("closed_at") or ""
 
 
-PR_REF_RE = re.compile(r"(?<![\w/])#(\d{2,6})\b")
+PR_REF_RE = re.compile(r"(?<![\w/])#([1-9]\d*)\b")
+
+
+def refs_of(body: str | None, number: int) -> list[int]:
+    """Same-repository `#N` references in a PR body, any length, the PR itself excluded."""
+    return sorted({int(n) for n in PR_REF_RE.findall(body or "") if int(n) != number})
 
 
 def run_gh(args: list[str]) -> tuple[int, str, str]:
@@ -234,7 +250,7 @@ def fetch(repos: list[str], limit: int, gh=run_gh, resolved=resolved_via_graphql
             # that was resolved.
             sample = [{"number": pr["number"], "merged": bool(pr.get("merged_at")), "closed_at": closed_at(pr),
                        "merge_commit_sha": pr.get("merge_commit_sha"),
-                       "refs": sorted({int(n) for n in PR_REF_RE.findall(pr.get("body") or "") if int(n) != pr["number"]})}
+                       "refs": refs_of(pr.get("body"), pr["number"])}
                       for pr in prs]
             raw["repos"][repo] = {"coverage": "ok" if proven else "window_unproven", "head_sha": head, "prs_read": len(prs),
                                   "window": window, "prs": sample, "alerts": alerts,

@@ -130,6 +130,13 @@ time, merge commit and the `#refs` in its body. The receipt keeps that sample as
 each review root maps its threads to their PRs (`alert_prs`). `diff` then splits what moved:
 - **Left:** the thread's PR is still sampled, so the thread was resolved.
 - **Evicted:** the PR aged out of the window. `alerts_evicted` counts these, and they never clear a root.
+  An eviction needs a proven window (`ok`) for that repository on both sides; a `window_unproven` or
+  missing sample proves nothing, so those threads count as left.
+
+Each raw thread carries `anchor` and `anchor_side`: the line its comment targets (the last line of the
+diff hunk, however short) and whether that line was added, deleted or context in the PR. A deep read
+uses them to check the default branch. A deleted target that is back means something else than an added
+one still present.
 
 A thread on a PR that closed without merging is `deferred`, not outstanding. The change never landed.
 

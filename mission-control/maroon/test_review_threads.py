@@ -268,7 +268,8 @@ class Window(unittest.TestCase):
         entry = RT.fetch(["O/pub"], limit=5, gh=gh, resolved=lambda *a: set())["repos"]["O/pub"]
         self.assertEqual(entry["prs"], [{"number": 7, "merged": True, "closed_at": "2026-11-04T18:00:00Z",
                                          "merge_commit_sha": "e" * 40, "refs": [2160]}])
-        self.assertEqual(entry["alerts"][0]["anchor"], "out.write_text(report_body)")
+        # The target is the hunk's last line, however short (#1129 r4473193611); no earlier line stands in.
+        self.assertEqual((entry["alerts"][0]["anchor"], entry["alerts"][0]["anchor_side"]), ("x", "added"))
 
 
 def scoped(alerts_by_pr, prs, merged=True):
@@ -357,6 +358,52 @@ class Scope(unittest.TestCase):
                                      "--out", str(out)]), 0)
             subjects = {r["subject"] for r in json.loads((out / "MAROON_RECEIPT.json").read_text(encoding="utf-8"))["roots"]}
             self.assertIn("wave-claims", subjects)
+
+
+
+class ReviewFollowUps(unittest.TestCase):
+    """Codex on #1129: r4472801630 (unproven windows), r4473193611 (anchors), r4473193623 (refs)."""
+    EMPTY = {"owner": "O", "fetched_at": "none", "repos": {}}
+
+    def test_an_unproven_window_never_proves_an_eviction(self):
+        old = M.build(self.EMPTY, scoped({7: [1]}, [7]))
+        partial = scoped({}, [9])
+        partial["repos"]["O/pub"]["coverage"] = "window_unproven"
+        d = M.diff(old, M.build(self.EMPTY, partial))
+        self.assertEqual((d["alerts_evicted"], d["alerts_left"]), (0, 1))
+        unproven_old = scoped({7: [1]}, [7])
+        unproven_old["repos"]["O/pub"]["coverage"] = "window_unproven"
+        d = M.diff(M.build(self.EMPTY, unproven_old), M.build(self.EMPTY, scoped({}, [9])))
+        self.assertEqual((d["alerts_evicted"], d["alerts_left"]), (0, 1))
+
+    def test_scope_records_whether_the_window_was_proven(self):
+        partial = scoped({7: [1]}, [7])
+        partial["repos"]["O/pub"]["coverage"] = "window_unproven"
+        self.assertFalse(M.build(self.EMPTY, partial)["review_scope"]["O/pub"]["proven"])
+        self.assertTrue(M.build(self.EMPTY, scoped({7: [1]}, [7]))["review_scope"]["O/pub"]["proven"])
+
+    def test_anchor_is_the_target_line_even_when_short(self):
+        hunk = "@@ -1,3 +1,3 @@\n     long enough context line\n+    x = 1"
+        self.assertEqual(RT.anchor_of(hunk), {"text": "x = 1", "side": "added"})
+
+    def test_anchor_keeps_a_deleted_target_line(self):
+        hunk = "@@ -1,3 +1,2 @@\n     long enough context line\n-    os.replace(tmp, out)"
+        self.assertEqual(RT.anchor_of(hunk), {"text": "os.replace(tmp, out)", "side": "deleted"})
+
+    def test_anchor_of_a_context_or_blank_target(self):
+        self.assertEqual(RT.anchor_of("@@ -1 +1 @@\n  return value"), {"text": "return value", "side": "context"})
+        self.assertIsNone(RT.anchor_of("@@ -1,2 +1,2 @@\n+real line\n+   "))
+        self.assertIsNone(RT.anchor_of(None))
+
+    def test_threads_carry_the_anchor_and_its_side(self):
+        c = comment(1, CODEX, "Reject output paths that alias an input")
+        c["diff_hunk"] = "@@ -4,2 +4,1 @@\n context line here\n-    shutil.copy(a, b)"
+        t = RT.threads_of(PR, [c], [], set())[0]
+        self.assertEqual((t["anchor"], t["anchor_side"]), ("shutil.copy(a, b)", "deleted"))
+
+    def test_refs_of_every_length(self):
+        body = "Refs #5, #42, #1234567 and #0; not GBOGEB/x#99, abc#3 or #7 itself"
+        self.assertEqual(RT.refs_of(body, 7), [5, 42, 1234567])
 
 
 if __name__ == "__main__":

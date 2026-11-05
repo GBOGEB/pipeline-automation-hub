@@ -206,9 +206,12 @@ def apply_review_overrides(review: dict | None, overrides: dict | None) -> dict 
 
 
 def review_scope(review: dict | None) -> dict:
-    """Per repository: the PRs the review read sampled. Lets `diff` tell an eviction from a fix."""
+    """Per repository: the PRs the review read sampled. Lets `diff` tell an eviction from a fix.
+
+    `proven` is True only for a window read in full (coverage `ok`). A partial sample is recorded but
+    proves nothing: a PR missing from it may simply not have been read."""
     return {repo: {"prs": sorted(p["number"] for p in entry.get("prs", [])), "window": entry.get("window"),
-                   "head_sha": entry.get("head_sha")}
+                   "head_sha": entry.get("head_sha"), "proven": entry.get("coverage") == "ok"}
             for repo, entry in (review or {}).get("repos", {}).items() if "prs" in entry}
 
 
@@ -330,6 +333,8 @@ def diff(old: dict, new: dict) -> dict:
                     if root["source"] == "review_threads" else set())
         gone, aged_out = was - now - moved_from, set()
         if (root["source"] == "review_threads" and old_scope is not None and new_scope is not None
+                and (old_scope.get(root["repo"]) or {}).get("proven", True)
+                and (new_scope.get(root["repo"]) or {}).get("proven", True)
                 and root["repo"] in old_scope and root["repo"] in new_scope):
             sampled = set((new_scope.get(root["repo"]) or {}).get("prs", []))
             prs = a[rid].get("alert_prs", {}) if rid in a else {}
