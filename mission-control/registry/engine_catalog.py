@@ -30,7 +30,7 @@ ROLES = {"build", "structure", "render", "runtime", "native", "validate", "safet
 REQUIRED_CHECK_KEYS = {"id", "pillar", "tier", "severity", "status", "engines", "rule"}
 CHECK_KEYS = REQUIRED_CHECK_KEYS | {"evidence"}
 # The repository is public: the catalogue may name file types, never individual binaries or their hashes.
-LEAKS = (re.compile(r"[\w%+-]\.(?:pptx|pptm|docx|xlsx|xlsm|pdf)\b", re.IGNORECASE), re.compile(r"\b[0-9a-f]{40,64}\b", re.IGNORECASE))
+LEAKS = (re.compile(r"[\w%+-]\.(?:pptx|pptm|docx|docm|xlsx|xlsm|pdf|html?|svg)\b", re.IGNORECASE), re.compile(r"\b[0-9a-f]{40,64}\b", re.IGNORECASE))
 
 
 def load(path: Path = CATALOG) -> dict:

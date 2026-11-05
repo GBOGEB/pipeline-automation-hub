@@ -66,7 +66,8 @@ class CatalogTest(unittest.TestCase):
         self.assertTrue(any("required pillar native" in e for e in self.errors(cat)))
 
     def test_individual_binary_name_or_hash_fails(self):
-        self.assertTrue(any("project data" in e for e in self.errors(text="source: board_review.pptx")))
+        for name in ("board.pptx", "board.pptm", "note.docx", "note.docm", "plan.xlsx", "plan.xlsm", "spec.pdf", "dash.html", "dash.htm", "flow.svg"):
+            self.assertTrue(any("project data" in e for e in self.errors(text=f"source: {name}")), name)
         self.assertTrue(any("project data" in e for e in self.errors(text="sha: " + "a" * 64)))
         self.assertFalse(any("project data" in e for e in self.errors(text="type PPTX, Excel recalculation, PDF/A")))
 
