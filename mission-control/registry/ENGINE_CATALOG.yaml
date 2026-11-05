@@ -1,0 +1,144 @@
+# CANONICAL engine and QA-check catalogue by binary type. Hand-maintained; checked by engine_catalog.py.
+# PUBLIC REPOSITORY: generic engines, tiers and check definitions only. No project source names, hashes or
+# restricted binary families. A private consumer binds its own files and results in its own repository.
+schema: gbogeb.registry.engines.v1
+canonical: true
+tiers_owner: mission-control/gogreen/BINARY_TESTFLIGHT.md   # G0-G5 are defined there and reused, not redefined
+statuses:
+  implemented: Runs in this repository; evidence names the module, symbol and test
+  planned: Defined, not built; never counts as a pass
+severities:
+  gate: A FAIL blocks release at that tier
+  advisory: Reported; a WARN needs an owner note
+# Series that already use the letter K elsewhere. They keep their numbers; K-<TYPE>-NN below cannot collide with them.
+reserved_series: [LEDGER, CMV2, DELIVERY, HOUSE, ABACUS_PW]
+
+types:
+  ANY: {label: Any binary, required_pillars: [identity, safety]}
+  PPTX: {label: PowerPoint, required_pillars: [structure, schema, render, visual, native]}
+  DOCX: {label: Word, required_pillars: [structure, schema, render, roundtrip, native]}
+  XLSX: {label: Excel, required_pillars: [structure, schema, recalc, render, native]}
+  PDF: {label: PDF, required_pillars: [structure, conformance, render, visual]}
+  HTML: {label: HTML, required_pillars: [structure, runtime, accessibility]}
+  SVG: {label: SVG, required_pillars: [structure, render]}
+
+engines:
+  # roles: build, structure, render, runtime, native, validate, safety, diff, provenance
+  python-pptx: {roles: [build, structure], types: [PPTX], probe: {python: python-pptx}}
+  python-docx: {roles: [build, structure], types: [DOCX], probe: {python: python-docx}}
+  openpyxl: {roles: [build, structure], types: [XLSX], probe: {python: openpyxl}}
+  lxml: {roles: [structure], types: [PPTX, DOCX, XLSX, SVG], probe: {python: lxml}}
+  pymupdf: {roles: [render, structure, diff], types: [PDF], probe: {python: PyMuPDF}}
+  pypdf: {roles: [structure], types: [PDF], probe: {python: pypdf}}
+  pillow: {roles: [diff], types: [PPTX, DOCX, XLSX, PDF, SVG], probe: {python: pillow}}
+  oletools: {roles: [safety], types: [PPTX, DOCX, XLSX], probe: {python: oletools}}
+  playwright: {roles: [runtime, render], types: [HTML, SVG], probe: {python: playwright}}
+  libreoffice:
+    roles: [render, build]
+    types: [PPTX, DOCX, XLSX]
+    probe: {command: [soffice, libreoffice], args: [--version]}
+    note: Headless renderer. Its layout is not proof of how Office renders the file.
+  pandoc: {roles: [build, diff], types: [DOCX], probe: {command: [pandoc], args: [--version]}}
+  poppler: {roles: [render, structure], types: [PDF], probe: {command: [pdftoppm], args: [-v]}}
+  qpdf: {roles: [validate], types: [PDF], probe: {command: [qpdf], args: [--version]}}
+  verapdf: {roles: [validate], types: [PDF], probe: {command: [verapdf], args: [--version]}}
+  ooxml-validator:
+    roles: [validate]
+    types: [PPTX, DOCX, XLSX]
+    probe: {command: [OOXMLValidatorCLI, OOXMLValidator], args: [--version]}
+    note: Command-line wrapper around the Open XML SDK validator. Needs dotnet.
+  inkscape: {roles: [render], types: [SVG], probe: {command: [inkscape], args: [--version]}}
+  exiftool: {roles: [safety], types: [ANY], probe: {command: [exiftool], args: [-ver]}}
+  fontconfig: {roles: [provenance], types: [ANY], probe: {command: [fc-list], args: [--version]}}
+  axe-core:
+    roles: [validate]
+    types: [HTML]
+    probe: {none: "Runs inside a Playwright page, so no standalone command exists"}
+  excel: {roles: [native, render], types: [XLSX], probe: {com: Excel.Application}, note: Windows workstation witness only}
+  powerpoint: {roles: [native, render], types: [PPTX], probe: {com: PowerPoint.Application}, note: Windows workstation witness only}
+  word: {roles: [native, render], types: [DOCX], probe: {com: Word.Application}, note: Windows workstation witness only}
+
+checks:
+  # ------------------------------------------------------------------ any type
+  - {id: K-ANY-01, pillar: identity, tier: G0, severity: gate, status: planned, engines: [], rule: File bytes match the claimed type; the extension alone proves nothing}
+  - {id: K-ANY-02, pillar: identity, tier: G0, severity: gate, status: planned, engines: [], rule: Source hash recorded in the receipt}
+  - id: K-ANY-03
+    pillar: safety
+    tier: G0
+    severity: gate
+    status: implemented
+    engines: []
+    rule: Archive members stay inside size, count and path limits
+    evidence: {path: mission-control/gogreen/binary_flight.py, symbol: _safe_members, test: test_member_path_negatives}
+  - {id: K-ANY-04, pillar: provenance, tier: G1, severity: advisory, status: planned, engines: [fontconfig], rule: Receipt records every engine version and the fonts used}
+  - {id: K-ANY-05, pillar: safety, tier: G1, severity: gate, status: planned, engines: [exiftool], rule: Author metadata and the classification label are read and match the release target}
+  # ------------------------------------------------------------------ PowerPoint
+  - id: K-PPTX-01
+    pillar: structure
+    tier: G0
+    severity: gate
+    status: implemented
+    engines: []
+    rule: Mandatory package parts and slide relationships exist; a non-package file fails
+    evidence: {path: mission-control/gogreen/binary_flight.py, symbol: inspect_presentation, test: test_non_zip_false_green_rejected}
+  - id: K-PPTX-02
+    pillar: structure
+    tier: G0
+    severity: gate
+    status: implemented
+    engines: []
+    rule: Slide order follows the presentation relationships; no slide means no pass
+    evidence: {path: mission-control/gogreen/binary_flight.py, symbol: inspect_presentation, test: test_real_slide_order_and_source_bytes}
+  - id: K-PPTX-03
+    pillar: safety
+    tier: G0
+    severity: advisory
+    status: implemented
+    engines: []
+    rule: Macros, embedded objects and external relationships are counted separately; nothing executes
+    evidence: {path: mission-control/gogreen/binary_flight.py, symbol: inspect_presentation, test: test_embedded_object_not_confused_with_macro}
+  - {id: K-PPTX-04, pillar: schema, tier: G1, severity: gate, status: planned, engines: [ooxml-validator], rule: Package validates against the OOXML schema}
+  - {id: K-PPTX-05, pillar: render, tier: G2, severity: gate, status: planned, engines: [libreoffice, poppler], rule: Every slide renders; rendered page count equals slide count}
+  - {id: K-PPTX-06, pillar: visual, tier: G4, severity: advisory, status: planned, engines: [pillow], rule: Each rendered slide is compared with its accepted baseline}
+  - {id: K-PPTX-07, pillar: native, tier: G5, severity: gate, status: planned, engines: [powerpoint], rule: PowerPoint opens the file without a repair prompt}
+  # ------------------------------------------------------------------ Word
+  - {id: K-DOCX-01, pillar: structure, tier: G0, severity: gate, status: planned, engines: [lxml], rule: Mandatory package parts exist and all XML parts are well formed}
+  - {id: K-DOCX-02, pillar: structure, tier: G1, severity: gate, status: planned, engines: [python-docx], rule: No visible field errors in the body text}
+  - {id: K-DOCX-03, pillar: schema, tier: G1, severity: gate, status: planned, engines: [ooxml-validator], rule: Package validates against the OOXML schema}
+  - {id: K-DOCX-04, pillar: render, tier: G2, severity: gate, status: planned, engines: [libreoffice, poppler], rule: Document renders; page count is within the accepted range}
+  - {id: K-DOCX-05, pillar: roundtrip, tier: G4, severity: advisory, status: planned, engines: [pandoc], rule: Text and headings survive a conversion round trip}
+  - {id: K-DOCX-06, pillar: native, tier: G5, severity: gate, status: planned, engines: [word], rule: Word opens the file without a repair prompt}
+  # ------------------------------------------------------------------ Excel
+  - {id: K-XLSX-01, pillar: structure, tier: G0, severity: gate, status: planned, engines: [openpyxl], rule: Workbook loads; sheet names and declared key tables exist}
+  - {id: K-XLSX-02, pillar: schema, tier: G1, severity: gate, status: planned, engines: [ooxml-validator], rule: Package validates against the OOXML schema}
+  - {id: K-XLSX-03, pillar: recalc, tier: G2, severity: gate, status: planned, engines: [libreoffice, excel], rule: A full recalculation reports zero error cells}
+  - {id: K-XLSX-04, pillar: render, tier: G2, severity: gate, status: planned, engines: [libreoffice, excel], rule: Every visible sheet renders and each print area covers all used rows; counting output files is not enough}
+  - {id: K-XLSX-05, pillar: native, tier: G5, severity: gate, status: planned, engines: [excel], rule: Excel opens the file without a repair prompt}
+  # ------------------------------------------------------------------ PDF
+  - {id: K-PDF-01, pillar: structure, tier: G0, severity: gate, status: planned, engines: [qpdf], rule: File structure passes a syntax check}
+  - {id: K-PDF-02, pillar: structure, tier: G1, severity: advisory, status: planned, engines: [pypdf], rule: Page count and extractable text match the source}
+  - {id: K-PDF-03, pillar: conformance, tier: G1, severity: advisory, status: planned, engines: [verapdf], rule: Declared PDF/A or PDF/UA profile validates}
+  - {id: K-PDF-04, pillar: render, tier: G2, severity: gate, status: planned, engines: [pymupdf, poppler], rule: Every page renders and no page is blank unless declared}
+  - {id: K-PDF-05, pillar: visual, tier: G4, severity: advisory, status: planned, engines: [pillow], rule: Each page is compared with its accepted baseline}
+  # ------------------------------------------------------------------ HTML
+  - id: K-HTML-01
+    pillar: structure
+    tier: G1
+    severity: advisory
+    status: implemented
+    engines: []
+    rule: Static counts only; links and layout are not claimed as checked
+    evidence: {path: mission-control/gogreen/binary_flight.py, symbol: inspect_html, test: test_link_and_layout_not_fabricated_for_html}
+  - {id: K-HTML-02, pillar: runtime, tier: G3, severity: gate, status: planned, engines: [playwright], rule: "Desktop, laptop and mobile views load with no console errors"}
+  - {id: K-HTML-03, pillar: runtime, tier: G3, severity: advisory, status: planned, engines: [playwright], rule: Links resolve and key interactions work}
+  - {id: K-HTML-04, pillar: accessibility, tier: G3, severity: advisory, status: planned, engines: [axe-core, playwright], rule: No serious accessibility violations}
+  # ------------------------------------------------------------------ SVG
+  - id: K-SVG-01
+    pillar: structure
+    tier: G0
+    severity: gate
+    status: implemented
+    engines: []
+    rule: XML passes the conservative gate; a DOCTYPE is rejected
+    evidence: {path: mission-control/gogreen/binary_flight.py, symbol: _xml, test: test_svg_doctype_is_not_accepted_as_validated}
+  - {id: K-SVG-02, pillar: render, tier: G3, severity: advisory, status: planned, engines: [inkscape, playwright], rule: Image renders with the expected size}

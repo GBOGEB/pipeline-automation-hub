@@ -1,0 +1,40 @@
+name: QA Engine Catalogue
+on:
+  pull_request:
+    paths:
+      - 'mission-control/registry/ENGINE_CATALOG.yaml'
+      - 'mission-control/registry/engine_catalog.py'
+      - 'mission-control/registry/test_engine_catalog.py'
+      - 'mission-control/gogreen/binary_flight.py'
+      - 'mission-control/gogreen/tests/test_binary_flight.py'
+      - '.github/workflows/engine-catalog.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  catalogue:
+    name: Catalogue contract, Python ${{ matrix.python-version }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install the parser
+        run: python -m pip install --disable-pip-version-check pyyaml==6.0.3
+      - name: Negative tests
+        run: python -m unittest discover -s mission-control/registry -p 'test_engine_catalog.py' -v
+      - name: Evidence tests the catalogue cites
+        run: python -m unittest discover -s mission-control/gogreen/tests -p 'test_binary_flight.py' -v
+      - name: Validate the catalogue
+        run: python mission-control/registry/engine_catalog.py validate
+      - name: Report the runner's engines
+        run: python mission-control/registry/engine_catalog.py probe
