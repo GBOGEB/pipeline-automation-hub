@@ -85,6 +85,7 @@ One canonical module per metric. Import these; do not re-implement them. Paths a
 |---|---|---|---|
 | EVERRED census (occurrences, roots, root closure / recurrence rates) | `mission-control/qps-triage-ultra/p-process/everred/harvest.py` | `harvest()`, `matches()`, `run_probes()`; metrics are computed in `main()` and written to `everred.json` | `site/everred/data/everred.json` (`everred.census/1.0`) |
 | EVERRED register page | `mission-control/qps-triage-ultra/p-process/everred/build_page.py` | CLI only (renders from `everred.json`) | `site/everred/index.html` |
+| QA engines and K-<TYPE>-NN checks by binary type | `mission-control/registry/engine_catalog.py` + `ENGINE_CATALOG.yaml` | CLI: `validate`, `matrix`, `probe` | Check matrix, engine probe JSON |
 | P-process mode per repo | `mission-control/qps-triage-ultra/p-process/p_decide.py` | `decide(census, everred, drift, cp_repos)`, `repo_of()` | `site/data/p_state.json` (`p-process.state/1.0`) |
 | P-process home page and deck | `mission-control/qps-triage-ultra/p-process/build_p_process.py` | CLI only | `site/index.html`, `site/P-process-deck.pdf` |
 | Scale dock (first-red / root-red metrics, EVERRED / Code Purple / P-process docks, cross-source consistency) | `mission-control/gogreen/scale_dock.py` | `red_metrics()`, `dock_everred()`, `DOCKERS[name]()` (`dock_code_purple`, `dock_p_process`, `dock_issue_bd`, `dock_crosswalk`), `dock_consistency()`, `DOCK_SCHEMAS`, `evaluate()` | `codepurple.scale-dock.series.v1` |
