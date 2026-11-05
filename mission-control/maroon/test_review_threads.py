@@ -395,6 +395,13 @@ class ReviewFollowUps(unittest.TestCase):
         self.assertIsNone(RT.anchor_of("@@ -1,2 +1,2 @@\n+real line\n+   "))
         self.assertIsNone(RT.anchor_of(None))
 
+    def test_anchor_skips_the_no_newline_marker(self):
+        """#1129 r4477419118: a target on a file's last line, with no trailing newline, keeps its anchor."""
+        for sign, side in (("+", "added"), ("-", "deleted"), (" ", "context")):
+            with self.subTest(side=side):
+                hunk = f"@@ -1,2 +1,2 @@\n     long enough context line\n{sign}    write(final)\n\\ No newline at end of file"
+                self.assertEqual(RT.anchor_of(hunk), {"text": "write(final)", "side": side})
+
     def test_threads_carry_the_anchor_and_its_side(self):
         c = comment(1, CODEX, "Reject output paths that alias an input")
         c["diff_hunk"] = "@@ -4,2 +4,1 @@\n context line here\n-    shutil.copy(a, b)"
