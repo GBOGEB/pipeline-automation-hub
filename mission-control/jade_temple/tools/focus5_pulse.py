@@ -12,8 +12,10 @@ exact SHA only, writing a snapshot in the FOCUS5 shape that rolling5.py pins:
        in the previous pulse) are looked up on the new head: every one success ->
        PASS, any failure -> FAIL, otherwise (not run, cancelled, skipped) ->
        UNKNOWN. A gate with neither stays UNKNOWN.
-  H08  FAIL when the default branch is unprotected; protected with a pull
-       request rule -> UNKNOWN until a rejected RED canary is evidenced.
+  H08  FAIL when the default branch is unprotected. With a pull request rule it is
+       PASS only when a receipt in data/FOCUS5_H08_CANARY_RECEIPTS.json re-verifies live
+       (tools/h08_canary.py: active ruleset without bypass, the canary's red check still
+       required, PR never merged, merge refused 405); otherwise UNKNOWN.
   H03 H07 H09 H10 H11 H12  owner or independent evidence -> UNKNOWN here; the
        observation (security runs, tags) is recorded, never promoted.
 
@@ -38,6 +40,9 @@ _pb.loader.exec_module(PB)
 WINDOW = "site/rolling5.json"
 LEDGER = "data/ROLLING5_PULSES.json"
 REGISTRY = "data/FOCUS5_GATE_EVIDENCE_REGISTRY.json"
+_h8 = importlib.util.spec_from_file_location("h08_canary", Path(__file__).resolve().parent / "h08_canary.py")
+H8 = importlib.util.module_from_spec(_h8)
+_h8.loader.exec_module(H8)
 RUN_GATES = ("H04", "H05", "H06")
 SECURITY_RX = re.compile(r"codeql|osv|bandit|security|scorecard|dependency.review|secret", re.I)
 RUN_URL = re.compile(r"/actions/runs/(\d+)")
@@ -157,7 +162,8 @@ def classify_gate(paths: list[str], latest: dict[str, dict]) -> tuple[str, str |
     return "PASS", first["html_url"], f"{names} success on this exact SHA"
 
 
-def observe_repo(repo: str, prev_row: dict | None, lookup=gh, declared: dict[str, list[str]] | None = None) -> dict:
+def observe_repo(repo: str, prev_row: dict | None, lookup=gh, declared: dict[str, list[str]] | None = None,
+                 canaries: list[dict] | None = None) -> dict:
     meta = lookup(f"repos/{repo}")
     branch = meta["default_branch"]
     sha = lookup(f"repos/{repo}/commits/{branch}")["sha"]  # read once, used for every gate
@@ -207,8 +213,12 @@ def observe_repo(repo: str, prev_row: dict | None, lookup=gh, declared: dict[str
     if not protected and not rules:
         gate("H08", "FAIL", f"{base}/settings/branches", "Default branch unprotected (no protection, no ruleset)")
     elif "pull_request" in rules:
-        gate("H08", "UNKNOWN", f"{base}/settings/rules",
-             "Pull request rule active (" + ", ".join(rules) + "); rejected RED canary not evidenced in this pulse")
+        status, url, why = H8.evaluate(repo, branch, (canaries or []), lookup)
+        if status == "PASS":
+            gate("H08", "PASS", url, why)
+        else:
+            gate("H08", "UNKNOWN", f"{base}/settings/rules",
+                 "Pull request rule active (" + ", ".join(rules) + "); " + why)
     else:
         gate("H08", "UNKNOWN", f"{base}/settings/branches",
              "Protected without a pull request rule (" + (", ".join(rules) or "classic protection") + ")")
@@ -250,10 +260,11 @@ def observe_repo(repo: str, prev_row: dict | None, lookup=gh, declared: dict[str
 
 
 def build_snapshot(prev: dict, repos: list[str], date: str, lookup=gh,
-                   registry: dict[str, dict[str, list[str]]] | None = None) -> dict:
+                   registry: dict[str, dict[str, list[str]]] | None = None,
+                   canaries: dict[str, list[dict]] | None = None) -> dict:
     prev_rows = {r["repo"]: r for r in prev["rows"]}
-    registry = registry or {}
-    rows = [observe_repo(repo, prev_rows.get(repo), lookup, registry.get(repo)) for repo in repos]
+    registry, canaries = registry or {}, canaries or {}
+    rows = [observe_repo(repo, prev_rows.get(repo), lookup, registry.get(repo), canaries.get(repo)) for repo in repos]
     for row in rows:
         row["head_readback"] = f"{date} one pulse"
     passed = sum(r["verified_complete"] for r in rows)
@@ -275,7 +286,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--date", required=True, help="observation date (YYYY-MM-DD)")
     args = ap.parse_args(argv)
     window = json.loads((ROOT / WINDOW).read_text(encoding="utf-8"))["window"]["current"]
-    snap = build_snapshot(previous_snapshot(ROOT), window, args.date, registry=load_registry(ROOT))
+    snap = build_snapshot(previous_snapshot(ROOT), window, args.date, registry=load_registry(ROOT),
+                          canaries=H8.load_receipts(ROOT))
     out = ROOT / args.out
     out.write_text(json.dumps(snap, indent=2) + "\n", encoding="utf-8", newline="\n")
     m = snap["metrics"]
