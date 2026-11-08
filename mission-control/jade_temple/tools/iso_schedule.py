@@ -8,7 +8,9 @@ from __future__ import annotations
 
 from datetime import date
 from html import escape
+import hashlib
 import importlib.util
+import json
 from pathlib import Path
 import re
 
@@ -107,6 +109,36 @@ def validate_schedule(plan: dict) -> dict:
                 raise ValueError(f"{node['id']}: finish-to-start violation after {parent}")
     return {"schema": SCHEMA, "iso_year": year, "tasks": indexed, "waves": layers,
             "status": "DECLARED_PLAN_ONLY", "authority_transfer": False}
+
+
+def portable_receipt(plan: dict) -> dict:
+    """Return a JSON-canonical, integrity-bound *declared* plan for handover.
+
+    This makes the date-rich internal validated model transportable without
+    copying its Kahn implementation into GEMINI. The digest proves payload
+    consistency only, not Git source authenticity, a Drive revision or approval.
+    """
+    validated = validate_schedule(plan)
+    tasks = {}
+    for key, task in validated["tasks"].items():
+        tasks[key] = {
+            "id": task["id"], "title": task["title"],
+            "start": task["start"].isoformat(), "end": task["end"].isoformat(),
+            "start_code": task["start_code"], "end_code": task["end_code"],
+            "kind": task["kind"], "depends_on": list(task["depends_on"]),
+        }
+    record = {
+        "schema": SCHEMA, "iso_year": validated["iso_year"],
+        "generation_method": "JADE_ISO_SCHEDULE_PORTABLE_RECEIPT_V1",
+        "tasks": tasks, "waves": validated["waves"],
+        "status": "DECLARED_PLAN_ONLY", "authority_transfer": False,
+    }
+    payload = json.dumps(
+        record, sort_keys=True, separators=(",", ":"), ensure_ascii=True,
+        allow_nan=False,
+    ).encode("utf-8")
+    record["receipt_sha256"] = hashlib.sha256(payload).hexdigest()
+    return record
 
 
 def mermaid_dag(validated: dict) -> str:
