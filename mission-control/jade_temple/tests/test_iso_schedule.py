@@ -123,6 +123,30 @@ class IsoSchedule(unittest.TestCase):
         example_source = prose.split(tick + "python\n", 1)[1].split("\n" + tick, 1)[0]
         ast.parse(example_source)
 
+    def test_portable_receipt_is_json_canonical_and_source_safe(self):
+        import hashlib
+        import json
+
+        r = m.portable_receipt(example())
+        self.assertEqual(r["schema"], m.SCHEMA)
+        self.assertEqual(r["generation_method"], "JADE_ISO_SCHEDULE_PORTABLE_RECEIPT_V1")
+        self.assertEqual(r["status"], "DECLARED_PLAN_ONLY")
+        self.assertFalse(r["authority_transfer"])
+        self.assertEqual(r["waves"], [["SOURCE"], ["MATH", "RENDER"], ["GATE"]])
+        self.assertEqual(r["tasks"]["SOURCE"]["start"], "2026-11-09")
+        digest = r.pop("receipt_sha256")
+        wire = json.dumps(r, sort_keys=True, separators=(",", ":"),
+                          ensure_ascii=True, allow_nan=False).encode("utf-8")
+        self.assertEqual(digest, hashlib.sha256(wire).hexdigest())
+        self.assertEqual(r, json.loads(wire))
+
+    def test_portable_receipt_changes_digest_on_task_change(self):
+        before = m.portable_receipt(example())
+        changed = example()
+        changed["tasks"][0]["title"] = "New source"
+        after = m.portable_receipt(changed)
+        self.assertNotEqual(before["receipt_sha256"], after["receipt_sha256"])
+
     def test_invalid_task_and_schema_rejected(self):
         p = example()
         p["schema"] = "unexpected"
