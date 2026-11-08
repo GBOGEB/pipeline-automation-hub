@@ -73,6 +73,7 @@ Runtime workers added in R2 (none are crew): `CLAUDE_CODE_LOCAL`, `CLAUDE_DRIVE_
 - [ ] `base_blob` optimistic-concurrency check, classified as clean, three-way or conflict
 - [ ] Idempotency through the existing GMI batch ledger, reused as `gmi.broker_receipt`
 - [ ] Emits a patch and a branch plan; pushes nothing
+- [ ] Reconciled with the lane `OUT/` bundle return from GBOGEB/GEMINI#37 (`docs/bridge/LANES.md`): one ingest path per proposer type, not two
 - [ ] P1 · [ ] P2 · [ ] P3
 
 ### R2-W3: External auth habitat, owner only (GEMINI), maps to IC3 (the first red)
@@ -157,12 +158,13 @@ flowchart LR
 | REX-GMIC-R2-004 | Agent GitHub credentials are not Drive authorization | Each agent's Drive connector needs its own owner approval |
 | REX-GMIC-R2-005 | Re-dispatching IC3 while CONFIG_MISSING only reproduces habitat evidence | Don't dispatch until both repo variables exist |
 | REX-GMIC-R2-006 | Gemini's reach depends on where it runs | Gemini CLI goes through PRs; Gemini in Drive goes through the inbox |
+| REX-GMIC-R2-007 | A parallel thread landed a Drive lane layer (GBOGEB/GEMINI#37, `a607d003`) on provider `main` during W1 | Re-fetch before each wave, merge `main` in, and reconcile W2 ingest with the lane `OUT/` return |
 
 Inherited and still binding: REX-GMF-001..004, GM-I-B-EXACT-IDENTITY and GM-I-B-NONCOMPENSATION (see the v0.1 control).
 
 ## Linkage and prune
 
-- **Tags onto:** GM-I-C (overlay); GBOGEB/GEMINI#12 (IC3 first red, unchanged, R2-W3); GEMINI `docs/bridge/DRIVE_HANDOVER_BRIDGE.md` (its A-to-B target state is what R2 builds); `PACKAGE_CONTRACT.md` (reused by the proposal profile); `BATCH_IDEMPOTENCY.md` (reused as the broker receipt).
+- **Tags onto:** GM-I-C (overlay); GBOGEB/GEMINI#12 (IC3 first red, unchanged, R2-W3); GEMINI `docs/bridge/DRIVE_HANDOVER_BRIDGE.md` (its A-to-B target state is what R2 builds); `PACKAGE_CONTRACT.md` (reused by the proposal profile); `BATCH_IDEMPOTENCY.md` (reused as the broker receipt); GBOGEB/GEMINI#37 and `LANES.md` (the lane-bundle layer for agents with git, complementing the plain-file snapshot; the lane registry stays its own owner).
 - **Siblings, not re-opened:** GBOGEB/GEMINI#16 (R3 git-bundle lane); the frozen W282 visual lane.
 - **Pruned from the first design:** a new `DRIVE_PROPOSAL_V1` schema (replaced by `gmi.proposal_profile.v1`) and a new `BROKER_RECEIPT_V1` (replaced by `gmi.broker_receipt`, the existing GMI batch ledger).
 
