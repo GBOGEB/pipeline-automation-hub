@@ -6,7 +6,7 @@ override owner-held gates. The canonical DAG algorithm stays in devops/lifecycle
 """
 from __future__ import annotations
 
-from datetime import date, timedelta
+from datetime import date
 from html import escape
 import importlib.util
 from pathlib import Path
@@ -115,7 +115,7 @@ def mermaid_dag(validated: dict) -> str:
     node_ids = {t["id"]: f"N{i}" for i, t in enumerate(tasks)}
     lines = ["flowchart LR"]
     for task in tasks:
-        label = escape(f"{task['start_code']} {task['id']}: {task['title']}", quote=True)
+        label = escape(" ".join(f"{task['start_code']} {task['id']}: {task['title']}".split()), quote=True)
         lines.append(f'    {node_ids[task["id"]]}["{label}"]')
     for task in tasks:
         for p in task["depends_on"]:
@@ -128,9 +128,9 @@ def mermaid_gantt(validated: dict) -> str:
     lines = ["gantt", f"    title ISO {validated['iso_year']} (plan only)",
              "    dateFormat YYYY-MM-DD", "    axisFormat %d %b"]
     for i, task in enumerate(validated["tasks"].values()):
-        title = re.sub(r"[:\n\r]", " ", task["title"])
+        title = " ".join(re.sub(r"[:\n\r]", " ", task["title"]).split())
         label = f"{task['start_code']} {title}"
         style = "milestone, " if task["kind"] == "milestone" else ""
-        endpoint = "0d" if task["kind"] == "milestone" else (task["end"] + timedelta(days=1)).isoformat()
+        endpoint = "0d" if task["kind"] == "milestone" else f"{(task['end'] - task['start']).days + 1}d"
         lines.append(f'    {label} :{style}t{i}, {task["start"].isoformat()}, {endpoint}')
     return "\n".join(lines) + "\n"
