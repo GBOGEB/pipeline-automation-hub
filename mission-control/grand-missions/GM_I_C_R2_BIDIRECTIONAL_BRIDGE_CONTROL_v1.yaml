@@ -67,6 +67,7 @@ waves:
     crew: [U01, U02, U08]
     owner_action_required: false
     state: IN_PROGRESS
+    pulses: {P1: GBOGEB/pipeline-automation-hub#1135, P2: PENDING, P3: PENDING}
     dod:
       - BRIEF_AND_CONTROL_OVERLAY_COMMITTED
       - OVERLAY_VALIDATOR_IN_GM_I_C_REGISTRATION_CI
@@ -77,7 +78,8 @@ waves:
     maps_to_gates: [IC2_BRIDGE]
     crew: [U02, S05, U06]
     owner_action_required: false
-    state: PLANNED
+    state: IN_PROGRESS
+    pulses: {P1: GBOGEB/GEMINI#38, P2: PENDING, P3: PENDING}
     dod:
       - REPO_SNAPSHOT_MANIFEST_BUILDER_FROM_EXACT_COMMIT
       - NO_GIT_METADATA_IN_EXPORT

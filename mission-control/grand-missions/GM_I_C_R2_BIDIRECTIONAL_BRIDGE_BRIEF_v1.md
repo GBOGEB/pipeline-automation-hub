@@ -58,14 +58,14 @@ Runtime workers added in R2 (none are crew): `CLAUDE_CODE_LOCAL`, `CLAUDE_DRIVE_
 - [x] Re-open brief and control overlay written
 - [x] Overlay validator added to the GM-I-C registration CI
 - [x] Baseline v0.1 validator still passes
-- [ ] P1 draft PR open · [ ] P2 exact-head CI green + FPC receipt · [ ] P3 merged
+- [x] P1 draft PR open (GBOGEB/pipeline-automation-hub#1135) · [ ] P2 exact-head CI green + FPC receipt · [ ] P3 merged
 
 ### R2-W1: Snapshot publish contract, offline (GEMINI), maps to IC2
 
-- [ ] `gmi.repo_snapshot.v1` manifest builder from an exact commit (`git archive`, no `.git`)
-- [ ] `verify` recomputes git blob OIDs from the exported bytes
-- [ ] Deterministic manifest digest; contract tests in CI
-- [ ] P1 · [ ] P2 · [ ] P3
+- [x] `gmi.repo_snapshot.v1` manifest builder from an exact commit (raw blobs, no `.git`)
+- [x] `verify` recomputes git blob OIDs from the exported bytes
+- [x] Deterministic manifest digest; contract tests in CI
+- [x] P1 draft PR open (GBOGEB/GEMINI#38) · [ ] P2 · [ ] P3
 
 ### R2-W2: Proposal ingest broker, dry run (GEMINI), maps to IC7 and IC8
 
