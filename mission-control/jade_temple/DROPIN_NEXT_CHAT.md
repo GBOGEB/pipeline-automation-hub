@@ -1,3 +1,16 @@
+# JADE FOCUS5 P0005 + H08 CANARY TOOLING — CP.HANDOFF CHECKPOINT (2026-11-08, newest)
+
+**Entry:** [P0005 snapshot](data/FOCUS5_POINT_RELEASE_P0005.json) · [H08 canary tool](tools/h08_canary.py) · [canary receipts](data/FOCUS5_H08_CANARY_RECEIPTS.json) · [handover 2026-11-02](notes/handover_20261102/HANDOVER.md). Earlier checkpoints follow below, unchanged.
+
+1. **Pulse.** P0005 (2026-11-04): 25 PASS / 0 FAIL / 35 UNKNOWN of 60, the first pulse without FAIL. All five repos 5/12 (H01 H02 H04 H05 H06 PASS). Every remaining gate needs the owner or an independent acceptor; no new pulse until one changes.
+2. **H08 tooling (#1132).** H08 PASS needs a receipt of a rejected RED canary (proof class GITHUB_REJECTED_RED_MERGE), re-verified live each pulse. `python tools/h08_canary.py verify --repo <r>` reports readiness; `attempt ... --confirm-merge-attempt` is an owner action (real merge call, refused unless every precondition holds). Private repos excluded.
+3. **Readiness 2026-11-08 (verify).** yaml-grammar and gg_MATH: no required status checks rule. DOCX_RTM_Automation: no pull request rule. Hub: ruleset 25789280 has bypass actors or the reader can bypass. cryoplant: private, stays UNKNOWN.
+4. **Merged since 2026-11-02.** hub #1084-#1087, #1116, #1117, #1130, #1132; CODEX #1252; gg_MATH #102, #103; DOCX #107, #108; cryoplant #2206, #2208, #2242, #2244.
+5. **Owner.** Fix each repo's readiness blocker, then run or authorise one `attempt` per repo on a red canary PR (up to +4 PASS). Delete the 5 DOCX canary/tmp branches. Hub first-pass-closure on session PRs needs a Codex exact-head review.
+6. **Next session.** Re-run `verify` for the five repos; when ready and authorised, open a red canary (one byte broken in a required check's input), mark it ready for review, run `attempt`, commit the receipt, take P0006 (fetch first).
+
+---
+
 # JADE FOCUS5 PULSE P0004 + LOSSLESS HANDOVER PACKAGE — CP.HANDOFF CHECKPOINT (2026-11-02, newest)
 
 **Entry:** [handover](notes/handover_20261102/HANDOVER.md) · [session PR trace](notes/handover_20261102/SESSION_PR_TRACE.json) · [local binaries script](notes/handover_20261102/Build-JadeHandover.ps1) · [P0004 snapshot](data/FOCUS5_POINT_RELEASE_P0004.json). Earlier checkpoints follow below, unchanged.
