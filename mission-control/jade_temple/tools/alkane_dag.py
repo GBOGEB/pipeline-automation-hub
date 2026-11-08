@@ -43,6 +43,12 @@ def formula(n: int) -> str:
     return f"C{n if n > 1 else ''}H{2 * n + 2}"
 
 
+def carbon_of(key: str) -> int:
+    """Carbon number from the node key, for ordering; malformed keys sort last."""
+    m = KEY.fullmatch(key)
+    return int(m[1]) if m else len(ALKANES) + 1
+
+
 def load(path: Path = DATA) -> dict:
     doc = json.loads(path.read_text(encoding="utf-8"))
     if doc.get("schema") != SCHEMA:
@@ -62,7 +68,7 @@ def check_names(nodes: dict) -> list[str]:
         if name != want:
             errs.append(f"{key}: C{n} is {want or 'outside C1-C14'}")
         if node.get("carbon") != n:
-            errs.append(f"{key}: carbon {node.get('carbon')} != {n}")
+            errs.append(f"{key}: carbon {node.get('carbon')!r} != {n}")
         if node.get("formula") != formula(n):
             errs.append(f"{key}: formula {node.get('formula')} != {formula(n)}")
         seen.setdefault(n, []).append(key)
@@ -99,7 +105,7 @@ def check_lanes(nodes: dict, wave: dict[str, int], prereqs: dict[str, list[str]]
         lanes.setdefault(str(n.get("lane")), []).append(k)
     anc = ancestors(prereqs)
     for lane, members in sorted(lanes.items()):
-        members.sort(key=lambda k: (wave[k], nodes[k].get("carbon", 0)))
+        members.sort(key=lambda k: (wave[k], carbon_of(k), k))
         if lane.startswith("MATRIX-"):
             # A matrix is one wave of peers that consume the same upstream outputs.
             if len(members) < 2:
@@ -127,7 +133,7 @@ def evaluate(nodes: dict) -> dict:
         out["fatal"] = str(exc)
         return out
     out["errors"] += check_lanes(nodes, out["wave"], prereqs)
-    out["critical"] = CD.critical_path(prereqs)
+    out["critical"] = CD.critical_path(prereqs) if prereqs else []
     return out
 
 
@@ -135,7 +141,7 @@ def report(nodes: dict) -> int:
     r = evaluate(nodes)
     wave = r["wave"]
     for w in range(1, max(wave.values(), default=0) + 1):
-        row = sorted((k for k in wave if wave[k] == w), key=lambda k: nodes[k].get("carbon", 0))
+        row = sorted((k for k in wave if wave[k] == w), key=lambda k: (carbon_of(k), k))
         print(f"W{w}  " + "  ".join(f"{k}[{nodes[k].get('lane')}]" for k in row))
     if r["critical"]:
         print(f"critical path ({len(r['critical'])}): " + " -> ".join(r["critical"]))
