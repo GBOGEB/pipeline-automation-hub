@@ -6,7 +6,7 @@ override owner-held gates. The canonical DAG algorithm stays in devops/lifecycle
 """
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, timedelta
 from html import escape
 import importlib.util
 from pathlib import Path
@@ -124,13 +124,13 @@ def mermaid_dag(validated: dict) -> str:
 
 
 def mermaid_gantt(validated: dict) -> str:
-    """Date-anchored Gantt view (calendar dates, no invented workday exclusions)."""
+    """Date-anchored Gantt view; inclusive plan ends become exclusive Mermaid ends."""
     lines = ["gantt", f"    title ISO {validated['iso_year']} (plan only)",
              "    dateFormat YYYY-MM-DD", "    axisFormat %d %b"]
     for i, task in enumerate(validated["tasks"].values()):
         title = re.sub(r"[:\n\r]", " ", task["title"])
         label = f"{task['start_code']} {title}"
         style = "milestone, " if task["kind"] == "milestone" else ""
-        endpoint = "0d" if task["kind"] == "milestone" else task["end"].isoformat()
+        endpoint = "0d" if task["kind"] == "milestone" else (task["end"] + timedelta(days=1)).isoformat()
         lines.append(f'    {label} :{style}t{i}, {task["start"].isoformat()}, {endpoint}')
     return "\n".join(lines) + "\n"
