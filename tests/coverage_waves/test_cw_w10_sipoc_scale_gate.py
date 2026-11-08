@@ -187,6 +187,29 @@ def test_target_two_single_pulse_and_per_pulse_census():
     assert "METRIC_WINDOW_NOT_SOURCE_BOUND" in rs
 
 
+@pytest.mark.parametrize("source_role,target_role", [
+    ("worker", "worker"), ("worker", "verifier"), ("verifier", "worker"),
+    ("verifier", "verifier"),
+])
+def test_cross_pair_actor_collision_is_hold(source_role, target_role):
+    obs = sample()
+    prior, next_pair = obs["pulses"][1]["pairs"]
+    next_pair[target_role]["actor"] = prior[source_role]["actor"]
+    out = m.assess(obs)
+    assert "NON_DISJOINT_PAIR_ACTORS" in out["reasons"]
+    assert out["classification"] == "HOLD"
+    assert out["target_mutators"] == 2
+    assert not out["dispatch_authorized"]
+
+
+@pytest.mark.parametrize("bad", [[], {}, 1, " "])
+def test_invalid_actor_claim_cannot_promote(bad):
+    obs = sample()
+    _p(obs)["worker"]["actor"] = bad
+    assert "INDEPENDENT_VERIFIER_MISSING" in reasons(obs)
+    assert m.assess(obs)["classification"] == "HOLD"
+
+
 def test_native_evidence_reused_across_pulses():
     obs = sample()
     _p(obs)["worker"]["native"] = copy.deepcopy(obs["pulses"][0]["pairs"][0]["worker"]["native"])

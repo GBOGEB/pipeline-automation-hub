@@ -223,6 +223,51 @@ class ReaderNegativeControls(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "exceeds the search cap"):
             M.fetch_runs_day(Saturated(), REPO, date(2026, 10, 26))
 
+    def test_under_cap_day_duplicate_requires_hourly_refetch(self):
+        """Replays H1 source receipt 41618100602: 634 rows but 633 unique."""
+        class Collision:
+            def __init__(self):
+                self.calls = []
+            def pages(self, route, key):
+                self.calls.append(route)
+                if ".." not in route:
+                    return [run(1), run(2), run(2)], 3
+                return ([run(1), run(2)], 2) if "T00:" in route else ([], 0)
+        rd = Collision()
+        source = M.fetch_runs_day(rd, REPO, date(2026, 11, 3))
+        self.assertEqual([r["id"] for r in source], [1, 2])
+        self.assertEqual(len(rd.calls), 25)
+
+    def test_conflicting_duplicate_does_not_get_rewritten_as_verified(self):
+        class Conflicting:
+            def pages(self, route, key):
+                return [run(1), run(1, name="Different workflow")], 2
+        with self.assertRaisesRegex(ValueError, "conflicting workflow-run record"):
+            M.fetch_runs_day(Conflicting(), REPO, date(2026, 11, 3))
+
+    def test_hourly_page_collision_stays_unknown_not_unique_zero(self):
+        class BadHour:
+            def pages(self, route, key):
+                if ".." not in route:
+                    return [run(1), run(1)], 2
+                if "T00:" in route:
+                    return [run(1), run(1)], 2
+                return [], 0
+        with self.assertRaisesRegex(ValueError, "same-hour pagination collision"):
+            M.fetch_runs_day(BadHour(), REPO, date(2026, 11, 3))
+
+    def test_under_cap_unambiguous_day_requires_no_hourly_calls(self):
+        class Complete:
+            def __init__(self):
+                self.calls = []
+            def pages(self, route, key):
+                self.calls.append(route)
+                return [run(1), run(2)], 2
+        rd = Complete()
+        source = M.fetch_runs_day(rd, REPO, date(2026, 11, 3))
+        self.assertEqual(len(source), 2)
+        self.assertEqual(len(rd.calls), 1)
+
     def test_empty_or_negative_durations_are_unknown_not_zero(self):
         self.assertIsNone(M.seconds(None, "2026-10-26T00:00:00Z"))
         self.assertIsNone(M.seconds("2026-10-26T02:00:00Z", "2026-10-26T01:00:00Z"))

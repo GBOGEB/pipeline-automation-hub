@@ -32,7 +32,7 @@ def validate(doc):
     need(type(doc.get('max_parallel_readers')) is int and 1<=doc['max_parallel_readers']<=2,'CAPACITY_UNKNOWN_NO_SCALE')
     waves=doc.get('waves')
     need(isinstance(waves,list) and len(waves)==2,'REQUIRE_TWO_BOUNDED_WAVES')
-    results=[]; all_topics=set(); all_producers=set()
+    results=[]; all_topics=set(); all_producers=set(); source_scopes=set()
     graphs=[]
     for idx,pulse in enumerate(waves,1):
         need(pulse.get('max_readers')<=doc['max_parallel_readers'],'WAVE_OVER_CAPACITY')
@@ -41,6 +41,13 @@ def validate(doc):
         for item in result['topics']:
             need(item['topic'] not in all_topics,'OVERLAPPING_TOPIC_LEASE')
             all_topics.add(item['topic']);all_producers.add(item['producer_repo'])
+        # Topic name is not a lease: two differently named topics may cover
+        # the same producer-owned scope. Neither is independent census coverage.
+        for row in pulse['packets']:
+            packet = row['packet']  # validated by topic_wave.pilot()
+            scope_key = (packet['producer_repo'], packet['scope_sha256'])
+            need(scope_key not in source_scopes, 'OVERLAPPING_SOURCE_SCOPE')
+            source_scopes.add(scope_key)
         graphs.append(topic_wave.digest({'nodes':result['graph']['nodes'],'edges':result['graph']['edges']}))
         results.append(result)
     need(len(all_producers)<=3,'THREE_PHYSICAL_REPOSITORY_CAP')

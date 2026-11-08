@@ -82,24 +82,23 @@ class RealDataTests(unittest.TestCase):
 
     def test_reproduces_focus5_denominator_without_credit(self):
         m = self.model["metrics"]
-        # Latest pulse P0004 (2026-11-02); P0003 21/60, P0002 17/60, P0001 14/60.
-        self.assertEqual((m["verified_pass"], m["gate_denominator"]), (24, 60))
-        self.assertEqual(m["verified_completion_pct"], 40.0)
+        # Latest pulse P0005 (2026-11-04); P0004 24/60, P0003 21/60, P0002 17/60, P0001 14/60.
+        self.assertEqual((m["verified_pass"], m["gate_denominator"]), (25, 60))
+        self.assertEqual(m["verified_completion_pct"], 41.67)
         self.assertEqual(m["nirvana_count"], 0)
         self.assertEqual(self.model["merge_admission"], "HOLD")
         self.assertFalse(self.model["release_credit"])
         self.assertFalse(self.model["authority_transfer"])
 
-    def test_h08_is_core_focus(self):
-        # P0001: H08 FAIL in all five (COMMON_CAUSE). P0002: LOCAL to DOCX_RTM_Automation
-        # and yaml-grammar. P0003: DOCX main is protected (H08 UNKNOWN until a pull request
-        # rule and a RED canary), so the remaining H08 red is LOCAL to yaml-grammar.
+    def test_h08_moved_from_red_to_common_unknown(self):
+        # P0001: H08 FAIL in all five (COMMON_CAUSE); P0002: LOCAL to two repos; P0003/P0004:
+        # LOCAL to yaml-grammar. P0005: every default branch is protected, so no gate is red and
+        # H08 is UNKNOWN in all five until a rejected RED canary is evidenced per repo.
         red = self.model["source_red"]
-        self.assertEqual(red["core_focus"], "H08")
-        top = red["ranked_gates"][0]
-        self.assertEqual((top["gate"], top["repo_count"], top["class"]),
-                         ("H08", 1, "LOCAL"))
-        self.assertEqual(top["repos"], ["GBOGEB/yaml-grammar"])
+        self.assertIsNone(red["core_focus"])
+        self.assertEqual(red["ranked_gates"], [])
+        unknown = {u["gate"]: u for u in red["common_unknown"]}
+        self.assertEqual(unknown["H08"]["repo_count"], 5)
 
     def test_h03_is_common_unknown_breaking_every_golden_thread(self):
         unknown = {u["gate"]: u for u in self.model["source_red"]["common_unknown"]}
@@ -114,9 +113,9 @@ class RealDataTests(unittest.TestCase):
         self.assertEqual(w["admitted"], [])
 
     def test_unattended_is_inferred_only_from_three_pulses(self):
-        # Four pulses (P0001-P0004): 'unattended' is inferred, and only for gates UNKNOWN in
+        # Five pulses (P0001-P0005): 'unattended' is inferred, and only for gates UNKNOWN in
         # the last three. Owner gates were never evidenced; H01 is always read back.
-        self.assertEqual(self.model["history_depth"], 4)
+        self.assertEqual(self.model["history_depth"], 5)
         for repo in self.model["repos"]:
             s = repo["streaks"]
             for gid in ("H03", "H09", "H12"):

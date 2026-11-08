@@ -188,6 +188,76 @@ def build(root: Path, master: dict | None, pr: dict | None, previous: dict | Non
     return doc
 
 
+
+def hold_unapproved_changes(proposed: dict, previous: dict) -> dict:
+    """Source-owned, read-only admission candidate; never approve a promotion.
+
+    The normal telemetry proposal can recommend newly healthy ENFORCED gates.
+    This projection keeps every prior disposition until an owner explicitly
+    accepts a change. A lost or demoted incumbent is a hard error, not a
+    silently altered required gate.
+    """
+    import copy
+
+    if (not isinstance(proposed, dict)
+            or not isinstance(previous, dict)
+            or proposed.get("schema") != g.ADMISSION_SCHEMA
+            or previous.get("schema") != g.ADMISSION_SCHEMA
+            or (proposed.get("authority") or {}).get("merge_authorized") is not False):
+        raise ValueError("source-bound proposal and prior non-authorizing admission ledger required")
+
+    old = {}
+    for row in previous.get("entries", []):
+        if (not isinstance(row, dict) or not row.get("path")
+                or row["path"] in old
+                or row.get("disposition") not in (g.ENFORCED, g.OBSERVED, g.EXCLUDED)):
+            raise ValueError("invalid or repeated previous workflow disposition")
+        old[row["path"]] = row["disposition"]
+    if not old:
+        raise ValueError("empty prior admission ledger cannot authorize a review overlay")
+
+    doc = copy.deepcopy(proposed)
+    seen, held = set(), []
+    for row in doc.get("entries", []):
+        if (not isinstance(row, dict) or not row.get("path")
+                or row["path"] in seen
+                or row.get("disposition") not in (g.ENFORCED, g.OBSERVED, g.EXCLUDED)):
+            raise ValueError("invalid or repeated proposed workflow disposition")
+        path = row["path"]
+        seen.add(path)
+        before = old.get(path)
+        if before == g.ENFORCED and row["disposition"] != g.ENFORCED:
+            raise ValueError("incumbent ENFORCED demotion requires owner disposition: " + path)
+        if before is not None and row["disposition"] != before:
+            row["proposed_disposition"] = row["disposition"]
+            row["disposition"] = before
+            row["reasons"] = ["OWNER_DISPOSITION_PENDING"]
+            held.append(path)
+        elif before is None and row["disposition"] == g.ENFORCED:
+            row["proposed_disposition"] = row["disposition"]
+            row["disposition"] = g.OBSERVED
+            row["reasons"] = ["OWNER_PROMOTION_PENDING"]
+            held.append(path)
+
+    if set(old) - seen:
+        raise ValueError("prior workflows missing from proposal; owner disposition required")
+    counts = {state: sum(row["disposition"] == state for row in doc["entries"])
+              for state in (g.ENFORCED, g.OBSERVED, g.EXCLUDED)}
+    doc["counts"] = {state: count for state, count in counts.items() if count}
+    doc["coverage"]["enforced_of_pr_scoped"] = counts[g.ENFORCED]
+    doc["owner_review_hold"] = {
+        "state": "PROPOSED_NOT_ADMITTED",
+        "previous_ledger_sha256": previous.get("ledger_sha256"),
+        "old_entries": len(old),
+        "new_entries": len(seen) - len(old),
+        "held_paths": sorted(held),
+        "merge_authorized": False,
+        "root_closure_credit": 0,
+    }
+    doc.pop("ledger_sha256", None)
+    doc["ledger_sha256"] = hashlib.sha256(json.dumps(doc, sort_keys=True).encode()).hexdigest()
+    return doc
+
 def diff(old: dict | None, new: dict) -> dict:
     o = {e["path"]: e["disposition"] for e in (old or {}).get("entries", [])}
     n = {e["path"]: e for e in new["entries"]}
@@ -230,6 +300,7 @@ def main(argv=None):
     ap.add_argument("--ledger", type=Path, default=None, help="committed ledger (previous state + runtime map)")
     ap.add_argument("--out", type=Path, help="write the proposed ledger here")
     ap.add_argument("--summary", type=Path, help="write a markdown summary here")
+    ap.add_argument("--review-out", type=Path, help="unapproved, no-promotion owner-review candidate")
     ap.add_argument("--resolve-runtimes", action="store_true", help="git-fetch action.yml for unknown refs")
     a = ap.parse_args(argv)
     ledger = a.ledger or (a.root / g.ADMISSION)
@@ -245,6 +316,10 @@ def main(argv=None):
     d = diff(previous, doc)
     if a.out:
         a.out.write_text(json.dumps(doc, indent=1, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
+    if a.review_out:
+        held = hold_unapproved_changes(doc, previous)
+        a.review_out.write_text(json.dumps(held, indent=1, sort_keys=True, ensure_ascii=False) + "\n",
+                                encoding="utf-8", newline="\n")
     md = markdown(doc, d if previous else None)
     if a.summary:
         a.summary.write_text(md, encoding="utf-8", newline="\n")

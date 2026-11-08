@@ -301,19 +301,53 @@ def pressure_cache_evidence(cache: Path, repo: str, since: date, until: date,
     return [], fingerprint
 
 
+def _unique_run_identities(rows: list[dict], scope: str) -> list[dict]:
+    """Deduplicate identical run records; conflicting identities fail closed.
+
+    An identical GitHub page-boundary duplicate is evidence of a pagination
+    collision, not a distinct run. Callers MUST re-fetch via bounded hour
+    intervals before accepting the observation as complete.
+    """
+    seen: dict[int, dict] = {}
+    ordered: list[dict] = []
+    for item in rows:
+        rid = item.get("id") if isinstance(item, dict) else None
+        if not isinstance(rid, int) or isinstance(rid, bool) or rid <= 0:
+            raise ValueError(f"{scope}: malformed workflow-run identity")
+        data = slim(item, RUN_KEYS)
+        if rid not in seen:
+            seen[rid] = data
+            ordered.append(item)
+        elif data != seen[rid]:
+            raise ValueError(f"{scope}: conflicting workflow-run record for id {rid}")
+    return ordered
+
+
 def fetch_runs_day(rd: Reader, repo: str, day: date) -> list:
-    """All runs created on one UTC day; hour slices when the day exceeds the 1000-record search cap."""
+    """Read one UTC day with bounded hourly recovery for incomplete/unstable pages.
+
+    Even under 1000 records, active GitHub pagination may repeat an identical
+    run across page boundaries and thereby omit some other run. Do not silently
+    drop that duplicate and claim COMPLETE. Re-read disjoint UTC hour slices;
+    refuse incomplete or internally duplicated hours and conflicting records.
+    """
     route = f"/repos/{repo}/actions/runs?created={day.isoformat()}"
     runs, total = rd.pages(route, "workflow_runs")
-    if total > len(runs):
-        runs, seen = [], set()
+    unique = _unique_run_identities(runs, route)
+    if total > len(runs) or len(unique) != len(runs):
+        collected = []
         for h in range(24):
             lo, hi = f"{day}T{h:02d}:00:00Z", f"{day}T{h:02d}:59:59Z"
-            part, ptotal = rd.pages(f"/repos/{repo}/actions/runs?created={lo}..{hi}", "workflow_runs")
+            scope = f"/repos/{repo}/actions/runs?created={lo}..{hi}"
+            part, ptotal = rd.pages(scope, "workflow_runs")
+            clean = _unique_run_identities(part, scope)
             if ptotal > len(part):
                 raise ValueError(f"{repo} {lo}: {ptotal} runs in one hour exceeds the search cap")
-            runs.extend(r for r in part if r["id"] not in seen and not seen.add(r["id"]))
-    return [slim(r, RUN_KEYS) for r in runs]
+            if len(clean) != len(part):
+                raise ValueError(f"{repo} {lo}: same-hour pagination collision; source incomplete")
+            collected.extend(clean)
+        unique = _unique_run_identities(collected, f"{repo} {day} hourly slices")
+    return [slim(r, RUN_KEYS) for r in unique]
 
 
 def stratified(runs: list) -> list:

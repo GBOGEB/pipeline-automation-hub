@@ -28,6 +28,9 @@ GitHub sources:
 | Code scanning (CodeQL, Bandit, Ruff, Semgrep, Trivy, ...) | open, fixed, dismissed | outstanding, closed, deferred |
 | Secret scanning | open, resolved | outstanding; closed if revoked, otherwise deferred |
 
+A fourth source, `review_threads`, is read by `review_threads.py` for named repositories only (see
+[Review threads](#review-threads)).
+
 If a source can't be read, the runner records a coverage gap instead of a count:
 - `not_enabled`: the scanner is switched off for that repository.
 - `not_readable`: the caller's token can't read it.
@@ -96,6 +99,60 @@ package can show up as several roots there; Dependabot already groups those by p
 The scheduled run lives in the private cryoplant-project repository
 (`.github/workflows/code-maroon-nightly.yml`). It checks out this runner at a pinned commit, fetches
 with a read-only token, builds the receipt and diffs it against the committed one there.
+
+## Review threads
+
+A merged PR can keep open review threads from Copilot, Codex, a security bot or a person. Nothing
+reads them again after the merge, so they become debt that no alert API reports.
+`review_threads.py` reads them for the most recent closed PRs of the repositories you name, newest
+first:
+
+```bash
+python mission-control/maroon/review_threads.py fetch --repos GBOGEB/CODEX,GBOGEB/ABACUS --limit 30 --out <private dir>
+python mission-control/maroon/maroon.py build --raw <private dir>/raw.json --review <private dir>/raw_review.json --out <private dir>
+```
+
+| Field | Rule |
+|---|---|
+| Manifestation | One review thread: unresolved is `outstanding`, resolved is `closed` |
+| Root | One theme in one repository, such as `path-alias` or `provenance-pin`, so that one root is one follow-up PR. Copilot and Codex flagging the same defect fall into one root |
+| Severity | The reviewer's own: a Codex P badge (P0 critical, P1 high, P2 medium, P3 low) or Copilot's High, Medium or Low. Unrated threads are `note` |
+| Lane | `<repo>:review-<theme>`. Review lanes in one repository name their `shared_paths`, as code-scanning lanes do |
+| Coverage | `ok`, `not_readable`, or `not_in_scope` for a repository outside the review read |
+
+The window is the `--limit` most recently *closed* PRs. The API only sorts by update time, so the read
+pages on until the window is proven: `--limit` PRs closed no earlier than the oldest update time read. A
+PR never closes after its last update, so no later page can hold a newer closure. If the page budget
+runs out first, coverage is `window_unproven`, a gap rather than a silent short read.
+
+Each repository's raw entry lists the sampled PRs. Each entry gives the PR's number, merge state, close
+time, merge commit and the `#refs` in its body. The receipt keeps that sample as `review_scope`, and
+each review root maps its threads to their PRs (`alert_prs`). `diff` then splits what moved:
+- **Left:** the thread's PR is still sampled, so the thread was resolved.
+- **Evicted:** the PR aged out of the window. `alerts_evicted` counts these, and they never clear a root.
+  An eviction needs a proven window (`ok`) for that repository on both sides; a `window_unproven` or
+  missing sample proves nothing, so those threads count as left.
+
+Each raw thread carries `anchor` and `anchor_side`: the line its comment targets (the last line of the
+diff hunk, however short) and whether that line was added, deleted or context in the PR. A deep read
+uses them to check the default branch. A deleted target that is back means something else than an added
+one still present.
+
+A thread on a PR that closed without merging is `deferred`, not outstanding. The change never landed.
+
+`build --review-overrides <json>` applies deep-read corrections before roots are formed, as
+`{"<thread id>": {"theme": "<theme>"}}`. A re-themed finding then leaves the wrong lane and joins the
+right one.
+
+The theme is a triage heuristic over the finding's first line (`THEMES` in `review_threads.py`). An
+unresolved thread is not proof that the defect is still on the default branch: a later commit may have
+fixed it without a reply. Each root needs a deep read before anyone calls it fixed or open.
+
+Resolution comes from GraphQL through `first_pass_closure_gate.resolved_thread_roots`, imported rather
+than copied (AGENTS.md L4). Claude Code sessions can't reach GraphQL, so they pass `--threads ccr`.
+Each repository's head SHA is recorded with its threads (AGENTS.md L6).
+
+`raw_review.json` holds review text and paths, so it is private only. `MAROON_PUBLIC.json` holds counts.
 
 ## Storage split
 

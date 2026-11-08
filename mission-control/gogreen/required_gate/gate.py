@@ -42,6 +42,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
+import urllib.parse
 from pathlib import Path
 
 GUARDED = (".github/workflows/code-purple-method-atlas.yml", ".github/workflows/live-lossless-qa.yml")
@@ -171,6 +172,20 @@ def run_ref(run: dict | None, repo: str) -> dict | None:
             "started_at": run.get("run_started_at") or run.get("created_at"), "url": url}
 
 
+class _NoCrossHostAuthRedirect(urllib.request.HTTPRedirectHandler):
+    """Never forward the API Bearer token to an artifact blob redirect host."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        redirected = super().redirect_request(req, fp, code, msg, headers, newurl)
+        if redirected is not None and (
+            urllib.parse.urlsplit(req.full_url).hostname
+            != urllib.parse.urlsplit(newurl).hostname
+        ):
+            if redirected.has_header("Authorization"):
+                redirected.remove_header("Authorization")
+        return redirected
+
+
 class Reader:
     def __init__(self, repo, token=None, opener=None):
         self.repo, self.token = repo, token if token is not None else os.environ.get("GITHUB_TOKEN", "")
@@ -190,6 +205,20 @@ class Reader:
         with self.opener(urllib.request.Request("https://api.github.com" + path, headers=self._headers()),
                          timeout=20) as r:
             return json.load(r)
+
+    def artifact_zip(self, artifact_id: int) -> bytes:
+        """Read one authenticated GitHub artifact ZIP, capped before verification."""
+        if not isinstance(artifact_id, int) or isinstance(artifact_id, bool) or artifact_id <= 0:
+            raise ValueError("invalid artifact id")
+        self.requests += 1
+        path = f"/repos/{self.repo}/actions/artifacts/{artifact_id}/zip"
+        req = urllib.request.Request("https://api.github.com" + path, headers=self._headers())
+        # Test openers are injected explicitly; the production opener strips bearer
+        # headers on cross-domain GitHub Actions artifact storage redirects.
+        open_binary = (urllib.request.build_opener(_NoCrossHostAuthRedirect()).open
+                       if self.opener is urllib.request.urlopen else self.opener)
+        with open_binary(req, timeout=30) as response:
+            return response.read(MAX_RECHECK_RECEIPT_ZIP + 1)
 
     def rerun(self, run_id) -> None:
         """The only write: re-run one workflow run (recheck). No other POST path exists."""
@@ -548,7 +577,91 @@ def main_recheck_receipt(argv) -> int:
     return 0 if result["decision"] != RECHECK_UNKNOWN else 2
 
 
-def recheck(reader, sha: str, conclusion: str = "success", dry_run: bool = False) -> dict:
+def _bound_recheck_relevance(reader, *, aggregator: dict, sha: str, trigger_run_id: int,
+                             trigger_run_attempt: int | None = None) -> dict:
+    """Use GitHub-owned identities and digest-verified latest-attempt ZIP only.
+
+    UNKNOWN must *never* suppress recovery. The old recheck fallback remains
+    authoritative for UNKNOWN and ELIGIBLE; this only excludes proven irrelevant
+    successful workflow events. No merge authority or PR-supplied bytes are used.
+    """
+    out = {"decision": RECHECK_UNKNOWN, "reason": "unverified source receipt",
+           "merge_authorized": False}
+    if not isinstance(trigger_run_id, int) or isinstance(trigger_run_id, bool) or trigger_run_id <= 0:
+        out["reason"] = "missing trusted trigger run identity"
+        return out
+    if (not isinstance(trigger_run_attempt, int) or isinstance(trigger_run_attempt, bool)
+            or trigger_run_attempt <= 0):
+        out["reason"] = "missing or invalid triggering run attempt identity"
+        return out
+    attempt = aggregator.get("run_attempt")
+    agg_id = aggregator.get("id")
+    prs = aggregator.get("pull_requests")
+    if (not isinstance(agg_id, int) or isinstance(agg_id, bool)
+            or not isinstance(attempt, int) or isinstance(attempt, bool)
+            or not isinstance(prs, list) or len(prs) != 1
+            or not isinstance(prs[0], dict) or not isinstance(prs[0].get("number"), int)):
+        out["reason"] = "aggregator PR/attempt identity ambiguous"
+        return out
+    pr = prs[0]["number"]
+    if pr <= 0 or attempt <= 0:
+        out["reason"] = "invalid aggregator PR or attempt"
+        return out
+    try:
+        triggered = reader.get(f"/repos/{reader.repo}/actions/runs/{trigger_run_id}")
+        repo = triggered.get("repository") if isinstance(triggered, dict) else None
+        candidates = triggered.get("pull_requests") if isinstance(triggered, dict) else None
+        raw_path = triggered.get("path") if isinstance(triggered, dict) else None
+        if (not isinstance(triggered, dict) or triggered.get("id") != trigger_run_id
+                or triggered.get("head_sha") != sha or triggered.get("event") != "pull_request"
+                or triggered.get("status") != "completed"
+                or triggered.get("conclusion") != "success"
+                or triggered.get("run_attempt") != trigger_run_attempt
+                or not isinstance(repo, dict) or repo.get("full_name") != reader.repo
+                or not isinstance(candidates, list)
+                or len(candidates) != 1 or not isinstance(candidates[0], dict)
+                or candidates[0].get("number") != pr
+                or not isinstance(raw_path, str)):
+            out["reason"] = "trigger run not bound to exact SHA/repository/PR"
+            return out
+        workflow_path = raw_path.split("@", 1)[0]
+        if not re.fullmatch(r"\.github/workflows/[A-Za-z0-9_.-]+\.ya?ml", workflow_path):
+            out["reason"] = "trigger workflow path ambiguous"
+            return out
+        listed = reader.get(f"/repos/{reader.repo}/actions/runs/{agg_id}/artifacts?per_page=100")
+        artifacts = listed.get("artifacts") if isinstance(listed, dict) else None
+        if (not isinstance(artifacts, list)
+                or listed.get("total_count") != len(artifacts)):
+            out["reason"] = "incomplete aggregator artifact population"
+            return out
+        matching = [a for a in artifacts if isinstance(a, dict)
+                    and a.get("name") == f"gogreen-required-gate-{pr}-{attempt}"]
+        if len(matching) != 1:
+            out["reason"] = "no unique latest-attempt aggregator artifact"
+            return out
+        metadata = matching[0]
+        archive = reader.artifact_zip(metadata.get("id"))
+        verified = verify_recheck_artifact(metadata, archive, repo=reader.repo,
+                                           run_id=agg_id, attempt=attempt, pr=pr, sha=sha)
+        if verified["decision"] != "VERIFIED_FAILED_RECEIPT":
+            out["reason"] = verified["reason"]
+            return out
+        relevance = receipt_recheck_relevance(
+            verified["report"], sha=sha, workflow_path=workflow_path)
+        out.update(relevance)
+        out["receipt_sha256"] = verified["archive_sha256"]
+        out["verified_aggregator_run"] = agg_id
+        out["verified_attempt"] = attempt
+        out["verified_trigger_attempt"] = trigger_run_attempt
+    except (OSError, ValueError, TypeError, KeyError, urllib.error.URLError,
+            urllib.error.HTTPError, json.JSONDecodeError) as exc:
+        out["reason"] = f"source receipt unavailable: {type(exc).__name__}"
+    return out
+
+
+def recheck(reader, sha: str, conclusion: str = "success", dry_run: bool = False,
+            trigger_run_id: int | None = None,
+            trigger_run_attempt: int | None = None) -> dict:
     """Re-run the latest FAILED aggregator run on `sha` after an enforced gate succeeded there.
     Nothing happens when the gate did not succeed, the aggregator never ran on this head, is
     still running (it re-reads every poll), already passed, or hit RECHECK_MAX_ATTEMPT."""
@@ -570,13 +683,25 @@ def recheck(reader, sha: str, conclusion: str = "success", dry_run: bool = False
         out["reason"] = "latest aggregator run is still in progress; it re-reads every poll"
     elif run.get("conclusion") != "failure":
         out["reason"] = f"latest aggregator run concluded {run.get('conclusion')}; nothing to re-run"
-    elif (run.get("run_attempt") or 1) >= RECHECK_MAX_ATTEMPT:
+    elif (isinstance(run.get("run_attempt"), int) and not isinstance(run.get("run_attempt"), bool)
+          and run["run_attempt"] >= RECHECK_MAX_ATTEMPT):
         out["reason"] = f"latest aggregator run is at attempt {run.get('run_attempt')} (cap {RECHECK_MAX_ATTEMPT})"
     else:
+        # A VERIFIED prior PASS/NA cannot have contributed to the failed
+        # aggregator verdict; no rerun needed for this successful gate event.
+        # UNKNOWN and FAIL/WAIT preserve the existing recovery behavior.
+        relevance = _bound_recheck_relevance(
+            reader, aggregator=run, sha=sha, trigger_run_id=trigger_run_id,
+            trigger_run_attempt=trigger_run_attempt)
+        out["receipt_relevance"] = relevance["decision"]
+        out["receipt_reason"] = relevance["reason"]
+        if relevance["decision"] == RECHECK_ALREADY_SATISFIED:
+            out["reason"] = "verified already-satisfied workflow cannot recover another gate's RED"
+            return out
         if not dry_run:
             reader.rerun(run["id"])
         out["action"] = "dry-run" if dry_run else "rerun"
-        out["reason"] = "latest aggregator run failed; re-run so it re-reads the gates on this head"
+        out["reason"] = "latest aggregator still failed; recovery preserved for eligible/unknown receipt"
     return out
 
 
@@ -586,11 +711,14 @@ def main_recheck(argv) -> int:
     ap.add_argument("--sha", required=True, help="head SHA of the gate run that completed")
     ap.add_argument("--conclusion", default="success", help="conclusion of the gate run that completed")
     ap.add_argument("--dry-run", action="store_true", help="decide, but do not re-run")
+    ap.add_argument("--trigger-run-id", type=int, help="trusted triggering workflow_run id")
+    ap.add_argument("--trigger-run-attempt", type=int, help="trusted workflow_run attempt")
     a = ap.parse_args(argv)
     if not a.repo:
         raise SystemExit("--repo or GITHUB_REPOSITORY is required")
     reader = Reader(a.repo)
-    out = recheck(reader, a.sha, a.conclusion, a.dry_run)
+    out = recheck(reader, a.sha, a.conclusion, a.dry_run,
+                  trigger_run_id=a.trigger_run_id, trigger_run_attempt=a.trigger_run_attempt)
     ref = out["aggregator_run"]
     line = f"recheck {out['action']}: {out['reason']}" + (f" ({ref['url']})" if ref and ref.get("url") else "")
     print(line)

@@ -45,27 +45,52 @@ class W19Evidence(unittest.TestCase):
     def test_reject_root_fabrication(self):
         self.d["engineering_root_closure_credit"]=12
         with self.assertRaises(AssertionError):validate(self.d)
-    # PD-GPAH-001 (production defect): 28d30fd2f committed docs/mission-control/w19/burndown.html
-    # and README.md as a 155-byte tool error ("The requested file reference is not currently
-    # visible..."), not the Plotly view. Strict: these fail once the real view is restored.
-    @unittest.expectedFailure
     def test_axis_and_hover_integers(self):
         h=VIEW.read_text(encoding="utf8")
         for t in ("for(let n=min;n<=max;n+=2)","ticktext:ticks.map(String)","%{y:.0f}"):self.assertIn(t,h)
-    # PD-GPAH-001 (production defect): 28d30fd2f committed docs/mission-control/w19/burndown.html
-    # and README.md as a 155-byte tool error ("The requested file reference is not currently
-    # visible..."), not the Plotly view. Strict: these fail once the real view is restored.
-    @unittest.expectedFailure
     def test_html_scenarios_guarded(self):
         h=VIEW.read_text(encoding="utf8")
         for t in ('No-unblock plateau','not a prediction','not-observed'):self.assertIn(t,h)
-    # PD-GPAH-001 (production defect): 28d30fd2f committed docs/mission-control/w19/burndown.html
-    # and README.md as a 155-byte tool error ("The requested file reference is not currently
-    # visible..."), not the Plotly view. Strict: these fail once the real view is restored.
-    @unittest.expectedFailure
     def test_buttons_and_svg_fallback(self):
         h=VIEW.read_text(encoding="utf8")
         for t in ('id="csv"','id="reset"','id="show-scenario"','function drawSvg','function csv'):self.assertIn(t,h)
+    def test_generated_projection_exactly_matches_source(self):
+        import subprocess
+        import sys
+        import re
+        rendered = VIEW.read_text(encoding="utf-8")
+        self.assertNotIn("The requested file reference is not currently visible", rendered)
+        payload = re.search(
+            r'<script id="source-data" type="application/json">(.+?)</script>',
+            rendered, re.DOTALL,
+        )
+        self.assertIsNotNone(payload, "missing offline source payload")
+        self.assertEqual(self.d, json.loads(payload.group(1)))
+        completed = subprocess.run(
+            [sys.executable, str(ROOT / "docs/mission-control/w19/render.py"), "--check"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
+
+    def test_tool_error_and_source_divergence_negative_canary(self):
+        import importlib.util
+        import hashlib
+        script = ROOT / "docs/mission-control/w19/render.py"
+        spec = importlib.util.spec_from_file_location("w19_render", script)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        raw = DATA.read_bytes()
+        tpl = (script.parent / "burndown.template.html").read_text(encoding="utf-8")
+        with self.assertRaises(ValueError):
+            mod.render(raw, "The requested file reference is not currently visible __SOURCE_JSON__ __SOURCE_BLOB__")
+        mutated = json.loads(raw)
+        mutated["counts"][0] += 1
+        altered = mod.render(json.dumps(mutated).encode("utf-8"), tpl)
+        self.assertNotEqual(altered, VIEW.read_text(encoding="utf-8"))
+        marker = b"blob " + str(len(raw)).encode("ascii") + b"\0"
+        blob = hashlib.sha1(marker + raw).hexdigest()
+        self.assertIn(blob, VIEW.read_text(encoding="utf-8"))
+
     def test_main_admission_unknown(self):
         self.assertEqual(self.d["native"]["later_main"],"UNQUALIFIED")
         self.assertEqual(self.d["native"]["b9"],"UNPROVEN")

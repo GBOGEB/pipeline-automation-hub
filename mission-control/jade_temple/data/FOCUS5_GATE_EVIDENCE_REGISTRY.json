@@ -18,6 +18,10 @@
       ]
     },
     "GBOGEB/cryoplant-project": {
+      "H04": [
+        {"workflow": ".github/workflows/jade-dependency-lock.yml",
+         "proves": "JADE CI test path installs only from a hash lock (--require-hashes); exact pins, no drift vs manifest or registry hashes, clean install and pip check"}
+      ],
       "H05": [
         {"workflow": ".github/workflows/jade-ci.yml", "proves": "core pytest suite, fail-closed, pinned runner"},
         {"workflow": ".github/workflows/jade-ci-burndown.yml", "proves": "burn-down pytest suite, fail-closed, pinned runner"}

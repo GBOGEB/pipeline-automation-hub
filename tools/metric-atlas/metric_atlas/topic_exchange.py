@@ -323,6 +323,8 @@ def validate_ledger(ledger):
                             "merge_authorized"}, "INVALID_LEDGER_FIELDS")
     parent = None
     event_ids = set()
+    previous_time = None
+    packet_states = {}  # (topic, packet SHA): staged, published, terminal
     for event in ledger["events"]:
         require(isinstance(event, dict) and set(event) == {
             "kind", "topic", "packet_sha256", "recipient", "evidence_sha256",
@@ -345,6 +347,30 @@ def validate_ledger(ledger):
                 "EVENT_HASH_MISMATCH")
         require(event["event_id"] not in event_ids, "DUPLICATE_EVENT_ID")
         event_ids.add(event["event_id"])
+        event_time = timestamp(event["at"])
+        require(previous_time is None or event_time >= previous_time,
+                "EVENT_TIME_REGRESSION")
+        previous_time = event_time
+        packet_key = (event["topic"], event["packet_sha256"])
+        stage = packet_states.setdefault(packet_key, {"staged": False,
+                                     "published": False, "terminal": False})
+        kind = event["kind"]
+        if kind == "STAGED":
+            require(not stage["staged"] and event["recipient"] is None,
+                    "INVALID_STAGED_EVENT")
+            stage["staged"] = True
+        elif kind == "PUBLICATION_POSTED":
+            require(stage["staged"] and not stage["terminal"] and
+                    event["recipient"] is None, "PUBLICATION_WITHOUT_LIVE_STAGE")
+            stage["published"] = True
+        elif kind == "RECIPIENT_ACK":
+            require(event["recipient"] is not None, "ACK_RECIPIENT_REQUIRED")
+            require(stage["staged"] and stage["published"] and
+                    not stage["terminal"], "ACK_WITHOUT_LIVE_PUBLICATION")
+        else:  # SOURCE_DRIFT / INVALIDATED are terminal for this packet
+            require(stage["staged"] and not stage["terminal"] and
+                    event["recipient"] is None, "INVALID_TERMINAL_EVENT")
+            stage["terminal"] = True
         parent = event["event_sha256"]
     require(ledger.get("tail_sha256") == parent, "STALE_LEDGER_TAIL")
     return ledger

@@ -37,6 +37,8 @@ not publish full internal source manifests outside the authorized project.
   GoGREEN receipts and child-owned accepted content in a versioned graph.
 - `G5`: governed variants and release proof; parent source remains authoritative.
 
+Engines and K-<TYPE>-NN checks per binary type, mapped to these tiers: `mission-control/registry/ENGINE_CATALOG.yaml`.
+
 ## Non-negotiable boundaries
 
 1. A file extension is not proof of a valid binary. Invalid `.pptx` bytes

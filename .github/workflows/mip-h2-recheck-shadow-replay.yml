@@ -1,0 +1,70 @@
+name: MIP H2 Receipt Selector Shadow Replay
+
+# One-PR read-only replay. No workflow_run listener, reruns, branch writes or schedule.
+# Historical artifact is ephemeral; replay must be explicitly requested.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  shadow-exact-run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Replay exact historical GitHub artifact in read-only mode
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p reports
+          python3 - <<'PY'
+          import importlib.util
+          import json
+          from pathlib import Path
+
+          source = Path("mission-control/gogreen/required_gate/gate.py")
+          spec = importlib.util.spec_from_file_location("mip_h2_shadow", source)
+          gate = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(gate)
+          repo = "GBOGEB/pipeline-automation-hub"
+          sha = "d65f69cd74d0cfa495d3b27e9296341d4ba59572"
+          aggregator_id = 41474914910
+          trigger_id = 41474915008
+          reader = gate.Reader(repo)
+          run = reader.get(f"/repos/{repo}/actions/runs/{aggregator_id}")
+          assert run.get("id") == aggregator_id and run.get("run_attempt") == 2
+          assert run.get("head_sha") == sha and run.get("conclusion") == "failure"
+          result = gate._bound_recheck_relevance(
+              reader, aggregator=run, sha=sha, trigger_run_id=trigger_id,
+              trigger_run_attempt=1)
+          output = {
+              "schema": "mip.h2.shadow-exact-run.v1",
+              "aggregator_run": aggregator_id, "attempt": 2,
+              "trigger_run": trigger_id, "sha": sha,
+              "receipt_relevance": result,
+              "native_read_only": True, "merge_authorized": False,
+          }
+          Path("reports/mip-h2-shadow-exact-run.json").write_text(
+              json.dumps(output, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          print(json.dumps(output, sort_keys=True))
+          assert result["decision"] == gate.RECHECK_ALREADY_SATISFIED
+          assert result.get("verified_attempt") == 2
+          assert result.get("receipt_sha256")
+          PY
+      - name: Upload read-only replay receipt
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: mip-h2-shadow-exact-run
+          path: reports/mip-h2-shadow-exact-run.json
+          if-no-files-found: warn

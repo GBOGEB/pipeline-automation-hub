@@ -465,10 +465,45 @@ class EventLedger(unittest.TestCase):
 
     def test_valid_staged_and_recipient_ack_events_remain_accepted(self):
         a=self.append(t.new_ledger())
-        b=self.append(a,kind="RECIPIENT_ACK",recipient="GBOGEB/pipeline-automation-hub",
-                      expected=a["tail_sha256"])
-        self.assertEqual(len(t.validate_ledger(b)["events"]),2)
+        p=self.append(a,kind="PUBLICATION_POSTED",expected=a["tail_sha256"])
+        b=self.append(p,kind="RECIPIENT_ACK",recipient="GBOGEB/pipeline-automation-hub",
+                      expected=p["tail_sha256"])
+        self.assertEqual(len(t.validate_ledger(b)["events"]),3)
 
+
+
+    def test_ack_without_publication_is_rejected(self):
+        staged=self.append(t.new_ledger())
+        with self.assertRaisesRegex(t.ExchangeError,"ACK_WITHOUT_LIVE_PUBLICATION"):
+            self.append(staged,kind="RECIPIENT_ACK",
+                        recipient="GBOGEB/pipeline-automation-hub",expected=staged["tail_sha256"])
+
+    def test_ack_recipient_is_required(self):
+        staged=self.append(t.new_ledger())
+        published=self.append(staged,kind="PUBLICATION_POSTED",expected=staged["tail_sha256"])
+        with self.assertRaisesRegex(t.ExchangeError,"ACK_RECIPIENT_REQUIRED"):
+            self.append(published,kind="RECIPIENT_ACK",expected=published["tail_sha256"])
+
+    def test_publication_without_stage_is_rejected(self):
+        with self.assertRaisesRegex(t.ExchangeError,"PUBLICATION_WITHOUT_LIVE_STAGE"):
+            self.append(t.new_ledger(),kind="PUBLICATION_POSTED")
+
+    def test_terminal_invalidation_stops_ack(self):
+        staged=self.append(t.new_ledger())
+        pub=self.append(staged,kind="PUBLICATION_POSTED",expected=staged["tail_sha256"])
+        dead=self.append(pub,kind="INVALIDATED",expected=pub["tail_sha256"])
+        with self.assertRaisesRegex(t.ExchangeError,"ACK_WITHOUT_LIVE_PUBLICATION"):
+            self.append(dead,kind="RECIPIENT_ACK",
+                        recipient="GBOGEB/pipeline-automation-hub",expected=dead["tail_sha256"])
+
+    def test_ledger_time_cannot_reverse(self):
+        staged=self.append(t.new_ledger())
+        posted=t.append_event(staged,kind="PUBLICATION_POSTED",topic="electrical.icd.feeders",
+                              packet_sha256=X,evidence_sha256=Z,at=T1,
+                              expected_tail_sha256=staged["tail_sha256"])
+        with self.assertRaisesRegex(t.ExchangeError,"EVENT_TIME_REGRESSION"):
+            self.append(posted,kind="RECIPIENT_ACK",
+                        recipient="GBOGEB/pipeline-automation-hub",expected=posted["tail_sha256"])
 
 
 if __name__=='__main__':
