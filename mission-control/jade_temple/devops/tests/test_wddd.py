@@ -71,6 +71,17 @@ class Codes(unittest.TestCase):
             self.assertEqual(W.from_w_code(W.to_w_code(d, with_year=True)), d)
             d += timedelta(days=1)
 
+    def test_round_trip_at_the_ends_of_the_date_range(self):
+        # the year is zero-padded to four digits, so every code the encoder emits parses (Codex P2, #1137)
+        self.assertEqual(W.to_w_code(date.min, with_year=True), "0001-w01MON")
+        self.assertEqual(W.iso_week_key(date.min), "0001-W01")
+        self.assertEqual(W.to_w_code(date.max, with_year=True), "9999-w52FRI")
+        self.assertEqual(W.from_w_code("9999-w52FRI"), date.max)
+        for start in (date.min, date.max - timedelta(days=800)):
+            for i in range(800):
+                d = start + timedelta(days=i)
+                self.assertEqual(W.from_w_code(W.to_w_code(d, with_year=True)), d)
+
     def test_parsing_is_lenient_on_case_and_whitespace_only(self):
         self.assertEqual(W.from_w_code(" 2026-W46mon "), date(2026, 11, 9))
         self.assertEqual(W.from_w_code("2026-w46MON", iso_year=2026), date(2026, 11, 9))

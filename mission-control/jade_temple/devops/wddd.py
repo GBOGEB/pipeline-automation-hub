@@ -36,7 +36,7 @@ def to_w_code(d: date, with_year: bool = False) -> str:
     """date(2026, 11, 9) -> 'w46MON', or '2026-w46MON' with with_year=True."""
     iso_year, week, weekday = d.isocalendar()[:3]
     code = f"w{week:02d}{DAYS_3L[weekday - 1]}"
-    return f"{iso_year}-{code}" if with_year else code
+    return f"{iso_year:04d}-{code}" if with_year else code
 
 
 def from_w_code(code: str, iso_year: int | None = None) -> date:
@@ -65,7 +65,7 @@ def from_w_code(code: str, iso_year: int | None = None) -> date:
 def iso_week_key(d: date) -> str:
     """date(2026, 11, 9) -> '2026-W46'. Accepts a datetime too (its own calendar date is used)."""
     iso_year, week = d.isocalendar()[:2]
-    return f"{iso_year}-W{week:02d}"
+    return f"{iso_year:04d}-W{week:02d}"
 
 
 def quarter_13w(week: int) -> str:
