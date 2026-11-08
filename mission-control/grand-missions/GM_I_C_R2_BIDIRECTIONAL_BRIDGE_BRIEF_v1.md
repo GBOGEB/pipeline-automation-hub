@@ -69,12 +69,12 @@ Runtime workers added in R2 (none are crew): `CLAUDE_CODE_LOCAL`, `CLAUDE_DRIVE_
 
 ### R2-W2: Proposal ingest broker, dry run (GEMINI), maps to IC7 and IC8
 
-- [ ] `gmi.proposal_profile.v1` as a profile of the GMI package contract v1, not a new schema
-- [ ] `base_blob` optimistic-concurrency check, classified as clean, three-way or conflict
-- [ ] Idempotency through the existing GMI batch ledger, reused as `gmi.broker_receipt`
-- [ ] Emits a patch and a branch plan; pushes nothing
-- [ ] Reconciled with the lane `OUT/` bundle return from GBOGEB/GEMINI#37 (`docs/bridge/LANES.md`): one ingest path per proposer type, not two
-- [ ] P1 · [ ] P2 · [ ] P3
+- [x] `gmi.proposal_profile.v1` as a profile of the GMI package contract v1, not a new schema
+- [x] `base_blob` optimistic-concurrency check, classified as clean, three-way or conflict
+- [x] Idempotency through the existing GMI batch ledger, reused as `gmi.broker_receipt`
+- [x] Emits a patch and a branch plan; pushes nothing
+- [x] Reconciled with the lane `OUT/` bundle return from GBOGEB/GEMINI#37 (`docs/bridge/LANES.md`): one ingest path per proposer type, not two
+- [x] P1 draft PR open (GBOGEB/GEMINI#40, stacked on #38) · [ ] P2 · [ ] P3
 
 ### R2-W3: External auth habitat, owner only (GEMINI), maps to IC3 (the first red)
 

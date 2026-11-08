@@ -92,7 +92,8 @@ waves:
     maps_to_gates: [IC7_ROUNDTRIP, IC8_ADVERSARIAL]
     crew: [U02, S05, S06, U06]
     owner_action_required: false
-    state: PLANNED
+    state: IN_PROGRESS
+    pulses: {P1: GBOGEB/GEMINI#40, P2: PENDING, P3: PENDING}
     dod:
       - PROPOSAL_IS_A_PROFILE_OF_GMI_PACKAGE_CONTRACT_V1
       - BASE_BLOB_OPTIMISTIC_CONCURRENCY_CHECK
