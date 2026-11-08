@@ -96,6 +96,33 @@ class IsoSchedule(unittest.TestCase):
         self.assertNotIn("done,", gantt)
         self.assertNotIn("crit,", gantt)
 
+    def test_multiline_titles_do_not_split_mermaid_nodes(self):
+        p = example()
+        p["tasks"][0]["title"] = 'Source\nchecksum\rwith <angle> & "quotes"'
+        r = m.validate_schedule(p)
+        dag = m.mermaid_dag(r)
+        gantt = m.mermaid_gantt(r)
+        self.assertEqual(len(dag.splitlines()), 9)  # header + 4 nodes + 4 edges
+        self.assertIn("&lt;angle&gt;", dag)
+        self.assertNotIn("Source\nchecksum", dag)
+        self.assertNotIn("checksum\rwith", gantt)
+
+    def test_last_supported_date_uses_safe_gantt_duration(self):
+        addr = m.week_address(date.max)
+        p = {"schema": m.SCHEMA, "iso_year": addr["iso_year"], "tasks": [
+            {"id": "FINAL", "title": "Last valid day", "start": addr["code"], "end": addr["code"]},
+        ]}
+        r = m.validate_schedule(p)
+        self.assertIn("9999-12-31, 1d", m.mermaid_gantt(r))
+
+    def test_documented_python_example_parses(self):
+        import ast
+        document = PATH.parent.parent / "docs" / "ISO_SCHEDULE_ADAPTER.md"
+        prose = document.read_text(encoding="utf-8")
+        tick = chr(96) * 3
+        example_source = prose.split(tick + "python\n", 1)[1].split("\n" + tick, 1)[0]
+        ast.parse(example_source)
+
     def test_invalid_task_and_schema_rejected(self):
         p = example()
         p["schema"] = "unexpected"
