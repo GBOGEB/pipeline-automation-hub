@@ -9,6 +9,7 @@ This additive adapter **reuses** `mission-control/jade_temple/devops/lifecycle.p
 - `planning_quarter` is a **13-week planning bucket** (2026 PQ4 contains w40–w53). It must not be confused with a Gregorian calendar quarter, a financial-quarter authority, or a 4-4-5 month pattern.
 - `tasks` have `id`, `title`, `start`, `end`, optional `depends_on`, and optional `kind: milestone`. A task's `end` is its declared last date. Finish-to-start dependencies require successor start **after** predecessor end. Same-day event ordering requires another explicit clock/contract and is rejected here.
 - All outputs are `DECLARED_PLAN_ONLY` and `authority_transfer=false`. There is **no** inference of completed code, vendor sign-off, RED recovery, or merge eligibility.
+- `portable_receipt(plan)` runs the existing validator then exports a JSON-native record (ISO dates, waves and source-plan identity) with `receipt_sha256` over canonical JSON, excluding that digest field. The SHA-256 is **integrity, not Git/Drive provenance or execution evidence**.
 - `mermaid_dag` and `mermaid_gantt` are projections. Gantt date anchors include the declared final day through an explicit duration, avoiding date overflow at year 9999; they do not apply holiday exclusions or infer working-day durations; use an independently qualified calendar engine for this.
 - Reuse the existing JADE SIPOC / CI-DAG projection owner rather than cloning its definitions. The generic Drive BridgeFlow package remains a candidate **consumer/adapter**, not a second operator.
 
@@ -33,6 +34,7 @@ plan = {
 validated = iso_schedule.validate_schedule(plan)
 print(iso_schedule.mermaid_dag(validated))
 print(iso_schedule.mermaid_gantt(validated))
+print(iso_schedule.portable_receipt(plan))
 ```
 
 Run this example from the Hub repository root. The adapter imports the canonical JADE lifecycle owner via an exact file path.
