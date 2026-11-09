@@ -1,0 +1,527 @@
+{
+  "schema": "jade.portfolio-plan.v1",
+  "topic": "Source-bound portfolio convergence, JADE readiness and recursive CONTROL",
+  "clusters": [
+    {
+      "id": "governance",
+      "title": "Effective admission and owner release",
+      "domain": "Governance",
+      "epic": "Source-to-owner admission",
+      "issue_refs": [
+        "GBOGEB/pipeline-automation-hub#336",
+        "GBOGEB/pipeline-automation-hub#604"
+      ]
+    },
+    {
+      "id": "abacus",
+      "title": "ABACUS runtime and source binding",
+      "domain": "Evidence and security",
+      "epic": "Source-qualified DOW",
+      "issue_refs": [
+        "GBOGEB/ABACUS#1860"
+      ]
+    },
+    {
+      "id": "codex",
+      "title": "CODEX required contexts and federation",
+      "domain": "Contracts and exchange",
+      "epic": "Qualified consumer evidence",
+      "issue_refs": []
+    },
+    {
+      "id": "n6",
+      "title": "N6 workflow history and temporal control",
+      "domain": "Telemetry",
+      "epic": "Comparable queue and recovery observations",
+      "issue_refs": [
+        "GBOGEB/pipeline-automation-hub#886",
+        "GBOGEB/pipeline-automation-hub#76"
+      ]
+    },
+    {
+      "id": "jade",
+      "title": "JADE cluster and point-release view",
+      "domain": "Portfolio readiness",
+      "epic": "Core-seven and Top21 navigation",
+      "issue_refs": [
+        "GBOGEB/pipeline-automation-hub#718",
+        "GBOGEB/pipeline-automation-hub#870",
+        "GBOGEB/pipeline-automation-hub#887"
+      ]
+    },
+    {
+      "id": "math",
+      "title": "Qualified PCA and Bradley-Terry methods",
+      "domain": "Statistical methods",
+      "epic": "Evidence-led prioritisation",
+      "issue_refs": [
+        "GBOGEB/gg_MATH#27"
+      ]
+    },
+    {
+      "id": "bridge",
+      "title": "GEMINI and Drive federation",
+      "domain": "Cross-agent handover",
+      "epic": "Governed bridge and exact-artifact ingress",
+      "issue_refs": [
+        "GBOGEB/GEMINI#12",
+        "GBOGEB/GEMINI#16"
+      ]
+    },
+    {
+      "id": "artifacts",
+      "title": "Canonical binaries and generated views",
+      "domain": "Artifact provenance",
+      "epic": "Source-to-binary golden thread",
+      "issue_refs": [
+        "GBOGEB/pipeline-automation-hub#870"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T0_CAPTURE",
+      "cluster": "governance",
+      "phase": "P0_CONTROL",
+      "crew": "READER",
+      "state": "READY",
+      "source_sha": "897298dc3ed1a45607121b205617d4c103e7b226",
+      "t0_ref": "https://github.com/GBOGEB/pipeline-automation-hub/blob/897298dc3ed1a45607121b205617d4c103e7b226/AGENTS.md",
+      "depends_on": [],
+      "touch_paths": [
+        "AGENTS.md",
+        "mission-control/jade_temple/data/ROLLING5_PULSES.json"
+      ],
+      "write_pr": false,
+      "title": "Capture the starting intent and source identities",
+      "intent": "Record one source head per repository, open-PR path ownership, scope, evidence classes and starting DOV/DOD before selecting a repair.",
+      "dov": [
+        "Read repository instructions and current source heads once per pulse.",
+        "Record observed time, branch, source URL, owner and comparison cohort; identify intervening updates."
+      ],
+      "dod": [
+        "A source-bound intake receipt identifies all included and missing repositories.",
+        "No historical observation is promoted to current-head proof."
+      ],
+      "target_repo": "GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "id": "HUB_SOURCE",
+      "cluster": "governance",
+      "phase": "P0_CONTROL",
+      "crew": "READER",
+      "state": "HOLD",
+      "source_sha": "897298dc3ed1a45607121b205617d4c103e7b226",
+      "t0_ref": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1139",
+      "depends_on": [
+        "T0_CAPTURE"
+      ],
+      "touch_paths": [
+        "scripts/first_pass_closure_gate.py",
+        "scripts/tests/test_first_pass_closure_gate.py"
+      ],
+      "write_pr": false,
+      "title": "Reconcile the Hub source-owner frontier",
+      "intent": "Read the existing FPC controller repair and alkane landing evidence; route current source defects to their existing owner branches.",
+      "dov": [
+        "Read the current #1139 head, diff, native jobs and review findings.",
+        "Verify the separate #1134 landing and post-merge evidence without assuming its former PR state persists."
+      ],
+      "dod": [
+        "The current first-red source and required native proof are identified.",
+        "No second FPC evaluator, RED waiver or parallel modification of an owned controller path."
+      ],
+      "target_repo": "GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "id": "ABACUS_RUNTIME",
+      "cluster": "abacus",
+      "phase": "P0_CONTROL",
+      "crew": "DOCTOR",
+      "state": "HOLD",
+      "source_sha": "897298dc3ed1a45607121b205617d4c103e7b226",
+      "t0_ref": "https://github.com/GBOGEB/ABACUS/pull/2673",
+      "depends_on": [
+        "T0_CAPTURE"
+      ],
+      "touch_paths": [
+        ".github/workflows/dow-scheduled.yml",
+        "ci/governance/tests/test_dow_scheduled_exit.py"
+      ],
+      "write_pr": false,
+      "title": "Repair and qualify ABACUS runtime failures",
+      "intent": "Use the existing DOW repair lane and authenticated logs to distinguish formatting debt, scanner runtime failure and actual security findings.",
+      "dov": [
+        "Bind each first red to repository, head, workflow, run, attempt, job and step.",
+        "Run the source-owned formatting and scanner command over the comparable population; retain scanner output."
+      ],
+      "dod": [
+        "The repaired process executes and fails truthfully when the failure canary is supplied.",
+        "Security scanning remains enabled; a runtime repair does not clear unreviewed findings."
+      ],
+      "target_repo": "GBOGEB/ABACUS"
+    },
+    {
+      "id": "ABACUS_BINDING",
+      "cluster": "abacus",
+      "phase": "P0_CONTROL",
+      "crew": "READER",
+      "state": "HOLD",
+      "source_sha": "897298dc3ed1a45607121b205617d4c103e7b226",
+      "t0_ref": "https://github.com/GBOGEB/ABACUS/pull/2666",
+      "depends_on": [
+        "T0_CAPTURE"
+      ],
+      "touch_paths": [
+        "handover/a10_f3_phase_b_20261022/SC_20261109_A10_F3B_STATE_V2.json"
+      ],
+      "write_pr": false,
+      "title": "Resolve ABACUS source and confidentiality evidence",
+      "intent": "Reconcile the existing handover with the authoritative RFI source and native A10/security evidence without exporting restricted source content.",
+      "dov": [
+        "Verify each source reference and exact candidate SHA with the existing owner.",
+        "Record missing native or source evidence as missing; keep raw restricted content out of public projections."
+      ],
+      "dod": [
+        "RFI source binding and confidentiality have separate evidence-backed dispositions.",
+        "A handover edit or thread reply never substitutes for native A10 or security acceptance."
+      ],
+      "target_repo": "GBOGEB/ABACUS"
+    },
+    {
+      "id": "CODEX_CONTEXTS",
+      "cluster": "codex",
+      "phase": "P0_CONTROL",
+      "crew": "AUDITOR",
+      "state": "HOLD",
+      "source_sha": "897298dc3ed1a45607121b205617d4c103e7b226",
+      "t0_ref": "https://github.com/GBOGEB/CODEX/actions",
+      "depends_on": [
+        "T0_CAPTURE"
+      ],
+      "touch_paths": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/governance-gate.yml"
+      ],
+      "write_pr": false,
+      "title": "Verify CODEX required PR contexts and aged runs",
+      "intent": "Match actual required PR-context names to the candidate head and classify queued runs by identity and current relevance.",
+      "dov": [
+        "Read effective required contexts, candidate SHA and check-run identities.",
+        "Recheck each aged run before proposing cancellation; distinguish obsolete, live and already-terminal runs."
+      ],
+      "dod": [
+        "A context matrix shows PASS, FAIL, PENDING or UNKNOWN on the exact PR head.",
+        "Main-branch success and stale queue counts are not reused as current PR admission proof."
+      ],
+      "target_repo": "GBOGEB/CODEX"
+    },
+    {
+      "id": "N6_HISTORY",
+      "cluster": "n6",
+      "phase": "P0_CONTROL",
+      "crew": "READER",
+      "state": "HOLD",
+      "source_sha": "897298dc3ed1a45607121b205617d4c103e7b226",
+      "t0_ref": "https://github.com/GBOGEB/pipeline-automation-hub/blob/897298dc3ed1a45607121b205617d4c103e7b226/mission-control/jade_temple/devops/actions_metrics.py",
+      "depends_on": [
+        "T0_CAPTURE"
+      ],
+      "touch_paths": [
+        "mission-control/jade_temple/devops/actions_metrics.py",
+        "mission-control/federation-atlas/flightdeck/pulses/pr_run_history_collect.py"
+      ],
+      "write_pr": false,
+      "title": "Complete the dedicated workflow-history census",
+      "intent": "Collect a bounded, paginated workflow-history cohort through the existing metric owners and retain historical failure identities.",
+      "dov": [
+        "Record complete pagination, time window, workflow identity, source SHA, runs, attempts and denominator.",
+        "Separate cancelled/skipped records, genuine queue wait and executed runtime; retain a digest-bound cache receipt."
+      ],
+      "dod": [
+        "N6 telemetry is reproducible for its declared cohort.",
+        "Incomplete history remains PARTIAL or UNKNOWN and does not establish a new qualification."
+      ],
+      "target_repo": "GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "id": "JADE_PROJECTION",
+      "cluster": "jade",
+      "phase": "P1_PILOT",
+      "crew": "BUILDER",
+      "state": "HOLD",
+      "source_sha": "897298dc3ed1a45607121b205617d4c103e7b226",
+      "t0_ref": "https://github.com/GBOGEB/pipeline-automation-hub/blob/897298dc3ed1a45607121b205617d4c103e7b226/mission-control/jade_temple/README.md",
+      "depends_on": [
+        "T0_CAPTURE"
+      ],
+      "touch_paths": [
+        "mission-control/jade_temple/portfolio_readiness/portfolio_readiness.py",
+        "mission-control/jade_temple/portfolio_readiness/README.md",
+        "mission-control/jade_temple/portfolio_readiness/plan.json"
+      ],
+      "write_pr": false,
+      "title": "Build the user-facing cluster and readiness projection",
+      "intent": "Join existing JADE, issue-rank and Kahn outputs into a navigable read-only view with source dates, explicit missing evidence and deep source links.",
+      "dov": [
+        "Prove canonical module reuse, private projection and source-digest parity.",
+        "Exercise negative inputs, source-age display, cluster overlap and browser interaction at desktop and narrow widths."
+      ],
+      "dod": [
+        "The user can drill from core cluster to repository, task, source and DOV/DOD.",
+        "The view creates no second ledger, scheduler, metric definition or release authority."
+      ],
+      "target_repo": "GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "id": "BRIDGE_RECONCILE",
+      "cluster": "bridge",
+      "phase": "P1_PILOT",
+      "crew": "SCOUT",
+      "state": "HOLD",
+      "source_sha": "897298dc3ed1a45607121b205617d4c103e7b226",
+      "t0_ref": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1135",
+      "depends_on": [
+        "T0_CAPTURE"
+      ],
+      "touch_paths": [
+        "mission-control/grand-missions/GM_I_C_R2_BIDIRECTIONAL_BRIDGE_BRIEF_v1.md"
+      ],
+      "write_pr": false,
+      "title": "Reconcile the existing GEMINI broker stack",
+      "intent": "Map GEMINI/Drive ingress and the Hub GM-I-C owner stack into the same topic graph while preserving their independent IC3 conditions.",
+      "dov": [
+        "Read #1135 and stacked #1152 at their current heads; verify the parent relationship.",
+        "Bind actual hosted ingress and package-content receipts separately."
+      ],
+      "dod": [
+        "The bridge is represented as an independently gated source lane.",
+        "Transport success never grants content, engineering or release acceptance."
+      ],
+      "target_repo": "GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "id": "ARTIFACT_MAP",
+      "cluster": "artifacts",
+      "phase": "P4_SCOUT",
+      "crew": "READER",
+      "state": "HOLD",
+      "source_sha": "897298dc3ed1a45607121b205617d4c103e7b226",
+      "t0_ref": "https://github.com/GBOGEB/pipeline-automation-hub/blob/897298dc3ed1a45607121b205617d4c103e7b226/mission-control/registry/ENGINE_CATALOG.yaml",
+      "depends_on": [
+        "T0_CAPTURE"
+      ],
+      "touch_paths": [
+        "mission-control/registry/ENGINE_CATALOG.yaml",
+        "mission-control/registry/engine_catalog.py"
+      ],
+      "write_pr": false,
+      "title": "Map canonical binary and HTML products to source owners",
+      "intent": "Record source configuration, generator, native QA, artifact digest and outward version using the existing binary-engine registry.",
+      "dov": [
+        "Check declared artifact type against its canonical engine and K-series QA contract.",
+        "Follow source-to-generator-to-artifact references; keep private engineering evidence in its owner boundary."
+      ],
+      "dod": [
+        "Every selected outward product has a visible missing-proof list and owner route.",
+        "Generated HTML/PDF/PPTX/XLSX is a source-bound view, never a replacement SSOT."
+      ],
+      "target_repo": "GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "id": "NATIVE_PROOF",
+      "cluster": "governance",
+      "phase": "P0_CONTROL",
+      "crew": "RUNNER",
+      "state": "HOLD",
+      "source_sha": "897298dc3ed1a45607121b205617d4c103e7b226",
+      "t0_ref": "https://github.com/GBOGEB/pipeline-automation-hub/blob/897298dc3ed1a45607121b205617d4c103e7b226/mission-control/jade_temple/data/ROLLING5_POLICY.json",
+      "depends_on": [
+        "HUB_SOURCE",
+        "ABACUS_RUNTIME",
+        "ABACUS_BINDING",
+        "CODEX_CONTEXTS",
+        "N6_HISTORY",
+        "JADE_PROJECTION",
+        "BRIDGE_RECONCILE",
+        "ARTIFACT_MAP"
+      ],
+      "touch_paths": [],
+      "write_pr": false,
+      "title": "Collect exact-head native proof across the selected slice",
+      "intent": "Join the lane receipts only after each repository's source correction has its own terminal native verification.",
+      "dov": [
+        "Require exact repo/head/workflow/run/attempt/job/artifact identity and the actual required context set.",
+        "Run meaningful negative tests and document test/coverage populations; missing or skipped is not PASS."
+      ],
+      "dod": [
+        "Every selected source lane is verified or explicitly held with a source-owned next action.",
+        "One repository's success cannot compensate for another repository's missing proof."
+      ],
+      "target_repo": "GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "id": "INDEPENDENT_REVIEW",
+      "cluster": "governance",
+      "phase": "P0_CONTROL",
+      "crew": "AUDITOR",
+      "state": "HOLD",
+      "source_sha": "897298dc3ed1a45607121b205617d4c103e7b226",
+      "t0_ref": "https://github.com/GBOGEB/pipeline-automation-hub/issues/336",
+      "depends_on": [
+        "NATIVE_PROOF"
+      ],
+      "touch_paths": [],
+      "write_pr": false,
+      "title": "Obtain eligible independent review",
+      "intent": "Bind review to each final candidate SHA and separate advisory bot/test review from the eligible owner-required reviewer.",
+      "dov": [
+        "Verify reviewer eligibility, review state, latest push and dismissal/staleness policy.",
+        "Requalify review after any source-head advance."
+      ],
+      "dod": [
+        "Required independent review is evidenced for every candidate.",
+        "Unresolved findings and stale review retain admission HOLD."
+      ],
+      "target_repo": "GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "id": "EFFECTIVE_ADMISSION",
+      "cluster": "governance",
+      "phase": "P0_CONTROL",
+      "crew": "AUDITOR",
+      "state": "HOLD",
+      "source_sha": "897298dc3ed1a45607121b205617d4c103e7b226",
+      "t0_ref": "https://github.com/GBOGEB/pipeline-automation-hub/issues/336",
+      "depends_on": [
+        "INDEPENDENT_REVIEW"
+      ],
+      "touch_paths": [
+        "mission-control/jade_temple/tools/h08_canary.py"
+      ],
+      "write_pr": false,
+      "title": "Verify effective admission and rejected RED behavior",
+      "intent": "Read active protection and trusted-publisher requirements, then consume an independently permitted negative-canary receipt from the canonical owner.",
+      "dov": [
+        "Verify applicable rule scope, required contexts, bypass configuration and the exact rejected RED receipt.",
+        "Keep controller-bootstrap and separate non-controller canary evidence distinct."
+      ],
+      "dod": [
+        "Effective rejection and successful-admission predicates are separately evidenced.",
+        "This preview performs no merge attempt, rule mutation or policy waiver."
+      ],
+      "target_repo": "GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "id": "OWNER_DECISION",
+      "cluster": "governance",
+      "phase": "P0_CONTROL",
+      "crew": "AUDITOR",
+      "state": "HOLD",
+      "source_sha": "897298dc3ed1a45607121b205617d4c103e7b226",
+      "t0_ref": "https://github.com/GBOGEB/pipeline-automation-hub/blob/897298dc3ed1a45607121b205617d4c103e7b226/mission-control/jade_temple/03_JADE_CASTE_METHOD.md",
+      "depends_on": [
+        "EFFECTIVE_ADMISSION"
+      ],
+      "touch_paths": [],
+      "write_pr": false,
+      "title": "Record the owner's merge and point-release decision",
+      "intent": "Present concrete qualified candidates and release assets to the appropriate repository owner after all preceding gates.",
+      "dov": [
+        "Confirm owner intent, final candidate SHA, source tag/version, assets, publication target and rollback plan.",
+        "Read back any owner-performed merge/release before changing the recorded state."
+      ],
+      "dod": [
+        "Owner decision is explicit and source bound.",
+        "J4 candidate readiness remains distinct from J5 released and from downstream engineering acceptance."
+      ],
+      "target_repo": "GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "id": "CONTROL_PULSE",
+      "cluster": "n6",
+      "phase": "P0_CONTROL",
+      "crew": "AUDITOR",
+      "state": "HOLD",
+      "source_sha": "897298dc3ed1a45607121b205617d4c103e7b226",
+      "t0_ref": "https://github.com/GBOGEB/pipeline-automation-hub/blob/897298dc3ed1a45607121b205617d4c103e7b226/mission-control/jade_temple/tools/rolling5.py",
+      "depends_on": [
+        "OWNER_DECISION"
+      ],
+      "touch_paths": [
+        "mission-control/jade_temple/tools/rolling5.py"
+      ],
+      "write_pr": false,
+      "title": "Observe comparable post-merge CONTROL",
+      "intent": "Use the existing pulse owner to compare admitted source, native execution and recovery behavior over repeated matched observations.",
+      "dov": [
+        "Verify source, cohort, instrument version, denominator and observation independence before calculating deltas.",
+        "Preserve negative evidence and separate proof acquisition, actual closure, scope growth and regression."
+      ],
+      "dod": [
+        "Repeated qualifying observations satisfy the owner-approved CONTROL criterion.",
+        "Scaling remains held while recurrence, missing evidence or unmatched populations persist."
+      ],
+      "target_repo": "GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "id": "NPLUS1_DESIGN",
+      "cluster": "math",
+      "phase": "P4_SCOUT",
+      "crew": "SCOUT",
+      "state": "HOLD",
+      "source_sha": "897298dc3ed1a45607121b205617d4c103e7b226",
+      "t0_ref": "https://github.com/GBOGEB/pipeline-automation-hub/blob/897298dc3ed1a45607121b205617d4c103e7b226/mission-control/federation-atlas/flightdeck/pulses/mip_statistical_qualification.py",
+      "depends_on": [
+        "N6_HISTORY"
+      ],
+      "touch_paths": [
+        "mission-control/federation-atlas/flightdeck/pulses/mip_statistical_qualification.py",
+        "mission-control/qps-triage-ultra/ggmath_provider_binding_v1.json"
+      ],
+      "write_pr": false,
+      "title": "Prepare the next-wave statistical design",
+      "intent": "Specify observation units, source population, features and actual pairwise outcomes before invoking the canonical gg_MATH provider.",
+      "dov": [
+        "Qualify geometry, missingness, comparability, independent units and provider SHA/digests.",
+        "For PCA compare aligned components/subspaces; for BT check identifiable connected comparisons and finite-fit conditions."
+      ],
+      "dod": [
+        "The method is either provider-eligible or held with an explicit reason.",
+        "PCA loadings, model-derived strengths and reversed labels never become observed BT outcomes."
+      ],
+      "target_repo": "GBOGEB/pipeline-automation-hub"
+    },
+    {
+      "id": "NPLUS2_REX",
+      "cluster": "jade",
+      "phase": "P1_PILOT",
+      "crew": "AUDITOR",
+      "state": "HOLD",
+      "source_sha": "897298dc3ed1a45607121b205617d4c103e7b226",
+      "t0_ref": "https://github.com/GBOGEB/pipeline-automation-hub/blob/897298dc3ed1a45607121b205617d4c103e7b226/mission-control/jade_temple/07_HANDOVER_RECURSION.md",
+      "depends_on": [
+        "CONTROL_PULSE",
+        "NPLUS1_DESIGN"
+      ],
+      "touch_paths": [
+        "mission-control/jade_temple/07_HANDOVER_RECURSION.md"
+      ],
+      "write_pr": false,
+      "title": "Carry evidence and learning into N+1 and N+2",
+      "intent": "Preserve the original intent, old and new edges, predictions, actual results and blocked descendants when proposing the next bounded slice.",
+      "dov": [
+        "Score prior predictions against subsequent outcomes without rewriting history.",
+        "Retain task/root identity, predecessor receipt, source SHA and supersession reason; rediscover current open and closed PRs."
+      ],
+      "dod": [
+        "The next slice has a concrete source-owned TODO, DOV/DOD and path-disjoint matrix.",
+        "No-value or owner-blocked work is parked; expansion follows evidence and capacity rather than raw worker count."
+      ],
+      "target_repo": "GBOGEB/pipeline-automation-hub"
+    }
+  ],
+  "max_parallel": 2,
+  "per_cluster": 1,
+  "open_stack": 0
+}
