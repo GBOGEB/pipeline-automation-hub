@@ -15,6 +15,7 @@ from pathlib import Path
 import re
 
 SCHEMA = "jade.iso-schedule.v1"
+CANONICALIZATION = "JADE_CANONICAL_UTF8_JSON_V1"
 DAYS = ("MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN")
 WCODE = re.compile(r"^w([0-5][0-9])(MON|TUE|WED|THU|FRI|SAT|SUN)$")
 HERE = Path(__file__).resolve().parent
@@ -111,8 +112,38 @@ def validate_schedule(plan: dict) -> dict:
             "status": "DECLARED_PLAN_ONLY", "authority_transfer": False}
 
 
+def canonical_receipt_bytes(record: dict) -> bytes:
+    """Canonical UTF-8 JSON v1; fixed ASCII object keys; Unicode scalar string values.
+
+    Exact wire contract: no digest field, sorted ASCII keys recursively, no spaces,
+    compact JSON escaping, raw UTF-8 Unicode values, no BOM or newline. Arrays
+    retain order; numbers are integers. Integrity never implies source authority.
+    """
+    if type(record) is not dict or "receipt_sha256" in record:
+        raise ValueError("canonical receipt payload must exclude receipt_sha256")
+
+    def visit(value):
+        if type(value) is dict:
+            for key, child in value.items():
+                if type(key) is not str or not key.isascii():
+                    raise ValueError("all receipt object keys must be ASCII")
+                visit(child)
+        elif type(value) is list:
+            for child in value:
+                visit(child)
+        elif type(value) not in (str, int, bool, type(None)):
+            raise ValueError("unsupported receipt value type")
+
+    visit(record)
+    try:
+        return json.dumps(record, sort_keys=True, separators=(",", ":"),
+                          ensure_ascii=False, allow_nan=False).encode("utf-8")
+    except UnicodeEncodeError as exc:
+        raise ValueError("receipt strings must be Unicode scalar sequences") from exc
+
+
 def portable_receipt(plan: dict) -> dict:
-    """Return a JSON-canonical, integrity-bound *declared* plan for handover.
+    """Return a versioned UTF-8 JSON integrity-bound *declared* plan for handover.
 
     This makes the date-rich internal validated model transportable without
     copying its Kahn implementation into GEMINI. The digest proves payload
@@ -130,13 +161,11 @@ def portable_receipt(plan: dict) -> dict:
     record = {
         "schema": SCHEMA, "iso_year": validated["iso_year"],
         "generation_method": "JADE_ISO_SCHEDULE_PORTABLE_RECEIPT_V1",
+        "canonicalization": CANONICALIZATION,
         "tasks": tasks, "waves": validated["waves"],
         "status": "DECLARED_PLAN_ONLY", "authority_transfer": False,
     }
-    payload = json.dumps(
-        record, sort_keys=True, separators=(",", ":"), ensure_ascii=True,
-        allow_nan=False,
-    ).encode("utf-8")
+    payload = canonical_receipt_bytes(record)
     record["receipt_sha256"] = hashlib.sha256(payload).hexdigest()
     return record
 
