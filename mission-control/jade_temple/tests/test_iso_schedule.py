@@ -167,7 +167,7 @@ class IsoSchedule(unittest.TestCase):
             ({"receipt_sha256": "pretend"}, "exclude"),
             ({"ratio": 0.5}, "unsupported"),
             ({"\u00e9": "label"}, "ASCII"),
-            ({"title": "\\ud800"}, "Unicode scalar"),
+            ({"title": "\ud800"}, "Unicode scalar"),
         ]
         for record, message in cases:
             with self.subTest(record=repr(record)), self.assertRaisesRegex(ValueError, message):
