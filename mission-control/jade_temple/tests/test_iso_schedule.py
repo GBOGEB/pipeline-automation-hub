@@ -130,15 +130,48 @@ class IsoSchedule(unittest.TestCase):
         r = m.portable_receipt(example())
         self.assertEqual(r["schema"], m.SCHEMA)
         self.assertEqual(r["generation_method"], "JADE_ISO_SCHEDULE_PORTABLE_RECEIPT_V1")
+        self.assertEqual(r["canonicalization"], m.CANONICALIZATION)
         self.assertEqual(r["status"], "DECLARED_PLAN_ONLY")
         self.assertFalse(r["authority_transfer"])
         self.assertEqual(r["waves"], [["SOURCE"], ["MATH", "RENDER"], ["GATE"]])
         self.assertEqual(r["tasks"]["SOURCE"]["start"], "2026-11-09")
         digest = r.pop("receipt_sha256")
-        wire = json.dumps(r, sort_keys=True, separators=(",", ":"),
-                          ensure_ascii=True, allow_nan=False).encode("utf-8")
+        wire = m.canonical_receipt_bytes(r)
         self.assertEqual(digest, hashlib.sha256(wire).hexdigest())
         self.assertEqual(r, json.loads(wire))
+
+    def test_canonical_unicode_wire_vector_matches_independent_node(self):
+        # The fixed digest was independently reproduced with Node.js UTF-8
+        # JSON.stringify over recursively ASCII-sorted keys (not by this helper).
+        import hashlib
+        p = {"schema": m.SCHEMA, "iso_year": 2026, "tasks": [
+            {"id": "CAFE", "title": "Caf\u00e9 \U0001f52c/\u2206",
+             "start": "w46MON", "end": "w46MON"}
+        ]}
+        r = m.portable_receipt(p)
+        vector_sha = "bb7d5953a763eed0e7b9d0cd7741f7ae2c128d5305677884d44fbd8038b80c17"
+        self.assertEqual(r["receipt_sha256"], vector_sha)
+        payload = {key: value for key, value in r.items() if key != "receipt_sha256"}
+        wire = m.canonical_receipt_bytes(payload)
+        self.assertEqual(hashlib.sha256(wire).hexdigest(), vector_sha)
+        self.assertIn("Caf\u00e9 \U0001f52c/\u2206".encode("utf-8"), wire)
+        self.assertNotIn(b"\\\\u00e9", wire)
+        # The legacy ASCII-escaped serialization must not silently verify.
+        import json
+        legacy = json.dumps(payload, sort_keys=True, separators=(",", ":"),
+                            ensure_ascii=True).encode("utf-8")
+        self.assertNotEqual(hashlib.sha256(legacy).hexdigest(), vector_sha)
+
+    def test_canonical_wire_rejects_digest_floats_non_ascii_keys_and_lone_surrogates(self):
+        cases = [
+            ({"receipt_sha256": "pretend"}, "exclude"),
+            ({"ratio": 0.5}, "unsupported"),
+            ({"\u00e9": "label"}, "ASCII"),
+            ({"title": "\\ud800"}, "Unicode scalar"),
+        ]
+        for record, message in cases:
+            with self.subTest(record=repr(record)), self.assertRaisesRegex(ValueError, message):
+                m.canonical_receipt_bytes(record)
 
     def test_portable_receipt_changes_digest_on_task_change(self):
         before = m.portable_receipt(example())
