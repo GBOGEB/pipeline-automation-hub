@@ -96,6 +96,22 @@ class Naming(unittest.TestCase):
         del nodes["C14_tetradecane"]
         self.assertIn("C14: 0 nodes, want 1", ad.evaluate(nodes)["errors"])
 
+    def test_non_numeric_carbon_is_a_diagnostic_not_a_crash(self):
+        doc = copy.deepcopy(DOC)
+        doc["nodes"]["C6_hexane"]["carbon"] = "6"  # MATRIX-01 peer: sorted beside an int
+        doc["nodes"]["C10_decane"]["carbon"] = None  # sorted inside wave 6 by report()
+        code, out = run_cli(doc)
+        self.assertEqual(code, 1, out)
+        self.assertIn("FAIL C6_hexane: carbon '6' != 6", out)
+        self.assertIn("FAIL C10_decane: carbon None != 10", out)
+        self.assertIn("W6  C10_decane[LANE-D]  C11_undecane[LANE-E]", out)
+
+    def test_empty_graph_reports_missing_nodes(self):
+        code, out = run_cli(dict(DOC, nodes={}))
+        self.assertEqual(code, 1, out)
+        self.assertIn("FAIL C1: 0 nodes, want 1", out)
+        self.assertIn("FAIL C14: 0 nodes, want 1", out)
+
 
 class Lanes(unittest.TestCase):
     def test_pasted_1_2_matrices_are_rejected(self):
