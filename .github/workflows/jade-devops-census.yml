@@ -115,6 +115,35 @@ jobs:
             .github/workflows/jade-reusable-deploy.yml \
             mission-control/jade_temple/devops/templates/jade-cicd-caller.yml > "$RUNNER_TEMP/deploy-lint.json"
           python mission-control/jade_temple/devops/workflows.py lint .github/workflows/jade-reusable-ci.yml
+      - name: Native full-population consumer smoke on canonical N11
+        env:
+          JADE_PLANNING_SHA: 897298dc3ed1a45607121b205617d4c103e7b226
+        run: |
+          set -euo pipefail
+          P=mission-control/jade_temple/portfolio_readiness
+          python "$P/census_bridge.py" \
+            --census mission-control/jade_temple/data/DEVOPS_CENSUS_N11.json \
+            --private-registry mission-control/gogreen/token_census/REGISTRY.json \
+            --require-count 21 \
+            --out "$RUNNER_TEMP/jade-portfolio-N11-observation.json" \
+            --receipt "$RUNNER_TEMP/jade-portfolio-N11-receipt.json"
+          python "$P/portfolio_readiness.py" \
+            --as-of "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --source-sha "$JADE_PLANNING_SHA" \
+            --observation "$RUNNER_TEMP/jade-portfolio-N11-observation.json" \
+            --out "$RUNNER_TEMP/jade-portfolio-N11-site"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ["RUNNER_TEMP"])
+          r = json.loads((root / "jade-portfolio-N11-receipt.json").read_text())
+          m = json.loads((root / "jade-portfolio-N11-site/portfolio_readiness.json").read_text())
+          assert r["source_repos"] == 21
+          assert m["authority"]["current_point_release_readiness"] is None
+          assert m["authority"]["live_weighted_closure_rate"] is None
+          assert m["watch"]["enabled"] is False
+          print("CANONICAL_21_REPO_BRIDGE=PASS; SOURCE_STRUCTURAL_ONLY; LIVE_NATIVE_QA=UNKNOWN")
+          PY
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
@@ -123,6 +152,9 @@ jobs:
             ${{ runner.temp }}/devops-tests.log
             ${{ runner.temp }}/devops-coverage.json
             ${{ runner.temp }}/deploy-lint.json
+            ${{ runner.temp }}/jade-portfolio-N11-observation.json
+            ${{ runner.temp }}/jade-portfolio-N11-receipt.json
+            ${{ runner.temp }}/jade-portfolio-N11-site/
           retention-days: 21
           if-no-files-found: warn
 
