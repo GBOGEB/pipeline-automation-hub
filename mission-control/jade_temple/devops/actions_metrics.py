@@ -65,6 +65,7 @@ def _load(name: str, path: Path):
 
 PB = _load("jade_private_boundary", ROOT / "tools" / "private_boundary.py")
 BQ = _load("gogreen_bd_queue_wave", ROOT.parent / "gogreen" / "bd_queue_wave.py")  # owner of utc(), percentile()
+WD = _load("jade_devops_wddd", HERE / "wddd.py")  # owner of iso_week_key() and the w##DDD week codes
 STRATA_DOC = "job lists are fetched round-robin over (ISO week, workflow), newest first per stratum"
 
 SCHEMA = "jade.devops.actions-metrics.v1"
@@ -631,8 +632,8 @@ def recheck_pressure(runs: list[dict], repo: str, source_sha: str,
 
 
 def iso_week(ts: str) -> str:
-    y, w, _ = BQ.utc(ts).isocalendar()
-    return f"{y}-W{w:02d}"
+    """'2026-11-09T10:00:00Z' -> '2026-W46' (UTC). The key itself comes from wddd.iso_week_key()."""
+    return WD.iso_week_key(BQ.utc(ts))
 
 
 def weekly(runs: list, jobs_by_run: dict) -> dict:
