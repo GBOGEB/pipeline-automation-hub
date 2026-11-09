@@ -47,7 +47,7 @@ def load_yaml(path: Path):
     return yaml.safe_load(path.read_text(encoding="utf-8"))
 
 
-def validate(control: dict, baseline: dict, crew: dict, brief_text: str) -> dict:
+def validate(control: dict, baseline: dict, crew: dict, brief_text: str, hosted_ic3_attestor=None) -> dict:
     require(control.get("mission_id") == "GM-I-C", "overlay mission id must be GM-I-C")
     require(control.get("parent") == "GM-I", "overlay parent must remain GM-I")
     require(control.get("authority_transfer") is False, "authority transfer must remain false")
@@ -89,6 +89,12 @@ def validate(control: dict, baseline: dict, crew: dict, brief_text: str) -> dict
             require(isinstance(ev.get("pr"), int), f"{wid} PASS without a PR number")
             require(bool(SHA40.match(str(ev.get("merge_sha", "")))), f"{wid} PASS without a full merge SHA")
             if "IC3_AUTH" in wave["maps_to_gates"]:
+                # Overlay YAML is untrusted as proof of hosted credentials or a >0-step run.
+                # A future hosted IC3 gate must inject an independent verifier, not a YAML flag.
+                require(
+                    callable(hosted_ic3_attestor) and hosted_ic3_attestor(wave) is True,
+                    "IC3_AUTH PASS requires independently verified hosted >0-step receipt on exact head",
+                )
                 ic3_pass = True
         elif state.startswith("BLOCKED_ON_R2-W"):
             blocker = state.removeprefix("BLOCKED_ON_")
@@ -105,9 +111,13 @@ def validate(control: dict, baseline: dict, crew: dict, brief_text: str) -> dict
             continue
         if state == DONE_STATE:
             for earlier in waves[: wave_ids.index(wave["id"])]:
-                if earlier["owner_action_required"] is False:
-                    require(earlier["state"] == DONE_STATE, f"{wave['id']} PASS while earlier {earlier['id']} not PASS")
-    if not ic3_pass:
+                require(earlier["state"] == DONE_STATE, f"{wave['id']} PASS while earlier {earlier['id']} not PASS")
+    if ic3_pass:
+        require(
+            first_red["state"] == "IC3_DRIVE_READONLY_GT0_STEP_PASS",
+            "IC3 PASS contradicts withheld or incorrect first_red.state",
+        )
+    else:
         require(first_red["state"].startswith("WITHHELD"), "IC3 not passed: first red must stay WITHHELD")
 
     contracts = {c["id"]: c for c in control["contracts"]}
