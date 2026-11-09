@@ -9,7 +9,7 @@ This additive adapter **reuses** `mission-control/jade_temple/devops/lifecycle.p
 - `planning_quarter` is a **13-week planning bucket** (2026 PQ4 contains w40–w53). It must not be confused with a Gregorian calendar quarter, a financial-quarter authority, or a 4-4-5 month pattern.
 - `tasks` have `id`, `title`, `start`, `end`, optional `depends_on`, and optional `kind: milestone`. A task's `end` is its declared last date. Finish-to-start dependencies require successor start **after** predecessor end. Same-day event ordering requires another explicit clock/contract and is rejected here.
 - All outputs are `DECLARED_PLAN_ONLY` and `authority_transfer=false`. There is **no** inference of completed code, vendor sign-off, RED recovery, or merge eligibility.
-- `portable_receipt(plan)` runs the existing validator then exports a JSON-native record (ISO dates, waves and source-plan identity) with `receipt_sha256` over canonical JSON, excluding that digest field. The SHA-256 is **integrity, not Git/Drive provenance or execution evidence**.
+- `portable_receipt(plan)` runs the existing validator and exports a JSON-native record with `canonicalization: JADE_CANONICAL_UTF8_JSON_V1`. Its `receipt_sha256` covers exactly the unsigned canonical UTF-8 bytes, excluding the digest field. The SHA-256 is **integrity only**, not Git/Drive provenance, source authentication, independent review or execution evidence.
 - `mermaid_dag` and `mermaid_gantt` are projections. Gantt date anchors include the declared final day through an explicit duration, avoiding date overflow at year 9999; they do not apply holiday exclusions or infer working-day durations; use an independently qualified calendar engine for this.
 - Reuse the existing JADE SIPOC / CI-DAG projection owner rather than cloning its definitions. The generic Drive BridgeFlow package remains a candidate **consumer/adapter**, not a second operator.
 
@@ -38,6 +38,48 @@ print(iso_schedule.portable_receipt(plan))
 ```
 
 Run this example from the Hub repository root. The adapter imports the canonical JADE lifecycle owner via an exact file path.
+
+## Canonical wire contract and independent verifier vector
+
+The portable handover contract is deliberately a **restricted JSON profile**, not a claim of RFC 8785/JCS equivalence. To verify `receipt_sha256` across Python, Node, Drive or another runtime:
+
+1. Require `canonicalization == "JADE_CANONICAL_UTF8_JSON_V1"`. Exclude only `receipt_sha256` before hashing; reject an embedded digest in the unsigned payload.
+2. Recursively sort **ASCII object-property keys** in ascending lexical order. All keys in this schema (including task IDs) are ASCII. Preserve array order.
+3. Use compact JSON: no insignificant spaces, no BOM, no trailing newline. Serialize strings as Unicode scalar values in **raw UTF-8**, with standard JSON escapes for controls, quotation marks and backslashes; do not normalize Unicode. A lone surrogate is invalid. Only integer numbers, booleans, strings, null, objects and arrays are allowed; floats and non-ASCII keys are invalid.
+4. Hash these exact bytes with SHA-256 and compare a lower-case 64-hex `receipt_sha256`. A matching hash means **byte parity only**, never that the plan ran or is approved.
+
+The following is an independently reproduced **Python + Node.js** vector. The synthetic plan has one task `CAFE`, title `Café 🔬/∆` (precomposed é, mathematical increment sign), ISO year 2026, start and end `w46MON`, no predecessors. Expected digest (excluding `receipt_sha256`):
+
+```text
+bb7d5953a763eed0e7b9d0cd7741f7ae2c128d5305677884d44fbd8038b80c17
+```
+
+Node verifier for a `portable_receipt()` JSON result:
+
+```javascript
+const { createHash } = require("node:crypto");
+
+function sortAsciiKeys(v) {
+  if (Array.isArray(v)) return v.map(sortAsciiKeys);
+  if (v !== null && typeof v === "object") {
+    const keys = Object.keys(v);
+    if (keys.some(k => /[^\\x00-\\x7f]/.test(k))) throw Error("NON_ASCII_KEY");
+    return Object.fromEntries(keys.sort().map(k => [k, sortAsciiKeys(v[k])]));
+  }
+  if (typeof v === "number" && !Number.isSafeInteger(v)) throw Error("NOT_SAFE_INTEGER");
+  return v;
+}
+
+function verify(receipt) {
+  if (receipt.canonicalization !== "JADE_CANONICAL_UTF8_JSON_V1") return false;
+  const { receipt_sha256, ...unsigned } = receipt;
+  const canonical = JSON.stringify(sortAsciiKeys(unsigned));
+  const digest = createHash("sha256").update(Buffer.from(canonical, "utf8")).digest("hex");
+  return digest === receipt_sha256;
+}
+```
+
+Consumers must also validate the schema/field types, Unicode well-formedness, trusted source commit, receipt source binding and permitted data visibility separately. `JSON.stringify` is not itself proof of Unicode scalar validity; do not use this example as a general-purpose arbitrary JSON canonicalizer.
 
 ## Qualification
 
