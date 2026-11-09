@@ -53,6 +53,42 @@ Runtime workers added in R2 (none are crew): `CLAUDE_CODE_LOCAL`, `CLAUDE_DRIVE_
 
 ## Mission TODO checklist (waves and pulses)
 
+## Native minimum DoD / DoV and promotion DAG (reconciliation pulse 2026-11-09)
+
+**Starting intent:** GitHub remains authoritative; Google Drive contains exact-SHA plain-file snapshots or untrusted proposal inbox items. The broker may create a **draft PR only**. No agent, broker, receipt, passing test or Drive consumer can approve a merge or claim QPS/engineering authority. Reuse the v0.1 IC0..IC9 gate order, the canonical JADE Kahn topology owner and GEMINI's package/idempotency owners.
+
+**Observed post-merge source facts (not IC3 proof):**
+- R2-W1 offline snapshot contract [GEMINI #38](https://github.com/GBOGEB/GEMINI/pull/38) merged 2026-11-08 23:07:56 UTC; merge SHA `fbb34fbadfef91ab7e9c56dd2d04b3086a678584`.
+- R2-W2 offline broker [GEMINI #40](https://github.com/GBOGEB/GEMINI/pull/40) merged 2026-11-09 01:50:13 UTC; merge SHA `3ee30f9364c2f45687b83ad2f2b642ccf6a9b4b4`.
+- Both merges occurred **before W0 control-plane admission**; do not relabel W0 or W1/W2 as fully DoV-qualified or infer a valid controlled DAG progression. Replay post-merge qualification on actual GEMINI `main` before promotion. W3/IC3 is still withheld under [GEMINI #12](https://github.com/GBOGEB/GEMINI/issues/12).
+
+| Lane / output | Minimum DoD (source complete) | Minimum DoV (evidence complete) | Current disposition |
+|---|---|---|---|
+| W0 / Hub policy overlay | Baseline unchanged, no grant of authority, every PASS requires prior-wave PASS; IC3 refuses YAML self-attestation; negative tests | Native registration + zero-test + First-Pass Closure on the **same exact head**, independent P1/P2 review, owner admission | PR #1135 open; FPC historical STALE_HEAD; independent review unresolved |
+| W1 / GEMINI exact-SHA snapshot | Plain files, blob-OID verification, secret denylist, deterministic manifest; no `.git` export | On merged main, re-run source-attested builder/verify, compare manifest bytes and full commit SHA, preserve negative tests | Source merged #38; post-merge controlled P3 receipt pending |
+| W2 / GEMINI broker dry run | Profile existing GMI package and ledger; stale-base three-way/conflict, idempotency; output plan has `draft:true`, `pushed:false` | On merged main, run negative stale/secret/injection/duplicate tests, compare source SHA; no PR or Drive upload attributed to offline code | Source merged #40; post-merge controlled P3 receipt pending |
+| W3 / GEMINI owner auth IC3 | Repo-only OIDC/WIF, separate read-only ingress and write principals, least privilege; two repo variables set out of band | Authenticated hosted `drive_ingress.yml` run binds exact head and job IDs, >0 executed steps, read-only scope, root verified and `total_items>0`; emits `IC3_DRIVE_READONLY_GT0_STEP_PASS` plus census digest | **BLOCKED_OWNER**; no synthetic/connection-only pass |
+| W4 / hosted publish + ingest | Exact-SHA Drive snapshot and proposal-to-draft-PR only; no direct main push | W0, W1, W2 and W3 all qualified; real read/write scope audit, unique receipt, idempotent repeat | BLOCKED_ON_W3 |
+| W5 / consumer B parity | Independently approved external consumer and separate receipt | Same pinned snapshot, two independently produced digests/semantic comparison; no ACL inference | BLOCKED_ON_W4 |
+| W6 / adversarial closure | Deny secrets, stale bases, malformed/injection attempts and repeated requests | Same-source native negatives, real no-bypass red canary, independent owner acceptance and contraction | BLOCKED_ON_W5 |
+
+**Minimum globally noncompensating acceptance:** source/owner path; full head and base SHA; native CI with nonzero collected tests; one relevant adversarial/RED-negative; independently reviewed exact head after last push with zero material findings; trustworthy required context; owner authorization; post-merge source receipt where applicable. If any element is absent, the verdict is `WITHHELD`, not `PASS`. The weighted closure rate stays NULL unless the complete child population and source-qualified deduplication are established.
+
+The topology below is a **promotion dependency view**, not a second Kahn implementation or an execution receipt. Offline implementation may happen in disjoint branches; **promotion** is strictly gated.
+
+```mermaid
+flowchart LR
+  W0[W0 Hub controlled admission] --> W1[W1 merged-source DoV]
+  W1 --> W2[W2 merged-source DoV]
+  W2 --> W4[W4 hosted publish and ingest]
+  W0 --> W4
+  IC3[W3 owner IC3 hosted attestation] --> W4
+  W4 --> W5[W5 consumer parity] --> W6[W6 adversarial closure]
+```
+
+**Disjoint runner rules:** use separate owner branches and one concern per commit; fix a first red in its owning lane, never in a successor. Refetch branch heads immediately before writing, abort on mismatch, preserve source SHA on test receipts, and do not mark a blocked or unreviewed task done. A branch push is P1; native proof + review is P2; merged source **plus bound post-merge validation** is P3.
+
+
 ### R2-W0: Control-plane re-open (pipeline-automation-hub), maps to IC0
 
 - [x] Re-open brief and control overlay written
@@ -65,7 +101,7 @@ Runtime workers added in R2 (none are crew): `CLAUDE_CODE_LOCAL`, `CLAUDE_DRIVE_
 - [x] `gmi.repo_snapshot.v1` manifest builder from an exact commit (raw blobs, no `.git`)
 - [x] `verify` recomputes git blob OIDs from the exported bytes
 - [x] Deterministic manifest digest; contract tests in CI
-- [x] P1 draft PR open (GBOGEB/GEMINI#38) · [ ] P2 · [ ] P3
+- [x] P1 branch/PR #38 · [x] Source merged (2026-11-08; `fbb34fba`) · [ ] P2 source/review reconciliation · [ ] P3 bound post-merge receipt
 
 ### R2-W2: Proposal ingest broker, dry run (GEMINI), maps to IC7 and IC8
 
@@ -74,7 +110,7 @@ Runtime workers added in R2 (none are crew): `CLAUDE_CODE_LOCAL`, `CLAUDE_DRIVE_
 - [x] Idempotency through the existing GMI batch ledger, reused as `gmi.broker_receipt`
 - [x] Emits a patch and a branch plan; pushes nothing
 - [x] Reconciled with the lane `OUT/` bundle return from GBOGEB/GEMINI#37 (`docs/bridge/LANES.md`): one ingest path per proposer type, not two
-- [x] P1 draft PR open (GBOGEB/GEMINI#40, stacked on #38) · [ ] P2 · [ ] P3
+- [x] P1 branch/PR #40 · [x] Source merged (2026-11-09; `3ee30f93`) · [ ] P2 source/review reconciliation · [ ] P3 bound post-merge receipt
 
 ### R2-W3: External auth habitat, owner only (GEMINI), maps to IC3 (the first red)
 
