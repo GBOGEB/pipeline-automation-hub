@@ -139,6 +139,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.sha }}
+          fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
@@ -176,6 +177,39 @@ jobs:
               print(f"| {r['repo']} | {moved} | {lv} | {p['tests']['py_untested']} -> {r['tests']['py_untested']} |"
                     f" {p['tests']['zero_case_files']} -> {r['tests']['zero_case_files']} |")
           PY
+      - name: Project the private-safe portfolio from the same weekly census
+        env:
+          JADE_PLANNING_SHA: 897298dc3ed1a45607121b205617d4c103e7b226
+        run: |
+          set -euo pipefail
+          P=mission-control/jade_temple/portfolio_readiness
+          python "$P/census_bridge.py" \
+            --census "$RUNNER_TEMP/DEVOPS_CENSUS_FRESH.json" \
+            --private-registry mission-control/gogreen/token_census/REGISTRY.json \
+            --require-count 21 \
+            --out "$RUNNER_TEMP/jade-portfolio-observation.json" \
+            --receipt "$RUNNER_TEMP/jade-portfolio-bridge-receipt.json"
+          python "$P/portfolio_readiness.py" \
+            --as-of "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --source-sha "$JADE_PLANNING_SHA" \
+            --observation "$RUNNER_TEMP/jade-portfolio-observation.json" \
+            --out "$RUNNER_TEMP/jade-portfolio-weekly"
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ["RUNNER_TEMP"])
+          receipt = json.loads((root / "jade-portfolio-bridge-receipt.json").read_text())
+          model = json.loads((root / "jade-portfolio-weekly/portfolio_readiness.json").read_text())
+          assert receipt["source_repos"] == 21 and receipt["merge_admission"] == "HOLD"
+          assert model["authority"]["current_point_release_readiness"] is None
+          assert model["authority"]["live_weighted_closure_rate"] is None
+          assert model["watch"]["enabled"] is False
+          print("## JADE weekly portfolio: read-only structural observation")
+          print(f"Top21 rows: {receipt['source_repos']}; private aggregate rows: {receipt['private_rows_masked']}")
+          print(f"Observed: {receipt['observed_at_utc']}; source census SHA256: {receipt['source_digest_sha256']}")
+          print("**No native checks, weighted closure, owner release or current gate PASS is inferred.**")
+          print("Download the HTML cockpit, JSON, CSV, DAG and watch proposal from this run's artifacts.")
+          PY
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: jade-devops-census-fresh-${{ github.sha }}-${{ github.run_id }}
@@ -183,6 +217,9 @@ jobs:
             ${{ runner.temp }}/DEVOPS_CENSUS_FRESH.json
             ${{ runner.temp }}/DEVOPS_OBJECTS_FRESH.json
             ${{ runner.temp }}/fetch.jsonl
+            ${{ runner.temp }}/jade-portfolio-observation.json
+            ${{ runner.temp }}/jade-portfolio-bridge-receipt.json
+            ${{ runner.temp }}/jade-portfolio-weekly/
           retention-days: 35
           if-no-files-found: error
       - name: Open one issue when the scheduled refresh goes red
