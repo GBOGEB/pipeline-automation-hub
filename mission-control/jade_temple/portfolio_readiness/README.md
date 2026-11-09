@@ -137,6 +137,10 @@ The default caps are two candidate workers and one candidate per cluster. The ca
 6. **Owner decision:** record the concrete merge/release decision and read back its result.
 7. **CONTROL:** compare matched post-merge observations and retain regression/failure identity.
 
+The native-proof join covers the whole selected portfolio slice. Every selected lane must have PASS for all required exact-head native proof before the join can complete. A held lane or missing, failed or skipped required proof keeps the join HOLD even when its evidence inventory is complete. This portfolio fan-in does not block disjoint repository-local repairs from progressing through their own native proof, review, admission and owner decisions.
+
+An owner decision may record acceptance, denial or deferral. Downstream CONTROL additionally requires both an accepted owner action and read-back evidence of the actual merge/release, bound to the admitted candidate and resulting source identity. These are separate predicates: an explicit decision or acceptance alone cannot qualify post-merge CONTROL. Denial, deferral or absent read-back keeps CONTROL HOLD.
+
 The DAG contains dependencies inside one pulse. Feedback belongs to the next pulse. A CONTROL-to-plan learning edge is temporal and does not create a shortcut through current admission gates.
 
 ### DOV and DOD
@@ -222,7 +226,7 @@ These are reusable acceptance checks; current completion belongs in source-bound
 ### Next source-owner improvements
 
 - [ ] Reconcile Gate12 frozen-snapshot selection with the intended latest-pulse view in the Gate12 owner.
-- [ ] Add an authenticated execution-receipt adapter through the existing RF matrix contract before accepting DONE.
+- [ ] Add an authenticated execution-receipt adapter through the existing RF matrix contract before accepting DONE. Independently validate the native-proof join's PASS for every selected required exact-head result, the accepted owner action, and read-back evidence of its actual merge/release. Preserve inventory completeness separately; missing proof, denial, deferral or missing read-back must retain the applicable join or CONTROL HOLD.
 - [ ] Complete source-qualified root/child discovery and deduplication before a weighted closure rate.
 - [ ] Add complete same-method workflow-history receipts and queue/recovery comparison.
 - [ ] Bind experimental-design receipts and actual pairwise outcomes before numerical PCA/BT promotion.
