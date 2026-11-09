@@ -117,7 +117,7 @@ def source_hashes(jade: Path) -> dict:
     files.update(OWNERS.values())
     files.update(TRANSITIVE_INPUTS)
     files.update("mission-control/jade_temple/portfolio_readiness/" + p
-                 for p in ("portfolio_readiness.py", "dashboard.py"))
+                 for p in ("portfolio_readiness.py", "dashboard.py", "census_bridge.py"))
     result = {}
     for rel in sorted(files):
         path = jade / rel.removeprefix("mission-control/jade_temple/") if rel.startswith(
