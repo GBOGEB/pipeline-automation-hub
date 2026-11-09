@@ -14,7 +14,7 @@ on:
       - 'mission-control/jade_temple/data/TOP21_PORTFOLIO.json'
       - 'mission-control/gogreen/token_census/REGISTRY.json'
       - 'mission-control/issue_rank/*.py'
-      - 'mission-control/issue_rank/browser-qa-requirements.txt'
+      - 'mission-control/jade_temple/sprint/requirements-optional.txt'
       - 'mission-control/qps-triage-ultra/issue-expedition/triway_burndown.py'
       - 'mission-control/federation-atlas/flightdeck/pulses/mip_statistical_qualification.py'
       - 'mission-control/federation-atlas/flightdeck/pulses/mip_provider_execution.py'
@@ -35,7 +35,6 @@ jobs:
     env:
       PORTFOLIO_EXPECTED_SHA: ${{ github.event.pull_request.head.sha }}
       PORTFOLIO_PLANNING_SHA: 897298dc3ed1a45607121b205617d4c103e7b226
-      PORTFOLIO_QA_OUT: ${{ runner.temp }}/jade-portfolio-readiness
     steps:
       - name: Checkout the exact candidate source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -47,6 +46,7 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$PORTFOLIO_EXPECTED_SHA"
+          echo "PORTFOLIO_QA_OUT=$RUNNER_TEMP/jade-portfolio-readiness" >> "$GITHUB_ENV"
       - name: Set up Python
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
@@ -76,8 +76,7 @@ jobs:
       - name: Install the existing pinned browser QA dependency
         run: |
           set -euo pipefail
-          python -m pip install --disable-pip-version-check \
-            -r mission-control/issue_rank/browser-qa-requirements.txt
+          python -m pip install --disable-pip-version-check -c mission-control/jade_temple/sprint/requirements-optional.txt playwright
           python -m playwright install --with-deps chromium
       - name: Verify offline responsive UI and inert hostile text
         run: |

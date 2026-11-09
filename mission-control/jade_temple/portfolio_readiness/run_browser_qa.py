@@ -211,7 +211,7 @@ def main(argv=None) -> int:
                 hostile["plan"]["tasks"][0]["title"] = marker
                 hostile["plan"]["tasks"][0]["t0_ref"] = "javascript:window.__portfolioInjected=true"
                 hostile_path = args.out / "inert-text-fixture.html"
-                hostile_path.write_text(render(hostile), encoding="utf-8")
+                hostile_path.write_text(render(hostile), encoding="utf-8", newline="\n")
                 context = browser.new_context(viewport=VIEWPORTS["desktop"], offline=True,
                                               service_workers="block")
                 page = context.new_page()
@@ -241,7 +241,7 @@ def main(argv=None) -> int:
         receipt["failure"] = {"type": type(exc).__name__, "message": str(exc)}
     receipt["checks_total"] = len(receipt["checks"])
     (args.out / "browser-qa-receipt.json").write_text(
-        json.dumps(receipt, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+        json.dumps(receipt, sort_keys=True, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({key: receipt.get(key) for key in
                      ("status", "checks_total", "native_execution", "failure")}))
     return 0 if receipt["status"] == "PASS" else 1
