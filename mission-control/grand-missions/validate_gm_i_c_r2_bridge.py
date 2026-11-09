@@ -32,6 +32,79 @@ REQUIRED_NONCLAIMS = {
 BROKER_FUNCTIONS = {
     "HOLD", "READ", "PUBLISH", "REVIEW", "UPDATE", "FIX", "COMMIT", "DISJOINTED_COMMIT", "DISJOINTED_CENSUS",
 }
+# Minimum dependency graph. It is pinned here so that editing a wave's state or its
+# depends_on list in the YAML cannot erase a blocker (DO_NOT_START_A_BLOCKED_WAVE_BEFORE_ITS_BLOCKER_IS_PASS).
+REQUIRED_DEPENDENCIES = {
+    "R2-W4": {"R2-W3"},
+    "R2-W5": {"R2-W4"},
+    "R2-W6": {"R2-W5"},
+}
+RECEIPT_DIR = "mission-control/grand-missions/"
+
+
+def load_repo_yaml(rel_path: str):
+    path = (REPO / rel_path).resolve()
+    require(path.is_relative_to((REPO / RECEIPT_DIR).resolve()), f"receipt outside {RECEIPT_DIR}: {rel_path}")
+    require(path.is_file(), f"referenced receipt missing: {rel_path}")
+    return load_yaml(path)
+
+
+def validate_postmerge_receipt(control: dict, wave: dict, ev: dict, receipt: dict) -> None:
+    """Cross-check a referenced post-merge DoV receipt against the wave's control evidence."""
+    wid = wave["id"]
+    source_sha = ev["postmerge_source_sha"]
+    require(isinstance(receipt, dict), f"{wid} post-merge receipt is not a mapping")
+    require(receipt.get("mission") == control["mission_id"], f"{wid} post-merge receipt mission mismatch")
+    require(receipt.get("reopen_id") == control["reopen_id"], f"{wid} post-merge receipt reopen_id mismatch")
+    require(receipt.get("wave") == wid, f"{wid} post-merge receipt is bound to wave {receipt.get('wave')}")
+    require(receipt.get("authority_transfer") is False, f"{wid} post-merge receipt transfers authority")
+    require(receipt.get("formal_credit_delta") == 0, f"{wid} post-merge receipt claims credit")
+
+    pub = receipt.get("publication") or {}
+    require(pub.get("repository") == wave["repo"], f"{wid} post-merge receipt publication repo mismatch")
+    require(pub.get("pr") == ev.get("pr"), f"{wid} post-merge receipt PR mismatch")
+    require(pub.get("merge_sha") == ev.get("merge_sha"), f"{wid} post-merge receipt merge SHA mismatch")
+
+    src = receipt.get("validated_source") or {}
+    require(src.get("repository") == wave["repo"], f"{wid} post-merge receipt validated-source repo mismatch")
+    require(src.get("commit_sha") == source_sha, f"{wid} post-merge receipt validated-source SHA mismatch")
+    require(src.get("contains_merge") == ev.get("merge_sha"), f"{wid} post-merge receipt validated source does not contain the merge")
+
+    hosted = receipt.get("hosted_postmerge_runs") or {}
+    require(hosted.get("head_sha") == source_sha, f"{wid} post-merge receipt hosted-run head mismatch")
+    runs = hosted.get("runs") or []
+    require(bool(runs), f"{wid} post-merge receipt lists no hosted runs")
+    for run in runs:
+        require(isinstance(run.get("run_id"), int), f"{wid} post-merge receipt hosted run without a run id")
+        require(run.get("conclusion") == "success", f"{wid} post-merge receipt hosted run {run.get('run_id')} not success")
+
+    dogfood = receipt.get("dogfood_against_real_repo")
+    if dogfood is not None:
+        require(dogfood.get("head_sha") == source_sha, f"{wid} post-merge receipt dogfood head mismatch")
+
+    if wave["state"] != DONE_STATE:
+        require(str(receipt.get("status", "")).startswith("CANDIDATE"), f"{wid} not PASS but post-merge receipt is not a CANDIDATE")
+
+
+def validate_evidence(control: dict, wave: dict, receipt_loader) -> None:
+    """Evidence is checked whenever present, not only for PASS waves."""
+    wid = wave["id"]
+    ev = wave.get("evidence")
+    if ev is None:
+        return
+    require(isinstance(ev, dict), f"{wid} evidence must be a mapping")
+    if "pr" in ev:
+        require(isinstance(ev["pr"], int), f"{wid} evidence PR must be an integer")
+    if "merge_sha" in ev:
+        require(bool(SHA40.match(str(ev["merge_sha"]))), f"{wid} evidence merge SHA must be a full 40-hex SHA")
+    has_receipt = "postmerge_dov_candidate" in ev
+    has_source = "postmerge_source_sha" in ev
+    require(has_receipt == has_source, f"{wid} post-merge receipt and source SHA must be declared together")
+    if not has_receipt:
+        return
+    require(isinstance(ev.get("pr"), int) and "merge_sha" in ev, f"{wid} post-merge receipt needs evidence PR and merge SHA")
+    require(bool(SHA40.match(str(ev["postmerge_source_sha"]))), f"{wid} post-merge source SHA must be a full 40-hex SHA")
+    validate_postmerge_receipt(control, wave, ev, receipt_loader(ev["postmerge_dov_candidate"]))
 
 
 class Fail(SystemExit):
@@ -47,7 +120,9 @@ def load_yaml(path: Path):
     return yaml.safe_load(path.read_text(encoding="utf-8"))
 
 
-def validate(control: dict, baseline: dict, crew: dict, brief_text: str, hosted_ic3_attestor=None) -> dict:
+def validate(
+    control: dict, baseline: dict, crew: dict, brief_text: str, hosted_ic3_attestor=None, receipt_loader=load_repo_yaml
+) -> dict:
     require(control.get("mission_id") == "GM-I-C", "overlay mission id must be GM-I-C")
     require(control.get("parent") == "GM-I", "overlay parent must remain GM-I")
     require(control.get("authority_transfer") is False, "authority transfer must remain false")
@@ -82,6 +157,13 @@ def validate(control: dict, baseline: dict, crew: dict, brief_text: str, hosted_
         unknown = set(wave["crew"]) - crew_ids
         require(not unknown, f"{wid} assigns crew outside the v0.1 roster: {sorted(unknown)}")
         require(bool(wave.get("dod")), f"{wid} has no definition of done")
+        deps = wave.get("depends_on")
+        require(isinstance(deps, list), f"{wid} must declare depends_on (use [] for none)")
+        for dep in deps:
+            require(dep in wave_ids and wave_ids.index(dep) < wave_ids.index(wid), f"{wid} depends on unknown or later wave {dep}")
+        missing_deps = REQUIRED_DEPENDENCIES.get(wid, set()) - set(deps)
+        require(not missing_deps, f"{wid} drops pinned dependency {sorted(missing_deps)}")
+        validate_evidence(control, wave, receipt_loader)
         state = wave["state"]
         states[wid] = state
         if state == DONE_STATE:
@@ -99,6 +181,7 @@ def validate(control: dict, baseline: dict, crew: dict, brief_text: str, hosted_
         elif state.startswith("BLOCKED_ON_R2-W"):
             blocker = state.removeprefix("BLOCKED_ON_")
             require(blocker in wave_ids and wave_ids.index(blocker) < wave_ids.index(wid), f"{wid} blocked on unknown or later wave {blocker}")
+            require(blocker in deps, f"{wid} blocked on {blocker} which is not in its depends_on")
         else:
             require(state in OPEN_STATES, f"{wid} has unknown state {state}")
         reserve_used = set(wave["crew"]) - active_ids
@@ -107,6 +190,15 @@ def validate(control: dict, baseline: dict, crew: dict, brief_text: str, hosted_
 
     for wave in waves:
         state = wave["state"]
+        unpassed = [d for d in wave["depends_on"] if states[d] != DONE_STATE]
+        if unpassed:
+            # Any state other than BLOCKED_ON_<an unpassed dependency> would start or plan the
+            # wave past its blocker, so PLANNED, IN_PROGRESS, BLOCKED_ON_OWNER and PASS all fail.
+            require(
+                state in {f"BLOCKED_ON_{d}" for d in unpassed},
+                f"{wave['id']} is {state} but dependency {unpassed[0]} is not PASS; it must stay BLOCKED_ON_{unpassed[0]}",
+            )
+            continue
         if state.startswith("BLOCKED_ON_R2-W"):
             continue
         if state == DONE_STATE:

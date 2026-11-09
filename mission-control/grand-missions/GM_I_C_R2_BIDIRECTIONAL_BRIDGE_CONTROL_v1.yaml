@@ -64,6 +64,7 @@ waves:
     name: CONTROL_PLANE_REOPEN
     repo: GBOGEB/pipeline-automation-hub
     maps_to_gates: [IC0_REGISTER]
+    depends_on: []
     crew: [U01, U02, U08]
     owner_action_required: false
     state: IN_PROGRESS
@@ -76,6 +77,7 @@ waves:
     name: SNAPSHOT_PUBLISH_CONTRACT_OFFLINE
     repo: GBOGEB/GEMINI
     maps_to_gates: [IC2_BRIDGE]
+    depends_on: []
     crew: [U02, S05, U06]
     owner_action_required: false
     state: IN_PROGRESS
@@ -90,6 +92,7 @@ waves:
     name: PROPOSAL_INGEST_BROKER_DRY_RUN
     repo: GBOGEB/GEMINI
     maps_to_gates: [IC7_ROUNDTRIP, IC8_ADVERSARIAL]
+    depends_on: []
     crew: [U02, S05, S06, U06]
     owner_action_required: false
     state: IN_PROGRESS
@@ -110,6 +113,7 @@ waves:
     name: EXTERNAL_AUTH_HABITAT_OWNER_SETUP
     repo: GBOGEB/GEMINI
     maps_to_gates: [IC3_AUTH]
+    depends_on: []
     crew: [S03, S06, U06]
     owner_action_required: true
     state: BLOCKED_ON_OWNER
@@ -124,6 +128,7 @@ waves:
     name: HOSTED_PUBLISH_AND_INGEST_WORKFLOWS
     repo: GBOGEB/GEMINI
     maps_to_gates: [IC2_BRIDGE, IC7_ROUNDTRIP]
+    depends_on: [R2-W3]
     crew: [S03, U04, U06]
     owner_action_required: false
     state: BLOCKED_ON_R2-W3
@@ -136,6 +141,7 @@ waves:
     name: CONSUMER_B_CLAUDE_AND_PARITY
     repo: GBOGEB/GEMINI
     maps_to_gates: [IC5_CONSUMER_B, IC6_PARITY]
+    depends_on: [R2-W4]
     crew: [S01, S06, U05]
     owner_action_required: true
     state: BLOCKED_ON_R2-W4
@@ -147,6 +153,7 @@ waves:
     name: ADVERSARIAL_REPEAT_AND_CONTROL
     repo: GBOGEB/GEMINI
     maps_to_gates: [IC8_ADVERSARIAL, IC9_CONTROL]
+    depends_on: [R2-W5]
     crew: [U01, U06, S03]
     owner_action_required: false
     state: BLOCKED_ON_R2-W5
