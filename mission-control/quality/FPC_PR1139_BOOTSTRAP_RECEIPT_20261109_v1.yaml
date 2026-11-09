@@ -1,0 +1,52 @@
+schema: missioncontrol.fpc.pr1139.bootstrap_receipt.v1
+as_of: '2026-11-09T17:55:59+01:00'
+parent_pr: GBOGEB/pipeline-automation-hub#1139
+classification: CONTROLLER_BOOTSTRAP_FIX_FORWARD
+policy: mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json#controller_maintenance
+observed_finding:
+  id: CODEX_COMPLETION_NOT_BOUND_TO_EXACT_HEAD_CODE_REVIEW_ENTRY
+  effect: gate could read Codex completion from a summary comment that did not belong to the exact PR head
+  source: edit history of the Codex summary comment on GBOGEB/pipeline-automation-hub#1137 (two false passes replayed)
+repair:
+  primary_source: codex-review-state:v1 JSON, code_review.commit_sha == full head SHA and status == completed
+  fallback_source: single Code Review table row, only when the JSON is absent
+  fail_closed_on:
+    - unparseable codex-review-state JSON
+    - more than one codex-review-state JSON block
+    - missing code_review entry
+    - zero or more than one Code Review row
+  changed_paths:
+    - scripts/first_pass_closure_gate.py
+    - scripts/tests/test_first_pass_closure_gate.py
+  regression_tests_added: 12
+bootstrap_acceptance:
+  merged_head: 5ae7c600ae71a87e09f97c7c168e416c3c4a0fec
+  exact_head_proof_run: 42655180332
+  exact_head_proof_conclusion: success
+  exact_head_codex_review_complete: true
+  codex_review_commit_sha: 5ae7c600ae71a87e09f97c7c168e416c3c4a0fec
+  material_p1_p2_findings: 0
+  own_gate_run: 42655223513
+  own_gate_reason: CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP
+  ordinary_fpc_self_certification: forbidden
+merge:
+  controller_merge: 401c57316197c81e910f0b3da7ea7322e1f109fc
+  method: squash
+  merged_by: GBOGEB
+  merged_at: '2026-11-09T16:55:59Z'
+  mechanism: owner-added temporary ruleset bypass on ruleset 25789280, used once, then removed
+  ruleset_bypass_added: '2026-11-09T16:55:21Z'
+  ruleset_rule_suite_result: bypass
+  ruleset_bypass_removed: '2026-11-09T16:56:22Z'
+  verified_after_removal:
+    bypass_actors: []
+    current_user_can_bypass: never
+external_boundary:
+  observed: GitHub scheduled brownout of the default pull_request_target protection for public repositories
+  window_end: '2026-11-09T18:00:00Z'
+  effect: first-pass-closure runs triggered by pull_request_target ended in startup_failure from 2026-11-09T16:28:46Z; pull_request_review and workflow_run triggers still started
+  owner_action_required: explicitly allow pull_request_target in an Actions event policy before the default protection becomes permanent, or the required gate will not start on pull_request_target
+  guidance: https://gh.io/securely-using-pull_request_target#default-policy-for-pull_request_target
+post_merge_canary_required: true
+authority_transfer: false
+formal_credit_delta: 0
