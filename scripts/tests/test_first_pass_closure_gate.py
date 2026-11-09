@@ -96,8 +96,9 @@ def mapping(
     commit_authors=("GBOGEB",),
     inline_findings=(),
     resolved_ids=(),
+    summary_body=None,
 ):
-    summary = f"""<!-- codex-pull-request-review-summary -->
+    summary = summary_body if summary_body is not None else f"""<!-- codex-pull-request-review-summary -->
 | Review | Status | Commit |
 | --- | --- | --- |
 | Code Review | {'**Completed**' if completed else '**Running**'} | `{HEAD[:7]}` |
@@ -462,6 +463,164 @@ class TestFirstPassClosureGate(unittest.TestCase):
                              for p in rule["allowed_path_patterns"]))
         self.assertEqual(policy["codex_contract"]["blocking_priorities"], ["P0", "P1"])
 
+
+# Heads of GBOGEB/pipeline-automation-hub#1137, where the gate passed at 2026-11-08T23:19:10Z
+# while the Codex code review of 9a06106 was still running.
+PR1137_HEAD = "9a0610679cb5a5d498d10746118abbea3eb259ea"
+PR1137_OLD = "f735e3116781f896551df5d1acd9dbf0467d5998"
+CODEX_LOGIN = "chatgpt-codex-connector"
+
+
+def codex_summary(code=("running", HEAD), security=None, state_json=True):
+    """A Codex summary comment in the format Codex posted on #1137 (state JSON plus table).
+
+    code / security: (status, commit_sha) with status "running" or "completed", or None.
+    """
+    def entry(review):
+        if review is None:
+            return {"commit_sha": None, "has_any_findings": None,
+                    "has_unresolved_findings": None, "status": None}
+        status, sha = review
+        done = status == "completed"
+        return {"commit_sha": sha, "has_any_findings": False if done else None,
+                "has_unresolved_findings": False if done else None, "status": status}
+
+    def row(label, review):
+        status, sha = review
+        when = '<relative-time datetime="2026-11-08T23:18:18Z">2026-11-08T23:18:18Z</relative-time>'
+        cell = f"✅ **Completed** {when}" if status == "completed" else f"🔄 **Running** since {when}"
+        return f"| {label} | {cell} | `{sha[:7]}` | Manual request |"
+
+    state = {"code_review": entry(code), "security_review": entry(security)}
+    lines = ["<!-- codex-pull-request-review-summary -->"]
+    if state_json:
+        lines.append("<!-- codex-review-state:v1 " + json.dumps(state, separators=(",", ":")) + " -->")
+    lines += [
+        "<details>",
+        "<summary><strong>Codex Review Summary</strong>: 🔄 Running</summary>",
+        "",
+        "This comment shows the latest Codex review activity on this pull request.",
+        "",
+        "| Review | Status | Commit | Review trigger |",
+        "| --- | --- | --- | --- |",
+    ]
+    if code is not None:
+        lines.append(row("📝 **Code Review**", code))
+    if security is not None:
+        lines.append(row("🔒 **Security Review**", security))
+    lines += ["", "</details>"]
+    return "\n".join(lines) + "\n"
+
+
+def summary_comments(body, login="chatgpt-codex-connector[bot]", cid=6728451856):
+    return [{"id": cid, "body": body, "user": {"login": login}}]
+
+
+class TestCodexSummaryExactHeadCodeReview(unittest.TestCase):
+    """Completion is read from the Code Review entry for the exact head, never from another row."""
+
+    def completed(self, body, head):
+        return fpc.review_is_completed_for_head(summary_comments(body), head, CODEX_LOGIN)
+
+    def test_pr1137_running_code_review_plus_old_head_security_completed_is_not_completed(self):
+        # The body the gate read at 23:19:10Z: the old check took "**Completed**" from the
+        # security row (old head) and the head prefix from the code-review row (running).
+        body = codex_summary(code=("running", PR1137_HEAD), security=("completed", PR1137_OLD))
+        self.assertIn("**Completed**", body)
+        self.assertIn(f"`{PR1137_HEAD[:7]}`", body)
+        self.assertEqual(self.completed(body, PR1137_HEAD), (False, None))
+        # Same answer from the table-row fallback when the state JSON is absent.
+        body = codex_summary(code=("running", PR1137_HEAD), security=("completed", PR1137_OLD),
+                             state_json=False)
+        self.assertEqual(self.completed(body, PR1137_HEAD), (False, None))
+
+    def test_code_review_completed_on_head_is_completed(self):
+        body = codex_summary(code=("completed", PR1137_HEAD), security=("completed", PR1137_OLD))
+        self.assertEqual(self.completed(body, PR1137_HEAD), (True, 6728451856))
+
+    def test_code_review_completed_on_old_head_only_is_not_completed(self):
+        body = codex_summary(code=("completed", PR1137_OLD))
+        self.assertEqual(self.completed(body, PR1137_HEAD), (False, None))
+        # A security review completed on the head doesn't stand in for the code review.
+        body = codex_summary(code=("completed", PR1137_OLD), security=("completed", PR1137_HEAD))
+        self.assertEqual(self.completed(body, PR1137_HEAD), (False, None))
+
+    def test_without_state_json_the_code_review_row_decides(self):
+        cases = [
+            (("completed", PR1137_HEAD), ("running", PR1137_OLD), True),
+            (("running", PR1137_HEAD), ("completed", PR1137_HEAD), False),
+            (("completed", PR1137_OLD), ("completed", PR1137_HEAD), False),
+        ]
+        for code, security, expected in cases:
+            with self.subTest(code=code, security=security):
+                body = codex_summary(code=code, security=security, state_json=False)
+                self.assertNotIn("codex-review-state", body)
+                self.assertEqual(self.completed(body, PR1137_HEAD)[0], expected)
+
+    def test_row_fallback_fails_closed_without_exactly_one_code_review_row(self):
+        body = codex_summary(code=None, security=("completed", PR1137_HEAD), state_json=False)
+        self.assertEqual(self.completed(body, PR1137_HEAD), (False, None))
+        twice = codex_summary(code=("completed", PR1137_HEAD), state_json=False)
+        twice = twice.replace("| Manual request |", "| Manual request |\n" + twice.splitlines()[-3])
+        self.assertEqual(twice.count("**Code Review**"), 2)
+        self.assertEqual(self.completed(twice, PR1137_HEAD), (False, None))
+
+    def test_state_json_wins_over_a_completed_row(self):
+        body = codex_summary(code=("running", PR1137_HEAD))
+        body = body.replace("🔄 **Running** since", "✅ **Completed**")
+        self.assertIn("**Completed**", body)
+        self.assertEqual(self.completed(body, PR1137_HEAD), (False, None))
+
+    def test_malformed_or_ambiguous_state_json_fails_closed(self):
+        good = codex_summary(code=("completed", PR1137_HEAD))
+        state_line = good.splitlines()[1]
+        broken = good.replace(state_line, "<!-- codex-review-state:v1 {\"code_review\": -->")
+        no_code = good.replace(state_line, '<!-- codex-review-state:v1 {"code_review":null} -->')
+        doubled = good.replace(state_line, state_line + "\n" + state_line)
+        for name, body in (("broken", broken), ("no_code", no_code), ("doubled", doubled)):
+            with self.subTest(name):
+                self.assertEqual(self.completed(body, PR1137_HEAD), (False, None))
+
+    def test_state_json_needs_the_full_head_sha(self):
+        body = codex_summary(code=("completed", PR1137_HEAD[:7] + "0" * 33))
+        self.assertEqual(self.completed(body, PR1137_HEAD), (False, None))
+
+    def test_summary_from_another_login_is_ignored(self):
+        body = codex_summary(code=("completed", PR1137_HEAD))
+        comments = summary_comments(body, login="someone-else")
+        self.assertEqual(fpc.review_is_completed_for_head(comments, PR1137_HEAD, CODEX_LOGIN), (False, None))
+
+    def test_pr1137_summary_edit_history_passes_only_after_the_head_code_review_completes(self):
+        # The seven versions of the #1137 summary comment (GitHub userContentEdits), oldest first.
+        history = [
+            ("23:08:26", ("running", PR1137_OLD), None),
+            ("23:11:10", ("completed", PR1137_OLD), None),
+            ("23:13:00", ("running", PR1137_OLD), None),
+            ("23:13:10", ("running", PR1137_OLD), ("running", PR1137_OLD)),
+            ("23:15:31", ("running", PR1137_OLD), ("completed", PR1137_OLD)),
+            ("23:18:18", ("running", PR1137_HEAD), ("completed", PR1137_OLD)),
+            ("23:20:36", ("completed", PR1137_HEAD), ("completed", PR1137_OLD)),
+        ]
+        expected = {
+            PR1137_OLD: {"23:11:10"},
+            PR1137_HEAD: {"23:20:36"},
+        }
+        for head, passing in expected.items():
+            for edited_at, code, security in history:
+                with self.subTest(head=head[:7], edited_at=edited_at):
+                    body = codex_summary(code=code, security=security)
+                    self.assertEqual(self.completed(body, head)[0], edited_at in passing)
+
+    def test_gate_rejects_running_head_review_beside_completed_old_security_review(self):
+        body = codex_summary(code=("running", HEAD), security=("completed", "b" * 40))
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD"):
+            fpc.evaluate(FakeClient(mapping(summary_body=body)), REPO, PR, POLICY)
+
+    def test_gate_passes_when_the_head_code_review_completed(self):
+        body = codex_summary(code=("completed", HEAD), security=("completed", "b" * 40))
+        receipt = fpc.evaluate(FakeClient(mapping(summary_body=body)), REPO, PR, POLICY)
+        self.assertEqual(receipt["status"], fpc.PASS_STATUS)
+        self.assertEqual(receipt["codex_summary_comment_id"], 99)
 
 
 if __name__ == "__main__":

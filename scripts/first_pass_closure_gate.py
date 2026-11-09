@@ -219,17 +219,55 @@ def codex_login(policy: dict[str, Any]) -> str:
     return str(value)
 
 
+CODEX_STATE_TAG = "codex-review-state:v1"
+CODEX_STATE_RE = re.compile(r"<!--\s*codex-review-state:v1\s*(\{.*?\})\s*-->", re.S)
+CODEX_ROW_COMMIT_RE = re.compile(r"`([0-9a-f]{7,40})`")
+
+
+def code_review_completed_on_head(body: str, head_sha: str) -> bool:
+    """True only when the summary's Code Review entry is completed on the exact head.
+
+    The machine-readable ``codex-review-state:v1`` JSON decides. The ``Code Review`` table row
+    is read only when that JSON is absent. Other entries (the security review) never count, so
+    a completed review of an older head can't lend its status to a running review of this one.
+    Malformed or ambiguous input fails closed, including a state tag that doesn't parse.
+    """
+    if CODEX_STATE_TAG in body:
+        states = CODEX_STATE_RE.findall(body)
+        if len(states) != 1:
+            return False
+        try:
+            state = json.loads(states[0])
+        except json.JSONDecodeError:
+            return False
+        code = state.get("code_review") if isinstance(state, dict) else None
+        return (
+            isinstance(code, dict)
+            and code.get("commit_sha") == head_sha
+            and code.get("status") == "completed"
+        )
+    rows = []
+    for line in body.splitlines():
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) >= 3 and re.sub(r"[^A-Za-z ]", "", cells[0]).strip() == "Code Review":
+            rows.append(cells)
+    if len(rows) != 1:
+        return False
+    status, commit = rows[0][1], rows[0][2]
+    match = CODEX_ROW_COMMIT_RE.fullmatch(commit)
+    return "**Completed**" in status and bool(match) and head_sha.startswith(match.group(1))
+
+
 def review_is_completed_for_head(
     comments: list[dict[str, Any]], head_sha: str, expected_login: str
 ) -> tuple[bool, int | None]:
-    prefix = head_sha[:7]
     summaries = [c for c in comments if CODEX_SUMMARY_MARKER in (c.get("body") or "")]
     for comment in reversed(summaries):
         body = comment.get("body") or ""
         login = ((comment.get("user") or comment.get("author") or {}).get("login"))
         if not login_matches(login, expected_login):
             continue
-        if f"`{prefix}`" in body and "**Completed**" in body:
+        if code_review_completed_on_head(body, head_sha):
             return True, comment.get("id")
     return False, None
 
