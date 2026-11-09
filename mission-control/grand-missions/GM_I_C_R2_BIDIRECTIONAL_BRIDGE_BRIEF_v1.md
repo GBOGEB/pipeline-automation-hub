@@ -111,6 +111,7 @@ flowchart LR
 - [x] Emits a patch and a branch plan; pushes nothing
 - [x] Reconciled with the lane `OUT/` bundle return from GBOGEB/GEMINI#37 (`docs/bridge/LANES.md`): one ingest path per proposer type, not two
 - [x] P1 branch/PR #40 · [x] Source merged (2026-11-09; `3ee30f93`) · [ ] P2 source/review reconciliation · [ ] P3 bound post-merge receipt
+- Post-merge DoV candidate on GEMINI `main` `f95bad05`: `GM_I_C_R2_W2_POSTMERGE_DOV_RECEIPT_v1.yaml` (hosted push runs green incl. Py 3.9 gate, 53/53 local broker + boundary tests, real-repo dogfood CLEAN plan and stale-base CONFLICT). Not P2 or P3 until independent review and owner admission.
 
 ### R2-W3: External auth habitat, owner only (GEMINI), maps to IC3 (the first red)
 

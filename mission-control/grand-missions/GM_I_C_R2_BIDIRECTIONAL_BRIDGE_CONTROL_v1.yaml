@@ -94,6 +94,11 @@ waves:
     owner_action_required: false
     state: IN_PROGRESS
     pulses: {P1: GBOGEB/GEMINI#40, P2: PENDING, P3: PENDING}
+    evidence:
+      pr: 40
+      merge_sha: 3ee30f9364c2f45687b83ad2f2b642ccf6a9b4b4
+      postmerge_dov_candidate: mission-control/grand-missions/GM_I_C_R2_W2_POSTMERGE_DOV_RECEIPT_v1.yaml
+      postmerge_source_sha: f95bad05bf3a063daab8b27b190307e589b7b1c3
     dod:
       - PROPOSAL_IS_A_PROFILE_OF_GMI_PACKAGE_CONTRACT_V1
       - BASE_BLOB_OPTIMISTIC_CONCURRENCY_CHECK
