@@ -355,7 +355,8 @@
         "Run meaningful negative tests and document test/coverage populations; missing or skipped is not PASS."
       ],
       "dod": [
-        "Every selected source lane is verified or explicitly held with a source-owned next action.",
+        "Every selected source lane has PASS for all required exact-head native proof before this join can complete.",
+        "A held lane or missing, failed or skipped required proof keeps this join HOLD even when the evidence inventory is complete.",
         "One repository's success cannot compensate for another repository's missing proof."
       ],
       "target_repo": "GBOGEB/pipeline-automation-hub"
@@ -429,10 +430,11 @@
       "intent": "Present concrete qualified candidates and release assets to the appropriate repository owner after all preceding gates.",
       "dov": [
         "Confirm owner intent, final candidate SHA, source tag/version, assets, publication target and rollback plan.",
-        "Read back any owner-performed merge/release before changing the recorded state."
+        "Record acceptance, denial or deferral explicitly; separately read back any actual owner-performed merge/release and bind it to the admitted candidate and resulting source identity."
       ],
       "dod": [
-        "Owner decision is explicit and source bound.",
+        "Owner decision is explicit and source bound; recording denial or deferral does not qualify downstream CONTROL.",
+        "CONTROL remains HOLD until both an accepted owner action and read-back evidence of its actual merge/release are independently verified.",
         "J4 candidate readiness remains distinct from J5 released and from downstream engineering acceptance."
       ],
       "target_repo": "GBOGEB/pipeline-automation-hub"
@@ -455,10 +457,12 @@
       "title": "Observe comparable post-merge CONTROL",
       "intent": "Use the existing pulse owner to compare admitted source, native execution and recovery behavior over repeated matched observations.",
       "dov": [
+        "Require an accepted owner action and read-back evidence of its actual merge/release as separate predicates, bound to the admitted candidate and resulting source identity.",
         "Verify source, cohort, instrument version, denominator and observation independence before calculating deltas.",
         "Preserve negative evidence and separate proof acquisition, actual closure, scope growth and regression."
       ],
       "dod": [
+        "Denial, deferral or acceptance without actual merge/release read-back keeps CONTROL HOLD.",
         "Repeated qualifying observations satisfy the owner-approved CONTROL criterion.",
         "Scaling remains held while recurrence, missing evidence or unmatched populations persist."
       ],
