@@ -329,7 +329,7 @@ class CanonicalIntegrationTests(unittest.TestCase):
             (root / "data/ROLLING5_PULSES.json").write_text(json.dumps({"pulses": [{
                 "id": "P1", "observed_date": "2026-11-04", "snapshot": "data/pulse.json",
                 "snapshot_sha256": hashlib.sha256(data).hexdigest(),
-            }]}))
+            }]}), encoding="utf-8", newline="\n")
             self.assertEqual("P1", portfolio.history_view(root, AT)[0]["id"])
             (root / "data/pulse.json").write_bytes(data + b"\n")
             with self.assertRaisesRegex(ValueError, "snapshot drift"):
