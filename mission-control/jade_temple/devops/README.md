@@ -10,6 +10,7 @@ EXPAND/SUPPORT lanes. Design, maturity model and the deploy/production reference
 | `lifecycle.py` | Stages, SIPOC, probes, L0–L5 ladder, formalization (pure functions) |
 | `workflows.py` | Workflow parser, job needs-DAG, lifecycle signals, deploy contract DP1–DP10, `lint` CLI |
 | `census.py` | `fetch` (blobless git), `scan` (exact-head evidence), `check` (offline invariants) |
+| `wddd.py` | ISO week-date codes (`2026-w46MON`), week key (`2026-W46`), 13-week quarter, workday spans; patterns in [WDDD_WEEK_CODES.md](WDDD_WEEK_CODES.md) |
 | `../data/DEVOPS_CENSUS_N9.json` | Committed fleet snapshot (`jade.devops.census.v1`) |
 | `../data/DEVOPS_OBJECTS_N9.json` | Object table: every Python module and test file with its git blob id |
 | `../../../.github/workflows/jade-reusable-ci.yml` | Reusable CI: exact SHA, zero-test guard, coverage floor, sha256 manifest |
