@@ -689,5 +689,22 @@ class PressureTargets(unittest.TestCase):
                     "--repo", "GBOGEB/CODEX", "--source-sha", SHA])
 
 
+class IsoWeekOwner(unittest.TestCase):
+    """iso_week() is a thin UTC wrapper over wddd.iso_week_key(), the one owner of the week key (AGENTS.md L4)."""
+
+    def test_iso_week_delegates_to_wddd(self):
+        self.assertEqual(Path(M.WD.__file__).resolve(), (HERE / "wddd.py").resolve())
+        for ts, key in (("2026-11-09T10:00:00Z", "2026-W46"), ("2027-01-03T23:59:59Z", "2026-W53"),
+                        ("2027-01-04T00:30:00+01:00", "2026-W53"),  # 23:30 UTC on Sunday 3 January
+                        ("2025-12-29T00:00:00Z", "2026-W01")):
+            with self.subTest(ts=ts):
+                self.assertEqual(M.iso_week(ts), key)
+                self.assertEqual(M.iso_week(ts), M.WD.iso_week_key(M.BQ.utc(ts)))
+
+    def test_no_second_week_key_implementation(self):
+        src = (HERE / "actions_metrics.py").read_text(encoding="utf-8")
+        self.assertNotIn("isocalendar", src)
+
+
 if __name__ == "__main__":
     unittest.main()
