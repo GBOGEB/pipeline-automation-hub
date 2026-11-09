@@ -116,5 +116,17 @@ class PortfolioCensusBridgeTest(unittest.TestCase):
             bridge.convert(census, reg)
 
 
+    def test_public_artifact_records_actual_bridge_source_hash(self):
+        spec = importlib.util.spec_from_file_location(
+            "jade_portfolio_readiness_lineage", SOURCE.parent / "portfolio_readiness.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        source_hashes = module.source_hashes(module.JADE)
+        key = "mission-control/jade_temple/portfolio_readiness/census_bridge.py"
+        self.assertIn(key, source_hashes)
+        self.assertEqual(source_hashes[key]["sha256"],
+                         hashlib.sha256(SOURCE.read_bytes()).hexdigest())
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -39,6 +39,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
           persist-credentials: false
       - name: Assert exact checkout
         env:
@@ -139,6 +140,10 @@ jobs:
           r = json.loads((root / "jade-portfolio-N11-receipt.json").read_text())
           m = json.loads((root / "jade-portfolio-N11-site/portfolio_readiness.json").read_text())
           assert r["source_repos"] == 21
+          import hashlib
+          path = "mission-control/jade_temple/portfolio_readiness/census_bridge.py"
+          assert m["source_binding"]["status"] == "BASELINE_INPUTS_MATCH"
+          assert m["source_hashes"][path]["sha256"] == hashlib.sha256(Path(path).read_bytes()).hexdigest()
           assert m["authority"]["current_point_release_readiness"] is None
           assert m["authority"]["live_weighted_closure_rate"] is None
           assert m["watch"]["enabled"] is False
@@ -233,6 +238,10 @@ jobs:
           receipt = json.loads((root / "jade-portfolio-bridge-receipt.json").read_text())
           model = json.loads((root / "jade-portfolio-weekly/portfolio_readiness.json").read_text())
           assert receipt["source_repos"] == 21 and receipt["merge_admission"] == "HOLD"
+          import hashlib
+          path = "mission-control/jade_temple/portfolio_readiness/census_bridge.py"
+          assert model["source_binding"]["status"] == "BASELINE_INPUTS_MATCH"
+          assert model["source_hashes"][path]["sha256"] == hashlib.sha256(Path(path).read_bytes()).hexdigest()
           assert model["authority"]["current_point_release_readiness"] is None
           assert model["authority"]["live_weighted_closure_rate"] is None
           assert model["watch"]["enabled"] is False
