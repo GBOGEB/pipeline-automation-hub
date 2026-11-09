@@ -1,0 +1,44 @@
+name: GM-I-C R2 Disjoint Matrix Negative Canaries
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/test_gm_i_c_r2_disjoint_matrix.py'
+      - 'mission-control/grand-missions/validate_gm_i_c_r2_bridge.py'
+      - 'mission-control/grand-missions/GM_I_C_R2_BIDIRECTIONAL_BRIDGE_CONTROL_v1.yaml'
+      - 'mission-control/jade_temple/devops/lifecycle.py'
+      - '.github/workflows/gm-i-c-r2-disjoint-matrix.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fail-closed-series-and-disjoint-canaries:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact pull request head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Prove exact checked-out head
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = '${{ github.event.pull_request.head.sha || github.sha }}'
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Install bounded dependencies
+        run: python -m pip install --disable-pip-version-check pytest pyyaml
+      - name: Run native owner and matrix negative tests
+        run: |
+          python -m pytest -q \
+            mission-control/grand-missions/test_gm_i_c_r2_bridge.py \
+            mission-control/grand-missions/test_gm_i_c_r2_disjoint_matrix.py
+      - name: State non-compensation
+        run: |
+          echo 'This job tests strict source-owned DAG and negative gate semantics only.'
+          echo 'IC3 hosted WIF remains owner-controlled; FPC independent review is not waived.'
+          echo 'authority_transfer=false; formal_credit_delta=0; merge_allowed=false'
