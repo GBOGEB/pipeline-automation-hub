@@ -1,5 +1,6 @@
 schema: missioncontrol.fpc.pr1139.bootstrap_receipt.v1
-as_of: '2026-11-09T17:55:59+01:00'
+as_of: '2026-11-09T17:05:44Z'
+as_of_meaning: observation cutoff; every fact below was observed at or before this time
 parent_pr: GBOGEB/pipeline-automation-hub#1139
 classification: CONTROLLER_BOOTSTRAP_FIX_FORWARD
 policy: mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json#controller_maintenance
@@ -39,11 +40,12 @@ merge:
   ruleset_rule_suite_result: bypass
   ruleset_bypass_removed: '2026-11-09T16:56:22Z'
   verified_after_removal:
+    verified_at: '2026-11-09T17:05:44Z'
     bypass_actors: []
     current_user_can_bypass: never
 external_boundary:
   observed: GitHub scheduled brownout of the default pull_request_target protection for public repositories
-  window_end: '2026-11-09T18:00:00Z'
+  announced_window_end: '2026-11-09T18:00:00Z'  # as stated in GitHub's startup-failure annotation, not observed
   effect: first-pass-closure runs triggered by pull_request_target ended in startup_failure from 2026-11-09T16:28:46Z; pull_request_review and workflow_run triggers still started
   owner_action_required: explicitly allow pull_request_target in an Actions event policy before the default protection becomes permanent, or the required gate will not start on pull_request_target
   guidance: https://gh.io/securely-using-pull_request_target#default-policy-for-pull_request_target
