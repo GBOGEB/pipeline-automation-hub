@@ -38,6 +38,7 @@ import io
 import json
 import re
 import subprocess
+import urllib.error
 import urllib.request
 import zipfile
 from collections import Counter, defaultdict
@@ -67,13 +68,15 @@ NODES = {
     "SRC_PROOF_PENDING": ("SOURCE", "TRANSIENT", "proof workflow not finished on this head yet"),
     "SRC_PROOF_FAILED": ("SOURCE", "PR_CAUSED", "proof workflow failed on this head and never passed later"),
     "SRC_HEAD_MOVED": ("SOURCE", "PROCESS", "receipt or run bound to an older head"),
+    "SRC_RECEIPT_ABSENT": ("SOURCE", "PROCESS", "PR body had no FPC receipt and the gate did not derive one"),
     "SRC_CODE_FINDINGS": ("SOURCE", "PR_CAUSED", "material Codex findings on the exact head"),
     "SRC_GATE_INFRA": ("SOURCE", "INHERITED", "GitHub API or gate infrastructure error"),
     "SRC_UNCLASSIFIED": ("SOURCE", "UNKNOWN", "reason code not in the cause model"),
     "R_CODEX_REVIEW_NOT_COMPLETED": ("REASON", None, "CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD"),
     "R_CONTROL_PLANE_BOOTSTRAP": ("REASON", None, "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP"),
     "R_MISSING_PROOF": ("REASON", None, "MISSING_REQUIRED_PROOF_PURPOSE / RUN_NOT_SUCCESS"),
-    "R_STALE_HEAD": ("REASON", None, "STALE_HEAD / RUN_HEAD_MISMATCH"),
+    "R_STALE_HEAD": ("REASON", None, "STALE_HEAD / RUN_HEAD_MISMATCH / INVALID_RECEIPT_HEAD_SHA"),
+    "R_RECEIPT_MISSING": ("REASON", None, "MISSING_RECEIPT"),
     "R_CODEX_FINDINGS": ("REASON", None, "CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD"),
     "R_GATE_ERROR": ("REASON", None, "PR_HEAD_UNAVAILABLE / POLICY_* / other gate errors"),
     "R_OTHER": ("REASON", None, "any other reason code"),
@@ -88,6 +91,7 @@ EDGES = [
     ("SRC_PROOF_PENDING", "R_MISSING_PROOF", "CAUSES"),
     ("SRC_PROOF_FAILED", "R_MISSING_PROOF", "CAUSES"),
     ("SRC_HEAD_MOVED", "R_STALE_HEAD", "CAUSES"),
+    ("SRC_RECEIPT_ABSENT", "R_RECEIPT_MISSING", "CAUSES"),
     ("SRC_CODE_FINDINGS", "R_CODEX_FINDINGS", "CAUSES"),
     ("SRC_GATE_INFRA", "R_GATE_ERROR", "CAUSES"),
     ("SRC_UNCLASSIFIED", "R_OTHER", "CAUSES"),
@@ -96,11 +100,13 @@ EDGES = [
 REASON_NODE = [
     (re.compile(r"^CODEX_REVIEW_NOT_COMPLETED"), "R_CODEX_REVIEW_NOT_COMPLETED"),
     (re.compile(r"^CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP"), "R_CONTROL_PLANE_BOOTSTRAP"),
-    (re.compile(r"^(MISSING_REQUIRED_PROOF_PURPOSE|RUN_NOT_SUCCESS|MISSING_RECEIPT|NO_PROOF_RUN)"), "R_MISSING_PROOF"),
-    (re.compile(r"^(STALE_HEAD|RUN_HEAD_MISMATCH|TRIGGER_HEAD_MISMATCH)"), "R_STALE_HEAD"),
+    (re.compile(r"^MISSING_RECEIPT"), "R_RECEIPT_MISSING"),
+    (re.compile(r"^(MISSING_REQUIRED_PROOF_PURPOSE|RUN_NOT_SUCCESS|NO_PROOF_RUN|NO_ALLOWLISTED_PROOF_RUN)"), "R_MISSING_PROOF"),
+    (re.compile(r"^(STALE_HEAD|RUN_HEAD_MISMATCH|TRIGGER_HEAD_MISMATCH|INVALID_RECEIPT_HEAD_SHA)"), "R_STALE_HEAD"),
     (re.compile(r"^CODEX_MATERIAL_FINDINGS"), "R_CODEX_FINDINGS"),
     (re.compile(r"^(PR_HEAD_UNAVAILABLE|PR_BASE_UNAVAILABLE|POLICY_|ADMISSION_ARGUMENTS|API_|HTTP|GATE_ERROR|"
-                r"UNTRUSTED_PROOF|PROOF_WORKFLOW_MUTATED|CODEX_SUMMARY_AUTHOR)"), "R_GATE_ERROR"),
+                r"UNTRUSTED_PROOF|PROOF_WORKFLOW_MUTATED|CODEX_SUMMARY_AUTHOR|NO_RECEIPT_ARTIFACT|"
+                r"PRE_EVALUATOR_FAILURE|GitHub API \d+)"), "R_GATE_ERROR"),
 ]
 
 
@@ -134,6 +140,7 @@ def attribute(ev: dict, later_on_head: list[dict], pr: dict) -> str:
     if node == "R_MISSING_PROOF":
         return "SRC_PROOF_PENDING" if got_past else "SRC_PROOF_FAILED"
     return {"R_CONTROL_PLANE_BOOTSTRAP": "SRC_CONTROLLER_PATH", "R_STALE_HEAD": "SRC_HEAD_MOVED",
+            "R_RECEIPT_MISSING": "SRC_RECEIPT_ABSENT",
             "R_CODEX_FINDINGS": "SRC_CODE_FINDINGS", "R_GATE_ERROR": "SRC_GATE_INFRA"}.get(node, "SRC_UNCLASSIFIED")
 
 
@@ -141,19 +148,24 @@ def ts(s: str) -> dt.datetime:
     return dt.datetime.fromisoformat(s.replace("Z", "+00:00"))
 
 
-def attribute_all(evals: list[dict], prs: dict) -> list[dict]:
-    """Each evaluation plus ``reason_node``, ``source``, ``klass``; chronological."""
-    evals = sorted(evals, key=lambda e: e["created_at"])
+def attribute_all(evals: list[dict], prs: dict, heads: dict | None = None) -> list[dict]:
+    """Each evaluation plus ``reason_node``, ``source``, ``klass``; chronological.
+
+    ``heads`` maps a head SHA to its PR number. The gate's runs mostly carry no PR, so the head
+    decides; a PR the run did name wins. Later evaluations are matched by head SHA.
+    """
+    heads = heads or {}
+    evals = sorted(({**e, "pr": e.get("pr") or heads.get(e["head_sha"])} for e in evals), key=lambda e: e["created_at"])
     by_head = defaultdict(list)
     for e in evals:
-        by_head[(e.get("pr"), e["head_sha"])].append(e)
+        by_head[e["head_sha"]].append(e)
     out = []
     for e in evals:
         row = dict(e)
         if e["status"] == "PASS":
             row.update(reason_node=None, source=None, klass="PASS")
         else:
-            seq = by_head[(e.get("pr"), e["head_sha"])]
+            seq = by_head[e["head_sha"]]
             later = seq[seq.index(e) + 1:]
             src = attribute(e, later, prs.get(str(e.get("pr")), {}))
             row.update(reason_node=reason_node(e.get("reason")), source=src, klass=NODES[src][1])
@@ -329,8 +341,7 @@ def markdown(doc: dict) -> str:
 
 def project(cache: Path, out: Path, now: dt.datetime) -> dict:
     evals = [json.loads(x) for x in (cache / "evaluations.jsonl").read_text(encoding="utf-8").splitlines() if x.strip()]
-    prs = json.loads((cache / "prs.json").read_text(encoding="utf-8")) if (cache / "prs.json").exists() else {}
-    rows = attribute_all(evals, prs)
+    rows = attribute_all(evals, _load(cache / "prs.json"), _load(cache / "heads.json"))
     waves = kahn_waves()
     counts = node_counts(rows)
     doc = {"schema": SCHEMA, "repository": REPO, "generated_at": now.isoformat().replace("+00:00", "Z"),
@@ -355,12 +366,28 @@ def _token() -> str:
     return subprocess.run(["gh", "auth", "token"], capture_output=True, text=True, env=env, check=True).stdout.strip()
 
 
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *a, **k):
+        return None
+
+
+_API = urllib.request.build_opener(_NoRedirect)
+
+
 def _get(url: str, token: str, raw: bool = False):
+    """GET from the GitHub API. A redirect (artifact downloads go to blob storage) is followed
+    without the Authorization header, so the token never leaves api.github.com."""
     req = urllib.request.Request(url if url.startswith("http") else "https://api.github.com" + url,
                                  headers={"Authorization": "Bearer " + token, "Accept": "application/vnd.github+json",
                                           "X-GitHub-Api-Version": "2022-11-28"})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        data = r.read()
+    try:
+        with _API.open(req, timeout=60) as r:
+            data = r.read()
+    except urllib.error.HTTPError as e:
+        if e.code not in (301, 302, 303, 307, 308):
+            raise
+        with urllib.request.urlopen(e.headers["Location"], timeout=60) as r:
+            data = r.read()
     return data if raw else json.loads(data)
 
 
@@ -388,10 +415,25 @@ def _reason(run: dict, token: str) -> dict:
             "status": status, "reason": rec.get("reason") or (None if status == "PASS" else "NO_RECEIPT_ARTIFACT")}
 
 
-def fetch(days: int, cache: Path) -> None:
+def _reason_or_none(run: dict, token: str) -> dict | None:
+    """``_reason`` that returns None on a network or API error, so the run is retried on the next fetch."""
+    try:
+        return _reason(run, token)
+    except (urllib.error.URLError, OSError, ValueError, KeyError, zipfile.BadZipFile) as e:
+        print(f"  skip run {run['id']}: {type(e).__name__}", flush=True)
+        return None
+
+
+def fetch(days: int, cache: Path, lookups_only: bool = False) -> None:
+    """Fetch evaluations (unless ``lookups_only``), then the head -> PR map and the per-PR quota notice.
+
+    The artifact pass costs about two API calls per evaluation (30 days ~ 3,500 calls), so a
+    second pass with ``--lookups-only`` reuses the cached evaluations after a rate-limit reset."""
     token = _token()
     cache.mkdir(parents=True, exist_ok=True)
     path = cache / "evaluations.jsonl"
+    if lookups_only:
+        return _lookups(path, cache, token)
     done = {json.loads(x)["run_id"] for x in path.read_text(encoding="utf-8").splitlines() if x.strip()} if path.exists() else set()
     today = dt.datetime.now(dt.timezone.utc).date()
     runs = []
@@ -400,19 +442,55 @@ def fetch(days: int, cache: Path) -> None:
     todo = [r for r in runs if r["status"] == "completed" and r["conclusion"] in ("success", "failure") and r["id"] not in done]
     print(f"runs={len(runs)} evaluations_to_fetch={len(todo)} cached={len(done)}", flush=True)
     with path.open("a", encoding="utf-8", newline="\n") as fh, cf.ThreadPoolExecutor(8) as ex:
-        for k, row in enumerate(ex.map(lambda r: _reason(r, token), todo), 1):
+        for k, row in enumerate(ex.map(lambda r: _reason_or_none(r, token), todo), 1):
+            if row is None:
+                continue
             fh.write(json.dumps(row) + "\n")
             if k % 100 == 0:
                 print(f"  {k}/{len(todo)}", flush=True)
+    _lookups(path, cache, token)
+
+
+def _lookups(path: Path, cache: Path, token: str) -> None:
     rows = [json.loads(x) for x in path.read_text(encoding="utf-8").splitlines() if x.strip()]
-    prs_path = cache / "prs.json"
-    prs = json.loads(prs_path.read_text(encoding="utf-8")) if prs_path.exists() else {}
-    for n in sorted({r["pr"] for r in rows if r["pr"]} - {int(k) for k in prs}):
-        comments = _get(f"/repos/{REPO}/issues/{n}/comments?per_page=100", token)
-        prs[str(n)] = {"codex_quota": any((c.get("user") or {}).get("login") == CODEX_LOGIN and QUOTA_RE.search(c.get("body") or "")
-                                          for c in comments)}
-    prs_path.write_text(json.dumps(prs, indent=1) + "\n", encoding="utf-8", newline="\n")
-    print(f"evaluations={len(rows)} prs={len(prs)} quota_prs={sum(v['codex_quota'] for v in prs.values())}")
+    heads = _load(cache / "heads.json")
+    for sha in sorted({r["head_sha"] for r in rows} - set(heads)):
+        pulls = _get_patient(f"/repos/{REPO}/commits/{sha}/pulls", token)
+        if pulls is not None:
+            heads[sha] = pulls[0]["number"] if pulls else None
+            _save(cache / "heads.json", heads)
+    prs = _load(cache / "prs.json")
+    for n in sorted({r["pr"] or heads.get(r["head_sha"]) for r in rows} - {None} - {int(k) for k in prs}):
+        comments = _get_patient(f"/repos/{REPO}/issues/{n}/comments?per_page=100", token)
+        if comments is not None:
+            prs[str(n)] = {"codex_quota": any((c.get("user") or {}).get("login") == CODEX_LOGIN and QUOTA_RE.search(c.get("body") or "")
+                                              for c in comments)}
+            _save(cache / "prs.json", prs)
+    print(f"evaluations={len(rows)} heads={len(heads)} prs={len(prs)} quota_prs={sum(v['codex_quota'] for v in prs.values())}")
+
+
+def _load(p: Path) -> dict:
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+
+
+def _save(p: Path, d: dict) -> None:
+    p.write_text(json.dumps(d, indent=1) + "\n", encoding="utf-8", newline="\n")
+
+
+def _get_patient(url: str, token: str, tries: int = 5):
+    """``_get`` that backs off on 403/429/5xx (secondary rate limits); None after the last try."""
+    import time
+    for n in range(tries):
+        try:
+            return _get(url, token)
+        except urllib.error.HTTPError as e:
+            if e.code not in (403, 429, 500, 502, 503) or n + 1 == tries:
+                print(f"  give up {url}: HTTP {e.code}", flush=True)
+                return None
+            time.sleep(int(e.headers.get("Retry-After") or 30 * (n + 1)))
+        except (urllib.error.URLError, OSError):
+            time.sleep(10 * (n + 1))
+    return None
 
 
 def main(argv=None) -> int:
@@ -421,13 +499,14 @@ def main(argv=None) -> int:
     f = sub.add_parser("fetch")
     f.add_argument("--days", type=int, default=30)
     f.add_argument("--cache", type=Path, required=True)
+    f.add_argument("--lookups-only", action="store_true", help="skip the run/artifact pass; reuse cached evaluations")
     p = sub.add_parser("project")
     p.add_argument("--cache", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--now", help="ISO UTC; default now")
     a = ap.parse_args(argv)
     if a.cmd == "fetch":
-        fetch(a.days, a.cache)
+        fetch(a.days, a.cache, a.lookups_only)
     else:
         now = ts(a.now) if a.now else dt.datetime.now(dt.timezone.utc)
         doc = project(a.cache, a.out, now)

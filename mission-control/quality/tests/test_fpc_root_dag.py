@@ -41,6 +41,12 @@ class Model(unittest.TestCase):
         self.assertEqual(m.reason_node("CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP: x"), "R_CONTROL_PLANE_BOOTSTRAP")
         self.assertEqual(m.reason_node("STALE_HEAD: receipt=a current=b"), "R_STALE_HEAD")
         self.assertEqual(m.reason_node("CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD: 1 open P0/P1"), "R_CODEX_FINDINGS")
+        self.assertEqual(m.reason_node("MISSING_RECEIPT"), "R_RECEIPT_MISSING")
+        self.assertEqual(m.reason_node("INVALID_RECEIPT_HEAD_SHA"), "R_STALE_HEAD")
+        self.assertEqual(m.reason_node("NO_RECEIPT_ARTIFACT"), "R_GATE_ERROR")
+        self.assertEqual(m.reason_node("PRE_EVALUATOR_FAILURE"), "R_GATE_ERROR")
+        self.assertEqual(m.reason_node("GitHub API 502 for /repos/x/pulls/1"), "R_GATE_ERROR")
+        self.assertEqual(m.reason_node("NO_ALLOWLISTED_PROOF_RUN_ON_EXACT_HEAD"), "R_MISSING_PROOF")
         self.assertEqual(m.reason_node("SOMETHING_NEW"), "R_OTHER")
         self.assertEqual(m.reason_node(None), "R_OTHER")
 
@@ -68,6 +74,11 @@ class Attribution(unittest.TestCase):
         self.assertEqual(rows[1]["source"], "SRC_PROOF_PENDING")
         self.assertEqual(rows[3]["source"], "SRC_PROOF_FAILED")
         self.assertEqual(rows[3]["klass"], "PR_CAUSED")
+
+    def test_head_map_fills_the_pr_and_finds_the_quota(self):
+        e = ev(None, "h1", 3, "FAIL", "CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD", 1)
+        rows = m.attribute_all([e], {"1171": {"codex_quota": True}}, {"h1": 1171})
+        self.assertEqual((rows[0]["pr"], rows[0]["source"]), (1171, "SRC_CODEX_QUOTA"))
 
     def test_a_new_head_does_not_rescue_an_old_one(self):
         evals = [ev(6, "old", 9, "FAIL", "MISSING_REQUIRED_PROOF_PURPOSE: x", 1), ev(6, "new", 8, "PASS", run=2)]
