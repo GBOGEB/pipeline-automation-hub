@@ -36,6 +36,16 @@ OWNERS = {
     "statistics": "mission-control/federation-atlas/flightdeck/pulses/mip_statistical_qualification.py",
     "provider": "mission-control/federation-atlas/flightdeck/pulses/mip_provider_execution.py",
 }
+# Files the owners load at run time. A change here alters the projection exactly like a change to an
+# owner, so each one is hashed and compared with the planning baseline. Keep this in step with the
+# imports in OWNERS (test_transitive_inputs_cover_owner_imports checks the sibling imports).
+TRANSITIVE_INPUTS = (
+    "mission-control/issue_rank/issue_math.py",
+    "mission-control/issue_rank/taxonomy_pulse.py",
+    "mission-control/issue_rank/title_taxonomy.py",
+    "mission-control/qps-triage-ultra/issue-expedition/triway_burndown.py",
+    "mission-control/gogreen/token_census/REGISTRY.json",  # private-boundary repository registry
+)
 
 
 def owner(name: str):
@@ -105,6 +115,7 @@ def source_hashes(jade: Path) -> dict:
                  [rolling.POLICY, rolling.LEDGER, policy["roster_source"]])
     files.update("mission-control/jade_temple/" + p["snapshot"] for p in ledger["pulses"])
     files.update(OWNERS.values())
+    files.update(TRANSITIVE_INPUTS)
     files.update("mission-control/jade_temple/portfolio_readiness/" + p
                  for p in ("portfolio_readiness.py", "dashboard.py"))
     result = {}
