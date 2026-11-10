@@ -88,7 +88,8 @@
     "NO_ALLOWLISTED_PROOF_RUN_ON_EXACT_HEAD",
     "POLICY_DEPENDENCY_EXEMPTION_INVALID",
     "POLICY_CODEX_BLOCKING_PRIORITIES_INVALID",
-    "REVIEW_THREADS_UNAVAILABLE"
+    "REVIEW_THREADS_UNAVAILABLE",
+    "POLICY_CODEX_QUOTA_WAIVER_INVALID"
   ],
   "non_compensation": {
     "r3_release_credit": "NONE",
@@ -202,5 +203,25 @@
       "EXACT_HEAD_PROOF_RUNS",
       "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP"
     ]
+  },
+  "codex_quota_waiver": {
+    "applies_when": "CODEX_REVIEWER_POSTED_quota_notice_ON_THE_PR_AND_AN_owner_logins_COMMENT_AFTER_IT_CARRIES_THE_WAIVER_LINE_FOR_THE_EXACT_HEAD",
+    "quota_notice": "You have reached your Codex usage limits for code reviews",
+    "owner_logins": [
+      "GBOGEB"
+    ],
+    "waiver_line": "FPC_WAIVER_V1 head=<40-char PR head SHA> waives=CODEX_REVIEW reason=<text>",
+    "voided_by": "ANY_NEW_PUSH_TO_THE_PR_HEAD",
+    "waives": [
+      "CODEX_REVIEW"
+    ],
+    "never_waives": [
+      "EXACT_HEAD_PROOF_RUNS",
+      "OPEN_BLOCKING_CODEX_FINDINGS_ON_EXACT_HEAD",
+      "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP"
+    ],
+    "receipt_field": "codex_quota_waiver",
+    "post_merge": "CODEX_REVIEW_OWED_WHEN_QUOTA_RETURNS; receipt records post_merge_review_owed=true",
+    "owner_decision": "2026-11-10"
   }
 }

@@ -97,6 +97,7 @@ def mapping(
     inline_findings=(),
     resolved_ids=(),
     summary_body=None,
+    extra_comments=(),
 ):
     summary = summary_body if summary_body is not None else f"""<!-- codex-pull-request-review-summary -->
 | Review | Status | Commit |
@@ -141,7 +142,7 @@ def mapping(
             "id": 99,
             "body": summary,
             "user": {"login": summary_login},
-        }],
+        }, *extra_comments],
         f"/repos/{REPO}/pulls/{PR}/reviews": reviews,
         # inline_findings: (id, priority or None, commit) tuples from the Codex reviewer.
         f"/repos/{REPO}/pulls/{PR}/comments": [
@@ -284,6 +285,99 @@ class TestFirstPassClosureGate(unittest.TestCase):
             **self.DEP_POLICY["dependency_update_exemption"], "waives": ["CODEX_REVIEW", "EXACT_HEAD_CI"]}}
         with self.assertRaisesRegex(fpc.GateError, "POLICY_DEPENDENCY_EXEMPTION_INVALID"):
             fpc.evaluate(self.dep(), REPO, PR, policy)
+
+    # Owner decision 2026-11-10: a Codex review that quota prevented can be waived by the owner
+    # for one exact head; nothing else is waived.
+    NOTICE = "You have reached your Codex usage limits for code reviews"
+    WAIVER_POLICY = {**POLICY, "codex_quota_waiver": {
+        "quota_notice": NOTICE, "owner_logins": ["GBOGEB"], "waives": ["CODEX_REVIEW"]}}
+
+    def waived(self, notice_login="chatgpt-codex-connector[bot]", owner="GBOGEB", head=HEAD,
+               notice_at="2026-11-10T09:00:00Z", waiver_at="2026-11-10T09:05:00Z",
+               line=None, owner_type="User", **kw):
+        line = line if line is not None else f"FPC_WAIVER_V1 head={head} waives=CODEX_REVIEW reason=quota exhausted"
+        extra = [
+            {"id": 201, "created_at": notice_at, "user": {"login": notice_login, "type": "Bot"},
+             "body": self.NOTICE + ". You can see your limits in the dashboard."},
+            {"id": 202, "created_at": waiver_at, "user": {"login": owner, "type": owner_type},
+             "body": "Merging on proof only.\n" + line + "\n"},
+        ]
+        return FakeClient(mapping(completed=False, extra_comments=extra, **kw))
+
+    def test_owner_waiver_after_codex_quota_notice_passes_and_is_recorded(self):
+        receipt = fpc.evaluate(self.waived(), REPO, PR, self.WAIVER_POLICY)
+        self.assertEqual(receipt["status"], fpc.PASS_STATUS)
+        waiver = receipt["codex_quota_waiver"]
+        self.assertEqual(waiver["waives"], ["CODEX_REVIEW"])
+        self.assertEqual((waiver["waiver_comment_id"], waiver["quota_notice_comment_id"]), (202, 201))
+        self.assertEqual(waiver["reason"], "quota exhausted")
+        self.assertTrue(waiver["post_merge_review_owed"])
+        self.assertIsNone(receipt["codex_summary_comment_id"])
+        fpc.validate_pass_receipt(receipt, HEAD, BASE)
+
+    def test_completed_review_needs_no_waiver(self):
+        receipt = fpc.evaluate(FakeClient(mapping()), REPO, PR, self.WAIVER_POLICY)
+        self.assertIsNone(receipt["codex_quota_waiver"])
+
+    def test_waiver_for_another_head_is_void(self):
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
+            fpc.evaluate(self.waived(head="b" * 40), REPO, PR, self.WAIVER_POLICY)
+
+    def test_waiver_without_a_codex_quota_notice_is_void(self):
+        # The owner quoting the notice is not the reviewer saying it.
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
+            fpc.evaluate(self.waived(notice_login="GBOGEB"), REPO, PR, self.WAIVER_POLICY)
+
+    def test_waiver_posted_before_the_quota_notice_is_void(self):
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
+            fpc.evaluate(self.waived(waiver_at="2026-11-10T08:00:00Z"), REPO, PR, self.WAIVER_POLICY)
+
+    def test_waiver_from_a_non_owner_or_a_bot_is_void(self):
+        for kw in ({"owner": "someone-else"}, {"owner": "GBOGEB[bot]"}, {"owner_type": "Bot"}):
+            with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
+                fpc.evaluate(self.waived(**kw), REPO, PR, self.WAIVER_POLICY)
+
+    def test_malformed_waiver_line_is_void(self):
+        for line in (f"FPC_WAIVER_V1 head={HEAD[:12]} waives=CODEX_REVIEW reason=x",
+                     f"FPC_WAIVER_V1 head={HEAD} waives=EXACT_HEAD_CI reason=x",
+                     f"FPC_WAIVER_V1 head={HEAD} waives=CODEX_REVIEW reason=",
+                     f"> FPC_WAIVER_V1 head={HEAD} waives=CODEX_REVIEW reason=quoted"):
+            with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
+                fpc.evaluate(self.waived(line=line), REPO, PR, self.WAIVER_POLICY)
+
+    def test_waiver_is_off_without_the_policy_rule(self):
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
+            fpc.evaluate(self.waived(), REPO, PR, POLICY)
+
+    def test_waiver_never_waives_the_proof_runs(self):
+        with self.assertRaisesRegex(fpc.GateError, "RUN_NOT_SUCCESS"):
+            fpc.evaluate(self.waived(run_conclusion="failure"), REPO, PR, self.WAIVER_POLICY)
+
+    def test_waiver_never_waives_the_control_plane_rule(self):
+        with self.assertRaisesRegex(fpc.GateError, "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP"):
+            fpc.evaluate(self.waived(changed_files=["scripts/first_pass_closure_gate.py"]),
+                         REPO, PR, self.WAIVER_POLICY)
+
+    def test_waiver_never_waives_an_open_blocking_finding_on_the_head(self):
+        policy = {**self.WAIVER_POLICY,
+                  "codex_contract": {**POLICY["codex_contract"], "blocking_priorities": ["P0", "P1"]}}
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_MATERIAL_FINDINGS"):
+            fpc.evaluate(self.waived(inline_findings=[(1, "P1", HEAD)]), REPO, PR, policy)
+
+    def test_waiver_policy_that_widens_the_rule_is_invalid(self):
+        rule = self.WAIVER_POLICY["codex_quota_waiver"]
+        for bad in ({"waives": ["CODEX_REVIEW", "EXACT_HEAD_CI"]}, {"owner_logins": []},
+                    {"owner_logins": ["dependabot[bot]"]}, {"quota_notice": " "}):
+            with self.assertRaisesRegex(fpc.GateError, "POLICY_CODEX_QUOTA_WAIVER_INVALID"):
+                fpc.evaluate(self.waived(), REPO, PR, {**POLICY, "codex_quota_waiver": {**rule, **bad}})
+
+    def test_repository_policy_quota_waiver_is_owner_only_and_narrow(self):
+        policy = fpc.load_policy(str(ROOT.parent / "mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json"))
+        rule = policy["codex_quota_waiver"]
+        self.assertEqual(rule["waives"], ["CODEX_REVIEW"])
+        self.assertEqual(rule["owner_logins"], ["GBOGEB"])
+        self.assertIn("usage limits", rule["quota_notice"])
+        self.assertIn("POLICY_CODEX_QUOTA_WAIVER_INVALID", policy["fail_closed_on"])
 
     def test_stale_head_rejected(self):
         with self.assertRaisesRegex(fpc.GateError, "STALE_HEAD"):

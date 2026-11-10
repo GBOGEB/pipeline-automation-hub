@@ -213,6 +213,64 @@ def login_matches(actual: str | None, expected: str) -> bool:
     return actual in {expected, f"{expected}[bot]"}
 
 
+WAIVER_RE = re.compile(
+    r"^FPC_WAIVER_V1 head=([0-9a-f]{40}) waives=CODEX_REVIEW reason=(\S[^\r\n]*)$", re.M
+)
+
+
+def codex_quota_waiver(
+    comments: list[dict[str, Any]], head_sha: str, policy: dict[str, Any], expected_login: str
+) -> dict[str, Any] | None:
+    """The owner's head-bound waiver of a Codex review that quota prevented, or None.
+
+    It applies only when the Codex reviewer itself posted its usage-limit notice on this PR and a
+    declared owner then posted ``FPC_WAIVER_V1 head=<sha> waives=CODEX_REVIEW reason=<text>`` naming
+    the exact head. A new push changes the head, so the waiver stops matching. It waives only the
+    completed-review requirement: proof runs, open blocking findings and the control-plane rule
+    are still evaluated.
+    """
+    rule = policy.get("codex_quota_waiver")
+    if rule is None:
+        return None
+    notice = rule.get("quota_notice") if isinstance(rule, dict) else None
+    owners = rule.get("owner_logins") if isinstance(rule, dict) else None
+    waives = rule.get("waives") if isinstance(rule, dict) else None
+    if (not isinstance(notice, str) or not notice.strip()
+            or not isinstance(owners, list) or not owners
+            or not all(isinstance(o, str) and o and not o.endswith("[bot]") for o in owners)
+            or waives != ["CODEX_REVIEW"]):
+        raise GateError("POLICY_CODEX_QUOTA_WAIVER_INVALID")
+
+    def author(comment: dict[str, Any]) -> dict[str, Any]:
+        return comment.get("user") or comment.get("author") or {}
+
+    notices = [
+        c for c in comments
+        if login_matches(author(c).get("login"), expected_login)
+        and notice in (c.get("body") or "") and isinstance(c.get("created_at"), str)
+    ]
+    for comment in reversed(comments):
+        who = author(comment)
+        created = comment.get("created_at")
+        if who.get("login") not in owners or who.get("type") == "Bot" or not isinstance(created, str):
+            continue
+        earlier = [n for n in notices if n["created_at"] <= created]
+        if not earlier:
+            continue
+        for match in WAIVER_RE.finditer(comment.get("body") or ""):
+            if match.group(1) == head_sha:
+                return {
+                    "waives": ["CODEX_REVIEW"],
+                    "head_sha": head_sha,
+                    "owner_login": who.get("login"),
+                    "waiver_comment_id": comment.get("id"),
+                    "quota_notice_comment_id": earlier[-1].get("id"),
+                    "reason": match.group(2).strip()[:300],
+                    "post_merge_review_owed": True,
+                }
+    return None
+
+
 def codex_login(policy: dict[str, Any]) -> str:
     contract = policy.get("codex_contract") or {}
     value = contract.get("reviewer_login") or DEFAULT_CODEX_LOGIN
@@ -511,6 +569,7 @@ def evaluate(
     exemption = dependency_update_exemption(client, repo, pr_number, pr, policy)
     summary_id = None
     finding_counts = None
+    quota_waiver = None
     if exemption is None or "CODEX_REVIEW" not in exemption["waives"]:
         expected_login = codex_login(policy)
         comments = client.get_all(f"/repos/{repo}/issues/{pr_number}/comments")
@@ -518,7 +577,10 @@ def evaluate(
             comments, head_sha, expected_login
         )
         if not completed:
-            raise GateError("CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD")
+            # Only the completed-review requirement can be waived; findings are still checked below.
+            quota_waiver = codex_quota_waiver(comments, head_sha, policy, expected_login)
+            if quota_waiver is None:
+                raise GateError("CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD")
 
         blocking = (policy.get("codex_contract") or {}).get("blocking_priorities")
         if blocking is None:
@@ -553,6 +615,7 @@ def evaluate(
         "receipt_source": receipt_source,
         "codex_finding_counts_on_exact_head": finding_counts,
         "dependency_update_exemption": exemption,
+        "codex_quota_waiver": quota_waiver,
         "required_runs": run_receipts,
         "merge_allowed": True,
         "authority_transfer": False,
