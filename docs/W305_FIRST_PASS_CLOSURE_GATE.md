@@ -65,6 +65,25 @@ The gate requires:
 
 All comment and review pages are traversed; old-head findings do not block a repaired and re-reviewed head.
 
+### Codex quota waiver
+
+Codex reviews are metered. When the quota is spent, Codex posts "You have reached your Codex usage limits for code reviews" and never completes the review, so the gate stays red with `CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD` on a PR that has nothing to fix. The owner can waive that one requirement for one head (owner decision 2026-11-10, policy `codex_quota_waiver`).
+
+The gate accepts the waiver only when all of these hold:
+1. the Codex reviewer itself posted the usage-limit notice on the PR (the owner quoting it does not count);
+2. a login in `owner_logins` posted, after that notice, a comment with this line on its own:
+   `FPC_WAIVER_V1 head=<40-char PR head SHA> waives=CODEX_REVIEW reason=<text>`;
+3. the SHA is the exact current head. A new push voids the waiver.
+
+It waives the completed-review requirement and nothing else. The exact-head proof runs, open P0/P1 Codex findings on the head and the control-plane bootstrap rule are still enforced. The pass receipt records the waiver in `codex_quota_waiver` (comment ids, reason, `post_merge_review_owed: true`), so the review that was skipped stays visible as debt.
+
+A comment does not re-run the gate. Post the waiver, then dispatch the gate on the same head:
+
+```bash
+gh pr comment <N> --repo GBOGEB/pipeline-automation-hub --body "FPC_WAIVER_V1 head=<sha> waives=CODEX_REVIEW reason=Codex quota exhausted"
+gh workflow run first-pass-closure-gate.yml --repo GBOGEB/pipeline-automation-hub -f pr_number=<N> -f expected_head_sha=<sha>
+```
+
 ## Prospective KPI cohort
 
 Next 8 governed primary PRs:
