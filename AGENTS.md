@@ -77,6 +77,27 @@ design until the outputs are regenerated.
 - Line endings are hashed. `.gitattributes` keeps text LF on every platform; on Windows write generated
   files with `newline="\n"` and `encoding="utf-8"`.
 
+### Windows shell pitfalls
+
+Each of these cost time on the owner's workstation (2026-11-09/10, GEMINI#40, GEMINI#47, #1162).
+
+- **Git Bash rewrites leading-slash arguments.** MSYS turns `/AGENTS.md` into
+  `C:/Program Files/Git/AGENTS.md`, so `git sparse-checkout set /path` silently stores a wrong pattern.
+  Prefix such commands with `MSYS_NO_PATHCONV=1`, then read the result back with `git sparse-checkout list`.
+- **PowerShell splits unquoted commas.** `gh repo list --json name,isFork` passes an array, and `gh`
+  receives the wrong argument. Quote the list: `--json 'name,isFork'`.
+- **A failed `gh` call can look like an empty answer.** A GitHub 5xx printed an error and returned no
+  output, so a script went on with zero repos. Check `$LASTEXITCODE` (or `$?`) after every `gh` call,
+  retry a few times, then stop. Never treat empty output as "nothing to do".
+- **Owner-only temp folders block git.** `tempfile.TemporaryDirectory()` creates a folder that `git
+  merge-file` cannot read ("Permission denied"), and a `.pytest_cache` created the same way can't be
+  deleted. Make scratch folders with `os.makedirs` under `tempfile.gettempdir()` and remove them in `finally`.
+- **`Remove-Item -Recurse -Force` stops at the first locked entry**, after deleting part of the folder
+  (on 2026-11-10 it deleted `.git` first). Check the clone is fully pushed before you start, and check
+  `Test-Path` afterwards.
+- **CRLF checkouts.** With `core.autocrlf=true`, a patch made against git blobs (LF) fails `git apply`
+  in the working tree. Use `git apply --cached`, or apply it in an LF worktree.
+
 ## Metric ownership
 
 One canonical module per metric. Import these; do not re-implement them. Paths are repo-relative.
