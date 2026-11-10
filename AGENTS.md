@@ -84,6 +84,11 @@ Each of these cost time on the owner's workstation (2026-11-09/10, GEMINI#40, GE
 - **Git Bash rewrites leading-slash arguments.** MSYS turns `/AGENTS.md` into
   `C:/Program Files/Git/AGENTS.md`, so `git sparse-checkout set /path` silently stores a wrong pattern.
   Prefix such commands with `MSYS_NO_PATHCONV=1`, then read the result back with `git sparse-checkout list`.
+- **Validate a captured SHA before you use it.** In a mis-configured sparse checkout, `FIX=$(git rev-parse HEAD)`
+  captured something other than a bare SHA, so `git cherry-pick "$FIX"` failed after `git reset --hard` had
+  already run, and the commit could only be recovered from the reflog (#1135, 2026-11-09). Capture with
+  `H=$(git rev-parse HEAD 2>/dev/null | grep -E '^[0-9a-f]{40}$')`, stop if it is empty, and never chain a
+  destructive reset after a capture you have not checked.
 - **PowerShell splits unquoted commas.** `gh repo list --json name,isFork` passes an array, and `gh`
   receives the wrong argument. Quote the list: `--json 'name,isFork'`.
 - **A failed `gh` call can look like an empty answer.** A GitHub 5xx printed an error and returned no
