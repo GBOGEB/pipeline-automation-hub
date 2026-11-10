@@ -45,6 +45,10 @@ class Pick(unittest.TestCase):
         self.assertEqual(bl.pick(doc, "nope{}"), (None, False))
         self.assertEqual(bl.pick({"repos": [1]}, "repos{}"), (None, False))
 
+    def test_red_canary_focus5_h08(self):
+        # FOCUS5 H08 RED canary (DO NOT MERGE): this PR must be refused by the master ruleset.
+        self.fail("RED canary: deliberate failure of 'Launcher outputs current and tests' for FOCUS5 H08")
+
 
 class Committed(unittest.TestCase):
     @classmethod
