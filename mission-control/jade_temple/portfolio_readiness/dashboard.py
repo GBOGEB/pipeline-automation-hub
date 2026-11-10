@@ -124,7 +124,7 @@ function issueTable(){
 function exportReaderReview(){
  const report={schema:'jade.reader.review.v1',captured_at:m.as_of,source_sha:m.planning_source_sha,issue_source_digest:m.issues.source_digest||null,scope:m.issues.scope,
   evidence_class:'UNVERIFIED_LOCAL_READER_ANNOTATIONS',not_an_execution_receipt:true,not_an_issue_closure:true,authority_transfer:false,formal_credit_delta:0,review};
- const blob=new Blob([JSON.stringify(report,null,2)+'\\n'],{type:'application/json'}),u=URL.createObjectURL(blob),a=el('a');
+ const blob=new Blob([JSON.stringify(report,null,2)+'\n'],{type:'application/json'}),u=URL.createObjectURL(blob),a=el('a');
  a.href=u;a.download='JADE_reader_review_'+m.as_of.slice(0,10)+'.json';document.body.append(a);a.click();a.remove();URL.revokeObjectURL(u);
 }
 $('export-ledger').addEventListener('click',exportReaderReview);
