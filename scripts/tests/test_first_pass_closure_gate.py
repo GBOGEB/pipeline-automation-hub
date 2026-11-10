@@ -623,5 +623,128 @@ class TestCodexSummaryExactHeadCodeReview(unittest.TestCase):
         self.assertEqual(receipt["codex_summary_comment_id"], 99)
 
 
+WAIVER = {
+    "label": "fpc:codex-unavailable",
+    "labeler_logins": ["GBOGEB"],
+    "limit_comment_phrase": "You have reached your Codex usage limits",
+    "forbidden_path_patterns": [".github/workflows/*", "mission-control/quality/*"],
+    "waives": ["CODEX_REVIEW"],
+}
+WAIVER_POLICY = {**POLICY, "codex_unavailable_waiver": WAIVER,
+                 "codex_contract": {"reviewer_login": "chatgpt-codex-connector", "blocking_priorities": ["P0", "P1"]}}
+LIMIT_TEXT = "You have reached your Codex usage limits for code reviews."
+
+
+class TestCodexUnavailableWaiver(unittest.TestCase):
+    """Owner-labelled waiver when Codex could not review (quota); everything else still applies."""
+
+    def client(self, *, summary_status="failed", summary_head=HEAD, limit=True, label_actor="GBOGEB",
+               label_at="2026-11-10T10:00:00Z", committed_at="2026-11-10T09:00:00Z", unlabeled=False,
+               changed_files=None, inline_findings=(), label_name="fpc:codex-unavailable"):
+        state = {"code_review": {"commit_sha": summary_head, "has_any_findings": True,
+                                 "has_unresolved_findings": True, "status": summary_status},
+                 "security_review": {"commit_sha": None, "status": None}}
+        summary = ("<!-- codex-pull-request-review-summary -->\n<!-- codex-review-state:v1 "
+                   + json.dumps(state) + " -->\n")
+        who = {"login": "chatgpt-codex-connector[bot]"}
+        comments = [{"id": 101, "body": summary, "user": who, "created_at": "2026-11-10T09:01:50Z"}]
+        if limit:
+            comments.append({"id": 102, "body": LIMIT_TEXT, "user": who, "created_at": "2026-11-10T09:01:52Z"})
+        events = [{"event": "labeled", "label": {"name": label_name}, "actor": {"login": label_actor},
+                   "created_at": label_at}]
+        if unlabeled:
+            events.append({"event": "unlabeled", "label": {"name": label_name}, "actor": {"login": label_actor},
+                           "created_at": "2026-11-10T11:00:00Z"})
+        m = mapping(pr_body="", changed_files=changed_files, inline_findings=inline_findings)
+        m[f"/repos/{REPO}/issues/{PR}/comments"] = comments
+        m[f"/repos/{REPO}/issues/{PR}/events"] = events
+        m[f"/repos/{REPO}/commits/{HEAD}"] = {"commit": {"committer": {"date": committed_at}}}
+        return FakeClient(m)
+
+    def test_failed_codex_with_owner_label_passes_and_is_not_clean(self):
+        receipt = fpc.evaluate(self.client(), REPO, PR, WAIVER_POLICY)
+        self.assertEqual(receipt["status"], fpc.PASS_STATUS)
+        self.assertFalse(receipt["clean_first_pass"])
+        self.assertEqual(receipt["codex_review_waiver"]["labeled_by"], "GBOGEB")
+        self.assertEqual(receipt["codex_review_waiver"]["codex_summary_comment_id"], 101)
+        self.assertEqual(receipt["codex_material_finding_review_count"], 0)
+        fpc.validate_pass_receipt(receipt, HEAD, BASE)
+
+    def test_clean_codex_review_is_still_clean_first_pass(self):
+        receipt = fpc.evaluate(FakeClient(mapping()), REPO, PR, WAIVER_POLICY)
+        self.assertTrue(receipt["clean_first_pass"])
+        self.assertIsNone(receipt["codex_review_waiver"])
+
+    def test_without_the_label_the_gate_stays_red(self):
+        client = self.client()
+        client.mapping[f"/repos/{REPO}/issues/{PR}/events"] = []
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD$"):
+            fpc.evaluate(client, REPO, PR, WAIVER_POLICY)
+
+    def test_removed_label_withdraws_the_waiver(self):
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD$"):
+            fpc.evaluate(self.client(unlabeled=True), REPO, PR, WAIVER_POLICY)
+
+    def test_label_from_an_undeclared_login_is_refused(self):
+        with self.assertRaisesRegex(fpc.GateError, "waiver refused: label applied by undeclared login"):
+            fpc.evaluate(self.client(label_actor="someone-else"), REPO, PR, WAIVER_POLICY)
+
+    def test_label_older_than_the_head_commit_is_refused(self):
+        # A push after the label gives the head a newer committer date, so the owner must re-label.
+        with self.assertRaisesRegex(fpc.GateError, "label predates the exact head commit"):
+            fpc.evaluate(self.client(label_at="2026-11-10T08:00:00Z"), REPO, PR, WAIVER_POLICY)
+
+    def test_running_codex_review_is_not_a_failure(self):
+        with self.assertRaisesRegex(fpc.GateError, "no Codex summary reports the code review as failed"):
+            fpc.evaluate(self.client(summary_status="running"), REPO, PR, WAIVER_POLICY)
+
+    def test_failed_review_of_an_older_head_is_not_a_waiver_basis(self):
+        with self.assertRaisesRegex(fpc.GateError, "no Codex summary reports the code review as failed"):
+            fpc.evaluate(self.client(summary_head="b" * 40), REPO, PR, WAIVER_POLICY)
+
+    def test_failure_without_the_usage_limit_comment_is_refused(self):
+        with self.assertRaisesRegex(fpc.GateError, "no Codex usage-limit comment"):
+            fpc.evaluate(self.client(limit=False), REPO, PR, WAIVER_POLICY)
+
+    def test_workflow_paths_always_need_a_real_review(self):
+        with self.assertRaisesRegex(fpc.GateError, "changed paths need a real review: .github/workflows/x.yml"):
+            fpc.evaluate(self.client(changed_files=["docs/a.md", ".github/workflows/x.yml"]), REPO, PR, WAIVER_POLICY)
+
+    def test_open_codex_finding_on_head_of_any_priority_refuses_the_waiver(self):
+        with self.assertRaisesRegex(fpc.GateError, "1 open Codex finding"):
+            fpc.evaluate(self.client(inline_findings=[(7, "P3", HEAD)]), REPO, PR, WAIVER_POLICY)
+
+    def test_resolved_codex_finding_does_not_block_the_waiver(self):
+        client = self.client(inline_findings=[(7, "P2", HEAD)])
+        client.mapping["graphql"]["repository"]["pullRequest"]["reviewThreads"]["nodes"][0]["isResolved"] = True
+        self.assertEqual(fpc.evaluate(client, REPO, PR, WAIVER_POLICY)["status"], fpc.PASS_STATUS)
+
+    def test_waiver_never_skips_the_proof_runs(self):
+        client = self.client()
+        client.mapping[f"/repos/{REPO}/actions/runs/{RUN}"]["conclusion"] = "failure"
+        with self.assertRaisesRegex(fpc.GateError, "RUN_NOT_SUCCESS"):
+            fpc.evaluate(client, REPO, PR, WAIVER_POLICY)
+
+    def test_waiver_never_skips_the_control_plane_rule(self):
+        with self.assertRaisesRegex(fpc.GateError, "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP"):
+            fpc.evaluate(self.client(changed_files=["scripts/first_pass_closure_gate.py"]), REPO, PR, WAIVER_POLICY)
+
+    def test_invalid_waiver_policy_fails_closed(self):
+        for bad in ({**WAIVER, "waives": ["CODEX_REVIEW", "EXACT_HEAD_CI"]}, {**WAIVER, "labeler_logins": []},
+                    {**WAIVER, "forbidden_path_patterns": []}, {**WAIVER, "label": ""}):
+            with self.subTest(bad=bad), self.assertRaisesRegex(fpc.GateError, "POLICY_CODEX_WAIVER_INVALID"):
+                fpc.evaluate(self.client(), REPO, PR, {**WAIVER_POLICY, "codex_unavailable_waiver": bad})
+
+    def test_repository_policy_waiver_is_valid_and_keeps_control_paths_forbidden(self):
+        policy = fpc.load_policy(str(ROOT.parent / "mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json"))
+        rule = policy["codex_unavailable_waiver"]
+        self.assertEqual(rule["waives"], ["CODEX_REVIEW"])
+        self.assertEqual(rule["labeler_logins"], ["GBOGEB"])
+        import fnmatch
+        for path in (".github/workflows/first-pass-closure-gate.yml", "mission-control/quality/FIRST_PASS_CLOSURE_POLICY_v1.json",
+                     "scripts/first_pass_closure_gate.py"):
+            self.assertTrue(any(fnmatch.fnmatchcase(path, p) for p in rule["forbidden_path_patterns"]), path)
+
+
 if __name__ == "__main__":
     unittest.main()
