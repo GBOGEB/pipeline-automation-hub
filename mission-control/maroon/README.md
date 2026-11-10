@@ -159,3 +159,31 @@ Each repository's head SHA is recorded with its threads (AGENTS.md L6).
 The public hub holds this runner and `MAROON_PUBLIC.json` only. The full receipt, fix list and lanes
 go to a private repository, because they name vulnerable packages and file paths, including for private
 repositories.
+
+## Resolving answered threads
+
+Each fix PR ends with an evidence reply on every thread it settles. `resolve_answered.py` then resolves the
+threads whose fix is on the default branch, so the landing gate on unresolved threads stays meaningful.
+
+```bash
+python mission-control/maroon/resolve_answered.py --repos GBOGEB/cryoplant-project,GBOGEB/CODEX --limit 60          # report
+python mission-control/maroon/resolve_answered.py --repos GBOGEB/cryoplant-project,GBOGEB/CODEX --limit 60 --apply  # resolve
+```
+
+**Which threads it reads:** unresolved threads on merged PRs, where the last comment is from the login running the tool.
+
+**Which threads it resolves:**
+- the reply says the fix is already on main
+- the reply names a merged fix PR in the same repository
+- the reply names a commit on the thread's own merged PR
+
+**What stays open:**
+- a fix PR that has not merged
+- a finding confirmed open
+- a re-theme
+- any reply the tool does not recognise, such as an `@copilot` request
+
+A PR whose threads cannot be read is reported as a gap, and the sweep continues.
+
+Resolution uses the `ccr` route that Claude Code sessions have. The GitHub helpers come from
+`review_threads.py`.
