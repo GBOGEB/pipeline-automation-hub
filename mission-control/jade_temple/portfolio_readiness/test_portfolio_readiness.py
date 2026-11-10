@@ -275,6 +275,35 @@ class CanonicalIntegrationTests(unittest.TestCase):
         self.assertEqual("SOURCE_CHANGED", row["source_comparison"])
         self.assertIsNone(row["current_gate_pass"])
 
+    def test_transitive_inputs_are_hashed_and_drift_is_reported(self):
+        hashes = portfolio.source_hashes(portfolio.JADE)
+        for rel in portfolio.TRANSITIVE_INPUTS:
+            self.assertIn(rel, hashes, rel + " must be bound to the baseline")
+        tampered = copy.deepcopy(hashes)
+        victim = "mission-control/issue_rank/title_taxonomy.py"
+        tampered[victim]["git_blob_oid"] = "0" * 40
+        binding = portfolio.baseline_binding(BASE_SHA, tampered)
+        if binding["status"] != "UNRESOLVED_BASELINE":  # the planning commit may be absent from a shallow clone
+            self.assertEqual("BASELINE_INPUT_DRIFT", binding["status"])
+            self.assertIn(victim, binding["mismatches"])
+
+    def test_transitive_inputs_cover_owner_imports(self):
+        """Every sibling module an owner imports from its own directory is bound."""
+        import ast
+        covered = set(portfolio.OWNERS.values()) | set(portfolio.TRANSITIVE_INPUTS)
+        for name, rel in portfolio.OWNERS.items():
+            path = portfolio.REPO / rel
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+            for node in ast.walk(tree):
+                modules = ([a.name for a in node.names] if isinstance(node, ast.Import)
+                           else [node.module] if isinstance(node, ast.ImportFrom) and node.module and not node.level
+                           else [])
+                for module in modules:
+                    sibling = path.parent / (module.split(".")[0] + ".py")
+                    if sibling.exists():
+                        relative = sibling.relative_to(portfolio.REPO).as_posix()
+                        self.assertIn(relative, covered, f"{name} imports {module}; bind {relative}")
+
     def test_render_time_alone_is_no_update(self):
         first = copy.deepcopy(self.baseline)
         result = portfolio.project(as_of="2026-11-09T12:00:00Z", source_sha=BASE_SHA, previous=first)
