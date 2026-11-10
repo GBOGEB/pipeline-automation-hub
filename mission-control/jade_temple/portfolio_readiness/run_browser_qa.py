@@ -176,7 +176,9 @@ def main(argv=None) -> int:
                         expect(detail.locator(".criteria")).to_have_count(2)
                         for index, key in enumerate(("dov", "dod")):
                             criteria = detail.locator(".criteria").nth(index)
-                            expect(criteria.locator("li")).to_have_text(tasks[0][key])
+                            # DOV/DOD are explicitly review-only checkbox labels now,
+                            # not list items; assert the actual rendered criterion text.
+                            expect(criteria.locator("label.review-check span")).to_have_text(tasks[0][key])
                             check(True, name + " displays source " + key.upper() + " criteria")
                         no_overflow(page, name + " / expanded action")
                         screenshot(page, name + "-frontier.png")
