@@ -75,6 +75,13 @@ class Attribution(unittest.TestCase):
         self.assertEqual(rows[3]["source"], "SRC_PROOF_FAILED")
         self.assertEqual(rows[3]["klass"], "PR_CAUSED")
 
+    def test_quota_notice_matches_rest_and_graphql_logins(self):
+        body = "You have reached your Codex usage limits for code reviews."
+        self.assertTrue(m.quota_notice([{"user": {"login": "chatgpt-codex-connector[bot]"}, "body": body}]))
+        self.assertTrue(m.quota_notice([{"author": {"login": "chatgpt-codex-connector"}, "body": body}]))
+        self.assertFalse(m.quota_notice([{"user": {"login": "someone"}, "body": body}]))
+        self.assertFalse(m.quota_notice([{"user": {"login": "chatgpt-codex-connector[bot]"}, "body": "Review done"}]))
+
     def test_head_map_fills_the_pr_and_finds_the_quota(self):
         e = ev(None, "h1", 3, "FAIL", "CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD", 1)
         rows = m.attribute_all([e], {"1171": {"codex_quota": True}}, {"h1": 1171})

@@ -110,6 +110,17 @@ REASON_NODE = [
 ]
 
 
+def is_codex(login: str | None) -> bool:
+    """The Codex connector, as the REST API (``…[bot]``) or GraphQL (bare) names it."""
+    return (login or "").removesuffix("[bot]") == CODEX_LOGIN
+
+
+def quota_notice(comments: list[dict]) -> bool:
+    """True if the Codex connector told this PR it hit its review usage limit."""
+    return any(is_codex((c.get("user") or c.get("author") or {}).get("login")) and QUOTA_RE.search(c.get("body") or "")
+               for c in comments)
+
+
 def _lifecycle():
     spec = importlib.util.spec_from_file_location("jade_lifecycle", LIFECYCLE)
     mod = importlib.util.module_from_spec(spec)
@@ -463,8 +474,7 @@ def _lookups(path: Path, cache: Path, token: str) -> None:
     for n in sorted({r["pr"] or heads.get(r["head_sha"]) for r in rows} - {None} - {int(k) for k in prs}):
         comments = _get_patient(f"/repos/{REPO}/issues/{n}/comments?per_page=100", token)
         if comments is not None:
-            prs[str(n)] = {"codex_quota": any((c.get("user") or {}).get("login") == CODEX_LOGIN and QUOTA_RE.search(c.get("body") or "")
-                                              for c in comments)}
+            prs[str(n)] = {"codex_quota": quota_notice(comments)}
             _save(cache / "prs.json", prs)
     print(f"evaluations={len(rows)} heads={len(heads)} prs={len(prs)} quota_prs={sum(v['codex_quota'] for v in prs.values())}")
 
