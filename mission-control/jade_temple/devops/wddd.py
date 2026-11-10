@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""ISO 8601 week-date codes: `w##DDD` labels, `YYYY-Www` week keys, the 13-week quarter, workday spans.
+"""`w##DDD` week codes (ISO 8601 week calendar), `YYYY-Www` week keys, the 13-week quarter, workday spans.
 
 The single owner of week codes for GBOGEB (AGENTS.md "Metric ownership"). Import it; do not copy it.
 `actions_metrics.iso_week()` delegates to `iso_week_key()` here, and from another tree you load this
@@ -7,10 +7,12 @@ file with `importlib.util.spec_from_file_location`, as `actions_metrics._load()`
 patterns that use these codes are in `WDDD_WEEK_CODES.md` next to this file.
 
 Codes
-  * `2026-w46MON` is the canonical form: ISO year, ISO week, three-letter ISO weekday.
+  * `2026-w46MON` is the canonical form: ISO year, ISO week, three-letter weekday name.
+    It is a project code on the ISO 8601 week calendar, not ISO 8601 syntax, which writes it `2026-W46-1`.
   * `w46MON` is a display label only. ISO week 1 can start in December (`2026-w01MON` is 2025-12-29)
     and week 53 exists only in 53-week years, so a bare label needs the ISO year passed in.
   * `2026-W46` (`iso_week_key`) is the week key the hub's Actions metrics already use, so the two join.
+    It is the only form here that is ISO 8601 syntax.
 
 The 13-week quarter (w01-w13, w14-w26, w27-w39, w40-w52, with w53 folded into Q4) is a project
 convention, not part of ISO 8601, hence the name `quarter_13w`.
