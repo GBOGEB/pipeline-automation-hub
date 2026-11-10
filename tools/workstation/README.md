@@ -130,3 +130,25 @@ The script exits 1 if any PR ends FAIL or STALE. A JSON report is written to `-R
 plus the top dashboards, GitHub Pages sites and claude.ai artifacts. It is rebuilt daily by a scheduled task.
 Install it with `pwsh -NoProfile -File tools\workstation\dashboards\Install-Dashboards.ps1`; see
 [dashboards/README.md](dashboards/README.md).
+
+## Mermaid render check (`build_mermaid_check.py`)
+
+It renders every Mermaid diagram in the given Markdown or `.mmd` files and folders with one pinned Mermaid version, in your browser. For each diagram it reports "rendered" or the parse error, and a Gantt's axis labels. It also flags a Gantt `axisFormat` with `%W`, which is not the ISO week; use `%V` (see `mission-control/jade_temple/devops/WDDD_WEEK_CODES.md`). It needs only the standard library.
+
+```powershell
+Set-Location "<repo root>"
+python tools\workstation\build_mermaid_check.py docs mission-control\some\README.md --serve
+```
+
+- **`--serve`:** binds `127.0.0.1` exclusively, from port 8796 or the next free one. Python's default server on Windows can share a busy port silently. Ctrl+C stops it; nothing runs in the background.
+- **`--strict`:** exits with 1 on a lint warning.
+- **`--mermaid X.Y.Z`:** pins a different Mermaid version.
+- **The page:** it has a **Dark background** button for diagrams themed for dark pages. It is written to `%TEMP%\mermaid_check\` unless you pass `-o`.
+
+## Extracting pasted handovers (`extract_pasted_content.py`)
+
+A handover pasted into a Claude Code chat lives only in that session's transcript. Before a session is deleted, run this to save every `<pasted_content>` block byte-exact, with `SHA256SUMS` and a report of identical blocks:
+
+```powershell
+python tools\workstation\extract_pasted_content.py "$env:USERPROFILE\.claude\projects\<project>\<cliSessionId>.jsonl" "<out folder>"
+```
