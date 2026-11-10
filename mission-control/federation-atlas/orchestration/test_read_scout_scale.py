@@ -81,7 +81,8 @@ class ScaleContract(unittest.TestCase):
     def test_out_of_order_or_missing_pulse_fails_closed(self):
         for bad in (0,7,3):
             d=sample();d["cohorts"]["scouts32"][1]["pulse_id"]=bad
-            with self.subTest(pulse=bad),self.assertRaisesRegex(ValueError,"PULSES_NOT_CONSECUTIVE"):
+            expected="INVALID_PULSE_ID" if bad==0 else "PULSES_NOT_CONSECUTIVE"
+            with self.subTest(pulse=bad),self.assertRaisesRegex(ValueError,expected):
                 m.evaluate(d)
         d=sample();d["cohorts"]["scouts32"].pop()
         with self.assertRaisesRegex(ValueError,"FOUR_PULSES_REQUIRED"):
