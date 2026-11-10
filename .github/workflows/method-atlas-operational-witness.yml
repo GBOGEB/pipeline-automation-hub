@@ -1,0 +1,114 @@
+name: Method Atlas Operational Coverage & Outcome Witness
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/federation-atlas/orchestration/operational_witness.py'
+      - 'mission-control/federation-atlas/orchestration/test_operational_witness.py'
+      - 'mission-control/federation-atlas/orchestration/OPERATIONAL_SURFACES_v1.json'
+      - 'mission-control/federation-atlas/orchestration/OPERATIONAL_WITNESS.md'
+      - 'mission-control/gogreen/outcome_convergence/outcome_flight.py'
+      - 'mission-control/gogreen/outcome_convergence/samples/native_full_window_20261017.json'
+      - '.github/workflows/method-atlas-operational-witness.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: method-atlas-operational-witness-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  outcome-and-reachability:
+    name: Actual production G9 command + static reachability (no dispatch)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact immutable source head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Verify exact head
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+
+      - name: Python 3.12
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+
+      - name: Use Method Atlas existing pinned YAML parser
+        run: python -m pip install --disable-pip-version-check pyyaml==6.0.3
+
+      - name: Synthetic safety and coverage-axis tests (nonzero)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/federation-atlas/orchestration \
+            -p test_operational_witness.py -v 2>&1 | tee "$RUNNER_TEMP/operational-tests.log"
+          python - <<'PY'
+          import os,re
+          from pathlib import Path
+          s=(Path(os.environ['RUNNER_TEMP'])/'operational-tests.log').read_text()
+          matches=[int(x) for x in re.findall(r'^Ran ([0-9]+) tests? in ',s,re.M)]
+          if not matches or matches[-1] < 8 or 'FAILED' in s or 'skipped=' in s:
+              raise SystemExit('OPERATIONAL_WITNESS_TEST_POPULATION_FIRST_RED')
+          print('WITNESS_TESTS='+str(matches[-1]))
+          PY
+
+      - name: Execute actual G9 production processor + replay + counterfactual + negative inputs
+        shell: bash
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/federation-atlas/orchestration/operational_witness.py \
+            --root . --head "$EXPECTED_HEAD" \
+            --out "$RUNNER_TEMP/method-atlas-operational"
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          out=Path(os.environ['RUNNER_TEMP'])/'method-atlas-operational'
+          manifest=json.loads((out/'manifest.json').read_text())
+          data=json.loads((out/'operational_witness.json').read_text())
+          if manifest['head']!=os.environ['EXPECTED_HEAD'] or data['head']!=manifest['head']:
+              raise SystemExit('WITNESS_EXACT_HEAD_DRIFT')
+          for name,sha in manifest['files'].items():
+              if hashlib.sha256((out/name).read_bytes()).hexdigest()!=sha:
+                  raise SystemExit('WITNESS_ARTIFACT_HASH_MISMATCH')
+          expected={'total_native_runs':57,'native_terminal_success':46,
+                    'native_terminal_failure':10,'native_terminal_cancelled':1}
+          if data['witness']['baseline']!=expected:
+              raise SystemExit('G9_OUTCOME_ORACLE_DRIFT')
+          for k in ('idempotent_repeat','valid_counterfactual_changes_expected_outcome',
+                    'missing_population_rejected','out_of_order_clock_rejected'):
+              if data['witness'].get(k) is not True:
+                  raise SystemExit('WITNESS_NEGATIVE_FIRST_RED_'+k)
+          if data['inventory']['whole_pipeline_coverage_pct'] is not None:
+              raise SystemExit('FALSE_WHOLE_FLEET_COVERAGE')
+          if data['governance']!={'merge_admission':'HOLD','dispatch_authorized':False,
+                                  'watch_notification_owner_changed':False,
+                                  'whole_fleet_coverage_qualified':False,
+                                  'engineering_credit_delta':0}:
+              raise SystemExit('AUTHORITY_ESCALATION')
+          print('OPERATIONAL_WITNESS=CONTROLLED_ONLY; no merge/dispatch/engineering credit')
+          PY
+
+      - name: Upload trace and interactive read-only experience
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: method-atlas-operational-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/operational-tests.log
+            ${{ runner.temp }}/method-atlas-operational/
+          retention-days: 21
+          if-no-files-found: warn
