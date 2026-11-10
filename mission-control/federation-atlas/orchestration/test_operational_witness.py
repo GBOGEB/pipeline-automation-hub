@@ -137,6 +137,85 @@ class OutcomeAndAuthority(unittest.TestCase):
                 self.assertNotIn("coverage",cmd)
                 self.assertIsNone(mocked.call_args.kwargs["env"])
 
+    def test_source_and_owner_mismatch_are_fail_closed(self):
+        from types import SimpleNamespace
+        from unittest import mock
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            fake=SimpleNamespace(returncode=0,stdout="b"*40)
+            with mock.patch.object(w.subprocess,"run",return_value=fake), \
+                 self.assertRaisesRegex(ValueError,"CHECKOUT_HEAD_MISMATCH"):
+                w.source_head(root,"a"*40)
+            with mock.patch.object(w.importlib.util,"spec_from_file_location",return_value=None), \
+                 self.assertRaisesRegex(ValueError,"METHOD_ATLAS_OWNER_MISSING"):
+                w.existing_atlas()
+
+    def test_malformed_workflow_source_kept_unknown_not_covered(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td);(root/".github/workflows").mkdir(parents=True)
+            f=root/".github/workflows/malformed.yml"
+            f.write_text(
+                "name: Broken\non: workflow_dispatch\njobs:\n"
+                "  invalid: []\n"
+                "  live:\n    steps:\n      - 42\n"
+            )
+            class Owner:
+                @staticmethod
+                def source_files(x):return [".github/workflows/malformed.yml"]
+                @staticmethod
+                def inventory(x):
+                    return {"workflow_count":2,"workflow_jobs":2,"workflow_steps":1,
+                            "workflows":[{"path":"ignored.yml","errors":["BROKEN_AST"]},
+                                         {"path":".github/workflows/malformed.yml",
+                                          "errors":[]}]}
+            data=w.inventory(root,Owner,{"local_repo":"local","peers":[]})
+            self.assertGreaterEqual(data["unresolved_static_refs"],3)
+            self.assertIsNone(data["whole_pipeline_coverage_pct"])
+
+    def test_production_witness_rejects_all_eight_false_positive_modes(self):
+        from types import SimpleNamespace
+        from unittest import mock
+        good=dict(w.COUNTS)
+        delta=dict(good,native_terminal_success=45,native_terminal_failure=11)
+        wrong=dict(good,native_terminal_success=47)
+        # Failure modes deliberately target *real* witness decision branches.
+        cases={
+            "PRODUCTION_ENTRYPOINT_DID_NOT_RUN":([1],[],True),
+            "G9_SOURCE_BOUND_57_RUN_DENOMINATOR_DRIFT":([0,0],[wrong,good],True),
+            "PRODUCTION_OUTPUT_NOT_IDEMPOTENT":([0,0],[good,wrong],True),
+            "MISSING_COUNTERFACTUAL_ROW":([0,0],[good,good],False),
+            "CONTROLLED_VALID_INPUT_REJECTED":([0,0,1],[good,good],True),
+            "NO_EXPECTED_INPUT_OUTPUT_SENSITIVITY":([0,0,0],[good,good,good],True),
+            "INCOMPLETE_NATIVE_DENOMINATOR_FALSE_PASS":([0,0,0,0],[good,good,delta],True),
+            "OUT_OF_ORDER_NATIVE_CLOCK_FALSE_PASS":([0,0,0,1,0],[good,good,delta],True),
+        }
+        for expected,(codes,outputs,has_success) in cases.items():
+            with self.subTest(expected=expected),tempfile.TemporaryDirectory() as td:
+                root=Path(td)
+                source=root/w.SAMPLE
+                source.parent.mkdir(parents=True)
+                source.write_text(__import__('json').dumps({
+                    "cohorts":[{"runs":[{"conclusion":"success" if has_success else "failure"}]}]
+                }))
+                observed=[SimpleNamespace(returncode=x) for x in codes]
+                received=[(v,{"files":{}}) for v in outputs]
+                with mock.patch.object(w,"execute",side_effect=observed), \
+                     mock.patch.object(w,"verify_artifacts",side_effect=received), \
+                     self.assertRaisesRegex(ValueError,expected):
+                    w.actual_outcome_witness(root,"a"*40)
+
+    def test_registry_schema_mismatch_is_rejected_before_any_execution(self):
+        from unittest import mock
+        with tempfile.TemporaryDirectory() as td:
+            base=Path(td);root=base/"repo";root.mkdir()
+            fake=base/"registry.json"
+            fake.write_text('{"schema":"wrong","peers":[]}')
+            with mock.patch.object(w,"source_head",return_value="a"*40), \
+                 mock.patch.object(w,"REGISTRY",fake), \
+                 self.assertRaisesRegex(ValueError,"REGISTRY_SCHEMA_MISMATCH"):
+                w.main(["--root",str(root),"--head","a"*40,
+                        "--out",str(base/"output")])
+
     def test_no_new_metric_or_watcher_owner(self):
         reg=json.loads(w.REGISTRY.read_text())
         self.assertEqual(reg["schema"],"method-atlas.operational-surface-registry.v1")
