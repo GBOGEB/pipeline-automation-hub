@@ -599,13 +599,16 @@ jobs:
         run: |
           set -euo pipefail
           SRC=mission-control/federation-atlas/orchestration
-          python -m unittest discover -s "$SRC" -p test_runtime_evidence.py -v
+          python -m unittest discover -s mission-control/federation-atlas/orchestration -p test_runtime_evidence.py -v
           python "$SRC/main.py" run-local --root . \
             --out "$RUNNER_TEMP/atlas-runtime-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
             --head "$EXACT_SHA" --workers 2 > "$RUNNER_TEMP/atlas-runtime-receipt.stdout.json"
           python "$SRC/runtime_evidence.py" --root . \
             --run-dir "$RUNNER_TEMP/atlas-runtime-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
             --out /tmp/code-purple-atlas/runtime-evidence
+          python "$SRC/runtime_evidence_browser_qa.py" \
+            --html /tmp/code-purple-atlas/runtime-evidence/runtime-evidence.html \
+            --head "$EXACT_SHA" --out /tmp/code-purple-atlas/runtime-evidence/browser
       - name: Bind source-owned coverage-integrity view when present
         shell: bash
         env:

@@ -29,6 +29,12 @@ Replay does not execute any task. JSON inspection exposes source identity,
 dependency evidence, output hashes, bounds and qualifications. Arbitrary handler
 payloads and raw exception messages remain outside this shareable projection.
 
+The existing Method Atlas CI job also runs `runtime_evidence_browser_qa.py`
+against that generated HTML. It checks source identity, desktop/mobile layout,
+Replay, Reset and the exact terminal slider position with its existing pinned
+browser installation. A local browser launch restriction is a blocked check;
+it cannot be recorded as a visual pass.
+
 The actual local graph contains eight tasks and eleven dependency edges:
 
 ```mermaid

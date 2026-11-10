@@ -228,7 +228,7 @@ table{border-collapse:collapse;width:100%;font-size:.92rem}td,th{text-align:left
 <p>Eight registered tasks, their dependency order and their generated products. Replay uses recorded events; it does not launch work.</p>
 <p>Source <code>HEAD_PLACEHOLDER</code></p></header><div id="cards" class="cards"></div>
 <p class="note">Scope: the registered local generator graph. Native CI, hosted federation, domain acceptance and whole-repository coverage remain separate evidence.</p>
-<h2>Recorded execution</h2><div class="controls"><button id="play">Replay</button><button id="reset">Reset</button><input id="time" aria-label="Recorded time" type="range" min="0" step="0.01"><output id="clock"></output></div><div id="timeline"></div>
+<h2>Recorded execution</h2><div class="controls"><button id="play">Replay</button><button id="reset">Reset</button><input id="time" aria-label="Recorded time" type="range" min="0" step="any"><output id="clock"></output></div><div id="timeline"></div>
 <h2>What was checked</h2><p>Receipt source identity, dependency completion before successors start, output contracts, exact producer-to-assembly bytes, and package member hashes.</p>
 <div class="scroll"><table><thead><tr><th>Task</th><th>Observed outcome</th><th>Prerequisites</th><th>Execution seconds</th></tr></thead><tbody id="tasks"></tbody></table></div>
 <h2>Evidence boundary</h2><p id="interpretation"></p><p>“Causal intervention qualified” is false here. A positive trace records what happened. Separate failure injection and recovery runs are needed to establish which checks prevent false success.</p>

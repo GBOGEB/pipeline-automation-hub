@@ -7,10 +7,12 @@ from __future__ import annotations
 
 import copy
 import importlib.util
+import itertools
 import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest import mock
 
 
 MODULE_PATH = Path(__file__).with_name("main.py")
@@ -728,10 +730,14 @@ class LocalReceiptBoundaryTests(FixtureCase):
                 raise ValueError("fixture producer failed")
             return {"status": "produced"}
         broker = atlas.module("local_receipt_test_broker", MODULE_PATH.with_name("broker.py"))
-        receipt = broker.run_local(tasks, {"produce": produce, "consume": lambda: {"status": "consumed"}},
-                                   workers=2, max_pending=1, root=self.root,
-                                   input_validator=(lambda task: False) if validator_phase == "input" else None,
-                                   output_validator=(lambda task, result: False) if validator_phase == "output" else None)
+        # Exercise the real executor with a strictly advancing logical clock.
+        # Windows can report identical monotonic times for these tiny handlers;
+        # that would make a purported timestamp corruption a no-op.
+        with mock.patch.object(broker.time, "monotonic", new=itertools.count().__next__):
+            receipt = broker.run_local(tasks, {"produce": produce, "consume": lambda: {"status": "consumed"}},
+                                       workers=2, max_pending=1, root=self.root,
+                                       input_validator=(lambda task: False) if validator_phase == "input" else None,
+                                       output_validator=(lambda task, result: False) if validator_phase == "output" else None)
         source_digest = atlas.digest(source.read_bytes())
         receipt.update(source_sha=HEAD, source_digest=source_digest, source_changed_during_run=False)
         model = {"source": {"head_sha": HEAD, "source_digest": source_digest}, "broker": {"tasks": tasks}}
@@ -883,8 +889,9 @@ class LocalReceiptBoundaryTests(FixtureCase):
             barrier.wait(timeout=5)
             return {"status": "produced"}
         broker = atlas.module("overlap_receipt_broker", MODULE_PATH.with_name("broker.py"))
-        receipt = broker.run_local(model["broker"]["tasks"], {"produce": overlapping, "consume": overlapping},
-                                   workers=2, max_pending=2, root=self.root)
+        with mock.patch.object(broker.time, "monotonic", new=itertools.count().__next__):
+            receipt = broker.run_local(model["broker"]["tasks"], {"produce": overlapping, "consume": overlapping},
+                                       workers=2, max_pending=2, root=self.root)
         receipt.update(source_sha=HEAD, source_digest=model["source"]["source_digest"], source_changed_during_run=False)
         self.assertIs(atlas.validate_local_receipt(receipt, model), receipt)
         self.assertEqual(receipt["metrics"]["max_running"], 2)
