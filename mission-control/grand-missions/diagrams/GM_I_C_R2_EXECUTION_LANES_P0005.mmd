@@ -2,7 +2,7 @@ flowchart LR
   %% P0005 read-only execution view. Not a scheduler, dispatch instruction or admission receipt.
   %% Source: Hub master 401c57316197c81e910f0b3da7ea7322e1f109fc;
   %% GEMINI main d3a885ab8593cbf9af22e6fce6c64d589ad80575.
-  subgraph HUB["LANE A - Hub control and independent review"]
+  subgraph HUB["LANE A | Hub control"]
     H0["B21 | Hub W0 #1135 | native CI green, FPC red"]
     H1["B25 | choose strict review or one governed outage design"]
     H2["B29 | owner ruleset and negative canary"]
@@ -10,7 +10,7 @@ flowchart LR
     H1 --> H2
     H2 --> H3
   end
-  subgraph GEM["LANE B - GEMINI offline contract and mainline DoV"]
+  subgraph GEM["LANE B | GEMINI"]
     G1["W1 #38 | snapshot code merged"]
     G2["W2 #40/#46/#51/#52 | broker, legacy quarantine"]
     G3["B35 | main SHA d3a885ab | W2 native regression"]
@@ -19,12 +19,12 @@ flowchart LR
     G2 --> G3
     G3 --> G4
   end
-  subgraph ISO["LANE C - disjoint JADE ISO batch"]
+  subgraph ISO["LANE C | JADE ISO"]
     J1["B30 | #1164 sole integration candidate"]
     J2["B32 | independent review, trusted FPC, owner approval"]
     J1 --> J2
   end
-  subgraph AUTH["LANE D - owner-held hosted identity"]
+  subgraph AUTH["LANE D | Hosted identity"]
     O1["B19 / GEMINI #12 | WIF, repo variables, root Viewer ACL"]
     O2["IC3 | hosted read-only census, >0 steps and items"]
     O1 --> O2
