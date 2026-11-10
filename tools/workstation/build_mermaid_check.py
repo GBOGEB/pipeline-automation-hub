@@ -20,14 +20,18 @@ from __future__ import annotations
 
 import argparse
 import functools
+import hashlib
+import importlib.metadata
 import http.server
 import json
 import os
 import re
 import socket
 import sys
+import subprocess
 import tempfile
 import webbrowser
+import urllib.request
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Iterable, Iterator, List, Optional, Sequence
@@ -37,6 +41,8 @@ REPO_ROOT = HERE.parent.parent
 DEFAULT_INPUT = REPO_ROOT / "mission-control" / "jade_temple" / "devops" / "WDDD_WEEK_CODES.md"
 DEFAULT_OUT = Path(tempfile.gettempdir()) / "mermaid_check" / "mermaid_check.html"
 DEFAULT_MERMAID = "11.4.1"
+# Digest of the exact CDN distribution; headless mode refuses unknown or changed bytes.
+MERMAID_BUNDLE_SHA256 = {"11.4.1": "a43bc1afd446f9c4cc66ac5dd45d02e8d65e26fc5344ec0ef787f88d6ddb6f9e"}
 DEFAULT_PORT = 8796
 MD_SUFFIXES = {".md", ".markdown"}
 MMD_SUFFIXES = {".mmd", ".mermaid"}
@@ -239,6 +245,121 @@ def build_page(diagrams: Sequence[Diagram], version: str = DEFAULT_MERMAID) -> s
     )
 
 
+
+def pinned_bundle(version: str, bundle: Optional[Path] = None) -> bytes:
+    """Load one explicitly qualified distribution before starting the offline browser."""
+    expected = MERMAID_BUNDLE_SHA256.get(version)
+    if expected is None:
+        raise ValueError(f"no headless bundle digest qualified for Mermaid {version!r}")
+    if bundle is not None:
+        data = bundle.read_bytes()
+    else:
+        url = f"https://cdn.jsdelivr.net/npm/mermaid@{version}/dist/mermaid.min.js"
+        with urllib.request.urlopen(url, timeout=30) as response:
+            data = response.read()
+    if hashlib.sha256(data).hexdigest() != expected:
+        raise ValueError("Mermaid bundle digest mismatch")
+    return data
+
+
+def source_binding(diagrams: Sequence[Diagram], root: Path) -> dict:
+    """Bind the actual input bytes to one Git checkout; refuse an edited or untracked input."""
+    root = root.resolve()
+    head = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+    if not re.fullmatch(r"[0-9a-f]{40}", head):
+        raise ValueError("input source HEAD is not a full SHA")
+    files = []
+    for source in sorted({d.source for d in diagrams}):
+        path = Path(source).resolve()
+        relative = path.relative_to(root).as_posix()
+        committed = subprocess.check_output(["git", "-C", str(root), "show", f"{head}:{relative}"])
+        actual = path.read_bytes()
+        if actual != committed:
+            raise ValueError(f"input differs from committed source: {relative}")
+        files.append({"path": relative, "sha256": hashlib.sha256(actual).hexdigest()})
+    return {"status": "VERIFIED_INPUT_BYTES", "head_sha": head, "files": files}
+
+
+def render_headless(
+    diagrams: Sequence[Diagram],
+    out: Path,
+    version: str = DEFAULT_MERMAID,
+    bundle: Optional[Path] = None,
+    source_root: Optional[Path] = None,
+    timeout_ms: int = 30000,
+    chromium_executable: Optional[str] = None,
+) -> dict:
+    """Exercise this owner's generated page in Chromium and retain failures as JSON.
+
+    This verifies renderer execution, SVG presence and nonzero geometry. It does not
+    approve diagram meaning, reviewer acceptance, merge admission or issue closure.
+    """
+    out.mkdir(parents=True, exist_ok=True)
+    owner_file = Path(__file__).resolve()
+    report = {
+        "schema": "workstation.mermaid-render.v1", "ok": False,
+        "mermaid_version": version, "expected_diagrams": len(diagrams),
+        "owner_file_sha256": hashlib.sha256(owner_file.read_bytes()).hexdigest(),
+        "source_binding": {"status": "UNKNOWN_NOT_REQUESTED"},
+        "results": [], "svg_geometry": [], "browser_errors": [],
+        "diagram_payloads": [{"name": d.name, "sha256": hashlib.sha256(d.text.encode("utf-8")).hexdigest()} for d in diagrams],
+        "semantic_review": "NOT_ASSESSED", "merge_admission": "HOLD", "closure_credit": 0,
+    }
+    try:
+        report["owner_head_sha"] = subprocess.check_output(
+            ["git", "-C", str(REPO_ROOT), "rev-parse", "HEAD"], text=True
+        ).strip()
+        owner_relative = owner_file.relative_to(REPO_ROOT).as_posix()
+        committed_owner = subprocess.check_output(
+            ["git", "-C", str(REPO_ROOT), "show", f"HEAD:{owner_relative}"]
+        )
+        report["owner_matches_commit"] = committed_owner == owner_file.read_bytes()
+        if source_root is not None:
+            report["source_binding"] = source_binding(diagrams, source_root)
+        data = pinned_bundle(version, bundle)
+        report["mermaid_bundle_sha256"] = hashlib.sha256(data).hexdigest()
+        from playwright.sync_api import sync_playwright
+        report["playwright_version"] = importlib.metadata.version("playwright")
+        page_html = build_page(diagrams, version)
+        (out / "render-check.html").write_text(page_html, encoding="utf-8", newline="\n")
+        expected_url = f"https://cdn.jsdelivr.net/npm/mermaid@{version}/dist/mermaid.min.js"
+        with sync_playwright() as playwright:
+            browser = playwright.chromium.launch(executable_path=chromium_executable)
+            try:
+                report["browser_version"] = browser.version
+                report["browser_executable_override"] = chromium_executable
+                context = browser.new_context(viewport={"width": 1440, "height": 1000}, service_workers="block")
+                # The browser cannot fetch any unpinned asset or external diagram resource.
+                context.route("**/*", lambda route: route.fulfill(body=data, content_type="application/javascript")
+                              if route.request.url == expected_url else route.abort())
+                page = context.new_page()
+                page.on("pageerror", lambda error: report["browser_errors"].append(str(error)))
+                page.set_content(page_html, wait_until="load", timeout=timeout_ms)
+                page.wait_for_function("Array.isArray(window.__results)", timeout=timeout_ms)
+                report["results"] = page.evaluate("window.__results")
+                svgs = page.locator(".box > svg")
+                for index in range(svgs.count()):
+                    svg = svgs.nth(index)
+                    geometry = svg.evaluate("e => ({width:e.getBoundingClientRect().width,height:e.getBoundingClientRect().height,viewBox:e.getAttribute('viewBox')})")
+                    report["svg_geometry"].append(geometry)
+                    (out / f"diagram-{index + 1:02}.svg").write_text(svg.evaluate("e => e.outerHTML"), encoding="utf-8", newline="\n")
+                    svg.screenshot(path=str(out / f"diagram-{index + 1:02}.png"))
+                page.screenshot(path=str(out / "page.png"), full_page=True)
+                report["ok"] = bool(diagrams) and (
+                    len(report["results"]) == len(diagrams)
+                    and all(item.get("ok") is True and not item.get("lint") for item in report["results"])
+                    and len(report["svg_geometry"]) == len(diagrams)
+                    and all(item["width"] > 0 and item["height"] > 0 for item in report["svg_geometry"])
+                    and not report["browser_errors"]
+                )
+            finally:
+                browser.close()
+    except Exception as error:
+        report["error"] = f"{type(error).__name__}: {error}"
+    (out / "receipt.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8", newline="\n")
+    return report
+
+
 class _ExclusiveServer(http.server.ThreadingHTTPServer):
     """No SO_REUSEADDR: on Windows it lets a second server bind a port that is already in use, silently."""
 
@@ -280,7 +401,13 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     ap.add_argument("--strict", action="store_true", help="exit 1 when any lint warning is found")
     ap.add_argument("--serve", nargs="?", const=DEFAULT_PORT, type=int, metavar="PORT", help=f"serve the page on 127.0.0.1 (default port {DEFAULT_PORT})")
     ap.add_argument("--no-open", action="store_true", help="with --serve, don't open the browser")
+    ap.add_argument("--headless", type=Path, metavar="DIR", help="execute Chromium and save SVG, PNG and JSON evidence")
+    ap.add_argument("--bundle", type=Path, help="local Mermaid distribution, checked against the qualified digest")
+    ap.add_argument("--source-root", type=Path, help="bind actual diagram inputs to this Git checkout")
+    ap.add_argument("--chromium-executable", help="explicit local Chromium override, recorded in evidence; native CI uses Playwright's pinned browser")
     args = ap.parse_args(argv)
+    if args.headless is not None and args.serve is not None:
+        ap.error("--headless and --serve are mutually exclusive")
 
     paths = args.paths or [DEFAULT_INPUT]
     try:
@@ -304,6 +431,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         warnings += len(d.lint)
     print(f"{len(diagrams)} diagram(s), {warnings} lint warning(s) -> {out}")
 
+    if args.headless is not None:
+        report = render_headless(diagrams, args.headless, args.mermaid, args.bundle, args.source_root,
+                                 chromium_executable=args.chromium_executable)
+        print(json.dumps({key: report.get(key) for key in ("ok", "expected_diagrams", "error", "source_binding")}))
+        return 0 if report["ok"] else 1
     if args.serve is not None:
         serve(out, args.serve, open_browser=not args.no_open)
     return 1 if (args.strict and warnings) else 0

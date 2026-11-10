@@ -145,6 +145,41 @@ python tools\workstation\build_mermaid_check.py docs mission-control\some\README
 - **`--mermaid X.Y.Z`:** pins a different Mermaid version.
 - **The page:** it has a **Dark background** button for diagrams themed for dark pages. It is written to `%TEMP%\mermaid_check\` unless you pass `-o`.
 
+### Native browser evidence
+
+`--headless <evidence folder>` runs this same generated page in Playwright Chromium,
+saves one SVG and PNG per successful diagram, a full-page PNG and `receipt.json`, and
+exits nonzero for parser errors, zero diagrams, lint warnings, missing SVGs, zero
+geometry, browser errors, a missing browser, or an unqualified Mermaid bundle.
+The renderer is Mermaid **11.4.1**, with SHA256 checked against the qualified bundle
+digest. Browser requests other than that locally supplied bundle are blocked.
+Interactive `--mermaid X.Y.Z` remains available; headless mode requires adding an
+explicit distribution digest before using another version.
+
+```powershell
+python -m pip install -r mission-control/issue_rank/browser-qa-requirements.txt
+python -m playwright install chromium
+python tools/workstation/build_mermaid_check.py path/to/diagram.mmd --headless out/render --source-root .
+```
+
+`--source-root` verifies that the actual input bytes equal the named Git checkout.
+The receipt records that input SHA separately from the renderer's own HEAD and
+module hash, and states whether the renderer file matches its commit. `--bundle`
+accepts a previously downloaded distribution with the same required hash.
+`--chromium-executable` is an explicit, recorded local override; native CI uses
+the browser supplied by the existing pinned Playwright dependency.
+
+The narrowly triggered `workstation-mermaid-qa.yml` runs the method-owner tests,
+an actual Gantt/flowchart ID-collision regression, invalid syntax and empty-input
+negative cases, then renders all three P0005 assets from immutable PR #1179 source
+`9c897ae7b1859c901a2ac927d1736693b7f89b9c`. The artifact identifies both source
+roles. Changing either candidate requires new evidence for that new SHA.
+
+Renderer execution proves parse/render/geometry behavior. The receipt leaves
+semantic review unassessed, merge admission HOLD and closure credit zero. The
+existing P0006 source-DAG Kahn tests remain a separate proof; this method does not
+replace them or transfer their result to a different source.
+
 ## Extracting pasted handovers (`extract_pasted_content.py`)
 
 A handover pasted into a Claude Code chat lives only in that session's transcript. Before a session is deleted, run this to save every `<pasted_content>` block byte-exact, with `SHA256SUMS` and a report of identical blocks:

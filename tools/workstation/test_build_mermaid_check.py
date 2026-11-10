@@ -2,6 +2,7 @@
 import json
 import re
 import socket
+import subprocess
 
 import pytest
 
@@ -123,3 +124,40 @@ def test_server_refuses_a_port_in_use():
             bmc._ExclusiveServer(("127.0.0.1", port), bmc.http.server.SimpleHTTPRequestHandler)
     finally:
         holder.server_close()
+
+
+def test_headless_refuses_changed_bundle_bytes(tmp_path):
+    bundle = tmp_path / "mermaid.js"
+    bundle.write_bytes(b"unqualified bytes")
+    with pytest.raises(ValueError, match="digest mismatch"):
+        bmc.pinned_bundle("11.4.1", bundle)
+    with pytest.raises(ValueError, match="no headless bundle digest"):
+        bmc.pinned_bundle("99.0.0", bundle)
+
+
+def test_source_binding_refuses_edited_input(tmp_path):
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    source = tmp_path / "diagram.mmd"
+    source.write_text("flowchart TD\nA --> B\n", encoding="utf-8")
+    subprocess.run(["git", "-C", str(tmp_path), "add", "diagram.mmd"], check=True)
+    subprocess.run(["git", "-C", str(tmp_path), "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "fixture"], check=True)
+    diagrams = bmc.collect([source])
+    result = bmc.source_binding(diagrams, tmp_path)
+    assert result["status"] == "VERIFIED_INPUT_BYTES" and len(result["head_sha"]) == 40
+    source.write_text("flowchart TD\nA --> C\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="differs from committed"):
+        bmc.source_binding(bmc.collect([source]), tmp_path)
+
+
+def test_headless_failure_saves_evidence(tmp_path):
+    bundle = tmp_path / "bad.js"
+    bundle.write_bytes(b"bad bundle")
+    result = bmc.render_headless([bmc.Diagram("test", 1, "flowchart TD\nA-->B")], tmp_path / "evidence", bundle=bundle)
+    assert result["ok"] is False and "digest mismatch" in result["error"]
+    assert json.loads((tmp_path / "evidence" / "receipt.json").read_text())["ok"] is False
+
+
+def test_headless_and_server_are_mutually_exclusive(tmp_path):
+    with pytest.raises(SystemExit) as error:
+        bmc.main(["--headless", str(tmp_path), "--serve"])
+    assert error.value.code == 2
