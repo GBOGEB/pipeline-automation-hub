@@ -243,16 +243,29 @@ def checklist(body):
             for key, val in steps.items()}
 
 
-def parked_intent(body):
-    """The ``<!-- parked-intent:v1 {...} -->`` marker of a parked issue, else None."""
+def parked_intent_meta(body):
+    """The decoded JSON object of a ``parked-intent:v1`` marker, else None.
+
+    None when there is no marker, the JSON is malformed, or it is not an object.
+    The thread tools (``tools/threads/``) read ``id``, ``sessions`` and ``wake``
+    from it; :func:`parked_intent` is the summary the burndown publishes.
+    """
     m = PARKED.search(body or "")
     if not m:
         return None
     try:
         data = json.loads(m.group(1))
     except ValueError:
-        return {"marker": "parked-intent:v1", "valid": False, "id": None}
-    ok = isinstance(data, dict)
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def parked_intent(body):
+    """The ``<!-- parked-intent:v1 {...} -->`` marker of a parked issue, else None."""
+    if not PARKED.search(body or ""):
+        return None
+    data = parked_intent_meta(body)
+    ok = data is not None
     return {"marker": "parked-intent:v1", "valid": ok, "id": data.get("id") if ok else None}
 
 
