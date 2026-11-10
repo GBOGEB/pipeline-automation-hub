@@ -14,6 +14,7 @@ flowchart TD
   B21 --> ADMIT{"W4 | noncompensating owner admission"}
   B09 --> ADMIT
   B29 --> ADMIT
+  B37["B37 | GEMINI owner main PR reviews and required negative canary"] --> ADMIT
   IC3 --> ADMIT
   ADMIT --> W4["W4 | hosted exact-SHA publish and draft PR ingest"]
   W4 --> W5["W5 | second independent consumer and semantic parity"]
@@ -26,5 +27,5 @@ flowchart TD
   classDef blocked fill:#f6eef2,stroke:#8c4b6e,color:#38182c,stroke-dasharray:5 3
   class B12,B31,G1,G2,B35,B30 done
   class B13,B21,B09,B32 review
-  class B25,B26,B29,B19,IC3 owner
+  class B25,B26,B29,B37,B19,IC3 owner
   class ADMIT,W4,W5,W6,ISO blocked
