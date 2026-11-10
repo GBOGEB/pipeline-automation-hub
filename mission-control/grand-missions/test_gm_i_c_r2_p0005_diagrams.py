@@ -69,7 +69,10 @@ def _paths_from(source: str, edges):
     return reached
 
 
-@pytest.mark.parametrize("asset,expected", zip(NAMES, ((17, 15, 7), (22, 20, 7), (17, 16, 6))))
+@pytest.mark.parametrize(
+    "asset,expected",
+    [(NAMES[0], (17, 15, 7)), (NAMES[1], (22, 20, 7)), (NAMES[2], (17, 16, 6))],
+)
 def test_source_structure_matches_documented_p0005_qa(asset, expected):
     nodes, edges = _source_graph(ASSETS / asset)
     assert (len(nodes), len(edges)) == expected[:2]
