@@ -27,3 +27,7 @@ also works: `git push origin archive/<branch>:refs/heads/<branch>`).
 
 Run `W4_ARCHIVE_NEVER_LANDED` only after its branches are reviewed for
 unlanded fixes.
+
+For every repo of the owner at once, and for local clones, use the workstation step
+`tools/workstation/Invoke-BranchHygiene.ps1`. It builds the list from live branches
+and runs this same script on it (see `tools/workstation/README.md`).
