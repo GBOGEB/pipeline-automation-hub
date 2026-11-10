@@ -107,6 +107,36 @@ class OutcomeAndAuthority(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"OUTPUT_MUST_BE_EMPTY"):
                 w.main(["--root",str(root),"--head","a"*40,"--out",str(root/"out")])
 
+    def test_g9_runtime_coverage_separate_from_unit_coverage(self):
+        from unittest import mock
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)/"source";root.mkdir()
+            slot=Path(td)/"actual-g9-runtime-coverage"
+            with mock.patch.dict("os.environ",{"WITNESS_G9_COVERAGE_FILE":str(slot)}), \
+                 mock.patch.object(w.subprocess,"run") as mocked:
+                mocked.return_value.returncode=0
+                w.execute(root,"a"*40,root/"fixture.json",Path(td)/"output")
+                cmd=mocked.call_args.args[0]
+                self.assertEqual(cmd[:5],[w.sys.executable,"-m","coverage","run","-a"])
+                self.assertIn("--branch",cmd)
+                self.assertIn("outcome_flight.py"," ".join(cmd))
+                self.assertEqual(mocked.call_args.kwargs["env"]["COVERAGE_FILE"],str(slot))
+            with mock.patch.dict("os.environ",{"WITNESS_G9_COVERAGE_FILE":str(root/"bad")}), \
+                 self.assertRaisesRegex(ValueError,"COVERAGE_OUTPUT_INSIDE_CHECKOUT"):
+                w.execute(root,"a"*40,root/"fixture.json",Path(td)/"output")
+
+    def test_no_false_production_coverage_without_opt_in(self):
+        from unittest import mock
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)/"source";root.mkdir()
+            with mock.patch.dict("os.environ",{"WITNESS_G9_COVERAGE_FILE":""}), \
+                 mock.patch.object(w.subprocess,"run") as mocked:
+                w.execute(root,"a"*40,root/"fixture.json",Path(td)/"output")
+                cmd=mocked.call_args.args[0]
+                self.assertEqual(cmd[0],w.sys.executable)
+                self.assertNotIn("coverage",cmd)
+                self.assertIsNone(mocked.call_args.kwargs["env"])
+
     def test_no_new_metric_or_watcher_owner(self):
         reg=json.loads(w.REGISTRY.read_text())
         self.assertEqual(reg["schema"],"method-atlas.operational-surface-registry.v1")

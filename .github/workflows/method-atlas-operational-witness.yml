@@ -46,13 +46,15 @@ jobs:
           python-version: '3.12'
 
       - name: Use Method Atlas existing pinned YAML parser
-        run: python -m pip install --disable-pip-version-check pyyaml==6.0.3
+        run: python -m pip install --disable-pip-version-check pyyaml==6.0.3 coverage==7.13.3
 
       - name: Synthetic safety and coverage-axis tests (nonzero)
         shell: bash
         run: |
           set -euo pipefail
-          python -m unittest discover -s mission-control/federation-atlas/orchestration \
+          COVERAGE_FILE="$RUNNER_TEMP/.witness_coverage" python -m coverage run --branch \
+            --include='*/mission-control/federation-atlas/orchestration/operational_witness.py' \
+            -m unittest discover -s mission-control/federation-atlas/orchestration \
             -p test_operational_witness.py -v 2>&1 | tee "$RUNNER_TEMP/operational-tests.log"
           python - <<'PY'
           import os,re
@@ -70,9 +72,17 @@ jobs:
           EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
-          python mission-control/federation-atlas/orchestration/operational_witness.py \
+          WITNESS_G9_COVERAGE_FILE="$RUNNER_TEMP/.g9_actual_runtime" \
+            COVERAGE_FILE="$RUNNER_TEMP/.witness_coverage" \
+            python -m coverage run -a --branch \
+            --include='*/mission-control/federation-atlas/orchestration/operational_witness.py' \
+            mission-control/federation-atlas/orchestration/operational_witness.py \
             --root . --head "$EXPECTED_HEAD" \
             --out "$RUNNER_TEMP/method-atlas-operational"
+          COVERAGE_FILE="$RUNNER_TEMP/.witness_coverage" python -m coverage json -q \
+            -o "$RUNNER_TEMP/method-atlas-operational/witness_code_coverage.json"
+          COVERAGE_FILE="$RUNNER_TEMP/.g9_actual_runtime" python -m coverage json -q \
+            -o "$RUNNER_TEMP/method-atlas-operational/g9_actual_runtime_coverage.json"
           python - <<'PY'
           import hashlib,json,os
           from pathlib import Path
@@ -99,6 +109,32 @@ jobs:
                                   'whole_fleet_coverage_qualified':False,
                                   'engineering_credit_delta':0}:
               raise SystemExit('AUTHORITY_ESCALATION')
+          measured={}
+          for name in ("witness_code_coverage.json","g9_actual_runtime_coverage.json"):
+              p=out/name
+              c=json.loads(p.read_text())
+              total=c["totals"]
+              if (c["meta"].get("version")!="7.13.3" or
+                  c["meta"].get("branch_coverage") is not True or
+                  total["num_statements"]<=0 or total["num_branches"]<=0 or
+                  total["covered_lines"]<=0 or total["covered_branches"]<=0):
+                  raise SystemExit("COVERAGE_POPULATION_INVALID_"+name)
+              measured[name]={"file_sha256":hashlib.sha256(p.read_bytes()).hexdigest(),
+                              "tool":c["meta"]["version"],"branch_coverage":True,
+                              "measured_statements":total["num_statements"],
+                              "covered_statements":total["covered_lines"],
+                              "measured_branches":total["num_branches"],
+                              "covered_branches":total["covered_branches"],
+                              "statement_pct":total["percent_statements_covered"],
+                              "branch_pct":total["percent_branches_covered"]}
+          r={"schema":"method-atlas.operational-measured-coverage.v1",
+             "exact_head":os.environ["EXPECTED_HEAD"],"producer":"existing G9 processor",
+             "populations":{"witness_tests_plus_driver":measured["witness_code_coverage.json"],
+                            "g9_actual_cli_invocations_only":measured["g9_actual_runtime_coverage.json"]},
+             "matched_whole_repo_coverage":None,"fleet_causal_root_credit":0,
+             "merge_authorized":False}
+          (out/"coverage_measurements.json").write_text(json.dumps(r,sort_keys=True,indent=2)+"\n")
+          print("MEASURED_WITNESS_COVERAGE="+json.dumps(r["populations"],sort_keys=True))
           print('OPERATIONAL_WITNESS=CONTROLLED_ONLY; no merge/dispatch/engineering credit')
           PY
 

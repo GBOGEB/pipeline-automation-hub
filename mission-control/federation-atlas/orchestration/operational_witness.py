@@ -6,6 +6,7 @@ import hashlib
 import html
 import importlib.util
 import json
+import os
 import re
 import subprocess
 import sys
@@ -140,9 +141,28 @@ def inventory(root, owner, registry):
 
 
 def execute(root,head,source,out):
-    return subprocess.run([sys.executable,str(root/G9),"--input",str(source),
-                           "--out",str(out),"--source-sha",head],
-                          cwd=root,capture_output=True,text=True,timeout=75,check=False)
+    """Run the real G9 CLI, optionally measuring its runtime in its OWN cohort.
+
+    The wrapper's unittest/CLI coverage is distinct from G9 production coverage.
+    A trusted exact-head workflow may opt in through WITNESS_G9_COVERAGE_FILE.
+    No uncontrolled source code or remote process is dispatched.
+    """
+    script=[str(root/G9),"--input",str(source),
+            "--out",str(out),"--source-sha",head]
+    output=os.environ.get("WITNESS_G9_COVERAGE_FILE")
+    env=None
+    if output:
+        selected=Path(output).resolve()
+        if selected==root or selected.is_relative_to(root):
+            raise ValueError("G9_COVERAGE_OUTPUT_INSIDE_CHECKOUT")
+        cmd=[sys.executable,"-m","coverage","run","-a","--branch",
+             "--include=*/mission-control/gogreen/outcome_convergence/outcome_flight.py",
+             *script]
+        env={**os.environ,"COVERAGE_FILE":str(selected)}
+    else:
+        cmd=[sys.executable,*script]
+    return subprocess.run(cmd,cwd=root,env=env,capture_output=True,
+                          text=True,timeout=75,check=False)
 
 
 def verify_artifacts(path,head):

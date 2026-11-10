@@ -75,6 +75,29 @@ Outward: operational_witness.json, index.html (purple offline review),
 causal_dag.mmd, manifest.json (member SHA256). Full source cohort and
 temporary counterfactual input are **not** copied into the artifact.
 
+## 3A. Two isolated measured coverage populations
+
+The native workflow now installs the same existing pinned coverage.py 7.13.3
+and records **two separate branch-aware files**:
+
+- `witness_code_coverage.json` — unit tests PLUS the witness driver itself,
+  scoped only to `operational_witness.py`; this is implementation coverage,
+  not runtime effectiveness.
+- `g9_actual_runtime_coverage.json` — only the five actual invocations of the
+  existing `outcome_flight.py` production CLI (baseline, identical replay,
+  one valid counterfactual and two rejected bad inputs). This gives **observed
+  production-path statement and branch arcs**, not a mock unit-test statistic.
+
+`coverage_measurements.json` lists independently measured/covered statement
+and branch counts, percentages, source head and SHA of each coverage JSON.
+A missing/zero-eligible or non-branch-aware population fails closed. Native
+workflow logs show the exact measured source and process outcomes.
+
+Do not combine the two denominators or promote either to whole-repository,
+cross-branch, seven-repository, operational critical-path or causal-root
+coverage. G9 instrumented *historical fixture operation* is still not
+proof of live cross-repo production behavior.
+
 Proof levels: STATIC_DECLARED_ONLY; LOCAL_DIRECT_PRODUCTION_EXECUTION;
 CONTROLLED_FIXTURE_CAUSAL_SENSITIVITY. GitHub-native proof only after
 separate authenticated run/job/step readback. No claim of actual fleet
