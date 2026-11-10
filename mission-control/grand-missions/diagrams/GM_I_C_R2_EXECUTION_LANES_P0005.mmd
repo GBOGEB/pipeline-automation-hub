@@ -1,0 +1,46 @@
+flowchart LR
+  %% P0005 read-only execution view. Not a scheduler, dispatch instruction or admission receipt.
+  %% Source: Hub master 401c57316197c81e910f0b3da7ea7322e1f109fc;
+  %% GEMINI main d3a885ab8593cbf9af22e6fce6c64d589ad80575.
+  subgraph HUB["LANE A - Hub control and independent review"]
+    H0["B21 | Hub W0 #1135 | native CI green, FPC red"]
+    H1["B25 | choose strict review or one governed outage design"]
+    H2["B29 | owner ruleset and negative canary"]
+    H0 --> H3{"Exact-head independent review"}
+    H1 --> H2
+    H2 --> H3
+  end
+  subgraph GEM["LANE B - GEMINI offline contract and mainline DoV"]
+    G1["W1 #38 | snapshot code merged"]
+    G2["W2 #40/#46/#51/#52 | broker, legacy quarantine"]
+    G3["B35 | main SHA d3a885ab | W2 native regression"]
+    G4["B09/B26 | W1/W2 owner P2/P3 and schema decision"]
+    G1 --> G4
+    G2 --> G3
+    G3 --> G4
+  end
+  subgraph ISO["LANE C - disjoint JADE ISO batch"]
+    J1["B30 | #1164 sole integration candidate"]
+    J2["B32 | independent review, trusted FPC, owner approval"]
+    J1 --> J2
+  end
+  subgraph AUTH["LANE D - owner-held hosted identity"]
+    O1["B19 / GEMINI #12 | WIF, repo variables, root Viewer ACL"]
+    O2["IC3 | hosted read-only census, >0 steps and items"]
+    O1 --> O2
+  end
+  H3 --> W4{"W4 admission - AND join"}
+  G4 --> W4
+  O2 --> W4
+  W4 --> P4["W4 | hosted publish and draft-PR ingest"]
+  P4 --> P5["W5 | independent consumer parity"]
+  P5 --> P6["W6 | adversarial repeat and controls"]
+  J2 --> J3["ISO adapter integration - separate decision"]
+  classDef done fill:#ede1f4,stroke:#684080,color:#251532
+  classDef review fill:#f5e9f6,stroke:#9a6099,color:#321638
+  classDef owner fill:#fae9ef,stroke:#b05278,color:#451a32
+  classDef blocked fill:#f6eef2,stroke:#8c4b6e,color:#38182c,stroke-dasharray:5 3
+  class G1,G2,G3,J1 done
+  class H0,H3,G4,J2 review
+  class H1,H2,O1,O2 owner
+  class W4,P4,P5,P6,J3 blocked
