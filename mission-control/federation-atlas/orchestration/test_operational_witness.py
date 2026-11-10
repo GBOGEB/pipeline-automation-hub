@@ -195,7 +195,9 @@ class OutcomeAndAuthority(unittest.TestCase):
                 source=root/w.SAMPLE
                 source.parent.mkdir(parents=True)
                 source.write_text(__import__('json').dumps({
-                    "cohorts":[{"runs":[{"conclusion":"success" if has_success else "failure"}]}]
+                    "cohorts":[{"returned_count":1,"runs":[{
+                        "conclusion":"success" if has_success else "failure",
+                        "run_started_at":"2026-10-17T12:00:00Z"}]}]
                 }))
                 observed=[SimpleNamespace(returncode=x) for x in codes]
                 received=[(v,{"files":{}}) for v in outputs]
