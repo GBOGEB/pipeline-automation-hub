@@ -150,7 +150,8 @@ python tools\workstation\build_mermaid_check.py docs mission-control\some\README
 `--headless <evidence folder>` runs this same generated page in Playwright Chromium,
 saves one SVG and PNG per successful diagram, a full-page PNG and `receipt.json`, and
 exits nonzero for parser errors, zero diagrams, lint warnings, missing SVGs, zero
-geometry, browser errors, a missing browser, or an unqualified Mermaid bundle.
+geometry, a cluster title overlapping a node, browser errors, a missing browser,
+or an unqualified Mermaid bundle.
 The renderer is Mermaid **11.4.1**, with SHA256 checked against the qualified bundle
 digest. Browser requests other than that locally supplied bundle are blocked.
 Interactive `--mermaid X.Y.Z` remains available; headless mode requires adding an
@@ -162,7 +163,9 @@ python -m playwright install chromium
 python tools/workstation/build_mermaid_check.py path/to/diagram.mmd --headless out/render --source-root .
 ```
 
-`--source-root` verifies that the actual input bytes equal the named Git checkout.
+`--source-root` verifies that the actual input bytes equal the named Git checkout,
+and that the in-memory diagram payloads match extraction from those committed
+bytes (or the owner's explicitly declared ISO-week comparison expansion).
 The receipt records that input SHA separately from the renderer's own HEAD and
 module hash, and states whether the renderer file matches its commit. `--bundle`
 accepts a previously downloaded distribution with the same required hash.
@@ -170,10 +173,11 @@ accepts a previously downloaded distribution with the same required hash.
 the browser supplied by the existing pinned Playwright dependency.
 
 The narrowly triggered `workstation-mermaid-qa.yml` runs the method-owner tests,
-an actual Gantt/flowchart ID-collision regression, invalid syntax and empty-input
-negative cases, then renders all three P0005 assets from immutable PR #1179 source
-`9c897ae7b1859c901a2ac927d1736693b7f89b9c`. The artifact identifies both source
-roles. Changing either candidate requires new evidence for that new SHA.
+actual Gantt/flowchart ID-collision and wrapped-cluster-title regressions, invalid
+syntax and empty-input negative cases. The P0005 consumer workflow on PR #1179
+checks out an immutable qualified method commit and delegates its three current
+diagrams to this owner. Each consumer receipt identifies the method and input
+source roles separately. Changing either requires evidence for the changed SHA.
 
 Renderer execution proves parse/render/geometry behavior. The receipt leaves
 semantic review unassessed, merge admission HOLD and closure credit zero. The

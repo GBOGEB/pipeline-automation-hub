@@ -15,9 +15,6 @@ permissions:
 concurrency:
   group: workstation-mermaid-${{ github.event.pull_request.head.sha || github.sha }}
   cancel-in-progress: false
-env:
-  # This is the immutable input atlas from PR #1179, not this renderer PR's source.
-  DIAGRAM_SOURCE_SHA: 9c897ae7b1859c901a2ac927d1736693b7f89b9c
 jobs:
   renderer:
     name: Pinned Chromium render and negative cases
@@ -29,19 +26,10 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
-      - name: Checkout immutable P0005 diagram source
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          ref: ${{ env.DIAGRAM_SOURCE_SHA }}
-          path: .renderer-source
-          sparse-checkout: mission-control/grand-missions/diagrams
-          persist-credentials: false
-      - name: Assert distinct source identities
+      - name: Assert renderer source identity
         env:
           RENDERER_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: |
-          test "$(git rev-parse HEAD)" = "$RENDERER_SOURCE_SHA"
-          test "$(git -C .renderer-source rev-parse HEAD)" = "$DIAGRAM_SOURCE_SHA"
+        run: test "$(git rev-parse HEAD)" = "$RENDERER_SOURCE_SHA"
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
         with:
           python-version: '3.12'
@@ -53,34 +41,12 @@ jobs:
         env:
           RUN_MERMAID_BROWSER: '1'
         run: |
-          python -m pytest -q tools/workstation/test_build_mermaid_check.py tools/workstation/test_extract_pasted_content.py tools/workstation/test_mermaid_browser_qa.py
-      - name: Render the three exact P0005 assets with source binding
-        env:
-          RENDERER_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: |
-          python tools/workstation/build_mermaid_check.py \
-            .renderer-source/mission-control/grand-missions/diagrams/GM_I_C_R2_EXECUTION_LANES_P0005.mmd \
-            .renderer-source/mission-control/grand-missions/diagrams/GM_I_C_R2_PROMOTION_DEPENDENCIES_P0005.mmd \
-            .renderer-source/mission-control/grand-missions/diagrams/GM_I_C_R2_SIPOC_P0005.mmd \
-            --strict --source-root .renderer-source --headless "$RUNNER_TEMP/p0005-render" \
-            --out "$RUNNER_TEMP/p0005-render/input.html"
-          python - <<'PY'
-          import json, os
-          from pathlib import Path
-          receipt = json.loads((Path(os.environ['RUNNER_TEMP']) / 'p0005-render/receipt.json').read_text())
-          assert receipt['ok'] and receipt['expected_diagrams'] == 3
-          assert receipt['owner_head_sha'] == os.environ['RENDERER_SOURCE_SHA']
-          assert receipt['owner_matches_commit'] is True
-          assert receipt['source_binding']['head_sha'] == os.environ['DIAGRAM_SOURCE_SHA']
-          assert receipt['source_binding']['status'] == 'VERIFIED_INPUT_BYTES'
-          assert receipt['browser_executable_override'] is None
-          print(json.dumps(receipt, indent=2))
-          PY
-      - name: Retain render receipt, SVGs and PNGs
+          python -m pytest -q tools/workstation/test_build_mermaid_check.py tools/workstation/test_extract_pasted_content.py tools/workstation/test_mermaid_browser_qa.py --basetemp "$RUNNER_TEMP/workstation-mermaid-tests"
+      - name: Retain synthetic browser regression evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
-          name: p0005-render-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
-          path: ${{ runner.temp }}/p0005-render
+          name: workstation-mermaid-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/workstation-mermaid-tests
           if-no-files-found: warn
           retention-days: 30

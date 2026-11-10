@@ -147,18 +147,23 @@ def display(p: Path) -> str:
     return rel.as_posix() if rel.parts[:3].count("..") < 3 else p.resolve().as_posix()
 
 
+def _from_text(text: str, source: str, suffix: str) -> List[Diagram]:
+    """One extraction path for files and byte-verified Git objects."""
+    if suffix.lower() in MMD_SUFFIXES:
+        found = [Diagram(source=source, line=1, text=text)]
+    else:
+        found = extract_markdown(text, source)
+    for d in found:
+        d.dtype = diagram_type(d.text)
+        d.lint.extend(lint(d.text, d.dtype))
+    return found
+
+
 def collect(paths: Sequence[Path]) -> List[Diagram]:
     diagrams: List[Diagram] = []
     for f in iter_files(paths):
         text = f.read_text(encoding="utf-8-sig", errors="replace")
-        if f.suffix.lower() in MMD_SUFFIXES:
-            found = [Diagram(source=display(f), line=1, text=text)]
-        else:
-            found = extract_markdown(text, display(f))
-        for d in found:
-            d.dtype = diagram_type(d.text)
-            d.lint.extend(lint(d.text, d.dtype))
-        diagrams.extend(found)
+        diagrams.extend(_from_text(text, display(f), f.suffix))
     return diagrams
 
 
@@ -276,8 +281,18 @@ def source_binding(diagrams: Sequence[Diagram], root: Path) -> dict:
         actual = path.read_bytes()
         if actual != committed:
             raise ValueError(f"input differs from committed source: {relative}")
+        # Match collect()'s UTF-8 BOM and universal-newline handling on the same
+        # verified bytes. A modified/stale in-memory payload cannot inherit the
+        # path's provenance. Only the owner's explicit ISO-week expansion is valid.
+        text = committed.decode("utf-8-sig", errors="replace").replace("\r\n", "\n").replace("\r", "\n")
+        expected = _from_text(text, source, path.suffix)
+        supplied = [d for d in diagrams if d.source == source]
+        if supplied != expected and supplied != with_iso_week_variants(expected):
+            raise ValueError(f"render payload differs from committed extraction: {relative}")
         files.append({"path": relative, "sha256": hashlib.sha256(actual).hexdigest()})
-    return {"status": "VERIFIED_INPUT_BYTES", "head_sha": head, "files": files}
+    return {"status": "VERIFIED_INPUT_BYTES", "head_sha": head, "files": files,
+            "payload_binding": "VERIFIED_EXTRACTION_OR_DECLARED_ISO_VARIANT",
+            "variants": sorted({d.variant for d in diagrams if d.variant})}
 
 
 def render_headless(
@@ -301,7 +316,7 @@ def render_headless(
         "mermaid_version": version, "expected_diagrams": len(diagrams),
         "owner_file_sha256": hashlib.sha256(owner_file.read_bytes()).hexdigest(),
         "source_binding": {"status": "UNKNOWN_NOT_REQUESTED"},
-        "results": [], "svg_geometry": [], "browser_errors": [],
+        "results": [], "svg_geometry": [], "browser_errors": [], "cluster_title_overlaps": [],
         "diagram_payloads": [{"name": d.name, "sha256": hashlib.sha256(d.text.encode("utf-8")).hexdigest()} for d in diagrams],
         "semantic_review": "NOT_ASSESSED", "merge_admission": "HOLD", "closure_credit": 0,
     }
@@ -337,6 +352,22 @@ def render_headless(
                 page.set_content(page_html, wait_until="load", timeout=timeout_ms)
                 page.wait_for_function("Array.isArray(window.__results)", timeout=timeout_ms)
                 report["results"] = page.evaluate("window.__results")
+                report["cluster_title_overlaps"] = page.evaluate("""() => {
+                  const overlaps = [];
+                  for (const [diagram, svg] of [...document.querySelectorAll('.box > svg')].entries()) {
+                    for (const label of svg.querySelectorAll('.cluster-label')) {
+                      const a = label.getBoundingClientRect();
+                      for (const node of svg.querySelectorAll('.node')) {
+                        const b = node.getBoundingClientRect();
+                        const width = Math.min(a.right,b.right)-Math.max(a.left,b.left);
+                        const height = Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top);
+                        if (width > 0.5 && height > 0.5) overlaps.push({diagram:diagram+1,
+                          title:label.textContent.trim(),node:node.textContent.trim(),width,height});
+                      }
+                    }
+                  }
+                  return overlaps;
+                }""")
                 svgs = page.locator(".box > svg")
                 for index in range(svgs.count()):
                     svg = svgs.nth(index)
@@ -351,6 +382,7 @@ def render_headless(
                     and len(report["svg_geometry"]) == len(diagrams)
                     and all(item["width"] > 0 and item["height"] > 0 for item in report["svg_geometry"])
                     and not report["browser_errors"]
+                    and not report["cluster_title_overlaps"]
                 )
             finally:
                 browser.close()

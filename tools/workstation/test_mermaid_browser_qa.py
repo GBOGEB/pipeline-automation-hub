@@ -45,3 +45,18 @@ def test_empty_input_cannot_produce_positive_browser_proof(tmp_path):
     result = render([], tmp_path)
     assert result["ok"] is False
     assert result["expected_diagrams"] == 0
+
+
+def test_wrapped_cluster_title_overlapping_nodes_is_rejected(tmp_path):
+    text = '''flowchart LR
+      subgraph GEM["LANE B - GEMINI offline contract and mainline DoV"]
+        G1["W1 snapshot code merged"] --> G4["Owner receipts"]
+        G2["Broker and legacy quarantine"] --> G3["Current main regression"]
+        G3 --> G4
+      end
+      G4 --> W4["Admission"]
+    '''
+    result = render([bmc.Diagram("collision", 1, text)], tmp_path)
+    assert all(item["ok"] for item in result["results"]), result
+    assert result["ok"] is False
+    assert result["cluster_title_overlaps"], result

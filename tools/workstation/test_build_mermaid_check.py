@@ -3,6 +3,7 @@ import json
 import re
 import socket
 import subprocess
+from dataclasses import replace
 
 import pytest
 
@@ -144,9 +145,26 @@ def test_source_binding_refuses_edited_input(tmp_path):
     diagrams = bmc.collect([source])
     result = bmc.source_binding(diagrams, tmp_path)
     assert result["status"] == "VERIFIED_INPUT_BYTES" and len(result["head_sha"]) == 40
+    with pytest.raises(ValueError, match="render payload differs"):
+        bmc.source_binding([replace(diagrams[0], text="flowchart TD\nFAKE --> PAYLOAD\n")], tmp_path)
     source.write_text("flowchart TD\nA --> C\n", encoding="utf-8")
     with pytest.raises(ValueError, match="differs from committed"):
         bmc.source_binding(bmc.collect([source]), tmp_path)
+
+
+def test_source_binding_uses_committed_markdown_and_declared_iso_variant(tmp_path):
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    source = tmp_path / "diagram.md"
+    source.write_bytes(("# Title\r\n```mermaid\r\n" + GANTT_W.replace("\n", "\r\n") + "```\r\n").encode())
+    subprocess.run(["git", "-C", str(tmp_path), "add", "diagram.md"], check=True)
+    subprocess.run(["git", "-C", str(tmp_path), "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "fixture"], check=True)
+    diagrams = bmc.collect([source])
+    assert bmc.source_binding(diagrams, tmp_path)["variants"] == []
+    transformed = bmc.with_iso_week_variants(diagrams)
+    assert bmc.source_binding(transformed, tmp_path)["variants"] == ["axisFormat %W -> %V"]
+    transformed[1].text += "\n Injected :x, 2026-11-09, 2d\n"
+    with pytest.raises(ValueError, match="render payload differs"):
+        bmc.source_binding(transformed, tmp_path)
 
 
 def test_headless_failure_saves_evidence(tmp_path):
