@@ -402,6 +402,31 @@ class DashboardBoundaryTests(unittest.TestCase):
         self.assertEqual([], inspector.unsafe)
         self.assertNotIn('<script>window.PORTFOLIO_ATTACK=1</script>', page)
 
+    def test_reader_burndown_cannot_claim_native_completion(self):
+        result = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA,
+                                   plan=plan(task()))
+        page = portfolio.artifacts(result)["index.html"].decode()
+        self.assertIn("Action burndown · review annotations", page)
+        self.assertIn("Export review JSON", page)
+        self.assertIn("UNVERIFIED_LOCAL_READER_ANNOTATIONS", page)
+        self.assertIn("not_an_execution_receipt:true", page)
+        self.assertIn("not_an_issue_closure:true", page)
+        self.assertIn("formal_credit_delta:0", page)
+        self.assertIn("DOV/DOD: NOT ESTABLISHED", page)
+        self.assertIn("NOT_READY", page)
+        self.assertIn("0 verified completion credits", page)
+
+    def test_reader_ranking_is_derived_from_canonical_issue_model(self):
+        result = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA,
+                                   plan=plan(task()), issue_snapshot=issue_snapshot())
+        page = portfolio.artifacts(result)["index.html"].decode()
+        self.assertIn("issueLane(i)", page)
+        self.assertIn("issueTable()", page)
+        self.assertIn("ck.total?ck.done+'/'+ck.total", page)
+        self.assertIn("0/0 · undefined", page)
+        self.assertEqual(1, result["issues"]["public_open_items"])
+        self.assertFalse(result["issues"]["full_population_qualified"])
+
     def test_csv_formula_and_mermaid_label_injection_are_neutralized(self):
         value = plan(task(title='=HYPERLINK("https://evil.example")', intent="@command"))
         result = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA, plan=value)
