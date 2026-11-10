@@ -592,6 +592,20 @@ jobs:
             --out /tmp/code-purple-atlas/orchestration --head "$EXACT_SHA"
           python "$SRC/browser_qa.py" --html /tmp/code-purple-atlas/orchestration/index.html \
             --out /tmp/code-purple-atlas/orchestration-qa --head "$EXACT_SHA"
+      - name: Execute registered generators and verify runtime outcome bytes
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas/orchestration
+          python -m unittest discover -s "$SRC" -p test_runtime_evidence.py -v
+          python "$SRC/main.py" run-local --root . \
+            --out "$RUNNER_TEMP/atlas-runtime-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --head "$EXACT_SHA" --workers 2 > "$RUNNER_TEMP/atlas-runtime-receipt.stdout.json"
+          python "$SRC/runtime_evidence.py" --root . \
+            --run-dir "$RUNNER_TEMP/atlas-runtime-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --out /tmp/code-purple-atlas/runtime-evidence
       - name: Bind source-owned coverage-integrity view when present
         shell: bash
         env:

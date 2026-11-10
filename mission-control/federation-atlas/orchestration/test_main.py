@@ -75,6 +75,32 @@ class FixtureCase(unittest.TestCase):
 
 
 class ArtifactBoundaryTests(FixtureCase):
+    def test_output_seal_includes_unlisted_support_files_and_manifest_bytes(self):
+        self.write("product/index.html", "<html></html>")
+        self.write("product/support/app.js", "const version = 1;")
+        self.write("product/manifest.json", {"declared": ["index.html"]})
+        before = atlas.output_files(self.root / "product")
+        self.assertEqual(set(before), {"index.html", "support/app.js", "manifest.json"})
+        self.assertEqual(before["manifest.json"], atlas.digest((self.root / "product/manifest.json").read_bytes()))
+        self.write("product/support/app.js", "const version = 2;")
+        self.assertNotEqual(atlas.output_files(self.root / "product"), before)
+
+    def test_output_seal_rejects_symlinked_files_and_directories(self):
+        target = self.write("outside.txt", "outside output authority")
+        product = self.root / "product"
+        product.mkdir()
+        link = product / "linked.txt"
+        try:
+            link.symlink_to(target)
+        except OSError as exc:
+            self.skipTest("symlink creation unavailable: " + str(exc))
+        with self.assertRaisesRegex(ValueError, "symlinked"):
+            atlas.output_files(product)
+        link.unlink()
+        link.symlink_to(self.root, target_is_directory=True)
+        with self.assertRaisesRegex(ValueError, "symlinked"):
+            atlas.output_files(product)
+
     def test_missing_required_and_optional_artifacts_are_distinct(self):
         with self.assertRaises(ValueError):
             atlas.validate_artifact(self.root, self.port())
@@ -618,8 +644,9 @@ class RuntimeIntegrationBoundaryTests(FixtureCase):
                  "inventory_policy": atlas.SNAPSHOT_POLICY, "source_files_sha256": hashes,
                  "source_digest": source_digest}, "authority_transfer": False,
                  "remote_dispatch": False, "merge_admission": "HOLD"}
-        bundle = self.root / "bundle"
-        bundle.mkdir()
+        bundle_directory = tempfile.TemporaryDirectory()
+        self.addCleanup(bundle_directory.cleanup)
+        bundle = Path(bundle_directory.name)
         members = {"index.html": b"<html></html>", "style.css": b"body{}", "app.js": b"'use strict';",
                    "atlas.json": atlas.canonical(model), "inventory.json": b"{}", "burndown.json": b"{}",
                    "broker-plan.json": b"{}", "source-check.json": b"{}"}
@@ -686,7 +713,7 @@ class RuntimeIntegrationBoundaryTests(FixtureCase):
 
 
 class LocalReceiptBoundaryTests(FixtureCase):
-    def measured_receipt(self, fail=False):
+    def measured_receipt(self, fail=False, validator_phase=None):
         """Exercise the real broker; bind its measurements to a fixture source."""
         source = self.write("input.txt", "fixture source v1")
         tasks = [
@@ -702,7 +729,9 @@ class LocalReceiptBoundaryTests(FixtureCase):
             return {"status": "produced"}
         broker = atlas.module("local_receipt_test_broker", MODULE_PATH.with_name("broker.py"))
         receipt = broker.run_local(tasks, {"produce": produce, "consume": lambda: {"status": "consumed"}},
-                                   workers=2, max_pending=1, root=self.root)
+                                   workers=2, max_pending=1, root=self.root,
+                                   input_validator=(lambda task: False) if validator_phase == "input" else None,
+                                   output_validator=(lambda task, result: False) if validator_phase == "output" else None)
         source_digest = atlas.digest(source.read_bytes())
         receipt.update(source_sha=HEAD, source_digest=source_digest, source_changed_during_run=False)
         model = {"source": {"head_sha": HEAD, "source_digest": source_digest}, "broker": {"tasks": tasks}}
@@ -747,6 +776,124 @@ class LocalReceiptBoundaryTests(FixtureCase):
         drifted["source_changed_during_run"] = True
         with self.assertRaisesRegex(ValueError, "source drift"):
             atlas.validate_local_receipt(drifted, original_model)
+
+    def test_real_input_and_output_contract_failure_timelines_are_accepted(self):
+        for phase in ("input", "output"):
+            with self.subTest(phase=phase):
+                receipt, model = self.measured_receipt(validator_phase=phase)
+                self.assertIs(atlas.validate_local_receipt(receipt, model), receipt)
+                self.assertEqual(receipt["tasks"]["produce"]["error"]["phase"], phase + "_contract")
+
+    def test_timestamps_must_be_finite_in_run_and_chronological(self):
+        original, model = self.measured_receipt()
+        for field, value in (("started_at_seconds", float("nan")),
+                             ("finished_at_seconds", float("inf")),
+                             ("ready_at_seconds", -1),
+                             ("verify_started_at_seconds", original["metrics"]["elapsed_seconds"] + 1),
+                             ("execution_finished_at_seconds", 0)):
+            with self.subTest(field=field, value=value):
+                receipt = copy.deepcopy(original)
+                receipt["tasks"]["produce"][field] = value
+                with self.assertRaises(ValueError):
+                    atlas.validate_local_receipt(receipt, model)
+
+    def test_duration_arithmetic_cannot_be_changed_without_timestamps(self):
+        original, model = self.measured_receipt()
+        for field in ("execution_seconds", "verification_seconds"):
+            with self.subTest(field=field):
+                receipt = copy.deepcopy(original)
+                receipt["tasks"]["consume"][field] += 1
+                with self.assertRaisesRegex(ValueError, "duration"):
+                    atlas.validate_local_receipt(receipt, model)
+
+    def test_child_cannot_start_before_verified_parent_even_with_coherent_local_timing(self):
+        receipt, model = self.measured_receipt()
+        child = receipt["tasks"]["consume"]
+        shift = child["started_at_seconds"]
+        for field in ("started_at_seconds", "execution_finished_at_seconds", "verify_started_at_seconds", "finished_at_seconds"):
+            child[field] -= shift
+        child["ready_at_seconds"] = 0.0
+        child["ready_wait_seconds"] = 0.0
+        for event in child["events"]:
+            event["at_seconds"] = max(0.0, event["at_seconds"] - shift)
+        waits = sorted(row["ready_wait_seconds"] for row in receipt["tasks"].values())
+        receipt["metrics"].update(ready_wait_p50_seconds=waits[0], ready_wait_p95_seconds=waits[-1])
+        with self.assertRaisesRegex(ValueError, "verified predecessor"):
+            atlas.validate_local_receipt(receipt, model)
+
+    def test_trace_events_cannot_be_reordered_relabelled_or_removed(self):
+        original, model = self.measured_receipt()
+        for change in ("reorder", "relabel", "remove", "terminal-time"):
+            with self.subTest(change=change):
+                receipt = copy.deepcopy(original)
+                events = receipt["tasks"]["produce"]["events"]
+                if change == "reorder":
+                    events[1], events[2] = events[2], events[1]
+                elif change == "relabel":
+                    events[-2]["state"] = "running"
+                elif change == "remove":
+                    events.clear()
+                else:
+                    events[-1]["at_seconds"] = receipt["metrics"]["elapsed_seconds"]
+                with self.assertRaises(ValueError):
+                    atlas.validate_local_receipt(receipt, model)
+
+    def test_blocked_task_requires_real_failed_ancestor_and_no_execution(self):
+        original, model = self.measured_receipt(fail=True)
+        for change in ("no-blocker", "wrong-blocker", "execution", "early-block"):
+            with self.subTest(change=change):
+                receipt = copy.deepcopy(original)
+                child = receipt["tasks"]["consume"]
+                if change == "no-blocker":
+                    child["error"]["blocked_by"] = []
+                elif change == "wrong-blocker":
+                    child["error"]["blocked_by"] = ["consume"]
+                elif change == "execution":
+                    child["started_at_seconds"] = 0.0
+                else:
+                    child["finished_at_seconds"] = child["events"][-1]["at_seconds"] = 0.0
+                with self.assertRaises(ValueError):
+                    atlas.validate_local_receipt(receipt, model)
+
+    def test_terminal_result_and_failure_phase_must_match_trace(self):
+        receipt, model = self.measured_receipt()
+        receipt["tasks"]["produce"]["result"] = {}
+        with self.assertRaisesRegex(ValueError, "result contract"):
+            atlas.validate_local_receipt(receipt, model)
+        receipt, model = self.measured_receipt(fail=True)
+        receipt["tasks"]["produce"]["error"]["phase"] = "output_contract"
+        with self.assertRaisesRegex(ValueError, "failure phase"):
+            atlas.validate_local_receipt(receipt, model)
+
+    def test_real_empty_broker_receipt_has_no_execution_credit(self):
+        broker = atlas.module("empty_receipt_broker", MODULE_PATH.with_name("broker.py"))
+        receipt = broker.run_local([], {}, root=self.root)
+        receipt.update(source_sha=HEAD, source_digest="d" * 64, source_changed_during_run=False)
+        model = {"source": {"head_sha": HEAD, "source_digest": "d" * 64}, "broker": {"tasks": []}}
+        self.assertIs(atlas.validate_local_receipt(receipt, model), receipt)
+        self.assertEqual(receipt["metrics"]["succeeded"], 0)
+
+    def test_reported_concurrency_cannot_understate_real_overlapping_tasks(self):
+        import threading
+        _, model = self.measured_receipt()
+        for task in model["broker"]["tasks"]:
+            task["needs"] = []
+        barrier = threading.Barrier(2)
+        def overlapping():
+            barrier.wait(timeout=5)
+            return {"status": "produced"}
+        broker = atlas.module("overlap_receipt_broker", MODULE_PATH.with_name("broker.py"))
+        receipt = broker.run_local(model["broker"]["tasks"], {"produce": overlapping, "consume": overlapping},
+                                   workers=2, max_pending=2, root=self.root)
+        receipt.update(source_sha=HEAD, source_digest=model["source"]["source_digest"], source_changed_during_run=False)
+        self.assertIs(atlas.validate_local_receipt(receipt, model), receipt)
+        self.assertEqual(receipt["metrics"]["max_running"], 2)
+        for reported in (0, 1):
+            with self.subTest(reported=reported):
+                forged = copy.deepcopy(receipt)
+                forged["metrics"]["max_running"] = reported
+                with self.assertRaisesRegex(ValueError, "concurrency below observed"):
+                    atlas.validate_local_receipt(forged, model)
 
 
 class PortableGraphArtifactTests(FixtureCase):
@@ -881,6 +1028,101 @@ class CliPlanIdentityTests(FixtureCase):
         self.assertIn("checkout/head mismatch", json.loads(error.getvalue())["error"])
         load_broker.assert_not_called()
         self.assertFalse(out.exists())
+
+
+class MultilanguageInventoryTests(FixtureCase):
+    def rows(self):
+        result = atlas.inventory(self.root)
+        return result, {row["path"]: row for row in result["source_assets"]}
+
+    def test_languages_roles_and_original_inventory_keys_are_preserved(self):
+        for suffix in ("js", "jsx", "mjs", "cjs", "ts", "tsx", "sh", "bash", "ps1", "psm1"):
+            self.write("src/worker." + suffix, "no code is executed during discovery")
+        self.write("src/types.d.ts", "declare const value: string;")
+        self.write("tests/worker.test.js", "throw new Error('must not run');")
+        self.write("config/settings.toml", "workers = 2\n")
+        self.write("config/data.json", {"workers": 2})
+        self.write("config/values.yaml", "workers: 2\n")
+        self.write("entry.py", "def main(): pass\nif __name__ == '__main__': main()\n")
+        inv, rows = self.rows()
+        self.assertEqual((inv["python_module_count"], inv["python_with_main"]), (1, 1))
+        self.assertEqual(inv["source_asset_count"], 16)
+        self.assertEqual(rows["src/worker.ts"]["language"], "typescript")
+        self.assertEqual(rows["src/worker.ps1"]["language"], "powershell")
+        self.assertEqual(rows["src/types.d.ts"]["role"], "SUPPORT_DECLARATION")
+        self.assertEqual(rows["tests/worker.test.js"]["role"], "TEST_SUPPORT")
+        self.assertEqual(rows["config/data.json"]["role"], "CONFIG_OR_DATA")
+        self.assertTrue(all(row["runtime_reachability"] == "UNKNOWN" for row in rows.values()))
+
+    def test_package_composite_and_workflow_descriptors_remain_declarations(self):
+        self.write("package.json", {"scripts": {"build": "node src/build.mjs", "test": "node --test"}})
+        self.write(".github/actions/example/action.yml", "runs:\n  using: composite\n  steps:\n    - run: ./tools/task.sh\n      shell: bash\n")
+        self.write(".github/workflows/build.yml", "on: push\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - run: npm run build\n")
+        self.write("pyproject.toml", "[project]\nname='sample'\n")
+        self.write("src/build.mjs", "throw new Error('discovery must not execute');")
+        inv, rows = self.rows()
+        self.assertEqual(rows["package.json"]["declared_script_names"], ["build", "test"])
+        self.assertEqual(rows[".github/actions/example/action.yml"]["descriptor"], "GITHUB_COMPOSITE_ACTION")
+        self.assertEqual(rows["pyproject.toml"]["descriptor"], "PYTHON_PROJECT")
+        self.assertEqual(inv["workflow_count"], 1)
+        self.assertEqual(rows["src/build.mjs"]["membership"], "STATIC_REFERENCE_CANDIDATE")
+
+    def test_registered_sources_reference_candidates_and_unknown_are_distinct(self):
+        profile = self.profile()
+        self.write(atlas.PROFILE, profile)
+        self.write("src/consumer.ts", "import './peer.ts';\n// Documentation example: src/worker.py\n")
+        self.write("src/peer.ts", "export const n = 1;")
+        self.write("src/loose.js", "export const n = 2;")
+        _, rows = self.rows()
+        self.assertEqual(rows["src/worker.py"]["membership"], "REGISTERED_PROCESS_SOURCE")
+        self.assertEqual(rows["src/worker.py"]["registered_entrypoints"], [
+            {"block_id": "producer", "entrypoint": "emit"}, {"block_id": "consumer", "entrypoint": "emit"}])
+        self.assertEqual(rows["src/peer.ts"]["membership"], "STATIC_REFERENCE_CANDIDATE")
+        self.assertEqual(rows["src/loose.js"]["membership"], "UNCLASSIFIED_NO_LITERAL_REFERENCE")
+        self.assertEqual(rows["src/loose.js"]["runtime_reachability"], "UNKNOWN")
+
+    def test_ambiguous_dynamic_and_escaping_references_do_not_claim_reachability(self):
+        self.write("worker.js", "")
+        self.write("src/worker.js", "")
+        self.write("src/caller.js", "require('worker.js'); import(target); const x = '${where}';\n// ../../../outside.py\n")
+        _, rows = self.rows()
+        caller = rows["src/caller.js"]
+        ref = next(item for item in caller["references"] if item["literal"] == "worker.js")
+        self.assertEqual(ref["resolution"], "AMBIGUOUS_LOCAL_LITERAL")
+        self.assertEqual(ref["targets"], ["src/worker.js", "worker.js"])
+        self.assertGreaterEqual(caller["unresolved_dynamic_markers"], 2)
+        escape = next(item for item in caller["references"] if "outside" in item["literal"])
+        self.assertEqual(escape["targets"], [])
+        self.assertEqual(caller["runtime_reachability"], "UNKNOWN")
+
+    def test_reference_limits_non_utf8_and_bad_descriptors_are_reported(self):
+        self.write("big.json", b" " * (atlas.REFERENCE_SCAN_BYTES + 1))
+        self.write("binary.js", b"\xff\xfe")
+        self.write("many.js", "\n".join("'target%d.js'" % n for n in range(atlas.REFERENCE_SCAN_LIMIT + 1)))
+        self.write("package.json", "{broken")
+        self.write("action.yml", "runs: [unclosed")
+        _, rows = self.rows()
+        self.assertEqual(rows["big.json"]["reference_scan"], "SIZE_LIMIT_NOT_SCANNED")
+        self.assertEqual(rows["binary.js"]["reference_scan"], "NON_UTF8_NOT_SCANNED")
+        self.assertEqual(rows["many.js"]["reference_scan"], "REFERENCE_LIMIT_TRUNCATED")
+        self.assertEqual(len(rows["many.js"]["references"]), atlas.REFERENCE_SCAN_LIMIT)
+        self.assertIn("descriptor_error", rows["package.json"])
+        self.assertIn("descriptor_error", rows["action.yml"])
+
+    def test_every_new_inventory_input_is_bound_by_source_snapshot(self):
+        profile = self.profile()
+        self.write(atlas.PROFILE, profile)
+        for name, contents in {"frontend/entry.ts": "import './support.js'", "frontend/support.js": "",
+                               "tools/run.ps1": "Write-Output ok", "config/runtime.toml": "workers=2",
+                               "external/settings.json": {"value": 1}, "package.json": {"scripts": {}}}.items():
+            self.write(name, contents)
+        inv, rows = self.rows()
+        before = {name: atlas.digest((self.root / name).read_bytes()) for name in atlas.source_snapshot_paths(self.root, profile)}
+        self.assertTrue(set(rows) <= set(before))
+        self.assertEqual(inv["reference_policy"]["snapshot_policy"], atlas.SNAPSHOT_POLICY)
+        self.write("frontend/support.js", "export const version = 2;")
+        after = {name: atlas.digest((self.root / name).read_bytes()) for name in atlas.source_snapshot_paths(self.root, profile)}
+        self.assertNotEqual(before, after)
 
 
 if __name__ == "__main__":
