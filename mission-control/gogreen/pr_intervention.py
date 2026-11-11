@@ -172,7 +172,9 @@ def verdict(c):
     if (c.get('status') or '').upper() != 'COMPLETED':
         return 'pending'
     k = (c.get('conclusion') or '').upper()
-    return 'pass' if k in PASS else 'fail' if k in FAIL else 'superseded'  # CANCELLED / STALE
+    # The latest run of this identity was cancelled or went stale: nothing later superseded it, so it is
+    # not evidence of success. It stays non-green (pending) instead of dropping out of the count.
+    return 'pass' if k in PASS else 'fail' if k in FAIL else 'pending'
 
 
 def checks(rollup, gates):
@@ -310,22 +312,60 @@ def before(client, repos, policy, experiment, now, census):
 
 # ---------------------------------------------------------------- act
 
-def act(client, writer, b, apply, now):
+def live_guard(row, live, opt_out):
+    """Mutation safety re-read immediately before the write: labels, draft and base change without moving the head."""
+    if live.get('state') != 'OPEN':
+        return 'NOT_OPEN'
+    if live.get('headRefOid') != row['head_sha']:
+        return 'HEAD_MOVED'
+    if live.get('isDraft'):
+        return 'DRAFT'
+    if live.get('baseRefName') != row['base_ref']:
+        return 'BASE_CHANGED'
+    if {lb.get('name') for lb in live.get('labels') or []} & opt_out:
+        return 'OPT_OUT_LABEL'
+    if live.get('mergeable') == 'CONFLICTING' or live.get('mergeStateStatus') == 'DIRTY':
+        return 'CONFLICT'
+    return None
+
+
+def updated_head(client, row, method, sleep, tries=6):
+    """The exact head the update produced, read back so `after` compares SHAs; None when not confirmed."""
+    for attempt in range(tries):
+        try:
+            head = client.pr(row['repo'], row['number']).get('headRefOid')
+        except (OSError, ValueError):
+            head = None
+        if head and head != row['head_sha']:
+            if method != 'MERGE':
+                return head  # a rebase rewrites every commit: the first new head seen is the best evidence
+            try:  # a merge update's commit has the recorded head as its first parent; anything else is not ours
+                parents = [p.get('sha') for p in client.get(f"/repos/{row['repo']}/commits/{head}").get('parents') or []]
+            except (OSError, ValueError):
+                return None
+            return head if parents[:1] == [row['head_sha']] else None
+        if attempt < tries - 1:
+            sleep(5)
+    return None
+
+
+def act(client, writer, b, apply, now, sleep=time.sleep):
     method, results = b['policy']['method'], []
+    opt_out = set(b['policy']['opt_out_labels'])
     for row in b['prs']:
         if row['arm'] != 'TREATED':
             continue
-        live = client.pr(row['repo'], row['number'])
-        if live.get('state') != 'OPEN':
-            res = ('SKIPPED', 'NOT_OPEN')
-        elif live.get('headRefOid') != row['head_sha']:
-            res = ('SKIPPED', 'HEAD_MOVED')
+        reason, new_head = live_guard(row, client.pr(row['repo'], row['number']), opt_out), None
+        if reason:
+            res = ('SKIPPED', reason)
         elif not apply:
             res = ('PLANNED', None)
         else:
             res = writer.update_branch(row['repo'], row['number'], row['head_sha'], method)
+            if res[0] == 'ACCEPTED':
+                new_head = updated_head(client, row, method, sleep)
         results.append({'repo': row['repo'], 'number': row['number'], 'head_sha': row['head_sha'],
-                        'result': res[0], 'detail': res[1]})
+                        'result': res[0], 'detail': res[1], 'new_head': new_head})
     accepted = sum(r['result'] == 'ACCEPTED' for r in results)
     return {'kind': 'act', 'experiment': b['experiment'], 'recorded_at': stamp(now), 'method': method,
             'applied': bool(apply), 'results': results,
@@ -363,10 +403,13 @@ def outcome(a):
 
 
 def success(o):
-    return True if o in ('GREEN', 'MERGED') else False if o == 'RED' else None
+    # Closed without merging is a known non-success: dropping it would shrink the intention-to-treat denominator.
+    return True if o in ('GREEN', 'MERGED') else False if o in ('RED', 'CLOSED') else None
 
 
 def transition(before_ci, o):
+    if o == 'CLOSED':
+        return 'CLOSED_UNMERGED'
     s = success(o)
     if s is None:
         return 'UNKNOWN'
@@ -375,14 +418,18 @@ def transition(before_ci, o):
     return 'REGRESSED' if before_ci == 'GREEN' else 'STILL_RED' if before_ci == 'RED' else 'SETTLED_RED'
 
 
-def head_change(b, a, act_result, method):
+def head_change(b, a, act_row, method, parents=None):
+    """Exact identity, never inferred from commit counts: a force-push can keep the ahead count unchanged."""
     if a is None or a['head_sha'] == b['head_sha']:
         return 'HEAD_UNCHANGED'
-    if act_result == 'ACCEPTED' and b['ahead_by'] is not None:
-        # A merge update adds one commit the base lacks; a rebase keeps the PR's own commit count.
-        if a['ahead_by'] == b['ahead_by'] + (1 if method == 'MERGE' else 0):
-            return 'UPDATE_ONLY'
-    return 'AUTHOR_PUSH'
+    if not act_row or act_row['result'] != 'ACCEPTED':
+        return 'AUTHOR_PUSH'
+    if act_row.get('new_head'):
+        return 'UPDATE_ONLY' if a['head_sha'] == act_row['new_head'] else 'AUTHOR_PUSH'
+    # Head not read back at act time: a merge update's commit has two parents, the first being the recorded head.
+    if method == 'MERGE' and parents is not None and len(parents) == 2 and parents[0] == b['head_sha']:
+        return 'UPDATE_ONLY'
+    return 'UNVERIFIED_HEAD'
 
 
 def arm_stats(rows, arm):
@@ -395,7 +442,8 @@ def arm_stats(rows, arm):
     return {'assigned': len(mine), 'known': len(known), 'unknown': len(mine) - len(known), 'success': x,
             'rate': round(x / len(known), 4) if known else None, 'ci95': [round(v, 4) for v in ci] if ci else None,
             'red_before': len(red), 'unblocked': sum(r['success'] for r in red),
-            'green_before': len(green), 'regressed': sum(not r['success'] for r in green),
+            'green_before': len(green), 'regressed': sum(r['transition'] == 'REGRESSED' for r in green),
+            'closed_unmerged': sum(r['transition'] == 'CLOSED_UNMERGED' for r in mine),
             'author_push': sum(r['head_change'] == 'AUTHOR_PUSH' for r in mine),
             'gate_regressed': sum(r['gate_regressed'] for r in mine)}
 
@@ -461,14 +509,23 @@ def census_delta(cb, ca):
 
 def evaluate(client, b, act_rec, after_rows):
     method = b['policy']['method']
-    acts = {(r['repo'], r['number']): r['result'] for r in (act_rec or {}).get('results', [])}
+    acts = {(r['repo'], r['number']): r for r in (act_rec or {}).get('results', [])}
     rows, positives, cache = [], [], {}
     for br, ar in zip(b['prs'], after_rows):
         o = outcome(ar)
-        res = acts.get((br['repo'], br['number']))
-        change = head_change(br, ar, res, method)
+        act_row = acts.get((br['repo'], br['number']))
+        parents = None
+        if (ar and ar['head_sha'] != br['head_sha'] and act_row and act_row['result'] == 'ACCEPTED'
+                and not act_row.get('new_head') and method == 'MERGE'):
+            try:
+                parents = [p.get('sha') for p in
+                           client.get(f"/repos/{br['repo']}/commits/{ar['head_sha']}").get('parents') or []]
+            except (OSError, ValueError):
+                parents = None
+        change = head_change(br, ar, act_row, method, parents)
         row = {'repo': br['repo'], 'number': br['number'], 'arm': br['arm'], 'skip': br['skip'],
-               'act': res, 'before_ci': br['ci_state'], 'outcome': o, 'success': success(o),
+               'act': act_row['result'] if act_row else None, 'before_ci': br['ci_state'], 'outcome': o,
+               'success': success(o),
                'transition': transition(br['ci_state'], o), 'head_change': change,
                'gate_regressed': bool(ar) and br['gate_state'] == 'GREEN' and ar['gate_state'] == 'RED',
                'recovered_checks': sorted(set(br['ci_failing']) - set(ar['ci_failing'])) if ar else []}
@@ -481,7 +538,7 @@ def evaluate(client, b, act_rec, after_rows):
         rows.append(row)
         if signals:
             row['attribution'] = {'UPDATE_ONLY': 'DELIVERED_BY_UPDATE', 'HEAD_UNCHANGED': 'EXTERNAL',
-                                  'AUTHOR_PUSH': 'AUTHOR_PUSH'}[change]
+                                  'AUTHOR_PUSH': 'AUTHOR_PUSH', 'UNVERIFIED_HEAD': 'UNVERIFIED'}[change]
             positives.append({'repo': br['repo'], 'number': br['number'], 'arm': br['arm'], 'signals': signals,
                               'attribution': row['attribution'], 'recovered_checks': row['recovered_checks'],
                               **butterfly(client, br, ar, row, cache)})
@@ -603,14 +660,15 @@ def report(records, experiment):
             'Census (scale-dock pulses): ' + (
                 f"pulse {cd['from_n']} to {cd['to_n']}, RED jobs delta {cd['red_delta']}" if cd['status'] == 'OK'
                 else cd['status']) + '.', '',
-            '| Arm | Assigned | Known | Green or merged | Rate (95% CI) | Unblocked of red | Regressed of green | Author pushes | Gate turned red |',
-            '|---|---|---|---|---|---|---|---|---|']
+            '| Arm | Assigned | Known | Green or merged | Rate (95% CI) | Unblocked of red | Regressed of green '
+            '| Closed unmerged | Author pushes | Gate turned red |',
+            '|---|---|---|---|---|---|---|---|---|---|']
     for arm in ARMS:
         s = ev['arms'][arm]
         ci = f" ({_pct(s['ci95'][0])} to {_pct(s['ci95'][1])})" if s['ci95'] else ''
         out.append(f"| {arm} | {s['assigned']} | {s['known']} | {s['success']} | {_pct(s['rate'])}{ci} | "
                    f"{s['unblocked']} of {s['red_before']} | {s['regressed']} of {s['green_before']} | "
-                   f"{s['author_push']} | {s['gate_regressed']} |")
+                   f"{s['closed_unmerged']} | {s['author_push']} | {s['gate_regressed']} |")
     out += ['', f"Effect, green or merged (treated minus holdout): {_effect(ev['effect_green_or_merged'])}.",
             f"Effect, unblocked given red before: {_effect(ev['effect_unblock_given_red'])}.", '',
             '## Positive transitions (candidate causes, not proven)', '']
@@ -638,7 +696,7 @@ def policy_of(args):
     return p
 
 
-def main(argv=None, client=None, writer=None, now=None):
+def main(argv=None, client=None, writer=None, now=None, sleep=time.sleep):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = ap.add_subparsers(dest='cmd', required=True)
     for name in ('before', 'act', 'after', 'report'):
@@ -666,7 +724,7 @@ def main(argv=None, client=None, writer=None, now=None):
     if args.cmd == 'report':
         text = report(records, args.experiment)
         if args.out:
-            args.out.write_text(text, encoding='utf-8')
+            args.out.write_text(text, encoding='utf-8', newline='\n')
         print(text, end='')
         return 0
     client = client or Client()
@@ -678,7 +736,7 @@ def main(argv=None, client=None, writer=None, now=None):
     elif args.cmd == 'act':
         b, act_rec, afters = experiment_records(records, args.experiment)
         require(act_rec is None and not afters, 'experiment already acted on or measured')
-        rec = act(client, writer or Writer(), b, args.apply, now)
+        rec = act(client, writer or Writer(), b, args.apply, now, sleep=sleep)
         if args.apply:
             rec = append(args.ledger, rec)
         else:

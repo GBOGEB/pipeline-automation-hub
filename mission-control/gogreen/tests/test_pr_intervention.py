@@ -6,7 +6,6 @@ import hashlib
 import importlib.util
 import json
 import os
-import sys
 import tempfile
 import types
 import unittest
@@ -14,9 +13,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import patch
 
-# harvest.py imports PyYAML for its own CLI only; the gogreen CI lanes do not install it.
-if importlib.util.find_spec('yaml') is None:
-    sys.modules['yaml'] = types.ModuleType('yaml')
+# No PyYAML stub here: nothing this module imports needs it, and a stub without __spec__ planted
+# before test_scale_dock_series makes its own find_spec('yaml') raise (gogreen CI, 2026-11-11).
 
 HERE = Path(__file__).resolve().parent
 spec = importlib.util.spec_from_file_location('pr_intervention', HERE.parent / 'pr_intervention.py')
@@ -63,6 +61,7 @@ class FakeClient:
         self.compares = compares or {}
         self.windows = {}
         self.commit_files = {}
+        self.parents = {}
         self.pr_files = {}
         self.calls = []
 
@@ -75,7 +74,8 @@ class FakeClient:
             ref = route[len(prefix):]
             if ref in self.heads:
                 return {'sha': self.heads[ref]}
-            return {'sha': ref, 'files': [{'filename': f} for f in self.commit_files.get(ref, [])]}
+            return {'sha': ref, 'files': [{'filename': f} for f in self.commit_files.get(ref, [])],
+                    'parents': [{'sha': p} for p in self.parents.get(ref, [])]}
         raise AssertionError('unexpected route ' + route)
 
     def paginate(self, route, key=None):
@@ -101,12 +101,22 @@ class FakeClient:
 
 
 class FakeWriter:
-    def __init__(self, answer=('ACCEPTED', None)):
-        self.calls, self.answer = [], answer
+    """With a client, behaves like GitHub's merge update: a new head whose first parent is the old head."""
+
+    def __init__(self, client=None, answer=('ACCEPTED', None)):
+        self.client, self.calls, self.answer = client, [], answer
 
     def update_branch(self, repo, number, expected_head, method):
         self.calls.append((repo, number, expected_head, method))
+        if self.client is not None and self.answer[0] == 'ACCEPTED':
+            new = sha(f'u{number}')
+            self.client.views[(repo, number)]['headRefOid'] = new
+            self.client.parents[new] = [expected_head, self.client.heads['master']]
         return self.answer
+
+
+def no_sleep(seconds):
+    pass
 
 
 def policy(**kw):
@@ -119,7 +129,7 @@ class Snapshot(unittest.TestCase):
                   check('lint', 'CANCELLED'), check('first-pass-closure', 'FAILURE', workflow='FPC'),
                   {'__typename': 'StatusContext', 'context': 'ext', 'state': 'PENDING'}]
         lanes = mod.checks(rollup, {'first-pass-closure'})
-        self.assertEqual(lanes['ci'], {'fail': [], 'pending': ['status :: ext'], 'pass': 1})
+        self.assertEqual(lanes['ci'], {'fail': [], 'pending': ['CI :: lint', 'status :: ext'], 'pass': 1})
         self.assertEqual(mod.state_of(lanes['ci']), 'PENDING')
         self.assertEqual(mod.state_of(lanes['gate']), 'RED')  # a red gate never makes CI red
         self.assertEqual(mod.state_of({'fail': [], 'pending': [], 'pass': 0}), 'NO_CHECKS')
@@ -129,6 +139,12 @@ class Snapshot(unittest.TestCase):
         lanes = mod.checks([check('unit', 'SUCCESS'), status], {'first-pass-closure'})
         self.assertEqual((mod.state_of(lanes['ci']), lanes['gate']['fail']),
                          ('GREEN', ['status :: First-Pass Closure Gate / first-pass-closure']))
+
+    def test_latest_cancelled_check_is_never_green(self):
+        lanes = mod.checks([check('unit', 'SUCCESS'), check('lint', 'CANCELLED')], set())
+        self.assertEqual(mod.state_of(lanes['ci']), 'PENDING')
+        later = [check('lint', 'CANCELLED', '2026-11-01T00:00:00Z'), check('lint', 'SUCCESS', '2026-11-02T00:00:00Z')]
+        self.assertEqual(mod.state_of(mod.checks(later, set())['ci']), 'GREEN')  # superseded by a later run
 
     def test_reasons_cover_every_guard(self):
         row = mod.pr_row(FakeClient([]), REPO, pr(1, sha('h1')), BASE0, policy(), T0)
@@ -182,7 +198,7 @@ class Act(unittest.TestCase):
 
     def test_dry_run_writes_nothing(self):
         w = FakeWriter()
-        rec = mod.act(self.fc, w, self.b, False, T0)
+        rec = mod.act(self.fc, w, self.b, False, T0, sleep=no_sleep)
         self.assertEqual(w.calls, [])
         self.assertEqual(rec['counts']['PLANNED'], len(self.treated))
         self.assertEqual(rec['fpc_receipts_invalidated'], 0)
@@ -190,13 +206,41 @@ class Act(unittest.TestCase):
     def test_apply_is_guarded_by_the_recorded_head(self):
         moved = self.treated[0]
         self.fc.views[(REPO, moved)]['headRefOid'] = sha('moved')
-        w = FakeWriter()
-        rec = mod.act(self.fc, w, self.b, True, T0)
+        w = FakeWriter(self.fc)
+        rec = mod.act(self.fc, w, self.b, True, T0, sleep=no_sleep)
         self.assertEqual([c[1] for c in w.calls], self.treated[1:])
         self.assertTrue(all(c[2] == sha(f'h{c[1]}') and c[3] == 'MERGE' for c in w.calls))
-        by = {r['number']: (r['result'], r['detail']) for r in rec['results']}
-        self.assertEqual(by[moved], ('SKIPPED', 'HEAD_MOVED'))
+        by = {r['number']: r for r in rec['results']}
+        self.assertEqual((by[moved]['result'], by[moved]['detail']), ('SKIPPED', 'HEAD_MOVED'))
         self.assertEqual(rec['fpc_receipts_invalidated'], len(self.treated) - 1)
+        # The exact head the update produced is read back (first parent = recorded head).
+        self.assertTrue(all(by[n]['new_head'] == sha(f'u{n}') for n in self.treated[1:]))
+
+    def test_guards_are_reread_before_each_write(self):
+        """Labels, draft, base and conflicts can change after `before` without moving the head."""
+        changes = {'OPT_OUT_LABEL': {'labels': [{'name': 'no-auto-update'}]}, 'DRAFT': {'isDraft': True},
+                   'BASE_CHANGED': {'baseRefName': 'release'}, 'CONFLICT': {'mergeable': 'CONFLICTING'},
+                   'NOT_OPEN': {'state': 'CLOSED'}}
+        for reason, change in changes.items():
+            with self.subTest(reason=reason):
+                fc = FakeClient(copy.deepcopy(self.prs))
+                fc.views[(REPO, self.treated[0])].update(change)
+                w = FakeWriter(fc)
+                rec = mod.act(fc, w, self.b, True, T0, sleep=no_sleep)
+                self.assertNotIn(self.treated[0], [c[1] for c in w.calls])
+                first = next(r for r in rec['results'] if r['number'] == self.treated[0])
+                self.assertEqual((first['result'], first['detail']), ('SKIPPED', reason))
+
+    def test_unconfirmed_update_head_is_not_recorded(self):
+        sleeps = []
+        rec = mod.act(self.fc, FakeWriter(), self.b, True, T0, sleep=sleeps.append)  # GitHub never moved the head
+        self.assertTrue(all(r['new_head'] is None for r in rec['results']))
+        self.assertEqual(len(sleeps), 5 * len(self.treated))  # bounded: six reads, five waits per PR
+        fc = FakeClient(copy.deepcopy(self.prs))
+        n = self.treated[0]
+        fc.views[(REPO, n)]['headRefOid'] = sha('stranger')
+        fc.parents[sha('stranger')] = [sha('other'), BASE0]  # a head that is not our merge commit
+        self.assertIsNone(mod.updated_head(fc, {'repo': REPO, 'number': n, 'head_sha': sha(f'h{n}')}, 'MERGE', no_sleep))
 
 
 class Evaluate(unittest.TestCase):
@@ -210,8 +254,8 @@ class Evaluate(unittest.TestCase):
         treated = [r['number'] for r in b['prs'] if r['arm'] == 'TREATED']
         holdout = [r['number'] for r in b['prs'] if r['arm'] == 'HOLDOUT']
         self.assertGreaterEqual(min(len(treated), len(holdout)), 3)
-        a = mod.act(fc, FakeWriter(), b, True, T0)
-        # After: base moved; treated heads are merge commits (ahead +1) and green.
+        a = mod.act(fc, FakeWriter(fc), b, True, T0, sleep=no_sleep)
+        # After: base moved; treated heads are the update's merge commits and green.
         fc.heads['master'] = BASE1
         for n in treated:
             new = sha(f'u{n}')
@@ -269,10 +313,26 @@ class Evaluate(unittest.TestCase):
         self.assertEqual(mod.transition('GREEN', 'RED'), 'REGRESSED')
         self.assertEqual(mod.transition('RED', 'PENDING'), 'UNKNOWN')
         self.assertEqual(mod.transition('RED', 'MERGED'), 'UNBLOCKED')
-        self.assertEqual(mod.head_change(b, {'head_sha': sha('y'), 'ahead_by': 4}, 'ACCEPTED', 'MERGE'), 'AUTHOR_PUSH')
-        self.assertEqual(mod.head_change(b, {'head_sha': sha('y'), 'ahead_by': 2}, 'ACCEPTED', 'REBASE'), 'UPDATE_ONLY')
-        self.assertEqual(mod.head_change(b, {'head_sha': sha('y'), 'ahead_by': 3}, None, 'MERGE'), 'AUTHOR_PUSH')
-        self.assertEqual(mod.head_change(b, None, 'ACCEPTED', 'MERGE'), 'HEAD_UNCHANGED')
+        ours = {'result': 'ACCEPTED', 'new_head': sha('ours')}
+        self.assertEqual(mod.head_change(b, {'head_sha': sha('ours')}, ours, 'MERGE'), 'UPDATE_ONLY')
+        # A force-push after the update keeps the ahead count but not the SHA: it is the author's head.
+        self.assertEqual(mod.head_change(b, {'head_sha': sha('forced'), 'ahead_by': 3}, ours, 'MERGE'), 'AUTHOR_PUSH')
+        self.assertEqual(mod.head_change(b, {'head_sha': sha('y')}, None, 'MERGE'), 'AUTHOR_PUSH')
+        self.assertEqual(mod.head_change(b, None, ours, 'MERGE'), 'HEAD_UNCHANGED')
+        unread = {'result': 'ACCEPTED', 'new_head': None}
+        self.assertEqual(mod.head_change(b, {'head_sha': sha('y')}, unread, 'MERGE', [sha('x'), BASE1]), 'UPDATE_ONLY')
+        self.assertEqual(mod.head_change(b, {'head_sha': sha('y')}, unread, 'MERGE', [sha('z')]), 'UNVERIFIED_HEAD')
+        self.assertEqual(mod.head_change(b, {'head_sha': sha('y')}, unread, 'REBASE'), 'UNVERIFIED_HEAD')
+
+    def test_closed_unmerged_is_a_known_non_success(self):
+        self.assertIs(mod.success('CLOSED'), False)
+        self.assertEqual(mod.transition('GREEN', 'CLOSED'), 'CLOSED_UNMERGED')
+        rows = [{'arm': 'TREATED', 'success': False, 'before_ci': 'GREEN', 'transition': 'CLOSED_UNMERGED',
+                 'head_change': 'HEAD_UNCHANGED', 'gate_regressed': False},
+                {'arm': 'TREATED', 'success': True, 'before_ci': 'RED', 'transition': 'UNBLOCKED',
+                 'head_change': 'UPDATE_ONLY', 'gate_regressed': False}]
+        s = mod.arm_stats(rows, 'TREATED')
+        self.assertEqual((s['known'], s['success'], s['closed_unmerged'], s['regressed']), (2, 1, 1, 0))
 
 
 class Statistics(unittest.TestCase):
@@ -334,7 +394,7 @@ class Ledger(unittest.TestCase):
 
     def test_truncated_ledger_is_refused(self):
         mod.append(self.path, self.rec('before'))
-        self.path.write_text(self.path.read_text(encoding='ascii').rstrip('\n'), encoding='ascii')
+        self.path.write_text(self.path.read_text(encoding='ascii').rstrip('\n'), encoding='ascii', newline='\n')
         with self.assertRaises(ValueError):
             mod.read_ledger(self.path)
 
@@ -404,7 +464,8 @@ class Cli(unittest.TestCase):
                 mod.main(['act', *common, '--experiment', 'PRX-CLI'], client=fc, writer=FakeWriter(), now=T0)
                 self.assertEqual(len(mod.read_ledger(ledger)[0]), 1)  # a dry run appends nothing
                 w = FakeWriter()
-                mod.main(['act', *common, '--experiment', 'PRX-CLI', '--apply'], client=fc, writer=w, now=T0)
+                mod.main(['act', *common, '--experiment', 'PRX-CLI', '--apply'], client=fc, writer=w, now=T0,
+                         sleep=no_sleep)
                 with self.assertRaises(ValueError):  # too early to measure
                     mod.main(['after', *common, '--experiment', 'PRX-CLI', '--census-ledger', none],
                              client=fc, now=T0 + timedelta(minutes=30))
