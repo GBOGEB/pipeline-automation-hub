@@ -9,6 +9,24 @@ on:
       - 'mission-control/grand-missions/GM-I-C_CREW_ALLOCATION_v0.1.yaml'
       - 'mission-control/grand-missions/validate_gm_i_c_registration.py'
       - 'mission-control/grand-missions/validate_gm_i_b_and_launch_control.py'
+      - 'mission-control/grand-missions/GM_I_C_CURRENT_v1.yaml'
+      - 'mission-control/grand-missions/GM_I_C_R2_*'
+      - 'mission-control/grand-missions/validate_gm_i_c_r2_bridge.py'
+      - 'mission-control/grand-missions/test_gm_i_c_r2_bridge.py'
+      - '.github/workflows/gm-i-c-registration.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/OFFICIAL_MISSION_REGISTER_v1.yaml'
+      - 'mission-control/grand-missions/GRAND_MISSION_REGISTRY.json'
+      - 'mission-control/grand-missions/GM-I-C_CROSS_AGENT_DRIVE_FEDERATION_CONTROL_v0.1.yaml'
+      - 'mission-control/grand-missions/GM-I-C_CREW_ALLOCATION_v0.1.yaml'
+      - 'mission-control/grand-missions/validate_gm_i_c_registration.py'
+      - 'mission-control/grand-missions/validate_gm_i_b_and_launch_control.py'
+      - 'mission-control/grand-missions/GM_I_C_CURRENT_v1.yaml'
+      - 'mission-control/grand-missions/GM_I_C_R2_*'
+      - 'mission-control/grand-missions/validate_gm_i_c_r2_bridge.py'
+      - 'mission-control/grand-missions/test_gm_i_c_r2_bridge.py'
       - '.github/workflows/gm-i-c-registration.yml'
   workflow_dispatch:
 
@@ -33,10 +51,17 @@ jobs:
           python-version: '3.12'
 
       - name: Install validator dependency
-        run: python -m pip install --disable-pip-version-check PyYAML
+        run: python -m pip install --disable-pip-version-check pyyaml==6.0.3 pytest==9.1.1
 
       - name: Validate GM-I-C registration and evidence bindings
         run: python mission-control/grand-missions/validate_gm_i_c_registration.py
+
+      - name: Validate GM-I-C R2 re-open overlay (does not rewrite v0.1)
+        run: |
+          mkdir -p mission-control/grand-missions/runtime
+          python mission-control/grand-missions/validate_gm_i_c_r2_bridge.py \
+            --out mission-control/grand-missions/runtime/gm_i_c_r2_overlay.json
+          python -m pytest -q -p no:cacheprovider mission-control/grand-missions/test_gm_i_c_r2_bridge.py
 
       - name: Preserve sibling/fleet launch invariants
         run: |
@@ -48,5 +73,7 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: gm-i-c-registration-${{ github.event.pull_request.head.sha || github.sha }}
-          path: mission-control/grand-missions/runtime/gm_i_c_sibling_launch_guard.json
+          path: |
+            mission-control/grand-missions/runtime/gm_i_c_sibling_launch_guard.json
+            mission-control/grand-missions/runtime/gm_i_c_r2_overlay.json
           if-no-files-found: error
