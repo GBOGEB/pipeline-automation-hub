@@ -170,6 +170,7 @@ jobs:
             mission-control/federation-atlas/orchestration/test_broker_slowburn.py \
             mission-control/federation-atlas/orchestration/test_coverage_contract.py \
             mission-control/federation-atlas/orchestration/test_main.py \
+            mission-control/federation-atlas/orchestration/test_runtime_evidence.py \
             mission-control/federation-atlas/orchestration/test_render.py || rc=1
           python -m pytest -q -p no:cacheprovider -rsxX --junitxml=g-pah-junit/mc-gogreen.xml \
             mission-control/gogreen/mycelium_history/tests/test_annotated_green.py \

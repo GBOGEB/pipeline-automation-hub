@@ -20,10 +20,15 @@ the source tree. `--head` binds the exact checked-out Git identity, while the
 dirty flag and source digest also expose uncommitted source changes.
 
 The source snapshot includes all Mission Control files, repository Python,
-workflow YAML and Mermaid files, plus explicitly declared inherited sources and
-repository input ports. `source_files_sha256` records their bytes and
+JavaScript/TypeScript variants, shell/PowerShell, JSON/TOML/YAML configuration,
+workflow/action/package descriptors and Mermaid files, plus explicitly declared
+inherited sources and repository input ports. `source_files_sha256` records their bytes and
 `source_digest` fingerprints that map. This is an explicit source snapshot
 policy; it does not claim to trace every runtime dependency.
+
+For a replayable actual-run report, complete product seals, multi-language
+inventory semantics and the next bounded rollout, see
+[Runtime coverage and outcome evidence](RUNTIME_COVERAGE.md).
 
 ```bash
 python mission-control/federation-atlas/orchestration/main.py check --root .
