@@ -30,6 +30,7 @@ _spec.loader.exec_module(tt)
 
 SCHEMA = "missioncontrol.issue_expedition.triway.v1"
 CENSUS = "missioncontrol.issue_expedition.github_census.v1"
+CRITERION_IDENTITY_SCHEMA = "jade.issue-criterion.identity.v1"
 DEFAULT_REPOS = ("GBOGEB/cryoplant-project", "GBOGEB/ABACUS",
                  "GBOGEB/CODEX", "GBOGEB/pipeline-automation-hub",
                  "GBOGEB/gg_MATH")
@@ -186,6 +187,11 @@ def checklist(body):
     criteria without a tick state: counted as ``untracked``, never as done.
     ``[~]`` / ``[-]`` and fully struck-through (``~~...~~``) items are
     withdrawn: kept in ``items`` with ``withdrawn``, never counted.
+
+    ``criterion_sha256`` hashes the full criterion text before display truncation.
+    Checkbox state, section and position are separate attributes. Identical text
+    has the same digest; consumers must preserve duplicate multiplicity rather
+    than invent an identity for each indistinguishable occurrence.
     """
     steps = {"DoD": [], "DoV": [], "STEPS": [], "OTHER": []}
     declared = {k: [] for k in steps}
@@ -206,28 +212,44 @@ def checklist(body):
             label = INLINE_LABEL.match(text)
             if label:
                 own, own_basis = ("DoD" if label.group(1).lower() == "dod" else "DoV"), "INLINE_LABEL"
-            row = {"text": text[:300], "checked_in_issue": m.group(1).lower() == "x",
+            row = {"text": text[:300], "_criterion_text": text,
+                   "checked_in_issue": m.group(1).lower() == "x",
                    "evidence": "ISSUE_BODY_SELF_ASSERTED_UNVERIFIED", "basis": own_basis}
-            if m.group(1) in "~-" or STRUCK.fullmatch(text):  # dropped: never counted
+            if m.group(1) in "~-":  # explicit withdrawal; full-text strike is checked below
                 row["withdrawn"] = True
             steps[own].append(row)
             continuation = row
             prose = False
+        elif continuation is not None and re.match(r"^ {2,}\S", re.sub(r"^\s*(?:>[ \t]?)+", "", line)):
+            continuation["text"] = (continuation["text"] + " " + line.strip())[:300]
+            continuation["_criterion_text"] += " " + QUOTE.sub("", line).strip()
+            continue
         elif section != "OTHER" and line.strip():
-            if continuation is not None and re.match(r"^ {2,}\S", re.sub(r"^\s*(?:>[ \t]?)+", "", line)):
-                continuation["text"] = (continuation["text"] + " " + line.strip())[:300]
-                continue
             b = BULLET.match(line)
             if b:
-                declared[section].append({"text": b.group(1)[:300], "match_text": b.group(1)[:300], "form": "BULLET"})
+                declared[section].append({"text": b.group(1)[:300], "_criterion_text": b.group(1),
+                                          "match_text": b.group(1)[:300], "form": "BULLET"})
                 continuation = declared[section][-1]
             elif not prose and not META.match(line):  # one prose criterion per paragraph
-                declared[section].append({"text": line.strip()[:300], "form": "PROSE"})
+                declared[section].append({"text": line.strip()[:300], "_criterion_text": line.strip(),
+                                          "form": "PROSE"})
                 continuation = None
+            elif prose and not META.match(line) and declared[section]:
+                declared[section][-1]["_criterion_text"] += " " + line.strip()
             prose = not b
         else:
             prose = False
             continuation = None
+
+    for key in steps:
+        for row in steps[key] + declared[key]:
+            # Keep interior whitespace and case: either can carry a substantive
+            # change. Wrapped continuations are joined with one space above.
+            source = row.pop("_criterion_text").strip()
+            if "checked_in_issue" in row and STRUCK.fullmatch(source):
+                row["withdrawn"] = True
+                source = source[2:-2].strip()
+            row["criterion_sha256"] = hashlib.sha256(source.encode("utf-8")).hexdigest()
 
     def summary(rows):
         live = [x for x in rows if not x.get("withdrawn")]
