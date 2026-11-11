@@ -46,6 +46,24 @@ Rolling-5 sat local-only and had to ship inside #787; a pushed branch would have
   `gh pr create --draft --base master`
 - One concern per branch. If a second concern appears, branch it off and push it as its own PR.
 
+**Codex reviews are rationed.** The Codex review quota is small and shared by every session. It ran out
+from 2026-11-09, and on 2026-10-30 it left 31 PRs red. On 2026-11-11 the owner turned automatic review and
+automatic security review off in the personal Codex settings and set each repository to follow them. A
+repository entry set to "All PRs" overrides that and reviews drafts too: draft #1194 was reviewed when it
+opened. First-Pass Closure still needs a completed Codex review on the exact head, so no PR passes until
+someone asks for one.
+
+- Keep the PR a draft until it is final: tests pass locally and every commit is pushed. While automatic
+  review was on, opening a PR and marking it ready each spent one attempt (#1164, #1194).
+- Only the session that owns the PR marks it ready. Then comment `@codex review` once. Don't push until
+  the review lands. Fix every finding in one commit, then ask once more.
+- Batch small PRs that touch disjoint files and not the control plane (the FPC gate and policy, required-gate
+  ledgers, rulesets): merge each `--no-ff` into one batch PR and ask for one review (#1164 = #1163 + #1162
+  + #1138). A PR whose base is another PR's branch goes with that PR.
+- Ask for `@codex security review` only for changes to workflow permissions, `pull_request_target`, secrets
+  or tokens, or new third-party dependencies. CodeQL and osv-scanner cover the rest on every head.
+- If Codex replies with its usage-limit message, don't ask again in the same window.
+
 ### L6. Snapshots come from one pulse
 
 The census and the gate snapshot were read at different commits in 4 of 5 focus repos.
@@ -119,7 +137,7 @@ One canonical module per metric. Import these; do not re-implement them. Paths a
 | Rolling-5 window (NIRVANA rotation, streaks, golden thread, SOURCE_RED) | `mission-control/jade_temple/tools/rolling5.py` | `project()`, `verified_pulses()`, `append_pulse()`, `streak_stats()`, `nirvana()`, `source_red()` | `site/rolling5.json`, `site/rolling5.csv` |
 | CI/CD DAG + SIPOC (FUNCTION / SHA / OID lenses, DAG stats, red-trace EVERRED ratios) | `mission-control/jade_temple/tools/cicd_dag.py` | `project()`, `dag_stats()`, `critical_path()`, `gate_frontier()`, `everred_metrics()`, `scale_docks()` (delegates to `scale_dock.py`), `git_blob_oid()` | `site/cicd_dag.json`, `site/cicd_dag_crosswalk.csv`, `diagrams/CICD_DAG_*.mmd` |
 | CI/CD DAG page | `mission-control/jade_temple/site/build_cicd_dag.py` | renders `cicd_dag.project()`; no metrics of its own | `site/cicd_dag.html` |
-| Issue triway burndown (oldest / newest / connected orderings, explicit DoD/DoV checklist, owner-review queue) | `mission-control/qps-triage-ultra/issue-expedition/triway_burndown.py` | `checklist()`, `references()`, `parked_intent()`, `priority()`, `project()`, `collect()`; the issue parsers (DoD / DoV / STEPS sections, typed references) for every issue tool | `missioncontrol.issue_expedition.triway.v1` |
+| Issue triway burndown (oldest / newest / connected orderings, explicit DoD/DoV checklist, owner-review queue) | `mission-control/qps-triage-ultra/issue-expedition/triway_burndown.py` | `checklist()`, `references()`, `parked_intent()`, `parked_intent_meta()`, `priority()`, `project()`, `collect()`; the issue parsers (DoD / DoV / STEPS sections, typed references) for every issue tool | `missioncontrol.issue_expedition.triway.v1` |
 | Issue burndown ranking (method v2: unknown-not-zero urgency, pressure rank = PageRank with urgency restart and own / inherited split, Monte Carlo rank intervals, deadlocks and blocker chains, lifecycle golden thread via rolling5, flow with exact Poisson intervals, predicate leaks, lanes, per-repo / FOCUS4 / JADE TOP21 / USER rollups, private_boundary projection, chained pulse ledger; imports its checklist and reference parsing from triway above; SCC / chain / Poisson / rank statistics in `issue_math.py`) | `mission-control/issue_rank/issue_rank.py` | `build_graph()`, `unblock_pressure()`, `pagerank()`, `betweenness()`, `urgency()`, `lifecycle_thread()`, `flow()`, `predicate_leaks()`, `monte_carlo()`, `rank()`, `diff()`, `redact()`, `append_ledger()` | `out/<scope>/issue_rank.json` (`jade.issue-rank.v2`, local only, gitignored) |
 | Issue/PR title-family grammar and recursive vocabulary (sole SSOT, additive; classification and linked candidates never alter issue state) | `mission-control/issue_rank/title_taxonomy.py` | `parse_title()`, `summary()`, `associated_families()`; consumed by issue_rank and triway | `jade.title-taxonomy.v1` / per-repo, JADE and USER family and leaf-cluster views |
 | DevOps fleet census (exact-head blob ids, lifecycle stages) | `mission-control/jade_temple/devops/census.py` | `fetch` / `scan` / `check` / `report` subcommands | `data/DEVOPS_CENSUS_N9.json`, `data/DEVOPS_OBJECTS_N9.json` |
@@ -127,6 +145,9 @@ One canonical module per metric. Import these; do not re-implement them. Paths a
 | Wishbone schedule kernel and OID federation crosswalk (transitive reduction / muda prune, CPM slack and makespan with optional durations, N2 DSM; handover folder → owner map bound to blob OIDs at HEAD; handover "MIP" = SCHEDULE, not hub MIP) | `mission-control/jade_temple/tools/oid_federation.py` + `data/OID_FEDERATION_C2OH_CROSSWALK.json` | `transitive_reduction()`, `cpm()`, `schedule()`, `wishbone()`, `dsm()`, `check()`; waves via `alkane_dag.waves()`, critical path via `cicd_dag.critical_path()` | `jade.temple.oid-federation.v1` (stdout / `--json`) |
 | Actions usage + performance metrics (per workflow / repo / FOCUS5 fleet: billable minutes, job run and queue time, job failure rate, failed-job minutes, class / band / event groupings) | `mission-control/jade_temple/devops/actions_metrics.py` | `aggregate()`, `project()`, `fetch` / `project` subcommands; reuses `bd_queue_wave.utc()` / `percentile()` / `queue_seconds()` and `wddd.iso_week_key()` | `data/ACTIONS_METRICS_FOCUS5.json` (`jade.devops.actions-metrics.v1`), `site/actions_metrics.csv` |
 | ISO week-date codes for every GBOGEB repo (`YYYY-w##DDD` codes and `w##DDD` labels, `YYYY-Www` week key, weeks per ISO year, 13-week quarter convention, workday spans; Mermaid schedule patterns with `axisFormat w%V`) | `mission-control/jade_temple/devops/wddd.py` + `WDDD_WEEK_CODES.md` | `to_w_code()`, `from_w_code()`, `iso_week_key()`, `weeks_in_iso_year()`, `quarter_13w()`, `add_workdays()`; `actions_metrics.iso_week()` delegates to it; other trees and repos load it with `importlib` from a pinned hub commit | `2026-w46MON`, `2026-W46`; `ValueError` on a bare code without an ISO year |
+| Parked-intent issues and wake check (file untracked intents as `parked-intent` issues; list those whose wake triggers matched new activity, strong / weak, unread repos reported) | `tools/threads/parked_intents.py`, `tools/threads/wake_check.py` | `body()`, `existing()`, `already_commented()`; `match()`, `report()`. The marker parser stays in triway: `parked_intent_meta()` | GitHub issues; local `WAKE_CANDIDATES.md` / `.json` (never committed) |
+| Required-check presence census (which check runs appeared on every recent merged PR; the safe set for ruleset required checks) | `tools/threads/check_presence.py` | `tally()`, `candidates()` | local census JSON |
+| Thread wireframe (per Claude thread: repo, branch, OID → intent, TODO, next, verdict) | `tools/threads/thread_wire.py` | `merge()`, `render()` | local `THREAD_MAP.md`, `THREAD_WIRE.json` (never committed) |
 
 Note the two EVERRED views: `harvest.py` owns the root register metrics (per root, from Actions
 failures); `cicd_dag.everred_metrics()` owns the per-workflow red-trace ratios (`everred_ratio`,

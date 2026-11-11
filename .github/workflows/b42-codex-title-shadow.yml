@@ -1,0 +1,53 @@
+name: B42 CODEX-to-Hub Advisory Shadow (No Dispatch)
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/issue_rank/b42_codex_title_shadow.py'
+      - 'mission-control/issue_rank/test_b42_codex_title_shadow.py'
+      - '.github/workflows/b42-codex-title-shadow.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-pinned-shadow:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact candidate head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Checkout canonical CODEX method at exact merged SHA
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: GBOGEB/CODEX
+          ref: c7535442cd325d2b7602fcadf7677aa235ecdafd
+          path: .codex-source
+          persist-credentials: false
+      - name: Assert source identity
+        run: |
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          test "$(git -C .codex-source rev-parse HEAD)" = "c7535442cd325d2b7602fcadf7677aa235ecdafd"
+      - name: Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Install exact testing tool
+        run: python -m pip install pytest==9.2.0
+      - name: Execute shadow-only canaries
+        env:
+          B42_CODEX_ROOT: .codex-source
+        run: python -m pytest -q mission-control/issue_rank/test_b42_codex_title_shadow.py
+      - name: Generate bounded read-only demonstration
+        run: |
+          python mission-control/issue_rank/b42_codex_title_shadow.py --codex-root .codex-source --phrase "next ambitious slice" --title "fix(jade): advisory candidate only" > "$RUNNER_TEMP/b42-candidate.json"
+          python -c 'import json,sys; r=json.load(open(sys.argv[1])); assert not r["dispatch_authorized"] and not r["merge_authorized"] and not r["authority_transfer"] and r["formal_credit_delta"]==0' "$RUNNER_TEMP/b42-candidate.json"
+      - name: Archive bounded receipt
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v4.6.2
+        with:
+          name: b42-source-shadow-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/b42-candidate.json
+          retention-days: 30

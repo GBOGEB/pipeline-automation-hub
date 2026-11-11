@@ -44,6 +44,8 @@ HEX40 = re.compile(r"[0-9a-f]{40}\Z")
 HEX64 = re.compile(r"[0-9a-f]{64}\Z")
 # 405 also means "still a draft" or "not mergeable" (conflict); only a protection refusal counts.
 PROTECTION_405 = re.compile(r"status check|rule violation", re.I)
+# a refusal while checks are still queued/pending proves gating, not that a RED head is rejected
+PENDING_405 = re.compile(r"queued|expected|pending|in progress|waiting", re.I)
 
 _pb = importlib.util.spec_from_file_location("private_boundary", ROOT / "tools" / "private_boundary.py")
 PB = importlib.util.module_from_spec(_pb)
@@ -78,6 +80,8 @@ def validate_receipts(doc: dict, private=None) -> dict[str, list[dict]]:
             raise ValueError(f"{repo}: attempt needs http_status 405, response_sha256 and at")
         if not PROTECTION_405.search(str(a.get("message", ""))):
             raise ValueError(f"{repo}: 405 message does not name a status check or rule violation")
+        if PENDING_405.search(str(a.get("message", ""))):
+            raise ValueError(f"{repo}: 405 was for pending checks, not a rejected RED head")
         out.setdefault(repo, []).append(r)
     for rs in out.values():
         rs.sort(key=lambda r: r["attempt"]["at"])
@@ -170,14 +174,17 @@ def attempt(repo: str, pr_n: int, check: str, lookup=gh, merge=None) -> dict:
     head = pr["head"]["sha"]
     if pr.get("state") != "open" or pr["base"]["ref"] != branch or pr.get("draft"):
         raise SystemExit("REFUSED: canary PR must be open, ready for review (not draft) and target the default branch")
+    runs = lookup(f"repos/{repo}/commits/{head}/check-runs?per_page=100")["check_runs"]
+    if any(r.get("name") == check and r.get("status") != "completed" for r in runs):
+        raise SystemExit(f"REFUSED: a run of {check!r} on {head[:12]} is still queued or in progress; wait for it")
     run = latest_check(repo, head, check, lookup)
     if not run or run.get("conclusion") != "failure":
         raise SystemExit(f"REFUSED: latest {check!r} on {head[:12]} is not a completed failure")
     status, body = (merge or _merge)(repo, pr_n, head)
     if status != 405:
         raise SystemExit(f"ALARM: merge attempt returned HTTP {status}, not 405 - protection did NOT reject: {body[:300]}")
-    if not PROTECTION_405.search(_message(body)):
-        raise SystemExit(f"NOT A CANARY: 405 was not a protection refusal ({_message(body)[:200]}); no receipt written")
+    if not PROTECTION_405.search(_message(body)) or PENDING_405.search(_message(body)):
+        raise SystemExit(f"NOT A CANARY: 405 was not a RED-check refusal ({_message(body)[:200]}); no receipt written")
     rule_id = min(ids)
     return {"repo": repo, "pr_number": pr_n, "head_sha": head, "base_branch": branch, "failing_check": check,
             "failing_check_run": run.get("html_url"), "ruleset_id": rule_id, "proof_class": PROOF,
