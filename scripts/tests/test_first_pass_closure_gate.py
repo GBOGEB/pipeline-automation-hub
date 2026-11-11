@@ -56,6 +56,9 @@ class FakeClient:
         return self.mapping[path]
 
     def graphql(self, query, variables):
+        if "closingIssuesReferences" in query:  # GitHub's closing links; none unless a test sets them
+            return {"repository": {"pullRequest": {"closingIssuesReferences": self.mapping.get(
+                "closing_refs", {"totalCount": 0, "nodes": []})}}}
         if "graphql" not in self.mapping:
             raise AssertionError("graphql")
         return self.mapping["graphql"]
@@ -715,6 +718,121 @@ class TestCodexSummaryExactHeadCodeReview(unittest.TestCase):
         receipt = fpc.evaluate(FakeClient(mapping(summary_body=body)), REPO, PR, POLICY)
         self.assertEqual(receipt["status"], fpc.PASS_STATUS)
         self.assertEqual(receipt["codex_summary_comment_id"], 99)
+
+
+def closing_node(number, repo=REPO):
+    return {"number": number, "repository": {"nameWithOwner": repo}}
+
+
+# Real trap lines (GBOGEB, 2026-11-10/11). Each one auto-closed, or would have, on merge.
+TRAP_DOCX_110 = "Close #86 only after that source-bound proof; this PR has no automatic closure keyword."
+TRAP_HUB_1181_A = "Once the receipts are in, then close #1180 with receipts."
+TRAP_HUB_1181_B = "This change does not close #308/#324/#358."
+
+
+class TestClosingKeywordParser(unittest.TestCase):
+    HOME = "GBOGEB/pipeline-automation-hub"
+
+    def refs(self, text, home=None):
+        return fpc.closing_keyword_refs(text, home or self.HOME)
+
+    def test_conditional_close_is_a_closing_link(self):
+        self.assertEqual(self.refs(TRAP_DOCX_110, "GBOGEB/DOCX_RTM_Automation"),
+                         ["gbogeb/docx_rtm_automation#86"])
+
+    def test_then_close_is_a_closing_link(self):
+        self.assertEqual(self.refs(TRAP_HUB_1181_A), ["gbogeb/pipeline-automation-hub#1180"])
+
+    def test_negation_still_links_first_ref_only(self):
+        # GitHub binds a keyword to the one reference right after it; #324 and #358 stay mentions.
+        self.assertEqual(self.refs(TRAP_HUB_1181_B), ["gbogeb/pipeline-automation-hub#308"])
+
+    def test_reworded_safe_forms_link_nothing(self):
+        for text in (
+            "Afterwards, record the closure of #1180 with receipts.",
+            "#308 stays open; #324 and #358 stay open.",
+            "Closure of #86 is a manual step after integrated replay.",
+            "closing #5 by hand later",  # 'closing' is not a GitHub keyword
+            "This is unclosed #5 and a prefix #6 and a hotfix #7.",
+            "See fixtures/#8 and resolver #9.",
+        ):
+            with self.subTest(text=text):
+                self.assertEqual(self.refs(text), [])
+
+    def test_every_keyword_form_and_case(self):
+        for kw in ("close", "closes", "closed", "fix", "fixes", "fixed", "resolve", "resolves", "resolved",
+                   "CLOSES", "Fixes", "ReSoLvEd"):
+            with self.subTest(kw=kw):
+                self.assertEqual(self.refs(f"{kw} #12"), ["gbogeb/pipeline-automation-hub#12"])
+                self.assertEqual(self.refs(f"{kw}: #12"), ["gbogeb/pipeline-automation-hub#12"])
+
+    def test_unticked_and_ticked_checkboxes_both_link(self):
+        self.assertEqual(self.refs("- [ ] Fixes #41\n- [x] resolves #42"),
+                         ["gbogeb/pipeline-automation-hub#41", "gbogeb/pipeline-automation-hub#42"])
+
+    def test_emphasis_around_keyword_is_counted(self):
+        self.assertEqual(self.refs("**Closes** #3 and _fixes_: #4"),
+                         ["gbogeb/pipeline-automation-hub#3", "gbogeb/pipeline-automation-hub#4"])
+
+    def test_cross_repo_refs(self):
+        self.assertEqual(
+            self.refs("Fixes GBOGEB/ABACUS#2470, resolves https://github.com/GBOGEB/DOCX_RTM_Automation/issues/86"),
+            ["gbogeb/abacus#2470", "gbogeb/docx_rtm_automation#86"],
+        )
+        self.assertEqual(self.refs("closes other-org/lib.py#7"), ["other-org/lib.py#7"])
+
+    def test_keyword_binds_to_next_ref_only(self):
+        self.assertEqual(self.refs("Closes #1, #2 and fixes #3"),
+                         ["gbogeb/pipeline-automation-hub#1", "gbogeb/pipeline-automation-hub#3"])
+
+    def test_opt_in_marker_allows_only_named_refs(self):
+        body = "Closes #86\nFixes GBOGEB/ABACUS#5\nresolves #9\nAUTO_CLOSE_INTENDED: #86, GBOGEB/ABACUS#5"
+        out = fpc.unintended_auto_closes(body, self.HOME, [])
+        self.assertEqual(out["body_keyword"], ["gbogeb/pipeline-automation-hub#9"])
+
+    def test_opt_in_marker_alone_closes_nothing(self):
+        self.assertEqual(self.refs("AUTO_CLOSE_INTENDED: #86"), [])
+
+    def test_github_only_links_are_reported(self):
+        out = fpc.unintended_auto_closes("No keywords here.", self.HOME,
+                                         ["gbogeb/pipeline-automation-hub#77"])
+        self.assertEqual(out, {"body_keyword": [], "github_only": ["gbogeb/pipeline-automation-hub#77"]})
+        out = fpc.unintended_auto_closes("AUTO_CLOSE_INTENDED: #77", self.HOME,
+                                         ["gbogeb/pipeline-automation-hub#77"])
+        self.assertEqual(out, {"body_keyword": [], "github_only": []})
+
+
+class TestGateBlocksAutoClose(unittest.TestCase):
+    def evaluate(self, pr_body, closing_refs=None):
+        m = mapping(pr_body=pr_body)
+        if closing_refs is not None:
+            m["closing_refs"] = closing_refs
+        return fpc.evaluate(FakeClient(m), REPO, PR, POLICY)
+
+    def test_trap_lines_block_admission(self):
+        for line in (TRAP_DOCX_110, TRAP_HUB_1181_A, TRAP_HUB_1181_B):
+            with self.subTest(line=line):
+                with self.assertRaisesRegex(fpc.GateError, "PR_BODY_AUTO_CLOSES_ISSUES"):
+                    self.evaluate(body() + "\n" + line)
+
+    def test_reworded_body_passes(self):
+        receipt = self.evaluate(body() + "\nRecord the closure of #1180 with receipts. #308 stays open.")
+        self.assertEqual(receipt["status"], fpc.PASS_STATUS)
+
+    def test_opt_in_passes(self):
+        receipt = self.evaluate(body() + "\nCloses #86\nAUTO_CLOSE_INTENDED: #86",
+                                {"totalCount": 1, "nodes": [closing_node(86)]})
+        self.assertEqual(receipt["status"], fpc.PASS_STATUS)
+
+    def test_sidebar_link_blocks_even_with_clean_body(self):
+        with self.assertRaisesRegex(fpc.GateError, "PR_BODY_AUTO_CLOSES_ISSUES: gbogeb/example#5"):
+            self.evaluate(body(), {"totalCount": 1, "nodes": [closing_node(5)]})
+
+    def test_truncated_or_missing_github_view_fails_closed(self):
+        with self.assertRaisesRegex(fpc.GateError, "CLOSING_ISSUES_REFERENCES_TRUNCATED"):
+            self.evaluate(body(), {"totalCount": 101, "nodes": [closing_node(1)]})
+        with self.assertRaisesRegex(fpc.GateError, "CLOSING_ISSUES_REFERENCES_UNAVAILABLE"):
+            self.evaluate(body(), "not-a-connection")
 
 
 if __name__ == "__main__":

@@ -404,6 +404,85 @@ def codex_blocking_findings(
     return out, counts
 
 
+# GitHub closing keywords (docs: "Linking a pull request to an issue"). GitHub reads them with no
+# notion of negation, condition or checkbox state: "does not close #308", "Close #86 only after ..."
+# and "- [ ] fixes #5" all link the issue and close it on merge. GBOGEB closes issues by hand after
+# integrated replay (finite DoD), so any such link is a false-complete unless the PR opts in.
+# Deliberately a superset of GitHub's parser: emphasis around the keyword, refs inside code and
+# task-list items are still counted (GitHub skipped one unticked task-list item in hub PR 1185), so
+# this check can only be stricter than GitHub; GitHub's own list is unioned in by the gate.
+_ISSUE_REF = (
+    r"(?:https?://github\.com/(?P<url_owner>[\w.-]+)/(?P<url_repo>[\w.-]+)/(?:issues|pull)/(?P<url_num>\d+)"
+    r"|(?:(?P<owner>[A-Za-z0-9][\w.-]*)/(?P<repo>[\w.-]+))?#(?P<num>\d+))"
+)
+CLOSING_KEYWORD_RE = re.compile(
+    r"(?<![A-Za-z0-9/-])(?P<kw>close[sd]?|fix(?:e[sd])?|resolve[sd]?)[*_]*(?::[*_]*\s*|\s+)" + _ISSUE_REF,
+    re.I,
+)
+ISSUE_REF_RE = re.compile(_ISSUE_REF)
+AUTO_CLOSE_INTENDED_RE = re.compile(r"AUTO_CLOSE_INTENDED:[ \t]*(?P<refs>[^\r\n]*)")
+CLOSING_REFS_QUERY = """query($owner:String!,$name:String!,$number:Int!){
+  repository(owner:$owner,name:$name){pullRequest(number:$number){
+    closingIssuesReferences(first:100){totalCount nodes{number repository{nameWithOwner}}}}}}"""
+
+
+def _ref_key(match: re.Match[str], home_repo: str) -> str:
+    if match.group("url_num"):
+        owner_repo, num = f"{match.group('url_owner')}/{match.group('url_repo')}", match.group("url_num")
+    else:
+        owner, name = match.group("owner"), match.group("repo")
+        owner_repo, num = (f"{owner}/{name}" if owner else home_repo), match.group("num")
+    return f"{owner_repo.lower()}#{int(num)}"
+
+
+def closing_keyword_refs(body: str | None, home_repo: str) -> list[str]:
+    """Issues GitHub will link (and close on merge) from closing keywords in a PR body.
+
+    Each keyword binds to the single reference right after it, as on GitHub: "Closes #1, #2"
+    links #1 only. Returns sorted ``owner/repo#N`` keys (lower-case owner/repo).
+    """
+    return sorted({_ref_key(m, home_repo) for m in CLOSING_KEYWORD_RE.finditer(body or "")})
+
+
+def auto_close_opt_ins(body: str | None, home_repo: str) -> set[str]:
+    """Refs the author explicitly allows to auto-close: ``AUTO_CLOSE_INTENDED: #N, owner/repo#M``."""
+    keys: set[str] = set()
+    for line in AUTO_CLOSE_INTENDED_RE.finditer(body or ""):
+        keys.update(_ref_key(m, home_repo) for m in ISSUE_REF_RE.finditer(line.group("refs")))
+    return keys
+
+
+def github_closing_refs(client: Any, repo: str, pr_number: int) -> list[str]:
+    """GitHub's own view (``closingIssuesReferences``): body keywords plus manual sidebar links."""
+    owner, name = repo.split("/", 1)
+    data = client.graphql(CLOSING_REFS_QUERY, {"owner": owner, "name": name, "number": pr_number})
+    conn = (((data or {}).get("repository") or {}).get("pullRequest") or {}).get("closingIssuesReferences")
+    if not isinstance(conn, dict) or not isinstance(conn.get("nodes"), list):
+        raise GateError("CLOSING_ISSUES_REFERENCES_UNAVAILABLE")
+    if (conn.get("totalCount") or 0) > len(conn["nodes"]):
+        raise GateError("CLOSING_ISSUES_REFERENCES_TRUNCATED")
+    return sorted(
+        f"{n['repository']['nameWithOwner'].lower()}#{int(n['number'])}" for n in conn["nodes"]
+    )
+
+
+def unintended_auto_closes(
+    body: str | None, repo: str, github_refs: list[str]
+) -> dict[str, list[str]]:
+    """Closing links not covered by an ``AUTO_CLOSE_INTENDED`` opt-in, from both parsers.
+
+    ``github_refs`` is GitHub's ``closingIssuesReferences``. The union blocks: the local parser
+    catches links GitHub has not indexed yet, GitHub's list catches links made outside the body
+    (Development sidebar) and any keyword form this parser misses.
+    """
+    allowed = auto_close_opt_ins(body, repo)
+    parsed = set(closing_keyword_refs(body, repo))
+    return {
+        "body_keyword": sorted(parsed - allowed),
+        "github_only": sorted(set(github_refs) - parsed - allowed),
+    }
+
+
 def protected_control_changes(
     client: Any, repo: str, pr_number: int, policy: dict[str, Any]
 ) -> list[str]:
@@ -542,6 +621,17 @@ def evaluate(
     if protected:
         raise GateError(
             "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP: " + ",".join(protected)
+        )
+
+    auto_close = unintended_auto_closes(
+        pr.get("body"), repo, github_closing_refs(client, repo, pr_number)
+    )
+    if auto_close["body_keyword"] or auto_close["github_only"]:
+        raise GateError(
+            "PR_BODY_AUTO_CLOSES_ISSUES: "
+            + ",".join(auto_close["body_keyword"] + auto_close["github_only"])
+            + " (reword, e.g. 'record the closure of #N' / '#N stays open', unlink it in the"
+            " Development sidebar, or add 'AUTO_CLOSE_INTENDED: #N' if closing on merge is intended)"
         )
 
     # A hand-written body receipt is still honoured (and must be on the exact head); without one,

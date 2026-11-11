@@ -1,0 +1,18 @@
+schema: missioncontrol.fpc.post_pr1139_canary.v1
+as_of: '2026-11-09T17:05:44Z'
+as_of_meaning: observation cutoff; the canary's own outcome is recorded by its required status, not in this file
+controller_pr: GBOGEB/pipeline-automation-hub#1139
+controller_merge: 401c57316197c81e910f0b3da7ea7322e1f109fc
+bootstrap_receipt: mission-control/quality/FPC_PR1139_BOOTSTRAP_RECEIPT_20261109_v1.yaml
+purpose: PROVE_NON_CONTROLLER_PR_REACHES_HEAD_BOUND_FPC_PASS_BEFORE_MERGE
+candidate_scope: NON_CONTROLLER_METADATA_ONLY
+touches_protected_control_paths: false
+expected_sequence:
+  - exact_head_proof_pass
+  - codex_review_complete_clean
+  - bind_FPC_RECEIPT_V1_in_pr_body
+  - head_bound_status_success
+  - merge_after_success_only
+acceptance_rule: CANARY_HEAD_BOUND_REQUIRED_STATUS_SUCCESS
+authority_transfer: false
+formal_credit_delta: 0

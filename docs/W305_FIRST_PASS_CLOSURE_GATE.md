@@ -183,6 +183,37 @@ The required owner/admin control should require `First-Pass Closure Gate / first
 This distinction is non-compensating: a green controller run does not prove the admin barrier exists, and installing a branch rule does not replace exact-head proof/review evidence.
 
 
+## R9 closing-keyword auto-close guard (2026-11-11)
+
+A merged PR closes every issue its body links with a GitHub closing keyword (`close[sd]`, `fix(e[sd])`,
+`resolve[sd]`, any case, optional colon, then `#N`, `owner/repo#N` or an issue URL). GitHub does not read
+the sentence: "does not close #308" and "Close #86 only after ..." both close the issue. GBOGEB closes
+issues by hand after integrated replay, so an automatic close is a false-complete (DOCX_RTM_Automation
+PR 110 closed issue 86 at 3/7 criteria on 2026-11-10).
+
+The trusted controller now fails closed with `PR_BODY_AUTO_CLOSES_ISSUES: <owner/repo#N,...>` when either
+source links an issue that the body does not opt in with `AUTO_CLOSE_INTENDED: #N`:
+
+1. `closing_keyword_refs`, a body parser that binds each keyword to the one reference right after it
+   ("Closes #1, #2" links #1 only, as on GitHub);
+2. GitHub's own `closingIssuesReferences`, which also includes issues linked in the Development sidebar.
+   A missing or truncated list fails closed (`CLOSING_ISSUES_REFERENCES_UNAVAILABLE` / `_TRUNCATED`).
+
+The parser is deliberately a superset of GitHub's. It also counts keywords inside task-list items, code
+and emphasis. Live cross-check on 2026-11-11: DOCX_RTM_Automation PR 110 (parser and GitHub both
+`#86`) and hub PR 1181 (both empty) agree, as do 24 other recent hub PRs. One divergence is known:
+in hub PR 1185, GitHub did not link "- [ ] ... then close #1182." inside an unticked task-list item;
+the parser does. Over-blocking costs one rewording; under-blocking costs a false-complete.
+
+Before merging any PR (in any repo, gate or not):
+
+```bash
+python scripts/fpc_receipt.py --check-closing --repo <owner/name> --pr <N>
+```
+
+It prints both views side by side (`parser_only`, `github_only`) and exits 1 when something would
+auto-close without an opt-in. `--write`/dry-run receipt generation also notes such links on stderr.
+
 ## Filling the receipt
 
 The gate fails on every PR without a receipt, so a red gate that "always fails" must not become background noise. Fill the receipt with `scripts/fpc_receipt.py` instead of copying run ids by hand:
