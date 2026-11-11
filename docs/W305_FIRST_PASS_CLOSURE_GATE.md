@@ -233,3 +233,20 @@ The helper uses your existing `gh auth` login, reads the live PR head/base SHA, 
 - Exit `2`: `gh`/API or policy error.
 
 `--write` is idempotent (re-running on an unchanged head leaves the body untouched) and editing the body re-triggers the gate. Every new push changes the head SHA and makes the receipt stale (`STALE_HEAD`), so re-run the helper after each push. A receipt is necessary but not sufficient: the exact-head Codex review and the protected-path bootstrap rule still apply, and the helper notes on stderr when a PR touches protected controller paths.
+
+## Codex-unavailable waiver
+
+When Codex cannot review a head because its usage limit is reached, the gate fails with `CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD` although there is no finding to fix. The policy block `codex_unavailable_waiver` lets the owner waive **only the Codex completion requirement** for such a head. It is the in-gate tier of the review-failover design; the ruleset tier (an admin bypass on a soft ruleset) is described in `governance/branch_protection/SOFT_GATE_PROPOSAL.md`.
+
+All conditions are machine-checked by `codex_unavailable_waiver()` in `scripts/first_pass_closure_gate.py`:
+
+1. Codex's own summary comment reports the **code review as `failed` on the exact head**, and a later Codex comment contains the usage-limit phrase. A running or completed review, or a failure for an older head, never qualifies.
+2. The label `fpc:codex-unavailable` was applied by a login in `labeler_logins`, **after the head commit's committer date**. A push, rebase or amend gives the head a newer date, so the owner must re-apply the label for that head. Removing the label withdraws the waiver.
+3. No changed path matches `forbidden_path_patterns` (workflows, actions, dependabot, CODEOWNERS, SECURITY.md, the quality policy, the gate script). Those always need a real review.
+4. No open Codex inline finding of **any** priority on the exact head. A resolved thread does not block.
+
+Unchanged by the waiver: the three exact-head proof runs, the control-plane bootstrap rule, and zero open P0/P1 findings. The pass receipt carries `codex_review_waiver` (who, when, which comments) and `clean_first_pass: false`, so a waived PR never counts toward the prospective cohort in the policy's `prospective_cohort` block.
+
+Owner steps: create the label once (`gh label create fpc:codex-unavailable --color FBCA04 --description "Owner waiver: Codex usage limit reached on this head"`), then add it to a PR whose gate failed with that reason. The gate re-runs on `labeled`.
+
+Control-plane change: this section and the policy block are protected control paths. They merge only as an explicit bootstrap (see "Controller-maintenance bootstrap"), followed by a distinct non-controller canary PR that passes with the waiver.

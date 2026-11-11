@@ -209,6 +209,98 @@ def dependency_update_exemption(
             "waives": sorted(waives)}
 
 
+def codex_unavailable_waiver(
+    client: Any, repo: str, pr_number: int, head_sha: str, comments: list[dict[str, Any]],
+    policy: dict[str, Any],
+) -> tuple[dict[str, Any] | None, str | None]:
+    """Owner-labelled waiver for "Codex could not review this head" (usage limit, outage).
+
+    Returns (waiver, None) when every condition holds, (None, None) when the owner has not asked
+    for a waiver, and (None, reason) when a waiver was asked for but one condition fails. It waives
+    only CODEX_REVIEW completion. Exact-head proof runs, the control-plane bootstrap rule and any
+    open Codex finding on the exact head still apply, and the receipt records that the first pass
+    was not clean. Conditions, all machine-checked:
+
+    1. Codex's own summary for the exact head reports the code review as `failed`, and a later Codex
+       comment carries the usage-limit phrase (so the cause is quota, not a review verdict).
+    2. The declared label was applied by a declared login, after the head commit's committer date.
+       A new push, rebase or amend therefore invalidates an earlier label.
+    3. No changed path matches a forbidden pattern (workflows, dependabot, policy).
+    4. No open Codex finding of any priority on the exact head.
+    """
+    rule = policy.get("codex_unavailable_waiver")
+    if rule is None:
+        return None, None
+    label = rule.get("label") if isinstance(rule, dict) else None
+    labelers = rule.get("labeler_logins") if isinstance(rule, dict) else None
+    phrase = rule.get("limit_comment_phrase") if isinstance(rule, dict) else None
+    forbidden = rule.get("forbidden_path_patterns") if isinstance(rule, dict) else None
+    waives = rule.get("waives") if isinstance(rule, dict) else None
+    if (not isinstance(label, str) or not label
+            or not isinstance(labelers, list) or not labelers or not all(isinstance(x, str) and x for x in labelers)
+            or not isinstance(phrase, str) or not phrase
+            or not isinstance(forbidden, list) or not forbidden or not all(isinstance(x, str) and x for x in forbidden)
+            or waives != ["CODEX_REVIEW"]):
+        raise GateError("POLICY_CODEX_WAIVER_INVALID")
+
+    # Has the owner asked for a waiver? The latest label event decides, and its actor must be declared.
+    events = client.get_all(f"/repos/{repo}/issues/{pr_number}/events")
+    label_events = [e for e in events if isinstance(e, dict) and e.get("event") in {"labeled", "unlabeled"}
+                    and ((e.get("label") or {}).get("name")) == label]
+    if not label_events or label_events[-1].get("event") != "labeled":
+        return None, None
+    labeled = label_events[-1]
+    actor = ((labeled.get("actor") or {}).get("login"))
+    if actor not in labelers:
+        return None, f"label applied by undeclared login {actor!r}"
+
+    commit = client.get(f"/repos/{repo}/commits/{head_sha}")
+    committed_at = (((commit.get("commit") or {}).get("committer") or {}).get("date"))
+    labeled_at = labeled.get("created_at")
+    if not isinstance(committed_at, str) or not isinstance(labeled_at, str) or labeled_at < committed_at:
+        return None, "label predates the exact head commit; re-apply it for this head"
+
+    expected_login = codex_login(policy)
+    codex_comments = [c for c in comments if isinstance(c, dict)
+                      and login_matches(((c.get("user") or c.get("author") or {}).get("login")), expected_login)]
+    summary = None
+    for c in codex_comments:
+        text = c.get("body") or ""
+        if CODEX_SUMMARY_MARKER not in text:
+            continue
+        found = CODEX_STATE_RE.findall(text)
+        if len(found) != 1:
+            continue
+        try:
+            code = (json.loads(found[0]) or {}).get("code_review")
+        except (json.JSONDecodeError, AttributeError):
+            continue
+        if isinstance(code, dict) and code.get("commit_sha") == head_sha and code.get("status") == "failed":
+            summary = c
+    if summary is None:
+        return None, "no Codex summary reports the code review as failed on the exact head"
+    limit = [c for c in codex_comments if CODEX_SUMMARY_MARKER not in (c.get("body") or "")
+             and phrase in (c.get("body") or "")
+             and str(c.get("created_at") or "") >= str(summary.get("created_at") or "")]
+    if not limit:
+        return None, "no Codex usage-limit comment follows the failed summary"
+
+    files = client.get_all(f"/repos/{repo}/pulls/{pr_number}/files")
+    paths = sorted(f.get("filename") for f in files if isinstance(f, dict) and isinstance(f.get("filename"), str))
+    hit = [p for p in paths if any(fnmatch.fnmatchcase(p, pat) for pat in forbidden)]
+    if not paths or hit:
+        return None, "changed paths need a real review: " + ",".join(hit or ["(none)"])
+
+    findings, _counts = codex_blocking_findings(
+        client, repo, pr_number, head_sha, expected_login, {"P0", "P1", "P2", "P3"})
+    if findings:
+        return None, f"{len(findings)} open Codex finding(s) on the exact head"
+
+    return {"label": label, "labeled_by": actor, "labeled_at": labeled_at, "head_committed_at": committed_at,
+            "codex_summary_comment_id": summary.get("id"), "codex_limit_comment_id": limit[-1].get("id"),
+            "waives": ["CODEX_REVIEW"], "clean_first_pass": False, "changed_paths": len(paths)}, None
+
+
 def login_matches(actual: str | None, expected: str) -> bool:
     return actual in {expected, f"{expected}[bot]"}
 
@@ -673,7 +765,9 @@ def evaluate(
                 raise GateError("CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD")
 
         blocking = (policy.get("codex_contract") or {}).get("blocking_priorities")
-        if blocking is None:
+        if waiver is not None:
+            pass  # the waiver already refused any open Codex finding on the exact head
+        elif blocking is None:
             # Strict rule: any commented Codex review bound to the exact head blocks.
             reviews = client.get_all(f"/repos/{repo}/pulls/{pr_number}/reviews")
             findings = codex_finding_reviews_for_head(reviews, head_sha, expected_login)
