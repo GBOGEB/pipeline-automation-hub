@@ -4,8 +4,15 @@
 often than leaving them alone? It applies an intervention to a random part of the eligible PRs,
 keeps the rest as a holdout group, and compares the two groups after CI has had time to run.
 
-Slice 1 has one intervention: bring the PR branch up to date with its base branch (GitHub
-update-branch). Later slices add more levels (see [Ladder](#ladder)).
+Each experiment applies one intervention, chosen with `--intervention` on `before`:
+
+- `update` (default): bring the PR branch up to date with its base branch (GitHub update-branch).
+- `rerun`: rerun the failed jobs of the newest failed run on the PR's exact head.
+- `debug-rerun`: the same rerun with runner and step debug logging.
+
+For the two rerun levels, `rerun_triage.plan()` decides per PR and the tool follows it exactly
+(see [Rerun levels](#rerun-levels)). `--gate-check` (repeatable) names checks that are judged as
+gates rather than CI, for example `--gate-check "PR Feedback Gate"` on ABACUS.
 
 ## Run it
 
@@ -97,10 +104,39 @@ proven root fix (`proof: CANDIDATE_NOT_PROVEN`).
 |---|---|---|---|
 | L0 | Observe only (A/A test) | 1 | this tool |
 | L1 | Update branch (merge; `--method rebase` opt-in) | 1 | this tool |
-| L2 | Rerun failed jobs | 2 | `rerun_triage.plan()` (`RERUN_FAILED_JOBS_CANDIDATE`) |
-| L3 | Debug rerun, observed as an LDAB `debug_receipt` at `REPORTED_UNVERIFIED` | 2 | `rerun_triage.plan()` (`DEBUG_RERUN_CANDIDATE`), ABACUS LDAB contract |
+| L2 | Rerun failed jobs (`--intervention rerun`) | 2 | `rerun_triage.plan()` (`RERUN_FAILED_JOBS_CANDIDATE`) |
+| L3 | Debug rerun (`--intervention debug-rerun`), observed as an LDAB `debug_receipt` at `REPORTED_UNVERIFIED` | 2 | `rerun_triage.plan()` (`DEBUG_RERUN_CANDIDATE`), `bd_ldab_consumer.check_observation()` |
 | L4 | Agent fix proposal PR (never merged automatically) | 3 | owner review |
 
-Slice 3 also adds attribution across repositories (census pinned blob ids) and per-stratum policy:
-level by workflow class, change size, DAG depth and failure type. Until then LDAB, Actions minutes
-and cross-repository attribution are `UNKNOWN` in every record.
+Slice 3 adds attribution across repositories (census pinned blob ids) and per-stratum policy:
+level by workflow class, change size, DAG depth and failure type. Until then Actions minutes and
+cross-repository attribution are `UNKNOWN` in every record.
+
+## Rerun levels
+
+`before` builds one `rerun_triage` snapshot per repository. For each PR it takes the newest completed
+run on the exact head (failed runs first) and its first failed job, and classifies that job from
+GitHub job metadata only (no log download, `classifier: job_metadata_v1`):
+
+| Job metadata | `failure_kind` | `logs_insufficient` | Usual triage decision |
+|---|---|---|---|
+| Failed job that ran no step (lost its runner) | `TRANSIENT`, cause `runner_lost` | false | `RERUN_FAILED_JOBS_CANDIDATE` |
+| Failed job with no failed step | `UNCLASSIFIED` | true | `DEBUG_RERUN_CANDIDATE` |
+| Failed job with a failed step | `UNCLASSIFIED` | false | `INSPECT_FIRSTRED` |
+| Run succeeded | `NONE` | false | `EVALUATE_INDEPENDENT_GATES` |
+
+`rerun_triage` decides, in its own order: a PR behind its base is `RECONCILE_MAIN` (the `update`
+level's job), a second attempt is `RETRY_EXHAUSTED`, and so on. Only `RERUN_FAILED_JOBS_CANDIDATE`
+PRs are eligible for `rerun`, and only `DEBUG_RERUN_CANDIDATE` PRs for `debug-rerun`. Every other
+PR records `TRIAGE_<decision>` as its reason. To change those rules, change `rerun_triage.py` in a PR
+of its own (AGENTS.md L4).
+
+`act` reruns failed jobs only (`gh run rerun <id> --failed`, plus `--debug` at L3). It goes ahead only
+if the run is still the same completed, failed attempt that triage judged; otherwise it records
+`RUN_MOVED`. A rerun keeps the head, so it does not invalidate FPC receipts.
+
+`after` reads each rerun's attempt and conclusion. For `debug-rerun` on ABACUS or CODEX, a new attempt
+becomes an LDAB `debug_receipt` observation, validated by `bd_ldab_consumer.check_observation()`:
+`proof_level: REPORTED_UNVERIFIED`, `real_probe_steps: 0`. Actions debug logging is not a debugger
+session. Other repositories record `NOT_IN_LDAB_SCOPE`. A PR that turns green with an unchanged head
+after our accepted rerun is attributed `DELIVERED_BY_RERUN`.

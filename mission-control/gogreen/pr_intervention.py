@@ -1,25 +1,37 @@
 #!/usr/bin/env python3
-"""PR intervention ledger, slice 1: update stale PR branches against a randomized holdout, then measure.
+"""PR intervention ledger: act on a randomized part of the eligible PRs, keep a holdout, then measure.
+
+Interventions (one per experiment, `--intervention`):
+  UPDATE       bring the PR branch up to date with its base (GitHub update-branch)       slice 1
+  RERUN        rerun the failed jobs of the newest failed run on the exact head           slice 2
+  DEBUG_RERUN  the same rerun with step debug logging (an LDAB debug_receipt observation) slice 2
+For the rerun levels, rerun_triage.plan() decides per PR and only its RERUN_FAILED_JOBS_CANDIDATE /
+DEBUG_RERUN_CANDIDATE PRs are eligible. A PR behind its base is RECONCILE_MAIN there, so the rerun
+levels and UPDATE never act on the same PR.
 
 An experiment is three kinds of record in one append-only ledger, chained by sha256:
   before  one pulse: each base branch head read once (AGENTS.md L6), a snapshot of every open PR,
           the reasons a PR is not eligible, and a deterministic TREATED / HOLDOUT arm per eligible PR
-  act     the update-branch calls for the TREATED arm (GitHub is written only with --apply)
+  act     the writes for the TREATED arm (GitHub is written only with --apply)
   after   the same PRs re-read: per-PR transitions, the effect estimate (treated minus holdout,
-          intention to treat) and positive transitions with their candidate causes ("butterflies")
+          intention to treat), positive transitions with their candidate causes ("butterflies")
+          and, for DEBUG_RERUN on ABACUS / CODEX, LDAB debug_receipt observations
 
 A PR that turns green or loses its conflict is a positive transition. Its attribution is
-DELIVERED_BY_UPDATE (our update was the only change to its head), EXTERNAL (its head did not change:
-a rerun, a base change or another repository) or AUTHOR_PUSH. The base-window commits are ranked by
-how many files they share with the PR. They are candidates, never proven root fixes.
+DELIVERED_BY_UPDATE (its head is exactly the one our update produced), DELIVERED_BY_RERUN (head
+unchanged, our rerun was accepted), EXTERNAL (head unchanged, nothing of ours: a rerun by someone
+else, a base change or another repository), AUTHOR_PUSH or UNVERIFIED. The base-window commits are
+ranked by how many files they share with the PR. They are candidates, never proven root fixes.
 
 The census context is the latest scale-dock pulse (scale_dock_series ledger) at before and after;
-when both name the same pulse the delta is SAME_PULSE, not zero. LDAB, rerun / debug rerun
-(rerun_triage.plan) and cross-repository attribution are later slices and stay UNKNOWN here.
+when both name the same pulse the delta is SAME_PULSE, not zero. Actions minutes and
+cross-repository attribution stay UNKNOWN.
 
 Owner functions are imported, never copied (AGENTS.md L4):
   scale_dock_series  GhReader (gh login, bounded retry), line, sha256, read_ledger, LEDGER, LEDGER_SCHEMA
   bd_queue_wave      utc
+  rerun_triage       plan, SCHEMA, TRANSIENT_CAUSES (rerun / debug-rerun decisions)
+  bd_ldab_consumer   check_observation (LDAB debug_receipt contract, ABACUS-owned schema)
 
 GitHub writes go through the operator's gh login only. Commits pushed with an Actions GITHUB_TOKEN do
 not start pull_request workflows, so an update made from Actions would never be measured.
@@ -51,11 +63,15 @@ SCHEMA = 'gogreen.pr-intervention.ledger.v1'
 KINDS = ('before', 'act', 'after')
 METHODS = ('MERGE', 'REBASE')
 ARMS = ('TREATED', 'HOLDOUT')
+INTERVENTIONS = ('UPDATE', 'RERUN', 'DEBUG_RERUN')
+# The rerun_triage decision that makes a PR eligible for each rerun level.
+TRIAGE_WANTED = {'RERUN': 'RERUN_FAILED_JOBS_CANDIDATE', 'DEBUG_RERUN': 'DEBUG_RERUN_CANDIDATE'}
 POLICY = {'min_age_days': 7.0, 'min_behind': 1, 'holdout': 0.2, 'quiet_hours': 24.0, 'method': 'MERGE',
-          'opt_out_labels': ['no-auto-update', 'do-not-rebase'], 'gate_checks': ['first-pass-closure'],
-          'min_arm': 5}
+          'intervention': 'UPDATE', 'opt_out_labels': ['no-auto-update', 'do-not-rebase'],
+          'gate_checks': ['first-pass-closure'], 'min_arm': 5}
+LDAB_REPOS = ('GBOGEB/ABACUS', 'GBOGEB/CODEX')  # bd_ldab_consumer accepts native evidence from these only
 CONTROLS = {'authority_transfer': False, 'merge_admission': 'HOLD', 'root_closure': False,
-            'ldab': 'UNKNOWN_SLICE_2', 'actions_minutes': 'UNKNOWN_SLICE_2',
+            'ldab': 'DEBUG_RECEIPTS_REPORTED_UNVERIFIED', 'actions_minutes': 'UNKNOWN',
             'cross_repo_attribution': 'UNKNOWN_SLICE_3'}
 PASS = {'SUCCESS', 'NEUTRAL', 'SKIPPED'}
 FAIL = {'FAILURE', 'TIMED_OUT', 'ACTION_REQUIRED', 'STARTUP_FAILURE', 'ERROR'}
@@ -81,6 +97,8 @@ def _load(name, path):
 
 sds = _load('scale_dock_series', HERE / 'scale_dock_series.py')
 bd = sds.bd
+rt = _load('rerun_triage', HERE / 'rerun_triage.py')
+ldab = _load('bd_ldab_consumer', HUB / 'mission-control' / 'federation-atlas' / 'bd_ldab_consumer.py')
 
 
 def require(ok, message):
@@ -139,22 +157,28 @@ class Client:
 
 
 class Writer:
-    """The only GitHub write: update one PR branch, guarded by the head SHA this experiment recorded."""
+    """The only GitHub writes: update one PR branch, or rerun one run's failed jobs. act() guards both."""
 
     def __init__(self, run=subprocess.run):
         self.run = run
 
-    def update_branch(self, repo, number, expected_head, method):
-        if method == 'MERGE':
-            args = ['gh', 'api', '-X', 'PUT', f'repos/{repo}/pulls/{number}/update-branch',
-                    '-f', f'expected_head_sha={expected_head}']
-        else:  # gh has no head guard for --rebase; act() re-reads the head immediately before
-            args = ['gh', 'pr', 'update-branch', str(number), '-R', repo, '--rebase']
+    def _call(self, args):
         out = self.run(args, capture_output=True, text=True, encoding='utf-8', env=_env(), timeout=120)
         if out.returncode == 0:
             return 'ACCEPTED', None
         code = re.search(r'\(HTTP (\d{3})\)', out.stderr or '')
         return 'FAILED', ('HTTP_' + code.group(1)) if code else f'EXIT_{out.returncode}'
+
+    def update_branch(self, repo, number, expected_head, method):
+        if method == 'MERGE':
+            return self._call(['gh', 'api', '-X', 'PUT', f'repos/{repo}/pulls/{number}/update-branch',
+                               '-f', f'expected_head_sha={expected_head}'])
+        # gh has no head guard for --rebase; act() re-reads the head immediately before
+        return self._call(['gh', 'pr', 'update-branch', str(number), '-R', repo, '--rebase'])
+
+    def rerun_failed(self, repo, run_id, debug):
+        # Failed jobs only (bounded CI spend); --debug turns on runner and step debug logging.
+        return self._call(['gh', 'run', 'rerun', str(run_id), '--failed', '-R', repo, *(['--debug'] if debug else [])])
 
 
 # ---------------------------------------------------------------- snapshot
@@ -240,10 +264,15 @@ def reasons(row, default_branch, policy, now):
         r.append('STACKED')
     if row['age_days'] < policy['min_age_days']:
         r.append('YOUNG')
-    if row['behind_by'] is None:
-        r.append('BEHIND_UNKNOWN')
-    elif row['behind_by'] < policy['min_behind']:
-        r.append('CURRENT')
+    if policy['intervention'] == 'UPDATE':
+        if row['behind_by'] is None:
+            r.append('BEHIND_UNKNOWN')
+        elif row['behind_by'] < policy['min_behind']:
+            r.append('CURRENT')
+    else:  # rerun levels: rerun_triage decides; only its candidate decision for this level is eligible
+        t = row.get('triage') or {}
+        if t.get('decision') != TRIAGE_WANTED[policy['intervention']]:
+            r.append('TRIAGE_' + (t.get('decision') or t.get('reason') or 'UNKNOWN'))
     if row['mergeable'] == 'CONFLICTING' or row['merge_state'] == 'DIRTY':
         r.append('CONFLICT')  # update-branch cannot resolve it; the PR_CONFLICT_RUNBOOK owns that path
     pushed = bd.utc(row['head_committed_at'])
@@ -254,6 +283,76 @@ def reasons(row, default_branch, policy, now):
     if set(row['labels']) & set(policy['opt_out_labels']):
         r.append('OPT_OUT_LABEL')
     return r
+
+
+def newest_run(client, repo, head):
+    """Newest completed run on the exact head, failed runs first, with its latest-attempt jobs; None if none."""
+    runs = [r for r in client.paginate(f'/repos/{repo}/actions/runs?head_sha={head}', key='workflow_runs')
+            if r.get('head_sha') == head and r.get('status') == 'completed']
+    if not runs:
+        return None
+    run = max(runs, key=lambda r: (r.get('conclusion') == 'failure', r.get('updated_at') or '', r.get('id') or 0))
+    return run, client.paginate(f"/repos/{repo}/actions/runs/{run['id']}/jobs", key='jobs')
+
+
+def classify(run, jobs):
+    """Job-metadata classifier, no log download: (failure_kind, cause, logs_insufficient, job).
+
+    A failed job that never ran a step lost its runner (TRANSIENT runner_lost, a cause rerun_triage
+    accepts). A failed job with no failed step left nothing to read (logs insufficient). Any other
+    failure is UNCLASSIFIED: rerun_triage then says INSPECT_FIRSTRED, never a blind rerun.
+    """
+    if run.get('conclusion') != 'failure':
+        return 'NONE', None, False, (jobs[0] if jobs else None)
+    failed = sorted((j for j in jobs if j.get('conclusion') == 'failure'), key=lambda j: j.get('id') or 0)
+    if not failed:
+        return 'UNCLASSIFIED', None, True, (jobs[0] if jobs else None)
+    job = failed[0]
+    steps = job.get('steps') or []
+    if not steps:
+        return 'TRANSIENT', 'runner_lost', False, job
+    if not any(s.get('conclusion') == 'failure' for s in steps):
+        return 'UNCLASSIFIED', None, True, job
+    return 'UNCLASSIFIED', None, False, job
+
+
+def triage(client, repo, rows, main_sha, now):
+    """rerun_triage.plan() over this repo's PRs; its decision and the run it judged go on each row."""
+    items, runs = [], {}
+    for row in rows:
+        if row['behind_by'] is None:
+            row['triage'] = {'decision': None, 'reason': 'BEHIND_UNKNOWN'}
+            continue
+        try:
+            found = newest_run(client, repo, row['head_sha'])
+        except (OSError, ValueError):
+            row['triage'] = {'decision': None, 'reason': 'RUNS_UNREADABLE'}
+            continue
+        run = None
+        if found:
+            r, jobs = found
+            kind, cause, thin, job = classify(r, jobs)
+            if job is not None:
+                run = {'id': r['id'], 'attempt': r.get('run_attempt') or 1, 'job_id': job['id'],
+                       'head_sha': r['head_sha'], 'status': 'completed', 'conclusion': r['conclusion'],
+                       'failure_kind': kind, 'logs_insufficient': thin, 'cause': cause}
+                runs[row['number']] = {**run, 'job_name': job.get('name'), 'workflow': r.get('name')}
+        items.append({'pr': row['number'], 'head_sha': row['head_sha'], 'behind_main': row['behind_by'],
+                      'created_at': row['created_at'], 'run': run, 'root_id': None})
+    if not items:
+        return None
+    receipt = rt.plan({'schema': rt.SCHEMA, 'authority_transfer': False, 'observed_at': stamp(now),
+                       'main_sha': main_sha, 'items': items})
+    by_number = {row['number']: row for row in rows}
+    for out in receipt['rows']:
+        run = runs.get(out['pr']) or {}
+        by_number[out['pr']]['triage'] = {
+            'decision': out['decision'], 'reason': out['reason'], 'run_id': run.get('id'),
+            'run_attempt': run.get('attempt'), 'job_id': run.get('job_id'), 'job_name': run.get('job_name'),
+            'workflow': run.get('workflow'), 'failure_kind': run.get('failure_kind'),
+            'cause': run.get('cause'), 'logs_insufficient': run.get('logs_insufficient'),
+            'classifier': 'job_metadata_v1'}
+    return receipt['kpi']['counts']
 
 
 def arm_of(experiment, repo, number, head, holdout):
@@ -297,13 +396,17 @@ def before(client, repos, policy, experiment, now, census):
             base_head(client, repo, ref, cache)  # each base head read once per pulse (L6)
         pulse[repo] = {'default_branch': default,
                        'base_heads': {ref: sha for (r, ref), sha in sorted(cache.items()) if r == repo}}
+        mine = []
         for listed in prs:
             pr = client.pr(repo, listed['number'])
-            row = pr_row(client, repo, pr, base_head(client, repo, pr['baseRefName'], cache), policy, now)
+            mine.append(pr_row(client, repo, pr, base_head(client, repo, pr['baseRefName'], cache), policy, now))
+        if policy['intervention'] != 'UPDATE':
+            pulse[repo]['triage_counts'] = triage(client, repo, mine, cache[(repo, default)], now)
+        for row in mine:
             row['skip'] = reasons(row, default, policy, now)
             row['arm'] = None if row['skip'] else arm_of(experiment, repo, row['number'], row['head_sha'],
                                                          policy['holdout'])
-            rows.append(row)
+        rows += mine
     arms = {a: sum(r['arm'] == a for r in rows) for a in ARMS}
     return {'kind': 'before', 'experiment': experiment, 'recorded_at': stamp(now), 'policy': policy,
             'controls': CONTROLS, 'pulse': pulse, 'census': census, 'prs': rows,
@@ -349,29 +452,51 @@ def updated_head(client, row, method, sleep, tries=6):
     return None
 
 
+def run_guard(client, row):
+    """The run triage judged must still be the same completed, failed attempt: anyone's rerun moves it."""
+    t = row.get('triage') or {}
+    try:
+        run = client.get(f"/repos/{row['repo']}/actions/runs/{t['run_id']}")
+    except (OSError, ValueError, KeyError):
+        return 'RUN_UNREADABLE'
+    if (run.get('run_attempt') != t.get('run_attempt') or run.get('status') != 'completed'
+            or run.get('conclusion') != 'failure'):
+        return 'RUN_MOVED'
+    return None
+
+
 def act(client, writer, b, apply, now, sleep=time.sleep):
     method, results = b['policy']['method'], []
+    intervention = b['policy'].get('intervention', 'UPDATE')
     opt_out = set(b['policy']['opt_out_labels'])
     for row in b['prs']:
         if row['arm'] != 'TREATED':
             continue
         reason, new_head = live_guard(row, client.pr(row['repo'], row['number']), opt_out), None
+        if not reason and intervention != 'UPDATE':
+            reason = run_guard(client, row)
         if reason:
             res = ('SKIPPED', reason)
         elif not apply:
             res = ('PLANNED', None)
-        else:
+        elif intervention == 'UPDATE':
             res = writer.update_branch(row['repo'], row['number'], row['head_sha'], method)
             if res[0] == 'ACCEPTED':
                 new_head = updated_head(client, row, method, sleep)
-        results.append({'repo': row['repo'], 'number': row['number'], 'head_sha': row['head_sha'],
-                        'result': res[0], 'detail': res[1], 'new_head': new_head})
+        else:
+            res = writer.rerun_failed(row['repo'], row['triage']['run_id'], intervention == 'DEBUG_RERUN')
+        out = {'repo': row['repo'], 'number': row['number'], 'head_sha': row['head_sha'],
+               'result': res[0], 'detail': res[1], 'new_head': new_head}
+        if intervention != 'UPDATE':
+            out.update(run_id=row['triage']['run_id'], run_attempt=row['triage']['run_attempt'])
+        results.append(out)
     accepted = sum(r['result'] == 'ACCEPTED' for r in results)
     return {'kind': 'act', 'experiment': b['experiment'], 'recorded_at': stamp(now), 'method': method,
-            'applied': bool(apply), 'results': results,
+            'intervention': intervention, 'applied': bool(apply), 'results': results,
             'counts': {k: sum(r['result'] == k for r in results) for k in ('PLANNED', 'ACCEPTED', 'FAILED', 'SKIPPED')},
-            # Each accepted update moves the head, so its First-Pass Closure receipt must be written again.
-            'fpc_receipts_invalidated': accepted}
+            # An accepted update moves the head, so its First-Pass Closure receipt must be written again.
+            # A rerun keeps the head: the receipt stays bound to it.
+            'fpc_receipts_invalidated': accepted if intervention == 'UPDATE' else 0}
 
 
 # ---------------------------------------------------------------- after / evaluate
@@ -511,6 +636,7 @@ def evaluate(client, b, act_rec, after_rows):
     method = b['policy']['method']
     acts = {(r['repo'], r['number']): r for r in (act_rec or {}).get('results', [])}
     rows, positives, cache = [], [], {}
+    rerun_level = b['policy'].get('intervention', 'UPDATE') != 'UPDATE'
     for br, ar in zip(b['prs'], after_rows):
         o = outcome(ar)
         act_row = acts.get((br['repo'], br['number']))
@@ -539,6 +665,8 @@ def evaluate(client, b, act_rec, after_rows):
         if signals:
             row['attribution'] = {'UPDATE_ONLY': 'DELIVERED_BY_UPDATE', 'HEAD_UNCHANGED': 'EXTERNAL',
                                   'AUTHOR_PUSH': 'AUTHOR_PUSH', 'UNVERIFIED_HEAD': 'UNVERIFIED'}[change]
+            if change == 'HEAD_UNCHANGED' and rerun_level and act_row and act_row['result'] == 'ACCEPTED':
+                row['attribution'] = 'DELIVERED_BY_RERUN'  # same head, our rerun was the change we made
             positives.append({'repo': br['repo'], 'number': br['number'], 'arm': br['arm'], 'signals': signals,
                               'attribution': row['attribution'], 'recovered_checks': row['recovered_checks'],
                               **butterfly(client, br, ar, row, cache)})
@@ -567,7 +695,57 @@ def after(client, records, experiment, now, census, min_hours):
             rows.append(None)  # UNREADABLE: an unknown outcome, never a failure or a success
     return {'kind': 'after', 'experiment': experiment, 'recorded_at': stamp(now), 'hours_since': round(hours, 3),
             'acted': act_rec is not None and act_rec['applied'], 'prs': rows, 'census': census,
-            'census_delta': census_delta(b['census'], census), 'evaluation': evaluate(client, b, act_rec, rows)}
+            'census_delta': census_delta(b['census'], census), 'evaluation': evaluate(client, b, act_rec, rows),
+            'reruns': reruns(client, b, act_rec)}
+
+
+def ldab_observation(repo, head, run_id, job_id):
+    """One LDAB debug_receipt observation, validated by the hub's own bd_ldab_consumer.
+
+    Actions step debug logging is not a debugger session: real_probe_steps is 0 and the proof level stays
+    REPORTED_UNVERIFIED, as the ABACUS BD-LDAB join contract requires.
+    """
+    o = {'repository': repo, 'source_sha': head, 'run_id': run_id, 'job_id': job_id,
+         'evidence_url': f'https://github.com/{repo}/actions/runs/{run_id}', 'source': 'debug_receipt',
+         'proof_level': 'REPORTED_UNVERIFIED', 'real_probe_steps': 0}
+    ldab.check_observation(o, debug=True)
+    return o
+
+
+def reruns(client, b, act_rec):
+    """For each accepted rerun: the run's attempt and conclusion now, and its LDAB observation if any."""
+    if not act_rec or act_rec.get('intervention', 'UPDATE') == 'UPDATE':
+        return []
+    debug, out = act_rec['intervention'] == 'DEBUG_RERUN', []
+    triaged = {(r['repo'], r['number']): r.get('triage') or {} for r in b['prs']}
+    for a in act_rec['results']:
+        if a['result'] != 'ACCEPTED':
+            continue
+        row = {'repo': a['repo'], 'number': a['number'], 'run_id': a['run_id'], 'attempt_before': a['run_attempt'],
+               'attempt_after': None, 'status': None, 'conclusion': None, 'ldab': None}
+        try:
+            run = client.get(f"/repos/{a['repo']}/actions/runs/{a['run_id']}")
+            row.update(attempt_after=run.get('run_attempt'), status=run.get('status'), conclusion=run.get('conclusion'))
+        except (OSError, ValueError):
+            row['ldab'] = 'RUN_UNREADABLE'
+        if row['ldab'] is None:
+            if not debug:
+                row['ldab'] = 'NOT_A_DEBUG_RERUN'
+            elif a['repo'] not in LDAB_REPOS:
+                row['ldab'] = 'NOT_IN_LDAB_SCOPE'
+            elif not isinstance(row['attempt_after'], int) or row['attempt_after'] <= a['run_attempt']:
+                row['ldab'] = 'NO_NEW_ATTEMPT'
+            else:
+                name = triaged[(a['repo'], a['number'])].get('job_name')
+                try:
+                    jobs = client.paginate(f"/repos/{a['repo']}/actions/runs/{a['run_id']}/jobs", key='jobs')
+                except (OSError, ValueError):
+                    jobs = []
+                job = next((j for j in jobs if j.get('name') == name), jobs[0] if jobs else None)
+                row['ldab'] = (ldab_observation(a['repo'], a['head_sha'], a['run_id'], job['id'])
+                               if job and type(job.get('id')) is int else 'NO_JOB')
+        out.append(row)
+    return out
 
 
 # ---------------------------------------------------------------- ledger
@@ -640,7 +818,13 @@ def report(records, experiment):
     b, act_rec, afters = experiment_records(records, experiment)
     out = [f'# PR intervention {experiment}', '',
            f"Before: {b['recorded_at']}, {b['counts']['open']} open PRs, {b['counts']['eligible']} eligible "
-           f"({b['counts']['TREATED']} treated, {b['counts']['HOLDOUT']} holdout). Method: {b['policy']['method']}."]
+           f"({b['counts']['TREATED']} treated, {b['counts']['HOLDOUT']} holdout). "
+           f"Intervention: {b['policy'].get('intervention', 'UPDATE')}"
+           + (f" ({b['policy']['method']})." if b['policy'].get('intervention', 'UPDATE') == 'UPDATE' else '.')]
+    for repo, p in b['pulse'].items():
+        if p.get('triage_counts'):
+            out.append(f"rerun_triage on {repo}: " + ', '.join(
+                f'{k} {v}' for k, v in sorted(p['triage_counts'].items()) if v) + '.')
     if act_rec:
         c = act_rec['counts']
         out.append(f"Act: {act_rec['recorded_at']}, applied={act_rec['applied']}: {c['ACCEPTED']} accepted, "
@@ -681,7 +865,13 @@ def report(records, experiment):
                             for c in p['candidates'][:3]) or ('window unreadable' if p['window_commits'] is None else 'no base commits')
             out.append(f"| {p['repo']}#{p['number']} | {p['arm'] or 'not eligible'} | {', '.join(p['signals'])} | "
                        f"{p['attribution']} | {top} |")
-    out += ['', 'LDAB, Actions minutes and cross-repository attribution: UNKNOWN in slice 1.']
+    if a.get('reruns'):
+        out += ['', '## Reruns', '', '| PR | Run | Attempt before / now | Conclusion now | LDAB |', '|---|---|---|---|---|']
+        for r in a['reruns']:
+            obs = r['ldab'] if isinstance(r['ldab'], str) else f"debug_receipt {r['ldab']['proof_level']}"
+            out.append(f"| {r['repo']}#{r['number']} | {r['run_id']} | {r['attempt_before']} / {r['attempt_after']} | "
+                       f"{r['conclusion']} | {obs} |")
+    out += ['', 'Actions minutes and cross-repository attribution: UNKNOWN.']
     return '\n'.join(out) + '\n'
 
 
@@ -689,10 +879,14 @@ def report(records, experiment):
 
 def policy_of(args):
     p = {**POLICY, 'min_age_days': args.min_age_days, 'min_behind': args.min_behind, 'holdout': args.holdout,
-         'quiet_hours': args.quiet_hours, 'method': args.method.upper(), 'min_arm': args.min_arm}
+         'quiet_hours': args.quiet_hours, 'method': args.method.upper(), 'min_arm': args.min_arm,
+         'intervention': args.intervention.upper().replace('-', '_'),
+         'gate_checks': sorted(set(args.gate_check)) if args.gate_check else list(POLICY['gate_checks'])}
     require(p['min_age_days'] >= 0 and p['quiet_hours'] >= 0 and p['min_behind'] >= 1, 'policy bounds')
     require(0 < p['holdout'] < 1, 'holdout must be strictly between 0 and 1')
     require(p['method'] in METHODS and p['min_arm'] >= 1, 'policy method or min_arm')
+    require(p['intervention'] in INTERVENTIONS and all(isinstance(g, str) and g.strip() for g in p['gate_checks']),
+            'policy intervention or gate checks')
     return p
 
 
@@ -715,6 +909,9 @@ def main(argv=None, client=None, writer=None, now=None, sleep=time.sleep):
     s.add_argument('--quiet-hours', type=float, default=POLICY['quiet_hours'])
     s.add_argument('--method', choices=['merge', 'rebase'], default='merge')
     s.add_argument('--min-arm', type=int, default=POLICY['min_arm'])
+    s.add_argument('--intervention', choices=['update', 'rerun', 'debug-rerun'], default='update')
+    s.add_argument('--gate-check', action='append',
+                   help='check name judged as a gate, not CI; repeat (default: first-pass-closure)')
     sub.choices['act'].add_argument('--apply', action='store_true', help='write to GitHub (default: dry run)')
     sub.choices['after'].add_argument('--min-hours', type=float, default=2.0)
     sub.choices['report'].add_argument('--out', type=Path)
@@ -740,7 +937,7 @@ def main(argv=None, client=None, writer=None, now=None, sleep=time.sleep):
         if args.apply:
             rec = append(args.ledger, rec)
         else:
-            print('DRY RUN: nothing written to GitHub or the ledger. Re-run with --apply to update branches.')
+            print('DRY RUN: nothing written to GitHub or the ledger. Re-run with --apply to write.')
         print(json.dumps({'experiment': args.experiment, 'applied': args.apply, **rec['counts'],
                           'results': [f"{r['repo']}#{r['number']} {r['result']}" for r in rec['results']]},
                          sort_keys=True))
