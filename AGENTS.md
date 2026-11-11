@@ -46,6 +46,24 @@ Rolling-5 sat local-only and had to ship inside #787; a pushed branch would have
   `gh pr create --draft --base master`
 - One concern per branch. If a second concern appears, branch it off and push it as its own PR.
 
+**Codex reviews are rationed.** The Codex review quota is small and shared by every session. It ran out
+from 2026-11-09, and on 2026-10-30 it left 31 PRs red. On 2026-11-11 the owner turned automatic review and
+automatic security review off in the personal Codex settings and set each repository to follow them. A
+repository entry set to "All PRs" overrides that and reviews drafts too: draft #1194 was reviewed when it
+opened. First-Pass Closure still needs a completed Codex review on the exact head, so no PR passes until
+someone asks for one.
+
+- Keep the PR a draft until it is final: tests pass locally and every commit is pushed. While automatic
+  review was on, opening a PR and marking it ready each spent one attempt (#1164, #1194).
+- Only the session that owns the PR marks it ready. Then comment `@codex review` once. Don't push until
+  the review lands. Fix every finding in one commit, then ask once more.
+- Batch small PRs that touch disjoint files and not the control plane (the FPC gate and policy, required-gate
+  ledgers, rulesets): merge each `--no-ff` into one batch PR and ask for one review (#1164 = #1163 + #1162
+  + #1138). A PR whose base is another PR's branch goes with that PR.
+- Ask for `@codex security review` only for changes to workflow permissions, `pull_request_target`, secrets
+  or tokens, or new third-party dependencies. CodeQL and osv-scanner cover the rest on every head.
+- If Codex replies with its usage-limit message, don't ask again in the same window.
+
 ### L6. Snapshots come from one pulse
 
 The census and the gate snapshot were read at different commits in 4 of 5 focus repos.
@@ -77,25 +95,31 @@ design until the outputs are regenerated.
 - Line endings are hashed. `.gitattributes` keeps text LF on every platform; on Windows write generated
   files with `newline="\n"` and `encoding="utf-8"`.
 
-### L8. No closing keyword next to an issue reference in a PR body
+### Windows shell pitfalls
 
-GitHub links `close`/`closes`/`closed`, `fix`/`fixes`/`fixed` and `resolve`/`resolves`/`resolved` followed
-by `#N`, `owner/repo#N` or an issue URL, and closes that issue on merge, whatever the sentence around it
-says. DOCX_RTM_Automation PR 110 auto-closed issue 86 at 3/7 criteria from "Close #86 only after that
-source-bound proof; this PR has no automatic closure keyword." Hub PR 1181 carried "then close #1180" and
-"does not close #308". Issue closure here is a manual DoD step after integrated replay, so an automatic
-close is a false-complete.
+Each of these cost time on the owner's workstation (2026-11-09/10, GEMINI#40, GEMINI#47, #1162).
 
-- Write closure intent without the keyword in front of the ref: "record the closure of #1180",
-  "#308 stays open", "closure of #86 is a manual step".
-- The FPC gate fails with `PR_BODY_AUTO_CLOSES_ISSUES` on any such link, from the body or from GitHub's
-  `closingIssuesReferences` (which also covers issues linked in the Development sidebar). When closing on
-  merge is really intended, add a line `AUTO_CLOSE_INTENDED: #N` (several refs allowed).
-- Check a PR in any repo before merging, without needing the gate:
-  `python scripts/fpc_receipt.py --check-closing --repo <owner/name> --pr <N>` (exit 1 = would auto-close).
-- Commit messages close issues too once they reach the default branch, and this repo's squash merge
-  defaults to `COMMIT_MESSAGES`. Keep the same wording rule in commit messages; the gate does not
-  check them yet.
+- **Git Bash rewrites leading-slash arguments.** MSYS turns `/AGENTS.md` into
+  `C:/Program Files/Git/AGENTS.md`, so `git sparse-checkout set /path` silently stores a wrong pattern.
+  Prefix such commands with `MSYS_NO_PATHCONV=1`, then read the result back with `git sparse-checkout list`.
+- **Validate a captured SHA before you use it.** In a mis-configured sparse checkout, `FIX=$(git rev-parse HEAD)`
+  captured something other than a bare SHA, so `git cherry-pick "$FIX"` failed after `git reset --hard` had
+  already run, and the commit could only be recovered from the reflog (#1135, 2026-11-09). Capture with
+  `H=$(git rev-parse HEAD 2>/dev/null | grep -E '^[0-9a-f]{40}$')`, stop if it is empty, and never chain a
+  destructive reset after a capture you have not checked.
+- **PowerShell splits unquoted commas.** `gh repo list --json name,isFork` passes an array, and `gh`
+  receives the wrong argument. Quote the list: `--json 'name,isFork'`.
+- **A failed `gh` call can look like an empty answer.** A GitHub 5xx printed an error and returned no
+  output, so a script went on with zero repos. Check `$LASTEXITCODE` (or `$?`) after every `gh` call,
+  retry a few times, then stop. Never treat empty output as "nothing to do".
+- **Owner-only temp folders block git.** `tempfile.TemporaryDirectory()` creates a folder that `git
+  merge-file` cannot read ("Permission denied"), and a `.pytest_cache` created the same way can't be
+  deleted. Make scratch folders with `os.makedirs` under `tempfile.gettempdir()` and remove them in `finally`.
+- **`Remove-Item -Recurse -Force` stops at the first locked entry**, after deleting part of the folder
+  (on 2026-11-10 it deleted `.git` first). Check the clone is fully pushed before you start, and check
+  `Test-Path` afterwards.
+- **CRLF checkouts.** With `core.autocrlf=true`, a patch made against git blobs (LF) fails `git apply`
+  in the working tree. Use `git apply --cached`, or apply it in an LF worktree.
 
 ## Metric ownership
 
@@ -113,7 +137,7 @@ One canonical module per metric. Import these; do not re-implement them. Paths a
 | Rolling-5 window (NIRVANA rotation, streaks, golden thread, SOURCE_RED) | `mission-control/jade_temple/tools/rolling5.py` | `project()`, `verified_pulses()`, `append_pulse()`, `streak_stats()`, `nirvana()`, `source_red()` | `site/rolling5.json`, `site/rolling5.csv` |
 | CI/CD DAG + SIPOC (FUNCTION / SHA / OID lenses, DAG stats, red-trace EVERRED ratios) | `mission-control/jade_temple/tools/cicd_dag.py` | `project()`, `dag_stats()`, `critical_path()`, `gate_frontier()`, `everred_metrics()`, `scale_docks()` (delegates to `scale_dock.py`), `git_blob_oid()` | `site/cicd_dag.json`, `site/cicd_dag_crosswalk.csv`, `diagrams/CICD_DAG_*.mmd` |
 | CI/CD DAG page | `mission-control/jade_temple/site/build_cicd_dag.py` | renders `cicd_dag.project()`; no metrics of its own | `site/cicd_dag.html` |
-| Issue triway burndown (oldest / newest / connected orderings, explicit DoD/DoV checklist, owner-review queue) | `mission-control/qps-triage-ultra/issue-expedition/triway_burndown.py` | `checklist()`, `references()`, `parked_intent()`, `priority()`, `project()`, `collect()`; the issue parsers (DoD / DoV / STEPS sections, typed references) for every issue tool | `missioncontrol.issue_expedition.triway.v1` |
+| Issue triway burndown (oldest / newest / connected orderings, explicit DoD/DoV checklist, owner-review queue) | `mission-control/qps-triage-ultra/issue-expedition/triway_burndown.py` | `checklist()`, `references()`, `parked_intent()`, `parked_intent_meta()`, `priority()`, `project()`, `collect()`; the issue parsers (DoD / DoV / STEPS sections, typed references) for every issue tool | `missioncontrol.issue_expedition.triway.v1` |
 | Issue burndown ranking (method v2: unknown-not-zero urgency, pressure rank = PageRank with urgency restart and own / inherited split, Monte Carlo rank intervals, deadlocks and blocker chains, lifecycle golden thread via rolling5, flow with exact Poisson intervals, predicate leaks, lanes, per-repo / FOCUS4 / JADE TOP21 / USER rollups, private_boundary projection, chained pulse ledger; imports its checklist and reference parsing from triway above; SCC / chain / Poisson / rank statistics in `issue_math.py`) | `mission-control/issue_rank/issue_rank.py` | `build_graph()`, `unblock_pressure()`, `pagerank()`, `betweenness()`, `urgency()`, `lifecycle_thread()`, `flow()`, `predicate_leaks()`, `monte_carlo()`, `rank()`, `diff()`, `redact()`, `append_ledger()` | `out/<scope>/issue_rank.json` (`jade.issue-rank.v2`, local only, gitignored) |
 | Issue/PR title-family grammar and recursive vocabulary (sole SSOT, additive; classification and linked candidates never alter issue state) | `mission-control/issue_rank/title_taxonomy.py` | `parse_title()`, `summary()`, `associated_families()`; consumed by issue_rank and triway | `jade.title-taxonomy.v1` / per-repo, JADE and USER family and leaf-cluster views |
 | DevOps fleet census (exact-head blob ids, lifecycle stages) | `mission-control/jade_temple/devops/census.py` | `fetch` / `scan` / `check` / `report` subcommands | `data/DEVOPS_CENSUS_N9.json`, `data/DEVOPS_OBJECTS_N9.json` |
