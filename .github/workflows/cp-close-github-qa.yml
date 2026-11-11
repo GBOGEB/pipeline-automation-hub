@@ -206,7 +206,7 @@ jobs:
           BD=mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json
           OUT="$RUNNER_TEMP/gmic-p0008-nine-record"
           ZIP="$RUNNER_TEMP/$N.zip"
-          python -m unittest discover -s "$C" -p 'test_cp_gmic_p0008.py' -v
+          python -m unittest discover -s mission-control/v2/handoff/closeout -p 'test_cp_gmic_p0008.py' -v
           python "$C/cp_close.py" --intake "$C/intakes/$N.json" --bd "$BD" --out "$OUT" --zip "$ZIP"
           python "$C/cp_close.py" --intake "$C/intakes/$N.json" --bd "$BD" --out "$OUT" --check
           if test -f "$C/records/$N/MANIFEST.json"; then

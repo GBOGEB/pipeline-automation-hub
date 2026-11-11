@@ -1,0 +1,618 @@
+{
+  "actions": [
+    {
+      "depends_on": [],
+      "done_when": "Pin repository, branch, exact SHA, run and FPC separably.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/1135"
+      ],
+      "id": "SC-A001",
+      "owner": "Hub GMIC source reader",
+      "priority": "P0",
+      "state": "DONE",
+      "summary": "Freeze observed source and six-lane PR heads without treating non-atomic reads as a transaction."
+    },
+    {
+      "depends_on": [
+        "SC-A001"
+      ],
+      "done_when": "Exactly 46 unique B IDs, 22 scoped DONE and 24 open; no CPQ/SEM/Drive denominator addition.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/1135#issuecomment-6779729295"
+      ],
+      "id": "SC-A002",
+      "owner": "Hub BD owner",
+      "priority": "P0",
+      "state": "DONE",
+      "summary": "Preserve all B01-B46 complete and open rows as read-only source-bound history."
+    },
+    {
+      "depends_on": [
+        "SC-A001"
+      ],
+      "done_when": "Link exact PR head 22baea95 and merge c7535442; zero implicit owner approval.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/CODEX/pull/1282"
+      ],
+      "id": "SC-A003",
+      "owner": "CODEX semantic source owner",
+      "priority": "P0",
+      "state": "DONE",
+      "summary": "Record observed CODEX #1282 merge and actual main SHA, separate from its review/admission legitimacy."
+    },
+    {
+      "depends_on": [
+        "SC-A003"
+      ],
+      "done_when": "Explicit eligibility/readback, resolved material findings and owner acceptance; do not call a merge valid merely because GitHub says merged.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/CODEX/issues/1283",
+        "https://github.com/GBOGEB/CODEX/pull/1282"
+      ],
+      "id": "SC-A004",
+      "owner": "CODEX owner/reviewer",
+      "priority": "P0",
+      "state": "HOLD",
+      "summary": "Independently disposition #1282 historical security review and last-push protection after merge."
+    },
+    {
+      "depends_on": [
+        "SC-A001"
+      ],
+      "done_when": "Current-main source-bound W1/W2 acceptance receipt + owner decision in #44, not synthetic corpus tests alone.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/GEMINI/issues/44",
+        "https://github.com/GBOGEB/GEMINI/pull/48"
+      ],
+      "id": "SC-A005",
+      "owner": "GEMINI W1-W2 broker owner",
+      "priority": "P0",
+      "state": "HOLD",
+      "summary": "Resolve B09/B26 canonical profile-plus-proposal CHANGED/idempotency and P2/P3 acceptance; source #48 is now merged."
+    },
+    {
+      "depends_on": [
+        "SC-A001"
+      ],
+      "done_when": "Completed eligible after-last-push review + full required gate on 41e287f8; no quota waiver.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/1135"
+      ],
+      "id": "SC-A006",
+      "owner": "Hub W0 FPC reviewer",
+      "priority": "P0",
+      "state": "HOLD",
+      "summary": "Obtain independent exact-head review and required FPC SUCCESS for W0 #1135."
+    },
+    {
+      "depends_on": [
+        "SC-A001"
+      ],
+      "done_when": "Latest exact-head reviews + FPC green + unblocked canary/stack; native workflows are not admission.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/1138",
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/1152",
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/1160"
+      ],
+      "id": "SC-A007",
+      "owner": "Hub FPC other source owners",
+      "priority": "P0",
+      "state": "HOLD",
+      "summary": "Requalify #1138, #1152, #1160 and relevant successor heads independently."
+    },
+    {
+      "depends_on": [
+        "SC-A001"
+      ],
+      "done_when": "One owner policy, effective ruleset, last-push review, independent RED reject and GREEN positive; no default automatic waiver.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/1172",
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/1173"
+      ],
+      "id": "SC-A008",
+      "owner": "Hub governance owner/admin",
+      "priority": "P0",
+      "state": "HOLD",
+      "summary": "Dispose competing #1172/#1173 waiver proposals and prove Hub required checks and RED negative canary."
+    },
+    {
+      "depends_on": [
+        "SC-A001"
+      ],
+      "done_when": "Prove active main rules + RED cannot merge + eligible reviewed green; not deletion/nonfastforward-only.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/GEMINI/issues/50"
+      ],
+      "id": "SC-A009",
+      "owner": "GEMINI owner/admin",
+      "priority": "P0",
+      "state": "HOLD",
+      "summary": "Close B37 only after effective main protection, required PR approval and required contexts plus canary."
+    },
+    {
+      "depends_on": [
+        "SC-A001"
+      ],
+      "done_when": "Hosted authenticated >0-step >0-item reader receipt under approved folder; owner-side connector is not WIF proof.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/GEMINI/issues/12"
+      ],
+      "id": "SC-A010",
+      "owner": "GEMINI IC3 hosted identity owner",
+      "priority": "P0",
+      "state": "HOLD",
+      "summary": "Configure approved OIDC WIF and scoped Drive readonly principal/ACL without unauthorized dispatch."
+    },
+    {
+      "depends_on": [
+        "SC-A007"
+      ],
+      "done_when": "Review eligible and FPC successful at selected head, owner merge decision, post-main readback and no parallel duplicate integration.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/1164"
+      ],
+      "id": "SC-A011",
+      "owner": "Hub ISO owner",
+      "priority": "P1",
+      "state": "HOLD",
+      "summary": "Choose #1164 exclusive batch integration route and resolve source PR disposition."
+    },
+    {
+      "depends_on": [
+        "SC-A001"
+      ],
+      "done_when": "#1175 27 native method PASS, #1179 3 rendered diagrams and 7 Kahn PASS, source-bound artifact 13806715038.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/1175",
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/1179"
+      ],
+      "id": "SC-A012",
+      "owner": "Hub diagram renderer owners",
+      "priority": "P1",
+      "state": "DONE",
+      "summary": "Preserve exact-source method/consumer browser evidence for B34, distinct from independent admission."
+    },
+    {
+      "depends_on": [
+        "SC-A012",
+        "SC-A006"
+      ],
+      "done_when": "Current-head #1179 eligible review, successful trusted FPC, owner decision and post-integrated recensus.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/1179"
+      ],
+      "id": "SC-A013",
+      "owner": "Hub diagram admission owner",
+      "priority": "P1",
+      "state": "HOLD",
+      "summary": "Qualify B34/B38 independent reviewer/FPC/integrated-source after renderer-native proof."
+    },
+    {
+      "depends_on": [
+        "SC-A004"
+      ],
+      "done_when": "No fork, identical candidate SHA for exact allowlist synonyms, unknown/collision negative canary and no dispatch.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/CODEX/issues/1283"
+      ],
+      "id": "SC-A014",
+      "owner": "Hub/CODEX semantic consumer owners",
+      "priority": "P1",
+      "state": "TODO",
+      "summary": "Read-only Hub title_taxonomy.py shadow consumer for CODEX canonical alias contract, with explicit domain namespaces."
+    },
+    {
+      "depends_on": [
+        "SC-A001"
+      ],
+      "done_when": "Read-only measured inventory; no claimed access, path move or retroactive history rewrite.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/1135#issuecomment-6779729295"
+      ],
+      "id": "SC-A015",
+      "owner": "Windows workstation operator",
+      "priority": "P1",
+      "state": "TODO",
+      "summary": "Inventory local C:\\DEV and C:\\repos case/symlink/worktree path aliases and hash/ownership before edits."
+    },
+    {
+      "depends_on": [
+        "SC-A005",
+        "SC-A006",
+        "SC-A008",
+        "SC-A009",
+        "SC-A010",
+        "SC-A013"
+      ],
+      "done_when": "Independent five-way AND join; then post-merge negative canary and owner decision, never infer from native green.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/1135",
+        "https://github.com/GBOGEB/GEMINI/issues/12"
+      ],
+      "id": "SC-A016",
+      "owner": "GMIC bridge owner",
+      "priority": "P0",
+      "state": "HOLD",
+      "summary": "Admit W4 only when W1/W2 owner receipt, W0 trusted FPC, Hub and GEMINI protections and hosted IC3 all PASS."
+    },
+    {
+      "depends_on": [
+        "SC-A001",
+        "SC-A002"
+      ],
+      "done_when": "Intake schema and B46 continuity PASS, 9-member manifest SHA+ZIP CRC verified, exact-head native job, review-only candidate PR.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/closeout/cp_close.py"
+      ],
+      "id": "SC-A017",
+      "owner": "MissionControl CP.CLOSE owner",
+      "priority": "P1",
+      "state": "IN_PR",
+      "summary": "Publish canonical CP.CLOSE generated nine artifacts and restart drop-in using one existing generator."
+    },
+    {
+      "depends_on": [
+        "SC-A003"
+      ],
+      "done_when": "Four comparable shadow pulses, explicit owner WARN decision, source/consumer tests and 14/30-day controlled ERROR/GATE progression.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/CODEX/issues/1283"
+      ],
+      "id": "SC-A018",
+      "owner": "CODEX/ABACUS/QPS/gg_MATH domain owners",
+      "priority": "P1",
+      "state": "HOLD",
+      "summary": "Advance semantics soft-refactor only within each owner namespace, preserving aliases that add value."
+    },
+    {
+      "depends_on": [
+        "SC-A016"
+      ],
+      "done_when": "Source/readback receipt on actual merged default heads; no formal root-closure credit from premerge tests.",
+      "evidence_urls": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/pull/1135"
+      ],
+      "id": "SC-A019",
+      "owner": "GMIC postmerge verifier",
+      "priority": "P1",
+      "state": "HOLD",
+      "summary": "Requalify exact-main W4 hosted and negative paths after any authorized owner integration."
+    }
+  ],
+  "decisions": [
+    {
+      "disposition": "ADDITIVE_ONLY",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/v2/handoff/CP_HANDOFF_RESUME_V1.json",
+      "name": "Preserve existing CP.CLOSE generator and cross-chat CP.RESUME",
+      "rationale": "Canonical Hub protocol and ABACUS V2 are separate consumer/transport layers; no second generator."
+    },
+    {
+      "disposition": "HOLD",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1179",
+      "name": "Do not waive Codex review quota or FPC RED",
+      "rationale": "The gate reports CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD; same-head native green cannot substitute."
+    },
+    {
+      "disposition": "SOURCE_VERIFIED_ADMISSION_SEPARATE",
+      "evidence_url": "https://github.com/GBOGEB/CODEX/pull/1282",
+      "name": "Merged CODEX #1282 and GEMINI #48 are source facts, not authority",
+      "rationale": "Both merged to observed main; independently effective review/policy and broker owner P2-P3 acceptance remain unknown."
+    },
+    {
+      "disposition": "NONADDITIVE",
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1135#issuecomment-6779729295",
+      "name": "Never add Hub B### plus CODEX SEM plus BridgeFlow plus CPQ totals",
+      "rationale": "Different denominators and root ownership; maintain cross-links only."
+    }
+  ],
+  "insights": [
+    {
+      "evidence_url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1179",
+      "implication": "B34 renderer source proof is distinct from B34/B38 admission; keep head-bound review and owner hold.",
+      "observation": "P0007.3 browser and Kahn checks passed at new #1179 head but FPC RED persists"
+    },
+    {
+      "evidence_url": "https://github.com/GBOGEB/CODEX/pull/1282",
+      "implication": "Consumer pilots must preserve explicit alias-output equivalence and domain authority; review historical controls.",
+      "observation": "Newly merged CODEX #1282 supplies source-adopted alias profile, not automatic prompt routing or deprecation"
+    },
+    {
+      "evidence_url": "https://github.com/GBOGEB/GEMINI/issues/12",
+      "implication": "IC3 remains blocked until scoped hosted principal/read-only >0 steps and items receipt is independently checked.",
+      "observation": "Hosted Drive owner connector is not an authenticated WIF service account"
+    }
+  ],
+  "intents": [
+    {
+      "actions": [
+        "SC-A001",
+        "SC-A002"
+      ],
+      "id": "SC-I001",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "summary": "Retain P0007 B01–B46 stable checklist and 38/20/18 predecessor; no resets."
+    },
+    {
+      "actions": [
+        "SC-A005",
+        "SC-A006",
+        "SC-A007",
+        "SC-A008",
+        "SC-A009",
+        "SC-A010",
+        "SC-A011",
+        "SC-A012",
+        "SC-A013",
+        "SC-A016"
+      ],
+      "id": "SC-I002",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "summary": "Resume six disjoint A-F lanes and noncompensating FPC, governance, hosted IC3 and W4 join."
+    },
+    {
+      "actions": [
+        "SC-A017"
+      ],
+      "id": "SC-I003",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "summary": "Use existing CP.CLOSE / CP.RESUME GitHub-first pipeline to generate a true verified portable handover plus drop-in."
+    },
+    {
+      "actions": [
+        "SC-A003",
+        "SC-A004",
+        "SC-A014",
+        "SC-A018"
+      ],
+      "id": "SC-I004",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "summary": "Adopt semantically deterministic useful prompt aliases with explicit CODEX namespace and no false equivalence."
+    },
+    {
+      "actions": [
+        "SC-A003",
+        "SC-A004",
+        "SC-A005"
+      ],
+      "id": "SC-I005",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "summary": "Account for CODEX #1282 merge and GEMINI #48 merge without retroactively assuming effective review or P2/P3 acceptance."
+    },
+    {
+      "actions": [
+        "SC-A012",
+        "SC-A013"
+      ],
+      "id": "SC-I006",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "summary": "Preserve actual rendered Mermaid and Kahn QA at changed #1175/#1179 heads; separate source QA from FPC admission."
+    },
+    {
+      "actions": [
+        "SC-A014",
+        "SC-A015",
+        "SC-A018"
+      ],
+      "id": "SC-I007",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "summary": "Census Windows local worktrees before soft-refactor, avoid mass renaming and duplicate semantic owners."
+    },
+    {
+      "actions": [
+        "SC-A016",
+        "SC-A019"
+      ],
+      "id": "SC-I008",
+      "original_chat_message_id": null,
+      "original_chat_timestamp": null,
+      "source_class": "USER_VISIBLE_RECONSTRUCTED",
+      "summary": "Execute only the eligible next governed G3P slice with disjoint source owners, not background or waiver."
+    }
+  ],
+  "issues": [
+    {
+      "owner_lane": "A: canonical broker / P2-P3 contract",
+      "url": "https://github.com/GBOGEB/GEMINI/issues/44"
+    },
+    {
+      "owner_lane": "C: effective GEMINI main protections",
+      "url": "https://github.com/GBOGEB/GEMINI/issues/50"
+    },
+    {
+      "owner_lane": "D: IC3 hosted WIF ACL",
+      "url": "https://github.com/GBOGEB/GEMINI/issues/12"
+    },
+    {
+      "owner_lane": "SEM: global semantic owner review and alias rollout",
+      "url": "https://github.com/GBOGEB/CODEX/issues/1283"
+    },
+    {
+      "owner_lane": "C: Hub FPC required status policy",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/336"
+    },
+    {
+      "owner_lane": "governed current named-frontier execution",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/308"
+    }
+  ],
+  "metrics": [
+    {
+      "denominator": 46,
+      "evidence_class": "SOURCE_BOUND_REFERENCE",
+      "metric": "hub_b_cumulative_done",
+      "numerator": 22,
+      "population": "B01–B46 frozen P0007 count",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1135#issuecomment-6779729295",
+      "unit": "tasks"
+    },
+    {
+      "denominator": 38,
+      "evidence_class": "HISTORICAL_SOURCE_REFERENCE",
+      "metric": "hub_b_precedessor_done",
+      "numerator": 20,
+      "population": "B01–B38 retained P0005 historical cohort",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1135#issuecomment-6779044450",
+      "unit": "tasks"
+    },
+    {
+      "denominator": 16,
+      "evidence_class": "HISTORICAL_SOURCE_REFERENCE",
+      "metric": "codex_sem_done",
+      "numerator": 3,
+      "population": "SEM-01–SEM-16 historical code-health checklist",
+      "source": "https://github.com/GBOGEB/CODEX/issues/1283#issuecomment-6779994702",
+      "unit": "tasks"
+    },
+    {
+      "denominator": 23,
+      "evidence_class": "SOURCE_BOUND_REFERENCE",
+      "metric": "hub1179_native_workflows",
+      "numerator": 23,
+      "population": "#1179 d4414bbc current exact-head native cohort; FPC separate",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1179",
+      "unit": "workflow conclusions"
+    },
+    {
+      "denominator": 7,
+      "evidence_class": "NATIVE_RUN_REFERENCE",
+      "metric": "hub1179_dag_qa",
+      "numerator": 7,
+      "population": "#1179 d4414bbc source Kahn QA",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/42907725159",
+      "unit": "tests"
+    },
+    {
+      "denominator": 27,
+      "evidence_class": "NATIVE_RUN_REFERENCE",
+      "metric": "hub1175_renderer_tests",
+      "numerator": 27,
+      "population": "#1175 10c93e22 native method/browser QA",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/42907472029",
+      "unit": "tests"
+    },
+    {
+      "denominator": 82,
+      "evidence_class": "NATIVE_RUN_REFERENCE",
+      "metric": "gemini48_broker_corpus",
+      "numerator": 82,
+      "population": "#48 historical wire corpus at fa71ed7a; merged later, owner agreement separate",
+      "source": "https://github.com/GBOGEB/GEMINI/actions/runs/42907614963",
+      "unit": "tests"
+    },
+    {
+      "denominator": null,
+      "evidence_class": "UNKNOWN",
+      "metric": "hub_source_weighted_root_closure",
+      "numerator": null,
+      "population": "unique root weights source-qualified unknown",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1135#issuecomment-6779729295",
+      "unit": "roots"
+    },
+    {
+      "denominator": null,
+      "evidence_class": "UNKNOWN",
+      "metric": "hosted_ic3_gt0_authenticated_census",
+      "numerator": null,
+      "population": "GEMINI official hosted readonly WIF - no observed attested population",
+      "source": "https://github.com/GBOGEB/GEMINI/issues/12",
+      "unit": "items"
+    }
+  ],
+  "prs": [
+    {
+      "head_sha": "41e287f89fd48bc03e4ca7960f0c71fd62ca7a62",
+      "merge_sha": null,
+      "number": 1135,
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "state": "OPEN",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1135"
+    },
+    {
+      "head_sha": "10c93e2268e62ab8584f8e915d60c3707116f81d",
+      "merge_sha": null,
+      "number": 1175,
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "state": "OPEN",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1175"
+    },
+    {
+      "head_sha": "d4414bbc20364e00d58d2f5179e94c68e37dd2a7",
+      "merge_sha": null,
+      "number": 1179,
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "state": "OPEN",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1179"
+    },
+    {
+      "head_sha": "cf5801805b3bd59e01918970d3f9753d9ce999a8",
+      "merge_sha": null,
+      "number": 1164,
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "state": "OPEN",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1164"
+    },
+    {
+      "head_sha": "17b279a80c1f48c10d89471f19eb8468ea28b4a5",
+      "merge_sha": null,
+      "number": 1138,
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "state": "OPEN",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1138"
+    },
+    {
+      "head_sha": "66b919d35122f5227c47a43fe93f00e4d4594c50",
+      "merge_sha": null,
+      "number": 1152,
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "state": "OPEN",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1152"
+    },
+    {
+      "head_sha": "15cc9a27e7c074bdec0a0563136729ad1a0bdb6b",
+      "merge_sha": null,
+      "number": 1160,
+      "repository": "GBOGEB/pipeline-automation-hub",
+      "state": "OPEN",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1160"
+    },
+    {
+      "head_sha": "22baea95a96ddfe09b2b4f66ff26cc89fbb5ca91",
+      "merge_sha": "c7535442cd325d2b7602fcadf7677aa235ecdafd",
+      "number": 1282,
+      "repository": "GBOGEB/CODEX",
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/CODEX/pull/1282"
+    },
+    {
+      "head_sha": "fa71ed7a93924434e8bbcee36e19987ba1f023ff",
+      "merge_sha": "fec1ded1a5730327fcadd7389b2bb43156ea967d",
+      "number": 48,
+      "repository": "GBOGEB/GEMINI",
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/GEMINI/pull/48"
+    },
+    {
+      "head_sha": "51cfca6b59e52fb829a7ee86fa982b9838503241",
+      "merge_sha": "d3a885ab8593cbf9af22e6fce6c64d589ad80575",
+      "number": 52,
+      "repository": "GBOGEB/GEMINI",
+      "state": "MERGED",
+      "url": "https://github.com/GBOGEB/GEMINI/pull/52"
+    }
+  ],
+  "schema": "missioncontrol.cp_close.semantic_ledger.v1"
+}
