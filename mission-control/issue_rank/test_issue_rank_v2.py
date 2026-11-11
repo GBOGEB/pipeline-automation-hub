@@ -435,6 +435,188 @@ class Delta(unittest.TestCase):
         self.assertEqual((d["new_items_rooted"], d["new_items_unrooted"]), ([k(6)], [k(7)]))
 
 
+class CriterionEvolution(unittest.TestCase):
+    def model(self, body):
+        return {"items": [{"key": k(1), "lane": "NOT_STARTED", "checklist": ir.parse_checklist(body)}],
+                "edges": [], "fetched_at": "2026-11-10T21:00:00Z"}
+
+    def evolution(self, before, after):
+        return ir.diff(self.model(before), self.model(after))["criterion_evolution"]["items"][0]
+
+    def test_same_count_replacement_preserves_addition_and_removal(self):
+        d = ir.diff(self.model("## DoD\n- [ ] original obligation"),
+                    self.model("## DoD\n- [ ] replacement obligation"))
+        self.assertEqual((d["tasks_ticked_net"], d["scope_added_net"]), (0, 0))
+        e = d["criterion_evolution"]
+        row = e["items"][0]
+        self.assertEqual(row["status"], "COMPARABLE")
+        self.assertEqual((row["added_occurrences"], row["removed_occurrences"]), (1, 1))
+        self.assertEqual(sorted(x["events"] for x in row["changes"]), [["ADDED"], ["REMOVED"]])
+        self.assertEqual(e["issue_origin"], "UNKNOWN_NOT_CAPTURED")
+        self.assertEqual(e["closure_credit"], 0)
+
+    def test_rank_to_diff_detects_same_count_replacement_without_publishing_raw_criteria(self):
+        before = ir.rank(snapshot([issue(HUB, 1, "## DoD\n- [ ] original obligation")]), draws=0)
+        after = ir.rank(snapshot([issue(HUB, 1, "## DoD\n- [ ] replacement obligation")]), draws=0)
+        checklist = after["items"][0]["checklist"]
+        self.assertNotIn("items", checklist)
+        self.assertNotIn("withdrawn_items", checklist)
+        self.assertNotIn("untracked_items", checklist)
+        self.assertTrue(all("text" not in c for c in checklist["criteria"]))
+        row = ir.diff(before, after)["criterion_evolution"]["items"][0]
+        self.assertEqual(row["status"], "COMPARABLE")
+        self.assertEqual((row["added_occurrences"], row["removed_occurrences"]), (1, 1))
+
+    def test_long_tail_change_survives_both_display_truncations(self):
+        prefix = "meaningful criterion " * 30
+        row = self.evolution("## DoD\n- [ ] " + prefix + "\n  first tail",
+                             "## DoD\n- [ ] " + prefix + "\n  second tail")
+        self.assertEqual((row["added_occurrences"], row["removed_occurrences"]), (1, 1))
+
+    def test_ticks_and_reopens_retain_identity(self):
+        a, b = "## DoD\n- [ ] original", "## DoD\n- [x] original"
+        tick = self.evolution(a, b)["changes"][0]
+        reopen = self.evolution(b, a)["changes"][0]
+        self.assertEqual(tick["criterion_sha256"], reopen["criterion_sha256"])
+        self.assertEqual(tick["events"], ["TICKED_SELF_REPORTED"])
+        self.assertEqual(reopen["events"], ["REOPENED_SELF_REPORTED"])
+
+    def test_withdrawal_and_restoration_are_not_completion(self):
+        a, b = "## DoD\n- [x] original", "## DoD\n- [ ] ~~original~~"
+        row = self.evolution(a, b)
+        self.assertEqual(row["changes"][0]["events"], ["WITHDRAWN"])
+        self.assertEqual(row["removed_occurrences"], 0)
+        self.assertEqual(self.evolution(b, a)["changes"][0]["events"], ["RESTORED"])
+        parsed = ir.parse_checklist(b)
+        self.assertEqual((parsed["done"], parsed["total"]), (0, 0))
+        self.assertEqual(len(parsed["withdrawn_items"]), 1)
+        self.assertNotIn("done", parsed["withdrawn_items"][0])
+
+    def test_duplicate_reorder_cannot_invent_ticks(self):
+        a = "## DoD\n- [ ] duplicate\n- [x] duplicate\n- [ ] distinct"
+        b = "## DoD\n- [ ] distinct\n- [x] duplicate\n- [ ] duplicate"
+        self.assertEqual(self.evolution(a, b)["changes"], [])
+        changed = self.evolution(a, "## DoD\n- [x] duplicate\n- [ ] distinct")
+        self.assertEqual(changed["removed_occurrences"], 1)
+        self.assertEqual(changed["changes"][0]["events"], ["DUPLICATE_MULTISET_CHANGED"])
+        self.assertEqual(changed["changes"][0]["occurrence_identity"], "INDISTINGUISHABLE_DUPLICATES")
+
+    def test_duplicate_addition_preserves_multiplicity(self):
+        row = self.evolution("## DoD\n- [ ] same", "## DoD\n- [ ] same\n- [ ] same")
+        self.assertEqual((row["added_occurrences"], row["removed_occurrences"]), (1, 0))
+        self.assertEqual(row["changes"][0]["after"][0]["count"], 2)
+
+    def test_section_move_is_distinct_from_scope_replacement(self):
+        row = self.evolution("## Steps\n- [ ] same", "## DoD\n- [ ] same")
+        self.assertEqual((row["added_occurrences"], row["removed_occurrences"]), (0, 0))
+        self.assertEqual(row["changes"][0]["events"], ["SECTION_CHANGED"])
+
+    def test_plain_bullet_conversion_preserves_identity_without_claiming_completion(self):
+        row = self.evolution("## DoD\n- same", "## DoD\n- [x] same")
+        self.assertEqual(row["changes"][0]["events"], ["TRACKING_CHANGED"])
+        self.assertEqual((row["added_occurrences"], row["removed_occurrences"]), (0, 0))
+
+    def test_first_observation_is_not_issue_creation_or_added_scope(self):
+        d = ir.diff(None, self.model("## DoD\n- [ ] existing"))
+        e = d["criterion_evolution"]
+        self.assertTrue(d["baseline"])
+        self.assertEqual(e["issue_origin"], "UNKNOWN_NOT_CAPTURED")
+        self.assertEqual(e["items"][0]["status"], "FIRST_OBSERVED")
+        self.assertIsNone(e["items"][0]["changes"])
+
+    def test_legacy_baseline_is_unknown_even_with_matching_display_text(self):
+        a = self.model("## DoD\n- [ ] existing")
+        del a["items"][0]["checklist"]["criterion_identity_schema"]
+        row = ir.diff(a, self.model("## DoD\n- [x] existing"))["criterion_evolution"]["items"][0]
+        self.assertEqual(row["status"], "UNKNOWN_LEGACY_BASELINE")
+        self.assertIsNone(row["changes"])
+
+    def test_invalid_current_identity_cannot_be_interpreted_as_removed_scope(self):
+        a = self.model("## DoD\n- [ ] existing")
+        for invalid in ("missing-list", "bad-digest", "bad-digest-type", "bad-kind", "bad-state",
+                        "bad-state-type", "bad-row"):
+            b = self.model("## DoD\n- [ ] existing")
+            cl = b["items"][0]["checklist"]
+            if invalid == "missing-list":
+                del cl["criteria"]
+            elif invalid == "bad-row":
+                cl["criteria"][0] = None
+            else:
+                field, value = {"bad-digest": ("criterion_sha256", "bad"),
+                                "bad-digest-type": ("criterion_sha256", int("1" * 64)),
+                                "bad-kind": ("kind", "invalid"), "bad-state": ("state", "DONE"),
+                                "bad-state-type": ("state", {})}[invalid]
+                cl["criteria"][0][field] = value
+            # Exercise the pure identity consumer: aggregate diff requires a
+            # valid legacy checklist independently of this new contract.
+            row = ir.criterion_evolution({k(1): a["items"][0]}, {k(1): b["items"][0]})["items"][0]
+            self.assertEqual(row["status"], "UNKNOWN_CURRENT_IDENTITY")
+            self.assertIsNone(row["changes"])
+
+    def test_inventory_disagreeing_with_persisted_counts_is_unknown(self):
+        body = "## DoD\n- [ ] open\n- [x] checked\n- plain\n- [~] withdrawn"
+        previous = self.model(body)
+        for field in ("total", "done", "untracked", "withdrawn"):
+            for invalid in (-1, 0, True, None):
+                with self.subTest(field=field, invalid=invalid):
+                    current = self.model(body)
+                    current["items"][0]["checklist"][field] = invalid
+                    row = ir.criterion_evolution({k(1): previous["items"][0]},
+                                                 {k(1): current["items"][0]})["items"][0]
+                    self.assertEqual(row["status"], "UNKNOWN_CURRENT_IDENTITY")
+                    self.assertIsNone(row["changes"])
+        for mutation in ("empty", "duplicate", "omit-withdrawn", "tick-without-count"):
+            with self.subTest(mutation=mutation):
+                current = self.model(body)
+                criteria = current["items"][0]["checklist"]["criteria"]
+                if mutation == "empty":
+                    criteria.clear()
+                elif mutation == "duplicate":
+                    criteria.append(dict(criteria[0]))
+                elif mutation == "omit-withdrawn":
+                    criteria.pop()
+                else:
+                    criteria[0]["state"] = "CHECKED"
+                row = ir.criterion_evolution({k(1): previous["items"][0]},
+                                             {k(1): current["items"][0]})["items"][0]
+                self.assertEqual(row["status"], "UNKNOWN_CURRENT_IDENTITY")
+                self.assertIsNone(row["changes"])
+
+    def test_genuinely_empty_observed_checklist_is_distinct_from_missing_identity(self):
+        row = self.evolution("", "## DoD\n- [ ] added")
+        self.assertEqual(row["status"], "COMPARABLE")
+        self.assertEqual(row["added_occurrences"], 1)
+
+    def test_public_projection_removes_private_criterion_digests_and_delta(self):
+        before = ir.rank(snapshot([issue(HUB, 1, "## DoD\n- [ ] public")],
+                                  [issue(QPS, 2, "## DoD\n- [ ] secret condition")]), draws=0)
+        after = ir.rank(snapshot([issue(HUB, 1, "## DoD\n- [x] public")],
+                                 [issue(QPS, 2, "## DoD\n- [~] secret condition")]), draws=0)
+        private = next(i for i in before["items"] if i["repo"] == QPS)
+        digest = private["checklist"]["criteria"][0]["criterion_sha256"]
+        model, delta = ir.redact(after, ir.diff(before, after))
+        text = json.dumps({"model": model, "delta": delta})
+        self.assertNotIn(digest, text)
+        self.assertNotIn("secret condition", text)
+        self.assertEqual([r["key"] for r in delta["criterion_evolution"]["items"]], [k(1)])
+
+    def test_privacy_transition_withholds_previous_criterion_identity(self):
+        for old_private, new_private in ((True, False), (False, True), (None, False)):
+            with self.subTest(previous=old_private, current=new_private):
+                before = self.model("## DoD\n- [ ] earlier confidential obligation")
+                after = self.model("## DoD\n- [ ] current obligation")
+                before["items"][0]["private"] = old_private
+                after["items"][0]["private"] = new_private
+                old_digest = before["items"][0]["checklist"]["criteria"][0]["criterion_sha256"]
+                evolution = ir.diff(before, after)["criterion_evolution"]
+                self.assertEqual(evolution["items"][0]["status"], "PRIVACY_SCOPE_CHANGED")
+                self.assertIsNone(evolution["items"][0]["changes"])
+                self.assertNotIn(old_digest, json.dumps(evolution))
+        before, after = self.model("## DoD\n- [ ] same"), self.model("## DoD\n- [x] same")
+        before["items"][0]["private"] = after["items"][0]["private"] = False
+        self.assertEqual(ir.diff(before, after)["criterion_evolution"]["items"][0]["status"], "COMPARABLE")
+
+
 class Outputs(unittest.TestCase):
     def test_views_agreement_csv_html(self):
         m = ir.rank(fixture(), draws=10)
