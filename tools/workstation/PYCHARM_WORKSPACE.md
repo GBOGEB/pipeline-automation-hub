@@ -6,10 +6,23 @@
 
 Both are read-only towards your repos. The PyCharm folder holds only **directory junctions** (links) to the real folders.
 
+## 0. Run these scripts from a stable clone, never from a worktree
+
+`Set-PyCharmWorkspaceConfig.ps1` writes the folder it runs from into the PyCharm External Tools (`GBOGEB.xml`), and other generators copy that path. One example is the QPS ledger's `Set-PyCharmQpsConfig.ps1`, which writes the "Workspace: refresh overview and links" run configuration. `Invoke-WorkspaceAudit.ps1 -Apply` removes worktrees whose work has landed, so tools set up from a worktree break once that worktree is gone. On 2026-11-08 this happened with `C:\repos\_wt\pah_wsoverview_20261031`. The audit only reports clones and never removes them, so keep one small clone of `master` for these scripts:
+
+```powershell
+git clone --filter=blob:none --sparse --branch master https://github.com/GBOGEB/pipeline-automation-hub.git C:\repos\pah_tools
+git -C C:\repos\pah_tools sparse-checkout set tools/workstation
+```
+
+- **Update it:** `git -C C:\repos\pah_tools pull --ff-only`.
+- **Make branches elsewhere:** branch from it with `git -C C:\repos\pah_tools worktree add ...`, never in the clone itself, so PyCharm keeps running the `master` scripts.
+- **Repair tools set up from a worktree:** rerun section 2b from the clone. It repoints the External Tools.
+
 ## 1. Build or refresh it (PowerShell 7)
 
 ```powershell
-pwsh -File "C:\Users\gbonthuy\Documents\Codex\2026-10-23\pah-devops-n9\tools\workstation\Invoke-WorkspaceOverview.ps1" -PyCharmWorkspace C:\repos\GBOGEB_WORKSPACE -ExtraFolder "C:\Users\gbonthuy\OneDrive - Studiecentrum voor Kernenergie\Master_Input\QPS_ACTION_LEDGER"
+pwsh -File "C:\repos\pah_tools\tools\workstation\Invoke-WorkspaceOverview.ps1" -PyCharmWorkspace C:\repos\GBOGEB_WORKSPACE -ExtraFolder "C:\Users\gbonthuy\OneDrive - Studiecentrum voor Kernenergie\Master_Input\QPS_ACTION_LEDGER"
 ```
 
 - The run takes about 7 minutes: it audits every root and sizes every folder. Add `-SkipSize` for a faster run without sizes.
@@ -39,7 +52,7 @@ Keep the workspace folder **outside OneDrive** (`C:\repos\...`). OneDrive does n
 Close PyCharm first (**File ▸ Exit**). It rewrites `.idea` on exit, and the script refuses to run while PyCharm is open.
 
 ```powershell
-pwsh -File "C:\Users\gbonthuy\Documents\Codex\2026-10-23\pah-devops-n9\tools\workstation\Set-PyCharmWorkspaceConfig.ps1" -Workspace C:\repos\GBOGEB_WORKSPACE
+pwsh -File "C:\repos\pah_tools\tools\workstation\Set-PyCharmWorkspaceConfig.ps1" -Workspace C:\repos\GBOGEB_WORKSPACE
 ```
 
 It writes:
