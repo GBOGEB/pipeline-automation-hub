@@ -4,6 +4,8 @@ on:
     paths:
       - 'mission-control/maroon/**'
       - '.github/workflows/code-maroon-runner.yml'
+      - 'mission-control/jade_temple/devops/lifecycle.py'
+      - 'scripts/first_pass_closure_gate.py'
   workflow_dispatch: {}
 permissions:
   contents: read

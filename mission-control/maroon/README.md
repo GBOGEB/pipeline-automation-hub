@@ -187,3 +187,85 @@ A PR whose threads cannot be read is reported as a gap, and the sweep continues.
 
 Resolution uses the `ccr` route that Claude Code sessions have. The GitHub helpers come from
 `review_threads.py`.
+
+## Open-PR pulse (proactive mode)
+
+The sources above count debt. The pulse acts on it, starting with the open PRs where unresolved threads
+block a merge today. `open_threads.py` reads every open PR of the owner (or named repositories) at one
+head SHA per PR. `pulse.py` decides what each unresolved thread needs, clusters repeats, plans a DAG of
+actions, records everything in a BD-queue ledger, and acts on what the evidence already proves.
+
+```bash
+python mission-control/maroon/pulse.py run  --owner GBOGEB --ledger <private>/MAROON_LEDGER.json --out <private>/<pulse>          # dry run
+python mission-control/maroon/pulse.py act  --plan <private>/<pulse>/MAROON_PULSE_PLAN.json --ledger <ledger> --apply              # resolve
+python mission-control/maroon/pulse.py done --ledger <ledger> --node fix:GBOGEB/ABACUS#2711 --status DONE                          # worker receipt
+python mission-control/maroon/pulse.py seed --review <private>/raw_review.json --ledger <ledger>                                  # closed-PR history
+```
+
+### Verdicts
+
+Every unresolved thread gets one verdict, evidence first (the module docstring has the full table):
+`ANSWERED`, `WAIT`, `HUMAN_PENDING`, `SUGGESTION_APPLIED`, `OUT_OF_SCOPE`, `FP_HISTORY`, `SEEN_FIXED`,
+`GENERATED`, `LIKELY_ADDRESSED`, `NEEDS_FIX`. False-positive and history signals:
+- the suggestion is already in the file at the head;
+- the path is no longer changed by the PR;
+- the same finding was kept as is twice before;
+- the same finding was fixed before (a regression check, not a new fix);
+- the path is a generated or pinned output (regenerate, never hand-edit);
+- the thread is outdated and its anchor line is gone at the head.
+
+`ANSWERED` reuses `resolve_answered.verdict_of`, so a worker's `Fixed in <sha>.` or `Kept as is: <reason>`
+reply is evidence for the next pulse. On an open PR the SHA must be one of the PR's own commits.
+
+### Findings, recurrence and the ledger
+
+A finding is one defect, whatever reviewer or PR shows it:
+- **Identity:** a scanner rule id where there is one (`yaml.github-actions...mutable-action-tag`, `B602`, `CWE-79`);
+  otherwise repository, theme and the significant words of the first line.
+- **Near-duplicates:** findings without a rule id in one theme merge when their word sets overlap by 60% or more.
+  Two rules never merge.
+
+The ledger (`code_maroon.ledger.v1`, private) keeps per finding: first and last seen, pulses seen, PRs, threads,
+frequency (threads per pulse), modal path and reviewer, latest verdict per thread, and tags. Re-planning the
+same pulse changes no count.
+
+| Recurrence | Rule |
+|---|---|
+| `ONCE` | one thread in one pulse |
+| `REPEAT` | two or more threads, or seen in two or more pulses |
+| `RECURRING` | two PRs |
+| `SYSTEMIC` | three or more PRs: gets a `fold` node |
+
+Tags come from the PR title, branch and labels, and the thread: `METHOD`, `REX`, `SCALING_PROOF`,
+`SCALING_PILOT`, `SCALING`, and `CORE_OID` for paths whose git OIDs JADE outputs pin. A `CORE_OID` node
+must re-run the JADE DAG generator in the same push.
+
+### DAG, waves and workers
+
+| Node | Executor | Writes | Does |
+|---|---|---|---|
+| `resolve:<repo>#<n>` | `act` | nothing | replies and resolves where evidence is in hand |
+| `cluster:<id>` | worker | each PR branch it covers | one coherent fix for findings repeated on the same PRs |
+| `fix:<repo>#<n>` | worker | that PR branch | the PR's remaining threads |
+| `fold:<key>` | worker | a new branch | turns a SYSTEMIC finding into a test, lint, gate rule or doc line |
+| `close:<repo>#<n>` | `act` | nothing | resolves what the workers answered, once they are done |
+
+Edges: cluster -> fix on the same branch, fix or cluster -> close, and a chain between any two nodes that
+write one branch. Waves are Kahn layers from `jade_temple/devops/lifecycle.topo_layers` (imported). The
+plan asserts that no wave writes a branch twice, so the workers in one wave are disjoint. Bot branches
+(Dependabot, Renovate) and forks get no writer: a bot rebase would drop the commit.
+
+Each ready worker node gets a brief (`briefs/<node>.md`): its threads, branch heads and a contract. The
+worker stops on a moved head, deep-reads before fixing, replies `Fixed in <sha>.` or `Kept as is: <reason>`,
+never merges and never resolves. Queue states: `QUEUED`, `DISPATCHED` (back to `QUEUED` after 24 h with no
+receipt), `DONE`, `FAILED` (`BLOCKED` after three attempts), `OBSERVED_CLOSED` when its threads are gone.
+
+### Authority
+
+`act` writes only with `--apply`, at most `--max-actions` (default 25), and only for `ANSWERED`,
+`SUGGESTION_APPLIED` and `OUT_OF_SCOPE` unless `--include-medium` adds `FP_HISTORY`. Before each write it
+reads the PR again: closed, moved head or already-resolved thread means skip. Replies carry a
+`<!-- code-maroon:... -->` marker. Nothing in the pulse merges, approves or dismisses a review.
+
+The `/maroon` skill (`SKILL.md` here) runs the pulse by hand on every open PR, or from the 8-hourly
+scheduled task, and launches the workers.
