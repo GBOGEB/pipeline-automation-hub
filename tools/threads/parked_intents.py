@@ -76,6 +76,18 @@ def already_commented(posted: list[str], pid: str) -> bool:
     return any(pat.search(b or "") for b in posted)
 
 
+def bad_refs(spec: dict) -> list[str]:
+    """Items whose wake refs do not parse; the filer refuses the spec so a bad marker is never filed."""
+    out = []
+    for item in spec.get("items", []):
+        for r in item.get("wake", {}).get("refs", []):
+            try:
+                c.split_ref(r, item["repo"])
+            except ValueError:
+                out.append(f"{item['id']}: {r!r}")
+    return out
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("spec", type=Path)
@@ -83,6 +95,10 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     spec = json.loads(a.spec.read_text(encoding="utf-8"))
     date = spec.get("date", "")
+    bad = bad_refs(spec)
+    if bad:
+        print("REFUSED: wake refs must be repo#N, #N or N: " + "; ".join(bad), file=sys.stderr)
+        return 2
     results = []
     for repo in sorted({i["repo"] for i in spec.get("items", [])}):
         if not a.dry_run:

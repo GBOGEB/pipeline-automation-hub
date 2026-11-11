@@ -86,8 +86,21 @@ class WakeMatch(unittest.TestCase):
     def test_split_ref(self):
         self.assertEqual(wake_check.split_ref("#5", "hub"), ("hub", 5))
         self.assertEqual(wake_check.split_ref("CODEX#7", "hub"), ("CODEX", 7))
-        with self.assertRaises(ValueError):
-            wake_check.split_ref("CODEX 7", "hub")
+        self.assertEqual(wake_check.split_ref("1171", "hub"), ("hub", 1171))
+        self.assertEqual(wake_check.split_ref(1135, "hub"), ("hub", 1135))
+        for bad in ("CODEX 7", "", "#", True, None):
+            with self.assertRaises(ValueError):
+                wake_check.split_ref(bad, "hub")
+
+    def test_bad_refs_are_skipped_not_fatal(self):
+        good, bad = wake_check.parse_refs(["#5", 7, "nope", "CODEX#2"], "hub")
+        self.assertEqual(good, {("hub", 5), ("hub", 7), ("CODEX", 2)})
+        self.assertEqual(bad, ["nope"])
+
+    def test_filer_refuses_unparseable_refs(self):
+        spec = {"items": [{"id": "U1", "repo": "hub", "wake": {"refs": ["#1", "1171"]}},
+                          {"id": "U2", "repo": "hub", "wake": {"refs": ["see 12"]}}]}
+        self.assertEqual(parked_intents.bad_refs(spec), ["U2: 'see 12'"])
 
     def test_unread_repos_are_reported(self):
         lines = wake_check.report([self.item], [{**self.item, "hits": [], "strong": 0}], ["CODEX: boom"], "s", "n")

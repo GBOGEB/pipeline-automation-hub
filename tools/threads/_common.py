@@ -8,6 +8,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import re
 import subprocess
 import time
 from pathlib import Path
@@ -55,3 +56,19 @@ def gh(*args: str, stdin: str | None = None, tries: int = 4) -> str:
 def gh_json(*args: str):
     out = gh(*args)
     return json.loads(out) if out.strip() else []
+
+
+def split_ref(ref, home: str) -> tuple[str, int]:
+    """Parse a wake ref into (repo, number): ``"repo#N"``, ``"#N"``, a bare ``"N"`` or an int ``N``.
+
+    Bare numbers and ints mean an issue or PR in ``home``. Hand-filed markers used both forms
+    (hub#1191 ``"1171"``, hub#1208 ``[1135, 1171]``) and crashed the wake check on 2026-11-11.
+    """
+    if isinstance(ref, bool):
+        raise ValueError(ref)
+    if isinstance(ref, int):
+        return home, ref
+    m = re.fullmatch(r"(?:([\w.-]+)#|#)?(\d+)", str(ref).strip())
+    if not m:
+        raise ValueError(ref)
+    return (m.group(1) or home), int(m.group(2))
