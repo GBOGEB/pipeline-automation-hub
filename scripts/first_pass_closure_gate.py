@@ -350,8 +350,9 @@ def codex_blocking_findings(
 # notion of negation, condition or checkbox state: "does not close #308", "Close #86 only after ..."
 # and "- [ ] fixes #5" all link the issue and close it on merge. GBOGEB closes issues by hand after
 # integrated replay (finite DoD), so any such link is a false-complete unless the PR opts in.
-# Deliberately a superset of GitHub's parser: emphasis around the keyword and refs inside code are
-# still counted, so this check can only be stricter than GitHub, never looser.
+# Deliberately a superset of GitHub's parser: emphasis around the keyword, refs inside code and
+# task-list items are still counted (GitHub skipped one unticked task-list item in hub PR 1185), so
+# this check can only be stricter than GitHub; GitHub's own list is unioned in by the gate.
 _ISSUE_REF = (
     r"(?:https?://github\.com/(?P<url_owner>[\w.-]+)/(?P<url_repo>[\w.-]+)/(?:issues|pull)/(?P<url_num>\d+)"
     r"|(?:(?P<owner>[A-Za-z0-9][\w.-]*)/(?P<repo>[\w.-]+))?#(?P<num>\d+))"
