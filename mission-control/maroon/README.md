@@ -205,3 +205,46 @@ A PR whose threads cannot be read is reported as a gap, and the sweep continues.
 Historical candidate discovery can use the existing `ccr` reader. Proof-bound application uses
 official GitHub REST/GraphQL through `closure.GitHub`; connected-tool adapters must preserve the same
 evidence and checkpoint contract. The GitHub helpers come from `review_threads.py`.
+
+## Diagnosis hints
+
+`hints.py` is an add-on to `operations.py`. It reads the operations ledger as JSON and never writes it.
+For each open observation, it says what is already known so that repeats are diagnosed once:
+
+```bash
+python mission-control/maroon/hints.py --ledger <private>/MAROON_OPERATIONS.json --out <private dir> \
+  [--history <private>/raw_review.json] [--check-heads]
+```
+
+- **Finding identity.** A finding spans PRs, branches and pulses. It is identified by its scanner rule id
+  (`yaml.github-actions...mutable-action-tag`, `B602`, `CWE-79`) where the title has one. Otherwise it is
+  identified by repository, theme and the significant words of the first line. Near-duplicates merge, but
+  two rules never do.
+- **Recurrence.** Each finding is `ONCE`, `REPEAT`, `RECURRING` (2 PRs) or `SYSTEMIC` (3 or more PRs). It also
+  records sightings, frequency per pulse, reopens, first and last seen, and the modal path and reviewer.
+  `--history` adds closed-PR threads as history; they are never treated as work.
+- **Tags.** `METHOD`, `REX`, `SCALING_PROOF`, `SCALING_PILOT` and `SCALING`. `PINNED_OID` marks paths whose
+  git OIDs JADE outputs pin; for those, re-run the JADE DAG generator.
+- **Signals.**
+  - `NO_PUSH_BOT_BRANCH` / `NO_PUSH_FORK`: a bot rebase drops foreign commits, and a fork is not ours.
+  - `SEEN_FIXED`: closed before on another PR. Reuse the method and check for a regression.
+  - `FP_HISTORY`: closed as a false positive twice or more.
+  - `REOPENED`.
+  - `GENERATED_PATH`: regenerate the file; never hand-edit it.
+  - `SUGGESTION_AT_HEAD` / `ANCHOR_GONE_AT_HEAD`: read-only checks against the PR head, made with `--check-heads`.
+- **Proposals.**
+  - `GROUP_FINDINGS`: one finding on one PR head, held in several roots. Its arguments are ready for
+    `operations.group_findings` once a source read justifies the grouping.
+  - `ONE_METHOD_MANY_PACKETS`: one finding on several PRs. Diagnose it once, then apply the same method
+    in each branch packet.
+  - `FOLD_BACK`: a `SYSTEMIC` finding. One PR adds the test, lint rule, gate rule or doc line that stops it
+    from recurring.
+
+Every hint carries `DIAGNOSIS_HINT_NOT_CLOSURE_PROOF`. Closure still needs the proof that `OPERATIONS.md`
+requires. A dry run on the GBOGEB/ABACUS open-PR read of 2026-11-11 gave:
+- 66 open observations in 17 findings;
+- 2 `SYSTEMIC` Semgrep unpinned-action rules;
+- 9 findings on several PRs;
+- 16 observations on a Dependabot branch, held as no-push.
+
+`MAROON_HINTS_PUBLIC.json` holds counts only.
