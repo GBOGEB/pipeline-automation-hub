@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import ast
 import json
+import re
 import sys
 import tempfile
 import unittest
@@ -14,6 +15,7 @@ sys.path.insert(0, str(HERE))
 import _common as c  # noqa: E402
 import check_presence  # noqa: E402
 import parked_intents  # noqa: E402
+import session_census  # noqa: E402
 import thread_wire  # noqa: E402
 import wake_check  # noqa: E402
 
@@ -133,6 +135,89 @@ class Wire(unittest.TestCase):
         self.assertIn("  - [A] **-** Child `bbbbbbbb` · ? · #9 MERGED", md)
         self.assertIn("W123 alone", md)
         self.assertIn("· numbered", md)
+
+
+class Census(unittest.TestCase):
+    sc = session_census
+
+    def test_family_numbers(self):
+        self.assertEqual(self.sc.family("U34 land census"), ("U", "U34"))
+        self.assertEqual(self.sc.family("Cool-down W368 rebuild"), ("W", "W368"))
+        self.assertEqual(self.sc.family("Lane B-main audit"), ("LANE", "LANE:B-main"))
+        self.assertEqual(self.sc.family("plain title"), (None, None))
+
+    def test_norm_and_where(self):
+        self.assertEqual(self.sc.norm("/c/x//y/out.xlsx)."), "C:\\x\\y\\out.xlsx")
+        roots = (self.sc.norm("D:/clones"),)
+        self.assertEqual(self.sc.where("D:\\clones\\r\\a.pdf", roots), "git-home")
+        self.assertEqual(self.sc.where("D:\\clonesX\\a.pdf", roots), "other")
+        self.assertEqual(self.sc.where("D:\\home\\.claude\\worktrees\\w\\a.pdf"), "git-home")
+        self.assertEqual(self.sc.where("D:\\h\\AppData\\Local\\Temp\\claude\\s\\scratchpad\\a.csv"), "scratchpad")
+        self.assertEqual(self.sc.where("D:\\path\\to\\a.csv"), "skip")
+        self.assertEqual(self.sc.where("D:\\h\\OneDrive\\a.pptx"), "user-docs")
+        rx = (re.compile(r"\\proj\\20\d\d\\", re.I),)
+        self.assertEqual(self.sc.where("D:\\proj\\2026\\a.pdf", rx), "git-home")
+
+    def base(self, **kw):
+        rec = {"task_run": False, "outputs": [], "writes": [], "scratch": None, "pasted": 0, "artifacts": [],
+               "prs_app": [], "mined_in": [], "rescue_dirs": [], "mapped_in": [], "indexed_in": [],
+               "user_turns": 2, "foldback": False}
+        rec.update(kw)
+        return rec
+
+    def test_verdicts(self):
+        v = self.sc.verdict
+        self.assertEqual(v(self.base(task_run=True)), ("TASK_RUN", []))
+        self.assertEqual(v(self.base(prs_app=["O/R#1:MERGED"]))[0], "CAPTURED")
+        self.assertEqual(v(self.base())[0], "PARTIAL")
+        self.assertEqual(v(self.base(user_turns=9)), ("AT_RISK", ["no-record", "no-foldback"]))
+        gone = [{"path": "D:\\u\\OneDrive\\a.pdf", "exists": False, "where": "user-docs"}]
+        self.assertEqual(v(self.base(outputs=gone, mapped_in=["m.md"]))[0], "AT_RISK")
+        self.assertEqual(v(self.base(outputs=gone, rescue_dirs=["r"]))[0], "PARTIAL")
+        self.assertEqual(v(self.base(outputs=gone, mined_in=["c.md"]))[0], "CAPTURED")
+
+    def test_census_from_fixture(self):
+        sid = "local_abcdef12-0000-0000-0000-000000000000"
+        transcript = [
+            {"type": "user", "message": {"content": "Build the W901 deck at D:/share/deck.pptx please"}},
+            {"type": "user", "message": {"content": "<system-reminder>x</system-reminder>"}},
+            {"type": "assistant", "message": {"content": [
+                {"type": "text", "text": "Opened https://github.com/O/R/pull/7 . Method fold-back: none"},
+                {"type": "tool_use", "name": "Write",
+                 "input": {"file_path": "D:/share/notes.md", "content": "x" * 2000}}]}}]
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "s").mkdir()
+            (root / "p" / "proj").mkdir(parents=True)
+            (root / "pulse" / "rescue").mkdir(parents=True)
+            (root / "s" / f"{sid}.json").write_text(json.dumps({
+                "sessionId": sid, "title": "W901 deck", "isArchived": True, "cliSessionId": "cli-1",
+                "createdAt": 1762819200000, "lastActivityAt": 1762905600000,
+                "prs": [{"repo": "O/R", "prNumber": 7, "state": "OPEN", "branch": "feat/w901"}]}), encoding="utf-8")
+            (root / "s" / "local_task.json").write_text(json.dumps({
+                "sessionId": "local_99999999-0", "title": "nightly", "scheduledTaskId": "t1"}), encoding="utf-8")
+            (root / "s" / "local_bad.json").write_text("{not json", encoding="utf-8")
+            (root / "p" / "proj" / "cli-1.jsonl").write_text(
+                "\n".join(json.dumps(x) for x in transcript) + "\nnot json\n", encoding="utf-8")
+            (root / "pulse" / "rescue" / "abcdef12.md").write_text("rescued local_abcdef12", encoding="utf-8")
+            out = root / "out"
+            self.assertEqual(session_census.main([
+                "--sessions-dir", str(root / "s"), "--projects", str(root / "p"), "--pulse", str(root / "pulse"),
+                "--notes", "", "--out", str(out)]), 0)
+            recs = {r["id"]: r for r in json.loads((out / "SESSION_CENSUS.json").read_text(encoding="utf-8"))}
+            wire = (out / "ARCHIVE_WIREFRAME.md").read_text(encoding="utf-8")
+            cards = (out / "REENTRY_CARDS.md").read_text(encoding="utf-8")
+        r = recs[sid]
+        self.assertEqual((r["number"], r["user_turns"], r["foldback"]), ("W901", 1, True))
+        self.assertEqual(r["prs_text"], ["O/R#7"])
+        self.assertEqual(r["writes"][0]["path"], "D:\\share\\notes.md")
+        self.assertEqual([o["path"] for o in r["outputs"]], ["D:\\share\\deck.pptx"])
+        self.assertTrue(r["rescue_dirs"])
+        self.assertEqual(r["verdict"], "PARTIAL")
+        self.assertIn("unarchive_session " + sid, r["wake"])
+        self.assertEqual(recs["local_99999999-0"]["verdict"], "TASK_RUN")
+        self.assertIn("| W901 | ARC | PARTIAL | W901 deck |", wire)
+        self.assertIn("feat/w901", cards)
 
 
 class Hygiene(unittest.TestCase):

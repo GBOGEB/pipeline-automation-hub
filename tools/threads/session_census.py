@@ -1,7 +1,17 @@
 """Session census: the archive wireframe of every Claude Code desktop session. Read-only.
 
-    python -I session_census.py --sessions-dir <claude-code-sessions/<acct>/<org>> \
-        --projects ~/.claude/projects --pulse <work>/_pulse --memory <work memory dir> --out <dir>
+    python -I tools/threads/session_census.py --sessions-dir SESSIONS --pulse PULSE --out OUT \
+        [--projects PROJECTS] [--memory MEMORY ...] [--notes NOTES] [--git-root DIR ...] \
+        [--task-title TITLE ...]
+
+SESSIONS is the desktop app's per-session JSON folder (`claude-code-sessions/<account>/<org>`),
+which also holds sessions past the 200-row `list_sessions` cap. PROJECTS is the transcript root
+(default `~/.claude/projects`), PULSE the handover folder searched for rescues, maps and mining
+cards, MEMORY the memory folder(s) searched for index entries, NOTES the side-session notes root
+(default `%APPDATA%/Claude/side-session-notes`). A `--git-root` folder holds git clones or
+worktrees: a file there that is gone now was most likely committed; `--git-home-re` does the
+same with a regex on the backslash path. `--task-title` marks a title
+as a scheduled-task run when its session JSON carries no `scheduledTaskId`.
 
 Reads the app's per-session JSON (title, archive state, parent, PRs, wrap-up) and each
 session's transcript JSONL(s), and writes, for every session:
@@ -9,6 +19,10 @@ session's transcript JSONL(s), and writes, for every session:
   SESSION_CENSUS.json   one record per session (machine-readable, for data and method mining)
   ARCHIVE_WIREFRAME.md  human tree: reserved-number families first, then parents with children,
                         each with state, capture verdict, risk flags and its wake line
+  REENTRY_CARDS.md      one re-entry card per archived thread: keywords, wake triggers, outcome
+
+All three hold session titles and transcript excerpts: keep OUT local and private and never
+commit it (README "Rules").
 
 Capture verdict for a thread (how losslessly it is recorded outside its transcript):
   CAPTURED  every output it wrote still exists or was rescued, and a PR, a rescue or an index
@@ -32,12 +46,8 @@ import re
 import sys
 from pathlib import Path
 
-TASK_TITLES = {
-    "Burn-down pulse refresh",
-    "Issue pulse refresh",
-    "Parked intents: daily wake check",
-    "BnB dashboard: weekday pull and republish",
-}
+# Titles of scheduled-task runs whose session JSON lacks a scheduledTaskId (--task-title adds more).
+TASK_TITLES = frozenset({"Parked intents: daily wake check"})
 
 # Reserved-number families. A number, once given to a use case, keeps it: a renamed or
 # re-ordered thread keeps its number, and a new use case takes the next free number.
@@ -67,16 +77,29 @@ PATH_RE = re.compile(
 SKIP_RE = re.compile(
     r"\\path\\to\\|\\\.\.\.\\|[<{]|\\Temp\\tmp|\\Temp\\claude\\[^\\]+\\[^\\]+\\images\\", re.I
 )
-# Folders that are git clones or worktrees: a file there that is gone now was most likely
-# committed (check the PR) rather than lost.
-GIT_HOME_RE = re.compile(
-    r"^C:\\(?:repos|DEV\\REPOS|DEV\\WORKSPACES)\\|\\\.claude\\worktrees\\"
-    r"|\\Documents\\Codex\\20\d\d-\d\d-\d\d\\(?!upd\\work\\_pulse)[^\\]+\\", re.I
-)
+# App-made worktrees are always git homes; --git-root adds the user's clone and worktree folders.
+# A file there that is gone now was most likely committed (check the PR) rather than lost.
+GIT_HOME_RE = re.compile(r"\\\.claude\\worktrees\\", re.I)
 
 
-def where(path: str) -> str:
-    """Where a referenced file lived: skip, temp, scratchpad, scratch-ws, git-home, user-docs, other."""
+def under(path: str, roots) -> bool:
+    """True when the normalised `path` lies inside one of `roots`: a normalised folder (str) or
+    a compiled regex searched against the path."""
+    pl = path.lower()
+    for r in roots:
+        if isinstance(r, str):
+            if pl.startswith(r.lower().rstrip("\\") + "\\"):
+                return True
+        elif r.search(path):
+            return True
+    return False
+
+
+def where(path: str, git_roots: tuple = ()) -> str:
+    """Where a referenced file lived: skip, temp, scratchpad, scratch-ws, git-home, user-docs, other.
+
+    `git_roots` holds normalised (norm()) folders, or compiled regexes, for git clones or worktrees.
+    """
     if SKIP_RE.search(path):
         return "skip"
     pl = path.lower()
@@ -84,11 +107,13 @@ def where(path: str) -> str:
         return "scratchpad" if "\\scratchpad\\" in pl else "temp"
     if "scratch-workspaces" in pl:
         return "scratch-ws"
-    if GIT_HOME_RE.search(path):
+    if GIT_HOME_RE.search(path) or under(path, git_roots):
         return "git-home"
     if any(k in pl for k in ("onedrive", "\\documents\\", "\\downloads\\", "\\desktop\\")):
         return "user-docs"
     return "other"
+
+
 ARTIFACT_RE = re.compile(r"https://claude\.ai/(?:code/)?artifact/[A-Za-z0-9-]+")
 PR_RE = re.compile(r"https://github\.com/([\w.-]+/[\w.-]+)/pull/(\d+)")
 LOCAL_RE = re.compile(r"local_([0-9a-f]{8})")
@@ -240,7 +265,8 @@ def mention_index(roots: list[Path]) -> dict[str, set[str]]:
                 try:
                     if os.path.getsize(fpth) > 4_000_000:
                         continue
-                    data = open(fpth, encoding="utf-8", errors="replace").read()
+                    with open(fpth, encoding="utf-8", errors="replace") as fh:
+                        data = fh.read()
                 except OSError:
                     continue
                 for m in set(LOCAL_RE.findall(data)):
@@ -292,17 +318,29 @@ def verdict(rec) -> tuple[str, list[str]]:
     return "CAPTURED", flags
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--sessions-dir", required=True)
-    ap.add_argument("--projects", default=os.path.expanduser("~/.claude/projects"))
-    ap.add_argument("--pulse", required=True)
-    ap.add_argument("--memory", action="append", default=[])
-    ap.add_argument("--notes", default=os.path.expandvars(r"%APPDATA%\Claude\side-session-notes"))
-    ap.add_argument("--out", required=True)
-    ap.add_argument("--skip-transcripts-for-task-runs", action="store_true", default=True)
-    a = ap.parse_args()
-    sys.stdout.reconfigure(encoding="utf-8")
+def default_notes() -> str:
+    base = os.environ.get("APPDATA")
+    return os.path.join(base, "Claude", "side-session-notes") if base else ""
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__.split("\n", 1)[0])
+    ap.add_argument("--sessions-dir", required=True, help="the app's per-session JSON folder")
+    ap.add_argument("--projects", default=os.path.join(os.path.expanduser("~"), ".claude", "projects"),
+                    help="transcript root (<project>/<cliSessionId>.jsonl)")
+    ap.add_argument("--pulse", required=True, help="handover folder searched for rescues, maps and mining cards")
+    ap.add_argument("--memory", action="append", default=[], help="memory folder searched for index entries")
+    ap.add_argument("--notes", default=default_notes(), help="side-session notes root")
+    ap.add_argument("--git-root", action="append", default=[], help="folder holding git clones or worktrees")
+    ap.add_argument("--git-home-re", action="append", default=[],
+                    help="case-insensitive regex on the backslash path that marks a git home")
+    ap.add_argument("--task-title", action="append", default=[], help="title that marks a scheduled-task run")
+    ap.add_argument("--out", required=True, help="output folder (local and private)")
+    a = ap.parse_args(argv)
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+    task_titles = TASK_TITLES | set(a.task_title)
+    git_roots = tuple(norm(g) for g in a.git_root) + tuple(re.compile(x, re.I) for x in a.git_home_re)
 
     jsonl = {Path(f).stem: f for f in glob.glob(os.path.join(a.projects, "*", "*.jsonl"))}
     rescue_roots = [Path(a.pulse)]
@@ -312,13 +350,16 @@ def main() -> int:
     recs = []
     for f in sorted(glob.glob(os.path.join(a.sessions_dir, "local_*.json"))):
         try:
-            d = json.load(open(f, encoding="utf-8"))
+            with open(f, encoding="utf-8") as fh:
+                d = json.load(fh)
         except ValueError:
+            continue
+        if not isinstance(d, dict) or not str(d.get("sessionId", "")).startswith("local_"):
             continue
         sid = d["sessionId"]
         id8 = sid[6:14]
         title = (d.get("title") or "").replace("\n", " ")
-        task_run = title in TASK_TITLES or bool(d.get("scheduledTaskId"))
+        task_run = title in task_titles or bool(d.get("scheduledTaskId"))
         fam, num = family(title)
         clis = [c for c in dict.fromkeys([d.get("cliSessionId"), d.get("lastAssistantCliSessionId")]) if c]
         paths = [jsonl[c] for c in clis if c in jsonl]
@@ -331,7 +372,7 @@ def main() -> int:
                 for _dp, _dn, fns in os.walk(cwd):
                     n += len(fns)
             scratch = {"path": cwd, "exists": os.path.isdir(cwd), "files": n}
-        notes_dir = os.path.join(a.notes, sid)
+        notes_dir = os.path.join(a.notes, sid) if a.notes else ""
         pts = d.get("postTurnSummary") if isinstance(d.get("postTurnSummary"), dict) else {}
         rec = {
             "id": sid,
@@ -360,7 +401,7 @@ def main() -> int:
             "status_detail": pts.get("status_detail"),
             "needs_action": pts.get("needs_action"),
             "scratch": scratch,
-            "notes_dir_exists": os.path.isdir(notes_dir),
+            "notes_dir_exists": bool(notes_dir) and os.path.isdir(notes_dir),
             "rescue_dirs": sorted(p for p in rescued.get(id8, set()) if "\\rescue\\" in p.replace("/", "\\"))[:12],
             "mapped_in": sorted(p for p in rescued.get(id8, set()) if "\\rescue\\" not in p.replace("/", "\\"))[:12],
             "indexed_in": sorted(indexed.get(id8, set()))[:6],
@@ -378,10 +419,10 @@ def main() -> int:
                 "last_user": tr["last_user"],
                 "last_outcome": tr["last_outcome"],
                 "writes": [{"path": p, "chars": n, "exists": os.path.exists(p), "in_git": in_git(p),
-                            "where": where(p)} for p, n in sorted(tr["writes"].items())],
+                            "where": where(p, git_roots)} for p, n in sorted(tr["writes"].items())],
                 "edits": len(tr["edits"]),
-                "outputs": [{"path": p, "exists": os.path.exists(p), "where": where(p)}
-                            for p in sorted(tr["outputs"]) if where(p) != "skip"],
+                "outputs": [{"path": p, "exists": os.path.exists(p), "where": where(p, git_roots)}
+                            for p in sorted(tr["outputs"]) if where(p, git_roots) != "skip"],
                 "artifacts": sorted(tr["artifacts"]),
                 "prs_text": sorted(tr["prs"])[:40],
                 "pasted": tr["pasted"],
