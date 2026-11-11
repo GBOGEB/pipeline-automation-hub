@@ -1,0 +1,42 @@
+name: GM-I-C P0005 Source DAG Kahn QA
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/diagrams/GM_I_C_R2_*_P0005.mmd'
+      - 'mission-control/grand-missions/test_gm_i_c_r2_p0005_diagrams.py'
+      - '.github/workflows/gm-i-c-r2-p0005-diagram-qa.yml'
+  push:
+    branches:
+      - 'docs/gm-i-c-r2-p0005-mermaid-bd'
+    paths:
+      - 'mission-control/grand-missions/diagrams/GM_I_C_R2_*_P0005.mmd'
+      - 'mission-control/grand-missions/test_gm_i_c_r2_p0005_diagrams.py'
+      - '.github/workflows/gm-i-c-r2-p0005-diagram-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-kahn-source-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact candidate head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact source commit
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+      - name: Set up Python 3.12
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Install bounded tests
+        run: python -m pip install --disable-pip-version-check pytest
+      - name: Check P0005 graph source and Kahn owner semantics
+        run: python -m pytest -q mission-control/grand-missions/test_gm_i_c_r2_p0005_diagrams.py
+      - name: State non-compensation boundary
+        run: |
+          echo 'Source DAG topology PASS is not Mermaid browser rendering.'
+          echo 'No IC3 hosted proof, exact-head CODEX review, or merge admission is implied.'

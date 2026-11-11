@@ -35,6 +35,11 @@
 .EXAMPLE
     pwsh -NoProfile -File tools/workstation/Invoke-DraftPrPass.ps1 -Repo pipeline-automation-hub -IncludeReady -ShowThreads
     # one repo, ready PRs too, list every open thread under its PR
+
+.EXAMPLE
+    pwsh -NoProfile -Command "& ./tools/workstation/Invoke-DraftPrPass.ps1 -Repo ABACUS,pipeline-automation-hub,cryoplant-project -IncludeReady"
+    # several repos: use -Command. Under -File the comma list reaches -Repo as ONE string
+    # ("Could not resolve to a Repository with the name 'GBOGEB/ABACUS,pipeline-...'").
 #>
 [CmdletBinding()]
 param(
