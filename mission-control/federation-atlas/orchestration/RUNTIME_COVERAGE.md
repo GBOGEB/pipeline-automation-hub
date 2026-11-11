@@ -160,6 +160,53 @@ existing CODEX/Hub capacity decision owners. Distinguish ready task width,
 per-worker throughput, critical path, external quotas, setup time, cache hit
 rate, retries, peak memory, queue p95 and useful accepted outcomes per cost.
 
+### RC06 serial-phase profile (2026-11-11, Windows, Python 3.12.7, full checkout)
+
+Useful throughput comes from shrinking the serial phases before adding workers.
+On this machine and full (non-sparse) checkout, `run-local` took 57–75 s, not
+the ~10.6 s seen earlier; that earlier figure was not reproduced here and its
+population (sparse vs full census) is unconfirmed. cProfile of the in-process
+orchestration build (73 s under the profiler) split it as follows:
+
+| Phase | Before | Note |
+|---|---|---|
+| `Path.resolve()` round trips (all callers) | 37 s | 46k calls; `_getfinalpathname` ~0.14 ms each |
+| `verify_bundle` (source-name and source-byte rechecks) | 17.6 s | ~2.6k names resolved under the bundle where they do not exist (2.7 ms each) |
+| Reference matching (`source_assets`) | 31 s | 20.8k literal resolves |
+| Source scanning: Python AST / workflow YAML | 8.1 s / 5.0 s | CPU, needed for model content |
+| Model serialization (`canonical`) | 3.1 s | |
+| Reading + SHA-256 of census members | ~1 s per pass | hashing is not the cost |
+
+Pages packaging (14.4 s standalone) spends 12.2 s in two more `verify_bundle`
+passes; copying is 0.8 s. The census is read once by `run_local`, `source_model`,
+each `verify_bundle` (×3) and `run_local` again at the end. Every pass is a
+deliberate drift guard, so all are kept; each pass is made cheaper instead:
+the root resolve is hoisted out of census loops (`safe_path(base=...)`), source
+hash names are validated without resolving absent trees (`safe_names`), literal
+resolves are memoized within one scan, and `source_census` is the one census
+definition (also used by `runtime_evidence.py`).
+
+Matched results (same source; all runs retained):
+
+- In-process build, old vs new code on the identical tree, alternating order:
+  35.5/46.3/60.2 s → 24.1/21.8/32.4 s (median 46.3 → 24.1 s); all 789 bundle
+  members byte-identical in every round.
+- Full `run-local --workers 2`, interleaved base `9c59a523` / new: whole run
+  74.5/67.3/56.6 → 61.9/47.1/47.7 s (median −29%); orchestration task median
+  45.6 → 34.3 s; portal median 18.1 → 9.0 s. All six runs succeeded with no
+  source drift; new orchestration and portal trees are identical across
+  repetitions; `runtime_evidence.py` qualifies 8/8 tasks, 11/11 edges and 15/15
+  ports for each new run.
+
+Remaining serial cost after the change (profiled build 36 s): literal reference
+resolves 6.5 s, Python AST 5.5 s, JSON serialization 2.9 s, reference regex
+2.3 s, YAML 2.1 s. A further exact reduction is per-directory realpath plus a
+cached directory listing for reference matching (fall back to `resolve()` for
+reparse points and short names). Cross-run content-addressed caching of AST and
+YAML rows needs an owner decision on cache invalidation. Same-machine variance
+is large (old build 35–60 s), so the medians are indicative, not capacity
+claims.
+
 Cache dependency downloads or content-addressed wheels by OS, architecture,
 runtime/ABI, lock digest and dependency source. Keep clean-install/cold-cache
 controls and fresh immutable build environments. Cache availability is not
