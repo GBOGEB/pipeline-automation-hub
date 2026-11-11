@@ -309,18 +309,21 @@ def ingest(store, raw_review, pulse_id, *, now=None):
                 previous = data["observations"].get(key)
                 source = _source(thread, entry, raw_review, previous)
                 assignment = (previous or {}).get("manual_group")
-                preserve_group = bool(assignment and assignment["head_sha"] == source["head_sha"]
+                group_current = bool(assignment and assignment["head_sha"] == source["head_sha"]
                                       and assignment["body_hash"] == source["body_hash"]
                                       and assignment["path"] == thread.get("path"))
-                if preserve_group:
+                # Preserve causal/dependency identity on drift, but hold the whole group until a
+                # trusted re-diagnosis rebinds it. Moving children into automatic roots would strand
+                # downstream dependencies on an empty superseded group.
+                if assignment:
                     root_id = previous["root_id"]
                 row = copy.deepcopy(previous) if previous else {
                     "id": key, "repo": repo, "pr": thread["pr"], "comment_id": thread["number"],
                     "first_seen": when, "sighting_count": 0, "revision_count": 0,
                     "head_change_count": 0, "reopen_count": 0, "semantic_state": "open",
                     "root_history": [], "closure_receipts": []}
-                if assignment and not preserve_group:
-                    row.pop("manual_group", None)
+                if assignment:
+                    row["manual_group"]["status"] = "CURRENT" if group_current else "REVALIDATION_REQUIRED"
                 provider_state = "resolved" if thread.get("state") == "resolved" else "open"
                 if previous:
                     row["revision_count"] += int(previous["discussion_hash"] != source["discussion_hash"])
@@ -407,7 +410,7 @@ def group_findings(store, item_ids, remediation_key, *, method, proof_refs, now=
             row["root_id"] = new_id
             row["manual_group"] = {"key": remediation_key, "head_sha": row["head_sha"],
                                    "body_hash": row["body_hash"], "path": row["path"],
-                                   "method": method, "proof_refs": copy.deepcopy(proof_refs)}
+                                   "method": method, "proof_refs": copy.deepcopy(proof_refs), "status": "CURRENT"}
             row["root_history"].append({"root_id": new_id, "assigned_at": _iso(now),
                                          "method": method, "proof_refs": copy.deepcopy(proof_refs)})
         for other in data["roots"].values():
@@ -431,6 +434,8 @@ def _packet(data, root):
     blockers = []
     if any(row["observation_status"] != "OBSERVED" for row in members):
         blockers.append("COVERAGE_UNKNOWN")
+    if any(row.get("manual_group", {}).get("status") == "REVALIDATION_REQUIRED" for row in members):
+        blockers.append("GROUP_REDIAGNOSIS_REQUIRED")
     if any(row.get("pr_state") != "open" for row in members):
         blockers.append("PR_NOT_OPEN")
     if any(row.get("negative_canary") is not False for row in members):

@@ -70,7 +70,8 @@ defect. Preserve historical fixes and their receipts after revalidation becomes 
 After source diagnosis, `group_findings(store, item_ids, remediation_key, method=..., proof_refs=...)`
 combines complete compatible branch-bound batches into one worker packet and records the assignment
 provenance. It refuses active work, incomplete/canary sources and mixed heads. Unchanged rescans retain
-the grouping; changed source-head or original-finding bytes invalidate the manual assignment.
+the grouping; changed source-head or original-finding bytes hold the group for explicit re-diagnosis.
+Its dependency identity and children stay attached, so downstream roots cannot be stranded or skipped.
 
 No missing page, missing repository, aged-out thread or failed API request proves closure. UNKNOWN
 remains visible. A native alert and its review comment are linked obligations: resolving a review

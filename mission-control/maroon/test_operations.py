@@ -70,7 +70,26 @@ class Operations(unittest.TestCase):
         self.assertEqual({r["root_id"] for r in self.store.read()["observations"].values()}, {grouped})
         a["pr_head"] = b["pr_head"] = "d" * 40
         O.ingest(self.store, raw(a, b), "p3", now=LATER)
-        self.assertNotIn(grouped, {r["root_id"] for r in self.store.read()["observations"].values()})
+        self.assertEqual({r["root_id"] for r in self.store.read()["observations"].values()}, {grouped})
+        packet = next(p for p in O.plan(self.store, now=LATER)["packets"] if p["root_id"] == grouped)
+        self.assertIn("GROUP_REDIAGNOSIS_REQUIRED", packet["admission_reasons"])
+        self.assertEqual(O.group_findings(self.store, items, "shared", method="Re-diagnosed new source", proof_refs=["new-proof"], now=LATER), grouped)
+        self.assertIn(grouped, O.plan(self.store, now=LATER)["ready"])
+
+    def test_group_source_drift_does_not_orphan_downstream_dependencies(self):
+        a, b, child = thread(1, title="first"), thread(2, title="second"), thread(3, path="src/c.py", branch="fix/child", pr=8)
+        self.seed(a, b, child)
+        items = [O.observation_id("O/r", 7, n) for n in (1, 2)]
+        grouped = O.group_findings(self.store, items, "shared", method="Shared source", proof_refs=["proof"], now=NOW)
+        dependent = self.store.read()["observations"][O.observation_id("O/r", 8, 3)]["root_id"]
+        O.set_dependencies(self.store, dependent, [grouped])
+        a["pr_head"] = "d" * 40  # A partial changed-head observation must hold, not split the DAG.
+        O.ingest(self.store, raw(a, b, child), "p2", now=LATER)
+        current = self.store.read()
+        self.assertEqual(current["roots"][dependent]["depends_on"], [grouped])
+        self.assertEqual(set(current["roots"][grouped]["member_ids"]), set(items))
+        self.assertEqual(current["roots"][grouped]["state"], "OPEN")
+        self.assertNotIn(grouped, O.plan(self.store, now=LATER)["ready"])
 
     def test_regrouping_rejects_active_lease_and_cross_branch(self):
         roots, items = self.seed(thread(1, title="first"), thread(2, title="second"))
