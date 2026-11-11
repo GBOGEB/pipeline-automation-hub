@@ -430,13 +430,22 @@ def source_assets(root, names):
                 row["unresolved_dynamic_markers"] = len(re.findall(r"\$\{\{|\$\{|\brequire\(\s*(?![\s'\"])|\bimport\(\s*(?![\s'\"])", text))
                 for literal in literals[:REFERENCE_SCAN_LIMIT]:
                     targets = set()
+                    # Every candidate exists (its bytes were just read), so a
+                    # resolution can only name one if the joined path exists.
+                    # Without "..", a non-existent joined path resolves to a
+                    # non-existent location on Windows and POSIX alike, so one
+                    # lstat stands in for the far costlier resolve. Literals
+                    # with ".." keep the full resolve (POSIX realpath applies
+                    # ".." after a missing component, unlike lexists).
+                    skip_absent = ".." not in PurePosixPath(literal).parts
                     for parent in (base, (base / name).parent):
                         joined = parent / literal
                         key = str(joined)  # str, not Path: Windows Path equality ignores case
-                        resolved = resolved_cache.get(key)
-                        if resolved is None:
-                            resolved = resolved_cache[key] = joined.resolve()
-                        if resolved.is_relative_to(base):
+                        if key not in resolved_cache:
+                            resolved_cache[key] = (None if skip_absent and not os.path.lexists(joined)
+                                                   else joined.resolve())
+                        resolved = resolved_cache[key]
+                        if resolved is not None and resolved.is_relative_to(base):
                             relative = resolved.relative_to(base).as_posix()
                             if relative in candidates and relative != name:
                                 targets.add(relative)

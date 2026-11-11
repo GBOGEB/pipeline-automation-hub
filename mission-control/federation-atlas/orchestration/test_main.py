@@ -1095,6 +1095,36 @@ class MultilanguageInventoryTests(FixtureCase):
         self.assertEqual(rows["config/data.json"]["role"], "CONFIG_OR_DATA")
         self.assertTrue(all(row["runtime_reachability"] == "UNKNOWN" for row in rows.values()))
 
+    def test_reference_targets_match_unconditional_resolve(self):
+        """The absent-path lstat shortcut must not change any resolved target."""
+        self.write("lib/util.py", "x = 1\n")
+        self.write("lib/sibling.py", "y = 2\n")
+        self.write("app/main.py", "\n".join([
+            "# lib/util.py ./sibling.py ../lib/sibling.py missing/none.py ./absent.py",
+            "# lib/../lib/util.py nowhere/../lib/util.py LIB/UTIL.py linked/util.py"]) + "\n")
+        self.write("app/sibling.py", "z = 3\n")
+        try:
+            (self.root / "linked").symlink_to(self.root / "lib", target_is_directory=True)
+        except OSError:
+            pass
+        names = sorted(p.relative_to(self.root).as_posix() for p in self.root.rglob("*")
+                       if p.is_file() and not p.is_symlink() and "linked" not in p.relative_to(self.root).parts)
+        rows = {row["path"]: row for row in atlas.source_assets(self.root, names)}
+        candidates = {n for n in names if Path(n).suffix in atlas.SOURCE_LANGUAGES}
+        for ref in rows["app/main.py"]["references"]:
+            expected = set()
+            for parent in (self.root, self.root / "app"):
+                resolved = (parent / ref["literal"]).resolve()
+                if resolved.is_relative_to(self.root):
+                    relative = resolved.relative_to(self.root).as_posix()
+                    if relative in candidates and relative != "app/main.py":
+                        expected.add(relative)
+            with self.subTest(literal=ref["literal"]):
+                self.assertEqual(ref["targets"], sorted(expected))
+        by_literal = {ref["literal"]: ref["targets"] for ref in rows["app/main.py"]["references"]}
+        self.assertEqual(by_literal["missing/none.py"], [])
+        self.assertEqual(by_literal["nowhere/../lib/util.py"], ["lib/util.py"])
+
     def test_package_composite_and_workflow_descriptors_remain_declarations(self):
         self.write("package.json", {"scripts": {"build": "node src/build.mjs", "test": "node --test"}})
         self.write(".github/actions/example/action.yml", "runs:\n  using: composite\n  steps:\n    - run: ./tools/task.sh\n      shell: bash\n")
