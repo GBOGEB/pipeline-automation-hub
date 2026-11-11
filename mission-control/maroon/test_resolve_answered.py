@@ -59,21 +59,22 @@ class FakeGh:
 class Verdicts(unittest.TestCase):
     def test_reply_forms(self):
         merged = {9: True, 10: False}.get
-        self.assertEqual(RA.verdict_of("Already fixed on main, confirmed by a deep read.", merged), "on-main")
-        self.assertEqual(RA.verdict_of("Fixed in #9 (draft).", merged), "merged #9")
-        self.assertEqual(RA.verdict_of("<!-- m -->\n**Title.** Fixed by merged #9.", merged), "merged #9")
-        self.assertEqual(RA.verdict_of("#2281 merged first, so the fix is in #9 (draft).", merged), "merged #9")
+        for text in ("Already fixed on main, confirmed by a deep read.", "Fixed in #9 (draft).",
+                     "<!-- m -->\n**Title.** Fixed by merged #9.",
+                     "#2281 merged first, so the fix is in #9 (draft).", "Kept as is."):
+            self.assertTrue(RA.verdict_of(text, merged).startswith(RA.WAIT))
         self.assertTrue(RA.verdict_of("Fixed in #10 (draft).", merged).startswith(RA.WAIT))
-        self.assertEqual(RA.verdict_of("Fixed in 963e6d5. ...", merged), "fixed on this merged PR")
+        self.assertTrue(RA.verdict_of("Fixed in 963e6d5. ...", merged).startswith(RA.WAIT))
         self.assertTrue(RA.verdict_of("@copilot fix this", merged).startswith(RA.SKIP))
 
 
 class Apply(unittest.TestCase):
-    def test_only_proven_threads_are_resolved(self):
+    def test_apply_without_proof_and_lease_is_rejected(self):
         gh = FakeGh()
-        self.assertEqual(RA.main(["--repos", "O/r", "--apply"], gh=gh), 0)
-        self.assertEqual(sorted(gh.posts), ["repos/O/r/pulls/7/ccr/comments/1/resolve",
-                                            "repos/O/r/pulls/7/ccr/comments/2/resolve"])
+        with self.assertRaises(SystemExit) as error:
+            RA.main(["--repos", "O/r", "--apply"], gh=gh)
+        self.assertEqual(error.exception.code, 2)
+        self.assertEqual(gh.posts, [])
 
     def test_an_unreadable_pr_is_a_gap_not_a_crash(self):
         gh = FakeGh()
@@ -83,7 +84,7 @@ class Apply(unittest.TestCase):
             if args[1:2] and args[1].endswith("/ccr/review_threads"):
                 return 1, "", "gh: GitHub is temporarily unavailable. (HTTP 503)"
             return real(args)
-        self.assertEqual(RA.main(["--repos", "O/r", "--apply"], gh=flaky), 0)
+        self.assertEqual(RA.main(["--repos", "O/r"], gh=flaky), 0)
         self.assertEqual(gh.posts, [])
 
     def test_dry_run_resolves_nothing(self):

@@ -1,5 +1,6 @@
 """CODE MAROON review-thread source: threads -> themed roots, reviewer severity, coverage, no text in public."""
 import copy
+import hashlib
 import json
 import sys
 import tempfile
@@ -167,6 +168,10 @@ class Fetch(unittest.TestCase):
         entry = RT.fetch(["O/pub"], limit=1, gh=gh, resolved=lambda *a: set())["repos"]["O/pub"]
         self.assertEqual(entry["threads_deferred_to_code_scanning"], 1)
         self.assertNotIn(9, [t["number"] for t in entry["alerts"]])
+        self.assertEqual(entry["linked_alerts"][0]["number"], 9)
+        self.assertEqual(entry["linked_alerts"][0]["provider_alert_owner"], "code_scanning")
+        self.assertEqual(entry["linked_alerts"][0]["scanner_alert_state"], "UNKNOWN")
+        self.assertIn("Clear-text logging", entry["linked_alerts"][0]["body"])
 
     def test_unreadable_repo_is_a_gap_not_zero(self):
         raw = RT.fetch(["O/x"], limit=5, gh=lambda args: (1, "", "HTTP 404: Not Found"), resolved=lambda *a: set())
@@ -266,8 +271,12 @@ class Window(unittest.TestCase):
                 return 0, json.dumps([[hunk]]), ""
             return 0, json.dumps([[]]), ""
         entry = RT.fetch(["O/pub"], limit=5, gh=gh, resolved=lambda *a: set())["repos"]["O/pub"]
-        self.assertEqual(entry["prs"], [{"number": 7, "merged": True, "closed_at": "2026-11-04T18:00:00Z",
-                                         "merge_commit_sha": "e" * 40, "refs": [2160]}])
+        self.assertEqual(len(entry["prs"]), 1)
+        self.assertEqual({k: entry["prs"][0][k] for k in ("number", "merged", "closed_at", "merge_commit_sha", "refs")},
+                         {"number": 7, "merged": True, "closed_at": "2026-11-04T18:00:00Z",
+                          "merge_commit_sha": "e" * 40, "refs": [2160]})
+        self.assertEqual((entry["prs"][0]["state"], entry["prs"][0]["head_sha"], entry["prs"][0]["coverage"]),
+                         ("closed", "f" * 40, "ok"))
         # The target is the hunk's last line, however short (#1129 r4473193611); no earlier line stands in.
         self.assertEqual((entry["alerts"][0]["anchor"], entry["alerts"][0]["anchor_side"]), ("x", "added"))
 
@@ -314,7 +323,9 @@ class Scope(unittest.TestCase):
         """#1128 review (r4472368445): leaving the sample is not a fix."""
         old = M.build(self.EMPTY, scoped({7: [1], 8: [2]}, [7, 8]))
         aged = M.build(self.EMPTY, scoped({8: [2]}, [8, 9]))       # PR 7 left the window
-        fixed = M.build(self.EMPTY, scoped({8: [2]}, [7, 8, 9]))    # PR 7 still sampled, thread 1 resolved
+        fixed_raw = scoped({7: [1], 8: [2]}, [7, 8, 9])
+        fixed_raw["repos"]["O/pub"]["alerts"][0]["state"] = "resolved"
+        fixed = M.build(self.EMPTY, fixed_raw)  # provider positively reports resolution
         d = M.diff(old, aged)
         self.assertEqual((d["alerts_evicted"], d["alerts_left"], d["roots_cleared"]), (1, 0, 0))
         self.assertEqual(M.delta_counts(d)["alerts_evicted"], 1)
@@ -326,13 +337,13 @@ class Scope(unittest.TestCase):
         d = M.diff(old, M.build(self.EMPTY, scoped({}, [9])))
         self.assertEqual((d["alerts_evicted"], d["roots_cleared"], d["left"]), (1, 0, []))
 
-    def test_receipts_without_a_sample_keep_the_old_behaviour(self):
+    def test_receipts_without_a_sample_cannot_prove_resolution(self):
         old, new = M.build(self.EMPTY, scoped({7: [1]}, [7])), M.build(self.EMPTY, scoped({}, [9]))
         old.pop("review_scope")
         d = M.diff(old, new)
-        self.assertEqual((d["alerts_evicted"], d["alerts_left"]), (0, 1))
+        self.assertEqual((d["alerts_evicted"], d["alerts_left"], d["alerts_unobserved"]), (0, 0, 1))
 
-    def test_missing_repository_sample_keeps_the_old_behaviour(self):
+    def test_missing_repository_sample_cannot_clear_a_root(self):
         def without_prs(alerts_by_pr, prs):
             review = scoped(alerts_by_pr, prs)
             del review["repos"]["O/pub"]["prs"]
@@ -341,12 +352,12 @@ class Scope(unittest.TestCase):
         old = M.build(self.EMPTY, scoped({7: [1]}, [7]))
         new = without_prs({}, [])
         d = M.diff(old, new)
-        self.assertEqual((d["alerts_evicted"], d["alerts_left"], d["roots_cleared"]), (0, 1, 1))
+        self.assertEqual((d["alerts_evicted"], d["alerts_left"], d["roots_cleared"], d["alerts_unobserved"]), (0, 0, 0, 1))
 
         old = without_prs({7: [1]}, [7])
         new = M.build(self.EMPTY, scoped({}, []))
         d = M.diff(old, new)
-        self.assertEqual((d["alerts_evicted"], d["alerts_left"], d["roots_cleared"]), (0, 1, 1))
+        self.assertEqual((d["alerts_evicted"], d["alerts_left"], d["roots_cleared"], d["alerts_unobserved"]), (0, 0, 0, 1))
 
     def test_build_command_reads_overrides(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -370,11 +381,11 @@ class ReviewFollowUps(unittest.TestCase):
         partial = scoped({}, [9])
         partial["repos"]["O/pub"]["coverage"] = "window_unproven"
         d = M.diff(old, M.build(self.EMPTY, partial))
-        self.assertEqual((d["alerts_evicted"], d["alerts_left"]), (0, 1))
+        self.assertEqual((d["alerts_evicted"], d["alerts_left"], d["alerts_unobserved"]), (0, 0, 1))
         unproven_old = scoped({7: [1]}, [7])
         unproven_old["repos"]["O/pub"]["coverage"] = "window_unproven"
         d = M.diff(M.build(self.EMPTY, unproven_old), M.build(self.EMPTY, scoped({}, [9])))
-        self.assertEqual((d["alerts_evicted"], d["alerts_left"]), (0, 1))
+        self.assertEqual((d["alerts_evicted"], d["alerts_left"], d["alerts_unobserved"]), (0, 0, 1))
 
     def test_scope_records_whether_the_window_was_proven(self):
         partial = scoped({7: [1]}, [7])
@@ -411,6 +422,138 @@ class ReviewFollowUps(unittest.TestCase):
     def test_refs_of_every_length(self):
         body = "Refs #5, #42, #1234567 and #0; not GBOGEB/x#99, abc#3 or #7 itself"
         self.assertEqual(RT.refs_of(body, 7), [5, 42, 1234567])
+
+
+class ActivePRIntake(unittest.TestCase):
+    EMPTY = {"owner": "O", "fetched_at": "none", "repos": {}}
+
+    @staticmethod
+    def active(number):
+        return {"number": number, "state": "open", "merged_at": None, "closed_at": None,
+                "draft": False, "head": {"sha": "a" * 40, "ref": "fix/topic", "repo": {"full_name": "O/pub"}},
+                "base": {"sha": "b" * 40, "ref": "main"}}
+
+    def test_open_unmerged_thread_is_outstanding(self):
+        threads = RT.threads_of(self.active(7), [comment(1, CODEX, "Fix the path alias")], [], set())
+        raw = {"fetched_at": "2026-11-11T00:00:00Z", "state": "open", "repos": {
+            "O/pub": {"coverage": "ok", "alerts": threads, "prs": [{"number": 7}], "scope_state": "open"}}}
+        receipt = M.build(self.EMPTY, raw)
+        self.assertEqual(receipt["totals"]["review_threads"], {"outstanding": 1, "closed": 0, "deferred": 0})
+        self.assertEqual(receipt["review_scope"]["O/pub"]["scope_state"], "open")
+
+    def test_unknown_state_is_not_silently_deferred(self):
+        thread = RT.threads_of({"number": 7}, [comment(1, CODEX, "Fix")], [], set())[0]
+        self.assertEqual(thread["pr_state"], "unknown")
+        self.assertEqual(M.manifestation("O/pub", "review_threads", thread)["disposition"], "outstanding")
+
+    def test_full_open_pagination_ignores_closed_window_limit(self):
+        calls = []
+
+        def gh(args):
+            path = args[1]
+            calls.append(path)
+            if path.endswith("commits/HEAD"):
+                return 0, json.dumps({"sha": "c" * 40}), ""
+            if "pulls?state=open" in path:
+                batch = [self.active(n) for n in range(1, 101)] if path.endswith("page=1") else [self.active(101)]
+                return 0, json.dumps(batch), ""
+            if "/comments?" in path:
+                n = int(path.split("/pulls/")[1].split("/")[0])
+                return 0, json.dumps([[comment(n, CODEX, "Fix the path alias")]]), ""
+            return 0, "[[]]", ""
+
+        entry = RT.fetch(["O/pub"], 1, gh=gh, resolved=lambda *a: set(), state="open")["repos"]["O/pub"]
+        self.assertEqual((entry["coverage"], entry["status"], entry["prs_read"], len(entry["alerts"])),
+                         ("ok", "OBSERVED", 101, 101))
+        self.assertTrue(all(thread["pr_state"] == "open" for thread in entry["alerts"]))
+        self.assertEqual(entry["window"], None)
+        self.assertEqual(sum("pulls?state=open" in path for path in calls), 2)
+        self.assertFalse(any("state=closed" in path for path in calls))
+
+    def test_page_budget_is_unknown_not_complete(self):
+        def gh(args):
+            path = args[1]
+            if path.endswith("commits/HEAD"):
+                return 0, json.dumps({"sha": "c" * 40}), ""
+            if "pulls?" in path:
+                return 0, json.dumps([self.active(n) for n in range(1, 101)]), ""
+            return 0, "[[]]", ""
+
+        entry = RT.fetch(["O/pub"], 1, gh=gh, resolved=lambda *a: set(), state="open", max_pages=1)["repos"]["O/pub"]
+        self.assertEqual((entry["coverage"], entry["status"]), ("pagination_incomplete", "UNKNOWN"))
+        self.assertFalse(M.review_scope({"repos": {"O/pub": entry}})["O/pub"]["proven"])
+
+    def test_one_failed_pr_keeps_known_observations_but_marks_scope_unknown(self):
+        def gh(args):
+            path = args[1]
+            if path.endswith("commits/HEAD"):
+                return 0, json.dumps({"sha": "c" * 40}), ""
+            if "pulls?" in path:
+                return 0, json.dumps([self.active(1), self.active(2)]), ""
+            if "/pulls/2/comments" in path:
+                return 1, "", "HTTP 503"
+            if "/comments?" in path:
+                return 0, json.dumps([[comment(1, CODEX, "Fix")]]), ""
+            return 0, "[[]]", ""
+
+        entry = RT.fetch(["O/pub"], 1, gh=gh, resolved=lambda *a: set(), state="open")["repos"]["O/pub"]
+        self.assertEqual((entry["coverage"], entry["status"], entry["prs_read"], len(entry["alerts"])),
+                         ("partial", "UNKNOWN", 1, 1))
+        self.assertEqual(entry["failures"][0]["pr"], 2)
+        self.assertEqual(entry["prs"][1]["coverage"], "not_readable")
+
+    def test_all_combines_every_open_with_closed_window(self):
+        old = closed_pr(3, "2026-11-01T00:00:00Z", "2026-11-01T00:00:00Z")
+        newest = closed_pr(4, "2026-11-02T00:00:00Z", "2026-11-02T00:00:00Z")
+
+        def gh(args):
+            path = args[1]
+            if path.endswith("commits/HEAD"):
+                return 0, json.dumps({"sha": "c" * 40}), ""
+            if "state=open" in path:
+                return 0, json.dumps([self.active(1), self.active(2)]), ""
+            if "state=closed" in path:
+                return 0, json.dumps([old, newest]), ""
+            return 0, "[[]]", ""
+
+        entry = RT.fetch(["O/pub"], 1, gh=gh, resolved=lambda *a: set(), state="all")["repos"]["O/pub"]
+        self.assertEqual({pr["number"]: pr["state"] for pr in entry["prs"]}, {1: "open", 2: "open", 4: "closed"})
+
+    def test_context_fingerprints_change_on_edits_without_changing_thread_identity(self):
+        root = dict(comment(1, CODEX, "Fix the alias"), created_at="2026-11-01T00:00:00Z", updated_at="2026-11-01T00:00:00Z")
+        reply = dict(comment(2, "alice", "I am checking this", reply_to=1), created_at="2026-11-02T00:00:00Z", updated_at="2026-11-02T00:00:00Z")
+        resolutions = RT.ResolvedThreads([], {1: {"id": "PRRT_example", "isOutdated": False}})
+        before = RT.threads_of(self.active(7), [reply, root], [], resolutions)[0]
+        reply["body"] = "Fixed in an exact commit"
+        reply["updated_at"] = "2026-11-03T00:00:00Z"
+        after = RT.threads_of(self.active(7), [root, reply], [], resolutions)[0]
+        self.assertEqual((before["number"], before["thread_id"], before["latest_comment_id"]), (1, "PRRT_example", 2))
+        self.assertEqual(before["body_hash"], hashlib.sha256(root["body"].encode()).hexdigest())
+        self.assertNotEqual(before["discussion_hash"], after["discussion_hash"])
+        self.assertEqual(after["updated_at"], reply["updated_at"])
+        self.assertEqual(after["pr_head_ref"], "fix/topic")
+        self.assertEqual(after["pr_base_sha"], "b" * 40)
+
+    def test_graphql_partial_errors_never_mean_no_resolved_threads(self):
+        with self.assertRaises(RT.FPC.GateError):
+            RT.resolved_via_graphql(lambda *a: (0, json.dumps({"errors": [{"message": "denied"}], "data": {}}), ""), "O/pub", 7)
+
+    def test_graphql_metadata_uses_canonical_reader(self):
+        page = {"data": {"repository": {"pullRequest": {"reviewThreads": {
+            "pageInfo": {"hasNextPage": False, "endCursor": None},
+            "nodes": [{"id": "PRRT_example", "isResolved": True, "isOutdated": False,
+                       "comments": {"nodes": [{"databaseId": 1}]}}]}}}}}
+        result = RT.resolved_via_graphql(lambda *a: (0, json.dumps(page), ""), "O/pub", 7)
+        self.assertEqual(result, {1})
+        self.assertEqual(result.metadata[1]["id"], "PRRT_example")
+
+    def test_graphql_repeated_or_missing_cursor_fails_closed(self):
+        for cursor in (None, "same-cursor"):
+            with self.subTest(cursor=cursor):
+                page = {"data": {"repository": {"pullRequest": {"reviewThreads": {
+                    "pageInfo": {"hasNextPage": True, "endCursor": cursor}, "nodes": []}}}}}
+                with self.assertRaises(RT.FPC.GateError):
+                    RT.resolved_via_graphql(lambda *a: (0, json.dumps(page), ""), "O/pub", 7)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,14 @@
-# CODE MAROON runner
+# CODE MAROON: observe, repair, prove and close
+
+MAROON now has separate intake and worker paths. The active-PR scanner augments a private durable
+ledger; a claimed worker diagnoses a coherent finding group, repairs or explains it, verifies the
+current source, replies, resolves the review thread and closes the corresponding ledger item after
+provider readback. See [OPERATIONS.md](OPERATIONS.md) for manual invocation, scheduling, SIPOC,
+Kahn sequencing, action envelopes, recovery and the scaling contract.
+
+The security census remains read-only. The worker's bounded authority comes from the current user
+request and actual authenticated provider permissions. MAROON has no merge or protection-bypass
+authority. A resolved thread, a satisfied ledger item and a merge-ready PR are separate facts.
 
 CODE_MAROON is the review- and security-debt programme declared in
 `mission-control/federation-atlas/superstitch/SUPERSTITCH_TAXONOMY_v1.json`. The
@@ -6,7 +16,8 @@ CODE_MAROON is the review- and security-debt programme declared in
 - deduplicates manifestations to roots;
 - records closed, deferred and outstanding counts;
 - keeps each scanner's provenance;
-- closes nothing and has no merge authority.
+- originally closed nothing and had no merge authority; the new proof-bound worker handles
+  explicitly authorized review-item closure while merge authority remains separate.
 
 `maroon.py` writes that receipt from GitHub's own alert APIs.
 
@@ -86,11 +97,12 @@ package can show up as several roots there; Dependabot already groups those by p
 ## What moved
 
 `diff` compares two receipts and writes `MAROON_DELTA.json` (private: it names roots):
-- **Left:** alerts that are no longer outstanding. GitHub marks a Dependabot or code-scanning alert
+- **Left:** positively observed alerts that are no longer outstanding. GitHub marks a Dependabot or code-scanning alert
   `fixed` once the fix reaches the default branch, so fixes from merged PRs show up here on the next
   read.
 - **Joined:** new outstanding alerts, and roots that weren't outstanding before.
-- **Coverage changes:** a source that became unreadable is listed here, so it isn't mistaken for a fix.
+- **Coverage changes / unobserved:** missing or unreadable observations remain UNKNOWN. Their
+  disappearance never clears a root. Provider resolution and deferral have separate counters.
 
 `delta_counts()` gives the same delta as counts only.
 
@@ -104,18 +116,19 @@ with a read-only token, builds the receipt and diffs it against the committed on
 
 A merged PR can keep open review threads from Copilot, Codex, a security bot or a person. Nothing
 reads them again after the merge, so they become debt that no alert API reports.
-`review_threads.py` reads them for the most recent closed PRs of the repositories you name, newest
-first:
+`review_threads.py` reads all OPEN PRs with `--state open`. `--state closed` (the compatible default)
+reads the recent closed window; `--state all` reads all OPEN plus that bounded closed window:
 
 ```bash
 python mission-control/maroon/review_threads.py fetch --repos GBOGEB/CODEX,GBOGEB/ABACUS --limit 30 --out <private dir>
+python mission-control/maroon/review_threads.py fetch --repos GBOGEB/CODEX,GBOGEB/ABACUS --state open --out <private dir>
 python mission-control/maroon/maroon.py build --raw <private dir>/raw.json --review <private dir>/raw_review.json --out <private dir>
 ```
 
 | Field | Rule |
 |---|---|
 | Manifestation | One review thread: unresolved is `outstanding`, resolved is `closed` |
-| Root | One theme in one repository, such as `path-alias` or `provenance-pin`, so that one root is one follow-up PR. Copilot and Codex flagging the same defect fall into one root |
+| Census root | A theme in one repository, such as `path-alias` or `provenance-pin`. This is a triage category, not proof that all findings share one repair. The operations queue keeps conservative branch/source diagnosis groups and each child identity |
 | Severity | The reviewer's own: a Codex P badge (P0 critical, P1 high, P2 medium, P3 low) or Copilot's High, Medium or Low. Unrated threads are `note` |
 | Lane | `<repo>:review-<theme>`. Review lanes in one repository name their `shared_paths`, as code-scanning lanes do |
 | Coverage | `ok`, `not_readable`, or `not_in_scope` for a repository outside the review read |
@@ -128,10 +141,10 @@ runs out first, coverage is `window_unproven`, a gap rather than a silent short 
 Each repository's raw entry lists the sampled PRs. Each entry gives the PR's number, merge state, close
 time, merge commit and the `#refs` in its body. The receipt keeps that sample as `review_scope`, and
 each review root maps its threads to their PRs (`alert_prs`). `diff` then splits what moved:
-- **Left:** the thread's PR is still sampled, so the thread was resolved.
+- **Left:** the current receipt positively records the thread's resolved or deferred disposition.
 - **Evicted:** the PR aged out of the window. `alerts_evicted` counts these, and they never clear a root.
   An eviction needs a proven window (`ok`) for that repository on both sides; a `window_unproven` or
-  missing sample proves nothing, so those threads count as left.
+  missing sample proves nothing, so those threads count as unobserved rather than fixed.
 
 Each raw thread carries `anchor` and `anchor_side`: the line its comment targets (the last line of the
 diff hunk, however short) and whether that line was added, deleted or context in the PR. A deep read
@@ -139,6 +152,9 @@ uses them to check the default branch. A deleted target that is back means somet
 one still present.
 
 A thread on a PR that closed without merging is `deferred`, not outstanding. The change never landed.
+An OPEN unmerged PR remains outstanding. CodeQL-linked review obligations retain full identities in
+`linked_alerts` for the operations queue; the security census still delegates their alert counts to
+the native code-scanning owner, avoiding a second security-root count.
 
 `build --review-overrides <json>` applies deep-read corrections before roots are formed, as
 `{"<thread id>": {"theme": "<theme>"}}`. A re-themed finding then leaves the wrong lane and joins the
@@ -162,20 +178,21 @@ repositories.
 
 ## Resolving answered threads
 
-Each fix PR ends with an evidence reply on every thread it settles. `resolve_answered.py` then resolves the
-threads whose fix is on the default branch, so the landing gate on unresolved threads stays meaningful.
+`resolve_answered.py` reports historical prose candidates. Wording such as “already fixed”, “kept as
+is”, a merged PR reference or an abbreviated SHA never authorizes resolution. The old prose-only
+`--apply` route is rejected.
 
 ```bash
-python mission-control/maroon/resolve_answered.py --repos GBOGEB/cryoplant-project,GBOGEB/CODEX --limit 60          # report
-python mission-control/maroon/resolve_answered.py --repos GBOGEB/cryoplant-project,GBOGEB/CODEX --limit 60 --apply  # resolve
+python mission-control/maroon/resolve_answered.py --repos GBOGEB/cryoplant-project,GBOGEB/CODEX --limit 60
+python mission-control/maroon/resolve_answered.py --proofs <private proofs.json> --ledger <private ledger.json> --apply
 ```
 
 **Which threads it reads:** unresolved threads on merged PRs, where the last comment is from the login running the tool.
 
-**Which threads it resolves:**
-- the reply says the fix is already on main
-- the reply names a merged fix PR in the same repository
-- the reply names a commit on the thread's own merged PR
+**Which threads the proof-bound path resolves:** active, non-canary threads with a live leased
+ledger item; exact head/base and source blob OIDs; unchanged discussion; finding-specific test or
+source-analysis evidence; and authenticated provider permission. A journal persists reply, resolve,
+readback and ledger closure so partial completion can be reconciled.
 
 **What stays open:**
 - a fix PR that has not merged
@@ -185,87 +202,6 @@ python mission-control/maroon/resolve_answered.py --repos GBOGEB/cryoplant-proje
 
 A PR whose threads cannot be read is reported as a gap, and the sweep continues.
 
-Resolution uses the `ccr` route that Claude Code sessions have. The GitHub helpers come from
-`review_threads.py`.
-
-## Open-PR pulse (proactive mode)
-
-The sources above count debt. The pulse acts on it, starting with the open PRs where unresolved threads
-block a merge today. `open_threads.py` reads every open PR of the owner (or named repositories) at one
-head SHA per PR. `pulse.py` decides what each unresolved thread needs, clusters repeats, plans a DAG of
-actions, records everything in a BD-queue ledger, and acts on what the evidence already proves.
-
-```bash
-python mission-control/maroon/pulse.py run  --owner GBOGEB --ledger <private>/MAROON_LEDGER.json --out <private>/<pulse>          # dry run
-python mission-control/maroon/pulse.py act  --plan <private>/<pulse>/MAROON_PULSE_PLAN.json --ledger <ledger> --apply              # resolve
-python mission-control/maroon/pulse.py done --ledger <ledger> --node fix:GBOGEB/ABACUS#2711 --status DONE                          # worker receipt
-python mission-control/maroon/pulse.py seed --review <private>/raw_review.json --ledger <ledger>                                  # closed-PR history
-```
-
-### Verdicts
-
-Every unresolved thread gets one verdict, evidence first (the module docstring has the full table):
-`ANSWERED`, `WAIT`, `HUMAN_PENDING`, `SUGGESTION_APPLIED`, `OUT_OF_SCOPE`, `FP_HISTORY`, `SEEN_FIXED`,
-`GENERATED`, `LIKELY_ADDRESSED`, `NEEDS_FIX`. False-positive and history signals:
-- the suggestion is already in the file at the head;
-- the path is no longer changed by the PR;
-- the same finding was kept as is twice before;
-- the same finding was fixed before (a regression check, not a new fix);
-- the path is a generated or pinned output (regenerate, never hand-edit);
-- the thread is outdated and its anchor line is gone at the head.
-
-`ANSWERED` reuses `resolve_answered.verdict_of`, so a worker's `Fixed in <sha>.` or `Kept as is: <reason>`
-reply is evidence for the next pulse. On an open PR the SHA must be one of the PR's own commits.
-
-### Findings, recurrence and the ledger
-
-A finding is one defect, whatever reviewer or PR shows it:
-- **Identity:** a scanner rule id where there is one (`yaml.github-actions...mutable-action-tag`, `B602`, `CWE-79`);
-  otherwise repository, theme and the significant words of the first line.
-- **Near-duplicates:** findings without a rule id in one theme merge when their word sets overlap by 60% or more.
-  Two rules never merge.
-
-The ledger (`code_maroon.ledger.v1`, private) keeps per finding: first and last seen, pulses seen, PRs, threads,
-frequency (threads per pulse), modal path and reviewer, latest verdict per thread, and tags. Re-planning the
-same pulse changes no count.
-
-| Recurrence | Rule |
-|---|---|
-| `ONCE` | one thread in one pulse |
-| `REPEAT` | two or more threads, or seen in two or more pulses |
-| `RECURRING` | two PRs |
-| `SYSTEMIC` | three or more PRs: gets a `fold` node |
-
-Tags come from the PR title, branch and labels, and the thread: `METHOD`, `REX`, `SCALING_PROOF`,
-`SCALING_PILOT`, `SCALING`, and `CORE_OID` for paths whose git OIDs JADE outputs pin. A `CORE_OID` node
-must re-run the JADE DAG generator in the same push.
-
-### DAG, waves and workers
-
-| Node | Executor | Writes | Does |
-|---|---|---|---|
-| `resolve:<repo>#<n>` | `act` | nothing | replies and resolves where evidence is in hand |
-| `cluster:<id>` | worker | each PR branch it covers | one coherent fix for findings repeated on the same PRs |
-| `fix:<repo>#<n>` | worker | that PR branch | the PR's remaining threads |
-| `fold:<key>` | worker | a new branch | turns a SYSTEMIC finding into a test, lint, gate rule or doc line |
-| `close:<repo>#<n>` | `act` | nothing | resolves what the workers answered, once they are done |
-
-Edges: cluster -> fix on the same branch, fix or cluster -> close, and a chain between any two nodes that
-write one branch. Waves are Kahn layers from `jade_temple/devops/lifecycle.topo_layers` (imported). The
-plan asserts that no wave writes a branch twice, so the workers in one wave are disjoint. Bot branches
-(Dependabot, Renovate) and forks get no writer: a bot rebase would drop the commit.
-
-Each ready worker node gets a brief (`briefs/<node>.md`): its threads, branch heads and a contract. The
-worker stops on a moved head, deep-reads before fixing, replies `Fixed in <sha>.` or `Kept as is: <reason>`,
-never merges and never resolves. Queue states: `QUEUED`, `DISPATCHED` (back to `QUEUED` after 24 h with no
-receipt), `DONE`, `FAILED` (`BLOCKED` after three attempts), `OBSERVED_CLOSED` when its threads are gone.
-
-### Authority
-
-`act` writes only with `--apply`, at most `--max-actions` (default 25), and only for `ANSWERED`,
-`SUGGESTION_APPLIED` and `OUT_OF_SCOPE` unless `--include-medium` adds `FP_HISTORY`. Before each write it
-reads the PR again: closed, moved head or already-resolved thread means skip. Replies carry a
-`<!-- code-maroon:... -->` marker. Nothing in the pulse merges, approves or dismisses a review.
-
-The `/maroon` skill (`SKILL.md` here) runs the pulse by hand on every open PR, or from the 8-hourly
-scheduled task, and launches the workers.
+Historical candidate discovery can use the existing `ccr` reader. Proof-bound application uses
+official GitHub REST/GraphQL through `closure.GitHub`; connected-tool adapters must preserve the same
+evidence and checkpoint contract. The GitHub helpers come from `review_threads.py`.

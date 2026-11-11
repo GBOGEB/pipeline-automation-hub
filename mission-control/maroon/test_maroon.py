@@ -164,6 +164,34 @@ class Public(unittest.TestCase):
 
 
 class Diff(unittest.TestCase):
+    def test_unreadable_source_does_not_clear_previous_findings(self):
+        old = M.build(RAW)
+        raw = json.loads(json.dumps(RAW))
+        raw["repos"]["O/pub"]["sources"]["dependabot"] = {"coverage": "not_readable", "error": "denied"}
+        d = M.diff(old, M.build(raw))
+        self.assertEqual((d["alerts_left"], d["roots_cleared"], d["alerts_resolved"]), (0, 0, 0))
+        self.assertGreater(d["alerts_unobserved"], 0)
+        self.assertTrue(all(row["status"] == "UNKNOWN" for row in d["unobserved"]))
+
+    def test_missing_alert_is_unknown_even_when_the_source_was_read(self):
+        old = M.build(RAW)
+        raw = json.loads(json.dumps(RAW))
+        raw["repos"]["O/pub"]["sources"]["dependabot"]["alerts"] = []
+        d = M.diff(old, M.build(raw))
+        self.assertEqual((d["alerts_left"], d["roots_cleared"], d["alerts_resolved"]), (0, 0, 0))
+        self.assertGreater(d["alerts_unobserved"], 0)
+        self.assertEqual(d["unobserved"][0]["reason"], "observation_missing")
+
+    def test_dismissal_is_deferred_not_a_verified_root_closure(self):
+        old = M.build(RAW)
+        raw = json.loads(json.dumps(RAW))
+        for alert in raw["repos"]["O/pub"]["sources"]["dependabot"]["alerts"]:
+            if alert["state"] == "open":
+                alert["state"] = "dismissed"
+        d = M.diff(old, M.build(raw))
+        self.assertGreater(d["alerts_deferred"], 0)
+        self.assertEqual((d["alerts_resolved"], d["roots_cleared"]), (0, 0))
+
     def test_fixed_alerts_leave_and_new_ones_join(self):
         old = M.build(RAW)
         raw = json.loads(json.dumps(RAW))
