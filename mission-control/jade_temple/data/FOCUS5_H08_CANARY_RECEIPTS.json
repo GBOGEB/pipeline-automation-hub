@@ -1,4 +1,21 @@
 {
- "receipts": [],
+ "receipts": [
+  {
+   "attempt": {
+    "at": "2026-11-11T07:59:54Z",
+    "http_status": 405,
+    "message": "Repository rule violations found\n\n2 of 5 required status checks are failing.\n\n",
+    "response_sha256": "7fe69cbd79464bf44732e77489bdb653688663daa1726c39ad99b4ab9cb8c159"
+   },
+   "base_branch": "main",
+   "failing_check": "first-kernel",
+   "failing_check_run": "https://github.com/GBOGEB/gg_MATH/actions/runs/42874211243/job/130033087207",
+   "head_sha": "f08b40dad5b5ced9994f371d197f1ba200f8c3d4",
+   "pr_number": 107,
+   "proof_class": "GITHUB_REJECTED_RED_MERGE",
+   "repo": "GBOGEB/gg_MATH",
+   "ruleset_id": 25554283
+  }
+ ],
  "schema": "jade.focus5.h08_canary_receipts.v1"
 }
