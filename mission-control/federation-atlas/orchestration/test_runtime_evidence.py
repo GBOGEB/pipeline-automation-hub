@@ -101,6 +101,27 @@ class EvidenceBoundaryTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "sealed product"):
             self.check_products(profile, receipt, tasks)
 
+    def test_resealed_consumer_with_stale_producer_bytes_reaches_assembly_check(self):
+        # Re-sealing the assembler's own output defeats its seal check, so only the
+        # producer-to-consumer byte comparison can reject this handoff.
+        for mutation in ("stale", "unexpected"):
+            with self.subTest(mutation=mutation):
+                profile, receipt, tasks = self.products_fixture()
+                if mutation == "stale":
+                    self.write(self.run / "assemble", "superstitch/result.json",
+                               {"schema": "example/v1", "producer": "stale"})
+                else:
+                    self.write(self.run / "assemble", "unexpected.txt", b"not a declared producer member")
+                receipt["tasks"]["assemble"]["result"]["output_files_sha256"] = evidence.file_map(self.run / "assemble")
+                with self.assertRaisesRegex(ValueError, "assembly did not consume exact producer bytes"):
+                    self.check_products(profile, receipt, tasks)
+
+    def test_recorded_port_observation_must_match_current_bytes(self):
+        profile, receipt, tasks = self.products_fixture()
+        receipt["tasks"]["method"]["result"]["artifacts"][0]["sha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "recorded producer bytes changed: method"):
+            self.check_products(profile, receipt, tasks)
+
     def test_unexpected_assembly_member_is_rejected(self):
         profile, receipt, tasks = self.products_fixture()
         self.write(self.run / "assemble", "unexpected.txt", b"not a declared producer member")

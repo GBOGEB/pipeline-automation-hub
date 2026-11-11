@@ -29,6 +29,12 @@ Replay does not execute any task. JSON inspection exposes source identity,
 dependency evidence, output hashes, bounds and qualifications. Arbitrary handler
 payloads and raw exception messages remain outside this shareable projection.
 
+A tree that is dirty at execution or at inspection qualifies only as
+`LOCAL_DIRTY_SOURCE_NOT_COMMIT_BOUND`: the verified bytes are not the bytes of
+`source_sha`. Ignored files stay outside the source fingerprint. The Method
+Atlas CI job asserts a clean, commit-bound
+`LOCAL_EXECUTION_AND_CURRENT_BYTES_VERIFIED` result on the exact checkout.
+
 The existing Method Atlas CI job also runs `runtime_evidence_browser_qa.py`
 against that generated HTML. It checks source identity, desktop/mobile layout,
 Replay, Reset and the exact terminal slider position with its existing pinned

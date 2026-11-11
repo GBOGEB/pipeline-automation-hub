@@ -263,9 +263,10 @@ def verify(out:Path,sha:str):
     if (manifest.get('group_source_sha256')!=digest((out/'groups.json').read_bytes()) or
             graph.get('group_contract')!=declared or graph.get('groups')!=declared['groups']):
         raise ValueError('GROUP_SOURCE_OR_IDENTITY_MISMATCH')
-    if (graph.get('mermaid',{}).get('dag') != (out/'superstitch.mmd').read_text() or
-            graph.get('mermaid',{}).get('sipoc') != (out/'sipoc-lanes.mmd').read_text() or
-            graph.get('mermaid',{}).get('triggers') != (out/'trigger-dag.mmd').read_text()):
+    # Members are written as UTF-8 bytes; decode them as such, not with the locale codec.
+    if (graph.get('mermaid',{}).get('dag') != (out/'superstitch.mmd').read_bytes().decode('utf-8') or
+            graph.get('mermaid',{}).get('sipoc') != (out/'sipoc-lanes.mmd').read_bytes().decode('utf-8') or
+            graph.get('mermaid',{}).get('triggers') != (out/'trigger-dag.mmd').read_bytes().decode('utf-8')):
         raise ValueError('MERMAID_MACHINE_PARITY_FAIL')
     if graph['publication']['presentation_head']!=sha or graph['publication']['native_current_attestation'] is not None:
         raise ValueError('FAKE_NATIVE_STATUS')

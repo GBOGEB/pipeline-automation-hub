@@ -902,6 +902,19 @@ class LocalReceiptBoundaryTests(FixtureCase):
                 with self.assertRaisesRegex(ValueError, "concurrency below observed"):
                     atlas.validate_local_receipt(forged, model)
 
+    def test_zero_length_tasks_inside_open_intervals_raise_the_overlap_bound(self):
+        peak = atlas.observed_execution_peak
+        self.assertEqual(peak([]), 0)
+        self.assertEqual(peak([(1.0, 1.0)]), 1)
+        # Equal instants on a coarse clock may be sequential: not provably overlapping.
+        self.assertEqual(peak([(1.0, 1.0), (1.0, 1.0)]), 1)
+        self.assertEqual(peak([(0.0, 1.0), (1.0, 2.0)]), 1)
+        self.assertEqual(peak([(0.0, 1.0), (0.0, 1.0)]), 2)
+        # A tick-length task strictly inside another's open interval did overlap it.
+        self.assertEqual(peak([(0.0, 2.0), (1.0, 1.0)]), 2)
+        self.assertEqual(peak([(0.0, 3.0), (0.5, 2.5), (1.0, 1.0)]), 3)
+        self.assertEqual(peak([(0.0, 2.0), (0.0, 0.0), (2.0, 2.0)]), 1)
+
 
 class PortableGraphArtifactTests(FixtureCase):
     def assert_portable_stem(self, stem):

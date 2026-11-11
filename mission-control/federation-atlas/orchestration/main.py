@@ -94,7 +94,9 @@ def read_json(root, name):
 
 
 def git(root, *args):
-    result = subprocess.run(["git", "-C", str(root), *args], capture_output=True, text=True, check=False)
+    # Git emits UTF-8 blobs; the Windows locale codec would corrupt non-ASCII source.
+    result = subprocess.run(["git", "-C", str(root), *args], capture_output=True, text=True,
+                            encoding="utf-8", check=False)
     return result.stdout.strip() if result.returncode == 0 else None
 
 
@@ -489,7 +491,7 @@ def graphs(root, profile, inv):
         "mission-control/federation-atlas/orchestration/broker.py",
         interpretation="Deferred tasks are reconsidered on subsequent scheduler passes after slots release. This static DAG unrolls that control loop and does not imply remote dispatch."))
     import yaml
-    fed = yaml.safe_load(safe_path(root, profile["sources"]["federation"]).read_text())
+    fed = yaml.safe_load(safe_path(root, profile["sources"]["federation"]).read_text(encoding="utf-8"))
     result.append(graph_record("federation", "Canonical federation · owners and evidence", "FEDERATION",
         fed["nodes"], [{**e, "kind": e["type"].upper()} for e in fed["edges"]], profile["sources"]["federation"]))
     beams = read_json(root, profile["sources"]["beams"])
@@ -806,6 +808,27 @@ def source_model(root, head, snapshot=None):
     return model
 
 
+def observed_execution_peak(intervals):
+    """Lower bound on simultaneous execution implied by (start, finish) pairs.
+
+    End sorts before start at ties, so adjacent tasks do not overlap. Any
+    executed task needed one slot. Coarse clocks (about 15.6 ms on Windows)
+    record short tasks as zero-length: equal instants stay ambiguous, but a
+    zero-length task strictly inside another task's open interval did overlap
+    it. The broker's own counter can include short postterminal cleanup, so
+    its reported peak may exceed this bound.
+    """
+    active, peak = 0, int(bool(intervals))
+    for _, delta in sorted((point, delta) for start, finish in intervals if start < finish
+                           for point, delta in ((start, 1), (finish, -1))):
+        active += delta
+        peak = max(peak, active)
+    for instant, finish in intervals:
+        if instant == finish:
+            peak = max(peak, 1 + sum(start < instant < end for start, end in intervals))
+    return peak
+
+
 def validate_local_timeline(receipt, task_defs):
     """Reject a plausible-looking terminal summary without a causal local trace."""
     elapsed = receipt["metrics"]["elapsed_seconds"]
@@ -952,17 +975,8 @@ def validate_local_receipt(receipt, model):
            and metrics["peak_ready"] <= bounds["max_pending"], "local receipt queue bound mismatch")
     validate_local_timeline(receipt, task_defs)
     executed = [row for row in receipt["tasks"].values() if row.get("started_at_seconds") is not None]
-    boundaries = [(row[field], delta) for row in executed
-                  if row["started_at_seconds"] < row["finished_at_seconds"]
-                  for field, delta in (("started_at_seconds", 1), ("finished_at_seconds", -1))]
-    active, observed_peak = 0, int(bool(executed))
-    # End before start at ties: adjacent verified tasks do not overlap. Even a
-    # recorded zero-duration task needed one slot. The broker's active counter
-    # can include short postterminal cleanup, so its peak may exceed this bound.
-    for _, delta in sorted(boundaries):
-        active += delta
-        observed_peak = max(observed_peak, active)
-    demand(observed_peak <= metrics["max_running"] <= bounds["workers"],
+    intervals = [(row["started_at_seconds"], row["finished_at_seconds"]) for row in executed]
+    demand(observed_execution_peak(intervals) <= metrics["max_running"] <= bounds["workers"],
            "local concurrency below observed execution or beyond worker bound")
     return receipt
 
@@ -995,7 +1009,7 @@ def verify_bundle(out, head=None, *, require_clean=False, source_root=None):
     if "coverage" in model:
         demand({"metric_observations.json", "coverage_burndown.jsonl"} <= members.keys(), "coverage outputs missing")
         demand(read_json(out, "metric_observations.json") == model["coverage"], "coverage model mismatch")
-        ledger = [json.loads(line) for line in safe_path(out, "coverage_burndown.jsonl").read_text().splitlines() if line]
+        ledger = [json.loads(line) for line in safe_path(out, "coverage_burndown.jsonl").read_text(encoding="utf-8").splitlines() if line]
         demand(ledger == model["coverage"]["ledger_records"], "coverage ledger mismatch")
     if model.get("broker", {}).get("local_receipt") is not None:
         receipt = validate_local_receipt(model["broker"]["local_receipt"], model)
@@ -1166,9 +1180,9 @@ def main(argv=None):
                 result["bundle"] = "VERIFIED"
         else:
             demand(args.out is not None, "--out required")
-            snapshot = json.loads(args.snapshot.read_text()) if args.snapshot else None
+            snapshot = json.loads(args.snapshot.read_text(encoding="utf-8")) if args.snapshot else None
             if args.command == "build":
-                local_receipt = json.loads(args.local_receipt.read_text()) if args.local_receipt else None
+                local_receipt = json.loads(args.local_receipt.read_text(encoding="utf-8")) if args.local_receipt else None
                 result = build(args.root, args.out, head, snapshot, local_receipt)
             elif args.command == "plan":
                 runtime_root(args.root)

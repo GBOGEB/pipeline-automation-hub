@@ -177,7 +177,11 @@ def qualify(root, run_dir):
               "source_dirty_reported_at_execution": receipt.get("source_dirty"),
               "receipt_sha256": digest(receipt_path.read_bytes()), "started_at": receipt["started_at"],
               "scope": "REGISTERED_LOCAL_GENERATOR_GRAPH", "instrument": "EXISTING_BROKER_AND_ARTIFACT_CONTRACTS",
-              "qualification": ("LOCAL_EXECUTION_AND_CURRENT_BYTES_VERIFIED" if receipt["success"]
+              # A dirty tree at execution or inspection means the verified bytes are
+              # not the bytes of source_sha; never present that as commit-bound.
+              "qualification": ("LOCAL_DIRTY_SOURCE_NOT_COMMIT_BOUND"
+                                if receipt["source_dirty"] or current_status
+                                else "LOCAL_EXECUTION_AND_CURRENT_BYTES_VERIFIED" if receipt["success"]
                                 else "LOCAL_FAILED_EXECUTION_RECORD_VERIFIED"),
               "outcome": receipt["outcome"], "success": receipt["success"],
               "counts": {"registered_tasks": len(rows),

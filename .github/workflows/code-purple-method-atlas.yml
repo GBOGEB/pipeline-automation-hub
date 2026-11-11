@@ -606,6 +606,12 @@ jobs:
           python "$SRC/runtime_evidence.py" --root . \
             --run-dir "$RUNNER_TEMP/atlas-runtime-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
             --out /tmp/code-purple-atlas/runtime-evidence
+          python - <<'PY'
+          import json
+          report = json.load(open("/tmp/code-purple-atlas/runtime-evidence/runtime-evidence.json", encoding="utf-8"))
+          assert report["qualification"] == "LOCAL_EXECUTION_AND_CURRENT_BYTES_VERIFIED", report["qualification"]
+          assert report["source_dirty"] is False and report["source_dirty_reported_at_execution"] is False
+          PY
           python "$SRC/runtime_evidence_browser_qa.py" \
             --html /tmp/code-purple-atlas/runtime-evidence/runtime-evidence.html \
             --head "$EXACT_SHA" --out /tmp/code-purple-atlas/runtime-evidence/browser
