@@ -1,6 +1,7 @@
 """Regression tests for the real side-effect boundary and interrupted closure."""
 import copy
 import importlib.util
+import json
 from pathlib import Path
 import unittest
 
@@ -159,6 +160,77 @@ class Closure(unittest.TestCase):
                       "PROBE - DO NOT MERGE - close after reading", "negative-canary", "testflight red"):
             self.assertTrue(C.is_negative_canary(title, ""))
         self.assertFalse(C.is_negative_canary("formatting lane", "Do not merge unless green."))
+
+
+class NativeAuthorIdentity(unittest.TestCase):
+    """REST intake and GraphQL readback must hash the same actual scanner author."""
+
+    def native_read(self, *, login="github-advanced-security", actor_type="Bot", body="Check the source.",
+                    rest_login="github-advanced-security[bot]"):
+        proof, _ = fixture()
+        pr = {"number": 7, "state": "open", "title": "Fix the source", "body": "Review this repair.",
+              "head": {"sha": proof["head_sha"]}, "base": {"sha": proof["base_sha"]}}
+        rest_comment = {"id": 1, "body": "Check the source.", "user": {"login": rest_login},
+                        "created_at": "2026-11-11T00:00:00Z", "updated_at": "2026-11-11T00:00:00Z",
+                        "original_commit_id": proof["head_sha"]}
+        intake = C.RT.threads_of(pr, [rest_comment], [], set())[0]
+        proof["discussion_hash"] = intake["discussion_hash"]
+        query_calls = []
+
+        def gh(args):
+            route = args[1]
+            if route == "user":
+                result = {"login": "worker"}
+            elif route == "repos/O/r/pulls/7":
+                result = pr
+            elif route.startswith("repos/O/r/contents/src/a.py?"):
+                result = {"type": "file", "sha": proof["blob_oids"]["src/a.py"]}
+            elif route == "graphql":
+                query_calls.append(args)
+                result = {"data": {"node": {"id": "T1", "isResolved": False, "viewerCanResolve": True,
+                    "pullRequest": {"number": 7, "repository": {"nameWithOwner": "O/r"}},
+                    "comments": {"pageInfo": {"hasNextPage": False, "endCursor": None}, "nodes": [{
+                        "databaseId": 1, "body": body, "author": {"login": login, "__typename": actor_type},
+                        "createdAt": rest_comment["created_at"], "updatedAt": rest_comment["updated_at"],
+                        "originalCommit": {"oid": proof["head_sha"]}, "commit": {"oid": proof["head_sha"]},
+                        "url": "https://github.com/O/r/pull/7#discussion_r1"}]}}}}
+            else:
+                self.fail("unexpected native read route: " + route)
+            return 0, json.dumps(result), ""
+
+        live = C.GitHub(gh=gh).read(proof)
+        self.assertIn("author{__typename login}", next(arg for arg in query_calls[0] if arg.startswith("query=")))
+        return proof, live
+
+    def test_known_graphql_bot_matches_existing_rest_ledger_hash(self):
+        proof, live = self.native_read()
+        self.assertEqual(live["comments"][0]["author"], "github-advanced-security[bot]")
+        self.assertTrue(C.validate(proof, live))
+
+    def test_suffix_is_not_added_twice(self):
+        proof, live = self.native_read(login="github-advanced-security[bot]")
+        self.assertTrue(C.validate(proof, live))
+
+    def test_other_provider_typed_bots_use_the_same_rest_identity_rule(self):
+        for login in ("chatgpt-codex-connector", "sonarcloud", "review-agent"):
+            with self.subTest(login=login):
+                proof, live = self.native_read(login=login, rest_login=login + "[bot]")
+                self.assertTrue(C.validate(proof, live))
+
+    def test_same_login_on_a_user_or_unknown_actor_does_not_impersonate_bot(self):
+        for actor_type in ("User", None):
+            with self.subTest(actor_type=actor_type):
+                proof, live = self.native_read(actor_type=actor_type)
+                self.assertEqual(live["comments"][0]["author"], "github-advanced-security")
+                with self.assertRaisesRegex(C.Hold, "discussion changed"):
+                    C.validate(proof, live)
+
+    def test_actual_author_or_body_changes_still_invalidate_proof(self):
+        for change in ({"login": "another-security-app"}, {"body": "The finding has changed."}):
+            with self.subTest(change=change):
+                proof, live = self.native_read(**change)
+                with self.assertRaisesRegex(C.Hold, "discussion changed"):
+                    C.validate(proof, live)
 
 
 if __name__ == "__main__":

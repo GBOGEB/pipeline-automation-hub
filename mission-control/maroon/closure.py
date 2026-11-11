@@ -40,6 +40,20 @@ def discussion_hash(comments):
     return digest(sorted(comments, key=lambda c: (c.get("created_at") or "", c["id"])))
 
 
+def rest_author_login(actor):
+    """Preserve the REST intake identity for a positively typed GraphQL Bot.
+
+    GraphQL Bot logins omit the REST bot suffix. Do not strip suffixes, infer bot identity from
+    an account name, or rewrite User/unknown actors:
+    their exact identity remains part of the discussion hash and any change must fail validation.
+    """
+    actor = actor or {}
+    login = actor.get("login")
+    if actor.get("__typename") == "Bot" and isinstance(login, str) and login and not login.endswith("[bot]"):
+        return login + "[bot]"
+    return login
+
+
 def is_negative_canary(title, body):
     """Reuse the intake owner's conservative intent classifier."""
     return RT.is_negative_canary(title, body)
@@ -232,7 +246,7 @@ class GitHub:
         query = '''query($id:ID!,$after:String){node(id:$id){... on PullRequestReviewThread{
           id isResolved viewerCanResolve pullRequest{number repository{nameWithOwner}}
           comments(first:100,after:$after){nodes{databaseId body createdAt updatedAt url
-            author{login} originalCommit{oid} commit{oid}}
+            author{__typename login} originalCommit{oid} commit{oid}}
             pageInfo{hasNextPage endCursor}}}}}'''
         for _ in range(100):
             thread = self.graphql(query, id=proof["thread_id"], after=cursor).get("node")
@@ -243,7 +257,7 @@ class GitHub:
                 raise Hold("thread belongs to another PR")
             for c in thread["comments"]["nodes"]:
                 comments.append({"id": c["databaseId"], "body": c.get("body") or "",
-                                 "author": (c.get("author") or {}).get("login"),
+                                 "author": rest_author_login(c.get("author")),
                                  "created_at": c.get("createdAt"), "updated_at": c.get("updatedAt"),
                                  "commit_id": (c.get("commit") or c.get("originalCommit") or {}).get("oid")})
             page = thread["comments"]["pageInfo"]
