@@ -71,6 +71,58 @@ To make an issue measurable, write it like this:
 Blocked by #MMM
 ```
 
+## Criterion history and original obligations
+
+Issue [#1180](https://github.com/GBOGEB/pipeline-automation-hub/issues/1180)
+repairs a specific provenance gap in the existing owner: replacing one open TODO
+with another could leave `done/total` unchanged and disappear from the delta.
+The numeric fields remain compatible, while `delta.json.criterion_evolution`
+records changes to the criteria themselves.
+
+`triway_burndown.checklist()` computes `criterion_sha256` from the complete
+criterion before the 300-character parser and 200-character ranking display
+limits. Wrapped continuation text participates in the identity. Checkbox state,
+section and list position are separate from the digest. An enclosing full
+strikethrough marks withdrawal; the same underlying criterion can therefore be
+followed from open to withdrawn and restored. Interior whitespace and case are
+retained, so this is a content identity, not an assertion of semantic equivalence.
+
+`parse_checklist()` carries a compact `criteria` inventory into the actual
+`rank()` output. It includes live, withdrawn and untracked criteria, with their
+section and state. Display text is not added to the persisted inventory.
+
+| Observed change | Criterion delta | Interpretation |
+|---|---|---|
+| Open A replaced by open B at the same total | `REMOVED` A and `ADDED` B | Original observed commitment changed; net scope can still be zero. |
+| Open criterion checked | `TICKED_SELF_REPORTED` | The issue author reports completion; independent DoV is still separate. |
+| Checked criterion unchecked | `REOPENED_SELF_REPORTED` | The observed commitment is open again. |
+| Criterion withdrawn or restored | `WITHDRAWN` / `RESTORED` | Withdrawal is not completion. |
+| Same text moved between DoD/DoV/Steps | `SECTION_CHANGED` | The section changed without inventing a new text identity. |
+| Criterion gains or loses checkbox tracking | `TRACKING_CHANGED` | Tracking format changed; no completion is inferred. |
+| Identical duplicate text changes state/count | `DUPLICATE_MULTISET_CHANGED` | Before/after section-state counts are retained; individual occurrences are indistinguishable. |
+| Pure list reorder | No criterion change | Position is not criterion identity. |
+
+The comparison reports `FIRST_OBSERVED` for a newly seen item and
+`UNKNOWN_LEGACY_BASELINE` when the earlier model lacks full identities. A missing
+or inconsistent current inventory is `UNKNOWN_CURRENT_IDENTITY`. No comparison
+reconstructs full identities from old truncated text. Privacy-scope changes also
+withhold comparison rather than exposing a former private criterion digest.
+
+The evidence basis is `OBSERVED_SNAPSHOTS_ONLY`; `issue_origin` remains
+`UNKNOWN_NOT_CAPTURED`. A first-observed body is not proven to be the original
+issue-creation body. To claim original intent, retain its actual source revision
+or creation/history receipt alongside later additions. Content edits are
+reported as remove/add; only an explicit source-backed mapping may establish a
+renamed or superseded obligation.
+
+These changes do not alter the existing oldest/newest/connected pressure model,
+grant closure credit, or automate issue closure. A finite issue still needs its
+original scope, added obligations with provenance, explicit DoD/DoV, and an
+accepted completion or successor mapping. For #1180 the exit is the bounded
+CL01–CL09 checklist: source repair, adversarial and native exact-head proof,
+independent admission, then one regression replay on the admitted merged source.
+Parent Issue Expedition #308 and its consumers #324/#358 retain their own scope.
+
 ## Edges
 
 References come from issue and PR bodies, the last five comments, PR closing
