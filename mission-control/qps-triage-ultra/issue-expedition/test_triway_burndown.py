@@ -161,4 +161,66 @@ class ParserN2(unittest.TestCase):
   self.assertEqual(c["DoD"]["progress"]["total"],1)
   self.assertEqual(c["DoD"]["untracked"],0)
   self.assertIn("native test",c["DoD"]["items"][0]["text"])
+class CriterionIdentity(unittest.TestCase):
+    def item(self, body, section="DoD", field="items"):
+        return m.checklist(body)[section][field][0]
+
+    def test_full_text_after_display_limit_changes_identity(self):
+        prefix = "required behavior " * 30
+        a = self.item("## DoD\n- [ ] " + prefix + "original")
+        b = self.item("## DoD\n- [ ] " + prefix + "replacement")
+        self.assertEqual(a["text"], b["text"])
+        self.assertNotEqual(a["criterion_sha256"], b["criterion_sha256"])
+        self.assertNotIn("_criterion_text", a)
+
+    def test_continuation_after_limit_is_hashed_with_and_without_heading(self):
+        prefix = "Required behavior " * 30
+        for heading, section in (("## DoD\n", "DoD"), ("", "OTHER")):
+            with self.subTest(section=section):
+                a = self.item(heading + "- [ ] " + prefix + "\n  original tail", section)
+                b = self.item(heading + "- [ ] " + prefix + "\n  replacement tail", section)
+                self.assertEqual(a["text"], b["text"])
+                self.assertNotEqual(a["criterion_sha256"], b["criterion_sha256"])
+
+    def test_checkbox_and_withdrawal_state_do_not_change_identity(self):
+        rows = [self.item("## DoD\n" + line) for line in
+                ("- [ ] preserve obligation", "- [x] preserve obligation",
+                 "- [-] preserve obligation", "- [~] preserve obligation",
+                 "- [ ] ~~preserve obligation~~")]
+        self.assertEqual(len({r["criterion_sha256"] for r in rows}), 1)
+        self.assertTrue(all(r["withdrawn"] for r in rows[2:]))
+
+    def test_position_section_and_duplicate_multiplicity_are_separate(self):
+        a = m.checklist("## DoD\n- [ ] a\n- [x] b\n- [ ] a")["DoD"]["items"]
+        b = m.checklist("## DoV\n- [ ] a\n- [ ] a\n- [x] b")["DoV"]["items"]
+        self.assertEqual(sorted(r["criterion_sha256"] for r in a),
+                         sorted(r["criterion_sha256"] for r in b))
+        self.assertEqual(a[0]["criterion_sha256"], a[2]["criterion_sha256"])
+        self.assertEqual(len(a), 3)
+
+    def test_untracked_prose_and_bullet_tails_are_hashed(self):
+        prefix = "Required condition " * 30
+        for source in (prefix + "\n", "- " + prefix + "\n  "):
+            a = self.item("## DoD\n" + source + "original", field="declared")
+            b = self.item("## DoD\n" + source + "replacement", field="declared")
+            self.assertEqual(a["text"], b["text"])
+            self.assertNotEqual(a["criterion_sha256"], b["criterion_sha256"])
+
+    def test_significant_whitespace_and_case_are_not_normalized_away(self):
+        rows = [self.item("## DoD\n- [ ] " + s) for s in ("Code A", "Code  A", "Code a")]
+        self.assertEqual(len({r["criterion_sha256"] for r in rows}), 3)
+
+    def test_quoted_and_unquoted_wrapped_text_have_same_identity(self):
+        a = self.item("## DoD\n- [ ] implement behavior\n  with proof")
+        b = self.item("## DoD\n> - [ ] implement behavior\n>   with proof")
+        self.assertEqual(a["criterion_sha256"], b["criterion_sha256"])
+
+    def test_full_strike_is_decided_after_wrapped_text_is_assembled(self):
+        a = self.item("## DoD\n- [ ] preserve\n  original obligation")
+        b = self.item("## DoD\n- [ ] ~~preserve\n  original obligation~~")
+        self.assertEqual(a["criterion_sha256"], b["criterion_sha256"])
+        self.assertTrue(b["withdrawn"])
+        partial = self.item("## DoD\n- [ ] ~~preserve~~\n  but still verify")
+        self.assertFalse(partial.get("withdrawn", False))
+
 if __name__=="__main__":unittest.main()
