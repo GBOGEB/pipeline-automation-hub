@@ -1,0 +1,19 @@
+{
+  "_comment": "POST /repos/GBOGEB/pipeline-automation-hub/rulesets. Soft tier: only the checks the owner accepts being red in an emergency. The Repository-admin role (actor_id 5) may bypass THIS ruleset only, and only while merging a pull request (bypass_mode pull_request), never by direct push. Verify actor_id/actor_type on readback. Strip this _comment key before sending.",
+  "name": "P-SOFT first-pass gate (owner bypass on pull request)",
+  "target": "branch",
+  "enforcement": "active",
+  "conditions": {"ref_name": {"include": ["~DEFAULT_BRANCH"], "exclude": []}},
+  "bypass_actors": [
+    {"actor_id": 5, "actor_type": "RepositoryRole", "bypass_mode": "pull_request"}
+  ],
+  "rules": [
+    {"type": "required_status_checks", "parameters": {
+      "strict_required_status_checks_policy": false,
+      "do_not_enforce_on_create": false,
+      "required_status_checks": [
+        {"context": "First-Pass Closure Gate / first-pass-closure", "integration_id": 15368}
+      ]
+    }}
+  ]
+}
