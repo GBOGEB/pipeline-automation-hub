@@ -155,6 +155,27 @@ class ArtifactBoundaryTests(FixtureCase):
             with self.subTest(name=name), self.assertRaises(ValueError):
                 atlas.safe_path(self.root, name)
 
+    def test_safe_names_matches_safe_path_verdict(self):
+        """The batched absent-tree shortcut must accept and reject exactly as safe_path."""
+        self.write("present/file.py", "x = 1\n")
+        bad = ["../outside.json", "nested/../../outside.json", "/tmp/outside.json", "nested\\outside.json", ""]
+        good = ["present/file.py", "present/absent.py", "absent/deeper/file.py", "absent/other.py", "top.py"]
+        for name in bad:
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                atlas.safe_names(self.root, [name])
+        atlas.safe_names(self.root, good)
+        for name in good:
+            atlas.safe_path(self.root, name)
+        with tempfile.TemporaryDirectory() as outside:
+            try:
+                (self.root / "escape").symlink_to(outside, target_is_directory=True)
+            except OSError as exc:
+                self.skipTest("symlinks unavailable: " + str(exc))
+            for check in (lambda: atlas.safe_path(self.root, "escape/x.py"),
+                          lambda: atlas.safe_names(self.root, ["absent/x.py", "escape/x.py"])):
+                with self.assertRaisesRegex(ValueError, "escapes root"):
+                    check()
+
     def test_symlink_escape_cannot_supply_an_artifact(self):
         with tempfile.TemporaryDirectory() as outside:
             target = Path(outside) / "input.json"
@@ -1073,6 +1094,36 @@ class MultilanguageInventoryTests(FixtureCase):
         self.assertEqual(rows["tests/worker.test.js"]["role"], "TEST_SUPPORT")
         self.assertEqual(rows["config/data.json"]["role"], "CONFIG_OR_DATA")
         self.assertTrue(all(row["runtime_reachability"] == "UNKNOWN" for row in rows.values()))
+
+    def test_reference_targets_match_unconditional_resolve(self):
+        """The absent-path lstat shortcut must not change any resolved target."""
+        self.write("lib/util.py", "x = 1\n")
+        self.write("lib/sibling.py", "y = 2\n")
+        self.write("app/main.py", "\n".join([
+            "# lib/util.py ./sibling.py ../lib/sibling.py missing/none.py ./absent.py",
+            "# lib/../lib/util.py nowhere/../lib/util.py LIB/UTIL.py linked/util.py"]) + "\n")
+        self.write("app/sibling.py", "z = 3\n")
+        try:
+            (self.root / "linked").symlink_to(self.root / "lib", target_is_directory=True)
+        except OSError:
+            pass
+        names = sorted(p.relative_to(self.root).as_posix() for p in self.root.rglob("*")
+                       if p.is_file() and not p.is_symlink() and "linked" not in p.relative_to(self.root).parts)
+        rows = {row["path"]: row for row in atlas.source_assets(self.root, names)}
+        candidates = {n for n in names if Path(n).suffix in atlas.SOURCE_LANGUAGES}
+        for ref in rows["app/main.py"]["references"]:
+            expected = set()
+            for parent in (self.root, self.root / "app"):
+                resolved = (parent / ref["literal"]).resolve()
+                if resolved.is_relative_to(self.root):
+                    relative = resolved.relative_to(self.root).as_posix()
+                    if relative in candidates and relative != "app/main.py":
+                        expected.add(relative)
+            with self.subTest(literal=ref["literal"]):
+                self.assertEqual(ref["targets"], sorted(expected))
+        by_literal = {ref["literal"]: ref["targets"] for ref in rows["app/main.py"]["references"]}
+        self.assertEqual(by_literal["missing/none.py"], [])
+        self.assertEqual(by_literal["nowhere/../lib/util.py"], ["lib/util.py"])
 
     def test_package_composite_and_workflow_descriptors_remain_declarations(self):
         self.write("package.json", {"scripts": {"build": "node src/build.mjs", "test": "node --test"}})

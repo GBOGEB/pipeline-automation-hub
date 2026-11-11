@@ -154,8 +154,7 @@ def qualify(root, run_dir):
     current_status = atlas.git(root, "status", "--porcelain")
     demand(current_status is not None, "current source cleanliness unavailable")
     profile = atlas.read_json(root, atlas.PROFILE)
-    source_hashes = {path: atlas.digest(atlas.safe_path(root, path).read_bytes())
-                     for path in atlas.source_snapshot_paths(root, profile)}
+    source_hashes = atlas.source_census(root, profile)
     broker = atlas.module("runtime_evidence_broker", HERE / "broker.py")
     policy = atlas.read_json(root, "mission-control/federation-atlas/orchestration/BROKER_POLICY_v1.json")
     planned = broker.plan(atlas.tasks(profile), policy=policy)
