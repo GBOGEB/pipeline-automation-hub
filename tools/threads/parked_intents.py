@@ -53,7 +53,20 @@ def _ticks(values) -> str:
     return ", ".join("`" + v + "`" for v in values)
 
 
+def canonical_refs(refs, home: str) -> list[str]:
+    """Refs as ``#N`` (same repo) or ``repo#N`` strings, so int and bare forms render and re-parse."""
+    out = []
+    for r in refs or []:
+        repo, n = c.split_ref(r, home)
+        out.append(f"#{n}" if repo == home else f"{repo}#{n}")
+    return out
+
+
 def body(item: dict, spec_map: str, date: str) -> str:
+    wake = dict(item["wake"])
+    if "refs" in wake:
+        wake["refs"] = canonical_refs(wake["refs"], item["repo"])
+    item = {**item, "wake": wake}
     meta = {"id": item["id"], "sessions": [s[1] for s in item["sessions"]], "wake": item["wake"]}
     sessions = "\n".join("- " + t + ": `" + sid + "` (claude://claude.ai/epitaxy/" + sid + ")"
                          for t, sid in item["sessions"])

@@ -102,6 +102,14 @@ class WakeMatch(unittest.TestCase):
                           {"id": "U2", "repo": "hub", "wake": {"refs": ["see 12"]}}]}
         self.assertEqual(parked_intents.bad_refs(spec), ["U2: 'see 12'"])
 
+    def test_int_and_bare_refs_render_canonically(self):
+        item = {"id": "U9", "repo": "hub", "title": "t", "intent": "i", "done_when": "d",
+                "sessions": [["s", "local_x"]], "wake": {"refs": [1135, "1171", "#5", "CODEX#7", "hub#8"]}}
+        text = parked_intents.body(item, "map.md", "2026-11-11")
+        self.assertIn("- references: #1135, #1171, #5, CODEX#7, #8", text)
+        self.assertIn('"refs":["#1135","#1171","#5","CODEX#7","#8"]', text)
+        self.assertEqual(item["wake"]["refs"][0], 1135)
+
     def test_unread_repos_are_reported(self):
         lines = wake_check.report([self.item], [{**self.item, "hits": [], "strong": 0}], ["CODEX: boom"], "s", "n")
         self.assertIn("- CODEX: boom", lines)
