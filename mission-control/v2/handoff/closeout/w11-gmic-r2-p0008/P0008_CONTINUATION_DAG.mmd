@@ -1,0 +1,20 @@
+flowchart TD
+  R["Read CP.CLOSE intake and 46-row source projection"] --> C["Canonical CP.CLOSE schema + 9-member SHA/CRC proof"]
+  C --> V{"Exact-head independent source and rules recensus"}
+  V --> S["CODEX #1282 merged: verify admission history separately"]
+  V --> A["A GEMINI #44 W1/W2 P2/P3 owner decision"]
+  V --> B["B Hub W0, #1138/#1152/#1160 review + FPC"]
+  V --> G["C Hub B29 and GEMINI B37 effective protections"]
+  V --> D["D GEMINI IC3 hosted WIF + Viewer ACL"]
+  V --> F["F Hub #1179 / #1175 admission after renderer QA"]
+  V --> E["E ISO #1164 single-route review"]
+  A --> W{"W4 owner AND-join"}
+  B --> W
+  G --> W
+  D --> W
+  F --> W
+  W --> P["Post-merge W4 negative canary + exact-main readback"]
+  S --> X["SEM consumers shadow only; 4 comparable pulses"]
+  X --> Y["Owner WARN, later ERROR/GATE conditionally"]
+  E --> I["Separate ISO integration decision"]
+  R --> T["B44 Windows read-only worktree inventory"]

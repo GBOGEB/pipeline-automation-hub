@@ -177,3 +177,79 @@ jobs:
             ${{ runner.temp }}/CP-M3-FED-QA-20261017.zip
           if-no-files-found: error
           retention-days: 21
+
+  gmic-p0008-closeout:
+    name: P0008 CP.CLOSE canonical nine-member replay and B46 continuity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout exact PR head (read only)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Setup Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - name: Existing generator, source+BD negative tests and byte replay
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          C=mission-control/v2/handoff/closeout
+          N=CP-GMIC-R2-P0008-20261111
+          BD=mission-control/federation-atlas/CODE_PURPLE_BD_QUEUE_v1.json
+          OUT="$RUNNER_TEMP/gmic-p0008-nine-record"
+          ZIP="$RUNNER_TEMP/$N.zip"
+          python -m unittest discover -s "$C" -p 'test_cp_gmic_p0008.py' -v
+          python "$C/cp_close.py" --intake "$C/intakes/$N.json" --bd "$BD" --out "$OUT" --zip "$ZIP"
+          python "$C/cp_close.py" --intake "$C/intakes/$N.json" --bd "$BD" --out "$OUT" --check
+          if test -f "$C/records/$N/MANIFEST.json"; then
+            python "$C/cp_close.py" --intake "$C/intakes/$N.json" --bd "$BD" --out "$C/records/$N" --check
+            echo CP_GMIC_P0008_COMMITTED_BYTE_PARITY=PASS
+          else
+            echo CP_GMIC_P0008_COMMITTED_BYTE_PARITY=PENDING_GENERATED_RECORD_NOT_COMMITTED
+          fi
+          python - <<'PY'
+          import hashlib, json, os, zipfile
+          from pathlib import Path
+          base=Path('mission-control/v2/handoff/closeout')
+          root=Path(os.environ['RUNNER_TEMP'])/'gmic-p0008-nine-record'
+          snap=json.loads((base/'w11-gmic-r2-p0008/BD_B01_B46_READONLY.json').read_text())
+          state=json.loads((root/'STATE.json').read_text())
+          stats=json.loads((root/'CHAT_STATS.json').read_text())
+          bd=json.loads((root/'BD_QUEUE_READONLY.json').read_text())
+          manifest=json.loads((root/'MANIFEST.json').read_text())
+          ids=[r['id'] for r in snap['items']]
+          assert ids==[f'B{i:02d}' for i in range(1,47)]
+          assert (snap['counts']['total'],snap['counts']['done'],snap['counts']['open'])==(46,22,24)
+          assert len(manifest['member_sha256'])==8
+          assert all(hashlib.sha256((root/n).read_bytes()).hexdigest()==h for n,h in manifest['member_sha256'].items())
+          assert state['intent_count_reconstructed']==8 and state['action_count_reconstructed']==19
+          assert stats['full_chat_total_prompts'] is None and state['full_chat_prompt_count'] is None
+          assert bd['new_canonical_bd_items']==0 and not bd['focus']
+          assert not manifest['verbatim_transcript_claim'] and not manifest['authority_transfer']
+          path=Path(os.environ['RUNNER_TEMP'])/'CP-GMIC-R2-P0008-20261111.zip'
+          with zipfile.ZipFile(path) as z:
+            assert z.testzip() is None and set(z.namelist())==set(manifest['member_sha256'])|{'MANIFEST.json'}
+          print('CP_GMIC_P0008_NATIVE=PASS SHA='+os.environ['EXPECTED_SHA']+' INTENTS=8 ACTIONS=19 B46_DONE=22 OPEN=24')
+          print('CP_GMIC_P0008_ZIP_SHA256='+hashlib.sha256(path.read_bytes()).hexdigest())
+          for file in sorted(root.iterdir()):
+            if file.is_file():
+              print('CP_P0008_EXPORT_FILE='+json.dumps({'name':file.name,'content':file.read_text(encoding='utf-8')},ensure_ascii=True,separators=(',',':')))
+          PY
+      - name: Upload canonical nine-artifact record and zipped handover
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: cp-gmic-p0008-source-bound-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ runner.temp }}/gmic-p0008-nine-record/
+            ${{ runner.temp }}/CP-GMIC-R2-P0008-20261111.zip
+          if-no-files-found: warn
+          retention-days: 21
