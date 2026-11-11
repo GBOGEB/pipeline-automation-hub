@@ -82,6 +82,10 @@ waves:
     owner_action_required: false
     state: IN_PROGRESS
     pulses: {P1: GBOGEB/GEMINI#38, P2: PENDING, P3: PENDING}
+    reserve_wake: {S05: BOUNDED_IMPLEMENTATION_CHANGE}
+    evidence:
+      pr: 38
+      merge_sha: fbb34fbadfef91ab7e9c56dd2d04b3086a678584
     dod:
       - REPO_SNAPSHOT_MANIFEST_BUILDER_FROM_EXACT_COMMIT
       - NO_GIT_METADATA_IN_EXPORT
@@ -97,6 +101,7 @@ waves:
     owner_action_required: false
     state: IN_PROGRESS
     pulses: {P1: GBOGEB/GEMINI#40, P2: PENDING, P3: PENDING}
+    reserve_wake: {S05: BOUNDED_IMPLEMENTATION_CHANGE}
     evidence:
       pr: 40
       merge_sha: 3ee30f9364c2f45687b83ad2f2b642ccf6a9b4b4
@@ -143,6 +148,7 @@ waves:
     maps_to_gates: [IC5_CONSUMER_B, IC6_PARITY]
     depends_on: [R2-W4]
     crew: [S01, S06, U05]
+    reserve_wake: {U05: PARITY_METRICS}
     owner_action_required: true
     state: BLOCKED_ON_R2-W4
     dod:
@@ -261,6 +267,7 @@ explicit_nonclaims:
   - BROKER_DRAFT_PR_NE_REVIEW_OR_MERGE
   - MANUAL_CONNECTOR_READ_NE_CONSUMER_B_RECEIPT
   - NO_GM_VI_NO_RENUMBERING
+  - OFFLINE_RECEIPT_CROSSCHECK_NE_GITHUB_VERIFICATION
   - NO_ENGINEERING_RELEASE_OR_QPS_AUTHORITY
 
 stop_rules:
