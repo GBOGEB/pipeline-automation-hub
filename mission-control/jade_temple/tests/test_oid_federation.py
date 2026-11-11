@@ -61,6 +61,8 @@ class Kernel(unittest.TestCase):
     def test_wishbone_converges_on_committed_dag(self):
         w = of.wishbone(PREREQS)
         self.assertTrue(w["track_c"]["converged"])
+        self.assertTrue(w["track_c"]["idempotent"])
+        self.assertEqual(of.wishbone(w["track_c"]["dag"])["track_c"]["dag"], w["track_c"]["dag"])
         self.assertEqual(w["track_a"]["waves"], w["track_b"]["waves"])
         self.assertEqual(w["track_c"]["makespan"], len(w["track_c"]["waves"]))
         self.assertEqual(w["track_a"]["critical"][0], "C1_methane")
@@ -97,11 +99,25 @@ class Crosswalk(unittest.TestCase):
 
     def test_open_pr_needs_number_and_claims_need_link(self):
         doc = copy.deepcopy(DOC)
-        doc["folders"]["01_DROPBOX_IN"].pop("pr")
+        doc["folders"]["01_DROPBOX_IN"] = {"title": "bus", "status": "open_pr"}
         doc["unverified_claims"][1]["evidence"] = "trust me"
         errs, _ = of.check(doc, NODES, fake_oid)
         self.assertIn("01_DROPBOX_IN: open_pr needs a PR number", errs)
         self.assertTrue(any("evidence must be null or a link" in e for e in errs))
+
+    def test_mip_is_modernize_innovate_perpetuate(self):
+        self.assertEqual(set(DOC["mip"]), {"modernize", "innovate", "perpetuate"})
+        mip = next(t for t in DOC["term_collisions"] if t["term"] == "MIP")
+        self.assertIn("Perpetuate", mip["hub_meaning"])
+        self.assertNotIn("Prune", mip["hub_meaning"])
+
+    def test_perpetuate_needs_every_control(self):
+        doc = copy.deepcopy(DOC)
+        del doc["mip"]["perpetuate"]["properties"]["mycelium_golden_thread"]
+        doc["mip"]["innovate"]["owners"] = []
+        errs, _ = of.check(doc, NODES, fake_oid)
+        self.assertIn("mip.perpetuate: property mycelium_golden_thread is not bound to a control", errs)
+        self.assertIn("mip.innovate: names no owner", errs)
 
     def test_claims_stay_unverified(self):
         self.assertTrue(all(c["evidence"] is None for c in DOC["unverified_claims"]))
@@ -109,7 +125,7 @@ class Crosswalk(unittest.TestCase):
     def test_cli_json(self):
         with tempfile.TemporaryDirectory() as tmp:
             dur = Path(tmp) / "d.json"
-            dur.write_text(json.dumps({k: 1 for k in NODES}), encoding="utf-8")
+            dur.write_text(json.dumps({k: 1 for k in NODES}), encoding="utf-8", newline="\n")
             out = io.StringIO()
             with redirect_stdout(out):
                 code = of.main(["--json", "--durations", str(dur)])

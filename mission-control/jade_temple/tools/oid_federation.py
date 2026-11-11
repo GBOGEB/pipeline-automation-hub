@@ -14,8 +14,12 @@ critical path from tools/cicd_dag.critical_path; neither is re-implemented (AGEN
 New here: transitive reduction (muda prune), CPM slack and makespan with optional
 durations, and the N2 dependency structure matrix (DSM).
 
-"MIP" in the handover means scheduling; in the hub MIP is Modernize/Innovate/Prune.
-This module calls the handover's step SCHEDULE.
+MIP means Modernize / Innovate / Perpetuate (LEVEL1.md). Perpetuate is the control
+step that links MIP to DMAIC Control: immutable, idempotent, recursive lineage kept
+active by MYCELIUM and the Golden Thread. The handover used "MIP" for makespan
+optimisation; here that step is called SCHEDULE (an Innovate item). wishbone() proves
+it idempotent, and check() binds every Modernize / Innovate / Perpetuate owner to its
+blob OID.
 
   python mission-control/jade_temple/tools/oid_federation.py [--durations PATH] [--json]
 Exit 0 = clean, 1 = crosswalk violations, 2 = DAG cycle or wishbone did not converge.
@@ -38,6 +42,8 @@ FOLDERS = ("00_CONTROL", "01_DROPBOX_IN", "02_HANDOVER_LEDGER", "03_REPOS_MIRROR
            "04_SLICES_OUT", "TRACK_A_DMAIC_THEN_MIP", "TRACK_B_MIP_THEN_DMAIC",
            "TRACK_C_CONVERGED")
 STATUSES = ("owned", "open_pr", "parked")
+MIP_STEPS = ("modernize", "innovate", "perpetuate")
+PERPETUATE_PROPERTIES = ("immutable", "idempotent", "recursive_lineage", "mycelium_golden_thread")
 
 
 def _load(name: str, rel: str):
@@ -111,20 +117,24 @@ def schedule(prereqs: dict[str, list[str]], durations: dict[str, float] | None =
 
 
 def wishbone(prereqs: dict[str, list[str]], durations: dict[str, float] | None = None) -> dict:
-    """Track A prunes then schedules; Track B schedules then prunes; C is the merge.
+    """Track A: DMAIC (prune) then MIP (schedule); Track B: MIP then DMAIC; C merges.
 
     Transitive reduction keeps reachability, so A and B must agree on waves and
-    makespan. A disagreement is a bug, and `converged` is False."""
+    makespan, and pruning the pruned DAG must drop nothing (Perpetuate: idempotent).
+    Any disagreement is a bug, and `converged` is False."""
     reduced, dropped = transitive_reduction(prereqs)
     a = schedule(reduced, durations)
     b = schedule(prereqs, durations)
     _, b_dropped = transitive_reduction(prereqs)
-    converged = a["waves"] == b["waves"] and a["makespan"] == b["makespan"] and dropped == b_dropped
+    again, re_dropped = transitive_reduction(reduced)
+    idempotent = not re_dropped and again == reduced
+    converged = (a["waves"] == b["waves"] and a["makespan"] == b["makespan"]
+                 and dropped == b_dropped and idempotent)
     edges = sum(len(v) for v in prereqs.values())
     return {
         "track_a": {"order": ["DMAIC", "SCHEDULE"], "pruned": dropped, **a},
         "track_b": {"order": ["SCHEDULE", "DMAIC"], "pruned": b_dropped, **b},
-        "track_c": {"converged": converged, "edges_before": edges,
+        "track_c": {"converged": converged, "idempotent": idempotent, "edges_before": edges,
                     "edges_after": edges - len(dropped), "dag": reduced,
                     "makespan": a["makespan"], "unit": a["unit"], "waves": a["waves"]},
     }
@@ -188,6 +198,23 @@ def check(doc: dict, alkane_nodes: dict, oid=blob_oid) -> tuple[list[str], dict[
                     bound[rel] = o
         if st == "open_pr" and not isinstance(f.get("pr"), int):
             errs.append(f"{name}: open_pr needs a PR number")
+    mip = doc.get("mip") or {}
+    for step in sorted(set(MIP_STEPS) ^ set(mip)):
+        errs.append(f"mip.{step}: {'missing' if step in MIP_STEPS else 'not a MIP step'}")
+    for step in MIP_STEPS:
+        owners = (mip.get(step) or {}).get("owners") or []
+        if not owners:
+            errs.append(f"mip.{step}: names no owner")
+        for rel in owners:
+            o = oid(rel)
+            if o is None:
+                errs.append(f"mip.{step}: owner {rel} does not exist at HEAD")
+            else:
+                bound[rel] = o
+    props = (mip.get("perpetuate") or {}).get("properties") or {}
+    for p in PERPETUATE_PROPERTIES:
+        if not props.get(p):
+            errs.append(f"mip.perpetuate: property {p} is not bound to a control")
     anchor = (doc.get("anchor") or {}).get("node")
     if anchor not in alkane_nodes:
         errs.append(f"anchor {anchor!r} is not an alkane DAG node")
@@ -232,7 +259,8 @@ def main(argv=None) -> int:
         print(f"track A pruned {len(w['track_a']['pruned'])} redundant edge(s): "
               + ", ".join(f"{d}->{k}" for d, k in w["track_a"]["pruned"]))
         print(f"track C: {c['edges_before']} -> {c['edges_after']} edges, "
-              f"makespan {c['makespan']:g} {c['unit']}, converged={c['converged']}")
+              f"makespan {c['makespan']:g} {c['unit']}, converged={c['converged']}, "
+              f"idempotent={c['idempotent']}")
         print(f"DSM {len(r['dsm']['order'])}x{len(r['dsm']['order'])}, feedback marks {r['dsm']['above']}")
         for e in r["errors"]:
             print(f"FAIL {e}")
