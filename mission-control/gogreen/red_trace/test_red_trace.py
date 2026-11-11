@@ -4,6 +4,7 @@ import json
 import sys
 import tempfile
 import unittest
+import unittest.mock
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -138,6 +139,48 @@ class Pins(unittest.TestCase):
 class ReaderGuard(unittest.TestCase):
     def fake(self, payload):
         return lambda req, timeout: io.BytesIO(json.dumps(payload).encode())
+
+    def flaky(self, *failures, payload=None):
+        """Opener that raises each item of `failures` in turn (int = HTTP status), then answers `payload`."""
+        calls = []
+
+        def opener(req, timeout):
+            calls.append(req.full_url)
+            if len(calls) <= len(failures):
+                f = failures[len(calls) - 1]
+                if isinstance(f, int):
+                    raise t.urllib.error.HTTPError(req.full_url, f, "err", {}, io.BytesIO(b""))
+                raise f
+            return io.BytesIO(json.dumps(payload or {"ok": 1}).encode())
+        return opener, calls
+
+    def test_transient_5xx_and_timeouts_are_retried(self):
+        opener, calls = self.flaky(502, t.urllib.error.URLError("reset"), 504)
+        waits = []
+        r = t.Reader(REPO, token="ghs_SECRETVALUE", opener=opener, sleep=waits.append)
+        with unittest.mock.patch("sys.stderr", new_callable=io.StringIO) as err:
+            self.assertEqual(r.get(f"/repos/{REPO}/actions/workflows/7/runs?per_page=100"), {"ok": 1})
+        self.assertEqual((len(calls), r.requests, r.retries, waits), (4, 1, 3, [2, 5, 10]))
+        self.assertIn("HTTP 502 on /repos/%s/actions/workflows/7/runs; retry 1/3" % REPO, err.getvalue())
+        self.assertIn("URLError", err.getvalue())
+        self.assertNotIn("SECRETVALUE", err.getvalue())
+
+    def test_retries_are_bounded(self):
+        opener, calls = self.flaky(502, 502, 502, 502, 502)
+        r = t.Reader(REPO, token="", opener=opener, sleep=lambda s: None)
+        with unittest.mock.patch("sys.stderr", new_callable=io.StringIO), \
+                self.assertRaises(t.urllib.error.HTTPError) as cm:
+            r.get(f"/repos/{REPO}/actions/runs")
+        self.assertEqual((cm.exception.code, len(calls), r.retries), (502, 4, 3))
+
+    def test_client_errors_fail_closed_without_retry(self):
+        for code in (401, 403, 404, 422):
+            with self.subTest(code=code):
+                opener, calls = self.flaky(code)
+                r = t.Reader(REPO, token="", opener=opener, sleep=lambda s: self.fail("slept"))
+                with self.assertRaises(t.urllib.error.HTTPError):
+                    r.get(f"/repos/{REPO}/actions/runs")
+                self.assertEqual((len(calls), r.retries), (1, 0))
 
     def test_get_only_within_repo(self):
         r = t.Reader(REPO, token="x", opener=self.fake({"ok": 1}))

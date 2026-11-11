@@ -21,6 +21,7 @@ Evidence rules:
 - **`green_streak`:** consecutive green heads since the last red: how stable a gate has been since its last repair.
 - **`nondeterminism`:** `same_head_disagreements` (one head SHA gave both green and red) and `rerun_rescues` (a rerun turned red into green). This separates a nondeterministic gate from repair oscillation, which `FLAKY` alone cannot.
 - **`census`:** the full workflow listing is the denominator. A workflow that never ran on the branch is listed as `unobserved`, never counted green.
+- **Transient API errors:** a GET that gets HTTP 500/502/503/504 or a network timeout is retried after 2, 5 and 10 seconds, and each retry is noted on stderr. Any other error, and a fourth failure, still stops the run, so a token or permission fault is never retried into a partial ledger. `requests` counts logical GETs; retried attempts are counted separately.
 
 ## Merged-PR lane (N+9, `--pr-lane N`)
 
