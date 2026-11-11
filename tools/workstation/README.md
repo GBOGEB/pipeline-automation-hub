@@ -124,6 +124,48 @@ For each PR, the script merges `origin/<base>` into the PR head in one reused sc
 
 The script exits 1 if any PR ends FAIL or STALE. A JSON report is written to `-ReportPath`.
 
+# Branch hygiene across repos
+
+`Invoke-BranchHygiene.ps1` removes merged branches from every non-archived repo of an owner (default `GBOGEB`) and from the matching local clones. It deletes only what can be restored. It is a dry run unless you pass `-Execute`.
+
+```powershell
+# Dry run: every repo, GitHub and local clones. Read the table and the receipts first.
+pwsh -NoProfile -File tools\workstation\Invoke-BranchHygiene.ps1
+
+# Delete
+pwsh -NoProfile -File tools\workstation\Invoke-BranchHygiene.ps1 -Execute
+
+# One repo, or one side only
+pwsh -NoProfile -File tools\workstation\Invoke-BranchHygiene.ps1 -Repo GBOGEB/GEMINI -Scope Remote -Execute
+pwsh -NoProfile -File tools\workstation\Invoke-BranchHygiene.ps1 -Scope Local -LocalRoots C:\repos,C:\DEV\REPOS -Execute
+```
+
+**GitHub branches.** The script lists each repo's branches and hands the list to `scripts/branch_hygiene_delete.py`, the one owner of the delete decision (see [governance/branch_hygiene](../../governance/branch_hygiene/README.md)). It reads that script from `origin/master` of the PAH checkout that holds this file and records its blob OID. A branch is deleted only if:
+
+- its head is unchanged;
+- it is not the default branch and not protected;
+- no open PR uses it;
+- it is fully merged into the default branch, or it is a merged PR's exact head (still reachable as `refs/pull/<n>/head`).
+
+**Local branches.** In each clone directly under `-LocalRoots` whose `origin` is a repo in scope, the script runs `git fetch --prune` first. A branch is then deleted only if its tip is an ancestor of `origin/<default>`, or it equals a merged PR's head SHA. The delete is `git update-ref -d <ref> <sha>`, so a branch that moved after the check is kept.
+
+**Never touched:**
+
+- the default branch;
+- a branch checked out in any worktree;
+- a branch whose newest commit is younger than `-MinAgeDays` (default 2);
+- anything matching `-Exclude` (`release/*`, `releases/*`, `gh-pages`, `develop`, `staging`, `production`);
+- forks, unless `-IncludeForks` is passed.
+
+**Receipts.** Each run writes to `%LOCALAPPDATA%\branch-hygiene\<timestamp>\`:
+
+- per repo, `*.remote.json` and `*.local.json`, with a restore command for every deleted branch;
+- `SUMMARY.csv`.
+
+To restore a branch, run `git push origin <sha>:refs/heads/<branch>` for a GitHub branch, or `git -C <clone> branch <branch> <sha>` for a local one.
+
+`gh` uses the keyring login. The script clears `GITHUB_TOKEN`/`GH_TOKEN` for its own run, passes the keyring token only to the Python child, and puts the caller's values back at the end. A failed `gh` call is retried 3 times and then stops the run, so it never works from a partial list. Worktree folders are not removed here; that is `Invoke-WorkspaceAudit.ps1 -Apply`.
+
 # PC dashboard launcher
 
 `dashboards/` builds one local start page that links every HTML page in every clone on the workstation,
