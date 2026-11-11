@@ -155,6 +155,27 @@ class ArtifactBoundaryTests(FixtureCase):
             with self.subTest(name=name), self.assertRaises(ValueError):
                 atlas.safe_path(self.root, name)
 
+    def test_safe_names_matches_safe_path_verdict(self):
+        """The batched absent-tree shortcut must accept and reject exactly as safe_path."""
+        self.write("present/file.py", "x = 1\n")
+        bad = ["../outside.json", "nested/../../outside.json", "/tmp/outside.json", "nested\\outside.json", ""]
+        good = ["present/file.py", "present/absent.py", "absent/deeper/file.py", "absent/other.py", "top.py"]
+        for name in bad:
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                atlas.safe_names(self.root, [name])
+        atlas.safe_names(self.root, good)
+        for name in good:
+            atlas.safe_path(self.root, name)
+        with tempfile.TemporaryDirectory() as outside:
+            try:
+                (self.root / "escape").symlink_to(outside, target_is_directory=True)
+            except OSError as exc:
+                self.skipTest("symlinks unavailable: " + str(exc))
+            for check in (lambda: atlas.safe_path(self.root, "escape/x.py"),
+                          lambda: atlas.safe_names(self.root, ["absent/x.py", "escape/x.py"])):
+                with self.assertRaisesRegex(ValueError, "escapes root"):
+                    check()
+
     def test_symlink_escape_cannot_supply_an_artifact(self):
         with tempfile.TemporaryDirectory() as outside:
             target = Path(outside) / "input.json"

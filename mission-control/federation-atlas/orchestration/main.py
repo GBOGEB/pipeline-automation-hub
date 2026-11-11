@@ -60,14 +60,45 @@ def demand(condition, message):
         raise ValueError(message)
 
 
-def safe_path(root, name):
-    """Only literal relative member paths; reject traversal and symlink escape."""
+def safe_path(root, name, *, base=None):
+    """Only literal relative member paths; reject traversal and symlink escape.
+
+    `base` is `Path(root).resolve()` hoisted out of a loop over one stable
+    root. On Windows each resolve() costs a filesystem round trip per path
+    component, and resolving the root again for every census member dominated
+    the build (RC06 profile).
+    """
     demand(isinstance(name, str) and name and "\\" not in name, "invalid relative path")
     path = PurePosixPath(name)
     demand(not path.is_absolute() and ".." not in path.parts, "path escapes root")
     resolved = (Path(root) / name).resolve()
-    demand(resolved.is_relative_to(Path(root).resolve()), "path escapes root")
+    demand(resolved.is_relative_to(Path(root).resolve() if base is None else base), "path escapes root")
     return resolved
+
+
+def safe_names(root, names):
+    """Same verdict as safe_path for every name, without resolving absent trees.
+
+    A name whose first segment does not exist under root has no symlink below
+    root to follow, so it resolves to the resolved root joined with the name and
+    cannot escape. Only names under an existing first segment are resolved; the
+    lexical join check keeps drive-relative names on the full resolve path.
+    """
+    root = Path(root)
+    base = root.resolve()
+    absent = {}
+    for name in names:
+        demand(isinstance(name, str) and name and "\\" not in name, "invalid relative path")
+        path = PurePosixPath(name)
+        demand(not path.is_absolute() and ".." not in path.parts, "path escapes root")
+        joined = root / name
+        first = path.parts[0] if path.parts else ""
+        if first and root in joined.parents:
+            if first not in absent:
+                absent[first] = not os.path.lexists(root / first)
+            if absent[first]:
+                continue
+        safe_path(root, name, base=base)
 
 
 def artifact_stem(identity):
@@ -255,8 +286,14 @@ def source_snapshot_paths(root, profile):
     return sorted(consumed)
 
 
-def python_info(root, path):
-    raw = safe_path(root, path).read_bytes()
+def source_census(root, profile):
+    """SHA-256 of every snapshot member: the one census definition per pass."""
+    base = Path(root).resolve()
+    return {p: digest(safe_path(root, p, base=base).read_bytes()) for p in source_snapshot_paths(root, profile)}
+
+
+def python_info(root, path, base=None):
+    raw = safe_path(root, path, base=base).read_bytes()
     text = raw.decode("utf-8-sig")
     row = {"path": path, "sha256": digest(raw), "entrypoints": [], "functions": [],
            "static_calls": [], "parse_error": None, "evidence_class": "STATIC_SOURCE_ONLY"}
@@ -283,9 +320,9 @@ def python_info(root, path):
     return row
 
 
-def workflow_info(root, path):
+def workflow_info(root, path, base=None):
     import yaml
-    raw = safe_path(root, path).read_bytes()
+    raw = safe_path(root, path, base=base).read_bytes()
     row = {"path": path, "sha256": digest(raw), "jobs": [], "errors": [], "evidence_class": "DECLARED_YAML"}
     try:
         # BaseLoader preserves `on`, boolean-looking labels and expressions as
@@ -339,9 +376,10 @@ def source_assets(root, names):
                 {"block_id": block["id"], "entrypoint": block["entrypoint"]})
     rows = []
     base = Path(root).resolve()
+    resolved_cache = {}  # realpath is a pure function of the joined path within one scan
     for name in sorted(candidates):
         path = PurePosixPath(name)
-        raw = safe_path(root, name).read_bytes()
+        raw = safe_path(root, name, base=base).read_bytes()
         role = "CONFIG_OR_DATA" if path.suffix.lower() in CONFIG_SUFFIXES else "EXECUTABLE_SOURCE_CANDIDATE"
         descriptor = None
         if name.startswith(".github/workflows/") and path.suffix.lower() in {".yml", ".yaml"}:
@@ -393,7 +431,11 @@ def source_assets(root, names):
                 for literal in literals[:REFERENCE_SCAN_LIMIT]:
                     targets = set()
                     for parent in (base, (base / name).parent):
-                        resolved = (parent / literal).resolve()
+                        joined = parent / literal
+                        key = str(joined)  # str, not Path: Windows Path equality ignores case
+                        resolved = resolved_cache.get(key)
+                        if resolved is None:
+                            resolved = resolved_cache[key] = joined.resolve()
                         if resolved.is_relative_to(base):
                             relative = resolved.relative_to(base).as_posix()
                             if relative in candidates and relative != name:
@@ -411,10 +453,11 @@ def source_assets(root, names):
 
 def inventory(root):
     names = source_files(root)
-    python = [python_info(root, path) for path in names if path.endswith(".py")]
-    workflows = [workflow_info(root, path) for path in names
+    base = Path(root).resolve()
+    python = [python_info(root, path, base) for path in names if path.endswith(".py")]
+    workflows = [workflow_info(root, path, base) for path in names
                  if path.startswith(".github/workflows/") and path.endswith((".yml", ".yaml"))]
-    diagrams = [{"path": path, "sha256": digest(safe_path(root, path).read_bytes()),
+    diagrams = [{"path": path, "sha256": digest(safe_path(root, path, base=base).read_bytes()),
                  "kind": "MERMAID_SOURCE", "runtime_status": "UNKNOWN"}
                 for path in names if path.endswith(".mmd")]
     assets = source_assets(root, names)
@@ -743,7 +786,7 @@ def source_model(root, head, snapshot=None):
     root = runtime_root(root)
     profile_bytes = safe_path(root, PROFILE).read_bytes()
     profile = json.loads(profile_bytes)
-    source_hashes = {p: digest(safe_path(root, p).read_bytes()) for p in source_snapshot_paths(root, profile)}
+    source_hashes = source_census(root, profile)
     demand(source_hashes[PROFILE] == digest(profile_bytes), "profile changed during source snapshot")
     checked = validate_profile(root, profile)
     actual = git(root, "rev-parse", "HEAD")
@@ -1016,8 +1059,8 @@ def verify_bundle(out, head=None, *, require_clean=False, source_root=None):
         demand("local-run.json" in members and read_json(out, "local-run.json") == receipt, "local receipt member mismatch")
     hashes = model["source"]["source_files_sha256"]
     demand(isinstance(hashes, dict) and hashes, "empty source hash map")
+    safe_names(out, hashes)
     for name, expected in hashes.items():
-        safe_path(out, name)
         demand(isinstance(expected, str) and re.fullmatch(r"[0-9a-f]{64}", expected), "invalid source hash")
     expected_source = digest(canonical(hashes))
     demand(manifest.get("source_digest") == expected_source == model["source"].get("source_digest"),
@@ -1026,8 +1069,9 @@ def verify_bundle(out, head=None, *, require_clean=False, source_root=None):
         if model["source"].get("inventory_policy") == SNAPSHOT_POLICY:
             expected_members = set(source_snapshot_paths(source_root, read_json(source_root, PROFILE)))
             demand(set(hashes) == expected_members, "source inventory membership changed")
+        source_base = Path(source_root).resolve()
         for name, expected in hashes.items():
-            path = safe_path(source_root, name)
+            path = safe_path(source_root, name, base=source_base)
             demand(path.is_file() and digest(path.read_bytes()) == expected,
                    "source bytes changed: " + name)
     return manifest
@@ -1098,7 +1142,7 @@ def run_local(root, out, head, workers=2):
     demand(git(root, "rev-parse", "HEAD") == head, "checkout/head mismatch")
     profile = read_json(root, PROFILE)
     policy = read_json(root, "mission-control/federation-atlas/orchestration/BROKER_POLICY_v1.json")
-    source_hashes = {p: digest(safe_path(root, p).read_bytes()) for p in source_snapshot_paths(root, profile)}
+    source_hashes = source_census(root, profile)
     run_source_digest = digest(canonical(source_hashes))
     out.mkdir(parents=True, exist_ok=True)
     blocks = {b["id"]: b for b in profile["blocks"]}
@@ -1149,7 +1193,7 @@ def run_local(root, out, head, workers=2):
     broker = module("atlas_local_broker", HERE / "broker.py")
     receipt = broker.run_local(tasks(profile), handlers, workers=workers,
                                max_pending=policy.get("default_max_pending", 8), root=root, policy=policy)
-    final_hashes = {p: digest(safe_path(root, p).read_bytes()) for p in source_snapshot_paths(root, profile)}
+    final_hashes = source_census(root, profile)
     source_changed = source_hashes != final_hashes or git(root, "rev-parse", "HEAD") != head
     receipt.update(source_sha=head, source_digest=run_source_digest, source_dirty=bool(git(root, "status", "--porcelain")),
                    source_changed_during_run=source_changed,
