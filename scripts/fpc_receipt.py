@@ -84,6 +84,16 @@ class GhClient:
                 return rows
             page += 1
 
+    def graphql(self, query: str, variables: dict[str, Any]) -> Any:
+        args = ["api", "graphql", "-f", f"query={query}"]
+        for key, value in variables.items():
+            if value is not None:
+                args += ["-F" if isinstance(value, int) else "-f", f"{key}={value}"]
+        payload = json.loads(self.runner(args, None))
+        if not isinstance(payload, dict) or payload.get("errors") or "data" not in payload:
+            raise gate.GateError("GH_GRAPHQL_FAILED")
+        return payload["data"]
+
     def patch_pr_body(self, repo: str, pr_number: int, body: str) -> None:
         self.runner(
             ["api", "--method", "PATCH", f"repos/{repo}/pulls/{pr_number}", "--input", "-"],
@@ -201,11 +211,43 @@ def generate(
             + ",".join(protected)
         )
 
+    closing = gate.closing_keyword_refs(pr.get("body"), repo)
+    unintended = sorted(set(closing) - gate.auto_close_opt_ins(pr.get("body"), repo))
+    if unintended:
+        notes.append(
+            "PR body closing keywords will auto-close on merge; the gate will return "
+            "PR_BODY_AUTO_CLOSES_ISSUES unless reworded or opted in with AUTO_CLOSE_INTENDED: "
+            + ",".join(unintended)
+        )
+
     runs = list_success_runs(client, repo, head_sha)
     selected, covered, run_notes = select_runs(client, policy, repo, base_sha, runs)
     notes.extend(run_notes)
     receipt = build_receipt(head_sha, selected)
     return receipt, missing_purposes(covered), notes, pr
+
+
+def check_closing(client: Any, repo: str, pr_number: int) -> tuple[int, dict[str, Any]]:
+    """Cross-check the gate's body parser against GitHub's ``closingIssuesReferences``.
+
+    Exit 0 when nothing would auto-close without an ``AUTO_CLOSE_INTENDED`` opt-in, 1 otherwise.
+    """
+    pr = client.get(f"/repos/{repo}/pulls/{pr_number}") or {}
+    github = gate.github_closing_refs(client, repo, pr_number)
+    parsed = gate.closing_keyword_refs(pr.get("body"), repo)
+    unintended = gate.unintended_auto_closes(pr.get("body"), repo, github)
+    report = {
+        "repo": repo,
+        "pr": pr_number,
+        "body_parser": parsed,
+        "github_closingIssuesReferences": github,
+        "parser_only": sorted(set(parsed) - set(github)),
+        "github_only": sorted(set(github) - set(parsed)),
+        "opt_ins": sorted(gate.auto_close_opt_ins(pr.get("body"), repo)),
+        "unintended": unintended,
+    }
+    blocked = bool(unintended["body_keyword"] or unintended["github_only"])
+    return (1 if blocked else 0), report
 
 
 def main(argv: list[str] | None = None, client: Any = None) -> int:
@@ -218,7 +260,21 @@ def main(argv: list[str] | None = None, client: Any = None) -> int:
                       help="print the receipt block only (default)")
     mode.add_argument("--write", action="store_true",
                       help="replace/insert the receipt block in the PR body")
+    mode.add_argument("--check-closing", action="store_true",
+                      help="only cross-check closing keywords against GitHub's closingIssuesReferences")
     args = parser.parse_args(argv)
+
+    if args.check_closing:
+        try:
+            client = client or GhClient()
+            repo = args.repo or detect_repo(client.runner)
+            code, report = check_closing(client, repo, args.pr)
+        except gate.GateError as exc:
+            print(f"FPC_CLOSING=ERROR:{exc}", file=sys.stderr)
+            return 2
+        print(json.dumps(report, indent=2, sort_keys=True))
+        print(f"FPC_CLOSING={'BLOCK' if code else 'CLEAN'} pr={args.pr}", file=sys.stderr)
+        return code
 
     try:
         client = client or GhClient()
