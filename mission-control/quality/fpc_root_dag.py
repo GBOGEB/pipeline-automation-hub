@@ -49,6 +49,12 @@ WORKFLOW = "first-pass-closure-gate.yml"
 ARTIFACT = "first-pass-closure-gate"
 CODEX_LOGIN = "chatgpt-codex-connector"
 QUOTA_RE = re.compile(r"reached your Codex usage limits", re.I)
+# A quota notice explains a review that did not complete on an evaluation from QUOTA_LEAD before the
+# notice (the gate can run seconds before Codex answers) up to QUOTA_SPAN after it (the limit window).
+QUOTA_LEAD = dt.timedelta(hours=1)
+QUOTA_SPAN = dt.timedelta(hours=24)
+# Mutable PR comments are re-read when the PR had an evaluation this recently.
+REFRESH_SPAN = dt.timedelta(days=7)
 HERE = Path(__file__).resolve().parent
 LIFECYCLE = HERE.parent / "jade_temple" / "devops" / "lifecycle.py"
 SCHEMA = "missioncontrol.fpc_root_dag.v1"
@@ -110,15 +116,38 @@ REASON_NODE = [
 ]
 
 
+# The order in which first_pass_closure_gate.evaluate() raises: a later failure on the same head is
+# evidence the earlier stage was passed only if it comes from a later stage. Gate errors and unknown
+# reasons have no rank and prove nothing.
+STAGE = {"R_CONTROL_PLANE_BOOTSTRAP": 0, "R_RECEIPT_MISSING": 1, "R_STALE_HEAD": 1, "R_MISSING_PROOF": 2,
+         "R_CODEX_REVIEW_NOT_COMPLETED": 3, "R_CODEX_FINDINGS": 4}
+
+
 def is_codex(login: str | None) -> bool:
     """The Codex connector, as the REST API (``…[bot]``) or GraphQL (bare) names it."""
     return (login or "").removesuffix("[bot]") == CODEX_LOGIN
 
 
+def quota_notices(comments: list[dict]) -> list[str]:
+    """Timestamps of every Codex connector comment saying it hit its review usage limit, oldest first."""
+    return sorted(c.get("created_at") or c.get("createdAt") or "" for c in comments
+                  if is_codex((c.get("user") or c.get("author") or {}).get("login")) and QUOTA_RE.search(c.get("body") or ""))
+
+
 def quota_notice(comments: list[dict]) -> bool:
     """True if the Codex connector told this PR it hit its review usage limit."""
-    return any(is_codex((c.get("user") or c.get("author") or {}).get("login")) and QUOTA_RE.search(c.get("body") or "")
-               for c in comments)
+    return bool(quota_notices(comments))
+
+
+def quota_at(pr: dict, when: str) -> bool:
+    """True if a quota notice on this PR explains a review that had not completed at ``when``.
+
+    ``quota_at`` timestamps (cache v2) are matched in time; a legacy cache entry with only the
+    ``codex_quota`` boolean keeps the PR-wide reading."""
+    if "quota_at" not in pr:
+        return bool(pr.get("codex_quota"))
+    t = ts(when)
+    return any(ts(n) - QUOTA_LEAD <= t <= ts(n) + QUOTA_SPAN for n in pr["quota_at"] if n)
 
 
 def _lifecycle():
@@ -143,9 +172,11 @@ def reason_node(reason: str | None) -> str:
 def attribute(ev: dict, later_on_head: list[dict], pr: dict) -> str:
     """The source node of one red evaluation. ``later_on_head``: later evaluations of the same PR head."""
     node = reason_node(ev.get("reason"))
-    got_past = [e for e in later_on_head if e["status"] == "PASS" or reason_node(e.get("reason")) != node]
+    rank = STAGE.get(node)
+    got_past = [e for e in later_on_head if e["status"] == "PASS"
+                or (rank is not None and STAGE.get(reason_node(e.get("reason")), -1) > rank)]
     if node == "R_CODEX_REVIEW_NOT_COMPLETED":
-        if pr.get("codex_quota"):
+        if quota_at(pr, ev["created_at"]):
             return "SRC_CODEX_QUOTA"
         return "SRC_CODEX_REVIEW_PENDING" if got_past else "SRC_CODEX_REVIEW_ABSENT"
     if node == "R_MISSING_PROOF":
@@ -172,7 +203,7 @@ def attribute_all(evals: list[dict], prs: dict, heads: dict | None = None) -> li
         by_head[e["head_sha"]].append(e)
     out = []
     for e in evals:
-        row = dict(e)
+        row = dict(e, head_first_status=by_head[e["head_sha"]][0]["status"])
         if e["status"] == "PASS":
             row.update(reason_node=None, source=None, klass="PASS")
         else:
@@ -190,7 +221,9 @@ def summarize(rows: list[dict]) -> dict:
     heads = defaultdict(list)
     for r in rows:
         heads[(r.get("pr"), r["head_sha"])].append(r)
-    first_pass = sum(1 for seq in heads.values() if seq[0]["status"] == "PASS")
+    # A head's first evaluation may lie before the slice: use its global first outcome, or a retry
+    # inside a window would count as a first pass.
+    first_pass = sum(1 for seq in heads.values() if seq[0].get("head_first_status", seq[0]["status"]) == "PASS")
     closed = sum(1 for seq in heads.values() if seq[-1]["status"] == "PASS")
     return {
         "evaluations": n, "pass": n - len(red), "red": len(red),
@@ -420,9 +453,14 @@ def _reason(run: dict, token: str) -> dict:
         z = zipfile.ZipFile(io.BytesIO(_get(art["archive_download_url"], token, raw=True)))
         rec = json.loads(z.read(z.namelist()[0]))
     prs = [p["number"] for p in run.get("pull_requests") or []]
+    # pull_request_target runs carry the base-side head_sha; the receipt names the evaluated PR head.
+    from_receipt = isinstance(rec.get("head_sha"), str) and len(rec["head_sha"]) == 40
+    head = rec["head_sha"] if from_receipt else run["head_sha"]
+    rec_pr = str(rec.get("pr_number") or "")
     status = "PASS" if rec.get("merge_allowed") is True else ("FAIL" if rec else ("PASS" if run["conclusion"] == "success" else "FAIL"))
     return {"run_id": run["id"], "created_at": run["created_at"], "event": run["event"], "conclusion": run["conclusion"],
-            "head_sha": run["head_sha"], "pr": prs[0] if prs else None, "title": run.get("display_title"),
+            "head_sha": head, "run_head_sha": run["head_sha"], "head_from": "receipt" if from_receipt else "run",
+            "pr": int(rec_pr) if rec_pr.isdigit() else (prs[0] if prs else None), "title": run.get("display_title"),
             "status": status, "reason": rec.get("reason") or (None if status == "PASS" else "NO_RECEIPT_ARTIFACT")}
 
 
@@ -471,12 +509,33 @@ def _lookups(path: Path, cache: Path, token: str) -> None:
             heads[sha] = pulls[0]["number"] if pulls else None
             _save(cache / "heads.json", heads)
     prs = _load(cache / "prs.json")
-    for n in sorted({r["pr"] or heads.get(r["head_sha"]) for r in rows} - {None} - {int(k) for k in prs}):
-        comments = _get_patient(f"/repos/{REPO}/issues/{n}/comments?per_page=100", token)
+    recent = (dt.datetime.now(dt.timezone.utc) - REFRESH_SPAN).isoformat()
+    newest = defaultdict(str)
+    for r in rows:
+        n = r["pr"] or heads.get(r["head_sha"])
+        if n:
+            newest[n] = max(newest[n], r["created_at"])
+    # Comments change: re-read every PR without timestamped notices (cache v1) or active recently.
+    stale = {n for n, t in newest.items() if "quota_at" not in prs.get(str(n), {}) or t >= recent[:19]}
+    for n in sorted(stale):
+        comments = _get_comments(n, token)
         if comments is not None:
-            prs[str(n)] = {"codex_quota": quota_notice(comments)}
+            at = quota_notices(comments)
+            prs[str(n)] = {"codex_quota": bool(at), "quota_at": at}
             _save(cache / "prs.json", prs)
     print(f"evaluations={len(rows)} heads={len(heads)} prs={len(prs)} quota_prs={sum(v['codex_quota'] for v in prs.values())}")
+
+
+def _get_comments(n: int, token: str) -> list[dict] | None:
+    out, page = [], 1
+    while True:
+        d = _get_patient(f"/repos/{REPO}/issues/{n}/comments?per_page=100&page={page}", token)
+        if d is None:
+            return None
+        out += d
+        if len(d) < 100:
+            return out
+        page += 1
 
 
 def _load(p: Path) -> dict:
