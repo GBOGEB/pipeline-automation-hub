@@ -120,14 +120,18 @@ def parse_checklist(body: str | None) -> dict:
     the first open item, taking sections in the order DOD, DOV, STEPS, OTHER.
     """
     tw = triway.checklist(body or "")
-    sections, items, untracked = {}, [], []
+    sections, items, untracked, withdrawn = {}, [], [], []
     for name in ("DoV", "DoD", "STEPS", "OTHER"):
         sec, kind = tw[name], SECTION[name]
         prog = sec["progress"] or {"checked": 0, "total": 0}
         sections[kind] = {"done": prog["checked"], "total": prog["total"], "untracked": sec["untracked"]}
-        items += [{"kind": kind, "done": x["checked_in_issue"], "text": x["text"][:200]}
+        items += [{"kind": kind, "done": x["checked_in_issue"], "text": x["text"][:200],
+                   "criterion_sha256": x["criterion_sha256"]}
                   for x in sec["items"] if not x.get("withdrawn")]
-        untracked += [{"kind": kind, "text": x["text"][:200]} for x in sec["declared"]]
+        untracked += [{"kind": kind, "text": x["text"][:200], "criterion_sha256": x["criterion_sha256"]}
+                      for x in sec["declared"]]
+        withdrawn += [{"kind": kind, "text": x["text"][:200], "criterion_sha256": x["criterion_sha256"]}
+                      for x in sec["items"] if x.get("withdrawn")]
     done = sum(x["done"] for x in sections.values())
     total = sum(x["total"] for x in sections.values())
     n_untracked = sum(x["untracked"] for x in sections.values())
@@ -146,10 +150,16 @@ def parse_checklist(body: str | None) -> dict:
     def declared(name):
         sec = tw[name]
         return bool(sec["heading_seen"] or sec["items"] or sec["declared"])
+    criteria = [{"criterion_sha256": row["criterion_sha256"], "kind": row["kind"],
+                 "state": state or ("CHECKED" if row["done"] else "OPEN")}
+                for rows, state in ((items, None), (untracked, "UNTRACKED"), (withdrawn, "WITHDRAWN"))
+                for row in rows]
     return {"done": done, "total": total, "ratio": round(done / total, 4) if total else None,
             "untracked": n_untracked, "state": state, "sections": sections,
             "dod_declared": declared("DoD"), "dov_declared": declared("DoV"),
-            "next_open": nxt["text"] if nxt else None, "items": items, "untracked_items": untracked}
+            "next_open": nxt["text"] if nxt else None, "items": items, "untracked_items": untracked,
+            "criterion_identity_schema": triway.CRITERION_IDENTITY_SCHEMA, "withdrawn_items": withdrawn,
+            "withdrawn": len(withdrawn), "criteria": criteria}
 
 
 def progress_text(cl: dict) -> str:
@@ -1092,7 +1102,7 @@ def rank(snap: dict, now: float | None = None, overlay: dict | None = None,
             "draft": n.get("draft"), "checks": n.get("checks"), "review_decision": n.get("review_decision"),
             "approvals": n.get("approvals"),
             "closes": [key(c["repo"], c["number"]) for c in n.get("closes") or []],
-            "checklist": {x: cl[x] for x in cl if x not in ("items", "untracked_items")},
+            "checklist": {x: cl[x] for x in cl if x not in ("items", "untracked_items", "withdrawn_items")},
             "progress": progress_text(cl),
             "sub_issues_summary": n.get("sub_issues_summary"),
             "linked_prs": linked_prs(k, nodes, edges), "open_blockers": sorted(blockers.get(k, [])),
@@ -1324,10 +1334,93 @@ def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def _criterion_inventory(checklist: dict) -> dict | None:
+    """Full-text identities as multisets; legacy display text cannot recover them."""
+    if checklist.get("criterion_identity_schema") != triway.CRITERION_IDENTITY_SCHEMA:
+        return None
+    rows = checklist.get("criteria")
+    if not isinstance(rows, list):
+        return None
+    inventory = defaultdict(Counter)
+    counts = Counter()
+    for row in rows:
+        if (not isinstance(row, dict) or row.get("kind") not in SECTION.values()
+                or not isinstance(row.get("criterion_sha256"), str)
+                or not re.fullmatch(r"[0-9a-f]{64}", row["criterion_sha256"])
+                or row.get("state") not in ("OPEN", "CHECKED", "UNTRACKED", "WITHDRAWN")):
+            return None
+        inventory[row["criterion_sha256"]][(row["kind"], row["state"])] += 1
+        counts[row["state"]] += 1
+    expected = {"total": counts["OPEN"] + counts["CHECKED"], "done": counts["CHECKED"],
+                "untracked": counts["UNTRACKED"], "withdrawn": counts["WITHDRAWN"]}
+    if any(type(checklist.get(field)) is not int or checklist[field] != count
+           for field, count in expected.items()):
+        return None
+    return dict(inventory)
+
+
+def criterion_evolution(previous: dict, current: dict) -> dict:
+    """Compare observed criterion text/state, never reconstruct issue-origin intent.
+
+    Content-addressed duplicates are indistinguishable: report their complete
+    state/section multisets without attributing an individual tick or withdrawal.
+    A missing legacy identity is UNKNOWN, not an empty original checklist.
+    """
+    rows = []
+    for key, item in sorted(current.items()):
+        after = _criterion_inventory(item["checklist"])
+        before = (_criterion_inventory(previous[key]["checklist"])
+                  if key in previous else None)
+        status = ("PRIVACY_SCOPE_CHANGED" if key in previous
+                  and previous[key].get("private") != item.get("private") else
+                  "UNKNOWN_CURRENT_IDENTITY" if after is None else
+                  "FIRST_OBSERVED" if key not in previous else
+                  "UNKNOWN_LEGACY_BASELINE" if before is None else "COMPARABLE")
+        row = {"key": key, "status": status, "changes": None}
+        if status != "COMPARABLE":
+            rows.append(row)
+            continue
+        changes = []
+        added = removed = 0
+        for identity in sorted(set(before) | set(after)):
+            a, b = before.get(identity, Counter()), after.get(identity, Counter())
+            if a == b:
+                continue
+            na, nb = sum(a.values()), sum(b.values())
+            added += max(0, nb - na)
+            removed += max(0, na - nb)
+            if not a:
+                events = ["ADDED"]
+            elif not b:
+                events = ["REMOVED"]
+            elif max(na, nb) > 1:
+                events = ["DUPLICATE_MULTISET_CHANGED"]
+            else:
+                (ka, sa), (kb, sb) = next(iter(a)), next(iter(b))
+                events = ["SECTION_CHANGED"] if ka != kb else []
+                if sa != sb:
+                    events.append("WITHDRAWN" if sb == "WITHDRAWN" else
+                                  "RESTORED" if sa == "WITHDRAWN" else
+                                  "TICKED_SELF_REPORTED" if (sa, sb) == ("OPEN", "CHECKED") else
+                                  "REOPENED_SELF_REPORTED" if (sa, sb) == ("CHECKED", "OPEN") else
+                                  "TRACKING_CHANGED")
+            changes.append({"criterion_sha256": identity, "events": events,
+                            "before": [{"kind": k, "state": s, "count": n} for (k, s), n in sorted(a.items())],
+                            "after": [{"kind": k, "state": s, "count": n} for (k, s), n in sorted(b.items())],
+                            "occurrence_identity": "INDISTINGUISHABLE_DUPLICATES" if max(na, nb) > 1
+                            else "UNIQUE_TEXT_IN_OBSERVED_SNAPSHOTS"})
+        row.update(changes=changes, added_occurrences=added, removed_occurrences=removed)
+        rows.append(row)
+    return {"schema": "jade.issue-criterion.evolution.v1", "basis": "OBSERVED_SNAPSHOTS_ONLY",
+            "issue_origin": "UNKNOWN_NOT_CAPTURED", "grade": "SELF_REPORTED_NOT_QUALIFIED",
+            "closure_credit": 0, "items": rows}
+
+
 def diff(prev: dict | None, cur: dict) -> dict:
     """What moved between two rank models: items, links, PR dependencies, ticks."""
     if not prev:
-        return {"baseline": True}
+        return {"baseline": True,
+                "criterion_evolution": criterion_evolution({}, {i["key"]: i for i in cur["items"]})}
     p_items = {i["key"]: i for i in prev["items"]}
     c_items = {i["key"]: i for i in cur["items"]}
     ek = lambda e: (e["source"], e["target"], e["kind"])  # noqa: E731
@@ -1375,7 +1468,8 @@ def diff(prev: dict | None, cur: dict) -> dict:
             "checklist_moves": ticks, "lane_moves": lane_moves,
             "tasks_ticked_net": ticked, "scope_added_net": scope,
             "thread_moves": dict(sorted(thread_moves.items())),
-            "taxonomy_moves": taxonomy_moves}
+            "taxonomy_moves": taxonomy_moves,
+            "criterion_evolution": criterion_evolution(p_items, c_items)}
 
 
 def telemetry(model: dict, snap: dict, delta: dict) -> dict:

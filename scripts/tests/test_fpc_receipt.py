@@ -140,6 +140,47 @@ class ReceiptBuildingTests(unittest.TestCase):
         self.assertTrue(any("CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP" in n for n in notes))
 
 
+class ClosingKeywordTests(unittest.TestCase):
+    def closing_client(self, body, github_numbers=()):
+        client = FakeClient([run(1)], body=body)
+        nodes = [{"number": n, "repository": {"nameWithOwner": REPO}} for n in github_numbers]
+        client.graphql = lambda query, variables: {"repository": {"pullRequest": {
+            "closingIssuesReferences": {"totalCount": len(nodes), "nodes": nodes}}}}
+        return client
+
+    def test_generate_notes_unintended_closing_keyword(self):
+        client = FakeClient([run(1)], body="This change does not close #308.")
+        _, _, notes, _ = fr.generate(client, REPO, PR, policy())
+        self.assertTrue(any("PR_BODY_AUTO_CLOSES_ISSUES" in n and "#308" in n for n in notes))
+
+    def test_generate_no_note_for_opt_in_or_safe_wording(self):
+        for body in ("Closes #5\nAUTO_CLOSE_INTENDED: #5", "#308 stays open."):
+            with self.subTest(body=body):
+                _, _, notes, _ = fr.generate(FakeClient([run(1)], body=body), REPO, PR, policy())
+                self.assertFalse(any("PR_BODY_AUTO_CLOSES_ISSUES" in n for n in notes))
+
+    def test_check_closing_blocks_and_reports_agreement(self):
+        client = self.closing_client("Close #86 only after the proof.", github_numbers=(86,))
+        code, out, err = call_main(client, "--check-closing")
+        self.assertEqual(code, 1)
+        report = json.loads(out)
+        self.assertEqual(report["body_parser"], report["github_closingIssuesReferences"])
+        self.assertEqual(report["parser_only"], [])
+        self.assertIn("FPC_CLOSING=BLOCK", err)
+
+    def test_check_closing_clean(self):
+        code, out, err = call_main(self.closing_client("Record the closure of #1180."), "--check-closing")
+        self.assertEqual(code, 0)
+        self.assertEqual(json.loads(out)["unintended"], {"body_keyword": [], "github_only": []})
+        self.assertIn("FPC_CLOSING=CLEAN", err)
+
+    def test_gh_graphql_passes_typed_variables(self):
+        seen = []
+        client = fr.GhClient(runner=lambda args, stdin: seen.append(args) or json.dumps({"data": {"ok": 1}}))
+        self.assertEqual(client.graphql("q", {"owner": "o", "number": 7, "after": None}), {"ok": 1})
+        self.assertEqual(seen[0], ["api", "graphql", "-f", "query=q", "-f", "owner=o", "-F", "number=7"])
+
+
 class PolicyTests(unittest.TestCase):
     def test_default_policy_loads_via_gate(self):
         loaded = gate.load_policy(str(fr.DEFAULT_POLICY))
