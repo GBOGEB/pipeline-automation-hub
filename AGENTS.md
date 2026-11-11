@@ -77,25 +77,31 @@ design until the outputs are regenerated.
 - Line endings are hashed. `.gitattributes` keeps text LF on every platform; on Windows write generated
   files with `newline="\n"` and `encoding="utf-8"`.
 
-### L8. No closing keyword next to an issue reference in a PR body
+### Windows shell pitfalls
 
-GitHub links `close`/`closes`/`closed`, `fix`/`fixes`/`fixed` and `resolve`/`resolves`/`resolved` followed
-by `#N`, `owner/repo#N` or an issue URL, and closes that issue on merge, whatever the sentence around it
-says. DOCX_RTM_Automation PR 110 auto-closed issue 86 at 3/7 criteria from "Close #86 only after that
-source-bound proof; this PR has no automatic closure keyword." Hub PR 1181 carried "then close #1180" and
-"does not close #308". Issue closure here is a manual DoD step after integrated replay, so an automatic
-close is a false-complete.
+Each of these cost time on the owner's workstation (2026-11-09/10, GEMINI#40, GEMINI#47, #1162).
 
-- Write closure intent without the keyword in front of the ref: "record the closure of #1180",
-  "#308 stays open", "closure of #86 is a manual step".
-- The FPC gate fails with `PR_BODY_AUTO_CLOSES_ISSUES` on any such link, from the body or from GitHub's
-  `closingIssuesReferences` (which also covers issues linked in the Development sidebar). When closing on
-  merge is really intended, add a line `AUTO_CLOSE_INTENDED: #N` (several refs allowed).
-- Check a PR in any repo before merging, without needing the gate:
-  `python scripts/fpc_receipt.py --check-closing --repo <owner/name> --pr <N>` (exit 1 = would auto-close).
-- Commit messages close issues too once they reach the default branch, and this repo's squash merge
-  defaults to `COMMIT_MESSAGES`. Keep the same wording rule in commit messages; the gate does not
-  check them yet.
+- **Git Bash rewrites leading-slash arguments.** MSYS turns `/AGENTS.md` into
+  `C:/Program Files/Git/AGENTS.md`, so `git sparse-checkout set /path` silently stores a wrong pattern.
+  Prefix such commands with `MSYS_NO_PATHCONV=1`, then read the result back with `git sparse-checkout list`.
+- **Validate a captured SHA before you use it.** In a mis-configured sparse checkout, `FIX=$(git rev-parse HEAD)`
+  captured something other than a bare SHA, so `git cherry-pick "$FIX"` failed after `git reset --hard` had
+  already run, and the commit could only be recovered from the reflog (#1135, 2026-11-09). Capture with
+  `H=$(git rev-parse HEAD 2>/dev/null | grep -E '^[0-9a-f]{40}$')`, stop if it is empty, and never chain a
+  destructive reset after a capture you have not checked.
+- **PowerShell splits unquoted commas.** `gh repo list --json name,isFork` passes an array, and `gh`
+  receives the wrong argument. Quote the list: `--json 'name,isFork'`.
+- **A failed `gh` call can look like an empty answer.** A GitHub 5xx printed an error and returned no
+  output, so a script went on with zero repos. Check `$LASTEXITCODE` (or `$?`) after every `gh` call,
+  retry a few times, then stop. Never treat empty output as "nothing to do".
+- **Owner-only temp folders block git.** `tempfile.TemporaryDirectory()` creates a folder that `git
+  merge-file` cannot read ("Permission denied"), and a `.pytest_cache` created the same way can't be
+  deleted. Make scratch folders with `os.makedirs` under `tempfile.gettempdir()` and remove them in `finally`.
+- **`Remove-Item -Recurse -Force` stops at the first locked entry**, after deleting part of the folder
+  (on 2026-11-10 it deleted `.git` first). Check the clone is fully pushed before you start, and check
+  `Test-Path` afterwards.
+- **CRLF checkouts.** With `core.autocrlf=true`, a patch made against git blobs (LF) fails `git apply`
+  in the working tree. Use `git apply --cached`, or apply it in an LF worktree.
 
 ## Metric ownership
 
