@@ -48,10 +48,20 @@ A PR is eligible only when none of these hold. Each reason is recorded per PR.
 Eligible PRs are split by `sha256(experiment | repo#number | head SHA)`. That makes the split
 reproducible from the ledger alone; nobody picks which PRs get treated.
 
+`act` reads each treated PR again immediately before writing. Labels, draft state, base branch and
+conflicts can change after `before` without moving the head, so any of them, or a moved head, skips
+the write (`OPT_OUT_LABEL`, `DRAFT`, `BASE_CHANGED`, `CONFLICT`, `HEAD_MOVED`, `NOT_OPEN`). After an
+accepted update, `act` reads back the exact head it produced. For a merge update, that head must have the
+recorded head as its first parent. It is stored as `new_head`.
+
 ## What is measured
 
 - **Before and after state per PR.** The CI checks (latest run per check) and the gate checks
-  (`first-pass-closure`) are judged apart. A red gate means a missing receipt, not broken code.
+  (`first-pass-closure`, as a check run or as a `<workflow> / first-pass-closure` commit status) are
+  judged apart. A red gate means a missing receipt, not broken code. A check whose latest run was
+  cancelled counts as pending, never as green.
+- **Outcome.** Green or merged is a success. Red, or closed without merging, is a known non-success
+  (`CLOSED_UNMERGED` is counted in the denominator, not dropped). Pending or unreadable is unknown.
 - **Effect.** The rate of PRs that are green or merged in the treated group minus that rate in the
   holdout group, by intention to treat, with a Newcombe hybrid score 95% interval. The same is
   computed for PRs that were red before (unblocked rate). If either group has fewer than
@@ -67,12 +77,16 @@ reproducible from the ledger alone; nobody picks which PRs get treated.
 Any PR that turns green, merges or loses its conflict counts as a positive transition, whether or not
 it was eligible. It is attributed as:
 
-- `DELIVERED_BY_UPDATE`: our update was the only change to its head. The update delivered fixes
-  that already sat on the base branch, so the candidate root fixes are the base commits from the PR's
-  merge base onward.
+- `DELIVERED_BY_UPDATE`: the head is exactly the one our update produced (`new_head`). If that head
+  was not read back, the PR still qualifies when its head is a two-parent merge commit whose first
+  parent is the recorded head. The update delivered fixes that already sat on the base branch, so the
+  candidate root fixes are the base commits from the PR's merge base onward.
 - `EXTERNAL`: its head did not change. Something outside the PR fixed it: a rerun, a base change, or
   a commit in another repository.
-- `AUTHOR_PUSH`: someone pushed to the branch, so the effect is confounded.
+- `AUTHOR_PUSH`: someone pushed to the branch, so the effect is confounded. A force-push that keeps
+  the commit count still counts, because heads are compared by SHA.
+- `UNVERIFIED`: the update was accepted but its head could not be confirmed (for example a rebase
+  that was not read back).
 
 Candidate commits are ranked by how many files they share with the PR. A candidate is never a
 proven root fix (`proof: CANDIDATE_NOT_PROVEN`).
