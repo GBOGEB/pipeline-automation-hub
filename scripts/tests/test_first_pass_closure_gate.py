@@ -56,6 +56,9 @@ class FakeClient:
         return self.mapping[path]
 
     def graphql(self, query, variables):
+        if "closingIssuesReferences" in query:  # GitHub's closing links; none unless a test sets them
+            return {"repository": {"pullRequest": {"closingIssuesReferences": self.mapping.get(
+                "closing_refs", {"totalCount": 0, "nodes": []})}}}
         if "graphql" not in self.mapping:
             raise AssertionError("graphql")
         return self.mapping["graphql"]

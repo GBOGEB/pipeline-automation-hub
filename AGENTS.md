@@ -77,6 +77,26 @@ design until the outputs are regenerated.
 - Line endings are hashed. `.gitattributes` keeps text LF on every platform; on Windows write generated
   files with `newline="\n"` and `encoding="utf-8"`.
 
+### L8. No closing keyword next to an issue reference in a PR body
+
+GitHub links `close`/`closes`/`closed`, `fix`/`fixes`/`fixed` and `resolve`/`resolves`/`resolved` followed
+by `#N`, `owner/repo#N` or an issue URL, and closes that issue on merge, whatever the sentence around it
+says. DOCX_RTM_Automation PR 110 auto-closed issue 86 at 3/7 criteria from "Close #86 only after that
+source-bound proof; this PR has no automatic closure keyword." Hub PR 1181 carried "then close #1180" and
+"does not close #308". Issue closure here is a manual DoD step after integrated replay, so an automatic
+close is a false-complete.
+
+- Write closure intent without the keyword in front of the ref: "record the closure of #1180",
+  "#308 stays open", "closure of #86 is a manual step".
+- The FPC gate fails with `PR_BODY_AUTO_CLOSES_ISSUES` on any such link, from the body or from GitHub's
+  `closingIssuesReferences` (which also covers issues linked in the Development sidebar). When closing on
+  merge is really intended, add a line `AUTO_CLOSE_INTENDED: #N` (several refs allowed).
+- Check a PR in any repo before merging, without needing the gate:
+  `python scripts/fpc_receipt.py --check-closing --repo <owner/name> --pr <N>` (exit 1 = would auto-close).
+- Commit messages close issues too once they reach the default branch, and this repo's squash merge
+  defaults to `COMMIT_MESSAGES`. Keep the same wording rule in commit messages; the gate does not
+  check them yet.
+
 ## Metric ownership
 
 One canonical module per metric. Import these; do not re-implement them. Paths are repo-relative.
