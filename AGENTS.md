@@ -46,6 +46,24 @@ Rolling-5 sat local-only and had to ship inside #787; a pushed branch would have
   `gh pr create --draft --base master`
 - One concern per branch. If a second concern appears, branch it off and push it as its own PR.
 
+**Codex reviews are rationed.** The Codex review quota is small and shared by every session. It ran out
+from 2026-11-09, and on 2026-10-30 it left 31 PRs red. On 2026-11-11 the owner turned automatic review and
+automatic security review off in the personal Codex settings and set each repository to follow them. A
+repository entry set to "All PRs" overrides that and reviews drafts too: draft #1194 was reviewed when it
+opened. First-Pass Closure still needs a completed Codex review on the exact head, so no PR passes until
+someone asks for one.
+
+- Keep the PR a draft until it is final: tests pass locally and every commit is pushed. While automatic
+  review was on, opening a PR and marking it ready each spent one attempt (#1164, #1194).
+- Only the session that owns the PR marks it ready. Then comment `@codex review` once. Don't push until
+  the review lands. Fix every finding in one commit, then ask once more.
+- Batch small PRs that touch disjoint files and not the control plane (the FPC gate and policy, required-gate
+  ledgers, rulesets): merge each `--no-ff` into one batch PR and ask for one review (#1164 = #1163 + #1162
+  + #1138). A PR whose base is another PR's branch goes with that PR.
+- Ask for `@codex security review` only for changes to workflow permissions, `pull_request_target`, secrets
+  or tokens, or new third-party dependencies. CodeQL and osv-scanner cover the rest on every head.
+- If Codex replies with its usage-limit message, don't ask again in the same window.
+
 ### L6. Snapshots come from one pulse
 
 The census and the gate snapshot were read at different commits in 4 of 5 focus repos.
