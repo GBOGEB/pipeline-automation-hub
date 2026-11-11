@@ -198,14 +198,28 @@ Matched results (same source; all runs retained):
   repetitions; `runtime_evidence.py` qualifies 8/8 tasks, 11/11 edges and 15/15
   ports for each new run.
 
-Remaining serial cost after the change (profiled build 36 s): literal reference
-resolves 6.5 s, Python AST 5.5 s, JSON serialization 2.9 s, reference regex
-2.3 s, YAML 2.1 s. A further exact reduction is per-directory realpath plus a
-cached directory listing for reference matching (fall back to `resolve()` for
-reparse points and short names). Cross-run content-addressed caching of AST and
-YAML rows needs an owner decision on cache invalidation. Same-machine variance
-is large (old build 35–60 s), so the medians are indicative, not capacity
-claims.
+Step 2: reference matching skips `resolve()` when `lstat` reports the joined
+path absent. Every candidate exists, so an absent join cannot resolve to one;
+literals containing `..` keep the full resolve (POSIX realpath applies `..`
+after a missing component). A fixture test checks targets against an
+unconditional resolve and passes on both old and new code. Matched against the
+step-1 head `a5884abc`:
+
+- In-process build on the identical tree, alternating order: 28.6/25.7/19.2 s →
+  24.6/24.4/15.7 s; 789/789 members byte-identical in every round.
+- Full `run-local --workers 2`, interleaved: whole run 41.9/36.1/35.9 →
+  31.3/30.5/32.4 s (median −13%); orchestration task median 25.9 → 20.0 s;
+  portal unchanged (7.8 → 8.8 s, untouched by this step, within noise). All
+  six runs succeeded without source drift; 8/8, 11/11, 15/15 for each new run.
+
+Remaining serial cost (profiled build 31 s): Python AST 6.1 s, path resolves
+for existing census members 5.6 s, JSON serialization 3.4 s, YAML 3.0 s,
+reference regex 2.7 s, `verify_bundle` 4.4 s. This is mostly parsing that the
+model content needs. Further reduction needs a cross-run, content-addressed
+cache of AST/YAML/reference rows keyed by blob SHA and method version, which is
+an owner decision on cache invalidation, not a mechanical change. Same-machine
+variance is large (old build 19–60 s across sessions), so the medians are
+indicative, not capacity claims.
 
 Cache dependency downloads or content-addressed wheels by OS, architecture,
 runtime/ABI, lock digest and dependency source. Keep clean-install/cold-cache
