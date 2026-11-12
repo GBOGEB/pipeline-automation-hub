@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gbo.example/lsaf/session.schema.json",
+  "title": "LSAF Session Genome",
+  "type": "object",
+  "required": ["schema", "session_id", "titles", "temporal", "fragments"],
+  "properties": {
+    "schema": {"const": "lsaf/session/v0.1"},
+    "session_id": {"type": "string", "minLength": 1},
+    "titles": {
+      "type": "object",
+      "required": ["original"],
+      "properties": {
+        "original": {"type": "string"},
+        "canonical": {"type": ["string", "null"]},
+        "aliases": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "temporal": {
+      "type": "object",
+      "required": ["observed_at"],
+      "properties": {
+        "observed_at": {"type": "string", "format": "date-time"},
+        "window": {"type": ["string", "null"]},
+        "predecessor": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    },
+    "pin_rank": {"type": ["integer", "null"], "minimum": 1},
+    "fragments": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "source": {"type": "string", "default": "chatgpt"}
+  },
+  "additionalProperties": true
+}
