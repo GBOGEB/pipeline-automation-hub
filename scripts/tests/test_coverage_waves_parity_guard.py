@@ -53,5 +53,25 @@ class ParityGuardTest(unittest.TestCase):
         self.assertEqual(run(junit("pass", "skip"), "--expected-min", "2", "--max-skips", "1"), 0)
 
 
+LEDGER = Path(__file__).resolve().parents[2] / "tests" / "coverage_waves" / "WAVE_LEDGER.jsonl"
+
+
+class LedgerHeadParityTest(unittest.TestCase):
+    def test_every_ledger_row_carries_its_head_sha(self):
+        self.assertTrue(LEDGER.is_file(), LEDGER)
+        self.assertEqual(g.ledger_missing_heads(LEDGER), [])
+
+    def test_null_short_or_upper_head_is_reported(self):
+        path = Path(tempfile.mkdtemp()) / "ledger.jsonl"
+        rows = ['{"lane": "L6", "wave": 1, "head_sha": "%s"}' % ("a" * 40),
+                '{"lane": "L6", "wave": 8, "head_sha": null}',
+                '', '{"lane": "L6", "wave": 9, "head_sha": "d9a7811"}',
+                '{"lane": "L6", "wave": 10, "head_sha": "%s"}' % ("A" * 40),
+                '{"lane": "L6", "wave": 11}']
+        path.write_text("\n".join(rows) + "\n", encoding="utf-8")
+        self.assertEqual([b.split(":")[0] for b in g.ledger_missing_heads(path)],
+                         ["line 2", "line 4", "line 5", "line 6"])
+
+
 if __name__ == "__main__":
     unittest.main()
