@@ -150,7 +150,10 @@ jobs:
           assert b'gd.on("plotly_click", selectPoint)' in html
           assert b'ci-spine-point-inspector' in html
           assert b'Object.hasOwn(points, id)' in html
-          assert b'connect-src' not in html or b'fetch(' not in html
+          import sys
+          sys.path.insert(0, 'docs/ci-spine')
+          from plotly_projection import external_scripts
+          assert not external_scripts(html.decode('utf-8'))
           print("JQ08_POINTS_SOURCE_BOUND=8; PDF=UNMAPPED; AUTHORITY=false")
           PY
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
