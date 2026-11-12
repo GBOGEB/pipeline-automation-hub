@@ -20,13 +20,17 @@ but is never collected in CI cannot go red, so it gives a false green (an uncoll
    (`gh api "repos/<owner>/<repo>/actions/runs?head_sha=<sha>"`), read the `collected` / `passed` lines of each
    pytest job log and sum per lane. Record the run ids in `ci_lanes`. For CODEX, record the
    `tests/coverage_waves` lane separately in `coverage_waves`.
-4. Verdict per row: `PASS` when ci >= local; `GAP` when ci < local (open a G-lane issue naming the uncollected
-   families and put it in `issue`); `UNKNOWN` with a written `reason` when either vector cannot be read at that SHA.
+4. Verdict per row: `PASS` only when local collection had zero errors (`local_errors` is 0) and ci >= local;
+   `GAP` when ci < local (open a G-lane issue naming the uncollected families and put it in `issue`); `UNKNOWN`
+   with a written `reason` when either vector cannot be read at that SHA, or when local collection had errors
+   (the local count is then only a partial denominator; keep `UNKNOWN` until collection succeeds on the
+   declared interpreter).
 5. Private repos (cryoplant-project): rows hold counts, SHAs and run ids only. No paths, file names or test names.
 
 ## Check
 
 - Every ledger row is `PASS`, `GAP` with an `issue`, or `UNKNOWN` with a non-empty `reason`.
+- No `PASS` row has a non-zero `local_errors`.
 - `grep -nE '[A-Za-z]:\\|/Users/|/home/' docs/ci-spine/COLLECTION_PARITY_*` finds nothing.
 
 ## History
