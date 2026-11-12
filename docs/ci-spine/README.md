@@ -2,7 +2,7 @@
 
 ## Jacquard-inspired review workspace
 
-**Open locally:** [Standalone offline CI Spine Explorer](explorer.html) · [Jacquard research / cross-format pointer deep-read](JACQUARD_CROSSWALK.md) · [DoD/DoV workstream data](WORKSTREAM_STATUS_v1.json) · [Optional Plotly companion source](plotly_projection.py).
+**Open locally:** [Standalone offline CI Spine Explorer](explorer.html) · [Jacquard research / cross-format pointer deep-read](JACQUARD_CROSSWALK.md) · [DoD/DoV workstream data](WORKSTREAM_STATUS_v1.json) · [Optional Plotly companion source](plotly_projection.py) · [JQ-08 point-to-source links and test boundary](JQ08_PLOTLY_POINT_LINK_20261112.md).
 
 GitHub often shows an HTML file as source, not as an executed webpage. Clone the repository and open `docs/ci-spine/explorer.html` in a browser; it embeds the frozen data and makes **zero API/network requests**. The page offers five connected lenses (B00–B09 DAG, SIPOC, all 182 workflow records, eight measured GitHub run clocks, JQ-00..07 DoD/DoV), source links, zoom, selection hash links, SVG export and print-to-PDF.
 
