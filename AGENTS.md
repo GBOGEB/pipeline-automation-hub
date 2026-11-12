@@ -101,6 +101,19 @@ design until the outputs are regenerated.
 - Line endings are hashed. `.gitattributes` keeps text LF on every platform; on Windows write generated
   files with `newline="\n"` and `encoding="utf-8"`.
 
+### Conflicted PRs and stacks: which tool
+
+"The stack/conflict tool" exists twice, in two repos. Look in both before you write a new one (2026-10-27,
+issue #946: a session searched only the hub, missed ABACUS and rewrote a restack tool).
+
+- Hub `tools/workstation/`: `Restack-Pr.ps1` (checkout-free rebase, dry run by default),
+  `Resolve-RegenConflicts.ps1` (generated-output conflicts), `Invoke-DraftPrPass.ps1` (triage) and
+  `PR_CONFLICT_RUNBOOK.md`.
+- ABACUS `tools/stack/`: `Rebase-Stack.ps1`, `Fix-AllStacks.ps1`, `Stack-Helper.ps1` (whole-stack rebuild with
+  an auto-resolve rule; read its `README.md`).
+- The choice rule (rebase in memory, merge bottom-up, regen-resolve or ABACUS stack tools) is in
+  `tools/workstation/README.md`, section "Which restack tool".
+
 ### Windows shell pitfalls
 
 Each of these cost time on the owner's workstation (2026-11-09/10, GEMINI#40, GEMINI#47, #1162).
