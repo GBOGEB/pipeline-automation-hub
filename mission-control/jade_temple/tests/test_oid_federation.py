@@ -1,11 +1,10 @@
 """OID federation crosswalk and wishbone kernel: every handover folder maps to a real
-owner, open PR or parked item; pruning keeps the schedule; A and B converge; CPM slack,
-weighted makespan and the DSM are exact on small DAGs."""
+owner, open PR or parked item; pruning keeps the schedule; A and B converge; DSM / CPM /
+makespan stay with their gg_MATH owner."""
 import copy
 import importlib.util
 import io
 import json
-import tempfile
 import unittest
 from contextlib import redirect_stdout
 from pathlib import Path
@@ -38,22 +37,6 @@ class Kernel(unittest.TestCase):
         self.assertEqual(anc, anc_r)
         self.assertEqual(of.AD.waves(PREREQS), of.AD.waves(reduced))
 
-    def test_cpm_unit_weights_count_waves(self):
-        c = of.cpm(DIAMOND)
-        self.assertEqual((c["unit"], c["makespan"]), ("waves", 3.0))
-        self.assertEqual(c["zero_slack"], ["a", "b", "c"])
-        self.assertEqual(c["slack"]["d"], 2.0)
-
-    def test_cpm_weighted(self):
-        c = of.cpm(DIAMOND, {"a": 2, "b": 5, "c": 1, "d": 7.5})
-        self.assertEqual((c["unit"], c["makespan"]), ("seconds", 8.0))
-        self.assertEqual(c["earliest_start"]["c"], 7.0)
-        self.assertEqual(c["slack"]["d"], 0.5)
-
-    def test_cpm_missing_duration_fails_closed(self):
-        with self.assertRaises(ValueError):
-            of.cpm(DIAMOND, {"a": 1})
-
     def test_cycle_fails_closed(self):
         with self.assertRaises(ValueError):
             of.wishbone({"a": ["b"], "b": ["a"]})
@@ -64,15 +47,9 @@ class Kernel(unittest.TestCase):
         self.assertTrue(w["track_c"]["idempotent"])
         self.assertEqual(of.wishbone(w["track_c"]["dag"])["track_c"]["dag"], w["track_c"]["dag"])
         self.assertEqual(w["track_a"]["waves"], w["track_b"]["waves"])
-        self.assertEqual(w["track_c"]["makespan"], len(w["track_c"]["waves"]))
+        self.assertEqual(w["track_c"]["wave_count"], len(w["track_c"]["waves"]))
+        self.assertEqual(w["track_a"]["critical"], w["track_b"]["critical"])
         self.assertEqual(w["track_a"]["critical"][0], "C1_methane")
-
-    def test_dsm_is_lower_triangular_in_wave_order(self):
-        d = of.dsm(DIAMOND)
-        self.assertEqual(d["above"], 0)
-        self.assertEqual(sum(map(sum, d["matrix"])), 3)
-        self.assertEqual(of.dsm(PREREQS)["above"], 0)
-
 
 class Crosswalk(unittest.TestCase):
     def test_committed_crosswalk_is_clean(self):
@@ -123,15 +100,17 @@ class Crosswalk(unittest.TestCase):
         self.assertTrue(all(c["evidence"] is None for c in DOC["unverified_claims"]))
 
     def test_cli_json(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            dur = Path(tmp) / "d.json"
-            dur.write_text(json.dumps({k: 1 for k in NODES}), encoding="utf-8", newline="\n")
-            out = io.StringIO()
-            with redirect_stdout(out):
-                code = of.main(["--json", "--durations", str(dur)])
+        out = io.StringIO()
+        with redirect_stdout(out):
+            code = of.main(["--json"])
         r = json.loads(out.getvalue())
         self.assertEqual(code, 0)
-        self.assertEqual(r["wishbone"]["track_c"]["unit"], "seconds")
+        self.assertEqual(r["wishbone"]["track_c"]["wave_count"], 9)
+
+    def test_dsm_and_cpm_are_not_reimplemented(self):
+        # Owner decision 2026-11-12: gg_MATH kernels/dsm_makespan.py (GBOGEB/gg_MATH#128).
+        for name in ("cpm", "dsm", "makespan_bounds"):
+            self.assertFalse(hasattr(of, name), name)
 
 
 if __name__ == "__main__":

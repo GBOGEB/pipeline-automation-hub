@@ -44,7 +44,7 @@
       ],
       "properties": {
         "immutable": "sha256-chained, append-only pulse ledger (scale_dock_series.append / verify)",
-        "idempotent": "oid_federation.wishbone(): pruning a pruned DAG drops nothing, and the result is deterministic",
+        "idempotent": "oid_federation.wishbone(): pruning a pruned DAG drops nothing, and A and B agree on waves and critical path",
         "recursive_lineage": "every owner is bound to its git blob OID at HEAD (check()), and pulses are verified against the chain (rolling5.verified_pulses)",
         "mycelium_golden_thread": "convergence_hub Golden Thread CP.CLOSE -> CP.HANDOFF -> CP.RESUME and the canonical-alias Mycelium consumer"
       }
@@ -96,7 +96,7 @@
         "mission-control/jade_temple/tools/cicd_dag.py",
         "mission-control/jade_temple/site/build_cicd_dag.py"
       ],
-      "note": "DAG, SIPOC and Mermaid slices are owned. N2 DSM is produced by oid_federation.dsm(). Parquet telemetry has no owner; see parked."
+      "note": "DAG, SIPOC and Mermaid slices are owned. N2 DSM, CPM slack and makespan are owned by gg_MATH kernels/dsm_makespan.py (GBOGEB/gg_MATH#128; hub load from a pinned commit pending its merge). Parquet telemetry has no owner; see parked."
     },
     "TRACK_A_DMAIC_THEN_MIP": {
       "title": "Process Governance First (DMAIC then MIP)",
@@ -114,13 +114,13 @@
       "title": "Wishbone (2 -> 1) Bilevel Hybrid Amalgamation",
       "status": "owned",
       "owners": ["mission-control/jade_temple/tools/oid_federation.py"],
-      "note": "Transitive reduction keeps reachability, so A and B give the same waves and makespan; wishbone() asserts it."
+      "note": "Transitive reduction keeps reachability, so A and B give the same waves and critical path; wishbone() asserts it and that the prune is idempotent."
     }
   },
   "parked": [
     {"item": "Agent lease locks for 00_CONTROL", "reason": "no owner; needs a design that survives a dead session"},
     {"item": "Parquet telemetry slices for 04_SLICES_OUT", "reason": "no owner and no pyarrow in the hub runtime"},
-    {"item": "Per-node durations for the alkane DAG", "reason": "C1_C14_ALKANE_DAG.json has no durations, so no makespan in seconds can be computed"},
+    {"item": "Per-node durations for the alkane DAG", "reason": "C1_C14_ALKANE_DAG.json has no durations; weighted makespan belongs to gg_MATH dsm_makespan (#128), which reports CP 81 / work 186 on its own C1-C14 reference weights"},
     {"item": "Physical GDRIVE_OID_WORKTREE folder tree", "reason": "must be the GM-I-C R2 broker's tree (#1135, merged), not a second one; no owner has asked for it yet"}
   ],
   "unverified_claims": [

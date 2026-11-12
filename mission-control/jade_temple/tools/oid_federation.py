@@ -11,8 +11,9 @@ Read-only. Two jobs:
 
 Waves come from devops/lifecycle.topo_layers through alkane_dag.waves, and the unit
 critical path from tools/cicd_dag.critical_path; neither is re-implemented (AGENTS.md L4).
-New here: transitive reduction (muda prune), CPM slack and makespan with optional
-durations, and the N2 dependency structure matrix (DSM).
+New here: transitive reduction (muda prune) and the wishbone convergence check.
+DSM, CPM slack and makespan are owned by gg_MATH kernels/dsm_makespan.py
+(GBOGEB/gg_MATH#128); this module does not compute them.
 
 MIP means Modernize / Innovate / Perpetuate (LEVEL1.md). Perpetuate is the control
 step that links MIP to DMAIC Control: immutable, idempotent, recursive lineage kept
@@ -21,7 +22,7 @@ optimisation; here that step is called SCHEDULE (an Innovate item). wishbone() p
 it idempotent, and check() binds every Modernize / Innovate / Perpetuate owner to its
 blob OID.
 
-  python mission-control/jade_temple/tools/oid_federation.py [--durations PATH] [--json]
+  python mission-control/jade_temple/tools/oid_federation.py [--json]
 Exit 0 = clean, 1 = crosswalk violations, 2 = DAG cycle or wishbone did not converge.
 """
 from __future__ import annotations
@@ -77,58 +78,32 @@ def transitive_reduction(prereqs: dict[str, list[str]]) -> tuple[dict[str, list[
     return reduced, dropped
 
 
-def cpm(prereqs: dict[str, list[str]], durations: dict[str, float] | None = None) -> dict:
-    """Critical path method: earliest/latest start, slack and makespan.
+def schedule(prereqs: dict[str, list[str]]) -> dict:
+    """Kahn waves and the unit critical path, both from their hub owners.
 
-    Without durations every node weighs 1, so the makespan counts waves."""
+    Weighted makespan, CPM slack and the N2 DSM belong to gg_MATH
+    kernels/dsm_makespan.py (owner decision 2026-11-12, GBOGEB/gg_MATH#128)."""
     wave = AD.waves(prereqs)  # ValueError on a cycle or an unknown node
-    order = sorted(prereqs, key=lambda k: (wave[k], k))
-    unit = durations is None
-    missing = [] if unit else sorted(set(prereqs) - set(durations))
-    if missing:
-        raise ValueError(f"durations missing for {', '.join(missing)}")
-    dur = {k: 1.0 if unit else float(durations[k]) for k in prereqs}
-    es: dict[str, float] = {}
-    for k in order:
-        es[k] = max((es[d] + dur[d] for d in prereqs[k]), default=0.0)
-    makespan = max((es[k] + dur[k] for k in order), default=0.0)
-    succ: dict[str, list[str]] = {k: [] for k in prereqs}
-    for k, ds in prereqs.items():
-        for d in ds:
-            succ[d].append(k)
-    ls: dict[str, float] = {}
-    for k in reversed(order):
-        ls[k] = min((ls[s] for s in succ[k]), default=makespan) - dur[k]
-    slack = {k: round(ls[k] - es[k], 9) for k in order}
-    return {"unit": "waves" if unit else "seconds", "makespan": makespan,
-            "earliest_start": es, "latest_start": ls, "slack": slack,
-            "zero_slack": [k for k in order if slack[k] == 0]}
-
-
-def schedule(prereqs: dict[str, list[str]], durations: dict[str, float] | None = None) -> dict:
-    wave = AD.waves(prereqs)
     layers = [sorted((k for k in wave if wave[k] == w), key=lambda k: (AD.carbon_of(k), k))
               for w in range(1, max(wave.values(), default=0) + 1)]
-    c = cpm(prereqs, durations)
-    return {"waves": layers, "width": max((len(x) for x in layers), default=0),
-            "critical": CD.critical_path(prereqs) if prereqs else [],
-            "makespan": c["makespan"], "unit": c["unit"], "zero_slack": c["zero_slack"],
-            "slack": c["slack"]}
+    return {"waves": layers, "wave_count": len(layers),
+            "width": max((len(x) for x in layers), default=0),
+            "critical": CD.critical_path(prereqs) if prereqs else []}
 
 
-def wishbone(prereqs: dict[str, list[str]], durations: dict[str, float] | None = None) -> dict:
+def wishbone(prereqs: dict[str, list[str]]) -> dict:
     """Track A: DMAIC (prune) then MIP (schedule); Track B: MIP then DMAIC; C merges.
 
-    Transitive reduction keeps reachability, so A and B must agree on waves and
-    makespan, and pruning the pruned DAG must drop nothing (Perpetuate: idempotent).
-    Any disagreement is a bug, and `converged` is False."""
+    Transitive reduction keeps reachability, so A and B must agree on waves and the
+    critical path, and pruning the pruned DAG must drop nothing (Perpetuate:
+    idempotent). Any disagreement is a bug, and `converged` is False."""
     reduced, dropped = transitive_reduction(prereqs)
-    a = schedule(reduced, durations)
-    b = schedule(prereqs, durations)
+    a = schedule(reduced)
+    b = schedule(prereqs)
     _, b_dropped = transitive_reduction(prereqs)
     again, re_dropped = transitive_reduction(reduced)
     idempotent = not re_dropped and again == reduced
-    converged = (a["waves"] == b["waves"] and a["makespan"] == b["makespan"]
+    converged = (a["waves"] == b["waves"] and a["critical"] == b["critical"]
                  and dropped == b_dropped and idempotent)
     edges = sum(len(v) for v in prereqs.values())
     return {
@@ -136,23 +111,8 @@ def wishbone(prereqs: dict[str, list[str]], durations: dict[str, float] | None =
         "track_b": {"order": ["SCHEDULE", "DMAIC"], "pruned": b_dropped, **b},
         "track_c": {"converged": converged, "idempotent": idempotent, "edges_before": edges,
                     "edges_after": edges - len(dropped), "dag": reduced,
-                    "makespan": a["makespan"], "unit": a["unit"], "waves": a["waves"]},
+                    "wave_count": a["wave_count"], "waves": a["waves"]},
     }
-
-
-def dsm(prereqs: dict[str, list[str]]) -> dict:
-    """N2 dependency structure matrix in wave order; m[i][j] = 1 when row i needs column j.
-
-    In wave order every mark sits below the diagonal; `above` counts feedback marks."""
-    wave = AD.waves(prereqs)
-    order = sorted(prereqs, key=lambda k: (wave[k], AD.carbon_of(k), k))
-    idx = {k: i for i, k in enumerate(order)}
-    m = [[0] * len(order) for _ in order]
-    for k, ds in prereqs.items():
-        for d in ds:
-            m[idx[k]][idx[d]] = 1
-    above = sum(m[i][j] for i in range(len(order)) for j in range(i + 1, len(order)))
-    return {"order": order, "matrix": m, "above": above}
 
 
 # ---------------------------------------------------------------- crosswalk
@@ -229,24 +189,22 @@ def check(doc: dict, alkane_nodes: dict, oid=blob_oid) -> tuple[list[str], dict[
 
 # ---------------------------------------------------------------- CLI
 
-def build(doc: dict, nodes: dict, durations: dict | None) -> dict:
+def build(doc: dict, nodes: dict) -> dict:
     prereqs = {k: list(n.get("depends_on") or []) for k, n in nodes.items()}
     errs, bound = check(doc, nodes)
     return {"schema": "jade.temple.oid-federation.v1", "errors": errs, "owners": bound,
-            "wishbone": wishbone(prereqs, durations), "dsm": dsm(prereqs)}
+            "wishbone": wishbone(prereqs)}
 
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--crosswalk", type=Path, default=DATA)
     ap.add_argument("--dag", type=Path, default=AD.DATA)
-    ap.add_argument("--durations", type=Path, help="json {node: seconds}; default unit weights")
     ap.add_argument("--json", action="store_true", help="print the full result as json")
     a = ap.parse_args(argv)
     doc, nodes = load(a.crosswalk), AD.load(a.dag)["nodes"]
-    durations = json.loads(a.durations.read_text(encoding="utf-8")) if a.durations else None
     try:
-        r = build(doc, nodes, durations)
+        r = build(doc, nodes)
     except ValueError as exc:
         print(f"FATAL {exc}")
         return 2
@@ -259,9 +217,8 @@ def main(argv=None) -> int:
         print(f"track A pruned {len(w['track_a']['pruned'])} redundant edge(s): "
               + ", ".join(f"{d}->{k}" for d, k in w["track_a"]["pruned"]))
         print(f"track C: {c['edges_before']} -> {c['edges_after']} edges, "
-              f"makespan {c['makespan']:g} {c['unit']}, converged={c['converged']}, "
+              f"{c['wave_count']} waves, converged={c['converged']}, "
               f"idempotent={c['idempotent']}")
-        print(f"DSM {len(r['dsm']['order'])}x{len(r['dsm']['order'])}, feedback marks {r['dsm']['above']}")
         for e in r["errors"]:
             print(f"FAIL {e}")
     if not r["wishbone"]["track_c"]["converged"]:
