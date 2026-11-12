@@ -750,6 +750,9 @@ def stability(runs: list, branch: str | None, until: date, missing_days: list[st
     top = sorted(((k, v) for k, v in by_wf.items() if v[1]), key=lambda kv: (-kv[1][1], kv[0]))[:TOP_RED]
     wr = [r for r in in_window if r.get("event") == "workflow_run"]
     wr_cancel = sum(r.get("conclusion") == "cancelled" for r in wr)
+    wr_rate = _rate_block(wr_cancel, len(wr))
+    if missing:  # same completeness gate as the main cohort: counts only, no rate over a partial window
+        wr_rate.update(rate=None, wilson95=None)
     return {
         "schema": STABILITY_SCHEMA, "state": state,
         "window": {"since": w0.isoformat(), "until": until.isoformat(), "days": STABILITY_DAYS},
@@ -766,7 +769,8 @@ def stability(runs: list, branch: str | None, until: date, missing_days: list[st
         "top_red_root_workflows": [{"workflow": name, "path": path, "runs": v[0], "non_success": v[1]}
                                    for (name, path), v in top],
         "workflow_run_cancelled": {"cohort": "completed workflow_run-triggered runs, any branch, same window",
-                                   **_rate_block(wr_cancel, len(wr))},
+                                   "state": "PARTIAL_UNKNOWN_MISSING_DAYS" if missing else "MEASURED",
+                                   **wr_rate},
         "basis": "DESCRIPTIVE_ONE_WINDOW_NOT_PROCESS_CAPABILITY",
     }
 

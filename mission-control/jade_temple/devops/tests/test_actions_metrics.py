@@ -862,6 +862,15 @@ class Stability(unittest.TestCase):
         self.assertIsNone(b["sigma_short_term"])
         self.assertEqual(self.block(runs, branch=None)["state"], "UNKNOWN_DEFAULT_BRANCH")
 
+    def test_missing_day_nulls_workflow_run_cancelled_rate(self):
+        runs = [dflt(1, "cancelled", event="workflow_run"), dflt(2, event="workflow_run")]
+        wr = self.block(runs, missing=["2026-10-01"])["workflow_run_cancelled"]
+        self.assertEqual(wr["state"], "PARTIAL_UNKNOWN_MISSING_DAYS")
+        self.assertEqual((wr["numerator"], wr["denominator"]), (1, 2))
+        self.assertIsNone(wr["rate"])
+        self.assertIsNone(wr["wilson95"])
+        self.assertEqual(self.block(runs)["workflow_run_cancelled"]["state"], "MEASURED")
+
     def test_top_red_root_workflows_rank_by_defects(self):
         runs = ([dflt(i, "failure", name="A", path="a.yml") for i in range(1, 4)]
                 + [dflt(i, "failure", name="B", path="b.yml") for i in range(4, 6)]
@@ -879,7 +888,7 @@ class Stability(unittest.TestCase):
                     rows = [dflt(100 + k, created=f"{day}T10:00:00Z")]
                     if k == 6:
                         rows.append(dflt(200, "failure", created=f"{day}T11:00:00Z"))
-                    (d / f"{day}.json").write_text(json.dumps(rows), encoding="utf-8")
+                    (d / f"{day}.json").write_text(json.dumps(rows), encoding="utf-8", newline="\n")
                 heads = {repo: {"branch": "master", "head_sha": SHA, "visibility": "public", "oids": {}}}
                 doc = M.project(Path(td), [repo], self.UNTIL, self.UNTIL, heads, None, "2026-10-06T00:00:00Z")
                 b = doc["repos"][0]["stability"]
