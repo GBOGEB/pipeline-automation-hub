@@ -212,10 +212,10 @@ def render(explorer="explorer.html"):
     custom = [[x["run_id"], x["attempt"], x["source_sha"], x["job"]] for x in data]
     fig = go.Figure()
     fig.add_bar(name="Runner queue (s)", x=[x["queue_seconds"] for x in data], y=labels,
-                orientation="h", marker_color="#d7a75f", customdata=custom, ids=uids,
+                orientation="h", marker_color="#d6a1c9", customdata=custom, ids=uids,
                 hovertemplate="%{y}<br>Queue %{x}s<br>Run #%{customdata[0]} attempt %{customdata[1]}<extra></extra>")
     fig.add_bar(name="Representative job execution (s)", x=[x["execution_seconds"] for x in data],
-                y=labels, orientation="h", marker_color="#70c6ad", customdata=custom, ids=uids,
+                y=labels, orientation="h", marker_color="#a77bea", customdata=custom, ids=uids,
                 hovertemplate="%{y}<br>Execution %{x}s<br>Run #%{customdata[0]}<extra></extra>")
     fig.update_layout(
         barmode="stack", template="plotly_dark", height=610,
@@ -223,8 +223,8 @@ def render(explorer="explorer.html"):
         title="CI Spine · sampled GitHub Actions run clocks (advisory)",
         xaxis_title="Measured seconds (not billable minutes or fleet performance)",
         legend=dict(orientation="h",y=1.12,x=0),
-        paper_bgcolor="#081719",plot_bgcolor="#0e2528",
-        font=dict(color="#e8f5f1"),
+        paper_bgcolor="#160e24",plot_bgcolor="#241433",
+        font=dict(color="#f3e9fb"),
     )
     fig.update_yaxes(autorange="reversed")
     rendered = to_html(fig, include_plotlyjs=True, full_html=True,
@@ -237,8 +237,8 @@ def render(explorer="explorer.html"):
         ' (run '+str(x["run_id"])+')</a></li>'
         for x in data
     )
-    intro = ('<section style="font:13px system-ui;padding:20px 25px;background:#10292c;'
-             'color:#dbeae6;max-width:1100px;margin:auto"><b>FROZEN / READ-ONLY / NO '
+    intro = ('<section style="font:13px system-ui;padding:20px 25px;background:#21132e;'
+             'color:#f2e4fa;max-width:1100px;margin:auto"><b>FROZEN / READ-ONLY / NO '
              'ADMISSION AUTHORITY</b><p>Eight selected runs on 2026-10-28, not a representative '
              'fleet time series. Representative longest completed job per run; queue and '
              'execution are distinct. Navigate the <a href="'+html.escape(explorer, quote=True)+
