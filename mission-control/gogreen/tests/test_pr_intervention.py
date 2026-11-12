@@ -504,6 +504,14 @@ class Reruns(unittest.TestCase):
         self.assertEqual(mod.classify(run, [{'id': 1, 'conclusion': 'failure',
                                              'steps': [{'conclusion': 'failure'}]}])[:3], ('UNCLASSIFIED', None, False))
         self.assertEqual(mod.classify({'conclusion': 'success'}, [{'id': 1}])[:3], ('NONE', None, False))
+        # `rerun --failed` reruns every failed job: one actionable failed step anywhere means inspect first.
+        lost = {'id': 1, 'conclusion': 'failure', 'steps': []}
+        red = {'id': 2, 'conclusion': 'failure', 'steps': [{'conclusion': 'failure'}]}
+        thin = {'id': 3, 'conclusion': 'failure', 'steps': [{'conclusion': 'success'}]}
+        kind, cause, insufficient, job = mod.classify(run, [lost, red, thin])
+        self.assertEqual((kind, cause, insufficient, job['id']), ('UNCLASSIFIED', None, False, 2))
+        self.assertEqual(mod.classify(run, [lost, thin])[:3], ('UNCLASSIFIED', None, True))
+        self.assertEqual(mod.classify(run, [lost, {**lost, 'id': 4}])[:3], ('TRANSIENT', 'runner_lost', False))
 
     def test_triage_owner_decides_eligibility(self):
         decisions = {}
@@ -548,6 +556,10 @@ class Reruns(unittest.TestCase):
         self.assertEqual(obs['evidence_url'], 'https://github.com/GBOGEB/ABACUS/actions/runs/77')
         self.assertEqual(out[8]['ldab'], 'NOT_IN_LDAB_SCOPE')
         self.assertEqual((out[9]['attempt_before'], out[9]['attempt_after'], out[9]['conclusion']), (1, 2, 'success'))
+        self.assertIn(('paginate', f'/repos/{abacus}/actions/runs/77/attempts/2/jobs'), fc.calls)  # our attempt's jobs
+        fc.run_state[77]['run_attempt'] = 3  # someone reran again after us: attempt 3 is not our evidence
+        later = {r['number']: r for r in mod.reruns(fc, b, act_rec)}
+        self.assertEqual((later[9]['ldab'], later[9]['conclusion']), ('DISPATCHED_ATTEMPT_UNIDENTIFIABLE', None))
         fc.run_state[77]['run_attempt'] = 1
         self.assertEqual(mod.reruns(fc, b, act_rec)[0]['ldab'], 'NO_NEW_ATTEMPT')
         self.assertEqual(mod.reruns(fc, b, {**act_rec, 'intervention': 'RERUN'})[0]['ldab'], 'NOT_A_DEBUG_RERUN')
@@ -571,6 +583,9 @@ class Reruns(unittest.TestCase):
         attribution = {p['number']: p['attribution'] for p in ev['positives']}
         self.assertTrue(all(attribution[n] == 'DELIVERED_BY_RERUN' for n in treated))
         self.assertEqual(attribution[holdout[0]], 'EXTERNAL')
+        # Rerun again by someone else after us: the green is not credited to our rerun.
+        ev2 = mod.evaluate(fc, b, a, rows, foreign={(REPO, treated[0])})
+        self.assertEqual({p['number']: p['attribution'] for p in ev2['positives']}[treated[0]], 'UNVERIFIED')
 
     def test_writer_rerun_args_and_policy_flags(self):
         run = Transport.Run()

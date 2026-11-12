@@ -115,14 +115,15 @@ cross-repository attribution are `UNKNOWN` in every record.
 ## Rerun levels
 
 `before` builds one `rerun_triage` snapshot per repository. For each PR it takes the newest completed
-run on the exact head (failed runs first) and its first failed job, and classifies that job from
-GitHub job metadata only (no log download, `classifier: job_metadata_v1`):
+run on the exact head (failed runs first). It classifies the run from GitHub job metadata only (no log
+download, `classifier: job_metadata_v1`). `gh run rerun --failed` reruns every failed job of the run,
+so the classifier looks at all failed jobs and takes the most actionable one:
 
-| Job metadata | `failure_kind` | `logs_insufficient` | Usual triage decision |
+| Failed jobs of the run | `failure_kind` | `logs_insufficient` | Usual triage decision |
 |---|---|---|---|
-| Failed job that ran no step (lost its runner) | `TRANSIENT`, cause `runner_lost` | false | `RERUN_FAILED_JOBS_CANDIDATE` |
-| Failed job with no failed step | `UNCLASSIFIED` | true | `DEBUG_RERUN_CANDIDATE` |
-| Failed job with a failed step | `UNCLASSIFIED` | false | `INSPECT_FIRSTRED` |
+| Any failed job has a failed step | `UNCLASSIFIED` | false | `INSPECT_FIRSTRED` |
+| Every failed job ran no step (lost its runner) | `TRANSIENT`, cause `runner_lost` | false | `RERUN_FAILED_JOBS_CANDIDATE` |
+| Otherwise (failed jobs ran steps, none failed) | `UNCLASSIFIED` | true | `DEBUG_RERUN_CANDIDATE` |
 | Run succeeded | `NONE` | false | `EVALUATE_INDEPENDENT_GATES` |
 
 `rerun_triage` decides, in its own order: a PR behind its base is `RECONCILE_MAIN` (the `update`
@@ -135,8 +136,11 @@ of its own (AGENTS.md L4).
 if the run is still the same completed, failed attempt that triage judged; otherwise it records
 `RUN_MOVED`. A rerun keeps the head, so it does not invalidate FPC receipts.
 
-`after` reads each rerun's attempt and conclusion. For `debug-rerun` on ABACUS or CODEX, a new attempt
-becomes an LDAB `debug_receipt` observation, validated by `bd_ldab_consumer.check_observation()`:
+`after` reads each rerun's attempt and conclusion, bound to the attempt our rerun dispatched (the
+recorded attempt + 1). If someone reran the run again after us, the run is
+`DISPATCHED_ATTEMPT_UNIDENTIFIABLE`: its conclusion is not reported as ours and a green PR is
+attributed `UNVERIFIED`. For `debug-rerun` on ABACUS or CODEX, the dispatched attempt's own jobs
+become an LDAB `debug_receipt` observation, validated by `bd_ldab_consumer.check_observation()`:
 `proof_level: REPORTED_UNVERIFIED`, `real_probe_steps: 0`. Actions debug logging is not a debugger
 session. Other repositories record `NOT_IN_LDAB_SCOPE`. A PR that turns green with an unchanged head
 after our accepted rerun is attributed `DELIVERED_BY_RERUN`.

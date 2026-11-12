@@ -296,24 +296,26 @@ def newest_run(client, repo, head):
 
 
 def classify(run, jobs):
-    """Job-metadata classifier, no log download: (failure_kind, cause, logs_insufficient, job).
+    """Job-metadata classifier over ALL failed jobs, no log download: (failure_kind, cause, logs_insufficient, job).
 
-    A failed job that never ran a step lost its runner (TRANSIENT runner_lost, a cause rerun_triage
-    accepts). A failed job with no failed step left nothing to read (logs insufficient). Any other
-    failure is UNCLASSIFIED: rerun_triage then says INSPECT_FIRSTRED, never a blind rerun.
+    `gh run rerun --failed` reruns every failed job of the run, so the run is judged by its most
+    actionable failed job, conservatively:
+    - any failed job with a failed step: UNCLASSIFIED, logs sufficient -> rerun_triage INSPECT_FIRSTRED;
+    - else every failed job ran no step (lost its runner): TRANSIENT runner_lost -> rerun candidate;
+    - else (a failed job ran steps but none failed): UNCLASSIFIED, logs insufficient -> debug candidate.
     """
     if run.get('conclusion') != 'failure':
         return 'NONE', None, False, (jobs[0] if jobs else None)
     failed = sorted((j for j in jobs if j.get('conclusion') == 'failure'), key=lambda j: j.get('id') or 0)
     if not failed:
         return 'UNCLASSIFIED', None, True, (jobs[0] if jobs else None)
-    job = failed[0]
-    steps = job.get('steps') or []
-    if not steps:
-        return 'TRANSIENT', 'runner_lost', False, job
-    if not any(s.get('conclusion') == 'failure' for s in steps):
-        return 'UNCLASSIFIED', None, True, job
-    return 'UNCLASSIFIED', None, False, job
+    stepped = [j for j in failed if j.get('steps')]
+    red = [j for j in stepped if any(s.get('conclusion') == 'failure' for s in j['steps'])]
+    if red:
+        return 'UNCLASSIFIED', None, False, red[0]
+    if not stepped:
+        return 'TRANSIENT', 'runner_lost', False, failed[0]
+    return 'UNCLASSIFIED', None, True, stepped[0]
 
 
 def triage(client, repo, rows, main_sha, now):
@@ -632,7 +634,7 @@ def census_delta(cb, ca):
             'red_delta': {r: ca['red_by_repo'].get(r, 0) - cb['red_by_repo'].get(r, 0) for r in repos}}
 
 
-def evaluate(client, b, act_rec, after_rows):
+def evaluate(client, b, act_rec, after_rows, foreign=None):
     method = b['policy']['method']
     acts = {(r['repo'], r['number']): r for r in (act_rec or {}).get('results', [])}
     rows, positives, cache = [], [], {}
@@ -666,7 +668,9 @@ def evaluate(client, b, act_rec, after_rows):
             row['attribution'] = {'UPDATE_ONLY': 'DELIVERED_BY_UPDATE', 'HEAD_UNCHANGED': 'EXTERNAL',
                                   'AUTHOR_PUSH': 'AUTHOR_PUSH', 'UNVERIFIED_HEAD': 'UNVERIFIED'}[change]
             if change == 'HEAD_UNCHANGED' and rerun_level and act_row and act_row['result'] == 'ACCEPTED':
-                row['attribution'] = 'DELIVERED_BY_RERUN'  # same head, our rerun was the change we made
+                # Same head, our rerun was the change we made, unless someone reran it again after us.
+                row['attribution'] = ('UNVERIFIED' if (br['repo'], br['number']) in (foreign or set())
+                                      else 'DELIVERED_BY_RERUN')
             positives.append({'repo': br['repo'], 'number': br['number'], 'arm': br['arm'], 'signals': signals,
                               'attribution': row['attribution'], 'recovered_checks': row['recovered_checks'],
                               **butterfly(client, br, ar, row, cache)})
@@ -693,10 +697,12 @@ def after(client, records, experiment, now, census, min_hours):
             rows.append(pr_row(client, br['repo'], live, base, b['policy'], now))
         except (OSError, ValueError, KeyError):
             rows.append(None)  # UNREADABLE: an unknown outcome, never a failure or a success
+    rr = reruns(client, b, act_rec)
+    foreign = {(r['repo'], r['number']) for r in rr if r['ldab'] == 'DISPATCHED_ATTEMPT_UNIDENTIFIABLE'}
     return {'kind': 'after', 'experiment': experiment, 'recorded_at': stamp(now), 'hours_since': round(hours, 3),
             'acted': act_rec is not None and act_rec['applied'], 'prs': rows, 'census': census,
-            'census_delta': census_delta(b['census'], census), 'evaluation': evaluate(client, b, act_rec, rows),
-            'reruns': reruns(client, b, act_rec)}
+            'census_delta': census_delta(b['census'], census),
+            'evaluation': evaluate(client, b, act_rec, rows, foreign), 'reruns': rr}
 
 
 def ldab_observation(repo, head, run_id, job_id):
@@ -721,24 +727,32 @@ def reruns(client, b, act_rec):
     for a in act_rec['results']:
         if a['result'] != 'ACCEPTED':
             continue
+        ours = a['run_attempt'] + 1  # the attempt our rerun dispatched; a later rerun by anyone is not ours
         row = {'repo': a['repo'], 'number': a['number'], 'run_id': a['run_id'], 'attempt_before': a['run_attempt'],
-               'attempt_after': None, 'status': None, 'conclusion': None, 'ldab': None}
+               'attempt_dispatched': ours, 'attempt_after': None, 'status': None, 'conclusion': None, 'ldab': None}
         try:
             run = client.get(f"/repos/{a['repo']}/actions/runs/{a['run_id']}")
-            row.update(attempt_after=run.get('run_attempt'), status=run.get('status'), conclusion=run.get('conclusion'))
+            row['attempt_after'] = run.get('run_attempt')
         except (OSError, ValueError):
             row['ldab'] = 'RUN_UNREADABLE'
+            run = {}
+        if row['attempt_after'] == ours:
+            row.update(status=run.get('status'), conclusion=run.get('conclusion'))
+        elif row['ldab'] is None and isinstance(row['attempt_after'], int) and row['attempt_after'] > ours:
+            # Someone reran it again: the run's current conclusion and jobs belong to their attempt, not ours.
+            row['ldab'] = 'DISPATCHED_ATTEMPT_UNIDENTIFIABLE'
         if row['ldab'] is None:
             if not debug:
                 row['ldab'] = 'NOT_A_DEBUG_RERUN'
             elif a['repo'] not in LDAB_REPOS:
                 row['ldab'] = 'NOT_IN_LDAB_SCOPE'
-            elif not isinstance(row['attempt_after'], int) or row['attempt_after'] <= a['run_attempt']:
+            elif row['attempt_after'] != ours:
                 row['ldab'] = 'NO_NEW_ATTEMPT'
             else:
                 name = triaged[(a['repo'], a['number'])].get('job_name')
-                try:
-                    jobs = client.paginate(f"/repos/{a['repo']}/actions/runs/{a['run_id']}/jobs", key='jobs')
+                try:  # the dispatched attempt's own jobs, never the run's latest attempt
+                    jobs = client.paginate(f"/repos/{a['repo']}/actions/runs/{a['run_id']}/attempts/{ours}/jobs",
+                                           key='jobs')
                 except (OSError, ValueError):
                     jobs = []
                 job = next((j for j in jobs if j.get('name') == name), jobs[0] if jobs else None)
