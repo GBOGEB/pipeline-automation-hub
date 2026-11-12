@@ -12,6 +12,9 @@ Fails (exit 1) when:
 - fewer than --expect-xfail tests xfailed (a pinned defect went missing);
 - any test was skipped while --max-skips is 0 (no silent skips).
 
+ledger_missing_heads() checks tests/coverage_waves/WAVE_LEDGER.jsonl: every row must
+carry the 40-hex head SHA it was measured at (#1063). scripts/tests runs it in CI.
+
 Writes a JSON summary with --out and a Markdown table to $GITHUB_STEP_SUMMARY when set.
 """
 from __future__ import annotations
@@ -19,6 +22,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -46,6 +50,22 @@ def count(junit: Path) -> dict:
         else:
             c["passed"] += 1
     return {"counts": c, "skips": skips, "xfails": xfails}
+
+
+SHA40 = re.compile(r"[0-9a-f]{40}")
+
+
+def ledger_missing_heads(ledger: Path) -> list[str]:
+    """Return `lane wave N` for each ledger row without a 40-hex head_sha (empty = parity)."""
+    bad = []
+    for n, line in enumerate(ledger.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        head = row.get("head_sha")
+        if not (isinstance(head, str) and SHA40.fullmatch(head)):
+            bad.append(f"line {n}: {row.get('lane')} wave {row.get('wave')} head_sha={head!r}")
+    return bad
 
 
 def verdict(r: dict, expected_min: int, expect_xfail: int, max_skips: int) -> list[str]:
