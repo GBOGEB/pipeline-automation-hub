@@ -127,6 +127,32 @@ jobs:
           python docs/ci-spine/plotly_projection.py --bundle-explorer --out "$RUNNER_TEMP/ci-spine-plotly/ci-spine-plotly.html"
           test -s "$RUNNER_TEMP/ci-spine-plotly/ci-spine-plotly.html"
           test -s "$RUNNER_TEMP/ci-spine-plotly/explorer.html"
+          test -s "$RUNNER_TEMP/ci-spine-plotly/ci-spine-plotly.receipt.json"
+      - name: JQ08 source-to-point receipt consistency (no external calls)
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          folder = Path(os.environ["RUNNER_TEMP"]) / "ci-spine-plotly"
+          html = (folder / "ci-spine-plotly.html").read_bytes()
+          receipt = json.loads((folder / "ci-spine-plotly.receipt.json").read_text())
+          assert receipt["schema"] == "gbo.ci-spine.plotly-point-receipt.v1"
+          assert receipt["chart"]["sha256"] == hashlib.sha256(html).hexdigest()
+          assert receipt["chart"]["bytes"] == len(html)
+          assert receipt["count"] == len(receipt["points"]) == 8
+          assert len({p["point_id"] for p in receipt["points"]}) == 8
+          assert receipt["precision"] == "PLOTLY_POINT_SELECTION"
+          assert receipt["pdf_mapping"] == "UNMAPPED_NO_VERIFIED_BINARY"
+          assert receipt["authority_transfer"] is False and receipt["merge_authorized"] is False
+          assert receipt["source"]["sha256"] == hashlib.sha256(
+              Path("docs/ci-spine/RUN_TIMING_SAMPLES_20261028.json").read_bytes()).hexdigest()
+          assert b'gd.on("plotly_click", selectPoint)' in html
+          assert b'ci-spine-point-inspector' in html
+          assert b'Object.hasOwn(points, id)' in html
+          assert b'connect-src' not in html or b'fetch(' not in html
+          print("JQ08_POINTS_SOURCE_BOUND=8; PDF=UNMAPPED; AUTHORITY=false")
+          PY
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
