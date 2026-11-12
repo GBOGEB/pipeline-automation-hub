@@ -100,6 +100,29 @@ class ExtractWrites(unittest.TestCase):
             xw.dump(self.tmp / "repo" / "rescue", "", [self.jsonl])
         self.assertFalse((self.tmp / "repo" / "rescue").exists())
 
+    def test_errored_calls_are_dropped(self):
+        j = self.tmp / "err.jsonl"
+        w_ok = _call("2026-11-01T10:00:00Z", "Write", {"file_path": A, "content": "good"})
+        w_bad = _call("2026-11-01T10:01:00Z", "Write", {"file_path": A, "content": "never"})
+        e_bad = _call("2026-11-01T10:02:00Z", "Edit", {"file_path": A, "old_string": "good", "new_string": "bad"})
+        res = lambda c: {"type": "user", "message": {"role": "user", "content": [
+            {"type": "tool_result", "tool_use_id": c["message"]["content"][1]["id"],
+             "is_error": True, "content": "denied"}]}}
+        with open(j, "w", encoding="utf-8") as fh:
+            fh.write(chr(10).join(json.dumps(r) for r in (w_ok, w_bad, res(w_bad), e_bad, res(e_bad))))
+        calls = list(xw.iter_calls([j]))
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(xw.rebuild(calls)[:2], ("good", "complete"))
+
+    def test_calls_merge_chronologically_across_files(self):
+        old, new = self.tmp / "old.jsonl", self.tmp / "new.jsonl"
+        old.write_text(json.dumps(_call("2026-11-01T09:00:00Z", "Write", {"file_path": A, "content": "stale"})),
+                       encoding="utf-8")
+        new.write_text(json.dumps(_call("2026-11-02T09:00:00Z", "Write", {"file_path": A, "content": "fresh"})),
+                       encoding="utf-8")
+        for order in ([old, new], [new, old]):
+            self.assertEqual(xw.rebuild(list(xw.iter_calls(order)))[0], "fresh")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -41,7 +41,13 @@ TOOLS = ("Write", "Edit", "MultiEdit")
 
 
 def iter_calls(paths):
-    """Yield ``{ts, tool, file_path, input, src}`` for each Write/Edit/MultiEdit, in order."""
+    """Yield ``{ts, tool, file_path, input, src, id}`` for each Write/Edit/MultiEdit that took effect.
+
+    Calls whose ``tool_result`` has ``is_error`` (denied or failed) are dropped, so a
+    failed Write or Edit never becomes part of a rebuild. Calls from all files are merged
+    in timestamp order (stable), not argument order.
+    """
+    calls, failed = [], set()
     for p in paths:
         with open(p, encoding="utf-8", errors="replace") as fh:
             for line in fh:
@@ -54,15 +60,27 @@ def iter_calls(paths):
                 if not isinstance(content, list):
                     continue
                 for part in content:
-                    if not isinstance(part, dict) or part.get("type") != "tool_use":
+                    if not isinstance(part, dict):
+                        continue
+                    if part.get("type") == "tool_result":
+                        if part.get("is_error") and isinstance(part.get("tool_use_id"), str):
+                            failed.add(part["tool_use_id"])
+                        continue
+                    if part.get("type") != "tool_use":
                         continue
                     inp = part.get("input")
                     if part.get("name") not in TOOLS or not isinstance(inp, dict):
                         continue
                     fp = inp.get("file_path")
                     if isinstance(fp, str) and fp:
-                        yield {"ts": rec.get("timestamp", ""), "tool": part["name"],
-                               "file_path": fp, "input": inp, "src": str(p)}
+                        ts = rec.get("timestamp", "")
+                        calls.append({"ts": ts if isinstance(ts, str) else "", "tool": part["name"],
+                                      "file_path": fp, "input": inp, "src": str(p),
+                                      "id": part.get("id")})
+    calls.sort(key=lambda c: c["ts"])
+    for c in calls:
+        if c["id"] is None or c["id"] not in failed:
+            yield c
 
 
 def _edits(call):
