@@ -85,8 +85,8 @@ def main() -> int:
     snapshot = project(baseline, witness)
     args.out.mkdir(parents=True, exist_ok=True)
     (args.out / 'POSTMERGE_PROJECTION.json').write_text(json.dumps(snapshot, indent=2, sort_keys=True) + '\n', encoding='utf-8')
-    with (args.out / 'POSTMERGE_B46.csv').open('w', encoding='utf-8', newline='') as fh:
-        writer = csv.writer(fh)
+    with (args.out / 'POSTMERGE_B46.csv').open('w', encoding='utf-8', newline='\n') as fh:
+        writer = csv.writer(fh, lineterminator="\n")
         writer.writerow(['id', 'priority', 'historical_state', 'source_merge_prs', 'current_phase'])
         for row in snapshot['historical_unchanged_46']:
             witness_rows = row['current_phase_observation']
