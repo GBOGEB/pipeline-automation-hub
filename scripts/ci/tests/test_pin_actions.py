@@ -168,5 +168,65 @@ class CensusParity(unittest.TestCase):
         self.assertIs(pa.action_ref, workflows.action_ref)
 
 
+
+class FrozenBlobTests(unittest.TestCase):
+    """--frozen-blob-scan and the rewrite refusal, in a throwaway git repo."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        import subprocess
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        wfd = self.root / ".github" / "workflows"
+        wfd.mkdir(parents=True)
+        self.frozen = wfd / "frozen.yml"
+        self.free = wfd / "free.yml"
+        self.frozen.write_bytes(b"jobs:\n  a:\n    steps:\n      - uses: actions/checkout@v4\n")
+        self.free.write_bytes(b"jobs:\n  b:\n    steps:\n      - uses: actions/checkout@v4\n")
+        oid = next(iter(pa.git_blob_oids([self.frozen], self.root)))
+        (self.root / "lineage.json").write_bytes(b'{"frozen.yml": "%s"}\n' % oid.encode())
+        subprocess.run(["git", "-C", str(self.root), "add", "-A"], check=True)
+        self.old_root, pa.ROOT = pa.ROOT, self.root
+
+    def tearDown(self):
+        pa.ROOT = self.old_root
+        self.tmp.cleanup()
+
+    def run_main(self, argv, resolve=None):
+        out, err = io.StringIO(), io.StringIO()
+        with redirect_stdout(out), redirect_stderr(err):
+            rc = pa.main(argv, resolve=resolve)
+        return rc, out.getvalue(), err.getvalue()
+
+    def test_blob_oid_matches_git(self):
+        import hashlib
+        data = self.free.read_bytes()
+        want = hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
+        self.assertEqual(list(pa.git_blob_oids([self.free], self.root)), [want])
+
+    def test_scan_lists_only_pinned_file(self):
+        frozen = pa.frozen_blobs([self.frozen, self.free], self.root)
+        self.assertEqual(list(frozen), [self.frozen])
+        self.assertEqual(frozen[self.frozen], ["lineage.json"])
+
+    def test_scan_cli_reports_count(self):
+        rc, out, _ = self.run_main(["--frozen-blob-scan", str(self.frozen), str(self.free)])
+        self.assertEqual(rc, 0)
+        self.assertIn("frozen: 1 of 2", out)
+
+    def test_rewrite_refuses_frozen_without_allow(self):
+        before = self.frozen.read_text(encoding="utf-8")
+        rc, _, err = self.run_main([str(self.frozen), str(self.free)], resolve=FakeResolver(TABLE))
+        self.assertEqual(rc, 2)
+        self.assertIn("frozen", err)
+        self.assertEqual(self.frozen.read_text(encoding="utf-8"), before)
+        self.assertIn("@v4", self.free.read_text(encoding="utf-8"))  # nothing written at all
+
+    def test_rewrite_with_allow_pins(self):
+        rc, _, _ = self.run_main([str(self.frozen), "--allow", "frozen.yml"], resolve=FakeResolver(TABLE))
+        self.assertEqual(rc, 0)
+        self.assertNotIn("checkout@v4\n", self.frozen.read_text(encoding="utf-8"))
+
+
 if __name__ == "__main__":
     unittest.main()

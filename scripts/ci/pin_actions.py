@@ -17,6 +17,11 @@ when any exist. Used as a CI ratchet on changed workflow files.
 Only the `uses:` lines are touched; every other byte (indentation, quotes, line endings, comments
 on other lines) is preserved. Comment lines (`# uses: ...@<40-hex>`) are never rewritten.
 
+Frozen-blob scan (`--frozen-blob-scan`): no network; lists workflow files whose current git blob OID
+(`git hash-object`) appears in another tracked file (control, lineage or JADE outputs pin blob OIDs).
+Rewriting such a file breaks that pin, so rewrite mode refuses them unless named with `--allow`.
+Runbook: docs/governance/PIN_ACTIONS_ROLLOUT_RUNBOOK.md.
+
 Exit codes: 0 ok / nothing unpinned, 1 unpinned refs found (--check), 2 resolution or usage error.
 """
 from __future__ import annotations
@@ -187,13 +192,63 @@ def expand(paths: list[str], excludes: list[str]) -> list[Path]:
     return result
 
 
+def git_blob_oids(files: list[Path], root: Path = ROOT) -> dict[str, Path]:
+    """{blob OID: file} for the given files, as `git hash-object` computes them."""
+    # One call per file, run from the file's own folder: git applies that repo's clean filters (so a
+    # CRLF checkout still hashes to the committed blob) and files outside any repo hash raw.
+    oids = {}
+    for f in files:
+        out = subprocess.run(["git", "hash-object", "--", f.name], cwd=f.resolve().parent,
+                             capture_output=True, text=True, check=True)
+        oids[out.stdout.strip()] = f
+    return oids
+
+
+def frozen_blobs(files: list[Path], root: Path = ROOT) -> dict[Path, list[str]]:
+    """{workflow file: [tracked files that pin its blob OID]}; the file itself never counts."""
+    # Only files inside `root` can be pinned by root's tracked files.
+    inside = []
+    for f in files:
+        try:
+            f.resolve().relative_to(Path(root).resolve())
+            inside.append(f)
+        except ValueError:
+            pass
+    oids = git_blob_oids(inside, root)
+    if not oids:
+        return {}
+    args = ["git", "grep", "-l", "-F", "--no-color"]
+    for oid in oids:
+        args += ["-e", oid]
+    out = subprocess.run(args, cwd=root, capture_output=True, text=True, check=False)
+    if out.returncode not in (0, 1):
+        raise RuntimeError(f"git grep failed: {out.stderr.strip()}")
+    hits = [h for h in out.stdout.splitlines() if h]
+    result: dict[Path, list[str]] = {}
+    for oid, wf in oids.items():
+        own = wf.resolve()
+        pinners = []
+        for h in hits:
+            hp = (root / h).resolve()
+            if hp != own and oid in read_text(hp):
+                pinners.append(h)
+        if pinners:
+            result[wf] = sorted(pinners)
+    return result
+
+
 def main(argv=None, resolve=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("files", nargs="*", help="workflow files or globs (default: .github/workflows/*.y*ml)")
     ap.add_argument("--check", action="store_true", help="list unpinned refs and exit 1 if any (no network)")
     ap.add_argument("--exclude", action="append", default=[], help="file path or basename to skip (repeatable)")
     ap.add_argument("--self-repo", default=SELF_REPO, help="owner/repo whose reusable workflows are not pinned")
-    ap.add_argument("--json", action="store_true", help="with --check: JSON list of unpinned refs on stdout")
+    ap.add_argument("--json", action="store_true",
+                    help="with --check or --frozen-blob-scan: JSON report on stdout")
+    ap.add_argument("--frozen-blob-scan", action="store_true",
+                    help="list workflow files whose blob OID is pinned by another tracked file (no network)")
+    ap.add_argument("--allow", action="append", default=[],
+                    help="rewrite mode: frozen file path or basename that may be rewritten anyway (repeatable)")
     args = ap.parse_args(argv)
 
     files = expand(args.files, args.exclude)
@@ -215,6 +270,25 @@ def main(argv=None, resolve=None) -> int:
         if not bad:
             print(f"ok: {len(files)} file(s), every remote action is pinned to a commit SHA")
         return 1 if bad else 0
+
+    if args.frozen_blob_scan:
+        frozen = frozen_blobs(files, ROOT)
+        if args.json:
+            print(json.dumps({"files": len(files), "frozen": [{"file": shown(f), "pinned_by": p}
+                                                               for f, p in frozen.items()]}, indent=2))
+        else:
+            for f, pinners in frozen.items():
+                print(f"{shown(f)}: blob OID pinned by {', '.join(pinners)}")
+            print(f"frozen: {len(frozen)} of {len(files)} workflow file(s)")
+        return 0
+
+    allowed = {Path(a).resolve() for a in args.allow} | {a for a in args.allow if "/" not in a and "\\" not in a}
+    refused = [f for f in frozen_blobs(files, ROOT) if f.resolve() not in allowed and f.name not in allowed]
+    if refused:
+        for f in refused:
+            print(f"error: {shown(f)} is frozen (its blob OID is pinned elsewhere); "
+                  f"re-run with --allow {f.name} and regenerate the pinning outputs", file=sys.stderr)
+        return 2
 
     resolver = Resolver(resolve or gh_resolve)
     total = 0
