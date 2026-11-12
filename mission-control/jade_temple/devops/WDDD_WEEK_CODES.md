@@ -1,7 +1,7 @@
 # `w##DDD` week codes and Mermaid schedule patterns
 
 **Owner:** [`wddd.py`](wddd.py), tested by [`tests/test_wddd.py`](tests/test_wddd.py). This is the one GBOGEB owner of
-ISO week-date codes (AGENTS.md L4). Import it; do not copy it. `actions_metrics.iso_week()` already delegates to it.
+`w##DDD` week codes (AGENTS.md L4). Import it; do not copy it. `actions_metrics.iso_week()` already delegates to it.
 
 **Status:** the repository owner approved this for global roll-out on 2026-11-08, from the merged B1/B2 handover of
 that day.
@@ -15,6 +15,10 @@ control record yet. The examples below use neutral tasks and the Belgian public 
 | `YYYY-w##DDD` | `2026-w46MON` | Canonical. Store and exchange this form. |
 | `w##DDD` | `w46MON` | Display label only. Parsing it needs `iso_year=`. |
 | `YYYY-Www` | `2026-W46` | Week key, the same string as `actions_metrics.iso_week()`, so the two join. |
+
+`w##DDD` is a project code on the ISO 8601 week calendar, not ISO 8601 syntax. ISO 8601 writes `2026-w46MON` as
+`2026-W46-1`: an upper-case `W` and a numbered weekday (Monday is 1). Of the three forms, only the week key `YYYY-Www`
+is ISO 8601.
 
 `YYYY` is the **ISO** year, which can differ from the calendar year near 1 January: `2026-w01MON` is 2025-12-29, and
 `2026-w53SUN` is 2027-01-03. Week 53 exists only in 53-week years (2026 has one, 2027 does not).
