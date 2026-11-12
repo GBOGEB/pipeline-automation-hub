@@ -136,15 +136,22 @@ function Test-IsLink($Item) {
     return [bool]($Item.Attributes -band [IO.FileAttributes]::ReparsePoint)
 }
 
-function Remove-TreeChildren([string]$Path) {
+function Remove-TreeChildren([string]$Path, [datetime]$Cutoff = [datetime]::MaxValue) {
     # Delete each child on its own, so one locked folder (e.g. a .pytest_cache husk) does not stop its siblings.
     # -Confirm:$false: a confirmation prompt fails in the non-interactive scheduled task.
+    # $Cutoff applies to every descendant: a folder's own timestamp does not move when a file inside it is
+    # modified, so a recent file under an old folder is kept, and a folder is removed only once it is empty.
     $freed = 0
     foreach ($c in Get-ChildItem -LiteralPath $Path -Force -ErrorAction SilentlyContinue) {
         if (Test-IsLink $c) { continue }
         if ($c.PSIsContainer) {
-            $freed += Remove-TreeChildren $c.FullName
-            try { Remove-Item -LiteralPath $c.FullName -Force -Confirm:$false -ErrorAction Stop } catch { }
+            $dirOld = $c.LastWriteTime -lt $Cutoff   # read before emptying it updates the timestamp
+            $freed += Remove-TreeChildren $c.FullName $Cutoff
+            if ($dirOld -and -not (Get-ChildItem -LiteralPath $c.FullName -Force -ErrorAction SilentlyContinue | Select-Object -First 1)) {
+                try { Remove-Item -LiteralPath $c.FullName -Force -Confirm:$false -ErrorAction Stop } catch { }
+            }
+        } elseif ($c.LastWriteTime -ge $Cutoff) {
+            continue   # recent file: keep
         } else {
             $len = [double]$c.Length
             try { Remove-Item -LiteralPath $c.FullName -Force -Confirm:$false -ErrorAction Stop; $freed += $len } catch { }
@@ -242,8 +249,10 @@ function Remove-OlderThan([string]$Path, [double]$Days, [string[]]$Keep = @()) {
         if ($item.Name -in $Keep -or $item.LastWriteTime -ge $cut) { continue }
         if (Test-IsLink $item) { continue }   # junction: skip, never follow
         if ($item.PSIsContainer) {
-            $freed += Remove-TreeChildren $item.FullName
-            try { Remove-Item -LiteralPath $item.FullName -Force -Confirm:$false -ErrorAction Stop } catch { }
+            $freed += Remove-TreeChildren $item.FullName $cut
+            if (-not (Get-ChildItem -LiteralPath $item.FullName -Force -ErrorAction SilentlyContinue | Select-Object -First 1)) {
+                try { Remove-Item -LiteralPath $item.FullName -Force -Confirm:$false -ErrorAction Stop } catch { }
+            }
         } else {
             $len = [double]$item.Length
             try { Remove-Item -LiteralPath $item.FullName -Force -Confirm:$false -ErrorAction Stop; $freed += $len } catch { }   # in use: skip
