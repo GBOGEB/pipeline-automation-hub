@@ -689,6 +689,207 @@ class PressureTargets(unittest.TestCase):
                     "--repo", "GBOGEB/CODEX", "--source-sha", SHA])
 
 
+class SearchWindow:
+    """Fake runs search over a fixed run population: honours `created=lo..hi` and the 1000 cap.
+
+    overlap=True makes every window also return runs created one second after `hi`, so each
+    bisection boundary yields exact duplicates across the two halves.
+    """
+
+    def __init__(self, runs, overlap=False):
+        self.runs, self.overlap, self.calls = runs, overlap, []
+
+    def pages(self, route, key):
+        from datetime import datetime, timedelta, timezone
+        self.calls.append(route)
+        q = route.split("created=", 1)[1]
+        if ".." in q:
+            lo, hi = (datetime.strptime(x, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+                      for x in q.split(".."))
+        else:
+            lo = datetime.strptime(q, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+            hi = lo + timedelta(seconds=86399)
+        if self.overlap:
+            hi += timedelta(seconds=1)
+        hit = [r for r in self.runs if lo <= M.BQ.utc(r["created_at"]) <= hi]
+        return hit[:1000], len(hit)
+
+
+def busy_hour(n, day="2026-10-25", hour=10):
+    """n runs spread over one UTC hour (several per second when n > 3600)."""
+    return [run(i + 1, created=f"{day}T{hour:02d}:{(i * 3600 // n) // 60:02d}:{(i * 3600 // n) % 60:02d}Z")
+            for i in range(n)]
+
+
+class FetchBisection(unittest.TestCase):
+    """U29: an hour over the 1000-run search cap is bisected, not aborted."""
+
+    def test_hour_over_1000_runs_bisects_to_complete_parity(self):
+        runs = busy_hour(2500)
+        rd, receipt = SearchWindow(runs), {}
+        rows = M.fetch_runs_day(rd, REPO, date(2026, 10, 25), receipt=receipt)
+        self.assertEqual(len(rows), 2500)  # overall event-total parity
+        self.assertEqual({r["id"] for r in rows}, {r["id"] for r in runs})
+        self.assertGreater(receipt["bisected"], 0)
+        self.assertEqual(receipt["queries"], len(rd.calls))
+        self.assertEqual(receipt["unique_runs"], 2500)
+        self.assertEqual(receipt["windows"][0][4], "SPLIT_HOURLY")
+        self.assertTrue(all(w[3] <= 1000 for w in receipt["windows"]))
+
+    def test_exact_boundary_duplicates_collapse_by_run_id(self):
+        rows = M.fetch_runs_day(SearchWindow(busy_hour(1800), overlap=True), REPO, date(2026, 10, 25))
+        self.assertEqual(len(rows), 1800)
+        self.assertEqual(len({r["id"] for r in rows}), 1800)
+
+    def test_conflicting_boundary_duplicate_still_fails_closed(self):
+        runs = busy_hour(1200)
+
+        class Conflict(SearchWindow):
+            def pages(self, route, key):
+                rows, total = super().pages(route, key)
+                # id 601 sits on the 10:30:00 bisection boundary; the left half returns a different record
+                return [dict(r, conclusion="failure") if r["id"] == 601 and route.endswith("10:29:59Z") else r
+                        for r in rows], total
+        with self.assertRaisesRegex(ValueError, "conflicting workflow-run record"):
+            M.fetch_runs_day(Conflict(runs, overlap=True), REPO, date(2026, 10, 25))
+
+    def test_unsplittable_second_over_cap_fails_closed(self):
+        runs = [run(i + 1, created="2026-10-25T10:00:00Z") for i in range(1001)]
+        with self.assertRaisesRegex(ValueError, "unsplittable 1s window exceeds the search cap"):
+            M.fetch_runs_day(SearchWindow(runs), REPO, date(2026, 10, 25))
+
+    def test_zero_and_one_run_windows(self):
+        for runs in ([], [run(7, created="2026-10-25T23:59:59Z")]):
+            with self.subTest(n=len(runs)):
+                rd, receipt = SearchWindow(runs), {}
+                rows = M.fetch_runs_day(rd, REPO, date(2026, 10, 25), receipt=receipt)
+                self.assertEqual(len(rows), len(runs))
+                self.assertEqual((len(rd.calls), receipt["bisected"]), (1, 0))
+                self.assertEqual(receipt["windows"][0][4], "COMPLETE")
+
+    def test_one_run_hour_inside_a_split_day_is_one_query(self):
+        runs = busy_hour(1001) + [run(5000, created="2026-10-25T03:00:00Z")]
+        rd = SearchWindow(runs)
+        rows = M.fetch_runs_day(rd, REPO, date(2026, 10, 25))
+        self.assertEqual(len(rows), 1002)
+        self.assertEqual(sum("T03:00:00Z.." in c for c in rd.calls), 1)
+
+    def test_fetch_writes_pagination_receipt_that_pressure_still_accepts(self):
+        from datetime import datetime, timedelta, timezone
+        day = datetime.now(timezone.utc).date() - timedelta(days=1)  # finalized day, runs never in the future
+        runs = busy_hour(1500, day=day.isoformat())
+        with tempfile.TemporaryDirectory() as td:
+            M.fetch(Path(td), [REPO], day, day, 0, SearchWindow(runs), workers=1, log=lambda _: None)
+            path = M.repo_dir(Path(td), REPO) / "runs" / f"{day}.json"
+            rec = json.loads(M.cache_receipt_path(path).read_text(encoding="utf-8"))
+            self.assertEqual(rec["records"], 1500)
+            self.assertEqual(rec["pagination"]["schema"], M.PAGINATION_SCHEMA)
+            self.assertGreater(rec["pagination"]["bisected"], 0)
+            problems, _ = M.pressure_cache_evidence(Path(td), REPO, day, day, rec["fetched_at"])
+            self.assertEqual(problems, [])
+
+
+def dflt(i, conclusion="success", event="push", branch="master", created="2026-10-05T10:00:00Z",
+         name="Gate", path=".github/workflows/gate.yml"):
+    return dict(run(i, path=path, name=name, conclusion=conclusion, event=event, created=created),
+                head_branch=branch)
+
+
+class Stability(unittest.TestCase):
+    """U29: per-repo 7-day DPMO and short-term sigma; 0/1 boundaries and n=0 never fake certainty."""
+
+    UNTIL = date(2026, 10, 5)
+
+    def block(self, runs, branch="master", missing=None):
+        return M.stability(runs, branch, self.UNTIL, missing)
+
+    def test_interior_rate_gives_dpmo_wilson_and_sigma(self):
+        from statistics import NormalDist
+        b = self.block([dflt(i, "failure" if i == 1 else "success") for i in range(1, 11)])
+        self.assertEqual(b["state"], "DESCRIPTIVE_ESTIMATE")
+        self.assertEqual((b["numerator"], b["denominator"], b["dpmo"]), (1, 10, 100000.0))
+        self.assertAlmostEqual(b["sigma_short_term"], NormalDist().inv_cdf(0.9) + 1.5, places=3)
+        lo, hi = b["wilson95"]
+        self.assertLess(lo, 0.1)
+        self.assertGreater(hi, 0.1)
+        self.assertLess(b["sigma_lower95"], b["sigma_short_term"])
+        self.assertEqual(b["top_red_root_workflows"],
+                         [{"workflow": "Gate", "path": ".github/workflows/gate.yml", "runs": 10, "non_success": 1}])
+
+    def test_p_zero_is_censored_not_infinite_sigma(self):
+        b = self.block([dflt(i) for i in range(1, 21)])
+        self.assertEqual(b["state"], "CENSORED_ZERO_DEFECTS")
+        self.assertIsNone(b["sigma_short_term"])
+        self.assertEqual(b["dpmo"], 0.0)
+        self.assertEqual(b["wilson95"][0], 0.0)
+        self.assertTrue(0 < b["sigma_lower95"] < 6)  # finite pessimistic bound from the Wilson upper rate
+
+    def test_p_one_is_boundary_without_sigma(self):
+        b = self.block([dflt(i, "failure") for i in range(1, 4)])
+        self.assertEqual(b["state"], "BOUNDARY_ALL_DEFECTS")
+        self.assertIsNone(b["sigma_short_term"])
+        self.assertIsNone(b["sigma_lower95"])
+        self.assertEqual(b["dpmo"], 1e6)
+
+    def test_n_zero_is_unknown_not_zero(self):
+        b = self.block([dflt(1, event="pull_request")])
+        self.assertEqual(b["state"], "UNKNOWN_NO_OPPORTUNITIES")
+        self.assertEqual(b["denominator"], 0)
+        for k in ("rate", "wilson95", "dpmo", "sigma_short_term", "sigma_lower95"):
+            self.assertIsNone(b[k], k)
+        self.assertIsNone(M._sigma(0.0))
+        self.assertIsNone(M._sigma(1.0))
+        self.assertIsNone(M._sigma(None))
+
+    def test_cohort_excludes_other_branches_events_window_and_incomplete_runs(self):
+        runs = [dflt(1), dflt(2, "failure", event="schedule"), dflt(3, event="workflow_dispatch"),
+                dflt(4, "failure", event="pull_request"), dflt(5, "failure", branch="feature"),
+                dflt(6, "failure", created="2026-09-28T23:59:59Z"),  # day 8 back: outside the window
+                dict(dflt(7), status="in_progress", conclusion=None),
+                dflt(8, "cancelled", event="workflow_run"), dflt(9, event="workflow_run", branch="feature")]
+        b = self.block(runs)
+        self.assertEqual((b["numerator"], b["denominator"]), (1, 3))
+        self.assertEqual(b["window"], {"since": "2026-09-29", "until": "2026-10-05", "days": 7})
+        wr = b["workflow_run_cancelled"]
+        self.assertEqual((wr["numerator"], wr["denominator"], wr["rate"]), (1, 2, 0.5))
+
+    def test_missing_cache_day_or_branch_keeps_block_unknown(self):
+        runs = [dflt(1, "failure"), dflt(2)]
+        b = self.block(runs, missing=["2026-10-01"])
+        self.assertEqual(b["state"], "PARTIAL_UNKNOWN_MISSING_DAYS")
+        self.assertEqual(b["denominator"], 2)
+        self.assertIsNone(b["dpmo"])
+        self.assertIsNone(b["sigma_short_term"])
+        self.assertEqual(self.block(runs, branch=None)["state"], "UNKNOWN_DEFAULT_BRANCH")
+
+    def test_top_red_root_workflows_rank_by_defects(self):
+        runs = ([dflt(i, "failure", name="A", path="a.yml") for i in range(1, 4)]
+                + [dflt(i, "failure", name="B", path="b.yml") for i in range(4, 6)]
+                + [dflt(i, name="C", path="c.yml") for i in range(6, 9)])
+        top = self.block(runs)["top_red_root_workflows"]
+        self.assertEqual([(t["workflow"], t["non_success"]) for t in top], [("A", 3), ("B", 2)])
+
+    def test_project_carries_stability_and_private_rows_stay_aggregate(self):
+        for repo in (REPO, M.PB.private_repos()[0]):
+            with self.subTest(repo=repo), tempfile.TemporaryDirectory() as td:
+                d = M.repo_dir(Path(td), repo) / "runs"
+                d.mkdir(parents=True)
+                for k in range(7):
+                    day = date(2026, 9, 29 + k) if k < 2 else date(2026, 10, k - 1)
+                    rows = [dflt(100 + k, created=f"{day}T10:00:00Z")]
+                    if k == 6:
+                        rows.append(dflt(200, "failure", created=f"{day}T11:00:00Z"))
+                    (d / f"{day}.json").write_text(json.dumps(rows), encoding="utf-8")
+                heads = {repo: {"branch": "master", "head_sha": SHA, "visibility": "public", "oids": {}}}
+                doc = M.project(Path(td), [repo], self.UNTIL, self.UNTIL, heads, None, "2026-10-06T00:00:00Z")
+                b = doc["repos"][0]["stability"]
+                self.assertEqual(b["state"], "DESCRIPTIVE_ESTIMATE")
+                self.assertEqual((b["numerator"], b["denominator"]), (1, 8))
+                self.assertIsNotNone(b["sigma_short_term"])
+                self.assertNotIn('"id"', json.dumps(b))
+                self.assertEqual(M.PB.project(doc), doc)  # a fixed point of the private boundary
+
+
 class IsoWeekOwner(unittest.TestCase):
     """iso_week() is a thin UTC wrapper over wddd.iso_week_key(), the one owner of the week key (AGENTS.md L4)."""
 
