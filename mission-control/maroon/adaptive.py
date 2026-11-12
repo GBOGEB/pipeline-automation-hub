@@ -360,10 +360,8 @@ def main(argv=None) -> int:
     result = project(ledger, hints_result, queue_plan=queue_plan, red_trace=red_trace,
                      source_signals=source_signals, max_workers=args.workers)
     args.out.mkdir(parents=True, exist_ok=True)
-    (args.out / "MAROON_ADAPTIVE.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "
-", encoding="utf-8")
-    (args.out / "MAROON_ADAPTIVE_PUBLIC.json").write_text(json.dumps(public_counts(result), indent=2, sort_keys=True) + "
-", encoding="utf-8")
+    (args.out / "MAROON_ADAPTIVE.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    (args.out / "MAROON_ADAPTIVE_PUBLIC.json").write_text(json.dumps(public_counts(result), indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print("MAROON_ADAPTIVE=PASS", json.dumps(public_counts(result), sort_keys=True))
     return 0
 
