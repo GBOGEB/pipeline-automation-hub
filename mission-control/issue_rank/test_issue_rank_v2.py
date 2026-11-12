@@ -5,6 +5,7 @@ Synthetic snapshots only (no network, no private data).
 from __future__ import annotations
 
 import contextlib
+import copy
 import io
 import json
 import random
@@ -615,6 +616,283 @@ class CriterionEvolution(unittest.TestCase):
         before, after = self.model("## DoD\n- [ ] same"), self.model("## DoD\n- [x] same")
         before["items"][0]["private"] = after["items"][0]["private"] = False
         self.assertEqual(ir.diff(before, after)["criterion_evolution"]["items"][0]["status"], "COMPARABLE")
+
+
+class CriterionProvenance(unittest.TestCase):
+    OLD = "## DoD\n- [ ] original obligation"
+    NEW = "## DoD\n- [ ] replacement obligation"
+
+    @staticmethod
+    def capture(name, body, observed, repo=HUB):
+        raw = body.encode("utf-8")
+        blob = ir.hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw,
+                              usedforsecurity=False).hexdigest()
+        return {"id": name, "body": body, "body_sha256": ir.sha256(raw), "observed_at": observed,
+                "source_visibility": "PUBLIC", "source": {"repo": repo, "blob_sha": blob}}
+
+    @staticmethod
+    def identity(body):
+        return ir.parse_checklist(body)["criteria"][0]["criterion_sha256"]
+
+    def evidence(self, old=None, new=None, links=True, repo=HUB):
+        old, new = self.OLD if old is None else old, self.NEW if new is None else new
+        a, b = self.identity(old), self.identity(new)
+        history = {"key": k(1, repo), "origin_basis": "CREATION_RESPONSE_CAPTURE",
+                   "snapshots": [self.capture("origin", old, "2026-10-01T00:00:00Z", repo),
+                                 self.capture("later", new, "2026-10-25T00:00:00Z", repo)],
+                   "links": []}
+        if links:
+            history["links"] = [
+                {"kind": "INTRODUCED_BY", "snapshot": "later", "criterion_sha256": b,
+                 "pr": {"repo": repo, "number": 55, "head_sha": "d" * 40},
+                 "evidence_url": f"https://github.com/{repo}/pull/55#issuecomment-123"},
+                {"kind": "SUPERSEDES", "snapshot": "later", "from": a, "to": b,
+                 "evidence_url": f"https://github.com/{repo}/issues/1#issuecomment-456"}]
+        return {"schema": ir.CRITERION_PROVENANCE_SCHEMA, "histories": [history]}
+
+    def model(self, evidence=None, body=None):
+        return ir.rank(snapshot([issue(HUB, 1, self.NEW if body is None else body)]), draws=0,
+                       criterion_history=self.evidence() if evidence is None else evidence)
+
+    def outcome(self, evidence, body=None):
+        return self.model(evidence, body)["items"][0]["criterion_provenance"]
+
+    def test_equal_count_replacement_gets_explicit_lineage_without_completion(self):
+        model = self.model()
+        proof = model["items"][0]["criterion_provenance"]
+        old, new = self.identity(self.OLD), self.identity(self.NEW)
+        rows = {row["criterion_sha256"]: row for row in proof["criteria"]}
+        self.assertEqual(proof["status"], "CONTENT_BOUND_UNATTESTED")
+        self.assertEqual(proof["issue_origin"], "CREATION_CAPTURE_REPORTED_UNATTESTED")
+        self.assertEqual(proof["mapping_layers"], [[old], [new]])
+        self.assertEqual((rows[old]["current_occurrences"], rows[new]["current_occurrences"]), (0, 1))
+        self.assertEqual(rows[old]["superseded_by"], new)
+        self.assertEqual(rows[new]["supersedes"], old)
+        self.assertEqual(rows[new]["introduced_by"]["pr"]["head_sha"], "d" * 40)
+        self.assertEqual(proof["closure_credit"], 0)
+        self.assertFalse(proof["origin_authenticity_verified"])
+        self.assertFalse(proof["remote_custody_verified"])
+        self.assertFalse(model["authority"]["closure_authorized"])
+
+    def test_first_observed_never_becomes_original_creation(self):
+        evidence = self.evidence()
+        evidence["histories"][0]["origin_basis"] = "FIRST_OBSERVED"
+        self.assertEqual(self.outcome(evidence)["issue_origin"], "UNKNOWN_FIRST_OBSERVED_ONLY")
+
+    def test_missing_history_is_unknown_and_missing_links_do_not_infer_supersession(self):
+        proof = self.outcome({"schema": ir.CRITERION_PROVENANCE_SCHEMA, "histories": []})
+        self.assertEqual(proof["status"], "UNKNOWN_NOT_CAPTURED")
+        proof = self.outcome(self.evidence(links=False))
+        self.assertEqual(proof["unmapped_origin_removals"], [self.identity(self.OLD)])
+        self.assertTrue(all(row["supersedes"] is None for row in proof["criteria"]))
+
+    def test_hashes_bind_full_utf8_bytes_not_display_text(self):
+        old = "## DoD\n- [ ] " + "é" * 400 + " A"
+        new = "## DoD\n- [ ] " + "é" * 400 + " B"
+        proof = self.outcome(self.evidence(old, new), new)
+        self.assertEqual(proof["status"], "CONTENT_BOUND_UNATTESTED")
+        self.assertEqual(len(proof["criteria"]), 2)
+        self.assertNotIn("é", json.dumps(proof, ensure_ascii=False))
+
+    def test_body_or_git_blob_tampering_is_invalid(self):
+        for change in ("body", "body_sha256", "blob_sha"):
+            with self.subTest(change=change):
+                evidence = self.evidence()
+                r = evidence["histories"][0]["snapshots"][0]
+                if change == "body":
+                    r["body"] += " tamper"
+                elif change == "body_sha256":
+                    r[change] = "0" * 64
+                else:
+                    r["source"][change] = "0" * 40
+                proof = self.outcome(evidence)
+                self.assertEqual(proof["status"], "INVALID_EVIDENCE")
+                self.assertNotIn("snapshots", proof)
+
+    def test_history_must_end_at_exact_current_body(self):
+        proof = self.outcome(self.evidence(), self.NEW + "\nnew observation")
+        self.assertEqual(proof["reason"], "CRITERION_PROVENANCE_STALE_CURRENT_BODY")
+
+    def test_chronology_requires_strict_zoned_order_within_observation(self):
+        for bad in ("2026-09-30T00:00:00Z", "2026-10-01T00:00:00Z", "2026-10-27T00:00:00Z",
+                    "2026-10-25", "bad", None, []):
+            with self.subTest(value=bad):
+                evidence = self.evidence()
+                evidence["histories"][0]["snapshots"][1]["observed_at"] = bad
+                self.assertEqual(self.outcome(evidence)["status"], "INVALID_EVIDENCE")
+
+    def test_snapshot_and_link_ids_are_strict_and_unique(self):
+        for mode in ("duplicate", "bad_type", "unknown_link", "link_at_origin"):
+            evidence = self.evidence()
+            h = evidence["histories"][0]
+            if mode == "duplicate":
+                h["snapshots"][1]["id"] = "origin"
+            elif mode == "bad_type":
+                h["snapshots"][1]["id"] = []
+            else:
+                h["links"][0]["snapshot"] = "missing" if mode == "unknown_link" else "origin"
+            self.assertEqual(self.outcome(evidence)["status"], "INVALID_EVIDENCE")
+
+    def test_introduction_requires_new_unique_content_and_matching_pr(self):
+        mutations = [lambda h: h["links"][0].update(criterion_sha256=self.identity(self.OLD)),
+                     lambda h: h["links"][0]["pr"].update(head_sha="deadbee"),
+                     lambda h: h["links"][0]["pr"].update(number=True),
+                     lambda h: h["links"][0].update(evidence_url=f"https://github.com/{HUB}/pull/56"),
+                     lambda h: h["links"].append(copy.deepcopy(h["links"][0]))]
+        for mutation in mutations:
+            evidence = self.evidence()
+            mutation(evidence["histories"][0])
+            self.assertEqual(self.outcome(evidence)["status"], "INVALID_EVIDENCE")
+
+    def test_duplicate_occurrences_are_not_arbitrarily_mapped(self):
+        for old, new in ((self.OLD + "\n- [ ] original obligation", self.NEW),
+                         (self.OLD, self.NEW + "\n- [ ] replacement obligation")):
+            self.assertEqual(self.outcome(self.evidence(old, new), new)["status"], "INVALID_EVIDENCE")
+
+    def test_supersession_requires_actual_removal_and_replacement(self):
+        evidence = self.evidence()
+        h = evidence["histories"][0]
+        body = self.NEW + "\n- [ ] original obligation"
+        h["snapshots"][1] = self.capture("later", body, "2026-10-25T00:00:00Z")
+        self.assertEqual(self.outcome(evidence, body)["reason"], "CRITERION_PROVENANCE_SUPERSESSION_TRANSITION")
+
+    def test_conflicting_or_duplicate_supersession_is_invalid(self):
+        evidence = self.evidence()
+        h = evidence["histories"][0]
+        h["links"].append(copy.deepcopy(h["links"][1]))
+        self.assertEqual(self.outcome(evidence)["reason"], "CRITERION_PROVENANCE_SUPERSESSION_CONFLICT")
+
+    def test_cyclic_restoration_cannot_masquerade_as_supersession(self):
+        evidence = self.evidence()
+        h = evidence["histories"][0]
+        h["snapshots"].append(self.capture("third", self.OLD, "2026-10-25T01:00:00Z"))
+        h["links"].append({"kind": "SUPERSEDES", "snapshot": "third",
+                           "from": self.identity(self.NEW), "to": self.identity(self.OLD),
+                           "evidence_url": f"https://github.com/{HUB}/issues/1"})
+        self.assertEqual(self.outcome(evidence, self.OLD)["reason"], "CRITERION_PROVENANCE_SUPERSESSION_CYCLE")
+
+    def test_multihop_mapping_uses_canonical_kahn_independent_of_link_order(self):
+        evidence = self.evidence()
+        h = evidence["histories"][0]
+        final = "## DoD\n- [ ] final obligation"
+        h["snapshots"].append(self.capture("third", final, "2026-10-25T01:00:00Z"))
+        h["links"].insert(0, {"kind": "SUPERSEDES", "snapshot": "third",
+                              "from": self.identity(self.NEW), "to": self.identity(final),
+                              "evidence_url": f"https://github.com/{HUB}/issues/1"})
+        proof = self.outcome(evidence, final)
+        self.assertEqual(proof["mapping_layers"], [[self.identity(self.OLD)],
+                                                   [self.identity(self.NEW)], [self.identity(final)]])
+        self.assertEqual(proof["unmapped_origin_removals"], [])
+
+    def test_untracked_or_checked_source_is_not_qualified_completion(self):
+        old, new = "## DoD\n- original obligation", "## DoD\n- [x] original obligation"
+        proof = self.outcome(self.evidence(old, new, links=False), new)
+        self.assertEqual(proof["status"], "CONTENT_BOUND_UNATTESTED")
+        self.assertEqual(proof["criteria"][0]["current_states"][0]["state"], "CHECKED")
+        self.assertEqual(proof["closure_credit"], 0)
+
+    def test_public_reference_scope_and_historical_visibility_are_mandatory(self):
+        for mode in ("private_source", "unknown_source", "missing_visibility", "private_pr"):
+            evidence = self.evidence()
+            h = evidence["histories"][0]
+            if mode == "private_source":
+                h["snapshots"][0]["source"]["repo"] = QPS
+            elif mode == "unknown_source":
+                h["snapshots"][0]["source"]["repo"] = "GBOGEB/unobserved"
+            elif mode == "missing_visibility":
+                h["snapshots"][0].pop("source_visibility")
+            else:
+                h["links"][0]["evidence_url"] = f"https://github.com/{QPS}/pull/55"
+            proof = self.outcome(evidence)
+            self.assertEqual(proof["status"], "WITHHELD_SOURCE_SCOPE")
+            self.assertNotIn("criteria", proof)
+
+    def test_citation_rejects_external_or_credentialed_or_query_urls(self):
+        for url in ("https://evil.example/a", "https://user:secret@github.com/GBOGEB/x/pull/55",
+                    f"https://github.com/{HUB}/pull/55?token=secret", None, []):
+            evidence = self.evidence()
+            evidence["histories"][0]["links"][0]["evidence_url"] = url
+            self.assertEqual(self.outcome(evidence)["status"], "INVALID_EVIDENCE")
+
+    def test_private_history_is_withheld_and_redaction_retains_no_source_identity(self):
+        s = snapshot([], [issue(QPS, 1, self.NEW)])
+        m = ir.rank(s, draws=0, criterion_history=self.evidence(repo=QPS))
+        self.assertEqual(m["items"][0]["criterion_provenance"]["status"], "WITHHELD_PRIVATE_SCOPE")
+        public, delta = ir.redact(m, ir.diff(None, m))
+        text = json.dumps([public, delta])
+        for value in ("replacement obligation", self.identity(self.NEW), self.identity(self.OLD), "git/blobs/"):
+            self.assertNotIn(value, text)
+
+    def test_provenance_does_not_change_ranking_dependencies_or_closure_math(self):
+        baseline = ir.rank(snapshot([issue(HUB, 1, self.NEW)]), draws=0)
+        enriched = self.model()
+        proof = enriched["items"][0].pop("criterion_provenance")
+        self.assertEqual(enriched, baseline)
+        self.assertEqual(proof["mapping_role"], "PROVENANCE_ONLY_NOT_ISSUE_PRECEDENCE")
+
+    def test_authoritative_private_roster_withholds_public_issue_linked_fingerprints(self):
+        for mode in ("artifact", "pr", "citation"):
+            s = snapshot([issue(HUB, 1, self.NEW)])
+            s["repos"][QPS]["private"] = False
+            evidence = self.evidence()
+            h = evidence["histories"][0]
+            if mode == "artifact":
+                h["snapshots"][0]["source"]["repo"] = QPS
+            elif mode == "pr":
+                h["links"][0]["pr"]["repo"] = QPS
+                h["links"][0]["evidence_url"] = f"https://github.com/{QPS}/pull/55"
+            else:
+                h["links"][1]["evidence_url"] = f"https://github.com/{QPS}/issues/88"
+            model = ir.rank(s, draws=0, criterion_history=evidence)
+            self.assertEqual(model["items"][0]["criterion_provenance"]["status"], "CONTENT_BOUND_UNATTESTED")
+            public = ir.redact(model, private_repos=[QPS])
+            proof = public["items"][0]["criterion_provenance"]
+            self.assertEqual(proof["status"], "WITHHELD_SOURCE_SCOPE")
+            text = json.dumps(public)
+            self.assertNotIn(h["snapshots"][0]["body_sha256"], text)
+            self.assertNotIn(self.identity(self.OLD), text)
+
+    def test_invalid_container_or_duplicate_issue_fails_closed(self):
+        for evidence in (None, [], {}, {"schema": ir.CRITERION_PROVENANCE_SCHEMA, "histories": [None]}):
+            with self.assertRaisesRegex(ValueError, "CRITERION_PROVENANCE_"):
+                ir.criterion_provenance(evidence, {}, snapshot())
+        evidence = self.evidence()
+        evidence["histories"] += copy.deepcopy(evidence["histories"])
+        with self.assertRaisesRegex(ValueError, "DUPLICATE_ISSUE"):
+            self.model(evidence)
+
+    def test_cli_rank_wires_history_to_existing_output(self):
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            snap, history, out = base / "snapshot.json", base / "history.json", base / "out"
+            snap.write_bytes(ir.canonical(snapshot([issue(HUB, 1, self.NEW)])))
+            history.write_bytes(ir.canonical(self.evidence()))
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(ir.main(["rank", "--snapshot", str(snap), "--criterion-history", str(history),
+                                          "--out", str(out), "--draws", "0"]), 0)
+            model = json.loads((out / "issue_rank.json").read_text())
+            self.assertEqual(model["items"][0]["criterion_provenance"]["status"], "CONTENT_BOUND_UNATTESTED")
+
+    def test_retained_1180_response_bytes_replay_through_production_rank(self):
+        directory = Path(__file__).parent / "fixtures" / "criterion_origin_1180"
+        evidence = json.loads((directory / "history.json").read_text(encoding="utf-8"))
+        h, meta = evidence["histories"][0], evidence["frozen_issue"]
+        for revision in h["snapshots"]:
+            self.assertEqual((directory / (revision["id"] + ".md")).read_bytes(),
+                             revision["body"].encode("utf-8"))
+        s = snapshot([issue(HUB, 1180, h["snapshots"][-1]["body"],
+                            created=meta["created_at"], updated=meta["updated_at"])])
+        s["fetched_at"] = meta["fetched_at"]
+        s["repos"][HUB]["head_sha"] = meta["main_sha"]
+        model = ir.rank(s, draws=0, criterion_history=evidence)
+        proof = model["items"][0]["criterion_provenance"]
+        self.assertEqual(proof["status"], "CONTENT_BOUND_UNATTESTED")
+        self.assertEqual(proof["issue_origin"], "CREATION_CAPTURE_REPORTED_UNATTESTED")
+        self.assertEqual(proof["closure_credit"], 0)
+        self.assertEqual(proof["links"], [])
+        self.assertEqual(proof["unmapped_origin_removals"], [])
+        self.assertEqual((model["items"][0]["checklist"]["done"],
+                          model["items"][0]["checklist"]["total"]), (7, 9))
 
 
 class Outputs(unittest.TestCase):
