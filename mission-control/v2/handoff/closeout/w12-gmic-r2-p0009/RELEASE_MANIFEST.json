@@ -2,17 +2,19 @@
   "authority_transfer": false,
   "canonical_source": "GBOGEB/pipeline-automation-hub@2c74687ef07211acf9b626a3897bfbfb2b0e47ea",
   "date": "2026-11-12",
+  "excluded_nonmembers": [
+    "dashboard.html: Drive-side HTML companion, not committed here, not a release member and not verified by this manifest"
+  ],
   "files_sha256": {
     "DROPIN.md": "05009613436fc3a4cf56ce3cf9b8acbbd96f54ff071b035d5e6fa2b862f7cfb5",
     "P0009_DEPENDENCIES.mmd": "0a5954f65b985e6bd746b2177215b8ab058e3990aa27d7730b28ba074c6065a4",
-    "POSTMERGE_WITNESS.json": "1ef6bfafa5284bb4654dc3c4177c9f08beee4d39e2ec96485855f14b94733ae9",
-    "README.md": "4951c2b1f837f1d00325058e15e5383bf89198ca3eec37ebfd99035fec865ecb",
-    "dashboard.html": "3dc62100ded93869024371536161dc34e4c5365caa413dd0ca5ccd22bd00ea1a",
-    "postmerge_reconcile.py": "97794cb153caba54f8a2a79cab398f6f3e55c955808b973665b41cda22820ed5",
-    "test_postmerge_reconcile.py": "3c8f05335e237fd5ae8992a8c95d35b76d42c74650d9d1d1e3b1cb7314d28370"
+    "POSTMERGE_WITNESS.json": "d4ebb57bfc4d1a6e09020eddd78115faff37cc00aac244fc9e9095d553aafd4c",
+    "README.md": "e08f3e1222013f4e07f89d89d8cb7d8d0369bb344601a911ba4cd258c222898e",
+    "postmerge_reconcile.py": "d692c41d4b90d93d9d3c361f3f24bd952ae2f98a64a4a025e9a461a6da109f28",
+    "test_postmerge_reconcile.py": "f39746df353485daee8bce0b82e3d441bd48aa562e1dac03341ed076bdd22182"
   },
   "formal_credit_delta": 0,
   "qa_first_red_fix": "P4_EXPLICIT_NEWLINE_ON_WRITE_TEXT",
   "schema": "gmic.p0009.release-manifest.v1",
-  "scope": "DRIVE_COMPANION_WITH_HTML"
+  "scope": "REPO_COMMITTED_MEMBERS_ONLY"
 }

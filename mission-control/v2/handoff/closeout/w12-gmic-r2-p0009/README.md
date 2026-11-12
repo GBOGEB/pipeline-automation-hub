@@ -6,7 +6,7 @@ Previous observation recorded 46 B IDs, 22 scoped DONE and 24 OPEN. Eight previo
 
 ## Actual execution
 
-Run the existing CP.CLOSE tests, then `python mission-control/v2/handoff/closeout/w12-gmic-r2-p0009/postmerge_reconcile.py --out /tmp/gmic-p0009` and `python -m unittest discover -s mission-control/v2/handoff/closeout/w12-gmic-r2-p0009 -p 'test_*.py' -v`. The projector imports the original 46-row JSON and appends independent PR-merge evidence without promoting anything. It is offline, deterministic and read-only.
+Run the existing CP.CLOSE tests, then `python mission-control/v2/handoff/closeout/w12-gmic-r2-p0009/postmerge_reconcile.py --out /tmp/gmic-p0009` and `python -m unittest discover -s mission-control/v2/handoff/closeout/w12-gmic-r2-p0009 -p 'test_*.py' -v`. The projector imports the original 46-row JSON and appends independent PR-merge evidence without promoting anything. It is offline, deterministic and read-only. It refuses a baseline whose git blob differs from `48106d26a1db49317a20b91105ccb2a76237abad` or whose any row (id, priority, state, minimum DoD/DoV) differs from that frozen projection, and it refuses a release manifest with a missing member or a checksum mismatch.
 
 ## Three disjoint lanes
 

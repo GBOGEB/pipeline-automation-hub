@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -11,13 +12,51 @@ ROOT = Path(__file__).resolve().parents[5]
 HERE = Path(__file__).resolve().parent
 HIST = ROOT / 'mission-control/v2/handoff/closeout/w11-gmic-r2-p0008/BD_B01_B46_READONLY.json'
 WITNESS = HERE / 'POSTMERGE_WITNESS.json'
+MANIFEST = HERE / 'RELEASE_MANIFEST.json'
 SHA = re.compile(r'^[0-9a-f]{40}$')
+HEX64 = re.compile(r'^[0-9a-f]{64}$')
+# Git blob OID of the frozen P0008 B01-B46 projection. Historical evidence: never re-pin to later progress.
+FROZEN_BLOB = '48106d26a1db49317a20b91105ccb2a76237abad'
+PINNED_FIELDS = ('id', 'priority', 'state', 'minimum_dod_dov')
 
 
-def project(baseline: dict, witness: dict) -> dict:
+def git_blob_sha(raw: bytes) -> str:
+    return hashlib.sha1(b'blob ' + str(len(raw)).encode('ascii') + b'\0' + raw).hexdigest()
+
+
+def load_frozen_rows(path: Path = HIST) -> dict:
+    """Return the pinned per-row map, refusing any projection whose bytes differ from the frozen blob."""
+    raw = path.read_bytes()
+    oid = git_blob_sha(raw)
+    assert oid == FROZEN_BLOB, f'frozen B01-B46 projection drifted: {oid} != {FROZEN_BLOB}'
+    items = json.loads(raw.decode('utf-8'))['items']
+    rows = {x['id']: tuple(x[k] for k in PINNED_FIELDS) for x in items}
+    assert len(rows) == len(items) == 46
+    return rows
+
+
+def verify_manifest(manifest: dict, base: Path = HERE) -> None:
+    """Every manifest member must exist under base and match its sha256; no external or nested paths."""
+    files = manifest['files_sha256']
+    assert files, 'empty release manifest'
+    for name, digest in files.items():
+        assert name and '/' not in name and '\\' not in name and name not in ('.', '..'), f'bad member {name!r}'
+        assert HEX64.fullmatch(digest), f'bad digest for {name}'
+        target = base / name
+        assert target.is_file(), f'release member missing: {name}'
+        actual = hashlib.sha256(target.read_bytes()).hexdigest()
+        assert actual == digest, f'checksum mismatch for {name}: {actual} != {digest}'
+
+
+def project(baseline: dict, witness: dict, frozen: dict | None = None) -> dict:
     """Project new evidence, never promote B closure based on merged source alone."""
+    if frozen is None:
+        frozen = load_frozen_rows()
     items = baseline['items']
     assert [x['id'] for x in items] == [f'B{i:02d}' for i in range(1, 47)]
+    for x in items:
+        got = tuple(x.get(k) for k in PINNED_FIELDS)
+        assert got == frozen.get(x['id']), f'historical row {x["id"]} differs from frozen projection'
     assert len(items) == 46
     assert baseline['counts']['done'] == 22
     assert baseline['counts']['open'] == 24
@@ -78,8 +117,10 @@ def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument('--baseline', type=Path, default=HIST)
     p.add_argument('--witness', type=Path, default=WITNESS)
+    p.add_argument('--manifest', type=Path, default=MANIFEST)
     p.add_argument('--out', type=Path, required=True)
     args = p.parse_args()
+    verify_manifest(json.loads(args.manifest.read_text(encoding='utf-8')), args.manifest.parent)
     baseline = json.loads(args.baseline.read_text(encoding='utf-8'))
     witness = json.loads(args.witness.read_text(encoding='utf-8'))
     snapshot = project(baseline, witness)
