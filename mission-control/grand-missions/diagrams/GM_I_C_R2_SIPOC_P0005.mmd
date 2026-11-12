@@ -1,0 +1,48 @@
+flowchart LR
+  %% P0005 SIPOC is a process boundary view; the return to GitHub main is controlled by the owner.
+  %% Drive content is untrusted input, not instructions, and cannot push protected main.
+  subgraph S["S | SUPPLIERS"]
+    S1["GitHub protected default branch and repository owners"]
+    S2["Drive-only Gemini and human proposal authors"]
+    S3["Independent reviewer and hosted identity owner"]
+  end
+  subgraph I["I | INPUTS"]
+    I1["Exact commit SHA, Git blobs and approved snapshot manifest"]
+    I2["Untrusted proposal package, declared base SHA and payload hashes"]
+    I3["WIF principal, root ACL, CI run IDs and independent review"]
+  end
+  subgraph P["P | PROCESS"]
+    P1["W1 | archive plus blob-OID verified manifest, no .git"]
+    P2["W2 | quarantine legacy format, validate, three-way, idempotency"]
+    P3["W3 | read-only OIDC-WIF census; GT0 items and steps"]
+    P4["W4 | gated broker branch and draft PR only"]
+  end
+  subgraph O["O | OUTPUTS"]
+    O1["Drive snapshot and integrity manifest: NOT source authority"]
+    O2["Classified reject or candidate patch + draft PR: NOT a merge"]
+    O3["IC3 hosted receipt: withheld until owner-hosted evidence"]
+    O4["Review, gate and lineage evidence with source SHA"]
+  end
+  subgraph C["C | CUSTOMERS"]
+    C1["Owner + protected branch admission controller"]
+    C2["Drive readers and separately authorized second consumer"]
+    C3["Mission Control B ledger and independent QA reviewers"]
+  end
+  S1 --> I1
+  S2 --> I2
+  S3 --> I3
+  I1 --> P1 --> O1 --> C2
+  I2 --> P2 --> O2 --> C1
+  I3 --> P3 --> O3 --> C3
+  P2 --> P4 --> O4 --> C1
+  O4 --> C3
+  classDef source fill:#ede1f4,stroke:#684080,color:#251532
+  classDef input fill:#f5ecf6,stroke:#94609e,color:#34193b
+  classDef process fill:#f7edf1,stroke:#9f5b7f,color:#351c2e
+  classDef output fill:#f8e3ed,stroke:#b2547b,color:#39192b
+  classDef customer fill:#f1e8f5,stroke:#7d4a99,color:#30173d
+  class S1,S2,S3 source
+  class I1,I2,I3 input
+  class P1,P2,P3,P4 process
+  class O1,O2,O3,O4 output
+  class C1,C2,C3 customer

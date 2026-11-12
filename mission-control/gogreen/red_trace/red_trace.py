@@ -22,6 +22,7 @@ import hashlib
 import json
 import os
 import sys
+import time
 import urllib.error
 import urllib.request
 from datetime import datetime, timezone
@@ -31,17 +32,23 @@ SCHEMA = "gogreen.red_trace.v1"
 GREEN = {"success"}
 RED = {"failure", "timed_out", "startup_failure"}
 API = "https://api.github.com"
+# GitHub's runs listing intermittently answers 502/503/504 (federation spine 2026-11-09/10).
+# Retry those and network timeouts a bounded number of times; every other error stays fatal.
+RETRY_STATUS = {500, 502, 503, 504}
+RETRY_WAITS = (2, 5, 10)  # seconds before attempts 2, 3 and 4
 
 
 class Reader:
     """GET-only GitHub client; the token is never written to outputs."""
 
-    def __init__(self, repo: str, token: str | None = None, opener=None):
+    def __init__(self, repo: str, token: str | None = None, opener=None, sleep=None):
         if repo.count("/") != 1 or any(c in repo for c in "?#%\\ \n"):
             raise ValueError("invalid owner/repo")
         self.repo, self.token = repo, token if token is not None else os.environ.get("GITHUB_TOKEN", "")
         self.opener = opener or urllib.request.urlopen
-        self.requests = 0
+        self.sleep = sleep or time.sleep
+        self.requests = 0  # logical GETs; retried attempts are counted in self.retries
+        self.retries = 0
 
     def get(self, path: str):
         segs = path.split("?")[0].split("/")
@@ -51,8 +58,22 @@ class Reader:
         if self.token:
             headers["Authorization"] = "Bearer " + self.token
         self.requests += 1
-        with self.opener(urllib.request.Request(API + path, headers=headers), timeout=20) as r:
-            return json.load(r)
+        for attempt, wait in enumerate(RETRY_WAITS + (None,), start=1):
+            try:
+                with self.opener(urllib.request.Request(API + path, headers=headers), timeout=20) as r:
+                    return json.load(r)
+            except urllib.error.HTTPError as e:  # 401/403/404 and other 4xx stay fatal (fail closed)
+                if wait is None or e.code not in RETRY_STATUS:
+                    raise
+                why = "HTTP %s" % e.code
+            except (urllib.error.URLError, TimeoutError) as e:
+                if wait is None:
+                    raise
+                why = type(e).__name__
+            self.retries += 1
+            print("red-trace: %s on %s; retry %d/%d in %ss" % (why, path.split("?")[0], attempt, len(RETRY_WAITS), wait),
+                  file=sys.stderr)
+            self.sleep(wait)
 
 
 def list_workflows(reader: Reader) -> list:

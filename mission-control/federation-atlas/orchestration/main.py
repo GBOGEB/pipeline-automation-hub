@@ -33,7 +33,18 @@ EDGE_COLORS = {"DEPENDENCY": "#4c9ad6", "ARTIFACT_HANDOFF": "#169c87",
                "STATIC_CALL": "#64748b", "STEP_ORDER": "#4c9ad6",
                "SUPPLIES": "#4c9ad6", "CONSUMES_INPUT": "#169c87",
                "PRODUCES_OUTPUT": "#169c87", "DELIVERS_TO": "#8568bf"}
-SNAPSHOT_POLICY = "MISSION_CONTROL_FILES_AND_REPOSITORY_PYTHON_WORKFLOWS_MERMAID_V1"
+SNAPSHOT_POLICY = "MISSION_CONTROL_FILES_AND_REPOSITORY_MULTILANGUAGE_SOURCE_CONFIG_V2"
+SOURCE_LANGUAGES = {".py": "python", ".js": "javascript", ".mjs": "javascript",
+                    ".cjs": "javascript", ".jsx": "javascript-jsx", ".ts": "typescript",
+                    ".tsx": "typescript-jsx", ".sh": "shell", ".bash": "shell",
+                    ".ps1": "powershell", ".psm1": "powershell",
+                    ".json": "json", ".toml": "toml", ".yaml": "yaml", ".yml": "yaml"}
+CONFIG_SUFFIXES = {".json", ".toml", ".yaml", ".yml"}
+REFERENCE_SCAN_BYTES = 1_048_576
+REFERENCE_SCAN_LIMIT = 256
+LITERAL_FILE_REFERENCE = re.compile(
+    r"(?<![\w./:@-])(?:\.{1,2}/)?[A-Za-z0-9_@./-]+\."
+    r"(?:py|js|mjs|cjs|jsx|ts|tsx|sh|bash|ps1|psm1|json|toml|yaml|yml)(?![\w.-])")
 
 
 def canonical(value):
@@ -49,14 +60,45 @@ def demand(condition, message):
         raise ValueError(message)
 
 
-def safe_path(root, name):
-    """Only literal relative member paths; reject traversal and symlink escape."""
+def safe_path(root, name, *, base=None):
+    """Only literal relative member paths; reject traversal and symlink escape.
+
+    `base` is `Path(root).resolve()` hoisted out of a loop over one stable
+    root. On Windows each resolve() costs a filesystem round trip per path
+    component, and resolving the root again for every census member dominated
+    the build (RC06 profile).
+    """
     demand(isinstance(name, str) and name and "\\" not in name, "invalid relative path")
     path = PurePosixPath(name)
     demand(not path.is_absolute() and ".." not in path.parts, "path escapes root")
     resolved = (Path(root) / name).resolve()
-    demand(resolved.is_relative_to(Path(root).resolve()), "path escapes root")
+    demand(resolved.is_relative_to(Path(root).resolve() if base is None else base), "path escapes root")
     return resolved
+
+
+def safe_names(root, names):
+    """Same verdict as safe_path for every name, without resolving absent trees.
+
+    A name whose first segment does not exist under root has no symlink below
+    root to follow, so it resolves to the resolved root joined with the name and
+    cannot escape. Only names under an existing first segment are resolved; the
+    lexical join check keeps drive-relative names on the full resolve path.
+    """
+    root = Path(root)
+    base = root.resolve()
+    absent = {}
+    for name in names:
+        demand(isinstance(name, str) and name and "\\" not in name, "invalid relative path")
+        path = PurePosixPath(name)
+        demand(not path.is_absolute() and ".." not in path.parts, "path escapes root")
+        joined = root / name
+        first = path.parts[0] if path.parts else ""
+        if first and root in joined.parents:
+            if first not in absent:
+                absent[first] = not os.path.lexists(root / first)
+            if absent[first]:
+                continue
+        safe_path(root, name, base=base)
 
 
 def artifact_stem(identity):
@@ -83,7 +125,9 @@ def read_json(root, name):
 
 
 def git(root, *args):
-    result = subprocess.run(["git", "-C", str(root), *args], capture_output=True, text=True, check=False)
+    # Git emits UTF-8 blobs; the Windows locale codec would corrupt non-ASCII source.
+    result = subprocess.run(["git", "-C", str(root), *args], capture_output=True, text=True,
+                            encoding="utf-8", check=False)
     return result.stdout.strip() if result.returncode == 0 else None
 
 
@@ -152,6 +196,22 @@ def validate_artifact(root, port):
     return {"path": port["path"], "bytes": len(raw), "sha256": digest(raw)}
 
 
+def output_files(directory):
+    """Seal every regular output member, including manifests and support files."""
+    directory = Path(directory)
+    demand(directory.is_dir() and not directory.is_symlink(), "output directory missing or symlinked")
+    members = {}
+    for path in sorted(directory.rglob("*")):
+        demand(not path.is_symlink(), "symlinked output member")
+        if path.is_dir():
+            continue
+        demand(path.is_file(), "nonregular output member")
+        name = path.relative_to(directory).as_posix()
+        artifact_path(directory, name)
+        members[name] = digest(path.read_bytes())
+    return members
+
+
 def validate_profile(root, profile=None):
     profile = profile or read_json(root, PROFILE)
     demand(profile.get("schema") == "missioncontrol.orchestration.profile.v1", "profile schema")
@@ -213,8 +273,8 @@ def source_snapshot_paths(root, profile):
     """A bounded source snapshot, not a claim of dynamically traced dependencies."""
     names = source_files(root)
     consumed = {name for name in names if name.startswith("mission-control/")
-                or name.endswith((".py", ".mmd"))
-                or (name.startswith(".github/workflows/") and name.endswith((".yml", ".yaml")))}
+                or PurePosixPath(name).suffix.lower() in SOURCE_LANGUAGES
+                or name.endswith(".mmd")}
     consumed.update(profile["inherits"].values())
     consumed.update(profile["sources"].values())
     consumed.update({PROFILE, profile["publisher"]})
@@ -226,8 +286,14 @@ def source_snapshot_paths(root, profile):
     return sorted(consumed)
 
 
-def python_info(root, path):
-    raw = safe_path(root, path).read_bytes()
+def source_census(root, profile):
+    """SHA-256 of every snapshot member: the one census definition per pass."""
+    base = Path(root).resolve()
+    return {p: digest(safe_path(root, p, base=base).read_bytes()) for p in source_snapshot_paths(root, profile)}
+
+
+def python_info(root, path, base=None):
+    raw = safe_path(root, path, base=base).read_bytes()
     text = raw.decode("utf-8-sig")
     row = {"path": path, "sha256": digest(raw), "entrypoints": [], "functions": [],
            "static_calls": [], "parse_error": None, "evidence_class": "STATIC_SOURCE_ONLY"}
@@ -254,9 +320,9 @@ def python_info(root, path):
     return row
 
 
-def workflow_info(root, path):
+def workflow_info(root, path, base=None):
     import yaml
-    raw = safe_path(root, path).read_bytes()
+    raw = safe_path(root, path, base=base).read_bytes()
     row = {"path": path, "sha256": digest(raw), "jobs": [], "errors": [], "evidence_class": "DECLARED_YAML"}
     try:
         # BaseLoader preserves `on`, boolean-looking labels and expressions as
@@ -295,14 +361,115 @@ def workflow_info(root, path):
     return row
 
 
+def source_assets(root, names):
+    """Bounded literal-reference inspection, never a runtime/dead-code oracle.
+
+    Comments and example strings can match; dynamic imports, aliases, extensionless
+    targets and generated paths may not. Both limitations stay explicit per file.
+    Every byte inspected here belongs to source_snapshot_paths' V2 population.
+    """
+    candidates = {name for name in names if PurePosixPath(name).suffix.lower() in SOURCE_LANGUAGES}
+    registered = {}
+    if PROFILE in names:
+        for block in read_json(root, PROFILE).get("blocks", []):
+            registered.setdefault(block["source_path"], []).append(
+                {"block_id": block["id"], "entrypoint": block["entrypoint"]})
+    rows = []
+    base = Path(root).resolve()
+    resolved_cache = {}  # realpath is a pure function of the joined path within one scan
+    for name in sorted(candidates):
+        path = PurePosixPath(name)
+        raw = safe_path(root, name, base=base).read_bytes()
+        role = "CONFIG_OR_DATA" if path.suffix.lower() in CONFIG_SUFFIXES else "EXECUTABLE_SOURCE_CANDIDATE"
+        descriptor = None
+        if name.startswith(".github/workflows/") and path.suffix.lower() in {".yml", ".yaml"}:
+            role, descriptor = "WORKFLOW_DESCRIPTOR", "GITHUB_WORKFLOW"
+        elif path.name in {"action.yml", "action.yaml"}:
+            role, descriptor = "ACTION_DESCRIPTOR", "GITHUB_ACTION"
+        elif path.name == "package.json":
+            role, descriptor = "PACKAGE_DESCRIPTOR", "NPM_PACKAGE"
+        elif path.name == "pyproject.toml":
+            role, descriptor = "PACKAGE_DESCRIPTOR", "PYTHON_PROJECT"
+        elif name.endswith(".d.ts"):
+            role = "SUPPORT_DECLARATION"
+        elif any(part in {"test", "tests", "__tests__"} for part in path.parts) or path.name.startswith("test_") or re.search(r"\.(test|spec)\.", path.name):
+            role = "TEST_SUPPORT"
+        row = {"path": name, "sha256": digest(raw), "bytes": len(raw),
+               "language": SOURCE_LANGUAGES[path.suffix.lower()], "role": role,
+               "descriptor": descriptor, "registered_entrypoints": registered.get(name, []),
+               "references": [], "unresolved_dynamic_markers": 0,
+               "runtime_reachability": "UNKNOWN", "evidence_class": "BOUNDED_STATIC_LITERAL_REFERENCES"}
+        if len(raw) > REFERENCE_SCAN_BYTES:
+            row["reference_scan"] = "SIZE_LIMIT_NOT_SCANNED"
+        else:
+            try:
+                text = raw.decode("utf-8-sig")
+            except UnicodeDecodeError:
+                row["reference_scan"] = "NON_UTF8_NOT_SCANNED"
+            else:
+                if descriptor in {"GITHUB_ACTION", "NPM_PACKAGE"}:
+                    import yaml
+                    try:
+                        if descriptor == "NPM_PACKAGE":
+                            parsed = json.loads(text)
+                            scripts = parsed.get("scripts", {}) if isinstance(parsed, dict) else None
+                            demand(isinstance(scripts, dict), "package scripts must be a mapping")
+                            row["declared_script_names"] = sorted(scripts)
+                        else:
+                            parsed = yaml.load(text, Loader=yaml.BaseLoader)
+                            runtime = parsed.get("runs", {}).get("using") if isinstance(parsed, dict) else None
+                            row["declared_action_runtime"] = runtime
+                            if runtime == "composite":
+                                row["descriptor"] = "GITHUB_COMPOSITE_ACTION"
+                    except (ValueError, TypeError, AttributeError) as exc:
+                        row["descriptor_error"] = str(exc)
+                    except yaml.YAMLError as exc:
+                        row["descriptor_error"] = str(exc)
+                literals = sorted(set(LITERAL_FILE_REFERENCE.findall(text)))
+                row["reference_scan"] = "REFERENCE_LIMIT_TRUNCATED" if len(literals) > REFERENCE_SCAN_LIMIT else "COMPLETE_WITHIN_DECLARED_METHOD"
+                row["unresolved_dynamic_markers"] = len(re.findall(r"\$\{\{|\$\{|\brequire\(\s*(?![\s'\"])|\bimport\(\s*(?![\s'\"])", text))
+                for literal in literals[:REFERENCE_SCAN_LIMIT]:
+                    targets = set()
+                    # Every candidate exists (its bytes were just read), so a
+                    # resolution can only name one if the joined path exists.
+                    # Without "..", a non-existent joined path resolves to a
+                    # non-existent location on Windows and POSIX alike, so one
+                    # lstat stands in for the far costlier resolve. Literals
+                    # with ".." keep the full resolve (POSIX realpath applies
+                    # ".." after a missing component, unlike lexists).
+                    skip_absent = ".." not in PurePosixPath(literal).parts
+                    for parent in (base, (base / name).parent):
+                        joined = parent / literal
+                        key = str(joined)  # str, not Path: Windows Path equality ignores case
+                        if key not in resolved_cache:
+                            resolved_cache[key] = (None if skip_absent and not os.path.lexists(joined)
+                                                   else joined.resolve())
+                        resolved = resolved_cache[key]
+                        if resolved is not None and resolved.is_relative_to(base):
+                            relative = resolved.relative_to(base).as_posix()
+                            if relative in candidates and relative != name:
+                                targets.add(relative)
+                    row["references"].append({"literal": literal, "targets": sorted(targets),
+                        "resolution": "UNIQUE_LOCAL_LITERAL" if len(targets) == 1 else
+                                      "AMBIGUOUS_LOCAL_LITERAL" if targets else "UNRESOLVED_OR_SELF_REFERENCE"})
+        rows.append(row)
+    referenced = {target for row in rows for ref in row["references"] for target in ref["targets"]}
+    for row in rows:
+        row["membership"] = "REGISTERED_PROCESS_SOURCE" if row["registered_entrypoints"] else (
+            "STATIC_REFERENCE_CANDIDATE" if row["path"] in referenced else "UNCLASSIFIED_NO_LITERAL_REFERENCE")
+    return rows
+
+
 def inventory(root):
     names = source_files(root)
-    python = [python_info(root, path) for path in names if path.endswith(".py")]
-    workflows = [workflow_info(root, path) for path in names
+    base = Path(root).resolve()
+    python = [python_info(root, path, base) for path in names if path.endswith(".py")]
+    workflows = [workflow_info(root, path, base) for path in names
                  if path.startswith(".github/workflows/") and path.endswith((".yml", ".yaml"))]
-    diagrams = [{"path": path, "sha256": digest(safe_path(root, path).read_bytes()),
+    diagrams = [{"path": path, "sha256": digest(safe_path(root, path, base=base).read_bytes()),
                  "kind": "MERMAID_SOURCE", "runtime_status": "UNKNOWN"}
                 for path in names if path.endswith(".mmd")]
+    assets = source_assets(root, names)
     return {"schema": "missioncontrol.orchestration.inventory.v1",
             "scope": "LOCAL_REPOSITORY_SOURCE_ONLY", "python_modules": python, "workflows": workflows,
             "diagrams": diagrams, "python_module_count": len(python), "workflow_count": len(workflows),
@@ -311,6 +478,11 @@ def inventory(root):
             "python_with_main": sum(bool(x["entrypoints"]) for x in python),
             "workflow_jobs": sum(len(x["jobs"]) for x in workflows),
             "workflow_steps": sum(len(j["steps"]) for x in workflows for j in x["jobs"]),
+            "source_assets": assets, "source_asset_count": len(assets),
+            "source_language_counts": dict(sorted(Counter(x["language"] for x in assets).items())),
+            "reference_policy": {"snapshot_policy": SNAPSHOT_POLICY, "max_bytes_per_file": REFERENCE_SCAN_BYTES,
+                "max_unique_literals_per_file": REFERENCE_SCAN_LIMIT,
+                "interpretation": "Literal references can occur in comments or examples. Unreferenced files are unclassified, not confirmed dead. Dynamic, generated, aliased and extensionless dependencies require owner or runtime evidence."},
             "interpretation": "Static calls and YAML dependencies are source structure, not reachability, execution or remote dispatch proof."}
 
 
@@ -371,7 +543,7 @@ def graphs(root, profile, inv):
         "mission-control/federation-atlas/orchestration/broker.py",
         interpretation="Deferred tasks are reconsidered on subsequent scheduler passes after slots release. This static DAG unrolls that control loop and does not imply remote dispatch."))
     import yaml
-    fed = yaml.safe_load(safe_path(root, profile["sources"]["federation"]).read_text())
+    fed = yaml.safe_load(safe_path(root, profile["sources"]["federation"]).read_text(encoding="utf-8"))
     result.append(graph_record("federation", "Canonical federation · owners and evidence", "FEDERATION",
         fed["nodes"], [{**e, "kind": e["type"].upper()} for e in fed["edges"]], profile["sources"]["federation"]))
     beams = read_json(root, profile["sources"]["beams"])
@@ -612,7 +784,7 @@ def tasks(profile):
                   + [p["path"] for p in blocks[block]["inputs"]
                      if p.get("source_scope") == "REPOSITORY" and p.get("required", True)]) if block else []
         reads = sorted(set(inputs + ["build/" + predecessor for predecessor in needs]))
-        result.append({"id": identity, "label": label, "needs": needs, "repo": profile["repository"],
+        result.append({"id": identity, "label": label, "needs": needs, "repo": profile["repository"], "block_id": block,
                        "read_paths": reads, "write_paths": ["build/" + identity], "estimated_seconds": None,
                        "input_contract": {"required_paths": sorted(set(inputs))},
                        "output_contract": {"required_result_keys": ["status"]}})
@@ -623,7 +795,7 @@ def source_model(root, head, snapshot=None):
     root = runtime_root(root)
     profile_bytes = safe_path(root, PROFILE).read_bytes()
     profile = json.loads(profile_bytes)
-    source_hashes = {p: digest(safe_path(root, p).read_bytes()) for p in source_snapshot_paths(root, profile)}
+    source_hashes = source_census(root, profile)
     demand(source_hashes[PROFILE] == digest(profile_bytes), "profile changed during source snapshot")
     checked = validate_profile(root, profile)
     actual = git(root, "rev-parse", "HEAD")
@@ -651,7 +823,7 @@ def source_model(root, head, snapshot=None):
               "observed_at": None, "commit_at": git(root, "show", "-s", "--format=%cI", "HEAD"),
               "evidence_class": "LOCAL_SOURCE_INVENTORY_NOT_RUNTIME", "dirty": bool(git(root, "status", "--porcelain")),
               "inventory_policy": SNAPSHOT_POLICY,
-              "inventory_interpretation": "Source snapshot includes all Mission Control inputs/assets plus repository Python, workflow and Mermaid files. It is not runtime dependency tracing.",
+              "inventory_interpretation": "Source snapshot includes all Mission Control inputs/assets, repository Python/JavaScript/TypeScript/shell/PowerShell, JSON/TOML/YAML descriptors and Mermaid files. Bounded literal references are not runtime dependency tracing.",
               "source_files_sha256": source_hashes, "source_digest": digest(canonical(source_hashes))}
     coverage_module = module("atlas_coverage_contract", HERE / "coverage_contract.py")
     coverage = coverage_module.build_model(root, profile)
@@ -677,7 +849,7 @@ def source_model(root, head, snapshot=None):
                  {"label": "Build this view", "command": "python mission-control/federation-atlas/orchestration/main.py build --out ../atlas-review/orchestration --head <exact-checkout-sha>"},
                  {"label": "Rebuild registered views", "command": "python mission-control/federation-atlas/orchestration/main.py run-local --out ../atlas-review --head <exact-checkout-sha> --workers 2"}],
                  "outputs": [{"path": p, "purpose": purpose} for p, purpose in [
-                     ("atlas.json", "Shared functional and graph model"), ("inventory.json", "All local Python/YAML/Mermaid source locators"),
+                     ("atlas.json", "Shared functional and graph model"), ("inventory.json", "Multi-language source/config locators and bounded static reference candidates"),
                      ("burndown.json", "Independent cohort ledger projections"), ("broker-plan.json", "Bounded scheduling projection"),
                      ("metric_observations.json", "Coverage identity, distributions and qualification"),
                      ("coverage_burndown.jsonl", "Immutable source-event ledger projection; independent populations"),
@@ -686,6 +858,118 @@ def source_model(root, head, snapshot=None):
         for node in graph["nodes"]:
             node["visual_role"] = graph_role(node)
     return model
+
+
+def observed_execution_peak(intervals):
+    """Lower bound on simultaneous execution implied by (start, finish) pairs.
+
+    End sorts before start at ties, so adjacent tasks do not overlap. Any
+    executed task needed one slot. Coarse clocks (about 15.6 ms on Windows)
+    record short tasks as zero-length: equal instants stay ambiguous, but a
+    zero-length task strictly inside another task's open interval did overlap
+    it. The broker's own counter can include short postterminal cleanup, so
+    its reported peak may exceed this bound.
+    """
+    active, peak = 0, int(bool(intervals))
+    for _, delta in sorted((point, delta) for start, finish in intervals if start < finish
+                           for point, delta in ((start, 1), (finish, -1))):
+        active += delta
+        peak = max(peak, active)
+    for instant, finish in intervals:
+        if instant == finish:
+            peak = max(peak, 1 + sum(start < instant < end for start, end in intervals))
+    return peak
+
+
+def validate_local_timeline(receipt, task_defs):
+    """Reject a plausible-looking terminal summary without a causal local trace."""
+    elapsed = receipt["metrics"]["elapsed_seconds"]
+    rows = receipt["tasks"]
+    timestamps = ("ready_at_seconds", "started_at_seconds", "execution_finished_at_seconds",
+                  "verify_started_at_seconds", "finished_at_seconds")
+    transitions = {None: {"ready", "deferred_ready", "blocked"}, "deferred_ready": {"ready"},
+                   "ready": {"reserved"}, "reserved": {"running"},
+                   "running": {"verifying", "failed"}, "verifying": {"succeeded", "failed"},
+                   "succeeded": set(), "failed": set(), "blocked": set()}
+
+    def close(left, right):
+        return math.isclose(left, right, rel_tol=1e-9, abs_tol=1e-9)
+
+    for row in rows.values():
+        for field in timestamps:
+            value = row.get(field)
+            demand(value is None or (type(value) in {int, float} and math.isfinite(value)
+                   and 0 <= value <= elapsed), "invalid local task timestamp: " + field)
+        demand(row.get("finished_at_seconds") is not None, "terminal local task timestamp missing")
+    for identity, row in rows.items():
+        finished = row["finished_at_seconds"]
+        events = row.get("events")
+        demand(isinstance(events, list) and events, "local task events missing")
+        previous_state, previous_time = None, 0.0
+        event_times = {}
+        for event in events:
+            demand(isinstance(event, dict), "invalid local event")
+            state, at = event.get("state"), event.get("at_seconds")
+            demand(isinstance(state, str) and state in transitions.get(previous_state, set()), "invalid local event transition")
+            demand(type(at) in {int, float} and math.isfinite(at)
+                   and previous_time <= at <= elapsed, "nonmonotone local events")
+            event_times[state] = at
+            previous_state, previous_time = state, at
+        demand(previous_state == row["state"] and close(previous_time, finished), "local terminal event mismatch")
+        parents = [rows[parent] for parent in task_defs[identity]["needs"]]
+        if row["state"] == "blocked":
+            demand(len(events) == 1 and all(row.get(field) is None for field in timestamps[:-1])
+                   and all(row.get(field) is None for field in
+                           ("ready_wait_seconds", "execution_seconds", "verification_seconds"))
+                   and row.get("result") is None, "blocked task claims execution")
+            error = row.get("error")
+            blockers = error.get("blocked_by") if isinstance(error, dict) else None
+            demand(isinstance(error, dict) and error.get("phase") == "dependency"
+                   and isinstance(blockers, list) and blockers
+                   and all(isinstance(parent, str) for parent in blockers)
+                   and len(blockers) == len(set(blockers)), "blocked task lacks failed dependency")
+            demand(all(parent in task_defs[identity]["needs"] and rows[parent]["state"] in {"failed", "blocked"}
+                       and rows[parent].get("finished_at_seconds") is not None
+                       and rows[parent]["finished_at_seconds"] <= finished for parent in blockers),
+                   "blocked task causal dependency mismatch")
+            continue
+        ready, started, execution = (row.get(field) for field in timestamps[:3])
+        verifying = row.get("verify_started_at_seconds")
+        demand(ready is not None and started is not None and execution is not None
+               and ready <= started <= execution, "local execution timestamp ordering")
+        demand(all(parent["state"] == "succeeded" and parent.get("finished_at_seconds") is not None
+                   and parent["finished_at_seconds"] <= started for parent in parents),
+               "local task started before verified predecessor")
+        expected_ready = max((parent["finished_at_seconds"] for parent in parents), default=0.0)
+        demand(close(ready, expected_ready), "local ready timestamp mismatch")
+        demand(close(event_times.get("running", -1), started) and events[0]["at_seconds"] >= ready,
+               "local running event mismatch")
+        demand(close(row["ready_wait_seconds"], started - ready)
+               and close(row["execution_seconds"], execution - started), "local duration arithmetic mismatch")
+        if verifying is not None:
+            demand(execution <= verifying <= finished and close(event_times.get("verifying", -1), verifying),
+                   "local verification timestamp ordering")
+            demand(row.get("verification_seconds") is not None
+                   and close(row["verification_seconds"], finished - verifying), "local verification duration mismatch")
+        else:
+            # The broker records a pre-verification failure, then measures the
+            # end of execution in finally; that final timestamp is slightly later.
+            demand(row["state"] == "failed" and started <= finished <= execution
+                   and row.get("verification_seconds") is None, "local failure timestamp ordering")
+        if row["state"] == "succeeded":
+            result = row.get("result")
+            keys = task_defs[identity].get("output_contract", {}).get("required_result_keys", [])
+            demand(row.get("error") is None and (not keys or
+                   (isinstance(result, dict) and all(key in result for key in keys))), "local successful result contract mismatch")
+            try:
+                json.dumps(result, allow_nan=False)
+            except (TypeError, ValueError) as exc:
+                raise ValueError("invalid local successful result") from exc
+        else:
+            error = row.get("error")
+            phases = {"output_contract"} if verifying is not None else {"input_contract", "handler"}
+            demand(row.get("result") is None and isinstance(error, dict)
+                   and error.get("phase") in phases, "local failure phase mismatch")
 
 
 def validate_local_receipt(receipt, model):
@@ -697,6 +981,8 @@ def validate_local_receipt(receipt, model):
            and receipt.get("merge_authorized") is False and receipt.get("authority_transfer") is False,
            "local receipt authority violation")
     demand(receipt.get("source_changed_during_run") is False, "local receipt source drift")
+    demand(isinstance(receipt.get("tasks"), dict)
+           and all(isinstance(row, dict) for row in receipt["tasks"].values()), "invalid local task records")
     demand(set(receipt.get("tasks", {})) == {t["id"] for t in model["broker"]["tasks"]}, "local receipt task population mismatch")
     bounds, metrics = receipt.get("bounds", {}), receipt.get("metrics", {})
     demand(bounds.get("task_count") == len(receipt["tasks"]), "local receipt denominator mismatch")
@@ -739,6 +1025,11 @@ def validate_local_receipt(receipt, model):
            and metrics["max_running"] <= bounds["workers"], "local receipt worker bound mismatch")
     demand(type(bounds.get("max_pending")) is int and bounds["max_pending"] > 0
            and metrics["peak_ready"] <= bounds["max_pending"], "local receipt queue bound mismatch")
+    validate_local_timeline(receipt, task_defs)
+    executed = [row for row in receipt["tasks"].values() if row.get("started_at_seconds") is not None]
+    intervals = [(row["started_at_seconds"], row["finished_at_seconds"]) for row in executed]
+    demand(observed_execution_peak(intervals) <= metrics["max_running"] <= bounds["workers"],
+           "local concurrency below observed execution or beyond worker bound")
     return receipt
 
 
@@ -770,15 +1061,15 @@ def verify_bundle(out, head=None, *, require_clean=False, source_root=None):
     if "coverage" in model:
         demand({"metric_observations.json", "coverage_burndown.jsonl"} <= members.keys(), "coverage outputs missing")
         demand(read_json(out, "metric_observations.json") == model["coverage"], "coverage model mismatch")
-        ledger = [json.loads(line) for line in safe_path(out, "coverage_burndown.jsonl").read_text().splitlines() if line]
+        ledger = [json.loads(line) for line in safe_path(out, "coverage_burndown.jsonl").read_text(encoding="utf-8").splitlines() if line]
         demand(ledger == model["coverage"]["ledger_records"], "coverage ledger mismatch")
     if model.get("broker", {}).get("local_receipt") is not None:
         receipt = validate_local_receipt(model["broker"]["local_receipt"], model)
         demand("local-run.json" in members and read_json(out, "local-run.json") == receipt, "local receipt member mismatch")
     hashes = model["source"]["source_files_sha256"]
     demand(isinstance(hashes, dict) and hashes, "empty source hash map")
+    safe_names(out, hashes)
     for name, expected in hashes.items():
-        safe_path(out, name)
         demand(isinstance(expected, str) and re.fullmatch(r"[0-9a-f]{64}", expected), "invalid source hash")
     expected_source = digest(canonical(hashes))
     demand(manifest.get("source_digest") == expected_source == model["source"].get("source_digest"),
@@ -787,8 +1078,9 @@ def verify_bundle(out, head=None, *, require_clean=False, source_root=None):
         if model["source"].get("inventory_policy") == SNAPSHOT_POLICY:
             expected_members = set(source_snapshot_paths(source_root, read_json(source_root, PROFILE)))
             demand(set(hashes) == expected_members, "source inventory membership changed")
+        source_base = Path(source_root).resolve()
         for name, expected in hashes.items():
-            path = safe_path(source_root, name)
+            path = safe_path(source_root, name, base=source_base)
             demand(path.is_file() and digest(path.read_bytes()) == expected,
                    "source bytes changed: " + name)
     return manifest
@@ -859,7 +1151,7 @@ def run_local(root, out, head, workers=2):
     demand(git(root, "rev-parse", "HEAD") == head, "checkout/head mismatch")
     profile = read_json(root, PROFILE)
     policy = read_json(root, "mission-control/federation-atlas/orchestration/BROKER_POLICY_v1.json")
-    source_hashes = {p: digest(safe_path(root, p).read_bytes()) for p in source_snapshot_paths(root, profile)}
+    source_hashes = source_census(root, profile)
     run_source_digest = digest(canonical(source_hashes))
     out.mkdir(parents=True, exist_ok=True)
     blocks = {b["id"]: b for b in profile["blocks"]}
@@ -877,7 +1169,8 @@ def run_local(root, out, head, workers=2):
         if identity in {"superstitch", "convergence"}:
             verified = subprocess.run([*command, "--verify-only"], cwd=root, env=env, capture_output=True, text=True, timeout=60, check=False)
             demand(verified.returncode == 0, identity + " output verification failed")
-        return {"status": "OUTPUT_CONTRACT_PASS", "artifacts": checked}
+        return {"status": "OUTPUT_CONTRACT_PASS", "artifacts": checked,
+                "output_files_sha256": output_files(target)}
     def assemble():
         target = out / "assemble"
         shutil.copytree(out / "method", target)
@@ -886,7 +1179,7 @@ def run_local(root, out, head, workers=2):
                 shutil.copyfile(path, target / path.name)
         for name in ("superstitch", "convergence", "orchestration"):
             shutil.copytree(out / name, target / name)
-        return {"status": "VERIFIED_MEMBERS_JOINED"}
+        return {"status": "VERIFIED_MEMBERS_JOINED", "output_files_sha256": output_files(target)}
     def portal():
         command = [sys.executable, str(root / blocks["pages-portal"]["source_path"]), "--atlas", str(out / "assemble"), "--out", str(out / "portal"), "--sha", head]
         result = subprocess.run(command, cwd=root, capture_output=True, text=True, timeout=240, check=False)
@@ -899,14 +1192,17 @@ def run_local(root, out, head, workers=2):
         for name, expected in site_manifest["public_files_sha256"].items():
             member = safe_path(out / "portal", name)
             demand(member.is_file() and digest(member.read_bytes()) == expected, "Pages member hash mismatch: " + name)
-        return {"status": "LOCAL_PACKAGE_PASS_NOT_PUBLISHED"}
+        return {"status": "LOCAL_PACKAGE_PASS_NOT_PUBLISHED", "output_files_sha256": output_files(out / "portal")}
+    def orchestration():
+        result = build(root, out / "orchestration", head)
+        return {**result, "output_files_sha256": output_files(out / "orchestration")}
     handlers = {"validate": lambda: validate_profile(root),
                 **{key: (lambda identity=key: generator(identity)) for key in adapters},
-                "orchestration": lambda: build(root, out / "orchestration", head), "assemble": assemble, "portal": portal}
+                "orchestration": orchestration, "assemble": assemble, "portal": portal}
     broker = module("atlas_local_broker", HERE / "broker.py")
     receipt = broker.run_local(tasks(profile), handlers, workers=workers,
                                max_pending=policy.get("default_max_pending", 8), root=root, policy=policy)
-    final_hashes = {p: digest(safe_path(root, p).read_bytes()) for p in source_snapshot_paths(root, profile)}
+    final_hashes = source_census(root, profile)
     source_changed = source_hashes != final_hashes or git(root, "rev-parse", "HEAD") != head
     receipt.update(source_sha=head, source_digest=run_source_digest, source_dirty=bool(git(root, "status", "--porcelain")),
                    source_changed_during_run=source_changed,
@@ -937,9 +1233,9 @@ def main(argv=None):
                 result["bundle"] = "VERIFIED"
         else:
             demand(args.out is not None, "--out required")
-            snapshot = json.loads(args.snapshot.read_text()) if args.snapshot else None
+            snapshot = json.loads(args.snapshot.read_text(encoding="utf-8")) if args.snapshot else None
             if args.command == "build":
-                local_receipt = json.loads(args.local_receipt.read_text()) if args.local_receipt else None
+                local_receipt = json.loads(args.local_receipt.read_text(encoding="utf-8")) if args.local_receipt else None
                 result = build(args.root, args.out, head, snapshot, local_receipt)
             elif args.command == "plan":
                 runtime_root(args.root)

@@ -1,0 +1,64 @@
+name: GM-I-C P0005 Pinned Browser Mermaid Render QA
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/grand-missions/diagrams/GM_I_C_R2_*_P0005.mmd'
+      - 'mission-control/grand-missions/verify_p0005_mermaid_browser.py'
+      - 'mission-control/grand-missions/test_p0005_mermaid_browser_adapter.py'
+      - '.github/workflows/gm-i-c-p0005-browser-render.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-render-exact-head:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout exact diagram PR head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Checkout immutable separately owned renderer
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: 10c93e2268e62ab8584f8e915d60c3707116f81d
+          path: .renderer-method
+          sparse-checkout: |
+            tools/workstation
+            mission-control/issue_rank/browser-qa-requirements.txt
+          persist-credentials: false
+      - name: Assert distinct source identities
+        env:
+          DIAGRAM_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$DIAGRAM_SOURCE_SHA"
+          test "$(git -C .renderer-method rev-parse HEAD)" = '10c93e2268e62ab8584f8e915d60c3707116f81d'
+      - name: Setup Python 3.12
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
+        with:
+          python-version: '3.12'
+      - name: Install existing pinned browser dependency
+        run: |
+          python -m pip install --disable-pip-version-check pytest==9.2.0 -r .renderer-method/mission-control/issue_rank/browser-qa-requirements.txt
+          python -m playwright install --with-deps chromium
+      - name: Reject source-role substitution
+        run: python -m pytest -q mission-control/grand-missions/test_p0005_mermaid_browser_adapter.py
+      - name: Delegate exact-head rendering to the immutable method owner
+        env:
+          DIAGRAM_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          python mission-control/grand-missions/verify_p0005_mermaid_browser.py \
+            --method-root .renderer-method --source-sha "$DIAGRAM_SOURCE_SHA" \
+            --out "$RUNNER_TEMP/p0005-render"
+      - name: Upload source-bound browser receipts and assets
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: p0005-browser-render-${{ github.event.pull_request.head.sha || github.sha }}
+          if-no-files-found: warn
+          retention-days: 30
+          path: ${{ runner.temp }}/p0005-render

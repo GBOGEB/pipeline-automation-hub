@@ -1,0 +1,31 @@
+flowchart TD
+  %% P0005 ADMISSION dependency graph: each inbound edge is a mandatory AND prerequisite.
+  %% Never treat source-merged or native-green as independent review or owner admission.
+  B12["B12 | FPC controller repair #1139 merged"] --> B13["B13/B24 | distinct post-bootstrap RED negative canary"]
+  B31["B31 | live ruleset readback, no bypass actors"] --> B29["B29 | effective last-push and required-review proof"]
+  B25["B25 | owner selection: strict review or hardened exception"] --> B29
+  B13 --> B29
+  H0["W0 | source #1135 prepared"] --> B21["B21 | completed exact-head review and trusted FPC PASS"]
+  G1["W1 | GEMINI #38 merged snapshot contract"] --> B09["B09 | independently accepted W1/W2 P2-P3 receipts"]
+  G2["W2 | GEMINI #40/#46/#51/#52 merged broker"] --> B35["B35 | current-main negative and regression CI"]
+  B35 --> B09
+  B26["B26 | owner accepts canonical broker wire and CHANGED semantics"] --> B09
+  B19["B19 | owner WIF provider, scoped principal and Viewer ACL"] --> IC3["W3 IC3 | hosted OIDC-WIF, GT0 steps, items, census SHA"]
+  B21 --> ADMIT{"W4 | noncompensating owner admission"}
+  B09 --> ADMIT
+  B29 --> ADMIT
+  B37["B37 | GEMINI owner main PR reviews and required negative canary"] --> ADMIT
+  IC3 --> ADMIT
+  ADMIT --> W4["W4 | hosted exact-SHA publish and draft PR ingest"]
+  W4 --> W5["W5 | second independent consumer and semantic parity"]
+  W5 --> W6["W6 | adversarial replay, idempotency and control"]
+  B30["B30 | exclusive #1164 route selected"] --> B32["B32 | exact-head review, FPC, owner batch merge"]
+  B32 --> ISO["ISO schedule consumers - separate release"]
+  classDef done fill:#ede1f4,stroke:#684080,color:#251532
+  classDef review fill:#f5e9f6,stroke:#9a6099,color:#321638
+  classDef owner fill:#fae9ef,stroke:#b05278,color:#451a32
+  classDef blocked fill:#f6eef2,stroke:#8c4b6e,color:#38182c,stroke-dasharray:5 3
+  class B12,B31,G1,G2,B35,B30 done
+  class B13,B21,B09,B32 review
+  class B25,B26,B29,B37,B19,IC3 owner
+  class ADMIT,W4,W5,W6,ISO blocked

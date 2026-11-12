@@ -117,6 +117,7 @@ class Receipts(unittest.TestCase):
         with self.assertRaises(ValueError):
             H8.validate_receipts(self.doc(proof_class="CALLER_SAID_SO"), private=())
         for attempt in ({"http_status": 200}, {"message": "Pull Request is still a draft"},
+                        {"message": "Repository rule violations found. 5 of 5 required status checks are queued."},
                         {"message": "Pull Request is not mergeable"}, {"response_sha256": "x"}):
             bad = copy.deepcopy(RECEIPT)
             bad["attempt"].update(attempt)
@@ -143,6 +144,9 @@ class Attempt(unittest.TestCase):
                 H8.attempt("O/R", 9, CHECK, world(**over), merge)
         with self.assertRaises(SystemExit):
             H8.attempt("O/R", 9, "not-required", world(), merge)
+        queued = world()(f"repos/O/R/commits/{HEAD}/check-runs")["check_runs"] + [{"name": CHECK, "status": "queued"}]
+        with self.assertRaises(SystemExit):
+            H8.attempt("O/R", 9, CHECK, world(runs=queued), merge)
         self.assertEqual(merged, [])
 
     def test_records_only_a_protection_405_and_alarms_on_success(self):
@@ -155,6 +159,9 @@ class Attempt(unittest.TestCase):
         self.assertIn("ALARM", str(alarm.exception))
         with self.assertRaises(SystemExit):
             H8.attempt("O/R", 9, CHECK, world(), lambda *a: (405, '{"message":"Pull Request is not mergeable"}'))
+        with self.assertRaises(SystemExit):
+            H8.attempt("O/R", 9, CHECK, world(),
+                       lambda *a: (405, '{"message":"Repository rule violations found. 5 of 5 required status checks are queued."}'))
 
 
 class PulseIntegration(unittest.TestCase):

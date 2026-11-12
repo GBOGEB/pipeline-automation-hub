@@ -78,6 +78,7 @@
     "PRE_EVALUATOR_FAILURE",
     "PR_BASE_UNAVAILABLE",
     "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP",
+    "PR_BODY_AUTO_CLOSES_ISSUES",
     "FINAL_RECEIPT_STATUS_NOT_PASS",
     "FINAL_RECEIPT_MERGE_ALLOWED_NOT_TRUE",
     "FINAL_RECEIPT_HEAD_MISMATCH",
@@ -202,5 +203,32 @@
       "EXACT_HEAD_PROOF_RUNS",
       "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP"
     ]
+  },
+  "codex_unavailable_waiver": {
+    "purpose": "CODEX_COULD_NOT_REVIEW_THE_EXACT_HEAD_BECAUSE_OF_QUOTA_NOT_BECAUSE_OF_A_FINDING",
+    "applies_when": "CODEX_SUMMARY_CODE_REVIEW_FAILED_ON_EXACT_HEAD_AND_USAGE_LIMIT_COMMENT_FOLLOWS_AND_OWNER_LABEL_APPLIED_AFTER_HEAD_COMMIT_AND_NO_FORBIDDEN_PATH_AND_NO_OPEN_CODEX_FINDING",
+    "label": "fpc:codex-unavailable",
+    "labeler_logins": [
+      "GBOGEB"
+    ],
+    "limit_comment_phrase": "You have reached your Codex usage limits",
+    "forbidden_path_patterns": [
+      ".github/workflows/*",
+      ".github/actions/*",
+      ".github/dependabot.yml",
+      ".github/CODEOWNERS",
+      "SECURITY.md",
+      "mission-control/quality/*",
+      "scripts/first_pass_closure_gate.py"
+    ],
+    "waives": [
+      "CODEX_REVIEW"
+    ],
+    "never_waives": [
+      "EXACT_HEAD_PROOF_RUNS",
+      "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP",
+      "OPEN_CODEX_FINDINGS_ON_EXACT_HEAD"
+    ],
+    "receipt_marks_first_pass_not_clean": true
   }
 }

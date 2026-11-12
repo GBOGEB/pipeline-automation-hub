@@ -1,0 +1,52 @@
+name: Workstation Mermaid Native Render QA
+on:
+  pull_request:
+    paths:
+      - 'tools/workstation/build_mermaid_check.py'
+      - 'tools/workstation/test_build_mermaid_check.py'
+      - 'tools/workstation/test_mermaid_browser_qa.py'
+      - 'tools/workstation/extract_pasted_content.py'
+      - 'tools/workstation/test_extract_pasted_content.py'
+      - 'mission-control/issue_rank/browser-qa-requirements.txt'
+      - '.github/workflows/workstation-mermaid-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: workstation-mermaid-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  renderer:
+    name: Pinned Chromium render and negative cases
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout immutable renderer candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Assert renderer source identity
+        env:
+          RENDERER_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$RENDERER_SOURCE_SHA"
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0
+        with:
+          python-version: '3.12'
+      - name: Install existing pinned browser dependency
+        run: |
+          python -m pip install --disable-pip-version-check pytest==9.2.0 -r mission-control/issue_rank/browser-qa-requirements.txt
+          python -m playwright install --with-deps chromium
+      - name: Execute owner tests and actual browser regressions
+        env:
+          RUN_MERMAID_BROWSER: '1'
+        run: |
+          python -m pytest -q tools/workstation/test_build_mermaid_check.py tools/workstation/test_extract_pasted_content.py tools/workstation/test_mermaid_browser_qa.py --basetemp "$RUNNER_TEMP/workstation-mermaid-tests"
+      - name: Retain synthetic browser regression evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: workstation-mermaid-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/workstation-mermaid-tests
+          if-no-files-found: warn
+          retention-days: 30

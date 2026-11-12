@@ -1,0 +1,79 @@
+name: Method Atlas read-scout 16/32 scale qualification (no dispatch)
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/federation-atlas/orchestration/read_scout_scale.py'
+      - 'mission-control/federation-atlas/orchestration/test_read_scout_scale.py'
+      - 'mission-control/federation-atlas/orchestration/READ_SCOUT_SCALE.md'
+      - '.github/workflows/method-atlas-read-scout-scale.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: scout-scale-advisory-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  validate-without-dispatch:
+    name: Read-only scout scale evidence gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Assert exact source
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$HEAD"
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Source-bound adversarial test class without zero tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/federation-atlas/orchestration \
+            -p test_read_scout_scale.py -v 2>&1 | tee "$RUNNER_TEMP/scout-scale-test.log"
+          python - <<'PY'
+          import os,re
+          from pathlib import Path
+          x=(Path(os.environ["RUNNER_TEMP"])/"scout-scale-test.log").read_text()
+          tests=[int(n) for n in re.findall(r'^Ran (\d+) tests? in ',x,re.M)]
+          if not tests or tests[-1]<11 or 'FAILED' in x or 'skipped=' in x:
+              raise SystemExit("READ_SCOUT_ZERO_OR_RED_TESTS")
+          print("READ_SCOUT_TESTS="+str(tests[-1]))
+          PY
+      - name: Actual admission when zero source-bound trials
+        shell: bash
+        run: |
+          set -euo pipefail
+          python mission-control/federation-atlas/orchestration/read_scout_scale.py \
+            --out "$RUNNER_TEMP/read-scout-scale/advisory.json"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          path=Path(os.environ["RUNNER_TEMP"])/"read-scout-scale/advisory.json"
+          d=json.loads(path.read_text())
+          assert d['classification']=='HOLD_NO_MATCHED_NATIVE_OBSERVATIONS'
+          assert d['native_identity_authenticated'] is False
+          assert d['dispatch_authorized'] is False
+          assert d['merge_authorized'] is False
+          assert d['mutator_workers_changed'] is False
+          assert d['engineering_credit_delta']==0
+          print("READ_SCOUT_SCALE=HOLD_UNDERQUALIFIED_NO_WORKERS_DISPATCHED")
+          PY
+      - name: Preserve source-bound test and HOLD receipt
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: read-scout-scale-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/scout-scale-test.log
+            ${{ runner.temp }}/read-scout-scale/
+          retention-days: 21
+          if-no-files-found: warn

@@ -124,9 +124,112 @@ For each PR, the script merges `origin/<base>` into the PR head in one reused sc
 
 The script exits 1 if any PR ends FAIL or STALE. A JSON report is written to `-ReportPath`.
 
+# Branch hygiene across repos
+
+`Invoke-BranchHygiene.ps1` removes merged branches from every non-archived repo of an owner (default `GBOGEB`) and from the matching local clones. It deletes only what can be restored. It is a dry run unless you pass `-Execute`.
+
+```powershell
+# Dry run: every repo, GitHub and local clones. Read the table and the receipts first.
+pwsh -NoProfile -File tools\workstation\Invoke-BranchHygiene.ps1
+
+# Delete
+pwsh -NoProfile -File tools\workstation\Invoke-BranchHygiene.ps1 -Execute
+
+# One repo, or one side only
+pwsh -NoProfile -File tools\workstation\Invoke-BranchHygiene.ps1 -Repo GBOGEB/GEMINI -Scope Remote -Execute
+pwsh -NoProfile -File tools\workstation\Invoke-BranchHygiene.ps1 -Scope Local -LocalRoots C:\repos,C:\DEV\REPOS -Execute
+```
+
+**GitHub branches.** The script lists each repo's branches and hands the list to `scripts/branch_hygiene_delete.py`, the one owner of the delete decision (see [governance/branch_hygiene](../../governance/branch_hygiene/README.md)). It reads that script from `origin/master` of the PAH checkout that holds this file and records its blob OID. A branch is deleted only if:
+
+- its head is unchanged;
+- it is not the default branch and not protected;
+- no open PR uses it;
+- it is fully merged into the default branch, or it is a merged PR's exact head (still reachable as `refs/pull/<n>/head`).
+
+**Local branches.** In each clone directly under `-LocalRoots` whose `origin` is a repo in scope, the script runs `git fetch --prune` first. A branch is then deleted only if its tip is an ancestor of `origin/<default>`, or it equals a merged PR's head SHA. The delete is `git update-ref -d <ref> <sha>`, so a branch that moved after the check is kept.
+
+**Never touched:**
+
+- the default branch;
+- a branch checked out in any worktree;
+- a branch whose newest commit is younger than `-MinAgeDays` (default 2);
+- anything matching `-Exclude` (`release/*`, `releases/*`, `gh-pages`, `develop`, `staging`, `production`);
+- forks, unless `-IncludeForks` is passed.
+
+**Receipts.** Each run writes to `%LOCALAPPDATA%\branch-hygiene\<timestamp>\`:
+
+- per repo, `*.remote.json` and `*.local.json`, with a restore command for every deleted branch;
+- `SUMMARY.csv`.
+
+To restore a branch, run `git push origin <sha>:refs/heads/<branch>` for a GitHub branch, or `git -C <clone> branch <branch> <sha>` for a local one.
+
+`gh` uses the keyring login. The script clears `GITHUB_TOKEN`/`GH_TOKEN` for its own run, passes the keyring token only to the Python child, and puts the caller's values back at the end. A failed `gh` call is retried 3 times and then stops the run, so it never works from a partial list. Worktree folders are not removed here; that is `Invoke-WorkspaceAudit.ps1 -Apply`.
+
 # PC dashboard launcher
 
 `dashboards/` builds one local start page that links every HTML page in every clone on the workstation,
 plus the top dashboards, GitHub Pages sites and claude.ai artifacts. It is rebuilt daily by a scheduled task.
 Install it with `pwsh -NoProfile -File tools\workstation\dashboards\Install-Dashboards.ps1`; see
 [dashboards/README.md](dashboards/README.md).
+
+## Mermaid render check (`build_mermaid_check.py`)
+
+It renders every Mermaid diagram in the given Markdown or `.mmd` files and folders with one pinned Mermaid version, in your browser. For each diagram it reports "rendered" or the parse error, and a Gantt's axis labels. It also flags a Gantt `axisFormat` with `%W`, which is not the ISO week; use `%V` (see `mission-control/jade_temple/devops/WDDD_WEEK_CODES.md`). It needs only the standard library.
+
+```powershell
+Set-Location "<repo root>"
+python tools\workstation\build_mermaid_check.py docs mission-control\some\README.md --serve
+```
+
+- **`--serve`:** binds `127.0.0.1` exclusively, from port 8796 or the next free one. Python's default server on Windows can share a busy port silently. Ctrl+C stops it; nothing runs in the background.
+- **`--strict`:** exits with 1 on a lint warning.
+- **`--mermaid X.Y.Z`:** pins a different Mermaid version.
+- **The page:** it has a **Dark background** button for diagrams themed for dark pages. It is written to `%TEMP%\mermaid_check\` unless you pass `-o`.
+
+### Native browser evidence
+
+`--headless <evidence folder>` runs this same generated page in Playwright Chromium,
+saves one SVG and PNG per successful diagram, a full-page PNG and `receipt.json`, and
+exits nonzero for parser errors, zero diagrams, lint warnings, missing SVGs, zero
+geometry, a cluster title overlapping a node, browser errors, a missing browser,
+or an unqualified Mermaid bundle.
+The renderer is Mermaid **11.4.1**, with SHA256 checked against the qualified bundle
+digest. Browser requests other than that locally supplied bundle are blocked.
+Interactive `--mermaid X.Y.Z` remains available; headless mode requires adding an
+explicit distribution digest before using another version.
+
+```powershell
+python -m pip install -r mission-control/issue_rank/browser-qa-requirements.txt
+python -m playwright install chromium
+python tools/workstation/build_mermaid_check.py path/to/diagram.mmd --headless out/render --source-root .
+```
+
+`--source-root` verifies that the actual input bytes equal the named Git checkout,
+and that the in-memory diagram payloads match extraction from those committed
+bytes (or the owner's explicitly declared ISO-week comparison expansion).
+The receipt records that input SHA separately from the renderer's own HEAD and
+module hash, and states whether the renderer file matches its commit. `--bundle`
+accepts a previously downloaded distribution with the same required hash.
+`--chromium-executable` is an explicit, recorded local override; native CI uses
+the browser supplied by the existing pinned Playwright dependency.
+
+The narrowly triggered `workstation-mermaid-qa.yml` runs the method-owner tests,
+actual Gantt/flowchart ID-collision and wrapped-cluster-title regressions, invalid
+syntax and empty-input negative cases. The P0005 consumer workflow on PR #1179
+checks out an immutable qualified method commit and delegates its three current
+diagrams to this owner. Each consumer receipt identifies the method and input
+source roles separately. Changing either requires evidence for the changed SHA.
+
+Renderer execution proves parse/render/geometry behavior. The receipt leaves
+semantic review unassessed, merge admission HOLD and closure credit zero. The
+existing P0006 source-DAG Kahn tests remain a separate proof; this method does not
+replace them or transfer their result to a different source.
+
+## Extracting pasted handovers (`extract_pasted_content.py`)
+
+A handover pasted into a Claude Code chat lives only in that session's transcript. Before a session is deleted, run this to save every `<pasted_content>` block byte-exact, with `SHA256SUMS` and a report of identical blocks:
+
+```powershell
+python tools\workstation\extract_pasted_content.py "$env:USERPROFILE\.claude\projects\<project>\<cliSessionId>.jsonl" "<out folder>"
+```

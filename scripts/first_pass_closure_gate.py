@@ -209,6 +209,98 @@ def dependency_update_exemption(
             "waives": sorted(waives)}
 
 
+def codex_unavailable_waiver(
+    client: Any, repo: str, pr_number: int, head_sha: str, comments: list[dict[str, Any]],
+    policy: dict[str, Any],
+) -> tuple[dict[str, Any] | None, str | None]:
+    """Owner-labelled waiver for "Codex could not review this head" (usage limit, outage).
+
+    Returns (waiver, None) when every condition holds, (None, None) when the owner has not asked
+    for a waiver, and (None, reason) when a waiver was asked for but one condition fails. It waives
+    only CODEX_REVIEW completion. Exact-head proof runs, the control-plane bootstrap rule and any
+    open Codex finding on the exact head still apply, and the receipt records that the first pass
+    was not clean. Conditions, all machine-checked:
+
+    1. Codex's own summary for the exact head reports the code review as `failed`, and a later Codex
+       comment carries the usage-limit phrase (so the cause is quota, not a review verdict).
+    2. The declared label was applied by a declared login, after the head commit's committer date.
+       A new push, rebase or amend therefore invalidates an earlier label.
+    3. No changed path matches a forbidden pattern (workflows, dependabot, policy).
+    4. No open Codex finding of any priority on the exact head.
+    """
+    rule = policy.get("codex_unavailable_waiver")
+    if rule is None:
+        return None, None
+    label = rule.get("label") if isinstance(rule, dict) else None
+    labelers = rule.get("labeler_logins") if isinstance(rule, dict) else None
+    phrase = rule.get("limit_comment_phrase") if isinstance(rule, dict) else None
+    forbidden = rule.get("forbidden_path_patterns") if isinstance(rule, dict) else None
+    waives = rule.get("waives") if isinstance(rule, dict) else None
+    if (not isinstance(label, str) or not label
+            or not isinstance(labelers, list) or not labelers or not all(isinstance(x, str) and x for x in labelers)
+            or not isinstance(phrase, str) or not phrase
+            or not isinstance(forbidden, list) or not forbidden or not all(isinstance(x, str) and x for x in forbidden)
+            or waives != ["CODEX_REVIEW"]):
+        raise GateError("POLICY_CODEX_WAIVER_INVALID")
+
+    # Has the owner asked for a waiver? The latest label event decides, and its actor must be declared.
+    events = client.get_all(f"/repos/{repo}/issues/{pr_number}/events")
+    label_events = [e for e in events if isinstance(e, dict) and e.get("event") in {"labeled", "unlabeled"}
+                    and ((e.get("label") or {}).get("name")) == label]
+    if not label_events or label_events[-1].get("event") != "labeled":
+        return None, None
+    labeled = label_events[-1]
+    actor = ((labeled.get("actor") or {}).get("login"))
+    if actor not in labelers:
+        return None, f"label applied by undeclared login {actor!r}"
+
+    commit = client.get(f"/repos/{repo}/commits/{head_sha}")
+    committed_at = (((commit.get("commit") or {}).get("committer") or {}).get("date"))
+    labeled_at = labeled.get("created_at")
+    if not isinstance(committed_at, str) or not isinstance(labeled_at, str) or labeled_at < committed_at:
+        return None, "label predates the exact head commit; re-apply it for this head"
+
+    expected_login = codex_login(policy)
+    codex_comments = [c for c in comments if isinstance(c, dict)
+                      and login_matches(((c.get("user") or c.get("author") or {}).get("login")), expected_login)]
+    summary = None
+    for c in codex_comments:
+        text = c.get("body") or ""
+        if CODEX_SUMMARY_MARKER not in text:
+            continue
+        found = CODEX_STATE_RE.findall(text)
+        if len(found) != 1:
+            continue
+        try:
+            code = (json.loads(found[0]) or {}).get("code_review")
+        except (json.JSONDecodeError, AttributeError):
+            continue
+        if isinstance(code, dict) and code.get("commit_sha") == head_sha and code.get("status") == "failed":
+            summary = c
+    if summary is None:
+        return None, "no Codex summary reports the code review as failed on the exact head"
+    limit = [c for c in codex_comments if CODEX_SUMMARY_MARKER not in (c.get("body") or "")
+             and phrase in (c.get("body") or "")
+             and str(c.get("created_at") or "") >= str(summary.get("created_at") or "")]
+    if not limit:
+        return None, "no Codex usage-limit comment follows the failed summary"
+
+    files = client.get_all(f"/repos/{repo}/pulls/{pr_number}/files")
+    paths = sorted(f.get("filename") for f in files if isinstance(f, dict) and isinstance(f.get("filename"), str))
+    hit = [p for p in paths if any(fnmatch.fnmatchcase(p, pat) for pat in forbidden)]
+    if not paths or hit:
+        return None, "changed paths need a real review: " + ",".join(hit or ["(none)"])
+
+    findings, _counts = codex_blocking_findings(
+        client, repo, pr_number, head_sha, expected_login, {"P0", "P1", "P2", "P3"})
+    if findings:
+        return None, f"{len(findings)} open Codex finding(s) on the exact head"
+
+    return {"label": label, "labeled_by": actor, "labeled_at": labeled_at, "head_committed_at": committed_at,
+            "codex_summary_comment_id": summary.get("id"), "codex_limit_comment_id": limit[-1].get("id"),
+            "waives": ["CODEX_REVIEW"], "clean_first_pass": False, "changed_paths": len(paths)}, None
+
+
 def login_matches(actual: str | None, expected: str) -> bool:
     return actual in {expected, f"{expected}[bot]"}
 
@@ -344,6 +436,85 @@ def codex_blocking_findings(
             counts["blocking_open"] += 1
             out.append({"id": c.get("id"), "priority": priority, "path": c.get("path")})
     return out, counts
+
+
+# GitHub closing keywords (docs: "Linking a pull request to an issue"). GitHub reads them with no
+# notion of negation, condition or checkbox state: "does not close #308", "Close #86 only after ..."
+# and "- [ ] fixes #5" all link the issue and close it on merge. GBOGEB closes issues by hand after
+# integrated replay (finite DoD), so any such link is a false-complete unless the PR opts in.
+# Deliberately a superset of GitHub's parser: emphasis around the keyword, refs inside code and
+# task-list items are still counted (GitHub skipped one unticked task-list item in hub PR 1185), so
+# this check can only be stricter than GitHub; GitHub's own list is unioned in by the gate.
+_ISSUE_REF = (
+    r"(?:https?://github\.com/(?P<url_owner>[\w.-]+)/(?P<url_repo>[\w.-]+)/(?:issues|pull)/(?P<url_num>\d+)"
+    r"|(?:(?P<owner>[A-Za-z0-9][\w.-]*)/(?P<repo>[\w.-]+))?#(?P<num>\d+))"
+)
+CLOSING_KEYWORD_RE = re.compile(
+    r"(?<![A-Za-z0-9/-])(?P<kw>close[sd]?|fix(?:e[sd])?|resolve[sd]?)[*_]*(?::[*_]*\s*|\s+)" + _ISSUE_REF,
+    re.I,
+)
+ISSUE_REF_RE = re.compile(_ISSUE_REF)
+AUTO_CLOSE_INTENDED_RE = re.compile(r"AUTO_CLOSE_INTENDED:[ \t]*(?P<refs>[^\r\n]*)")
+CLOSING_REFS_QUERY = """query($owner:String!,$name:String!,$number:Int!){
+  repository(owner:$owner,name:$name){pullRequest(number:$number){
+    closingIssuesReferences(first:100){totalCount nodes{number repository{nameWithOwner}}}}}}"""
+
+
+def _ref_key(match: re.Match[str], home_repo: str) -> str:
+    if match.group("url_num"):
+        owner_repo, num = f"{match.group('url_owner')}/{match.group('url_repo')}", match.group("url_num")
+    else:
+        owner, name = match.group("owner"), match.group("repo")
+        owner_repo, num = (f"{owner}/{name}" if owner else home_repo), match.group("num")
+    return f"{owner_repo.lower()}#{int(num)}"
+
+
+def closing_keyword_refs(body: str | None, home_repo: str) -> list[str]:
+    """Issues GitHub will link (and close on merge) from closing keywords in a PR body.
+
+    Each keyword binds to the single reference right after it, as on GitHub: "Closes #1, #2"
+    links #1 only. Returns sorted ``owner/repo#N`` keys (lower-case owner/repo).
+    """
+    return sorted({_ref_key(m, home_repo) for m in CLOSING_KEYWORD_RE.finditer(body or "")})
+
+
+def auto_close_opt_ins(body: str | None, home_repo: str) -> set[str]:
+    """Refs the author explicitly allows to auto-close: ``AUTO_CLOSE_INTENDED: #N, owner/repo#M``."""
+    keys: set[str] = set()
+    for line in AUTO_CLOSE_INTENDED_RE.finditer(body or ""):
+        keys.update(_ref_key(m, home_repo) for m in ISSUE_REF_RE.finditer(line.group("refs")))
+    return keys
+
+
+def github_closing_refs(client: Any, repo: str, pr_number: int) -> list[str]:
+    """GitHub's own view (``closingIssuesReferences``): body keywords plus manual sidebar links."""
+    owner, name = repo.split("/", 1)
+    data = client.graphql(CLOSING_REFS_QUERY, {"owner": owner, "name": name, "number": pr_number})
+    conn = (((data or {}).get("repository") or {}).get("pullRequest") or {}).get("closingIssuesReferences")
+    if not isinstance(conn, dict) or not isinstance(conn.get("nodes"), list):
+        raise GateError("CLOSING_ISSUES_REFERENCES_UNAVAILABLE")
+    if (conn.get("totalCount") or 0) > len(conn["nodes"]):
+        raise GateError("CLOSING_ISSUES_REFERENCES_TRUNCATED")
+    return sorted(
+        f"{n['repository']['nameWithOwner'].lower()}#{int(n['number'])}" for n in conn["nodes"]
+    )
+
+
+def unintended_auto_closes(
+    body: str | None, repo: str, github_refs: list[str]
+) -> dict[str, list[str]]:
+    """Closing links not covered by an ``AUTO_CLOSE_INTENDED`` opt-in, from both parsers.
+
+    ``github_refs`` is GitHub's ``closingIssuesReferences``. The union blocks: the local parser
+    catches links GitHub has not indexed yet, GitHub's list catches links made outside the body
+    (Development sidebar) and any keyword form this parser misses.
+    """
+    allowed = auto_close_opt_ins(body, repo)
+    parsed = set(closing_keyword_refs(body, repo))
+    return {
+        "body_keyword": sorted(parsed - allowed),
+        "github_only": sorted(set(github_refs) - parsed - allowed),
+    }
 
 
 def protected_control_changes(
@@ -486,6 +657,17 @@ def evaluate(
             "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP: " + ",".join(protected)
         )
 
+    auto_close = unintended_auto_closes(
+        pr.get("body"), repo, github_closing_refs(client, repo, pr_number)
+    )
+    if auto_close["body_keyword"] or auto_close["github_only"]:
+        raise GateError(
+            "PR_BODY_AUTO_CLOSES_ISSUES: "
+            + ",".join(auto_close["body_keyword"] + auto_close["github_only"])
+            + " (reword, e.g. 'record the closure of #N' / '#N stays open', unlink it in the"
+            " Development sidebar, or add 'AUTO_CLOSE_INTENDED: #N' if closing on merge is intended)"
+        )
+
     # A hand-written body receipt is still honoured (and must be on the exact head); without one,
     # the trusted controller finds the allowlisted proof runs on the exact head itself.
     if has_body_receipt(pr.get("body")):
@@ -511,6 +693,7 @@ def evaluate(
     exemption = dependency_update_exemption(client, repo, pr_number, pr, policy)
     summary_id = None
     finding_counts = None
+    waiver = None
     if exemption is None or "CODEX_REVIEW" not in exemption["waives"]:
         expected_login = codex_login(policy)
         comments = client.get_all(f"/repos/{repo}/issues/{pr_number}/comments")
@@ -518,10 +701,15 @@ def evaluate(
             comments, head_sha, expected_login
         )
         if not completed:
-            raise GateError("CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD")
+            waiver, refused = codex_unavailable_waiver(client, repo, pr_number, head_sha, comments, policy)
+            if waiver is None:
+                raise GateError("CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD"
+                                + (f"; waiver refused: {refused}" if refused else ""))
 
         blocking = (policy.get("codex_contract") or {}).get("blocking_priorities")
-        if blocking is None:
+        if waiver is not None:
+            pass  # the waiver already refused any open Codex finding on the exact head
+        elif blocking is None:
             # Strict rule: any commented Codex review bound to the exact head blocks.
             reviews = client.get_all(f"/repos/{repo}/pulls/{pr_number}/reviews")
             findings = codex_finding_reviews_for_head(reviews, head_sha, expected_login)
@@ -553,6 +741,8 @@ def evaluate(
         "receipt_source": receipt_source,
         "codex_finding_counts_on_exact_head": finding_counts,
         "dependency_update_exemption": exemption,
+        "codex_review_waiver": waiver,
+        "clean_first_pass": waiver is None,
         "required_runs": run_receipts,
         "merge_allowed": True,
         "authority_transfer": False,
