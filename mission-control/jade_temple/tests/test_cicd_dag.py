@@ -223,6 +223,16 @@ class Census(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "digest/schema drift"):
             cd.load_census(ROOT, pol)
 
+    def test_object_registry_must_name_the_pinned_census(self):
+        for obj_id in ("OBJ.DEVOPS_CENSUS", "OBJ.DEVOPS_OBJECTS"):
+            pol = copy.deepcopy(POLICY)
+            entry = next(o for o in pol["objects"] if o["id"] == obj_id)
+            self.assertEqual(entry["path"], cd.JT_PREFIX + pol["devops_census"][
+                "census" if obj_id == "OBJ.DEVOPS_CENSUS" else "objects"])
+            entry["path"] = entry["path"].replace("_N", "_Nstale")
+            with self.assertRaisesRegex(ValueError, f"{obj_id} binds .* but devops_census pins"):
+                cd.load_census(ROOT, pol)
+
     def test_objects_must_reference_the_pinned_census(self):
         with tempfile.TemporaryDirectory() as tmp:
             t = Path(tmp)
