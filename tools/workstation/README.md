@@ -233,3 +233,21 @@ A handover pasted into a Claude Code chat lives only in that session's transcrip
 ```powershell
 python tools\workstation\extract_pasted_content.py "$env:USERPROFILE\.claude\projects\<project>\<cliSessionId>.jsonl" "<out folder>"
 ```
+
+<!-- BEGIN ResourceWatch (#1166) -->
+## ResourceWatch: disk and memory watchdog (`ResourceWatch/`)
+
+Windows PowerShell 5.1 watchdog that a scheduled task runs every few minutes. It measures C: free
+space and RAM and picks a band from `config.example.json` (copy it to `config.json` for local
+overrides). Each band clears regenerable caches (temp, crash dumps, WER, npm and pip caches, old
+VS Code servers) and shows a notification. It never deletes user documents, never empties the
+Recycle Bin and never force-kills a program.
+
+- Dry run first: `ResourceWatch.ps1 -Mode Status`, or `-Mode Check -DryRun -SimulateFreeGB 12`.
+- Register: `Install-ResourceWatch.ps1` prints the plan; `Install-ResourceWatch.ps1 -Apply` registers the task.
+- Every disk log line records pagefile.sys, the Recycle Bin and OneDrive waiting and cloud bytes,
+  because the page file explains most free-space swings (#1166).
+- Deletes skip junctions and symlinks. Each child is removed on its own with `-Confirm:$false`, so
+  one locked `.pytest_cache` does not stop its siblings. npm caches are deleted directly; it never calls npm.
+- Test: `python -m pytest tools/workstation/test_resourcewatch.py` (skipped where `powershell.exe` is missing).
+<!-- END ResourceWatch (#1166) -->

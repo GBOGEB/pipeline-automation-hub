@@ -1,0 +1,46 @@
+{
+  "checkEveryMin": 5,
+  "disk": {
+    "drive": "C",
+    "bands": [
+      { "name": "30 GB", "maxFreeGB": 30, "level": "info",      "notifyEveryMin": 1440, "cleanup": ["temp7"],
+        "advice": "Heads-up only: old temp files were cleared." },
+      { "name": "20 GB", "maxFreeGB": 20, "level": "notice",    "notifyEveryMin": 720,  "cleanup": ["temp2", "crashDumps", "werReports", "npmCache", "pipCache"],
+        "advice": "Check Downloads and the Recycle Bin. OneDrive needs about 20 GB of room to keep uploading." },
+      { "name": "15 GB", "maxFreeGB": 15, "level": "warning",   "notifyEveryMin": 360,  "cleanup": ["oneDriveUnpin90"],
+        "advice": "OneDrive files idle 90+ days are being set to online-only. Move big project folders or zips you don't need out of C:." },
+      { "name": "10 GB", "maxFreeGB": 10, "level": "warning",   "notifyEveryMin": 180,  "cleanup": ["temp1", "vscodeOldServers"],
+        "advice": "Delete or move large files now; Review lists what is running." },
+      { "name": "5 GB",  "maxFreeGB": 5,  "level": "urgent",    "notifyEveryMin": 60,   "cleanup": ["oneDriveUnpin30"],
+        "advice": "Apps and OneDrive will start failing soon. Close or move large files now." },
+      { "name": "3 GB",  "maxFreeGB": 3,  "level": "critical",  "notifyEveryMin": 30,   "cleanup": ["openStorageSettings"],
+        "advice": "Storage settings opened: use Temporary files and Cleanup recommendations. Save your work." },
+      { "name": "1 GB",  "maxFreeGB": 1,  "level": "emergency", "notifyEveryMin": 5,    "cleanup": [],
+        "advice": "Save your work now: saving files may fail. Empty the Recycle Bin and delete something large." }
+    ],
+    "cleanupCooldownMin": 360,
+    "unpinCooldownMin": 1440,
+    "clogged": {
+      "freeBelowGB": 0.5,
+      "runawayDropGB": 5,
+      "runawayWindowMin": 120,
+      "runawayCloggedBelowGB": 15,
+      "notifyEveryMin": 5
+    },
+    "oneDriveStalledAfterHours": 24
+  },
+  "memory": {
+    "bands": [
+      { "name": "propose",  "maxAvailPct": 25, "notifyEveryMin": 120 },
+      { "name": "urgent",   "maxAvailPct": 15, "notifyEveryMin": 30 },
+      { "name": "critical", "maxAvailPct": 8,  "notifyEveryMin": 10 }
+    ],
+    "criticalCommitPct": 90,
+    "candidateMinMB": 300,
+    "candidateIdleMin": 45,
+    "candidateMaxCpuPct": 1.0,
+    "neverPropose": ["explorer", "dwm", "ShellExperienceHost", "StartMenuExperienceHost", "SearchHost", "TextInputHost",
+                     "sihost", "ctfmon", "RuntimeBroker", "OneDrive", "Claude", "claude", "powershell", "pwsh",
+                     "SecurityHealthSystray", "MsMpEng", "conhost", "WindowsTerminal", "OpenConsole", "LockApp"]
+  }
+}
