@@ -1,0 +1,468 @@
+{
+  "schema": "code_maroon.rex_known_fixes.v1",
+  "authority": "PREPUSH_HINT_NOT_REVIEW_PROOF",
+  "note": "Known fixes for review findings that keep coming back. `review_match` maps a review comment's first line to an entry (used by `rex.py mine`); `detector` finds the same defect in a local diff before push (used by `rex.py scan`). Add an entry only for a finding that recurs on 3+ PRs and has one agreed fix. `evidence` is rewritten by `rex.py mine --write-evidence`.",
+  "evidence_source": {
+    "source": "7969 top-level review comments",
+    "comments": 7969,
+    "coverage": 0.2827
+  },
+  "entries": [
+    {
+      "rex_id": "REX-001",
+      "title": "Third-party action not pinned to a full commit SHA",
+      "review_match": [
+        "github-actions-mutable-action-tag",
+        "github-actions-unpinned-action-tag",
+        "Unpinned tag for a non-immutable Action"
+      ],
+      "detector": {
+        "kind": "regex",
+        "paths": [
+          ".github/workflows/*.yml",
+          ".github/workflows/*.yaml",
+          ".github/actions/*/action.yml"
+        ],
+        "pattern": "^\\s*-?\\s*uses:\\s*(?!\\./|docker://)[^\\s@#]+@(?![0-9a-f]{40}\\b)\\S+"
+      },
+      "known_fix": "Pin to the full 40-character commit SHA with a version comment: `uses: owner/action@<sha> # vX.Y.Z` (`gh api repos/<owner>/<action>/commits/<tag> --jq .sha`).",
+      "mode": "fix",
+      "evidence": {
+        "comments": 621,
+        "prs": 121
+      }
+    },
+    {
+      "rex_id": "REX-002",
+      "title": "Import block is unsorted",
+      "review_match": [
+        "Import block is un-sorted or un-formatted"
+      ],
+      "detector": {
+        "kind": "ruff",
+        "codes": [
+          "I001"
+        ]
+      },
+      "known_fix": "`ruff check --select I001 --fix <file>`",
+      "mode": "autofix",
+      "evidence": {
+        "comments": 258,
+        "prs": 104
+      }
+    },
+    {
+      "rex_id": "REX-003",
+      "title": "Unused import",
+      "review_match": [
+        "CodeQL / Unused import",
+        "imported but unused"
+      ],
+      "detector": {
+        "kind": "ruff",
+        "codes": [
+          "F401"
+        ]
+      },
+      "known_fix": "Remove the import, or `ruff check --select F401 --fix <file>`. For an availability probe use `importlib.util.find_spec`.",
+      "mode": "autofix",
+      "evidence": {
+        "comments": 308,
+        "prs": 126
+      }
+    },
+    {
+      "rex_id": "REX-004",
+      "title": "Shebang present but file is not executable",
+      "review_match": [
+        "Shebang is present but file is not executable"
+      ],
+      "detector": {
+        "kind": "exec_bit"
+      },
+      "known_fix": "Either `git update-index --chmod=+x <file>` (it is a script) or delete the `#!` line (it is a module).",
+      "mode": "fix",
+      "evidence": {
+        "comments": 93,
+        "prs": 80
+      }
+    },
+    {
+      "rex_id": "REX-005",
+      "title": "Module imported with both `import` and `from ... import`",
+      "review_match": [
+        "Module is imported with 'import' and 'import from'"
+      ],
+      "detector": {
+        "kind": "dual_import"
+      },
+      "known_fix": "Use one form per module: keep `import x` and write `x.name`, or keep `from x import name` only.",
+      "mode": "fix",
+      "evidence": {
+        "comments": 52,
+        "prs": 36
+      }
+    },
+    {
+      "rex_id": "REX-006",
+      "title": "Workflow has no `permissions:` block",
+      "review_match": [
+        "Workflow does not contain permissions"
+      ],
+      "detector": {
+        "kind": "workflow_permissions"
+      },
+      "known_fix": "Add a top-level `permissions: {contents: read}` and widen per job only where a job needs it.",
+      "mode": "fix",
+      "evidence": {
+        "comments": 34,
+        "prs": 29
+      }
+    },
+    {
+      "rex_id": "REX-007",
+      "title": "Empty `except` or blind `except Exception`",
+      "review_match": [
+        "CodeQL / Empty except",
+        "Do not catch blind exception",
+        "Try, Except, Pass detected"
+      ],
+      "detector": {
+        "kind": "ruff",
+        "codes": [
+          "S110",
+          "BLE001"
+        ]
+      },
+      "known_fix": "Catch the specific exception you expect, and log or re-raise; never `except: pass`.",
+      "mode": "fix",
+      "evidence": {
+        "comments": 86,
+        "prs": 40
+      }
+    },
+    {
+      "rex_id": "REX-008",
+      "title": "Subprocess with `shell=True` or without `check=`",
+      "review_match": [
+        "subprocess-shell-true",
+        "subprocess call with shell=True",
+        "`subprocess.run` without explicit `check` argument"
+      ],
+      "detector": {
+        "kind": "ruff",
+        "codes": [
+          "S602",
+          "PLW1510"
+        ]
+      },
+      "known_fix": "Pass an argument list with `shell=False`, and state `check=True` or `check=False` explicitly.",
+      "mode": "fix",
+      "evidence": {
+        "comments": 41,
+        "prs": 18
+      }
+    },
+    {
+      "rex_id": "REX-009",
+      "title": "XML parsed with the standard library instead of defusedxml",
+      "review_match": [
+        "use-defused-xml",
+        "Using xml to parse untrusted data"
+      ],
+      "detector": {
+        "kind": "ruff",
+        "codes": [
+          "S314",
+          "S318"
+        ]
+      },
+      "known_fix": "Parse untrusted XML with `defusedxml.ElementTree` (same API).",
+      "mode": "fix",
+      "evidence": {
+        "comments": 22,
+        "prs": 21
+      }
+    },
+    {
+      "rex_id": "REX-010",
+      "title": "Insecure hash (sha1 / md5) without `usedforsecurity=False`",
+      "review_match": [
+        "insecure-hash-algorithm",
+        "Use of weak MD5, MD4, or SHA1 hash",
+        "Probable use of insecure hash functions"
+      ],
+      "detector": {
+        "kind": "ruff",
+        "codes": [
+          "S324"
+        ]
+      },
+      "known_fix": "Use `hashlib.sha256`, or pass `usedforsecurity=False` where sha1 is a content id (git blob ids).",
+      "mode": "fix",
+      "evidence": {
+        "comments": 12,
+        "prs": 12
+      }
+    },
+    {
+      "rex_id": "REX-011",
+      "title": "Modernise datetime and imports (`datetime.UTC`, deprecated imports, tz replace)",
+      "review_match": [
+        "Use `datetime.UTC` alias",
+        "Import from `{target}` instead",
+        "Unnecessary timezone replacement with zero offset"
+      ],
+      "detector": {
+        "kind": "ruff",
+        "codes": [
+          "UP017",
+          "UP035",
+          "FURB162"
+        ]
+      },
+      "known_fix": "`ruff check --select UP017,UP035,FURB162 --fix <file>`; only where the declared runtime is >= 3.11.",
+      "mode": "autofix",
+      "evidence": {
+        "comments": 134,
+        "prs": 42
+      }
+    },
+    {
+      "rex_id": "REX-012",
+      "title": "`isinstance` check that raises the wrong exception type",
+      "review_match": [
+        "Prefer `TypeError` exception for invalid type"
+      ],
+      "detector": {
+        "kind": "ruff",
+        "codes": [
+          "TRY004"
+        ]
+      },
+      "known_fix": "Raise `TypeError` (not `ValueError`) after a failed type check.",
+      "mode": "fix",
+      "evidence": {
+        "comments": 54,
+        "prs": 20
+      }
+    },
+    {
+      "rex_id": "REX-013",
+      "title": "Unused local variable, nested `with`, unclosed file",
+      "review_match": [
+        "CodeQL / Unused local variable",
+        "is assigned to but never used",
+        "Use a single `with` statement",
+        "File is not always closed"
+      ],
+      "detector": {
+        "kind": "ruff",
+        "codes": [
+          "F841",
+          "SIM117",
+          "SIM115"
+        ]
+      },
+      "known_fix": "Drop the variable (or name it `_`), merge the `with` statements, open files in a `with` block.",
+      "mode": "fix",
+      "evidence": {
+        "comments": 79,
+        "prs": 36
+      }
+    },
+    {
+      "rex_id": "REX-014",
+      "title": "Implicit string concatenation (often a missing comma in a list)",
+      "review_match": [
+        "Implicit string concatenation in a list"
+      ],
+      "detector": {
+        "kind": "ruff",
+        "codes": [
+          "ISC001"
+        ]
+      },
+      "known_fix": "Add the missing comma, or wrap an intended concatenation in parentheses on one line.",
+      "mode": "fix",
+      "evidence": {
+        "comments": 24,
+        "prs": 11
+      }
+    },
+    {
+      "rex_id": "REX-015",
+      "title": "Workflow changed but the governed workflow inventory was not regenerated",
+      "review_match": [
+        "Regenerate the governed workflow inventory"
+      ],
+      "detector": {
+        "kind": "companion",
+        "requires_file": "ci/governance/audit_ci_workflows.py",
+        "when": [
+          ".github/workflows/*"
+        ],
+        "expect": [
+          "docs/ci/WORKFLOW_RATIONALIZATION.md"
+        ]
+      },
+      "known_fix": "`python ci/governance/audit_ci_workflows.py --markdown-output docs/ci/WORKFLOW_RATIONALIZATION.md`, then commit it (CI runs it with `--check`).",
+      "mode": "fix",
+      "evidence": {
+        "comments": 13,
+        "prs": 13
+      }
+    },
+    {
+      "rex_id": "REX-016",
+      "title": "File whose git OID JADE outputs pin changed without regenerating JADE",
+      "review_match": [
+        "Regenerate the JADE",
+        "stale pinned OID",
+        "re-run the JADE DAG generator"
+      ],
+      "detector": {
+        "kind": "companion",
+        "requires_file": "mission-control/jade_temple/tools/cicd_dag.py",
+        "when_hints_regex": "PINNED_OID_RE",
+        "expect": [
+          "mission-control/jade_temple/site/*",
+          "mission-control/jade_temple/data/*"
+        ]
+      },
+      "known_fix": "Re-run the JADE DAG generator (`mission-control/jade_temple/tools/cicd_dag.py`) and commit the regenerated outputs.",
+      "mode": "fix",
+      "evidence": {
+        "comments": 3,
+        "prs": 3
+      }
+    },
+    {
+      "rex_id": "REX-017",
+      "title": "`write_text` without `newline=` (CRLF on Windows breaks byte-pinned outputs)",
+      "review_match": [
+        "newline='\\n'",
+        "CRLF",
+        "line endings"
+      ],
+      "detector": {
+        "kind": "write_text_newline"
+      },
+      "known_fix": "Pass `newline=\"\\n\"` (and `encoding=\"utf-8\"`) to `write_text` for every generated file.",
+      "mode": "fix",
+      "evidence": {
+        "comments": 5,
+        "prs": 5
+      }
+    },
+    {
+      "rex_id": "REX-018",
+      "title": "Syntax newer than the declared runtime (for example PEP 701 nested f-string quotes)",
+      "review_match": [
+        "Cannot reuse outer quote character in f-strings",
+        "only valid on Python 3.12"
+      ],
+      "detector": {
+        "kind": "ruff",
+        "codes": [
+          "E999"
+        ],
+        "syntax": true
+      },
+      "known_fix": "Rewrite for the declared runtime (`.python-version` / CI matrix): hoist the inner expression into a variable.",
+      "mode": "fix",
+      "evidence": {
+        "comments": 0,
+        "prs": 0
+      }
+    },
+    {
+      "rex_id": "REX-019",
+      "title": "`assert` used for a runtime check (Bandit B101)",
+      "review_match": [
+        "Use of assert detected"
+      ],
+      "detector": {
+        "kind": "ruff",
+        "codes": [
+          "S101"
+        ],
+        "exclude": [
+          "tests/*",
+          "*/tests/*",
+          "test_*.py",
+          "*/test_*.py",
+          "*_test.py",
+          "conftest.py",
+          "*/conftest.py"
+        ]
+      },
+      "known_fix": "Outside tests, replace `assert` with an explicit check that raises. Inside tests B101 is noise: exclude test paths from the Bandit scan once (`exclude_dirs` / `skips: [B101]` for tests) instead of answering each comment.",
+      "mode": "fix",
+      "evidence": {
+        "comments": 274,
+        "prs": 36
+      }
+    },
+    {
+      "rex_id": "REX-020",
+      "title": "Subprocess with a partial executable path or unchecked input (Bandit B404/B603/B607)",
+      "review_match": [
+        "security implications associated with the subprocess module",
+        "subprocess call - check for execution of untrusted input",
+        "Starting a process with a partial executable path",
+        "dangerous-subprocess-use"
+      ],
+      "detector": {
+        "kind": "ruff",
+        "codes": [
+          "S603",
+          "S607"
+        ],
+        "exclude": [
+          "tests/*",
+          "*/tests/*",
+          "test_*.py",
+          "*/test_*.py",
+          "*_test.py",
+          "conftest.py",
+          "*/conftest.py"
+        ]
+      },
+      "known_fix": "Resolve the executable once (`shutil.which`, fail if missing), pass a list of arguments, never interpolate untrusted text; then a reviewed `# noqa: S603` with the reason is acceptable.",
+      "mode": "fix",
+      "evidence": {
+        "comments": 89,
+        "prs": 32
+      }
+    },
+    {
+      "rex_id": "REX-021",
+      "title": "Style rewrites ruff fixes safely (percent format, `dict()` call)",
+      "review_match": [
+        "Use format specifiers instead of percent format",
+        "Unnecessary `{kind}()` call"
+      ],
+      "detector": {
+        "kind": "ruff",
+        "codes": [
+          "UP031",
+          "C408"
+        ]
+      },
+      "known_fix": "`ruff check --select UP031,C408 --fix <file>`",
+      "mode": "autofix",
+      "evidence": {
+        "comments": 51,
+        "prs": 10
+      }
+    }
+  ],
+  "self_review": [
+    "Does every receipt or record bind the exact head SHA it describes, and is it rejected when the head moves?",
+    "Is every input validated and rejected fail-closed (wrong schema, missing field, wrong repo) instead of defaulted?",
+    "Did you regenerate and commit every generated or pinned output this change affects?",
+    "Is identity preserved end to end (repo, run id, attempt, head), never derived from a name or a latest lookup?",
+    "Does a re-run or a retry give the same result (no latest-wins, no hidden time dependence)?"
+  ]
+}
