@@ -68,6 +68,11 @@ param(
     # MAROON classification of each resolved thread: fixed (needs a passing test), already_fixed, false_positive.
     [ValidateSet('fixed', 'already_fixed', 'false_positive')]
     [string]   $Classification = 'fixed',
+    # Evidence for already_fixed / false_positive (MAROON rejects a disposition with no passing evidence):
+    # what was analysed or who reviewed it, e.g. "kernels/x.py:40-52 already guards n <= 0 (commit abc123)".
+    [ValidateSet('source_analysis', 'independent_review')]
+    [string]   $EvidenceKind = 'source_analysis',
+    [string]   $EvidenceRef,
     [string]   $ReportPath = $env:TEMP,
     [double]   $LiveMinutes = 30,
     # Run the offline checks and exit. Uses temporary git repos only; no gh calls.
@@ -235,15 +240,18 @@ function New-ClosureProof {
     # Closure evidence in the field shapes closure.validate() checks (mission-control/maroon/closure.py).
     # item_id and discussion_hash are MAROON's to compute from its own provider read; they stay null here.
     param([string] $RepoFull, [int] $Number, [string] $ThreadId, [long] $CommentId, [string] $HeadSha, [string] $BaseSha,
-          [hashtable] $BlobOids, [string] $Classification, [string] $TestCommand, [string] $Note, [string] $ReplyUrl)
+          [hashtable] $BlobOids, [string] $Classification, [string] $TestCommand, [string] $Note, [string] $ReplyUrl,
+          [string] $EvidenceKind = 'source_analysis', [string] $EvidenceRef)
     $evidence = @()
     if ($TestCommand) { $evidence += [ordered]@{ kind = 'local_test'; ref = "$TestCommand (exit 0)"; source_sha = $HeadSha; conclusion = 'PASS' } }
+    if ($EvidenceRef) { $evidence += [ordered]@{ kind = $EvidenceKind; ref = $EvidenceRef; source_sha = $HeadSha; conclusion = 'PASS' } }
+    if (-not $evidence.Count) { throw 'A closure record needs at least one passing evidence item (a -Test run or -EvidenceRef).' }
     [ordered]@{
         schema          = 'gbogeb.prfix.closure-evidence.v1'
         maps_to         = 'code_maroon.closure-proof.v1'
         maroon_ready    = $false
         maroon_missing  = @('item_id', 'discussion_hash')
-        maroon_next     = 'On Linux/WSL: item_id = operations.observation_id(repo, pr, comment_id); discussion_hash from the provider read; then closure.validate(proof, live).'
+        maroon_next     = 'On Linux/WSL: item_id = operations.observation_id(repo, pr, comment_id); discussion_hash from the provider read; then closure.validate(proof, live), which also re-checks evidence, blob OIDs and the live discussion.'
         repo            = $RepoFull
         pr              = $Number
         thread_id       = $ThreadId
@@ -346,6 +354,13 @@ if ($SelfTest) {
     Assert ($e0.kind -eq 'local_test' -and $e0.conclusion -eq 'PASS' -and $e0.source_sha -eq $p.head_sha) 'evidence uses MAROON kind/conclusion at the head'
     Assert ($p.method.Trim().Length -ge 20 -and $p.classification -eq 'fixed' -and $p.comment_id -eq 42) 'method >= 20 chars, classification, root comment id'
     Assert ($p.maroon_ready -eq $false -and $p.maroon_missing -contains 'item_id' -and $p.schema -ne 'code_maroon.closure-proof.v1') 'not presented as a finished MAROON proof'
+    $fp = New-ClosureProof -RepoFull 'o/r' -Number 1 -ThreadId 'PRRT_y' -CommentId 7 -HeadSha ('a' * 40) -BaseSha ('b' * 40) `
+        -BlobOids @{ 'k.py' = ('c' * 40) } -Classification 'false_positive' -TestCommand '' -Note 'input is validated upstream' -ReplyUrl 'u' `
+        -EvidenceKind 'source_analysis' -EvidenceRef 'k.py:10-20 rejects n <= 0 before the call'
+    Assert ($fp.evidence.Count -eq 1 -and $fp.evidence[0].kind -eq 'source_analysis' -and $fp.evidence[0].conclusion -eq 'PASS') 'non-test disposition carries source_analysis evidence'
+    $threw = $false
+    try { New-ClosureProof -RepoFull 'o/r' -Number 1 -ThreadId 'z' -CommentId 1 -HeadSha ('a' * 40) -BaseSha ('b' * 40) -BlobOids @{ 'k' = ('c' * 40) } -Classification 'already_fixed' -TestCommand '' -Note 'already handled' -ReplyUrl 'u' | Out-Null } catch { $threw = $true }
+    Assert $threw 'a record with no evidence is refused'
 
     # git fixtures: base and head edit the same line (conflict), then a clean merge.
     $tmp = Join-Path ([IO.Path]::GetTempPath()) ("prfix_selftest_" + [guid]::NewGuid().ToString('N').Substring(0, 8))
@@ -386,7 +401,7 @@ $baseSha = (Invoke-GhJson api "repos/$full/commits/$($prInfo.baseRefName)").sha
 $rules = @(Invoke-GhJson api "repos/$full/rules/branches/$([uri]::EscapeDataString($prInfo.headRefName))")
 $blocks = @(Get-PushBlock $rules)
 # `gh pr checks` exits 8 while checks are pending and 1 when one failed, with the JSON still on stdout.
-$cr = Invoke-Gh pr checks $Pr -R $full --json 'name,state,link'
+$cr = Invoke-Gh pr checks $Pr -R $full --json 'name,state,bucket,link'
 if ($cr.Code -notin 0, 1, 8 -or -not $cr.Text.StartsWith('[')) { throw "gh pr checks failed (exit $($cr.Code)): $($cr.Text)" }
 $checks = @($cr.Text | ConvertFrom-Json -Depth 10)
 # Every review thread, page by page (same rule as Invoke-DraftPrPass Get-ReviewThreads): a P1 after the
@@ -403,7 +418,8 @@ do {
 } while ($conn.pageInfo.hasNextPage)
 # FPC needs a COMPLETED Codex review on the exact head, and reviews are requested by hand (AGENTS.md).
 # Completion comes from Codex's own summary state (codex-review-state:v1), not from a review object existing.
-$summaries = @(Invoke-GhJson api "repos/$full/issues/$Pr/comments?per_page=100" |
+$pages = Invoke-GhJson api --paginate --slurp "repos/$full/issues/$Pr/comments?per_page=100"
+$summaries = @(@($pages | ForEach-Object { $_ }) |
     Where-Object { $_.user.login -match 'codex' -and $_.body -match 'codex-review-state:v1' })
 $codexState = if ($summaries.Count) { Get-CodexReviewState $summaries[-1].body } else { $null }
 $codexOnHead = Test-CodexReviewDone $codexState $prInfo.headRefOid
@@ -435,8 +451,9 @@ $diag = [pscustomobject]@{
     Fork = [bool]$prInfo.isCrossRepository; Bot = (Test-BotAuthor $prInfo.author $prInfo.headRefName); HeadRef = $prInfo.headRefName; HeadSha = $prInfo.headRefOid; BaseRef = $prInfo.baseRefName; BaseSha = $baseSha
     Mergeable = $prInfo.mergeable; MergeState = $prInfo.mergeStateStatus
     Blocks = $blocks; PushBlocked = [bool](@($blocks | Where-Object Blocks).Count)
-    FailingChecks = @($checks | Where-Object { $_.state -in 'FAILURE', 'ERROR', 'CANCELLED', 'TIMED_OUT' } | ForEach-Object { "$($_.name) $($_.link)" })
-    PendingChecks = @($checks | Where-Object { $_.state -in 'PENDING', 'QUEUED', 'IN_PROGRESS' } | ForEach-Object name)
+    # gh's normalized bucket (pass / fail / pending / skipping / cancel) covers ACTION_REQUIRED, STALE, STARTUP_FAILURE...
+    FailingChecks = @($checks | Where-Object { $_.bucket -in 'fail', 'cancel' } | ForEach-Object { "$($_.name) [$($_.state)] $($_.link)" })
+    PendingChecks = @($checks | Where-Object { $_.bucket -eq 'pending' } | ForEach-Object name)
     Threads = $threads; Live = $live; BranchWorktree = $branchWorktree; CodexReviewedHead = $codexOnHead
 }
 $class = Get-PrClass $diag
@@ -584,21 +601,35 @@ if ($ResolveThread.Count) {
     if ($Classification -eq 'fixed' -and -not $tested) {
         throw "Refusing to resolve as fixed: no passing -Test recorded on the PR head $($head.Substring(0, 8)). Run -Test (and -Publish) first."
     }
+    if ($Classification -ne 'fixed' -and -not $tested -and -not $EvidenceRef) {
+        throw "Refusing to resolve as ${Classification}: pass -EvidenceRef (what you analysed, with file:lines or commit) or run -Test first. MAROON rejects a disposition without evidence."
+    }
     $proofPath = Join-Path $ReportPath "prfix_$($Owner)_$($Repo)_$($Pr)_proofs.json"
     $testCmd = if ($tested) { $state['test'].command } else { '' }
     # Validate every id before the first write, so a typo cannot leave a half-processed batch.
     $missing = @($ResolveThread | Where-Object { $id = $_; -not ($threads | Where-Object Id -eq $id) })
     if ($missing.Count) { throw "Not unresolved threads on $full#${Pr}: $($missing -join ', '). Nothing was changed." }
+    # Each thread's file must exist at the published head: the blob OID is the record's source identity.
+    $blobs = @{}
     foreach ($id in $ResolveThread) {
         $t = $threads | Where-Object Id -eq $id
-        $blob = (Invoke-Git $Worktree rev-parse "$($head):$($t.Path)").Text
+        $b = Invoke-Git $Worktree rev-parse --verify --quiet "$($head):$($t.Path)"
+        if ($b.Code -ne 0 -or $b.Text -notmatch '^[0-9a-f]{40}$') {
+            throw "Thread $id is on $($t.Path), which has no blob at $($head.Substring(0, 12)) (deleted or renamed?). Nothing was changed; answer it by hand or with the file's new path in -Note and MAROON."
+        }
+        $blobs[$id] = $b.Text
+    }
+    foreach ($id in $ResolveThread) {
+        $t = $threads | Where-Object Id -eq $id
+        $blob = $blobs[$id]
         $verb = @{ fixed = 'Fixed in'; already_fixed = 'Already fixed at'; false_positive = 'Not applicable at' }[$Classification]
-        $verified = if ($tested) { "Verified: ``$($state['test'].command)`` exit 0 on ``$head``." } else { 'No test run recorded for this disposition.' }
+        $verified = if ($tested) { "Verified: ``$($state['test'].command)`` exit 0 on ``$head``." } else { "Evidence ($EvidenceKind): $EvidenceRef" }
         $body = "$verb $($head.Substring(0, 12)): $Note`n`n$verified`nEvidence: gbogeb.prfix.closure-evidence.v1 (Invoke-PrFixInSitu.ps1); MAROON adds item_id and discussion_hash before ledger closure."
         $reply = Invoke-GraphQL -Query 'mutation($id:ID!,$b:String!){addPullRequestReviewThreadReply(input:{pullRequestReviewThreadId:$id,body:$b}){comment{url}}}' -Variables @{ id = $id; b = $body }
         $url = $reply.data.addPullRequestReviewThreadReply.comment.url
         $record = New-ClosureProof -RepoFull $full -Number $Pr -ThreadId $id -CommentId $t.CommentId -HeadSha $head -BaseSha $diag.BaseSha `
-            -BlobOids @{ $t.Path = $blob } -Classification $Classification -TestCommand $testCmd -Note $Note -ReplyUrl $url
+            -BlobOids @{ $t.Path = $blob } -Classification $Classification -TestCommand $testCmd -Note $Note -ReplyUrl $url `
+            -EvidenceKind $EvidenceKind -EvidenceRef $EvidenceRef
         # Persist each record as soon as its reply exists, so a later failure cannot lose earlier evidence.
         try {
             $res = Invoke-GraphQL -Query 'mutation($id:ID!){resolveReviewThread(input:{threadId:$id}){thread{isResolved}}}' -Variables @{ id = $id }
