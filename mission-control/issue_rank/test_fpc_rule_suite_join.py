@@ -215,5 +215,91 @@ class RuleSuiteReplay(unittest.TestCase):
         self.assertEqual(result["merge_admission"], "HOLD")
 
 
+
+class OwnerExportReplay(unittest.TestCase):
+    """Real owner export (12 Nov 2026, Hub #336) and the collector's fail-closed decision."""
+
+    PACK = pathlib.Path(__file__).resolve().parent / "evidence" / "owner_rule_suites_20261112"
+
+    def _load(self, name):
+        import json
+        return json.loads((self.PACK / name).read_text(encoding="utf-8"))
+
+    def _events(self):
+        import json
+        root = pathlib.Path(__file__).resolve().parent / "evidence"
+        return json.loads((root / "FPC_MERGE_COHORT_29_20261112.json").read_text(encoding="utf-8"))
+
+    def test_sha256sums_match_committed_source_bytes(self):
+        import hashlib
+        lines = (self.PACK / "SHA256SUMS").read_text(encoding="utf-8").splitlines()
+        self.assertEqual(len(lines), 53)
+        for line in lines:
+            digest, name = line.split("  ", 1)
+            self.assertEqual(hashlib.sha256((self.PACK / name).read_bytes()).hexdigest(), digest, name)
+
+    def test_export_receipts_bind_every_raw_response(self):
+        import hashlib
+        export = self._load("OWNER_RULE_SUITES_EXPORT.json")
+        self.assertEqual(len(export["receipts"]), 52)
+        for r in export["receipts"]:
+            self.assertTrue(r["endpoint"].startswith("GET /repos/GBOGEB/pipeline-automation-hub/rulesets/rule-suites"))
+            self.assertEqual(hashlib.sha256((self.PACK / r["file"]).read_bytes()).hexdigest(), r["sha256"])
+
+    def test_owner_export_replays_to_recorded_receipt(self):
+        result = j.replay(self._events(), self._load("OWNER_RULE_SUITES_EXPORT.json"))
+        recorded = self._load("REPLAY.json")
+        self.assertEqual(result, recorded)
+        self.assertEqual(result["rule_suite_source_state"], "COMPLETE")
+        self.assertEqual(result["digest_sha256"],
+                         "638c46737baa8cc2b3a6f3ecb72584672998758aab4b1476d928223eb405e5c8")
+        verdicts = {}
+        for row in result["events"]:
+            verdicts.setdefault(row["rule_suite_verdict"], []).append(row["pr"])
+        self.assertEqual(len(verdicts["FPC_BYPASS_OBSERVED_OWNER_DECISION_REQUIRED"]), 22)
+        self.assertEqual(sorted(verdicts["NO_MATCHING_RULE_SUITE_OBSERVED_UNRESOLVED"]),
+                         [1135, 1152, 1185, 1206, 1207])
+        self.assertEqual(sorted(verdicts["RULE_SUITE_PASS_OBSERVED_NO_ADMISSION_PROOF"]), [1219, 1220])
+        self.assertEqual(result["authorized_bypasses"], 0)
+        self.assertEqual(result["merge_admission"], "HOLD")
+        self.assertFalse(result["authority_transfer"])
+        self.assertFalse(any(r["authorized_bypass"] for r in result["events"]))
+
+    def _collector_inputs(self):
+        export = self._load("OWNER_RULE_SUITES_EXPORT.json")
+        pages = [self._load("raw/list_p1.json")]
+        details = {s["id"]: s for s in export["suites"]}
+        return pages, details, self._events()["events"]
+
+    def test_collector_assess_reproduces_complete_export(self):
+        import fpc_rule_suite_collect as c
+        pages, details, events = self._collector_inputs()
+        got = c.assess(pages, details, events)
+        export = self._load("OWNER_RULE_SUITES_EXPORT.json")
+        for key in ("state", "pagination_complete", "details_complete", "metadata_truncated",
+                    "window_start", "window_end", "suites"):
+            self.assertEqual(got[key], export[key], key)
+
+    def test_collector_fails_closed_on_each_gap(self):
+        import fpc_rule_suite_collect as c
+        pages, details, events = self._collector_inputs()
+        first = pages[0][0]["id"]
+        gaps = {
+            "missing_detail": (pages, {**details, first: None}, None),
+            "full_last_page": ([pages[0] + [{**pages[0][0], "id": 10**12 + i} for i in range(c.PER_PAGE - len(pages[0]))]],
+                               {**details, **{10**12 + i: details[first] for i in range(c.PER_PAGE - len(pages[0]))}}, None),
+            "list_403": (pages, details, "list page 1: HTTP 403"),
+            "window_not_covered": ([[r for r in pages[0] if c._ts(r["pushed_at"]) > c._ts("2026-11-11T22:00:00Z")]], details, None),
+            "metadata_cap": (pages, {**details, first: {**details[first], "rule_evaluations": [{}] * c.METADATA_CAP}}, None),
+        }
+        for name, (pg, dt, err) in gaps.items():
+            with self.subTest(gap=name):
+                got = c.assess(pg, dt, events, err)
+                self.assertEqual(got["state"], "INCOMPLETE")
+                self.assertTrue(got["limitations"])
+                if name != "full_last_page":  # synthetic duplicate rows: the join rejects those outright
+                    self.assertEqual(j.replay(self._events(), got)["rule_suite_source_state"], "INCOMPLETE")
+
+
 if __name__ == "__main__":
     unittest.main()

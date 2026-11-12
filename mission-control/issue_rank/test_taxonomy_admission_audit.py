@@ -172,7 +172,7 @@ class AdmissionAudit(unittest.TestCase):
 
 # Extend the existing exact-head audit workflow with the owner-only rule-suite
 # replay tests. The new join is additive, not a second admission authority.
-from test_fpc_rule_suite_join import RuleSuiteReplay  # noqa: F401
+from test_fpc_rule_suite_join import OwnerExportReplay, RuleSuiteReplay  # noqa: F401
 
 
 if __name__ == "__main__":

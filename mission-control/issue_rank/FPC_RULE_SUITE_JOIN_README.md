@@ -45,7 +45,39 @@ zero authorized bypasses, zero formal root closures. The SHA256 digest
 checks deterministic inputs; it is not a source signature.
 The public Hub PR and commit-status readback is a bounded historical snapshot.
 
-## Owner-only source evidence (not performed by this PR)
+## Owner export collected (12 Nov 2026, Hub #336)
+
+The 403 above belongs to the integration's token. The owner's own `gh` session
+(keyring, GBOGEB) gets HTTP 200 on the same GET. `fpc_rule_suite_collect.py`
+implements steps 1-3 below, and its output is committed under
+[evidence/owner_rule_suites_20261112/](evidence/owner_rule_suites_20261112/):
+
+| Item | Value |
+|---|---|
+| Source | 1 list page plus 51 `?include_metadata=true` details, all raw, GET only |
+| `state` | `COMPLETE`: the last page was short, 51/51 details were read, no 50-entry cap, and the window is covered |
+| Window | `2026-11-11T21:22:40Z` .. `2026-11-12T06:16:35Z` |
+| Integrity | `SHA256SUMS` over the export and the raw files; each export receipt hashes one raw response |
+| Replay | `REPLAY.json`, digest `638c46737baa8cc2b3a6f3ecb72584672998758aab4b1476d928223eb405e5c8` |
+
+Replay against the unchanged 29-event fixture:
+
+- 22 `FPC_BYPASS_OBSERVED_OWNER_DECISION_REQUIRED`
+- 5 `NO_MATCHING_RULE_SUITE_OBSERVED_UNRESOLVED` (#1135, #1152, #1185, #1206, #1207)
+- 2 `RULE_SUITE_PASS_OBSERVED_NO_ADMISSION_PROOF` (#1219, #1220)
+- 0 authorized; merge admission HOLD
+
+All 51 suites name the actor `GBOGEB`.
+
+Lead for the 5 NO_MATCH events: #1135, #1152 and #1185 each have a `fail` suite
+at Δ = 0 s from the merge time, but with a different `after_sha` (`93d325b6`,
+`4c8beab6`, `00e2c0a7`). The join correctly does not match these. The owner
+should establish what those pushes were before classifying the 5 events.
+
+The collector and the replay ran in one owner session. Independent replay is
+still required, and every observed bypass still needs an owner disposition (K07).
+
+## Owner-only source evidence (procedure)
 
 An owner with an authenticated GitHub CLI session and separate repository
 Administration **read** permission can collect the narrowly scoped rule suites.
@@ -113,7 +145,11 @@ A COMPLETE assertion must be backed by actual owner-source receipts.
 Local pilot: **18/18 offline tests PASS**. Synthetic 29-event stress replay
 injected 26 matching bypass examples and still yielded zero authorizations;
 these are **synthetic examples**, not historical bypass evidence.
-Real owner-source API state remains HTTP 403. Native exact-head CI is required.
+The real owner source is now readable and committed (see "Owner export collected").
+`OwnerExportReplay` adds 5 tests: it pins SHA256SUMS, the raw-response receipts,
+the recorded replay and the collector's COMPLETE decision. It also checks that
+each collection gap (missing detail, full last page, list 403, window not
+covered, metadata cap) fails closed to INCOMPLETE. Native exact-head CI is required.
 
 ~~~mermaid
 flowchart TD
