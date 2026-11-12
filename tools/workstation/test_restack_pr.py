@@ -171,6 +171,37 @@ class RestackPrDryRun(unittest.TestCase):
         self.assertEqual(self.refs(self.clone, "refs/restack/7/rebased"), "")
         self.assertEqual(before, self.refs(self.origin, "refs/heads"))
 
+    def test_gh_failure_aborts_batch(self) -> None:
+        self.stack()
+        if sys.platform == "win32":
+            (self.bin / "gh.cmd").write_text("@exit /b 1\r\n", encoding="ascii")
+        else:
+            gh = self.bin / "gh"
+            gh.write_text("#!/bin/sh\nexit 1\n", encoding="ascii")
+            gh.chmod(0o755)
+        res = self.run_script()
+        out = res.stdout + res.stderr
+        self.assertNotEqual(res.returncode, 0, out)
+        self.assertIn("batch aborted", out)
+        self.assertNotIn("plan:", out)
+
+    def test_caller_author_env_is_restored(self) -> None:
+        head = self.stack()
+        self.fake_gh("feature", head)
+        env = dict(self.env, PATH=str(self.bin) + os.pathsep + self.env.get("PATH", ""))
+        cmd = (
+            "$env:GIT_AUTHOR_NAME='Keep Me'; $env:GIT_AUTHOR_EMAIL='keep@example.invalid'; "
+            f"& '{SCRIPT}' -Clone '{self.clone}' -Repo example/repo -Pr 7; "
+            "Write-Output \"AFTER=$env:GIT_AUTHOR_NAME|$env:GIT_AUTHOR_EMAIL|$([bool]$env:GIT_AUTHOR_DATE)\""
+        )
+        res = subprocess.run([PWSH, "-NoProfile", "-NonInteractive", "-Command", cmd],
+                             env=env, capture_output=True, text=True, timeout=120)
+        out = res.stdout + res.stderr
+        self.assertIn("#7 CLEAN", out)
+        self.assertIn("AFTER=Keep Me|keep@example.invalid|False", out)
+        rebased = self.git(self.clone, "rev-parse", "refs/restack/7/rebased")
+        self.assertEqual(self.git(self.clone, "log", "-1", "--format=%an", rebased), "Alice Author")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

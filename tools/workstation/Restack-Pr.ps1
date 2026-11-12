@@ -43,8 +43,15 @@ if ($gv -notmatch '^(\d+)\.(\d+)' -or [version]"$($Matches[1]).$($Matches[2])" -
 if (-not $Apply) { Write-Host 'DRY RUN: nothing is pushed and refs/heads/* is not changed (pass -Apply to push).' }
 
 foreach ($n in $Pr) {
-  $raw = gh pr view $n -R $Repo --json 'baseRefName,headRefName,headRefOid,isCrossRepository,state'
-  if ($LASTEXITCODE -or -not $raw) { Write-Warning "#${n}: gh pr view failed ($LASTEXITCODE); skipped"; continue }   # never act on an empty answer
+  # Retry a transient gh failure, then stop the whole batch: skipping one PR of a stack and pushing
+  # the rest could rewrite a child while its parent stays put.
+  $raw = $null
+  foreach ($try in 1..3) {
+    $raw = gh pr view $n -R $Repo --json 'baseRefName,headRefName,headRefOid,isCrossRepository,state'
+    if (-not $LASTEXITCODE -and $raw) { break }
+    $raw = $null; if ($try -lt 3) { Start-Sleep -Seconds (2 * $try) }
+  }
+  if (-not $raw) { throw "#${n}: gh pr view failed after 3 tries; batch aborted (no PR after this one was touched)" }   # never act on an empty answer
   $p = $raw | ConvertFrom-Json
   if ($p.state -ne 'OPEN' -or $p.isCrossRepository) { Write-Warning "#${n}: skipped (state=$($p.state), fork=$($p.isCrossRepository))"; continue }
   $ontoBranch = if ($Onto) { $Onto } else { $p.baseRefName }
@@ -69,9 +76,13 @@ foreach ($n in $Pr) {
     Write-Host "    pick $(G log -1 --format='%h %s' $c)"
     $msg = New-TemporaryFile
     [IO.File]::WriteAllText($msg, ((G log -1 --format=%B $c) -join "`n") + "`n")
-    $env:GIT_AUTHOR_NAME = G log -1 --format=%an $c; $env:GIT_AUTHOR_EMAIL = G log -1 --format=%ae $c
-    $env:GIT_AUTHOR_DATE = G log -1 --format=%ad --date=raw $c
-    try { $tip = G commit-tree $tree -p $tip -F $msg } finally { Remove-Item $msg; 'GIT_AUTHOR_NAME','GIT_AUTHOR_EMAIL','GIT_AUTHOR_DATE' | % { Remove-Item "env:$_" -EA SilentlyContinue } }
+    $authorVars = 'GIT_AUTHOR_NAME','GIT_AUTHOR_EMAIL','GIT_AUTHOR_DATE'
+    $savedEnv = @{}; $authorVars | % { $savedEnv[$_] = [Environment]::GetEnvironmentVariable($_) }   # caller's values, restored below
+    try {
+      $env:GIT_AUTHOR_NAME = G log -1 --format=%an $c; $env:GIT_AUTHOR_EMAIL = G log -1 --format=%ae $c
+      $env:GIT_AUTHOR_DATE = G log -1 --format=%ad --date=raw $c
+      $tip = G commit-tree $tree -p $tip -F $msg
+    } finally { Remove-Item $msg; $authorVars | % { [Environment]::SetEnvironmentVariable($_, $savedEnv[$_]) } }
   }
   if ($conflict) {
     Write-Host "#${n} CONFLICT at $($conflict.Commit)" -ForegroundColor Red
