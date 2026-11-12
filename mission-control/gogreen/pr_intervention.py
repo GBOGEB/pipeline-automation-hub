@@ -144,17 +144,31 @@ class Writer:
     def __init__(self, run=subprocess.run):
         self.run = run
 
-    def update_branch(self, repo, number, expected_head, method):
-        if method == 'MERGE':
-            args = ['gh', 'api', '-X', 'PUT', f'repos/{repo}/pulls/{number}/update-branch',
-                    '-f', f'expected_head_sha={expected_head}']
-        else:  # gh has no head guard for --rebase; act() re-reads the head immediately before
-            args = ['gh', 'pr', 'update-branch', str(number), '-R', repo, '--rebase']
-        out = self.run(args, capture_output=True, text=True, encoding='utf-8', env=_env(), timeout=120)
-        if out.returncode == 0:
-            return 'ACCEPTED', None
+    def _call(self, args):
+        return self.run(args, capture_output=True, text=True, encoding='utf-8', env=_env(), timeout=120)
+
+    @staticmethod
+    def _failed(out):
         code = re.search(r'\(HTTP (\d{3})\)', out.stderr or '')
         return 'FAILED', ('HTTP_' + code.group(1)) if code else f'EXIT_{out.returncode}'
+
+    def update_branch(self, repo, number, expected_head, method):
+        """Both methods are atomic on the recorded head: GitHub refuses the write if the head moved."""
+        if method == 'MERGE':
+            out = self._call(['gh', 'api', '-X', 'PUT', f'repos/{repo}/pulls/{number}/update-branch',
+                              '-f', f'expected_head_sha={expected_head}'])
+            return ('ACCEPTED', None) if out.returncode == 0 else self._failed(out)
+        # `gh pr update-branch --rebase` has no head guard; GraphQL updatePullRequestBranch takes expectedHeadOid.
+        node = self._call(['gh', 'pr', 'view', str(number), '-R', repo, '--json', 'id', '--jq', '.id'])
+        if node.returncode != 0 or not node.stdout.strip():
+            return self._failed(node)
+        out = self._call(['gh', 'api', 'graphql',
+                          '-f', 'query=mutation($id:ID!,$oid:GitObjectID!){updatePullRequestBranch(input:'
+                                '{pullRequestId:$id,expectedHeadOid:$oid,updateMethod:REBASE}){pullRequest{headRefOid}}}',
+                          '-f', f'id={node.stdout.strip()}', '-f', f'oid={expected_head}'])
+        if out.returncode != 0 or '"errors"' in (out.stdout or ''):
+            return self._failed(out) if out.returncode != 0 else ('FAILED', 'GRAPHQL_ERROR')
+        return 'ACCEPTED', None
 
 
 # ---------------------------------------------------------------- snapshot
@@ -355,21 +369,29 @@ def act(client, writer, b, apply, now, sleep=time.sleep):
     for row in b['prs']:
         if row['arm'] != 'TREATED':
             continue
-        reason, new_head = live_guard(row, client.pr(row['repo'], row['number']), opt_out), None
-        if reason:
-            res = ('SKIPPED', reason)
-        elif not apply:
-            res = ('PLANNED', None)
-        else:
-            res = writer.update_branch(row['repo'], row['number'], row['head_sha'], method)
-            if res[0] == 'ACCEPTED':
-                new_head = updated_head(client, row, method, sleep)
+        new_head, wrote = None, False
+        # One PR's failure never loses the others: every result, including writes already made, reaches the
+        # act record. An error after the write was issued is UNKNOWN (it may have landed), never a skip.
+        try:
+            reason = live_guard(row, client.pr(row['repo'], row['number']), opt_out)
+            if reason:
+                res = ('SKIPPED', reason)
+            elif not apply:
+                res = ('PLANNED', None)
+            else:
+                wrote = True
+                res = writer.update_branch(row['repo'], row['number'], row['head_sha'], method)
+                if res[0] == 'ACCEPTED':
+                    new_head = updated_head(client, row, method, sleep)
+        except Exception as exc:  # noqa: BLE001 - recorded per PR, never swallowed silently
+            res = ('UNKNOWN' if wrote else 'ERROR', type(exc).__name__)
         results.append({'repo': row['repo'], 'number': row['number'], 'head_sha': row['head_sha'],
                         'result': res[0], 'detail': res[1], 'new_head': new_head})
     accepted = sum(r['result'] == 'ACCEPTED' for r in results)
     return {'kind': 'act', 'experiment': b['experiment'], 'recorded_at': stamp(now), 'method': method,
             'applied': bool(apply), 'results': results,
-            'counts': {k: sum(r['result'] == k for r in results) for k in ('PLANNED', 'ACCEPTED', 'FAILED', 'SKIPPED')},
+            'counts': {k: sum(r['result'] == k for r in results)
+                       for k in ('PLANNED', 'ACCEPTED', 'FAILED', 'SKIPPED', 'ERROR', 'UNKNOWN')},
             # Each accepted update moves the head, so its First-Pass Closure receipt must be written again.
             'fpc_receipts_invalidated': accepted}
 
@@ -422,6 +444,8 @@ def head_change(b, a, act_row, method, parents=None):
     """Exact identity, never inferred from commit counts: a force-push can keep the ahead count unchanged."""
     if a is None or a['head_sha'] == b['head_sha']:
         return 'HEAD_UNCHANGED'
+    if act_row and act_row['result'] == 'UNKNOWN':
+        return 'UNVERIFIED_HEAD'  # our write may have landed: neither ours nor the author's is provable
     if not act_row or act_row['result'] != 'ACCEPTED':
         return 'AUTHOR_PUSH'
     if act_row.get('new_head'):
@@ -644,7 +668,8 @@ def report(records, experiment):
     if act_rec:
         c = act_rec['counts']
         out.append(f"Act: {act_rec['recorded_at']}, applied={act_rec['applied']}: {c['ACCEPTED']} accepted, "
-                   f"{c['FAILED']} failed, {c['SKIPPED']} skipped, {c['PLANNED']} planned. "
+                   f"{c['FAILED']} failed, {c['SKIPPED']} skipped, {c['PLANNED']} planned, "
+                   f"{c.get('ERROR', 0)} errors, {c.get('UNKNOWN', 0)} unknown. "
                    f"FPC receipts to rewrite: {act_rec['fpc_receipts_invalidated']}.")
     skips = {}
     for r in b['prs']:

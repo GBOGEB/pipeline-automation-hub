@@ -6,6 +6,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import subprocess
 import tempfile
 import types
 import unittest
@@ -242,6 +243,35 @@ class Act(unittest.TestCase):
         fc.parents[sha('stranger')] = [sha('other'), BASE0]  # a head that is not our merge commit
         self.assertIsNone(mod.updated_head(fc, {'repo': REPO, 'number': n, 'head_sha': sha(f'h{n}')}, 'MERGE', no_sleep))
 
+    def test_one_pr_failure_never_loses_the_other_results(self):
+        """A read error before the write is ERROR; an exception after the write was sent is UNKNOWN."""
+        first, second = self.treated[0], self.treated[1]
+
+        class Flaky(FakeClient):
+            def pr(self, repo, number):
+                if number == first:
+                    raise OSError('gh pr view exit 1: HTTP 502')
+                return super().pr(repo, number)
+
+        class Exploding(FakeWriter):
+            def update_branch(self, repo, number, expected_head, method):
+                if number == second:
+                    super().update_branch(repo, number, expected_head, method)
+                    raise subprocess.TimeoutExpired('gh', 120)
+                return super().update_branch(repo, number, expected_head, method)
+
+        fc = Flaky(copy.deepcopy(self.prs))
+        w = Exploding(fc)
+        rec = mod.act(fc, w, self.b, True, T0, sleep=no_sleep)
+        by = {r['number']: r for r in rec['results']}
+        self.assertEqual(set(by), set(self.treated))  # every treated PR is in the record
+        self.assertEqual((by[first]['result'], by[first]['detail']), ('ERROR', 'OSError'))
+        self.assertEqual((by[second]['result'], by[second]['detail']), ('UNKNOWN', 'TimeoutExpired'))
+        self.assertTrue(all(by[n]['result'] == 'ACCEPTED' for n in self.treated[2:]))
+        self.assertEqual((rec['counts']['ERROR'], rec['counts']['UNKNOWN']), (1, 1))
+        b = {'head_sha': sha('x'), 'ahead_by': 2}
+        self.assertEqual(mod.head_change(b, {'head_sha': sha('y')}, by[second], 'MERGE'), 'UNVERIFIED_HEAD')
+
 
 class Evaluate(unittest.TestCase):
     """Treated PRs turn green after a merge update; holdout PRs stay red, except one external recovery."""
@@ -421,9 +451,19 @@ class Transport(unittest.TestCase):
     def test_writer_failure_and_rebase(self):
         run = self.Run(code=1, stderr='gh: Update branch failed (HTTP 422)')
         self.assertEqual(mod.Writer(run).update_branch(REPO, 7, sha('h'), 'MERGE'), ('FAILED', 'HTTP_422'))
-        run = self.Run()
-        mod.Writer(run).update_branch(REPO, 7, sha('h'), 'REBASE')
-        self.assertEqual(run.calls[0][0], ['gh', 'pr', 'update-branch', '7', '-R', REPO, '--rebase'])
+        # A rebase is atomic on the recorded head too: GraphQL updatePullRequestBranch with expectedHeadOid,
+        # never `gh pr update-branch --rebase` (which has no head guard).
+        run = self.Run(stdout='PR_kwNODE\n')
+        self.assertEqual(mod.Writer(run).update_branch(REPO, 7, sha('h'), 'REBASE'), ('ACCEPTED', None))
+        self.assertEqual(run.calls[0][0][:6], ['gh', 'pr', 'view', '7', '-R', REPO])
+        mutation = run.calls[1][0]
+        self.assertEqual(mutation[:3], ['gh', 'api', 'graphql'])
+        self.assertIn('expectedHeadOid:$oid', ' '.join(mutation))
+        self.assertIn('oid=' + sha('h'), mutation)
+        self.assertIn('id=PR_kwNODE', mutation)
+        self.assertNotIn('update-branch', ' '.join(a for call in run.calls for a in call[0]))
+        run = self.Run(stdout='{"errors":[{"message":"expected head moved"}]}')
+        self.assertEqual(mod.Writer(run).update_branch(REPO, 7, sha('h'), 'REBASE'), ('FAILED', 'GRAPHQL_ERROR'))
 
     def test_gh_retries_5xx_but_not_4xx(self):
         class Flaky:
