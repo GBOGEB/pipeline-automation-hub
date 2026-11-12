@@ -124,6 +124,21 @@ def scoped_suite(suite, event):
     return abs((pushed - instant(event["merged_at"])).total_seconds()) <= 900
 
 
+def names_failed_fpc(rule):
+    """True when this evaluation identifies the FPC context as not passing.
+
+    Native ``?include_metadata=true`` payloads list required checks under
+    ``metadata.checks[].context``; when that list is present it is authoritative and the
+    free-form ``details`` text is ignored. Without metadata, fall back to ``details``.
+    """
+    checks = (rule.get("metadata") or {}).get("checks") if isinstance(rule.get("metadata"), dict) else None
+    if isinstance(checks, list):
+        return any(isinstance(c, dict) and c.get("context") == FPC_CONTEXT and c.get("state") != "success"
+                   for c in checks)
+    details = rule.get("details")
+    return isinstance(details, str) and FPC_CONTEXT.casefold() in details.casefold()
+
+
 def classify_match(suite):
     result = suite.get("result")
     if result != "bypass":
@@ -135,11 +150,10 @@ def classify_match(suite):
         if not isinstance(rule, dict):
             continue
         source = rule.get("rule_source") or {}
-        details = rule.get("details")
         if (isinstance(source, dict) and source.get("type") == "ruleset" and
             source.get("id") == SOFT_RULESET and rule.get("enforcement") == "active" and
             rule.get("rule_type") == "required_status_checks" and rule.get("result") == "fail" and
-            isinstance(details, str) and FPC_CONTEXT.casefold() in details.casefold()):
+            names_failed_fpc(rule)):
             return "FPC_BYPASS_OBSERVED_OWNER_DECISION_REQUIRED"
     return "BYPASS_OBSERVED_FPC_SCOPE_UNPROVEN"
 

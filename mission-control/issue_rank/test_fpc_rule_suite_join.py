@@ -92,6 +92,32 @@ class RuleSuiteReplay(unittest.TestCase):
         s["suites"] = [item]
         self.assertEqual(j.replay(cohort(), s)["fpc_bypass_observed"], 0)
 
+    def test_fpc_identity_from_native_check_metadata(self):
+        cases = {
+            "metadata_fpc_failure_no_details": ([{"context": j.FPC_CONTEXT, "state": "failure"}], None,
+                                                "FPC_BYPASS_OBSERVED_OWNER_DECISION_REQUIRED"),
+            "metadata_fpc_generic_details": ([{"context": "CodeQL", "state": "success"},
+                                              {"context": j.FPC_CONTEXT, "state": "error"}], "1 check failing",
+                                             "FPC_BYPASS_OBSERVED_OWNER_DECISION_REQUIRED"),
+            "metadata_other_check_beats_details": ([{"context": "CodeQL", "state": "failure"}],
+                                                   "Required check failed: " + j.FPC_CONTEXT,
+                                                   "BYPASS_OBSERVED_FPC_SCOPE_UNPROVEN"),
+            "metadata_fpc_success_not_bypass": ([{"context": j.FPC_CONTEXT, "state": "success"}], None,
+                                                "BYPASS_OBSERVED_FPC_SCOPE_UNPROVEN"),
+            "metadata_near_miss_context": ([{"context": j.FPC_CONTEXT + " (shadow)", "state": "failure"}], None,
+                                           "BYPASS_OBSERVED_FPC_SCOPE_UNPROVEN"),
+        }
+        for name, (checks, details, verdict) in cases.items():
+            with self.subTest(case=name):
+                item = match()
+                item["rule_evaluations"][0]["details"] = details
+                item["rule_evaluations"][0]["metadata"] = {"checks": checks}
+                s = complete()
+                s["suites"] = [item]
+                r = j.replay(cohort(), s)
+                self.assertEqual(r["events"][0]["rule_suite_verdict"], verdict)
+                self.assertEqual(r["authorized_bypasses"], 0)
+
     def test_no_details_unverified_not_closure(self):
         s = complete()
         s["suites"] = [match(rule_evaluations=None)]
@@ -280,6 +306,17 @@ class OwnerExportReplay(unittest.TestCase):
                     "window_start", "window_end", "suites"):
             self.assertEqual(got[key], export[key], key)
 
+    def test_owner_export_fpc_bypasses_named_by_check_metadata(self):
+        export = self._load("OWNER_RULE_SUITES_EXPORT.json")
+        by_id = {s["id"]: s for s in export["suites"]}
+        rows = [r for r in self._load("REPLAY.json")["events"]
+                if r["rule_suite_verdict"] == "FPC_BYPASS_OBSERVED_OWNER_DECISION_REQUIRED"]
+        self.assertEqual(len(rows), 22)
+        for row in rows:
+            rules = by_id[row["rule_suite_ids"][0]]["rule_evaluations"]
+            stripped = [{k: v for k, v in rule.items() if k != "details"} for rule in rules]
+            self.assertTrue(any(j.names_failed_fpc(rule) for rule in stripped), row["pr"])
+
     def test_collector_fails_closed_on_each_gap(self):
         import fpc_rule_suite_collect as c
         pages, details, events = self._collector_inputs()
@@ -291,6 +328,8 @@ class OwnerExportReplay(unittest.TestCase):
             "list_403": (pages, details, "list page 1: HTTP 403"),
             "window_not_covered": ([[r for r in pages[0] if c._ts(r["pushed_at"]) > c._ts("2026-11-11T22:00:00Z")]], details, None),
             "metadata_cap": (pages, {**details, first: {**details[first], "rule_evaluations": [{}] * c.METADATA_CAP}}, None),
+            "nested_checks_cap": (pages, {**details, first: {**details[first], "rule_evaluations": [
+                {"rule_type": "required_status_checks", "metadata": {"checks": [{"context": "c"}] * c.METADATA_CAP}}]}}, None),
         }
         for name, (pg, dt, err) in gaps.items():
             with self.subTest(gap=name):

@@ -4,6 +4,12 @@ on:
     paths:
       - 'mission-control/issue_rank/taxonomy_admission_audit.py'
       - 'mission-control/issue_rank/test_taxonomy_admission_audit.py'
+      - 'mission-control/issue_rank/fpc_rule_suite_join.py'
+      - 'mission-control/issue_rank/fpc_rule_suite_collect.py'
+      - 'mission-control/issue_rank/test_fpc_rule_suite_join.py'
+      - 'mission-control/issue_rank/evidence/FPC_MERGE_COHORT_29_20261112.json'
+      - 'mission-control/issue_rank/evidence/OWNER_RULE_SUITES_403_20261112.json'
+      - 'mission-control/issue_rank/evidence/owner_rule_suites_20261112/**'
       - '.github/workflows/taxonomy-admission-audit.yml'
   workflow_dispatch: {}
 permissions:

@@ -77,6 +77,30 @@ should establish what those pushes were before classifying the 5 events.
 The collector and the replay ran in one owner session. Independent replay is
 still required, and every observed bypass still needs an owner disposition (K07).
 
+### NO_MATCH probe (read-only, 12 Nov 2026)
+
+The suites form a hash chain: each suite's `before_sha` is the master tip it was
+evaluated against. Read with `git log` and `GET /pulls/{n}`, the 5 NO_MATCH events
+split into two classes. The join's verdict is unchanged; this is a lead for the owner.
+
+| PR | Finding | Evidence |
+|---|---|---|
+| #1206, #1207 | **Base was not master** | Base refs `feat/runtime-outcome-coverage-20261110` and `feat/maroon-resolve-answered-20261110`; no suite uses either merge SHA as `before_sha`. The 29-event fixture lists them as master merges, so it's a fixture-scope defect, not a missing bypass. |
+| #1135, #1152, #1185 | **Master advanced past a `fail` suite** | The merge commit's git parent is the `before_sha` of a P-SOFT FPC `fail` suite at Δ = 0 s (`5056251063`, `5056305510`, `5056701907`). The next suite's `before_sha` is the merge SHA. That `fail` suite's `after_sha` (`93d325b6`, `4c8beab6`, `00e2c0a7`) is not an object in the repository. |
+
+The `fail` class needs an owner explanation before any disposition. The only
+recorded evaluation of the transition is a failed FPC check, and the landed commit
+is not the evaluated one.
+
+Separately, suite `5000767803` (9 Nov, P-BASIC #25789280, `bypass`) shows a
+failing FPC check under P-BASIC. P-BASIC therefore required FPC at some earlier
+point. This supports the ruleset-history conflict recorded in #336.
+
+FPC identity comes from `rule_evaluations[].metadata.checks[].context` when the
+`include_metadata` payload carries it; free-form `details` is the fallback only.
+The collector treats any metadata list, nested ones included, that reaches 50
+entries as truncated.
+
 ## Owner-only source evidence (procedure)
 
 An owner with an authenticated GitHub CLI session and separate repository

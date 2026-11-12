@@ -12,7 +12,8 @@ export to fpc_rule_suite_join.py. It never mutates GitHub, never prints a token,
 authority: the join keeps merge admission HOLD.
 
 ``assess()`` is the pure decision: state is COMPLETE only when pagination ended on a short page,
-every detail GET succeeded, no rule_evaluations list reached GitHub's 50-entry metadata cap and
+every detail GET succeeded, no rule_evaluations list or nested metadata list (for example
+``metadata.checks``) reached GitHub's 50-entry metadata cap, and
 the oldest listed suite predates the event window. Anything else is INCOMPLETE, and the join then
 treats every event as unresolved.
 """
@@ -44,6 +45,16 @@ def _iso(value: datetime) -> str:
     return value.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def longest_list(value) -> int:
+    """Longest list anywhere in ``value``: GitHub caps each metadata collection at 50 entries,
+    including nested ones such as ``metadata.checks``, not only ``rule_evaluations``."""
+    if isinstance(value, list):
+        return max([len(value), *(longest_list(v) for v in value)])
+    if isinstance(value, dict):
+        return max([0, *(longest_list(v) for v in value.values())])
+    return 0
+
+
 def event_window(events: list[dict]) -> tuple[datetime, datetime]:
     times = [_ts(e["merged_at"]) for e in events]
     return min(times) - TOLERANCE, max(times) + TOLERANCE
@@ -63,9 +74,9 @@ def assess(pages: list[list[dict]], details: dict[int, dict | None], events: lis
         limits.append(f"detail GET failed for suites {missing}")
     suites = [{k: details[r["id"]].get(k) for k in SUITE_FIELDS}
               for r in sorted(listed, key=lambda r: r["id"]) if details.get(r["id"]) is not None]
-    truncated = any(len(s.get("rule_evaluations") or []) >= METADATA_CAP for s in suites)
+    truncated = any(longest_list(s.get("rule_evaluations")) >= METADATA_CAP for s in suites)
     if truncated:
-        limits.append(f"a rule_evaluations list reached the {METADATA_CAP}-entry metadata cap")
+        limits.append(f"a rule_evaluations or nested metadata list reached the {METADATA_CAP}-entry cap")
     lo, hi = event_window(events)
     oldest = min((_ts(s["pushed_at"]) for s in suites), default=None)
     covered = oldest is not None and oldest <= lo
