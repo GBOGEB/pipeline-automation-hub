@@ -506,6 +506,8 @@ jobs:
           SRC=mission-control/federation-atlas
           mkdir -p /tmp/code-purple-atlas/convergence
           python -m pip install --disable-pip-version-check coverage==7.13.3
+          # Keep coverage data out of the checkout; later steps need a clean tree.
+          export COVERAGE_FILE="$RUNNER_TEMP/w32.coverage"
           python -m coverage run --branch --source=convergence_hub -m unittest discover \
             -s "$SRC" -p 'test_convergence_hub.py' -v > "$RUNNER_TEMP/convergence-hub-tests.log" 2>&1
           cat "$RUNNER_TEMP/convergence-hub-tests.log"
@@ -592,6 +594,37 @@ jobs:
             --out /tmp/code-purple-atlas/orchestration --head "$EXACT_SHA"
           python "$SRC/browser_qa.py" --html /tmp/code-purple-atlas/orchestration/index.html \
             --out /tmp/code-purple-atlas/orchestration-qa --head "$EXACT_SHA"
+      - name: Execute registered generators and verify runtime outcome bytes
+        shell: bash
+        env:
+          EXACT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          SRC=mission-control/federation-atlas/orchestration
+          python -m unittest discover -s mission-control/federation-atlas/orchestration -p test_runtime_evidence.py -v
+          # Earlier steps leave byproducts in this checkout. Execute and inspect a
+          # separate clean worktree of the exact commit so the outcome is commit-bound.
+          echo "Byproducts in the shared checkout (not used for execution):"
+          git status --porcelain
+          RUNTIME_SRC="$RUNNER_TEMP/atlas-runtime-source"
+          git worktree add --detach "$RUNTIME_SRC" "$EXACT_SHA"
+          test "$(git -C "$RUNTIME_SRC" rev-parse HEAD)" = "$EXACT_SHA"
+          test -z "$(git -C "$RUNTIME_SRC" status --porcelain)"
+          python "$RUNTIME_SRC/$SRC/main.py" run-local --root "$RUNTIME_SRC" \
+            --out "$RUNNER_TEMP/atlas-runtime-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --head "$EXACT_SHA" --workers 2 > "$RUNNER_TEMP/atlas-runtime-receipt.stdout.json"
+          python "$RUNTIME_SRC/$SRC/runtime_evidence.py" --root "$RUNTIME_SRC" \
+            --run-dir "$RUNNER_TEMP/atlas-runtime-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --out /tmp/code-purple-atlas/runtime-evidence
+          python - <<'PY'
+          import json
+          report = json.load(open("/tmp/code-purple-atlas/runtime-evidence/runtime-evidence.json", encoding="utf-8"))
+          assert report["qualification"] == "LOCAL_EXECUTION_AND_CURRENT_BYTES_VERIFIED", report["qualification"]
+          assert report["source_dirty"] is False and report["source_dirty_reported_at_execution"] is False
+          PY
+          python "$SRC/runtime_evidence_browser_qa.py" \
+            --html /tmp/code-purple-atlas/runtime-evidence/runtime-evidence.html \
+            --head "$EXACT_SHA" --out /tmp/code-purple-atlas/runtime-evidence/browser
       - name: Bind source-owned coverage-integrity view when present
         shell: bash
         env:

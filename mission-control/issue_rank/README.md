@@ -350,3 +350,99 @@ python mission-control/issue_rank/burndown_apply.py --pulse mission-control/issu
    `spectral_graph.laplacian`.
 6. **Owner pairwise priority.** Where owners rank items pairwise, fit Bradley–Terry with
    `level1/runtime.py` `bt()` and add it as a score part.
+
+
+## Explicit origin and supersession mapping (OP01–OP09)
+
+Finite follow-on: [#1182](https://github.com/GBOGEB/pipeline-automation-hub/issues/1182),
+stacked on the separate equal-count repair [#1181](https://github.com/GBOGEB/pipeline-automation-hub/pull/1181).
+The predecessor's CL01–CL09 closure conditions are unchanged.
+
+Pass optional `--criterion-history history.json` to the existing `rank` or `run`
+command. `rank(..., criterion_history=...)` attaches `criterion_provenance` to each
+ranked item. The existing numeric ranking, issue dependency graph, delta semantics,
+and closure/admission authority remain unchanged. `delta.criterion_evolution`
+continues to describe observed snapshots; it does not infer origin from this overlay.
+
+### Input and byte binding
+
+Input schema: `jade.issue-criterion.provenance-input.v1`, with a `histories` list.
+Each history identifies one known issue with `key`, `origin_basis`, `snapshots`, and
+`links`. `origin_basis` is either `CREATION_RESPONSE_CAPTURE` or `FIRST_OBSERVED`.
+The former is a **reported capture**, not an automatically authenticated creation
+record. A timestamp equal to issue creation does not establish original intent.
+
+Each snapshot has a unique `id`, complete UTF-8 `body`, `body_sha256`, zoned
+`observed_at`, explicit `source_visibility: PUBLIC`, and `source: {repo, blob_sha}`.
+SHA256 must match the complete bytes; Git blob SHA1 must match the exact Git object
+encoding of those same bytes. SHA1 here is Git addressing, not a signature or an
+identity/authenticity claim. Times must be strictly increasing, no earlier than
+issue creation, and no later than the enclosing source snapshot. The final body
+must exactly match the ranked current issue; a later edit makes the history stale.
+
+The existing canonical triway parser is the only checklist parser. Full content
+identities are computed before display truncation. Missing history stays
+`UNKNOWN_NOT_CAPTURED`; invalid evidence supplies a fixed reason code and no
+partial origin/mapping claim. Raw historical bodies never enter generated outputs.
+
+### Explicit relationships
+
+| Declaration | Required evidence and structural checks |
+|---|---|
+| `INTRODUCED_BY` | `snapshot`, unique newly observed `criterion_sha256`, `pr: {repo, number, head_sha}`, and a matching GitHub PR/comment `evidence_url`. Full 40-character PR head required. The citation is declared evidence, not proof of review, merge, causality, or owner authority. |
+| `SUPERSEDES` | `snapshot`, `from`, `to`, and a GitHub issue/PR/comment `evidence_url`. The adjacent inventories must show one unique old criterion removed and one unique replacement added. Conflicting mappings, duplicate ambiguity, cycles, and missing endpoints are rejected. |
+| No declaration | Preserve the observed identities and unmapped original removals. Do not guess a rename, replacement, transfer, introduction PR, or completion. |
+
+The mapping reuses `jade_temple/devops/lifecycle.py::topo_layers` and publishes
+`mapping_layers`. These are **criterion provenance**, not issue execution
+precedence. They do not add `DEPENDS_ON` edges or alter priority/closure calculations.
+Link-list order is not execution order; each link names its observed transition.
+
+Valid output is `CONTENT_BOUND_UNATTESTED`, with
+`grade=DECLARED_PROVENANCE_NOT_QUALIFIED`, `remote_custody_verified=false`,
+`origin_authenticity_verified=false`, and `closure_credit=0`. A matching digest
+establishes byte identity; the function does not fetch GitHub or attest remote
+custody, authorship, capture time, semantic equivalence, review, or issue closure.
+
+### Privacy and scope
+
+Version 1 enriches public issues only. Private issues are withheld. Source
+artifacts and citations must belong to repositories observed as public in the
+same source snapshot; missing/unknown/private scope is withheld. Historical
+visibility must be declared explicitly for every retained artifact.
+
+The authoritative private roster still wins over an earlier public snapshot:
+`redact()` withholds the **entire** linked provenance object if any artifact,
+introduction PR, or citation is private under that roster. Scrubbing a URL alone
+would leave historical hashes and mappings as fingerprints, so those are withheld
+together. Public issues keep their ordinary current checklist fields.
+
+### Real retained-source replay
+
+`fixtures/criterion_origin_1180/` contains the actual public #1180 create-response
+body and a later update-response body. The raw Markdown files are authoritative;
+the materialized `history.json` copies are checked byte-for-byte in the native
+owner suite. Capture times are the API responses' `updated_at` values and remain
+declared metadata, not signed event receipts. Full Git blob names and SHA256
+values bind the saved bodies. The fixture freezes that historical observation;
+it is not a live statement about the latest issue body.
+
+The real replay retains **all original criterion identities** with no inferred
+supersession or introduction PR. Its tickable checklist remains **7/9**. The
+canonical parser also recognizes declared, untracked prose: those identities stay
+separate from tickable task counts and confer no closure credit. Synthetic cases
+exercise explicit equal-count replacement, multi-hop mapping, cycle rejection,
+malformed/ambiguous evidence, stale bodies, and privacy overrides.
+
+Run the focused production-path and CLI regressions from this directory:
+
+```bash
+python -m unittest -v test_issue_rank_v2.CriterionProvenance
+```
+
+The existing `issue-rank.yml` Python 3.11/3.12 jobs run these tests through the
+already-wired `test_issue_rank_v2` owner. No additional workflow or standing watch
+is introduced. Source qualification is OP01–OP07; eligible review/admission after
+#1181 integration is OP08; actual merged-source replay and finite issue closure is
+OP09. Automated history harvesting, cross-issue transfers, semantic equivalence,
+and qualified closure scoring are separate future increments.

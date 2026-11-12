@@ -1,0 +1,36 @@
+{
+  "_comment": "PUT /repos/GBOGEB/pipeline-automation-hub/rulesets/25789280. Live P-BASIC ruleset (read 2026-11-10) minus the First-Pass Closure context, which moves to hub_soft_ruleset.json. No bypass actors. Strip this _comment key before sending.",
+  "name": "P-BASIC pipeline-automation-hub default branch",
+  "target": "branch",
+  "enforcement": "active",
+  "conditions": {"ref_name": {"include": ["~DEFAULT_BRANCH"], "exclude": []}},
+  "bypass_actors": [],
+  "rules": [
+    {"type": "deletion"},
+    {"type": "non_fast_forward"},
+    {"type": "pull_request", "parameters": {
+      "required_approving_review_count": 0,
+      "dismiss_stale_reviews_on_push": true,
+      "required_reviewers": [],
+      "require_code_owner_review": false,
+      "require_last_push_approval": false,
+      "required_review_thread_resolution": true,
+      "require_extra_approval_for_unattributed_changes": true,
+      "allowed_merge_methods": ["squash", "rebase"]
+    }},
+    {"type": "required_status_checks", "parameters": {
+      "strict_required_status_checks_policy": false,
+      "do_not_enforce_on_create": false,
+      "required_status_checks": [
+        {"context": "validate-ultra-control", "integration_id": 15368},
+        {"context": "canonical-self-test-and-mutation", "integration_id": 15368},
+        {"context": "GOGREEN required gate", "integration_id": 15368},
+        {"context": "Launcher outputs current and tests", "integration_id": 15368},
+        {"context": "frozen-head-census", "integration_id": 15368},
+        {"context": "CodeQL", "integration_id": 57789}
+      ]
+    }},
+    {"type": "required_linear_history"},
+    {"type": "copilot_code_review", "parameters": {"review_on_push": true, "review_draft_pull_requests": false}}
+  ]
+}
