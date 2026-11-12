@@ -7,7 +7,7 @@ import json
 import re
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[4]
+ROOT = Path(__file__).resolve().parents[5]
 HERE = Path(__file__).resolve().parent
 HIST = ROOT / 'mission-control/v2/handoff/closeout/w11-gmic-r2-p0008/BD_B01_B46_READONLY.json'
 WITNESS = HERE / 'POSTMERGE_WITNESS.json'
