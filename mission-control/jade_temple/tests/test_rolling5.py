@@ -230,6 +230,14 @@ class NirvanaRotationTests(unittest.TestCase):
         self.assertEqual(race["o/r1"]["position"], 1)
         self.assertGreater(race["o/r2"]["position"], race["o/r3"]["position"])
 
+    def test_equal_readiness_ties_despite_cohort_display_order(self):
+        rows = r5.rows_of(snapshot("d", five()))
+        race = r5.race(rows)
+        self.assertEqual([r["position"] for r in race], [1, 2, 3, 4, 5])
+        self.assertEqual([r["readiness_placement"] for r in race], [1] * 5)
+        self.assertTrue(all(r["readiness_tied"] for r in race))
+        self.assertTrue(all("badge" not in r for r in race))
+
 
 class EndToEndTests(unittest.TestCase):
     def setUp(self):
@@ -245,13 +253,44 @@ class EndToEndTests(unittest.TestCase):
         self.box.add("P3", snapshot("2026-10-03", five({"o/r3": ALL_PASS})))
         model = r5.project(self.box.root)
         self.assertEqual(model["nirvana_ledger"],
-                         [{"repo": "o/r3", "pulse": "P3", "order": 1}])
+                         [{"repo": "o/r3", "pulse": "P3", "order": 1,
+                           "observed_date": "2026-10-03", "source_sha": SHA_A,
+                           "qualifying_pulses": ["P2", "P3"], "placement": 1,
+                           "tied": False, "badge": "NIRVANA #1",
+                           "release_credit": False}])
         self.assertEqual(model["window"]["admitted"], ["o/r6"])
         r3 = next(r for r in model["repos"] if r["repo"] == "o/r3")
         self.assertEqual(r3["streaks"]["H09"]["streak_on_current"], 2)
         self.assertEqual(r3["streaks"]["H01"]["streak_record"], 3)
         self.assertTrue(r3["nirvana"])
         self.assertEqual(model["metrics"]["nirvana_count"], 1)
+
+    def test_same_pulse_finishers_share_placement_before_next_finisher(self):
+        first = {"o/r1": ALL_PASS, "o/r3": ALL_PASS}
+        second = dict(first, **{"o/r2": ALL_PASS})
+        self.box.add("P1", snapshot("2026-10-01", five(first)))
+        self.box.add("P2", snapshot("2026-10-02", five(second)))
+        self.box.add("P3", snapshot("2026-10-03", five(second)))
+        ledger = r5.project(self.box.root)["nirvana_ledger"]
+        self.assertEqual([r["repo"] for r in ledger], ["o/r1", "o/r3", "o/r2"])
+        self.assertEqual([r["order"] for r in ledger], [1, 2, 3])
+        self.assertEqual([r["placement"] for r in ledger], [1, 1, 3])
+        self.assertEqual([r["badge"] for r in ledger],
+                         ["NIRVANA #1 (shared)", "NIRVANA #1 (shared)", "NIRVANA #3"])
+
+    def test_badge_requires_sustain_and_keeps_first_qualification_evidence(self):
+        self.box.add("P1", snapshot("2026-10-01", five({"o/r1": ALL_PASS})))
+        self.assertEqual(r5.project(self.box.root)["nirvana_ledger"], [])
+        self.box.add("P2", snapshot("2026-10-02", five({"o/r1": ALL_PASS}, sha=SHA_B)))
+        self.assertEqual(r5.project(self.box.root)["nirvana_ledger"], [])
+        self.box.add("P3", snapshot("2026-10-03", five({"o/r1": ALL_PASS}, sha=SHA_B)))
+        earned = r5.project(self.box.root)["nirvana_ledger"]
+        self.assertEqual(earned[0]["source_sha"], SHA_B)
+        self.assertEqual(earned[0]["qualifying_pulses"], ["P2", "P3"])
+        self.box.add("P4", snapshot("2026-10-04", five()))
+        self.assertEqual(r5.project(self.box.root)["nirvana_ledger"], earned)
+        self.assertEqual(r5.project(self.box.root)["metrics"]["verified_pass"], 0)
+        self.assertFalse(r5.project(self.box.root)["release_credit"])
 
     def test_snapshot_tamper_fails_closed(self):
         self.box.add("P1", snapshot("2026-10-01", five()))

@@ -11,13 +11,14 @@ JADE_TEMPLE is the read-only presentation and handover project for owner-approve
 | Merge admission | `MERGE_ADMISSION=HOLD` | [05 MACH tiers](05_MACH_TIERS.md), P0 factual guard |
 | Point release | Unnamed; qualified denominator UNKNOWN | Owner names the SemVer |
 | Hosted Pages | N+1 and N+2 children are staged at `/jade/` through the existing publisher; hosted HTTPS SHA parity UNKNOWN. H01–H12, CI/CD DAG and red-trace children are **not staged** | [Pages contract](notes/NAVIGATION_PAGES_STYLE_CONTRACT.md) |
-| Latest checkpoint | FOCUS5 pulse P0003, 2026-10-31 | [DROPIN_NEXT_CHAT.md](DROPIN_NEXT_CHAT.md) |
+| Latest committed gate checkpoint | FOCUS5 pulse P0005, 2026-11-04: 25/60 PASS, 35 UNKNOWN, no NIRVANA | [P0005](data/FOCUS5_POINT_RELEASE_P0005.json) · [12 November follow-up](notes/JADE_OG_FOLLOWUP_20261112.md) |
 | History | J0 bootstrap to N+11, newest first | [CHANGELOG.md](CHANGELOG.md) |
 
 ## Start here
 
 | I want to… | Open |
 |---|---|
+| Follow the original five toward point release | [Current evidence, H01–H12 work fronts and REX transfer](notes/JADE_OG_FOLLOWUP_20261112.md) · [rolling pulse / race projection](site/rolling5.json) |
 | Review all H01–H12 gates as owner | [Gate12 DoV cockpit](site/gate12_hub.html) · [playbook](notes/GATE12_DOV_OPERATING_PLAYBOOK.md) · [KPI projection](site/gate12_data.json) · [252-slot owner queue](site/gate12_bd_queue.csv) |
 | See the CI/CD process model | [Interactive DAG / SIPOC](site/cicd_dag.html) · [model JSON](site/cicd_dag.json) · [crosswalk CSV](site/cicd_dag_crosswalk.csv) · [policy](data/CICD_DAG_POLICY.json) |
 | Trace reds across the federation | [Red-trace ledger](site/redtrace.html) · [16:9 slides](site/redtrace-slides.html) · [interactive PDF](site/redtrace-slides.pdf) |

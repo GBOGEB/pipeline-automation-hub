@@ -161,6 +161,37 @@ def nirvana(repo: str, timeline: list[dict], sustain: int) -> bool:
     )
 
 
+def nirvana_results(pairs: list[tuple[dict, dict]], timeline: list[dict],
+                    sustain: int) -> list[dict]:
+    """Historical finish badges; one observation cannot order simultaneous finishes.
+
+    `order` is a deterministic display index. `placement` is competition rank,
+    shared by repositories first qualifying in the same pulse. A badge records
+    observed qualification and does not grant release or current-health credit.
+    """
+    results, achieved = [], set()
+    for i, (pulse, _) in enumerate(pairs):
+        finishers = sorted(repo for repo in timeline[i]
+                           if repo not in achieved
+                           and nirvana(repo, timeline[:i + 1], sustain))
+        placement = len(results) + 1
+        for repo in finishers:
+            achieved.add(repo)
+            results.append({
+                "repo": repo,
+                "pulse": pulse["id"],
+                "observed_date": pulse["observed_date"],
+                "source_sha": timeline[i][repo]["source_sha"],
+                "qualifying_pulses": [p["id"] for p, _ in pairs[i + 1 - sustain:i + 1]],
+                "order": len(results) + 1,
+                "placement": placement,
+                "tied": len(finishers) > 1,
+                "badge": f"NIRVANA #{placement}" + (" (shared)" if len(finishers) > 1 else ""),
+                "release_credit": False,
+            })
+    return results
+
+
 def rotate(window: list[str], roster: list[dict], graduated: set[str],
            size: int) -> dict:
     keep = [r for r in window if r not in graduated]
@@ -178,7 +209,11 @@ def rotate(window: list[str], roster: list[dict], graduated: set[str],
 
 
 def race(latest: dict[str, dict]) -> list[dict]:
-    """First-to-NIRVANA ordering of current candidates (evidence only)."""
+    """Current readiness, separate from earned NIRVANA finish placement.
+
+    `position` breaks ties by cohort rank for display only. Equal remaining and
+    failed gate counts share `readiness_placement`; neither awards a badge.
+    """
     out = []
     for repo, row in latest.items():
         values = list(row["gates"].values())
@@ -191,8 +226,12 @@ def race(latest: dict[str, dict]) -> list[dict]:
             "rank": row["rank"],
         })
     out.sort(key=lambda x: (x["remaining"], x["fail"], x["rank"]))
+    scores = [(item["remaining"], item["fail"]) for item in out]
     for i, item in enumerate(out, 1):
         item["position"] = i
+        score = scores[i - 1]
+        item["readiness_placement"] = scores.index(score) + 1
+        item["readiness_tied"] = scores.count(score) > 1
     return out
 
 
@@ -311,13 +350,8 @@ def _project(root: Path = ROOT) -> dict:
     sustain = policy["nirvana"]["sustain_pulses"]
     unattended_after = policy["streaks"]["unattended_after_pulses"]
 
-    nirvana_ledger, achieved = [], set()
-    for i, (pulse, _) in enumerate(pairs):
-        for repo in sorted(timeline[i]):
-            if repo not in achieved and nirvana(repo, timeline[: i + 1], sustain):
-                achieved.add(repo)
-                nirvana_ledger.append({"repo": repo, "pulse": pulse["id"],
-                                       "order": len(nirvana_ledger) + 1})
+    nirvana_ledger = nirvana_results(pairs, timeline, sustain)
+    achieved = {item["repo"] for item in nirvana_ledger}
 
     repos = []
     for repo, row in sorted(latest.items(), key=lambda kv: kv[1]["rank"]):
