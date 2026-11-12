@@ -28,11 +28,30 @@ pwsh -NoProfile -File tools\workstation\Invoke-WorkspaceAudit.ps1 -SkipSize -Ski
 | Class | Meaning |
 | --- | --- |
 | **REMOVABLE** | Clean (no modified or untracked files), no unpushed commits, and its PR is merged or closed, or HEAD is already in the default branch. Clones must also pass these checks: they host no linked worktrees, have no stash entries, have no unpushed commits on any local branch, and are not the last clone of their repo under the root. |
-| **PUSH-ME** | Its commits exist only locally (no upstream, or ahead of it) and are older than `-PushAfterHours`. Push them and open a draft PR. |
+| **PUSH-ME** | Its commits exist only locally (no upstream, or ahead of it), are older than `-PushAfterHours`, and passed the triage below. Triage first: read the `Triage` column, then push and open a draft PR. See [PUSH-ME triage](#push-me-triage). |
+| **LANDED** | Looked unpushed, but HEAD is on a remote branch, is in a merged PR, or has a tree-identical twin. Nothing to push. |
+| **STALE** | Pre-purge history. Never push it. |
+| **PUBLIC-RISK** | The remote is public and lacks office or PDF files that HEAD tracks. Never push it. |
 | **KEEP** | Anything else, with the reason: dirty, an open PR, younger unpushed work, the main repo of other worktrees, locked, or excluded because it is in use. |
 | **LEFTOVER** | A folder that matches `-LeftoverPattern` (`wt-*`, `qa-tmp-*`, `ABACUS*`, `CODEX*`) but has no `.git`. These are usually what remains of a removed worktree, such as a `.pytest_cache` or an empty folder. They are only reported. Check them, then delete them yourself. |
 
 Unpushed commits are counted against all remote-tracking refs. A clone with a narrow fetch refspec, like `mc-integration`, never gets those refs for branches it pushes. In that case the script asks `git ls-remote origin` before it calls the work unpushed.
+
+## PUSH-ME triage
+
+On 2026-11-08 only 2 of 16 PUSH-ME entries held real unlanded work (#1167). Pushing the other 14 would have been wrong, and for some of them harmful. Before the audit calls an entry PUSH-ME, it now checks the following, in order. The first check that matches sets the class and fills the `Triage` column. `NeverPush` is true for STALE and PUBLIC-RISK.
+
+1. **On a remote branch** (LANDED). `git branch -r --contains HEAD` finds it, or a branch tip from `git ls-remote --heads origin` equals HEAD. This also covers detached HEADs and single-branch clones.
+2. **In a merged PR** (LANDED). `gh api repos/<owner>/<repo>/commits/<sha>/pulls` lists a merged PR.
+3. **Tree-identical twin** (LANDED). `git diff --quiet HEAD <ref>` passes for the upstream, `origin/<branch>` or the default branch. This covers a rebased copy, a twin merge and an empty commit.
+4. **Pre-purge history** (STALE). The oldest unpushed commit has a twin on the default branch with the same author date, author and subject. Pushing it would put purged history back into the repo.
+5. **Public repo guard** (PUBLIC-RISK). `gh api repos/<owner>/<repo>` says the repo is public, and HEAD tracks office or PDF files that the upstream or default branch lacks.
+
+Only an entry that passes all five checks stays PUSH-ME. Before you push, still read its log. A clone with no remote, or a probe branch, needs the owner's decision.
+
+**Failed `git worktree prune`.** The prune's stderr is captured and reported as `prune failed`. In OneDrive, `.git/worktrees/<name>` can hold read-only reparse points, so the prune fails with `Permission denied`. With `-Apply`, the script then runs `attrib -R <dir> /S /D` on that one admin folder only, and prunes again (`prune (retry)`). It never touches any folder outside `.git/worktrees`.
+
+Tests: `python -m unittest tools/workstation/test_workspace_audit.py` (fake git, gh and attrib runners; never passes `-Apply` to the audit).
 
 ## `-Apply` (removal)
 
@@ -44,7 +63,7 @@ pwsh -NoProfile -File tools\workstation\Invoke-WorkspaceAudit.ps1 -Apply -AllowC
 - Removes only the **REMOVABLE** entries. Before each removal it checks the entry again, and skips it if it became dirty, gained unpushed commits, or moved HEAD since the scan.
 - Linked worktrees are removed with `git worktree remove <path>` and never with `--force`, so git also refuses if anything is left uncommitted. The branch itself is kept.
 - Standalone clones are removed only when `-AllowCloneDelete` is also passed. They go to the **Recycle Bin**, not a hard delete. Windows asks before it permanently deletes a folder that is too big for the Recycle Bin, so run this interactively. Do not schedule `-AllowCloneDelete`. The space comes back only after you empty the Recycle Bin.
-- Afterwards it runs `git worktree prune` in every main repo it saw.
+- Afterwards it runs `git worktree prune` in every main repo it saw. A failed prune is reported, see [PUSH-ME triage](#push-me-triage).
 - `-Exclude` (default `wt-jade5`, `wt-lesson*`) lists folder names that are never removed.
 
 ## Fixing a stale token (lesson 8)
