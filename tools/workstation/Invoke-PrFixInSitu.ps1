@@ -110,7 +110,8 @@ function Invoke-GraphQL {
     try {
         @{ query = $Query; variables = $Variables } | ConvertTo-Json -Depth 10 -Compress | Set-Content -Path $tmp -Encoding utf8NoBOM
         $r = Invoke-GhJson api graphql --input $tmp.FullName
-        if ($r.errors) { throw "GraphQL error: $(($r.errors | ForEach-Object message) -join '; ')" }
+        $errs = $r.PSObject.Properties['errors']
+        if ($errs -and $errs.Value) { throw "GraphQL error: $(($errs.Value | ForEach-Object message) -join '; ')" }
         $r
     } finally { Remove-Item $tmp -ErrorAction SilentlyContinue }
 }
@@ -330,10 +331,26 @@ $prInfo = Invoke-GhJson pr view $Pr -R $full --json 'number,title,state,isDraft,
 $baseSha = (Invoke-GhJson api "repos/$full/commits/$($prInfo.baseRefName)").sha
 $rules = @(Invoke-GhJson api "repos/$full/rules/branches/$([uri]::EscapeDataString($prInfo.headRefName))")
 $blocks = @(Get-PushBlock $rules)
-$checks = @(Invoke-GhJson pr checks $Pr -R $full --json 'name,state,link' 2>$null)
-$q = 'query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){pullRequest(number:$n){reviewThreads(first:100){nodes{id isResolved isOutdated path line comments(first:1){nodes{databaseId author{login} body url}}}}}}}'
-$tq = Invoke-GhJson api graphql -f "query=$q" -f "o=$Owner" -f "r=$Repo" -F "n=$Pr"
-$threads = @($tq.data.repository.pullRequest.reviewThreads.nodes | Where-Object { -not $_.isResolved } | ForEach-Object {
+# `gh pr checks` exits 8 while checks are pending and 1 when one failed, with the JSON still on stdout.
+$cr = Invoke-Gh pr checks $Pr -R $full --json 'name,state,link'
+if ($cr.Code -notin 0, 1, 8 -or -not $cr.Text.StartsWith('[')) { throw "gh pr checks failed (exit $($cr.Code)): $($cr.Text)" }
+$checks = @($cr.Text | ConvertFrom-Json -Depth 10)
+# Every review thread, page by page (same rule as Invoke-DraftPrPass Get-ReviewThreads): a P1 after the
+# first 100 must still be counted, and -ResolveThread must find it.
+$q = 'query($o:String!,$r:String!,$n:Int!,$after:String){repository(owner:$o,name:$r){pullRequest(number:$n){reviewThreads(first:100,after:$after){pageInfo{hasNextPage endCursor} nodes{id isResolved isOutdated path line comments(first:1){nodes{databaseId author{login} body url}}}}}}}'
+$threadNodes = [System.Collections.Generic.List[object]]::new()
+$after = $null
+do {
+    $vars = @{ o = $Owner; r = $Repo; n = $Pr }
+    if ($after) { $vars.after = $after }
+    $conn = (Invoke-GraphQL -Query $q -Variables $vars).data.repository.pullRequest.reviewThreads
+    foreach ($node in @($conn.nodes)) { $threadNodes.Add($node) }
+    $after = $conn.pageInfo.endCursor
+} while ($conn.pageInfo.hasNextPage)
+# FPC needs a completed Codex review on the exact head, and reviews are requested by hand (AGENTS.md).
+$codexOnHead = @((Invoke-GhJson api "repos/$full/pulls/$Pr/reviews?per_page=100") |
+    Where-Object { $_.commit_id -eq $prInfo.headRefOid -and $_.user.login -match 'codex' }).Count -gt 0
+$threads = @($threadNodes | Where-Object { -not $_.isResolved } | ForEach-Object {
     $c = $_.comments.nodes | Select-Object -First 1
     [pscustomobject]@{ Id = $_.id; Path = $_.path; Line = $_.line; Outdated = $_.isOutdated
                        CommentId = $c.databaseId; Author = $c.author.login; Priority = Get-ThreadPriority $c.body; Url = $c.url
@@ -366,7 +383,7 @@ $diag = [pscustomobject]@{
     Blocks = $blocks; PushBlocked = [bool](@($blocks | Where-Object Blocks).Count)
     FailingChecks = @($checks | Where-Object { $_.state -in 'FAILURE', 'ERROR', 'CANCELLED', 'TIMED_OUT' } | ForEach-Object { "$($_.name) $($_.link)" })
     PendingChecks = @($checks | Where-Object { $_.state -in 'PENDING', 'QUEUED', 'IN_PROGRESS' } | ForEach-Object name)
-    Threads = $threads; Live = $live; BranchWorktree = $branchWorktree
+    Threads = $threads; Live = $live; BranchWorktree = $branchWorktree; CodexReviewedHead = $codexOnHead
 }
 $class = Get-PrClass $diag
 $state.diagnose = @{ at = (Get-Date).ToString('o'); class = $class; head_sha = $diag.HeadSha; base_sha = $baseSha }
@@ -379,8 +396,14 @@ Write-Host ("  checks: {0} failing, {1} pending" -f $diag.FailingChecks.Count, $
 $diag.FailingChecks | ForEach-Object { Write-Host "    RED $_" }
 Write-Host ("  unresolved threads: {0}" -f $threads.Count)
 $threads | ForEach-Object { Write-Host ("    {0} {1} {2}:{3} {4}" -f $_.Priority, $_.Id, $_.Path, $_.Line, $_.Title) }
+Write-Host ("  codex review on this head: {0}" -f $(if ($codexOnHead) { 'yes' } else { 'NO' }))
 Write-Host "  class: $class"
 Write-Host "  next:  $(Get-NextStep $class $diag $self)"
+if (-not $codexOnHead -and $class -in 'CLEAN', 'RED', 'PENDING', 'THREAD') {
+    # Reviews are rationed (AGENTS.md): ask once, only when every fix is pushed, and not after a usage-limit reply.
+    Write-Host "  review: First-Pass Closure needs a Codex review of exactly this head. When every fix is pushed, ask ONCE:"
+    Write-Host "          gh pr comment $Pr -R $full --body '@codex review'"
+}
 
 $wantsWrite = $Prepare -or $Sync -or $Test -or $Publish -or $ResolveThread.Count
 if (-not $wantsWrite) { $diag | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $ReportPath "prfix_$($Owner)_$($Repo)_$($Pr)_diag.json") -Encoding utf8; exit 0 }
