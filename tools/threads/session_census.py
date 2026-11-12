@@ -249,14 +249,27 @@ def scan_transcript(paths: list[str]) -> dict:
     return r
 
 
-def mention_index(roots: list[Path]) -> dict[str, set[str]]:
-    """id8 -> set of files (under _pulse / memory) that name it."""
+GENERATED = frozenset({"session_census.json", "archive_wireframe.md", "reentry_cards.md"})
+
+
+def mention_index(roots: list[Path], skip: Path | None = None) -> dict[str, set[str]]:
+    """id8 -> set of files (under _pulse / memory) that name it.
+
+    The census's own outputs (the `skip` folder and the GENERATED file names) are left out, so a
+    rerun with --out inside --pulse does not count the previous census as a record of each thread."""
     idx: dict[str, set[str]] = collections.defaultdict(set)
+    skip_n = os.path.normcase(os.path.abspath(skip)) if skip else None
     for root in roots:
         if not root.exists():
             continue
         for dp, dns, fns in os.walk(root):
+            if skip_n:
+                dns[:] = [x for x in dns if os.path.normcase(os.path.abspath(os.path.join(dp, x))) != skip_n]
+                if os.path.normcase(os.path.abspath(dp)) == skip_n:
+                    continue
             for fn in fns:
+                if fn.lower() in GENERATED:
+                    continue
                 fpth = os.path.join(dp, fn)
                 for m in LOCAL_RE.findall(fpth):
                     idx[m].add(fpth)
@@ -344,8 +357,8 @@ def main(argv: list[str] | None = None) -> int:
 
     jsonl = {Path(f).stem: f for f in glob.glob(os.path.join(a.projects, "*", "*.jsonl"))}
     rescue_roots = [Path(a.pulse)]
-    rescued = mention_index(rescue_roots)
-    indexed = mention_index([Path(m) for m in a.memory])
+    rescued = mention_index(rescue_roots, skip=Path(a.out))
+    indexed = mention_index([Path(m) for m in a.memory], skip=Path(a.out))
 
     recs = []
     for f in sorted(glob.glob(os.path.join(a.sessions_dir, "local_*.json"))):

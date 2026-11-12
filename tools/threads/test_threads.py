@@ -220,6 +220,34 @@ class Census(unittest.TestCase):
         self.assertIn("feat/w901", cards)
 
 
+    def test_rerun_with_out_inside_pulse_is_stable(self):
+        sid = "local_abcdef12-0000-0000-0000-000000000000"
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "s").mkdir()
+            (root / "p").mkdir()
+            (root / "pulse").mkdir()
+            (root / "s" / f"{sid}.json").write_text(json.dumps({
+                "sessionId": sid, "title": "W902 thing", "isArchived": True, "cliSessionId": "cli-x",
+                "createdAt": 1762819200000, "lastActivityAt": 1762905600000}), encoding="utf-8")
+            out = root / "pulse" / "census"
+            args = ["--sessions-dir", str(root / "s"), "--projects", str(root / "p"),
+                    "--pulse", str(root / "pulse"), "--notes", "", "--out", str(out)]
+            runs = []
+            for _ in range(2):
+                self.assertEqual(session_census.main(args), 0)
+                rec = json.loads((out / "SESSION_CENSUS.json").read_text(encoding="utf-8"))[0]
+                runs.append((rec["verdict"], rec["mapped_in"]))
+            # a copy of an earlier census elsewhere under pulse is also not a record
+            (root / "pulse" / "old").mkdir()
+            (root / "pulse" / "old" / "REENTRY_CARDS.md").write_text(sid, encoding="utf-8")
+            self.assertEqual(session_census.main(args), 0)
+            rec = json.loads((out / "SESSION_CENSUS.json").read_text(encoding="utf-8"))[0]
+            runs.append((rec["verdict"], rec["mapped_in"]))
+        self.assertEqual(runs[0][1], [])
+        self.assertEqual(runs[0], runs[1])
+        self.assertEqual(runs[0], runs[2])
+
 class Hygiene(unittest.TestCase):
     def test_no_personal_paths_or_addresses_in_tools(self):
         import re
