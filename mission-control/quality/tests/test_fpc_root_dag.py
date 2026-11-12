@@ -139,6 +139,28 @@ class Attribution(unittest.TestCase):
         rows = {r["run_id"]: r for r in m.attribute_all(evals, {})}
         self.assertEqual(rows[1]["source"], "SRC_PROOF_FAILED")
 
+    def test_same_head_on_another_pr_does_not_lend_evidence(self):
+        # Review finding 1 (#1187): history is keyed by (repo, PR, head), never by SHA alone.
+        evals = [ev(11, "same", 9, "FAIL", "MISSING_REQUIRED_PROOF_PURPOSE: x", 1),
+                 ev(12, "same", 8, "PASS", run=2),
+                 ev(13, "same", 7, "FAIL", "CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD", 3),
+                 ev(14, "same", 6, "FAIL", "CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD: 1", 4)]
+        rows = {r["run_id"]: r for r in m.attribute_all(evals, {})}
+        self.assertEqual(rows[1]["source"], "SRC_PROOF_FAILED")
+        self.assertEqual(rows[3]["source"], "SRC_CODEX_REVIEW_ABSENT")
+        self.assertEqual(rows[1]["head_first_status"], "FAIL")
+        self.assertEqual(rows[2]["head_first_status"], "PASS")
+        self.assertEqual(m.summarize(list(rows.values()))["heads"], 4)
+
+    def test_untrusted_or_mutated_proof_is_pr_fixable(self):
+        # Review finding 2 (#1187): the candidate's own proof identity is not inherited infrastructure.
+        for reason in ("UNTRUSTED_PROOF_WORKFLOW_IDENTITY: x/y.yml", "PROOF_WORKFLOW_MUTATED_FROM_TRUSTED_BASE: y.yml"):
+            self.assertEqual(m.reason_node(reason), "R_PROOF_IDENTITY")
+            rows = m.attribute_all([ev(15, "p", 3, "FAIL", reason, 1)], {})
+            self.assertEqual((rows[0]["source"], rows[0]["klass"]), ("SRC_PROOF_UNTRUSTED", "PR_CAUSED"))
+            self.assertTrue(m.ledger(rows)[0]["pr_can_fix"])
+            self.assertEqual(m.summarize(rows)["inherited_share_of_red"], 0.0)
+
 
 class Metrics(unittest.TestCase):
     def setUp(self):
@@ -163,6 +185,15 @@ class Metrics(unittest.TestCase):
         self.assertEqual(w["4h"]["evaluations"], 1)
         self.assertEqual(w["4h"]["first_pass_rate"], 0.0)
         self.assertEqual(w["4h"]["head_closure_rate"], 1.0)
+
+    def test_unresolved_pr_is_not_counted_as_a_pr(self):
+        # Review finding 3 (#1187): None is an unresolved identity, reported apart from the PR count.
+        s = m.summarize(m.attribute_all([ev(None, "u1", 3, "FAIL", "MISSING_RECEIPT", 1)], {}))
+        self.assertEqual((s["prs"], s["unresolved_pr_evaluations"]), (0, 1))
+        mixed = m.attribute_all(self.evals + [ev(None, "u1", 3, "FAIL", "MISSING_RECEIPT", 5),
+                                              ev(None, "u2", 2, "FAIL", "MISSING_RECEIPT", 6)], {})
+        s = m.summarize(mixed)
+        self.assertEqual((s["prs"], s["unresolved_pr_evaluations"]), (4, 2))
 
     def test_iterations_label_newest_block_n(self):
         it = m.iterations(self.rows, block=2)

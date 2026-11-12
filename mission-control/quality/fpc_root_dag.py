@@ -73,6 +73,8 @@ NODES = {
     "SRC_CONTROLLER_PATH": ("SOURCE", "INHERITED", "PR touches a protected FPC controller path (bootstrap policy)"),
     "SRC_PROOF_PENDING": ("SOURCE", "TRANSIENT", "proof workflow not finished on this head yet"),
     "SRC_PROOF_FAILED": ("SOURCE", "PR_CAUSED", "proof workflow failed on this head and never passed later"),
+    "SRC_PROOF_UNTRUSTED": ("SOURCE", "PR_CAUSED",
+                            "candidate's proof workflow not allowlisted or mutated from its trusted base"),
     "SRC_HEAD_MOVED": ("SOURCE", "PROCESS", "receipt or run bound to an older head"),
     "SRC_RECEIPT_ABSENT": ("SOURCE", "PROCESS", "PR body had no FPC receipt and the gate did not derive one"),
     "SRC_CODE_FINDINGS": ("SOURCE", "PR_CAUSED", "material Codex findings on the exact head"),
@@ -81,6 +83,7 @@ NODES = {
     "R_CODEX_REVIEW_NOT_COMPLETED": ("REASON", None, "CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD"),
     "R_CONTROL_PLANE_BOOTSTRAP": ("REASON", None, "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP"),
     "R_MISSING_PROOF": ("REASON", None, "MISSING_REQUIRED_PROOF_PURPOSE / RUN_NOT_SUCCESS"),
+    "R_PROOF_IDENTITY": ("REASON", None, "UNTRUSTED_PROOF_WORKFLOW_IDENTITY / PROOF_WORKFLOW_MUTATED_FROM_TRUSTED_BASE"),
     "R_STALE_HEAD": ("REASON", None, "STALE_HEAD / RUN_HEAD_MISMATCH / INVALID_RECEIPT_HEAD_SHA"),
     "R_RECEIPT_MISSING": ("REASON", None, "MISSING_RECEIPT"),
     "R_CODEX_FINDINGS": ("REASON", None, "CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD"),
@@ -96,6 +99,7 @@ EDGES = [
     ("SRC_CONTROLLER_PATH", "R_CONTROL_PLANE_BOOTSTRAP", "CAUSES"),
     ("SRC_PROOF_PENDING", "R_MISSING_PROOF", "CAUSES"),
     ("SRC_PROOF_FAILED", "R_MISSING_PROOF", "CAUSES"),
+    ("SRC_PROOF_UNTRUSTED", "R_PROOF_IDENTITY", "CAUSES"),
     ("SRC_HEAD_MOVED", "R_STALE_HEAD", "CAUSES"),
     ("SRC_RECEIPT_ABSENT", "R_RECEIPT_MISSING", "CAUSES"),
     ("SRC_CODE_FINDINGS", "R_CODEX_FINDINGS", "CAUSES"),
@@ -104,6 +108,8 @@ EDGES = [
 ] + [(r, "FPC_RED", "CAUSES") for r, v in NODES.items() if v[0] == "REASON"] + [("FPC_RED", "MERGE_BLOCKED", "CAUSES")]
 
 REASON_NODE = [
+    # Before the gate-error catch-all: the candidate chose or changed this proof, so the PR can fix it.
+    (re.compile(r"^(UNTRUSTED_PROOF|PROOF_WORKFLOW_MUTATED)"), "R_PROOF_IDENTITY"),
     (re.compile(r"^CODEX_REVIEW_NOT_COMPLETED"), "R_CODEX_REVIEW_NOT_COMPLETED"),
     (re.compile(r"^CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP"), "R_CONTROL_PLANE_BOOTSTRAP"),
     (re.compile(r"^MISSING_RECEIPT"), "R_RECEIPT_MISSING"),
@@ -111,7 +117,7 @@ REASON_NODE = [
     (re.compile(r"^(STALE_HEAD|RUN_HEAD_MISMATCH|TRIGGER_HEAD_MISMATCH|INVALID_RECEIPT_HEAD_SHA)"), "R_STALE_HEAD"),
     (re.compile(r"^CODEX_MATERIAL_FINDINGS"), "R_CODEX_FINDINGS"),
     (re.compile(r"^(PR_HEAD_UNAVAILABLE|PR_BASE_UNAVAILABLE|POLICY_|ADMISSION_ARGUMENTS|API_|HTTP|GATE_ERROR|"
-                r"UNTRUSTED_PROOF|PROOF_WORKFLOW_MUTATED|CODEX_SUMMARY_AUTHOR|NO_RECEIPT_ARTIFACT|"
+                r"CODEX_SUMMARY_AUTHOR|NO_RECEIPT_ARTIFACT|"
                 r"PRE_EVALUATOR_FAILURE|GitHub API \d+)"), "R_GATE_ERROR"),
 ]
 
@@ -182,7 +188,7 @@ def attribute(ev: dict, later_on_head: list[dict], pr: dict) -> str:
     if node == "R_MISSING_PROOF":
         return "SRC_PROOF_PENDING" if got_past else "SRC_PROOF_FAILED"
     return {"R_CONTROL_PLANE_BOOTSTRAP": "SRC_CONTROLLER_PATH", "R_STALE_HEAD": "SRC_HEAD_MOVED",
-            "R_RECEIPT_MISSING": "SRC_RECEIPT_ABSENT",
+            "R_RECEIPT_MISSING": "SRC_RECEIPT_ABSENT", "R_PROOF_IDENTITY": "SRC_PROOF_UNTRUSTED",
             "R_CODEX_FINDINGS": "SRC_CODE_FINDINGS", "R_GATE_ERROR": "SRC_GATE_INFRA"}.get(node, "SRC_UNCLASSIFIED")
 
 
@@ -190,24 +196,31 @@ def ts(s: str) -> dt.datetime:
     return dt.datetime.fromisoformat(s.replace("Z", "+00:00"))
 
 
+def history_key(e: dict) -> tuple:
+    """One evaluation history: (repository, PR, head SHA). An unresolved PR (None) keeps its own history."""
+    return (e.get("repo") or REPO, e.get("pr"), e["head_sha"])
+
+
 def attribute_all(evals: list[dict], prs: dict, heads: dict | None = None) -> list[dict]:
     """Each evaluation plus ``reason_node``, ``source``, ``klass``; chronological.
 
     ``heads`` maps a head SHA to its PR number. The gate's runs mostly carry no PR, so the head
-    decides; a PR the run did name wins. Later evaluations are matched by head SHA.
+    decides; a PR the run did name wins. Later evaluations are matched by ``history_key``
+    (repository, PR, head SHA): receipt, proof and Codex state are per PR, so two PRs on one
+    commit never lend each other evidence.
     """
     heads = heads or {}
     evals = sorted(({**e, "pr": e.get("pr") or heads.get(e["head_sha"])} for e in evals), key=lambda e: e["created_at"])
     by_head = defaultdict(list)
     for e in evals:
-        by_head[e["head_sha"]].append(e)
+        by_head[history_key(e)].append(e)
     out = []
     for e in evals:
-        row = dict(e, head_first_status=by_head[e["head_sha"]][0]["status"])
+        seq = by_head[history_key(e)]
+        row = dict(e, head_first_status=seq[0]["status"])
         if e["status"] == "PASS":
             row.update(reason_node=None, source=None, klass="PASS")
         else:
-            seq = by_head[e["head_sha"]]
             later = seq[seq.index(e) + 1:]
             src = attribute(e, later, prs.get(str(e.get("pr")), {}))
             row.update(reason_node=reason_node(e.get("reason")), source=src, klass=NODES[src][1])
@@ -220,7 +233,7 @@ def summarize(rows: list[dict]) -> dict:
     klass = Counter(r["klass"] for r in red)
     heads = defaultdict(list)
     for r in rows:
-        heads[(r.get("pr"), r["head_sha"])].append(r)
+        heads[history_key(r)].append(r)
     # A head's first evaluation may lie before the slice: use its global first outcome, or a retry
     # inside a window would count as a first pass.
     first_pass = sum(1 for seq in heads.values() if seq[0].get("head_first_status", seq[0]["status"]) == "PASS")
@@ -232,7 +245,8 @@ def summarize(rows: list[dict]) -> dict:
         "pr_caused_share_of_red": round(klass["PR_CAUSED"] / len(red), 4) if red else None,
         "by_class": dict(sorted(klass.items())),
         "by_source": dict(Counter(r["source"] for r in red).most_common()),
-        "prs": len({r.get("pr") for r in rows}), "heads": len(heads),
+        "prs": len({r["pr"] for r in rows if r.get("pr") is not None}),
+        "unresolved_pr_evaluations": sum(1 for r in rows if r.get("pr") is None), "heads": len(heads),
         "first_pass_rate": round(first_pass / len(heads), 4) if heads else None,
         "head_closure_rate": round(closed / len(heads), 4) if heads else None,
     }
@@ -360,7 +374,7 @@ def pct(v):
 def markdown(doc: dict) -> str:
     L = [f"# FPC root-red DAG, {doc['generated_at']}", "",
          f"Source: `{REPO}` First-Pass Closure Gate runs since {doc['since']} ({doc['totals']['evaluations']} evaluations, "
-         f"{doc['totals']['prs']} PRs). Each red evaluation is traced to one source node; Kahn waves come from "
+         f"{doc['totals']['prs']} PRs, {doc['totals']['unresolved_pr_evaluations']} with no resolved PR). Each red evaluation is traced to one source node; Kahn waves come from "
          "`lifecycle.topo_layers`.", "", "## Kahn waves (source → reason → outcome)", ""]
     for i, wave in enumerate(doc["kahn_waves"]):
         L.append(f"- wave {i}: " + ", ".join(f"`{n}` ({doc['node_counts'].get(n, 0)})" for n in wave))
