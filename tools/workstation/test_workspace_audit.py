@@ -58,7 +58,7 @@ $fakeAttrib = { param($Path) $global:Calls.Add("attrib $Path"); [pscustomobject]
 $a = $cfg.args
 if ($cfg.fn -eq 'triage') {
     $state = [pscustomobject]$a.state
-    $r = Get-PushTriage -Dir 'X:\repo' -State $state -Slug $a.slug -DefaultRef 'origin/master' -Git $fakeGit -Gh $fakeGh
+    $r = Get-PushTriage -Dir 'X:\repo' -State $state -Slug $a.slug -DefaultRef 'origin/master' -Git $fakeGit -Gh $fakeGh -GhRetryDelayMs 0
     $out = [ordered]@{ Class = $r.Class; NeverPush = $r.NeverPush; Reasons = @($r.Reasons) }
 }
 else {
@@ -160,6 +160,18 @@ class WorkspaceAuditTriage(unittest.TestCase):
         r = self.triage(self.office_git(), gh={"api repos/o/r --jq .private": "true"})
         self.assertEqual(r["Class"], "PUSH-ME")
         self.assertFalse(r["NeverPush"])
+
+    def test_unknown_visibility_fails_closed_after_retries(self) -> None:
+        r = self.triage(self.office_git())  # gh api repos/o/r fails on every call
+        self.assertEqual(r["Class"], "PUBLIC-RISK")
+        self.assertTrue(r["NeverPush"])
+        self.assertIn("visibility unknown", r["Reasons"][0])
+        self.assertEqual(r["Calls"].count("gh api repos/o/r --jq .private"), 3)
+
+    def test_unknown_visibility_without_office_files_stays_push_me(self) -> None:
+        r = self.triage({})
+        self.assertEqual(r["Class"], "PUSH-ME")
+        self.assertIn("-c core.quotePath=false ls-files", " ".join(r["Calls"]))
 
     def test_real_unlanded_work_stays_push_me(self) -> None:
         r = self.triage({})

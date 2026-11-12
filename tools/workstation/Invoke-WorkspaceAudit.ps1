@@ -186,7 +186,8 @@ function Get-PushTriage {
         [string]$Dir, $State, [string]$Slug, [string]$DefaultRef,
         [scriptblock]$Git = { param($Dir, $GitArgs) Invoke-GitRun -Dir $Dir -GitArgs $GitArgs },
         [scriptblock]$Gh = { param($Arguments) Invoke-Gh -Arguments $Arguments },
-        [hashtable]$Cache = @{}
+        [hashtable]$Cache = @{},
+        [int]$GhRetryDelayMs = 2000
     )
     $run = { param([string[]]$a) & $Git $Dir $a }
     $head = $State.Head
@@ -238,13 +239,20 @@ function Get-PushTriage {
     }
 
     # (4) Public repo guard: HEAD tracks office/PDF files that the public remote does not have.
+    #     Fails closed: when visibility cannot be read after 3 tries, the repo is treated as public.
     if ($Slug) {
         $key = "private|$Slug"
         if (-not $Cache.ContainsKey($key)) {
-            $r = & $Gh @('api', "repos/$Slug", '--jq', '.private')
-            $Cache[$key] = if ($r.ExitCode -eq 0) { "$($r.Out)".Trim() } else { 'unknown' }
+            $vis = 'unknown'
+            for ($i = 1; $i -le 3 -and $vis -eq 'unknown'; $i++) {
+                $r = & $Gh @('api', "repos/$Slug", '--jq', '.private')
+                $o = "$($r.Out)".Trim()
+                if ($r.ExitCode -eq 0 -and $o -in 'true', 'false') { $vis = $o }
+                elseif ($i -lt 3 -and $GhRetryDelayMs -gt 0) { Start-Sleep -Milliseconds ($GhRetryDelayMs * $i) }
+            }
+            $Cache[$key] = $vis
         }
-        if ($Cache[$key] -eq 'false') {
+        if ($Cache[$key] -ne 'true') {
             $tracked = @((& $run @('-c', 'core.quotePath=false', 'ls-files')).Out | Where-Object { $_ -match $script:OfficeFilePattern })
             if ($tracked) {
                 $remoteRef = @($State.Upstream, $DefaultRef) | Where-Object { $_ } | Select-Object -First 1
@@ -253,7 +261,8 @@ function Get-PushTriage {
                 $missing = @($tracked | Where-Object { -not $onRemoteSet.Contains($_) })
                 if ($missing) {
                     $res.Class = 'PUBLIC-RISK'; $res.NeverPush = $true
-                    $res.Reasons += "public remote $Slug lacks $($missing.Count) office/PDF file(s) HEAD tracks (e.g. $(($missing | Select-Object -First 2) -join ', ')); do not push"
+                    $who = if ($Cache[$key] -eq 'false') { 'public remote' } else { 'remote (visibility unknown after 3 tries, treated as public)' }
+                    $res.Reasons += "$who $Slug lacks $($missing.Count) office/PDF file(s) HEAD tracks (e.g. $(($missing | Select-Object -First 2) -join ', ')); do not push"
                     return [pscustomobject]$res
                 }
             }
