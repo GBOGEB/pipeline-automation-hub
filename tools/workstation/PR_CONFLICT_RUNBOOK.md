@@ -103,8 +103,11 @@ pwsh -NoProfile -File tools/workstation/Invoke-PrFixInSitu.ps1 -Repo gg_MATH -Pr
 - `-Publish` pushes without force, and only when `-Test` passed on that exact HEAD and the PR head on GitHub
   is still the one recorded at `-Prepare`.
 - `-ResolveThread` replies "Fixed in <sha>" with the test evidence, resolves, reads back, and writes a
-  `code_maroon.closure-proof.v1` proof to `$env:TEMP`. MAROON (`mission-control/maroon`) owns ledger-bound
-  closure; its worker needs Linux, so this is the path on the Windows workstation.
+  closure-evidence record to `$env:TEMP` in the field shapes of `code_maroon.closure-proof.v1`
+  (`-Classification fixed` needs a passing test; `already_fixed` / `false_positive` do not).
+  It is not a finished MAROON proof: MAROON (`mission-control/maroon`) owns ledger-bound closure and adds
+  `item_id` and `discussion_hash` from its own provider read. Its worker needs Linux, so this script is the
+  path on the Windows workstation; each record says `maroon_ready: false`.
 
 ## 7. Push rejected with GH013 on a feature branch
 

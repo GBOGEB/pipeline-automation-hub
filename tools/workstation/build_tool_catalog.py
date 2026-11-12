@@ -29,10 +29,13 @@ SCHEMA = "gbogeb.workstation-tool-catalog.v1"
 SOURCE_LIMIT = 400_000  # characters of source embedded per tool
 
 
-def git(root: Path, *args: str) -> str:
+def git(root: Path, *args: str, raw: bool = False) -> str:
+    """git stdout; stripped unless raw (blob content must stay byte-for-byte)."""
     r = subprocess.run(["git", "-C", str(root), *args], capture_output=True, text=True,
                        encoding="utf-8", errors="replace")
-    return r.stdout.strip() if r.returncode == 0 else ""
+    if r.returncode != 0:
+        return ""
+    return r.stdout if raw else r.stdout.strip()
 
 
 def gh_json(*args: str):
@@ -86,7 +89,7 @@ def code_facts(root: Path, rel: str, head: str) -> dict:
     if not blob:
         return {"present": False}
     log = git(root, "log", "-1", "--format=%H%x1f%cs%x1f%s", "HEAD", "--", rel).split("\x1f")
-    source = git(root, "show", f"HEAD:{rel}")
+    source = git(root, "show", f"HEAD:{rel}", raw=True)
     local = root / rel
     dirty = local.exists() and bool(git(root, "status", "--porcelain", "--", rel))
     return {

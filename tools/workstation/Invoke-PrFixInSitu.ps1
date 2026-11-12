@@ -22,17 +22,20 @@
                          and is an ancestor of HEAD), then `git push` without force to the PR's own branch,
                          then readback. Refuses unless -Test passed on this exact HEAD.
       -ResolveThread     For each thread id: requires the published head to be the PR head and -Test PASS on
-                         it, writes a code_maroon.closure-proof.v1 proof (repo, PR, thread, head/base SHA,
-                         blob OID of the thread's file, test evidence), replies "Fixed in <sha>" with the
-                         evidence, resolves the thread, and reads it back.
+                         it writes a closure-evidence record (repo, PR, thread, root comment, head/base SHA,
+                         blob OID of the thread's file, classification, method, local_test evidence with
+                         conclusion PASS, all in the field shapes of code_maroon.closure-proof.v1), replies
+                         "Fixed in <sha>" with the evidence, resolves the thread, and reads it back.
 
     It never force-pushes, merges, approves, dismisses a review, or resolves a thread without a passing test on
     the published head. Every gh call runs with GITHUB_TOKEN/GH_TOKEN removed (lesson 8), restored afterwards.
     State and proofs go to -ReportPath as prfix_<owner>_<repo>_<pr>.json.
 
     MAROON (mission-control/maroon) owns the ledger-bound, proof-checked closure pipeline. Its worker needs
-    Linux (fcntl). This script is the in-situ path on a Windows workstation: it emits proofs in MAROON's
-    schema so the ledger can take them in later.
+    Linux (fcntl). This script is the in-situ path on a Windows workstation. Its records are NOT finished
+    MAROON proofs: item_id and discussion_hash come from MAROON's own provider read (operations.observation_id,
+    closure.discussion_hash), which cannot be imported on Windows. Each record says maroon_ready = false and
+    what MAROON must add before closure.validate() can accept it.
 .EXAMPLE
     pwsh -NoProfile -File tools/workstation/Invoke-PrFixInSitu.ps1 -Repo gg_MATH -Pr 128
     # diagnose only: push rules, conflicts, red checks, threads, next step
@@ -61,6 +64,9 @@ param(
     [switch]   $Publish,
     [string[]] $ResolveThread = @(),
     [string]   $Note,
+    # MAROON classification of each resolved thread: fixed (needs a passing test), already_fixed, false_positive.
+    [ValidateSet('fixed', 'already_fixed', 'false_positive')]
+    [string]   $Classification = 'fixed',
     [string]   $ReportPath = $env:TEMP,
     [double]   $LiveMinutes = 30,
     # Run the offline checks and exit. Uses temporary git repos only; no gh calls.
@@ -71,15 +77,21 @@ $ErrorActionPreference = 'Stop'
 
 # ---------------------------------------------------------------- helpers (pure where possible)
 
-function Invoke-Gh {
-    # gh without the stale-token variables; the caller's environment is restored afterwards.
+function Invoke-WithoutTokens {
+    # Run a block without the stale-token variables (lesson 8); the caller's environment is restored afterwards.
+    param([scriptblock] $Block)
     $saved = @{ GITHUB_TOKEN = $env:GITHUB_TOKEN; GH_TOKEN = $env:GH_TOKEN }
     Remove-Item Env:GITHUB_TOKEN, Env:GH_TOKEN -ErrorAction SilentlyContinue
-    try {
-        $out = & gh @args 2>&1
-        [pscustomobject]@{ Code = $LASTEXITCODE; Text = ($out | Out-String).Trim() }
-    } finally {
+    try { & $Block } finally {
         foreach ($k in $saved.Keys) { if ($null -ne $saved[$k]) { Set-Item "Env:$k" $saved[$k] } }
+    }
+}
+
+function Invoke-Gh {
+    $a = $args
+    Invoke-WithoutTokens {
+        $out = & gh @a 2>&1
+        [pscustomobject]@{ Code = $LASTEXITCODE; Text = ($out | Out-String).Trim() }
     }
 }
 
@@ -155,23 +167,32 @@ function Get-NextStep {
 }
 
 function New-ClosureProof {
-    # MAROON code_maroon.closure-proof.v1 shape (mission-control/maroon/closure.py validates it).
-    param([string] $RepoFull, [int] $Number, [string] $ThreadId, [string] $HeadSha, [string] $BaseSha,
-          [hashtable] $BlobOids, [string] $TestCommand, [string] $Note, [string] $CommentUrl)
+    # Closure evidence in the field shapes closure.validate() checks (mission-control/maroon/closure.py).
+    # item_id and discussion_hash are MAROON's to compute from its own provider read; they stay null here.
+    param([string] $RepoFull, [int] $Number, [string] $ThreadId, [long] $CommentId, [string] $HeadSha, [string] $BaseSha,
+          [hashtable] $BlobOids, [string] $Classification, [string] $TestCommand, [string] $Note, [string] $ReplyUrl)
+    $evidence = @()
+    if ($TestCommand) { $evidence += [ordered]@{ kind = 'local_test'; ref = "$TestCommand (exit 0)"; source_sha = $HeadSha; conclusion = 'PASS' } }
     [ordered]@{
-        schema     = 'code_maroon.closure-proof.v1'
-        repo       = $RepoFull
-        pr         = $Number
-        thread_id  = $ThreadId
-        head_sha   = $HeadSha
-        base_sha   = $BaseSha
-        blob_oids  = $BlobOids
-        method     = 'in-situ-fix'
-        evidence   = @([ordered]@{ kind = 'test'; ref = "$TestCommand (exit 0)"; source_sha = $HeadSha })
-        note       = $Note
-        comment_url = $CommentUrl
-        producer   = 'tools/workstation/Invoke-PrFixInSitu.ps1'
-        ledger     = 'not recorded: feed this proof to MAROON closure when its worker runs here'
+        schema          = 'gbogeb.prfix.closure-evidence.v1'
+        maps_to         = 'code_maroon.closure-proof.v1'
+        maroon_ready    = $false
+        maroon_missing  = @('item_id', 'discussion_hash')
+        maroon_next     = 'On Linux/WSL: item_id = operations.observation_id(repo, pr, comment_id); discussion_hash from the provider read; then closure.validate(proof, live).'
+        repo            = $RepoFull
+        pr              = $Number
+        thread_id       = $ThreadId
+        comment_id      = $CommentId
+        item_id         = $null
+        discussion_hash = $null
+        head_sha        = $HeadSha
+        base_sha        = $BaseSha
+        blob_oids       = $BlobOids
+        classification  = $Classification
+        method          = "In-situ fix by Invoke-PrFixInSitu.ps1: $Note"
+        evidence        = $evidence
+        reply_url       = $ReplyUrl
+        producer        = 'tools/workstation/Invoke-PrFixInSitu.ps1'
     }
 }
 
@@ -218,6 +239,10 @@ if ($SelfTest) {
     Assert (@(Get-PushBlock @()).Count -eq 0) 'no rules, no block'
     Assert ((Get-ThreadPriority '![P1 Badge](x) **Fix**') -eq 'P1') 'Codex P badge parsed'
     Assert ((Get-ThreadPriority 'plain text') -eq 'note') 'unrated thread is a note'
+    $env:GITHUB_TOKEN = 'stale'
+    $seen = Invoke-WithoutTokens { [string]$env:GITHUB_TOKEN }
+    Assert ($seen -eq '' -and $env:GITHUB_TOKEN -eq 'stale') 'token removed inside the block and restored after'
+    Remove-Item Env:GITHUB_TOKEN
 
     $d = [pscustomobject]@{ Fork = $false; Live = $false; State = 'OPEN'; PushBlocked = $true; Mergeable = 'CONFLICTING'
                             Threads = @(); FailingChecks = @(); PendingChecks = @() }
@@ -229,9 +254,12 @@ if ($SelfTest) {
     $d.Threads = @(); $d.FailingChecks = @('x')
     Assert ((Get-PrClass $d) -eq 'RED') 'red class'
 
-    $p = New-ClosureProof -RepoFull 'o/r' -Number 1 -ThreadId 'PRRT_x' -HeadSha ('a' * 40) -BaseSha ('b' * 40) `
-        -BlobOids @{ 'k.py' = ('c' * 40) } -TestCommand 'pytest' -Note 'n' -CommentUrl 'u'
-    Assert ($p.schema -eq 'code_maroon.closure-proof.v1' -and $p.evidence[0].source_sha -eq $p.head_sha) 'proof matches MAROON schema keys'
+    $p = New-ClosureProof -RepoFull 'o/r' -Number 1 -ThreadId 'PRRT_x' -CommentId 42 -HeadSha ('a' * 40) -BaseSha ('b' * 40) `
+        -BlobOids @{ 'k.py' = ('c' * 40) } -Classification 'fixed' -TestCommand 'pytest -q' -Note 'guard added' -ReplyUrl 'u'
+    $e0 = $p.evidence[0]
+    Assert ($e0.kind -eq 'local_test' -and $e0.conclusion -eq 'PASS' -and $e0.source_sha -eq $p.head_sha) 'evidence uses MAROON kind/conclusion at the head'
+    Assert ($p.method.Trim().Length -ge 20 -and $p.classification -eq 'fixed' -and $p.comment_id -eq 42) 'method >= 20 chars, classification, root comment id'
+    Assert ($p.maroon_ready -eq $false -and $p.maroon_missing -contains 'item_id' -and $p.schema -ne 'code_maroon.closure-proof.v1') 'not presented as a finished MAROON proof'
 
     # git fixtures: base and head edit the same line (conflict), then a clean merge.
     $tmp = Join-Path ([IO.Path]::GetTempPath()) ("prfix_selftest_" + [guid]::NewGuid().ToString('N').Substring(0, 8))
@@ -272,12 +300,12 @@ $baseSha = (Invoke-GhJson api "repos/$full/commits/$($prInfo.baseRefName)").sha
 $rules = @(Invoke-GhJson api "repos/$full/rules/branches/$([uri]::EscapeDataString($prInfo.headRefName))")
 $blocks = @(Get-PushBlock $rules)
 $checks = @(Invoke-GhJson pr checks $Pr -R $full --json 'name,state,link' 2>$null)
-$q = 'query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){pullRequest(number:$n){reviewThreads(first:100){nodes{id isResolved isOutdated path line comments(first:1){nodes{author{login} body url}}}}}}}'
+$q = 'query($o:String!,$r:String!,$n:Int!){repository(owner:$o,name:$r){pullRequest(number:$n){reviewThreads(first:100){nodes{id isResolved isOutdated path line comments(first:1){nodes{databaseId author{login} body url}}}}}}}'
 $tq = Invoke-GhJson api graphql -f "query=$q" -f "o=$Owner" -f "r=$Repo" -F "n=$Pr"
 $threads = @($tq.data.repository.pullRequest.reviewThreads.nodes | Where-Object { -not $_.isResolved } | ForEach-Object {
     $c = $_.comments.nodes | Select-Object -First 1
     [pscustomobject]@{ Id = $_.id; Path = $_.path; Line = $_.line; Outdated = $_.isOutdated
-                       Author = $c.author.login; Priority = Get-ThreadPriority $c.body; Url = $c.url
+                       CommentId = $c.databaseId; Author = $c.author.login; Priority = Get-ThreadPriority $c.body; Url = $c.url
                        Title = (($c.body -replace '<[^>]+>|!\[[^\]]*\]\([^)]*\)|\*\*', '') -split "`n" | Where-Object { $_.Trim() } | Select-Object -First 1).Trim() }
 })
 
@@ -292,7 +320,9 @@ if ($Clone -and (Test-Path $Clone)) {
             $dirty = (Invoke-Git $path status --porcelain).Text
             $last = (Invoke-Git $path log -g -1 --format=%ct).Text
             $recent = $last -and ([DateTimeOffset]::UtcNow.ToUnixTimeSeconds() - [long]$last) -lt $LiveMinutes * 60
-            $mine = $state.worktree -and ((Resolve-Path $state.worktree -ErrorAction SilentlyContinue)?.Path -eq (Resolve-Path $path).Path)
+            $here = (Resolve-Path $path).Path
+            $mine = ($state.worktree -and ((Resolve-Path $state.worktree -ErrorAction SilentlyContinue)?.Path -eq $here)) -or
+                    ($Worktree -and ((Resolve-Path $Worktree -ErrorAction SilentlyContinue)?.Path -eq $here))
             if (($dirty -or $recent) -and -not $mine) { $live = $true }
         }
     }
@@ -341,14 +371,20 @@ if ($Prepare) {
     } else {
         if ((Invoke-Git $Worktree status --porcelain).Text) { throw "Worktree $Worktree has uncommitted changes; commit or stash them first." }
         Invoke-Git $Worktree fetch origin $diag.HeadRef | Out-Null
-        $ff = Invoke-Git $Worktree merge --ff-only "origin/$($diag.HeadRef)"
-        if ($ff.Code -ne 0) { throw "Worktree branch diverged from the PR head: $($ff.Text)" }
+        # Behind the PR head: fast-forward. Ahead of it (your fix already committed here): keep it.
+        if ((Invoke-Git $Worktree merge-base --is-ancestor HEAD $diag.HeadSha).Code -eq 0) {
+            $ff = Invoke-Git $Worktree merge --ff-only $diag.HeadSha
+            if ($ff.Code -ne 0) { throw "Fast-forward to the PR head failed: $($ff.Text)" }
+        }
     }
     $head = (Invoke-Git $Worktree rev-parse HEAD).Text
-    if ($head -ne $diag.HeadSha) { throw "Worktree HEAD $head is not the PR head $($diag.HeadSha)." }
+    if ($head -ne $diag.HeadSha -and (Invoke-Git $Worktree merge-base --is-ancestor $diag.HeadSha HEAD).Code -ne 0) {
+        throw "Worktree HEAD $head has diverged from the PR head $($diag.HeadSha); a push would need force."
+    }
     $state.worktree = $Worktree; $state.expected_head = $diag.HeadSha; $state.base_ref = $diag.BaseRef
     Save-State $statePath $state
-    Write-Host "PREPARED $Worktree at $($head.Substring(0, 8))"
+    $ahead = (Invoke-Git $Worktree rev-list --count "$($diag.HeadSha)..HEAD").Text
+    Write-Host "PREPARED $Worktree at $($head.Substring(0, 8)) ($ahead local commit(s) ahead of the PR head)"
 }
 if (-not $Worktree) { $Worktree = $state.worktree }
 if (-not $Worktree -or -not (Test-Path $Worktree)) { throw 'No worktree recorded; run -Prepare first.' }
@@ -380,7 +416,9 @@ if ($Sync) {
 
 if ($Test) {
     $head = (Invoke-Git $Worktree rev-parse HEAD).Text
-    if ((Invoke-Git $Worktree status --porcelain --untracked-files=no).Text) { throw 'Commit your changes before -Test: the result is recorded against HEAD.' }
+    if ((Invoke-Git $Worktree status --porcelain).Text) {
+        throw 'Commit (or remove) every change, untracked files included, before -Test: the result is recorded against HEAD and a test must not pass on files the push will not carry.'
+    }
     Push-Location $Worktree
     try {
         $t0 = Get-Date
@@ -402,7 +440,8 @@ if ($Publish) {
     if ($why) { throw "Refusing -Publish: $why" }
     if ($head -eq $diag.HeadSha) { Write-Host 'Nothing new to push: HEAD is already the PR head.' }
     else {
-        $p = Invoke-Git $Worktree push origin "HEAD:refs/heads/$($diag.HeadRef)"
+        $wt = $Worktree; $ref = $diag.HeadRef
+        $p = Invoke-WithoutTokens { Invoke-Git $wt push origin "HEAD:refs/heads/$ref" }
         if ($p.Code -ne 0) {
             if ($p.Text -match 'GH013|repository rule') { throw "Push rejected by a repository rule (GH013). $(Get-NextStep 'PUSH_BLOCKED' $diag $self)" }
             throw "push failed: $($p.Text)"
@@ -419,24 +458,28 @@ if ($Publish) {
 # ---------------------------------------------------------------- resolve threads with proof
 
 if ($ResolveThread.Count) {
-    if (-not $Note) { throw '-ResolveThread needs -Note: one line saying what changed or why the finding does not apply.' }
+    if (-not $Note -or $Note.Trim().Length -lt 12) { throw '-ResolveThread needs -Note: a sentence saying what changed, or why the finding does not apply.' }
     $head = $diag.HeadSha
-    if (-not $state.test -or $state.test.exit -ne 0 -or $state.test.head -ne $head) {
-        throw "Refusing to resolve: no passing -Test recorded on the PR head $($head.Substring(0, 8)). Run -Test (and -Publish) first."
+    $tested = [bool]($state.test -and $state.test.exit -eq 0 -and $state.test.head -eq $head)
+    if ($Classification -eq 'fixed' -and -not $tested) {
+        throw "Refusing to resolve as fixed: no passing -Test recorded on the PR head $($head.Substring(0, 8)). Run -Test (and -Publish) first."
     }
     $proofs = @()
     foreach ($id in $ResolveThread) {
         $t = $threads | Where-Object Id -eq $id
         if (-not $t) { throw "Thread $id is not an unresolved thread on $full#$Pr." }
         $blob = (Invoke-Git $Worktree rev-parse "$($head):$($t.Path)").Text
-        $body = "Fixed in $($head.Substring(0, 12)): $Note`n`nVerified: ``$($state.test.command)`` exit 0 on ``$head``.`nProof: code_maroon.closure-proof.v1 (in-situ, Invoke-PrFixInSitu.ps1)."
+        $verb = @{ fixed = 'Fixed in'; already_fixed = 'Already fixed at'; false_positive = 'Not applicable at' }[$Classification]
+        $verified = if ($tested) { "Verified: ``$($state.test.command)`` exit 0 on ``$head``." } else { 'No test run recorded for this disposition.' }
+        $body = "$verb $($head.Substring(0, 12)): $Note`n`n$verified`nEvidence: gbogeb.prfix.closure-evidence.v1 (Invoke-PrFixInSitu.ps1); MAROON adds item_id and discussion_hash before ledger closure."
         $m = 'mutation($id:ID!,$b:String!){addPullRequestReviewThreadReply(input:{pullRequestReviewThreadId:$id,body:$b}){comment{url}}}'
         $reply = Invoke-GhJson api graphql -f "query=$m" -f "id=$id" -f "b=$body"
         $url = $reply.data.addPullRequestReviewThreadReply.comment.url
         $res = Invoke-GhJson api graphql -f 'query=mutation($id:ID!){resolveReviewThread(input:{threadId:$id}){thread{isResolved}}}' -f "id=$id"
         if (-not $res.data.resolveReviewThread.thread.isResolved) { throw "Readback: thread $id is not resolved." }
-        $proofs += New-ClosureProof -RepoFull $full -Number $Pr -ThreadId $id -HeadSha $head -BaseSha $diag.BaseSha `
-            -BlobOids @{ $t.Path = $blob } -TestCommand $state.test.command -Note $Note -CommentUrl $url
+        $testCmd = if ($tested) { $state.test.command } else { '' }
+        $proofs += New-ClosureProof -RepoFull $full -Number $Pr -ThreadId $id -CommentId $t.CommentId -HeadSha $head -BaseSha $diag.BaseSha `
+            -BlobOids @{ $t.Path = $blob } -Classification $Classification -TestCommand $testCmd -Note $Note -ReplyUrl $url
         Write-Host "RESOLVED $id  $url"
     }
     $proofPath = Join-Path $ReportPath "prfix_$($Owner)_$($Repo)_$($Pr)_proofs.json"

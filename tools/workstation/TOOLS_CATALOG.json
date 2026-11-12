@@ -41,7 +41,7 @@
       "artefacts": [
         "$env:TEMP/prfix_<owner>_<repo>_<pr>.json (stage state)",
         "$env:TEMP/prfix_<owner>_<repo>_<pr>_diag.json",
-        "$env:TEMP/prfix_<owner>_<repo>_<pr>_proofs.json (code_maroon.closure-proof.v1)"
+        "$env:TEMP/prfix_<owner>_<repo>_<pr>_proofs.json (closure evidence; MAROON adds item_id and discussion_hash)"
       ],
       "docs": [
         "tools/workstation/PR_CONFLICT_RUNBOOK.md"
@@ -142,7 +142,7 @@
       "path": "mission-control/maroon/operations.py",
       "goal": "Review- and security-debt programme: census of alerts and review threads into roots and lanes; worker plans a Kahn wave of disjoint roots (max 2), fixes, and closes threads only with code_maroon.closure-proof.v1 proofs.",
       "when": "Bulk, disjoint fixes of review threads across repos; nightly security census.",
-      "not_for": "Native Windows: operations.py needs fcntl (Linux, macOS or WSL). On Windows use Invoke-PrFixInSitu, which writes proofs in MAROON's schema.",
+      "not_for": "Native Windows: operations.py needs fcntl (Linux, macOS or WSL). On Windows use Invoke-PrFixInSitu; its closure evidence uses MAROON's field shapes but is not a finished MAROON proof.",
       "writes": "Private ledger ~/.maroon; worker commits and thread closure only with proof; never merges.",
       "commands": [
         "Set-Location \"{hub}\"",

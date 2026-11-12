@@ -76,8 +76,20 @@ class FixtureRepo(unittest.TestCase):
 
     def test_hub_placeholder_becomes_the_checkout_path(self):
         _, page = self.build([tool()])
-        self.assertIn(str(self.root.resolve()).replace("\\", "\\"), page.replace("&quot;", '"'))
+        # The path exactly as given (a Windows runner may hand out 8.3 short names; never compare resolved forms).
+        self.assertIn(f'Set-Location "{self.root}"', page.replace("&quot;", '"'))
         self.assertNotIn("{hub}", page)
+
+    def test_blob_whitespace_is_preserved(self):
+        (self.root / "tools" / "Blank.ps1").write_text("\n  indented\n\n", encoding="utf-8", newline="\n")
+        (self.root / "tools" / "Newline.ps1").write_text("\n", encoding="utf-8", newline="\n")
+        run(self.root, "add", ".")
+        run(self.root, "commit", "-qm", "whitespace")
+        model, _ = self.build([tool(id="a", path="tools/Blank.ps1"), tool(id="b", path="tools/Newline.ps1")])
+        a, b = (t["facts"] for t in model["tools"])
+        self.assertEqual(a["source"], "\n  indented\n\n")
+        self.assertEqual(a["lines"], 3)
+        self.assertEqual(b["lines"], 1)
 
     def test_missing_file_is_flagged_not_fatal(self):
         model, page = self.build([tool(path="tools/Gone.ps1")])
