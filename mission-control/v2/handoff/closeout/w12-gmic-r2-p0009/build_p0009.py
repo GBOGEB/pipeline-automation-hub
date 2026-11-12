@@ -49,7 +49,7 @@ document.getElementById('file').onchange=async e=>{const f=e.target.files[0];if(
 document.getElementById('export').onclick=()=>{const blob=new Blob([JSON.stringify(current,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const anchor=document.createElement('a');anchor.href=url;anchor.download='GMIC_P0009_VIEW.json';anchor.click();URL.revokeObjectURL(url)};
 draw(current);
 </script></html>""" % data
-    (out / "index.html").write_text(page, encoding="utf-8")
+    (out / "index.html").write_text(page, encoding="utf-8", newline="\n")
     names = ["POSTMERGE_AUDIT.json", "DAG.json", "DAG.mmd",
              "README.md", "test_p0009.py", "build_p0009.py"]
     sources = {name: (HERE / name).read_bytes() for name in names}
@@ -71,7 +71,7 @@ draw(current);
             output.writestr(name, value)
     digest = hashlib.sha256(archive.read_bytes()).hexdigest()
     (out / (archive.name + ".sha256")).write_text(
-        f"{digest}  {archive.name}\n", encoding="utf-8")
+        f"{digest}  {archive.name}\n", encoding="utf-8", newline="\n")
     return archive
 
 
