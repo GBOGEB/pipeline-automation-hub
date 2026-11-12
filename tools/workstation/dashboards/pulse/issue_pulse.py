@@ -24,7 +24,7 @@ import datetime as dt
 import importlib.util
 import json
 import os
-import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -40,8 +40,11 @@ DEFAULT_REF = "origin/master"
 REGISTER = "mission-control/federation-atlas/central"
 DAYS = 14
 STALE_DAYS = 30
-MENTION = re.compile(r"(?:(?<=\s)|^)(?:(GBOGEB/[A-Za-z0-9_.-]+))?#(\d+)\b")
-CLOSES = re.compile(r"\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s*:?\s+(?:GBOGEB/[A-Za-z0-9_.-]+)?#(\d+)", re.I)
+# The canonical typed reference parser (owner per AGENTS.md: issue triway burndown); imported, not copied.
+TRIWAY = os.path.join(HERE_CLONE, "mission-control", "qps-triage-ultra", "issue-expedition", "triway_burndown.py")
+_spec = importlib.util.spec_from_file_location("triway_burndown", TRIWAY)
+triway = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(triway)
 
 ISSUE_QUERY = """
 query($owner:String!,$name:String!,$cursor:String){repository(owner:$owner,name:$name){
@@ -68,9 +71,13 @@ def load_register(clone, ref=DEFAULT_REF):
         with open(os.path.join(tmp, name), "w", encoding="utf-8", newline="\n") as f:
             f.write(src)
     sys.path.insert(0, tmp)
-    spec = importlib.util.spec_from_file_location("recensus", os.path.join(tmp, "recensus.py"))
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
+    try:
+        spec = importlib.util.spec_from_file_location("recensus", os.path.join(tmp, "recensus.py"))
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+    finally:
+        sys.path.remove(tmp)
+        shutil.rmtree(tmp, ignore_errors=True)
     sha = subprocess.run(["git", "-C", clone, "rev-parse", "--short=8", ref],
                          capture_output=True, text=True, check=True).stdout.strip()
     return mod, sha
@@ -134,11 +141,15 @@ def main(out_dir, clone=None, ref=DEFAULT_REF, now=None, register=None):
                 if ref.get("repository", {}).get("nameWithOwner", full) == full:
                     edges[(ref["number"], p["number"])] = "closes"
             text = f"{p['title']}\n{p.get('body') or ''}"
-            for n in CLOSES.findall(text):
-                edges.setdefault((int(n), p["number"]), "closes")
-            for other, n in MENTION.findall(text):
-                if (not other or other == full) and int(n) in open_nums:
-                    edges.setdefault((int(n), p["number"]), "mentions")
+            # Closure claims first, so a closure is not shadowed by an association of the same issue.
+            refs = sorted(triway.references(text, full, pr=True), key=lambda r: r["kind"] != "PR_CLOSURE_CLAIM")
+            for ref in refs:
+                if ref["repo"] != full:
+                    continue
+                if ref["kind"] == "PR_CLOSURE_CLAIM":
+                    edges.setdefault((ref["number"], p["number"]), "closes")
+                elif ref["number"] in open_nums:
+                    edges.setdefault((ref["number"], p["number"]), "mentions")
         for num, node in links.items():
             for src in node["closedByPullRequestsReferences"]["nodes"]:
                 if src["repository"]["nameWithOwner"] == full:

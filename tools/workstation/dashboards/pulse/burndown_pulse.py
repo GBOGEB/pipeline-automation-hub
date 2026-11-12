@@ -138,7 +138,7 @@ def main(out_dir, now=None):
 
         # One day per call: the rollup for a whole week times out GitHub's GraphQL API.
         merged = []
-        for i in range(7, -1, -1):
+        for i in range(6, -1, -1):
             day = (now - dt.timedelta(days=i)).date().isoformat()
             merged += gh_retry("pr", "list", "-R", full, "--state", "merged", "--search", f"merged:{day}",
                                "--limit", "100", "--json", "number,mergedAt,statusCheckRollup")
@@ -146,7 +146,7 @@ def main(out_dir, now=None):
         merged_red = [m for m in merged if any(check_state(c) in BAD for c in m["statusCheckRollup"] or [])]
         merged_fpc_red = [m for m in merged if any(check_state(c) in BAD and red_kind(c.get("name")) == "fpc"
                                                    for c in m["statusCheckRollup"] or [])]
-        for i in range(7, -1, -1):
+        for i in range(6, -1, -1):
             day = (now - dt.timedelta(days=i)).date().isoformat()
             rows.append(dict(kind="day", key=f"{short}|{day}", repo=short, day=day, merged=per_day.get(day, 0)))
 
@@ -159,12 +159,12 @@ def main(out_dir, now=None):
         red_wf = 0
         for name, rs in by_wf.items():
             rs.sort(key=lambda r: r["createdAt"], reverse=True)
-            if rs[0]["conclusion"] != "failure":
+            if check_state(rs[0]) not in BAD:
                 continue
             red_wf += 1
             streak = 0
             for r in rs:
-                if r["conclusion"] != "failure":
+                if check_state(r) not in BAD:
                     break
                 streak += 1
             capped = streak == len(rs)

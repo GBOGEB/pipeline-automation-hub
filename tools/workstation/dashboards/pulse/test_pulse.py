@@ -82,7 +82,9 @@ def burndown_handler(args):
             return []
         run = lambda c, h, i: dict(workflowName="CI", conclusion=c, status="completed",  # noqa: E731
                                    createdAt=iso(0, hours=h), headSha="d" * 40, event="push", databaseId=i)
+        lint = lambda c, h, i: dict(run(c, h, i), workflowName="Lint")  # noqa: E731
         return [run("failure", 1, 3), run("failure", 2, 2), run("success", 3, 1),
+                lint("timed_out", 1, 6), lint("startup_failure", 2, 5),
                 dict(workflowName="Docs", conclusion="success", status="completed", createdAt=iso(0),
                      headSha="e" * 40, event="push", databaseId=4)]
     raise AssertionError(f"unexpected gh call: {args}")
@@ -132,11 +134,11 @@ class BurndownPulseTests(unittest.TestCase):
         self.assertEqual(prs[2]["stacked_on"], "PAH#1")
         self.assertEqual(prs[3]["next_step"], "Merge-ready (squash)")
         wf = [r for r in rows if r["kind"] == "wf"]
-        self.assertEqual([(r["workflow"], r["streak"], r["streak_note"]) for r in wf], [("CI", 2, "")])
+        self.assertEqual([(r["workflow"], r["streak"], r["streak_note"]) for r in wf], [("CI", 2, ""), ("Lint", 2, "or more")])
         repo = next(r for r in rows if r["kind"] == "repo" and r["repo"] == "PAH")
         self.assertEqual((repo["open_prs"], repo["merge_ready"], repo["merged_7d"], repo["merged_fpc_red_7d"]),
                          (3, 1, 1, 1))
-        self.assertEqual(len([r for r in rows if r["kind"] == "day"]), 8 * len(bp.REPOS))
+        self.assertEqual(len([r for r in rows if r["kind"] == "day"]), 7 * len(bp.REPOS))
         for args in fake.calls:
             bp.assert_read_only(args)
 
@@ -151,6 +153,11 @@ def fake_register(issues_by_repo):
 def issue(n, title, labels=(), idle_days=1):
     return dict(number=n, title=title, labels=list(labels), url=f"https://github.com/{PAH}/issues/{n}",
                 created_at_utc=iso(40), updated_at_utc=iso(idle_days))
+
+
+# Only "Closes #10" is a closure of a PAH issue: the ABACUS reference keeps its repository, the
+# negated one stays an association, and the fenced example is not a reference at all.
+PR20_BODY = "Closes #10\nCloses GBOGEB/ABACUS#11\nThis does not close #12.\n```\nCloses #14\n```\n"
 
 
 def issue_handler(args):
@@ -170,7 +177,7 @@ def issue_handler(args):
     if args[:2] == ["pr", "list"]:
         if opt(args, "-R") != PAH:
             return []
-        return [dict(number=20, title="fix: thing", body="Closes #10", isDraft=False,
+        return [dict(number=20, title="fix: thing", body=PR20_BODY, isDraft=False,
                      statusCheckRollup=[{"name": "tests", "conclusion": "FAILURE"}], closingIssuesReferences=[],
                      createdAt=iso(1), url=f"https://github.com/{PAH}/pull/20"),
                 dict(number=21, title="docs: see #12", body="", isDraft=False, statusCheckRollup=[],
@@ -201,6 +208,8 @@ class IssuePulseTests(unittest.TestCase):
         self.assertEqual(state[12][0], "pr-related")
         self.assertEqual(state[13][0], "parked")
         self.assertEqual(state[14][0], "stale")
+        edges20 = {r["issue"]: r["link"] for r in rows if r["kind"] == "edge" and r["pr"] == "PAH#20"}
+        self.assertEqual(edges20, {"PAH#10": "closes", "PAH#12": "mentions"})
         prs = {r["pr"]: r["link"] for r in rows if r["kind"] == "pr"}
         self.assertEqual(prs, {20: "closes", 21: "related"})
         repo = next(r for r in rows if r["kind"] == "repo" and r["repo"] == "PAH")
@@ -242,6 +251,8 @@ class RegisterSourceTests(unittest.TestCase):
                 f.write("MARK = 'uncommitted'\n")
             mod, sha = ip.load_register(clone, "HEAD")
         self.assertEqual(mod.MARK, "committed")
+        self.assertEqual([p for p in sys.path if "issue_register_" in p], [])
+        self.assertFalse(os.path.exists(os.path.dirname(mod.__file__)), "register scratch dir left behind")
         self.assertEqual(len(sha), 8)
 
 
