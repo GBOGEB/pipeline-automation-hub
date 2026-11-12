@@ -49,7 +49,8 @@
     pwsh -NoProfile -File tools/workstation/Invoke-PrFixInSitu.ps1 -Repo gg_MATH -Pr 128 -ResolveThread PRRT_kwDOS6bc6862X-7o -Note "gain reported as a proven interval"
     # reply with the fixing SHA and test evidence, resolve, read back
 #>
-[CmdletBinding()]
+# No positional binding: '-Prepare pipeline-automation-hub' must fail on the stray value, not bind it silently.
+[CmdletBinding(PositionalBinding = $false)]
 param(
     [string]   $Owner = 'GBOGEB',
     [string]   $Repo,
@@ -129,8 +130,11 @@ function Add-JsonRecords {
 }
 
 function Invoke-Git {
-    param([string] $Dir, [Parameter(ValueFromRemainingArguments)] [string[]] $GitArgs)
-    $out = & git -C $Dir @GitArgs 2>&1
+    # Invoke-Git <dir> <git args...>. No param block on purpose: git flags such as -g or -B must reach git
+    # untouched, never bind (by prefix) to a PowerShell parameter of this helper.
+    $dir = [string]$args[0]
+    $gitArgs = @($args | Select-Object -Skip 1 | ForEach-Object { [string]$_ })
+    $out = & git -C $dir @gitArgs 2>&1
     [pscustomobject]@{ Code = $LASTEXITCODE; Text = ($out | Out-String).TrimEnd() }
 }
 
@@ -155,9 +159,43 @@ function Get-ThreadPriority {
     'note'
 }
 
+function Get-CodexReviewState {
+    # The JSON after 'codex-review-state:v1' in Codex's summary comment, or $null.
+    param([string] $Body)
+    if ($Body -notmatch 'codex-review-state:v1\s*(\{.*?\})\s*-->') { return $null }
+    try { $Matches[1] | ConvertFrom-Json -Depth 10 } catch { $null }
+}
+
+function Test-CodexReviewDone {
+    param($State, [string] $Head)
+    if (-not $State -or -not $State.PSObject.Properties['code_review']) { return $false }
+    $cr = $State.code_review
+    [bool]($cr -and $cr.commit_sha -eq $Head -and $cr.status -eq 'completed')
+}
+
+function Get-WorktreeOnBranch {
+    # Path of the worktree that has $Branch checked out, from `git worktree list --porcelain` text.
+    param([string] $Porcelain, [string] $Branch)
+    foreach ($blk in ($Porcelain -split "`r?`n`r?`n")) {
+        if ($blk -match "(?m)^branch refs/heads/$([regex]::Escape($Branch))\s*$" -and $blk -match '(?m)^worktree (.+?)\s*$') {
+            return $Matches[1]
+        }
+    }
+    $null
+}
+
+function Test-BotAuthor {
+    # Bot-owned PRs: an app/bot author, or a branch namespace bots write to (dependabot/, renovate/).
+    param($Author, [string] $HeadRef)
+    $login = if ($Author) { [string]$Author.login } else { '' }
+    $isBot = $Author -and $Author.PSObject.Properties['is_bot'] -and $Author.is_bot
+    [bool]($isBot -or $login -match '\[bot\]$|^app/' -or $HeadRef -match '^(dependabot|renovate)/')
+}
+
 function Get-PrClass {
     param($Diag)
     if ($Diag.Fork)                                   { return 'NO_PUSH_FORK' }
+    if ($Diag.Bot)                                    { return 'NO_PUSH_BOT' }
     if ($Diag.Live)                                   { return 'LIVE' }
     if ($Diag.State -ne 'OPEN')                       { return 'NOT_OPEN' }
     if ($Diag.PushBlocked)                            { return 'PUSH_BLOCKED' }
@@ -174,6 +212,7 @@ function Get-NextStep {
     $base = "pwsh -NoProfile -File $Self -Owner $($Diag.Owner) -Repo $($Diag.Repo) -Pr $($Diag.Pr)"
     switch ($Class) {
         'NO_PUSH_FORK' { 'Fork PR: you cannot push to its branch. Comment the fix or open your own PR from a branch in this repo.' }
+        'NO_PUSH_BOT'  { 'Bot-owned PR (Dependabot, Renovate, an app): its tool rewrites the branch. Fix on your own branch and PR, or let the bot update.' }
         'LIVE'         { "Another session is working $($Diag.HeadRef). Leave it, or message that session first." }
         'NOT_OPEN'     { 'PR is not open. Nothing to fix in place.' }
         'PUSH_BLOCKED' {
@@ -276,9 +315,24 @@ if ($SelfTest) {
     Assert ($back.Count -eq 3 -and $back[2].n -eq 3) 'evidence file appends across runs (single record first)'
     Remove-Item $jf -ErrorAction SilentlyContinue
 
-    $d = [pscustomobject]@{ Fork = $false; Live = $false; State = 'OPEN'; PushBlocked = $true; Mergeable = 'CONFLICTING'
+    Assert (Test-BotAuthor ([pscustomobject]@{ login = 'app/dependabot'; is_bot = $true }) 'dependabot/pip/x') 'bot author detected'
+    Assert (-not (Test-BotAuthor ([pscustomobject]@{ login = 'GBOGEB'; is_bot = $false }) 'feat/x')) 'human author is not a bot'
+    Assert (Test-BotAuthor ([pscustomobject]@{ login = 'renovate[bot]' }) 'main-update') 'login ending [bot] is a bot'
+    $g = Invoke-Git ([IO.Path]::GetTempPath()) -c core.quotepath=false --version
+    Assert ($g.Code -eq 0 -and $g.Text -match '^git version') 'git flags pass through Invoke-Git unbound (-c, -g, -B)'
+    $porc = "worktree C:/main`nHEAD aaa`nbranch refs/heads/main`n`nworktree C:/wt/feat`nHEAD bbb`nbranch refs/heads/feat/x`n"
+    Assert ((Get-WorktreeOnBranch $porc 'feat/x') -eq 'C:/wt/feat') 'worktree found on its branch (multiline records)'
+    Assert ($null -eq (Get-WorktreeOnBranch $porc 'feat')) 'branch prefix does not match'
+    $sum = '<!-- codex-review-state:v1 {"code_review":{"commit_sha":"abc","has_any_findings":true,"status":"completed"},"security_review":{"commit_sha":null}} -->'
+    Assert (Test-CodexReviewDone (Get-CodexReviewState $sum) 'abc') 'completed review on this head'
+    Assert (-not (Test-CodexReviewDone (Get-CodexReviewState $sum) 'def')) 'review of another head does not count'
+    Assert (-not (Test-CodexReviewDone (Get-CodexReviewState ($sum -replace 'completed', 'in_progress')) 'abc')) 'in-progress review does not count'
+    $d = [pscustomobject]@{ Fork = $false; Bot = $false; Live = $false; State = 'OPEN'; PushBlocked = $true; Mergeable = 'CONFLICTING'
                             Threads = @(); FailingChecks = @(); PendingChecks = @() }
     Assert ((Get-PrClass $d) -eq 'PUSH_BLOCKED') 'push block outranks conflict'
+    $d.Bot = $true
+    Assert ((Get-PrClass $d) -eq 'NO_PUSH_BOT') 'bot-owned PR refuses writes before anything else but forks'
+    $d.Bot = $false
     $d.PushBlocked = $false
     Assert ((Get-PrClass $d) -eq 'CONFLICT') 'conflict class'
     $d.Mergeable = 'MERGEABLE'; $d.Threads = @([pscustomobject]@{ Priority = 'P1'; Outdated = $false })
@@ -327,7 +381,7 @@ $self = $PSCommandPath
 $statePath = Join-Path $ReportPath "prfix_$($Owner)_$($Repo)_$Pr.json"
 $state = Read-State $statePath
 
-$prInfo = Invoke-GhJson pr view $Pr -R $full --json 'number,title,state,isDraft,isCrossRepository,headRefName,headRefOid,baseRefName,mergeable,mergeStateStatus,url'
+$prInfo = Invoke-GhJson pr view $Pr -R $full --json 'number,title,state,isDraft,isCrossRepository,headRefName,headRefOid,baseRefName,mergeable,mergeStateStatus,url,author'
 $baseSha = (Invoke-GhJson api "repos/$full/commits/$($prInfo.baseRefName)").sha
 $rules = @(Invoke-GhJson api "repos/$full/rules/branches/$([uri]::EscapeDataString($prInfo.headRefName))")
 $blocks = @(Get-PushBlock $rules)
@@ -347,9 +401,12 @@ do {
     foreach ($node in @($conn.nodes)) { $threadNodes.Add($node) }
     $after = $conn.pageInfo.endCursor
 } while ($conn.pageInfo.hasNextPage)
-# FPC needs a completed Codex review on the exact head, and reviews are requested by hand (AGENTS.md).
-$codexOnHead = @((Invoke-GhJson api "repos/$full/pulls/$Pr/reviews?per_page=100") |
-    Where-Object { $_.commit_id -eq $prInfo.headRefOid -and $_.user.login -match 'codex' }).Count -gt 0
+# FPC needs a COMPLETED Codex review on the exact head, and reviews are requested by hand (AGENTS.md).
+# Completion comes from Codex's own summary state (codex-review-state:v1), not from a review object existing.
+$summaries = @(Invoke-GhJson api "repos/$full/issues/$Pr/comments?per_page=100" |
+    Where-Object { $_.user.login -match 'codex' -and $_.body -match 'codex-review-state:v1' })
+$codexState = if ($summaries.Count) { Get-CodexReviewState $summaries[-1].body } else { $null }
+$codexOnHead = Test-CodexReviewDone $codexState $prInfo.headRefOid
 $threads = @($threadNodes | Where-Object { -not $_.isResolved } | ForEach-Object {
     $c = $_.comments.nodes | Select-Object -First 1
     [pscustomobject]@{ Id = $_.id; Path = $_.path; Line = $_.line; Outdated = $_.isOutdated
@@ -360,25 +417,22 @@ $threads = @($threadNodes | Where-Object { -not $_.isResolved } | ForEach-Object
 # Live session: a worktree of -Clone on the head branch with uncommitted changes or a recent reflog entry.
 $live = $false; $branchWorktree = $null
 if ($Clone -and (Test-Path $Clone)) {
-    $wl = (Invoke-Git $Clone worktree list --porcelain).Text -split "`r?`n`r?`n"
-    foreach ($blk in $wl) {
-        if ($blk -match "branch refs/heads/$([regex]::Escape($prInfo.headRefName))(\s|$)" -and $blk -match '^worktree (.+)$') {
-            $path = ($blk -split "`r?`n")[0] -replace '^worktree ', ''
-            $branchWorktree = $path
-            $dirty = (Invoke-Git $path status --porcelain).Text
-            $last = (Invoke-Git $path log -g -1 --format=%ct).Text
-            $recent = $last -and ([DateTimeOffset]::UtcNow.ToUnixTimeSeconds() - [long]$last) -lt $LiveMinutes * 60
-            $here = (Resolve-Path $path).Path
-            $mine = ($state.worktree -and ((Resolve-Path $state.worktree -ErrorAction SilentlyContinue)?.Path -eq $here)) -or
-                    ($Worktree -and ((Resolve-Path $Worktree -ErrorAction SilentlyContinue)?.Path -eq $here))
-            if (($dirty -or $recent) -and -not $mine) { $live = $true }
-        }
+    $path = Get-WorktreeOnBranch ((Invoke-Git $Clone worktree list --porcelain).Text) $prInfo.headRefName
+    if ($path) {
+        $branchWorktree = $path
+        $dirty = (Invoke-Git $path status --porcelain).Text
+        $last = (Invoke-Git $path log -g -1 --format=%ct).Text
+        $recent = $last -and ([DateTimeOffset]::UtcNow.ToUnixTimeSeconds() - [long]$last) -lt $LiveMinutes * 60
+        $here = (Resolve-Path $path).Path
+        $mine = ($state['worktree'] -and ((Resolve-Path $state['worktree'] -ErrorAction SilentlyContinue)?.Path -eq $here)) -or
+                ($Worktree -and ((Resolve-Path $Worktree -ErrorAction SilentlyContinue)?.Path -eq $here))
+        if (($dirty -or $recent) -and -not $mine) { $live = $true }
     }
 }
 
 $diag = [pscustomobject]@{
     Owner = $Owner; Repo = $Repo; Pr = $Pr; Title = $prInfo.title; Url = $prInfo.url; State = $prInfo.state; Draft = $prInfo.isDraft
-    Fork = [bool]$prInfo.isCrossRepository; HeadRef = $prInfo.headRefName; HeadSha = $prInfo.headRefOid; BaseRef = $prInfo.baseRefName; BaseSha = $baseSha
+    Fork = [bool]$prInfo.isCrossRepository; Bot = (Test-BotAuthor $prInfo.author $prInfo.headRefName); HeadRef = $prInfo.headRefName; HeadSha = $prInfo.headRefOid; BaseRef = $prInfo.baseRefName; BaseSha = $baseSha
     Mergeable = $prInfo.mergeable; MergeState = $prInfo.mergeStateStatus
     Blocks = $blocks; PushBlocked = [bool](@($blocks | Where-Object Blocks).Count)
     FailingChecks = @($checks | Where-Object { $_.state -in 'FAILURE', 'ERROR', 'CANCELLED', 'TIMED_OUT' } | ForEach-Object { "$($_.name) $($_.link)" })
@@ -407,7 +461,7 @@ if (-not $codexOnHead -and $class -in 'CLEAN', 'RED', 'PENDING', 'THREAD') {
 
 $wantsWrite = $Prepare -or $Sync -or $Test -or $Publish -or $ResolveThread.Count
 if (-not $wantsWrite) { $diag | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $ReportPath "prfix_$($Owner)_$($Repo)_$($Pr)_diag.json") -Encoding utf8; exit 0 }
-if ($class -in 'NO_PUSH_FORK', 'LIVE', 'NOT_OPEN') { throw "Refusing write stages: class $class." }
+if ($class -in 'NO_PUSH_FORK', 'NO_PUSH_BOT', 'LIVE', 'NOT_OPEN') { throw "Refusing write stages: class $class." }
 if (($Publish) -and $diag.PushBlocked) { throw 'Refusing -Publish: a ruleset blocks direct pushes to this branch (see push rules above).' }
 
 # ---------------------------------------------------------------- prepare
@@ -440,7 +494,7 @@ if ($Prepare) {
     $ahead = (Invoke-Git $Worktree rev-list --count "$($diag.HeadSha)..HEAD").Text
     Write-Host "PREPARED $Worktree at $($head.Substring(0, 8)) ($ahead local commit(s) ahead of the PR head)"
 }
-if (-not $Worktree) { $Worktree = $state.worktree }
+if (-not $Worktree) { $Worktree = $state['worktree'] }
 if (-not $Worktree -or -not (Test-Path $Worktree)) { throw 'No worktree recorded; run -Prepare first.' }
 
 # ---------------------------------------------------------------- sync
@@ -452,10 +506,10 @@ if ($Sync) {
     switch ($s.Status) {
         'CONFLICT' {
             Write-Host "CONFLICT in $($s.Files.Count) file(s). The merge is left in progress in $Worktree. Resolve hunk by hand:"
-            $mb = (Invoke-Git $Worktree merge-base "origin/$($diag.BaseRef)" $state.expected_head).Text
+            $mb = (Invoke-Git $Worktree merge-base "origin/$($diag.BaseRef)" $state['expected_head']).Text
             foreach ($file in $s.Files) {
                 Write-Host "  $file"
-                Write-Host "    what the PR changed:  git -C `"$Worktree`" diff $($mb.Substring(0, 12)) $($state.expected_head.Substring(0, 12)) -- `"$file`""
+                Write-Host "    what the PR changed:  git -C `"$Worktree`" diff $($mb.Substring(0, 12)) $($state['expected_head'].Substring(0, 12)) -- `"$file`""
             }
             Write-Host "  never 'git checkout --ours/--theirs <file>' (drops the other side's hunks). Restore markers: git checkout -m -- <file>"
             Write-Host "  then: git -C `"$Worktree`" add <files>; git -C `"$Worktree`" commit --no-edit; and re-run with -Test `"<cmd>`" -Publish"
@@ -489,8 +543,8 @@ if ($Test) {
 
 if ($Publish) {
     $head = (Invoke-Git $Worktree rev-parse HEAD).Text
-    if (-not $state.test -or $state.test.exit -ne 0 -or $state.test.head -ne $head) { throw "Refusing -Publish: no passing -Test recorded on HEAD $($head.Substring(0, 8))." }
-    $why = Test-ExpectedHead -Dir $Worktree -Recorded $state.expected_head -Remote $diag.HeadSha
+    if (-not $state['test'] -or $state['test'].exit -ne 0 -or $state['test'].head -ne $head) { throw "Refusing -Publish: no passing -Test recorded on HEAD $($head.Substring(0, 8))." }
+    $why = Test-ExpectedHead -Dir $Worktree -Recorded $state['expected_head'] -Remote $diag.HeadSha
     if ($head -eq $diag.HeadSha) {
         # Already the PR head (for example an earlier -Publish whose readback timed out): nothing to push.
         Write-Host 'Nothing new to push: HEAD is already the PR head.'
@@ -526,28 +580,35 @@ if ($Publish) {
 if ($ResolveThread.Count) {
     if (-not $Note -or $Note.Trim().Length -lt 12) { throw '-ResolveThread needs -Note: a sentence saying what changed, or why the finding does not apply.' }
     $head = $diag.HeadSha
-    $tested = [bool]($state.test -and $state.test.exit -eq 0 -and $state.test.head -eq $head)
+    $tested = [bool]($state['test'] -and $state['test'].exit -eq 0 -and $state['test'].head -eq $head)
     if ($Classification -eq 'fixed' -and -not $tested) {
         throw "Refusing to resolve as fixed: no passing -Test recorded on the PR head $($head.Substring(0, 8)). Run -Test (and -Publish) first."
     }
-    $proofs = @()
+    $proofPath = Join-Path $ReportPath "prfix_$($Owner)_$($Repo)_$($Pr)_proofs.json"
+    $testCmd = if ($tested) { $state['test'].command } else { '' }
+    # Validate every id before the first write, so a typo cannot leave a half-processed batch.
+    $missing = @($ResolveThread | Where-Object { $id = $_; -not ($threads | Where-Object Id -eq $id) })
+    if ($missing.Count) { throw "Not unresolved threads on $full#${Pr}: $($missing -join ', '). Nothing was changed." }
     foreach ($id in $ResolveThread) {
         $t = $threads | Where-Object Id -eq $id
-        if (-not $t) { throw "Thread $id is not an unresolved thread on $full#$Pr." }
         $blob = (Invoke-Git $Worktree rev-parse "$($head):$($t.Path)").Text
         $verb = @{ fixed = 'Fixed in'; already_fixed = 'Already fixed at'; false_positive = 'Not applicable at' }[$Classification]
-        $verified = if ($tested) { "Verified: ``$($state.test.command)`` exit 0 on ``$head``." } else { 'No test run recorded for this disposition.' }
+        $verified = if ($tested) { "Verified: ``$($state['test'].command)`` exit 0 on ``$head``." } else { 'No test run recorded for this disposition.' }
         $body = "$verb $($head.Substring(0, 12)): $Note`n`n$verified`nEvidence: gbogeb.prfix.closure-evidence.v1 (Invoke-PrFixInSitu.ps1); MAROON adds item_id and discussion_hash before ledger closure."
         $reply = Invoke-GraphQL -Query 'mutation($id:ID!,$b:String!){addPullRequestReviewThreadReply(input:{pullRequestReviewThreadId:$id,body:$b}){comment{url}}}' -Variables @{ id = $id; b = $body }
         $url = $reply.data.addPullRequestReviewThreadReply.comment.url
-        $res = Invoke-GraphQL -Query 'mutation($id:ID!){resolveReviewThread(input:{threadId:$id}){thread{isResolved}}}' -Variables @{ id = $id }
-        if (-not $res.data.resolveReviewThread.thread.isResolved) { throw "Readback: thread $id is not resolved." }
-        $testCmd = if ($tested) { $state.test.command } else { '' }
-        $proofs += New-ClosureProof -RepoFull $full -Number $Pr -ThreadId $id -CommentId $t.CommentId -HeadSha $head -BaseSha $diag.BaseSha `
+        $record = New-ClosureProof -RepoFull $full -Number $Pr -ThreadId $id -CommentId $t.CommentId -HeadSha $head -BaseSha $diag.BaseSha `
             -BlobOids @{ $t.Path = $blob } -Classification $Classification -TestCommand $testCmd -Note $Note -ReplyUrl $url
+        # Persist each record as soon as its reply exists, so a later failure cannot lose earlier evidence.
+        try {
+            $res = Invoke-GraphQL -Query 'mutation($id:ID!){resolveReviewThread(input:{threadId:$id}){thread{isResolved}}}' -Variables @{ id = $id }
+            $record.resolved = [bool]$res.data.resolveReviewThread.thread.isResolved
+        } catch {
+            $record.resolved = $false; $record.resolve_error = "$_"
+        }
+        Add-JsonRecords -Path $proofPath -Records @($record)
+        if (-not $record.resolved) { throw "Replied to $id ($url) but it is not resolved: $($record.resolve_error). Evidence kept in $proofPath." }
         Write-Host "RESOLVED $id  $url"
     }
-    $proofPath = Join-Path $ReportPath "prfix_$($Owner)_$($Repo)_$($Pr)_proofs.json"
-    Add-JsonRecords -Path $proofPath -Records $proofs
     Write-Host "proofs: $proofPath"
 }
