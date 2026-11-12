@@ -8,7 +8,9 @@ disabled-by-default JADE hook.
 Kernel-executing tests fetch the pinned provider by exact SHA.  Offline they are
 skipped unless GGMATH_REQUIRE_PROVIDER=1 (set in CI), where a failed fetch fails.
 """
+import contextlib
 import copy
+import io
 import json
 import os
 import sys
@@ -75,6 +77,78 @@ class Binding(unittest.TestCase):
                 with self.assertRaises(gb.BridgeHold) as ctx:
                     gb.validate_binding(b)
                 self.assertEqual(ctx.exception.status, "DEFER_BINDING_INVALID")
+
+
+class StalePin(unittest.TestCase):
+    """check-stale reports pin age against the provider branch; offline via a stub fetcher."""
+
+    @staticmethod
+    def stub(payload=None, exc=None):
+        seen = []
+
+        def fetch(url):
+            seen.append(url)
+            if exc:
+                raise exc
+            return json.dumps(payload).encode("utf-8")
+        return fetch, seen
+
+    def test_compare_url_uses_exact_pin_and_branch(self):
+        fetch, seen = self.stub({"status": "identical", "ahead_by": 0, "commits": []})
+        rep = gb.check_stale(copy.deepcopy(BINDING), fetcher=fetch)
+        self.assertEqual(seen, [f"https://api.github.com/repos/GBOGEB/gg_MATH/compare/{BINDING['provider_sha']}...main"])
+        self.assertEqual((rep["status"], rep["behind_by"], rep["over_limit"]), ("CURRENT", 0, False))
+        self.assertFalse(rep["authority_transfer"])
+
+    def test_stale_is_report_only_unless_over_limit(self):
+        payload = {"status": "ahead", "ahead_by": 7, "commits": [{"sha": "a" * 40}]}
+        rep = gb.check_stale(copy.deepcopy(BINDING), fetcher=self.stub(payload)[0])
+        self.assertEqual((rep["status"], rep["behind_by"], rep["branch_head"], rep["over_limit"]),
+                         ("STALE", 7, "a" * 40, False))
+        self.assertTrue(gb.check_stale(copy.deepcopy(BINDING), max_behind=5, fetcher=self.stub(payload)[0])["over_limit"])
+        self.assertFalse(gb.check_stale(copy.deepcopy(BINDING), max_behind=7, fetcher=self.stub(payload)[0])["over_limit"])
+
+    def test_diverged_pin_is_always_over_limit(self):
+        rep = gb.check_stale(copy.deepcopy(BINDING), fetcher=self.stub({"status": "diverged", "ahead_by": 2})[0])
+        self.assertEqual((rep["status"], rep["over_limit"]), ("DIVERGED", True))
+
+    def test_fetch_failure_is_unknown_not_a_crash(self):
+        rep = gb.check_stale(copy.deepcopy(BINDING), fetcher=self.stub(exc=OSError("offline"))[0])
+        self.assertEqual((rep["status"], rep["behind_by"], rep["over_limit"]), ("UNKNOWN", None, False))
+
+    def test_cli_exit_codes(self):
+        with mock.patch.object(gb, "_api_fetch", self.stub({"status": "ahead", "ahead_by": 3})[0]), \
+                mock.patch.dict(os.environ, {"GITHUB_ACTIONS": ""}), \
+                contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(gb.main(["check-stale"]), 0)
+            self.assertEqual(gb.main(["check-stale", "--max-behind", "2"]), 3)
+
+    def test_actions_run_emits_a_warning_annotation(self):
+        out = io.StringIO()
+        with mock.patch.object(gb, "_api_fetch", self.stub({"status": "ahead", "ahead_by": 4})[0]), \
+                mock.patch.dict(os.environ, {"GITHUB_ACTIONS": "true"}), contextlib.redirect_stdout(out):
+            self.assertEqual(gb.main(["check-stale"]), 0)
+        self.assertIn("::warning title=gg_MATH pin STALE::", out.getvalue())
+        self.assertIn("4 commits behind main", out.getvalue())
+
+    def test_api_fetch_sends_token_only_when_set(self):
+        class Resp:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *exc):
+                return False
+
+            def read(self):
+                return b"{}"
+        for env, expect in (({"GH_TOKEN": "t0k"}, "Bearer t0k"), ({}, None)):
+            with self.subTest(env=sorted(env)), \
+                    mock.patch.dict(os.environ, {"GH_TOKEN": "", "GITHUB_TOKEN": "", **env}), \
+                    mock.patch.object(gb.urllib.request, "urlopen", return_value=Resp()) as op:
+                self.assertEqual(gb._api_fetch("https://api.github.com/x"), b"{}")
+                req = op.call_args.args[0]
+                self.assertEqual(req.get_header("Authorization"), expect)
+                self.assertEqual(req.get_header("X-github-api-version"), "2022-11-28")
 
 
 class DigestFailClosed(unittest.TestCase):
