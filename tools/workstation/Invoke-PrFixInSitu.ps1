@@ -102,6 +102,31 @@ function Invoke-GhJson {
     $r.Text | ConvertFrom-Json -Depth 50
 }
 
+function Invoke-GraphQL {
+    # Query and variables go in as a JSON file, so any text (quotes, newlines, long notes) survives the
+    # Windows command line intact.
+    param([string] $Query, [hashtable] $Variables)
+    $tmp = New-TemporaryFile
+    try {
+        @{ query = $Query; variables = $Variables } | ConvertTo-Json -Depth 10 -Compress | Set-Content -Path $tmp -Encoding utf8NoBOM
+        $r = Invoke-GhJson api graphql --input $tmp.FullName
+        if ($r.errors) { throw "GraphQL error: $(($r.errors | ForEach-Object message) -join '; ')" }
+        $r
+    } finally { Remove-Item $tmp -ErrorAction SilentlyContinue }
+}
+
+function Add-JsonRecords {
+    # Append records to a JSON array file (a lone object from an older run counts as one record).
+    param([string] $Path, [object[]] $Records)
+    $all = [System.Collections.Generic.List[object]]::new()
+    if (Test-Path $Path) {
+        $old = Get-Content $Path -Raw | ConvertFrom-Json -AsHashtable
+        if ($old -is [System.Collections.IList]) { $all.AddRange([object[]]$old) } elseif ($null -ne $old) { $all.Add($old) }
+    }
+    foreach ($r in $Records) { $all.Add($r) }
+    ConvertTo-Json -InputObject $all.ToArray() -Depth 10 | Set-Content $Path -Encoding utf8
+}
+
 function Invoke-Git {
     param([string] $Dir, [Parameter(ValueFromRemainingArguments)] [string[]] $GitArgs)
     $out = & git -C $Dir @GitArgs 2>&1
@@ -243,6 +268,12 @@ if ($SelfTest) {
     $seen = Invoke-WithoutTokens { [string]$env:GITHUB_TOKEN }
     Assert ($seen -eq '' -and $env:GITHUB_TOKEN -eq 'stale') 'token removed inside the block and restored after'
     Remove-Item Env:GITHUB_TOKEN
+    $jf = Join-Path ([IO.Path]::GetTempPath()) ("prfix_selftest_" + [guid]::NewGuid().ToString('N').Substring(0, 8) + '.json')
+    Add-JsonRecords -Path $jf -Records @([ordered]@{ n = 1 })
+    Add-JsonRecords -Path $jf -Records @([ordered]@{ n = 2 }, [ordered]@{ n = 3 })
+    $back = @(Get-Content $jf -Raw | ConvertFrom-Json)
+    Assert ($back.Count -eq 3 -and $back[2].n -eq 3) 'evidence file appends across runs (single record first)'
+    Remove-Item $jf -ErrorAction SilentlyContinue
 
     $d = [pscustomobject]@{ Fork = $false; Live = $false; State = 'OPEN'; PushBlocked = $true; Mergeable = 'CONFLICTING'
                             Threads = @(); FailingChecks = @(); PendingChecks = @() }
@@ -484,10 +515,9 @@ if ($ResolveThread.Count) {
         $verb = @{ fixed = 'Fixed in'; already_fixed = 'Already fixed at'; false_positive = 'Not applicable at' }[$Classification]
         $verified = if ($tested) { "Verified: ``$($state.test.command)`` exit 0 on ``$head``." } else { 'No test run recorded for this disposition.' }
         $body = "$verb $($head.Substring(0, 12)): $Note`n`n$verified`nEvidence: gbogeb.prfix.closure-evidence.v1 (Invoke-PrFixInSitu.ps1); MAROON adds item_id and discussion_hash before ledger closure."
-        $m = 'mutation($id:ID!,$b:String!){addPullRequestReviewThreadReply(input:{pullRequestReviewThreadId:$id,body:$b}){comment{url}}}'
-        $reply = Invoke-GhJson api graphql -f "query=$m" -f "id=$id" -f "b=$body"
+        $reply = Invoke-GraphQL -Query 'mutation($id:ID!,$b:String!){addPullRequestReviewThreadReply(input:{pullRequestReviewThreadId:$id,body:$b}){comment{url}}}' -Variables @{ id = $id; b = $body }
         $url = $reply.data.addPullRequestReviewThreadReply.comment.url
-        $res = Invoke-GhJson api graphql -f 'query=mutation($id:ID!){resolveReviewThread(input:{threadId:$id}){thread{isResolved}}}' -f "id=$id"
+        $res = Invoke-GraphQL -Query 'mutation($id:ID!){resolveReviewThread(input:{threadId:$id}){thread{isResolved}}}' -Variables @{ id = $id }
         if (-not $res.data.resolveReviewThread.thread.isResolved) { throw "Readback: thread $id is not resolved." }
         $testCmd = if ($tested) { $state.test.command } else { '' }
         $proofs += New-ClosureProof -RepoFull $full -Number $Pr -ThreadId $id -CommentId $t.CommentId -HeadSha $head -BaseSha $diag.BaseSha `
@@ -495,7 +525,6 @@ if ($ResolveThread.Count) {
         Write-Host "RESOLVED $id  $url"
     }
     $proofPath = Join-Path $ReportPath "prfix_$($Owner)_$($Repo)_$($Pr)_proofs.json"
-    $old = if (Test-Path $proofPath) { @(Get-Content $proofPath -Raw | ConvertFrom-Json -AsHashtable) } else { @() }
-    @($old + $proofs) | ConvertTo-Json -Depth 10 | Set-Content $proofPath -Encoding utf8
+    Add-JsonRecords -Path $proofPath -Records $proofs
     Write-Host "proofs: $proofPath"
 }
