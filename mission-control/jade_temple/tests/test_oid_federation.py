@@ -5,9 +5,12 @@ import copy
 import importlib.util
 import io
 import json
+import tempfile
+import os
 import unittest
 from contextlib import redirect_stdout
 from pathlib import Path
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 _spec = importlib.util.spec_from_file_location("oid_federation_under_test", ROOT / "tools" / "oid_federation.py")
@@ -106,11 +109,76 @@ class Crosswalk(unittest.TestCase):
         r = json.loads(out.getvalue())
         self.assertEqual(code, 0)
         self.assertEqual(r["wishbone"]["track_c"]["wave_count"], 9)
+        self.assertIn(r["gg_math_kernel"]["status"], ("OK", "UNKNOWN"))
 
     def test_dsm_and_cpm_are_not_reimplemented(self):
         # Owner decision 2026-11-12: gg_MATH kernels/dsm_makespan.py (GBOGEB/gg_MATH#128).
         for name in ("cpm", "dsm", "makespan_bounds"):
             self.assertFalse(hasattr(of, name), name)
+
+
+def fake_gg_math(tmp, schema=of.GG_MATH_SCHEMA, length=9.0):
+    kern = Path(tmp) / "kernels"
+    kern.mkdir()
+    (kern / "__init__.py").write_text("", encoding="utf-8", newline="\n")
+    (kern / "dsm_makespan.py").write_text(FAKE.format(schema=schema, length=length),
+                                          encoding="utf-8", newline="\n")
+    return Path(tmp)
+
+
+FAKE = 'SCHEMA = "{schema}"\n\n\ndef evaluate(lanes, workers):\n    return {{"schema": SCHEMA, "critical_path": {{"length": {length}, "total_work": float(len(lanes))}},\n            "workers": list(workers), "first": lanes[0]["id"]}}\n'
+
+
+class GgMathKernel(unittest.TestCase):
+    def pinned(self, root):
+        return of.gg_math_kernel(PREREQS, root, head=lambda r: of.GG_MATH_PIN)
+
+    def test_no_checkout_is_unknown_not_pass(self):
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("GG_MATH_ROOT", None)
+            g = of.gg_math_kernel(PREREQS)
+        self.assertEqual((g["status"], g["result"]), ("UNKNOWN", None))
+        self.assertIn("GG_MATH_ROOT", g["reason"])
+
+    def test_missing_kernel_is_unknown(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            g = self.pinned(tmp)
+        self.assertEqual(g["status"], "UNKNOWN")
+        self.assertIsNone(g["result"])
+
+    def test_wrong_commit_is_unknown(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            g = of.gg_math_kernel(PREREQS, fake_gg_math(tmp), head=lambda r: "0" * 40)
+        self.assertEqual((g["status"], g["result"]), ("UNKNOWN", None))
+        self.assertIn(of.GG_MATH_PIN, g["reason"])
+
+    def test_wrong_schema_is_unknown(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            g = self.pinned(fake_gg_math(tmp, schema="gg-math-dsm-makespan/v0"))
+        self.assertEqual((g["status"], g["result"]), ("UNKNOWN", None))
+
+    def test_pinned_owner_runs_with_lane_contract(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            g = self.pinned(fake_gg_math(tmp))
+        self.assertEqual(g["status"], "OK")
+        self.assertEqual(g["result"]["workers"], list(of.GG_MATH_WORKERS))
+        self.assertEqual(g["result"]["first"], next(iter(PREREQS)))  # insertion order kept
+        self.assertNotIn("kernels", __import__("sys").modules)     # no package leak
+
+    def test_owner_disagreeing_with_hub_waves_fails(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            g = self.pinned(fake_gg_math(tmp, length=8.0))
+        self.assertEqual(g["status"], "FAIL")
+
+    def test_real_pinned_checkout(self):
+        root = os.environ.get("GG_MATH_ROOT")
+        if not root:
+            self.skipTest("gg_math_kernel UNKNOWN: GG_MATH_ROOT not set (no pinned gg_MATH checkout)")
+        g = of.gg_math_kernel(PREREQS, root)
+        self.assertEqual(g["status"], "OK", g["reason"])
+        self.assertEqual(g["result"]["schema"], of.GG_MATH_SCHEMA)
+        self.assertEqual(g["result"]["critical_path"]["length"], 9.0)
+        self.assertEqual(g["result"]["n_lanes"], 14)
 
 
 if __name__ == "__main__":

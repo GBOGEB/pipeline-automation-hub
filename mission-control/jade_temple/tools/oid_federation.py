@@ -13,7 +13,8 @@ Waves come from devops/lifecycle.topo_layers through alkane_dag.waves, and the u
 critical path from tools/cicd_dag.critical_path; neither is re-implemented (AGENTS.md L4).
 New here: transitive reduction (muda prune) and the wishbone convergence check.
 DSM, CPM slack and makespan are owned by gg_MATH kernels/dsm_makespan.py
-(GBOGEB/gg_MATH#128); this module does not compute them.
+(GBOGEB/gg_MATH#128); gg_math_kernel() loads it from a checkout of the pinned
+commit (GG_MATH_ROOT) and reports UNKNOWN, with no numbers, when that is absent.
 
 MIP means Modernize / Innovate / Perpetuate (LEVEL1.md). Perpetuate is the control
 step that links MIP to DMAIC Control: immutable, idempotent, recursive lineage kept
@@ -30,6 +31,7 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -45,6 +47,14 @@ FOLDERS = ("00_CONTROL", "01_DROPBOX_IN", "02_HANDOVER_LEDGER", "03_REPOS_MIRROR
 STATUSES = ("owned", "open_pr", "parked")
 MIP_STEPS = ("modernize", "innovate", "perpetuate")
 PERPETUATE_PROPERTIES = ("immutable", "idempotent", "recursive_lineage", "mycelium_golden_thread")
+
+# DSM / CPM / makespan owner (decision 2026-11-12): gg_MATH kernels/dsm_makespan.py, merged in
+# GBOGEB/gg_MATH#128. Loaded from a checkout of exactly this commit (GG_MATH_ROOT); anything else
+# is reported as UNKNOWN, never as a pass and never as numbers.
+GG_MATH_REPO = "GBOGEB/gg_MATH"
+GG_MATH_PIN = "0d7725b1942d16dbed73ddc33604ef0bc1649cce"
+GG_MATH_SCHEMA = "gg-math-dsm-makespan/v1"
+GG_MATH_WORKERS = (1, 2, 4)
 
 
 def _load(name: str, rel: str):
@@ -113,6 +123,71 @@ def wishbone(prereqs: dict[str, list[str]]) -> dict:
                     "edges_after": edges - len(dropped), "dag": reduced,
                     "wave_count": a["wave_count"], "waves": a["waves"]},
     }
+
+
+# ---------------------------------------------------------------- gg_MATH owner (pinned)
+
+def _git_head(root: Path) -> str | None:
+    try:
+        out = subprocess.run(["git", "-C", str(root), "rev-parse", "HEAD"],
+                             capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return out.stdout.strip() if out.returncode == 0 else None
+
+
+def _import_kernel(root: Path):
+    """Import kernels.dsm_makespan from `root` without leaking its `kernels` package."""
+    def ours(k: str) -> bool:
+        return k == "kernels" or k.startswith("kernels.")
+
+    saved = {k: sys.modules.pop(k) for k in list(sys.modules) if ours(k)}
+    sys.path.insert(0, str(root))
+    try:
+        return importlib.import_module("kernels.dsm_makespan")
+    finally:
+        sys.path.remove(str(root))
+        for k in [k for k in sys.modules if ours(k)]:
+            sys.modules.pop(k)
+        sys.modules.update(saved)
+
+
+def gg_math_kernel(prereqs: dict[str, list[str]], root: str | Path | None = None,
+                   durations: dict[str, float] | None = None, head=_git_head) -> dict:
+    """DSM / CPM / makespan from the pinned gg_MATH owner, or an explicit coverage gap.
+
+    status OK: the checkout is exactly GG_MATH_PIN and `result` is its evaluate() output.
+    status UNKNOWN: no checkout, wrong commit, missing kernel or wrong schema; no numbers.
+    status FAIL: the owner ran, but its unit-weight critical path disagrees with the hub's
+    wave count (both must count the same longest chain)."""
+    out = {"status": "UNKNOWN", "repo": GG_MATH_REPO, "pin": GG_MATH_PIN, "reason": None,
+           "result": None}
+    root = root or os.environ.get("GG_MATH_ROOT")
+    if not root:
+        out["reason"] = "GG_MATH_ROOT not set: no gg_MATH checkout"
+        return out
+    root = Path(root)
+    if not (root / "kernels" / "dsm_makespan.py").is_file():
+        out["reason"] = f"{root}: kernels/dsm_makespan.py not found"
+        return out
+    got = head(root)
+    if got != GG_MATH_PIN:
+        out["reason"] = f"gg_MATH checkout at {got or 'unknown commit'}, pin is {GG_MATH_PIN}"
+        return out
+    dm = _import_kernel(root)
+    if getattr(dm, "SCHEMA", None) != GG_MATH_SCHEMA:
+        out["reason"] = f"schema {getattr(dm, 'SCHEMA', None)!r} != {GG_MATH_SCHEMA}"
+        return out
+    lanes = [{"id": k, "cost": float((durations or {}).get(k, 1.0)), "deps": list(v)}
+             for k, v in prereqs.items()]
+    result = dm.evaluate(lanes, workers=list(GG_MATH_WORKERS))
+    out.update(status="OK", result=result)
+    if durations is None:
+        waves = schedule(prereqs)["wave_count"]
+        length = result["critical_path"]["length"]
+        if length != waves:
+            out.update(status="FAIL", reason=f"gg_MATH unit critical path {length:g} != hub waves {waves}")
+    return out
 
 
 # ---------------------------------------------------------------- crosswalk
@@ -193,7 +268,7 @@ def build(doc: dict, nodes: dict) -> dict:
     prereqs = {k: list(n.get("depends_on") or []) for k, n in nodes.items()}
     errs, bound = check(doc, nodes)
     return {"schema": "jade.temple.oid-federation.v1", "errors": errs, "owners": bound,
-            "wishbone": wishbone(prereqs)}
+            "wishbone": wishbone(prereqs), "gg_math_kernel": gg_math_kernel(prereqs)}
 
 
 def main(argv=None) -> int:
@@ -219,10 +294,19 @@ def main(argv=None) -> int:
         print(f"track C: {c['edges_before']} -> {c['edges_after']} edges, "
               f"{c['wave_count']} waves, converged={c['converged']}, "
               f"idempotent={c['idempotent']}")
+        g = r["gg_math_kernel"]
+        if g["status"] == "OK":
+            cp = g["result"]["critical_path"]
+            print(f"gg_math_kernel: OK @ {GG_MATH_PIN[:12]} critical path {cp['length']:g}, "
+                  f"work {cp['total_work']:g}")
+        else:
+            print(f"gg_math_kernel: {g['status']} ({g['reason']})")
         for e in r["errors"]:
             print(f"FAIL {e}")
     if not r["wishbone"]["track_c"]["converged"]:
         return 2
+    if r["gg_math_kernel"]["status"] == "FAIL":
+        return 1
     return 1 if r["errors"] else 0
 
 
