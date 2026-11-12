@@ -5,9 +5,14 @@ import datetime as dt
 import hashlib
 import importlib.util
 import json
+import os
 import re
+import shutil
+import tempfile
 import unittest
+import zipfile
 from pathlib import Path
+from unittest import mock
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[4]
@@ -89,6 +94,72 @@ class SourceBoundP0009(unittest.TestCase):
         self.assertEqual(AUDIT["owner_issue"], "https://github.com/GBOGEB/pipeline-automation-hub/issues/336")
         self.assertEqual(GRAPH["owner_scope"]["HUB_RULE_EFFECTIVE"], "ADMIN_ONLY")
         self.assertEqual(GRAPH["owner_scope"]["GEM_12_IC3"], "GOOGLE_GITHUB_OWNER")
+
+
+def _builder():
+    spec = importlib.util.spec_from_file_location("gmic_p0009_build", HERE / "build_p0009.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+class ReproducibleRelease(unittest.TestCase):
+    """Equal sources give byte-equal ZIPs; a changed source changes the hash."""
+
+    SOURCES = ("POSTMERGE_AUDIT.json", "DAG.json", "DAG.mmd",
+               "README.md", "test_p0009.py", "build_p0009.py")
+
+    def setUp(self):
+        self.builder = _builder()
+        self.tmp = Path(tempfile.mkdtemp(prefix="gmic_p0009_"))
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        patcher = mock.patch.dict(os.environ)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        os.environ.pop("SOURCE_DATE_EPOCH", None)
+
+    def _sha(self, archive):
+        return hashlib.sha256(archive.read_bytes()).hexdigest()
+
+    def test_two_builds_at_different_times_are_byte_identical(self):
+        with mock.patch("time.time", return_value=1_700_000_000.0):
+            first = self.builder.build(self.tmp / "a")
+        with mock.patch("time.time", return_value=1_800_000_000.0):
+            second = self.builder.build(self.tmp / "b")
+        self.assertEqual(self._sha(first), self._sha(second))
+        receipt = (first.parent / (first.name + ".sha256")).read_bytes()
+        self.assertEqual(receipt, (second.parent / (second.name + ".sha256")).read_bytes())
+        self.assertEqual(receipt, f"{self._sha(first)}  {first.name}\n".encode("ascii"))
+        with zipfile.ZipFile(first) as archive:
+            infos = archive.infolist()
+            self.assertEqual([i.filename for i in infos], sorted(i.filename for i in infos))
+            for info in infos:
+                with self.subTest(entry=info.filename):
+                    self.assertEqual(info.date_time, (1980, 1, 1, 0, 0, 0))
+                    self.assertEqual(info.compress_type, zipfile.ZIP_DEFLATED)
+                    self.assertEqual(info.create_system, 3)
+                    self.assertEqual(info.external_attr, 0o100644 << 16)
+
+    def test_changed_source_changes_hash(self):
+        src = self.tmp / "src"
+        src.mkdir()
+        for name in self.SOURCES:
+            shutil.copyfile(HERE / name, src / name)
+        base = self._sha(self.builder.build(self.tmp / "base", src))
+        with (src / "README.md").open("a", encoding="utf-8", newline="\n") as stream:
+            stream.write("\nchanged\n")
+        changed = self._sha(self.builder.build(self.tmp / "changed", src))
+        self.assertNotEqual(base, changed)
+
+    def test_source_date_epoch_sets_entry_time_and_is_clamped(self):
+        os.environ["SOURCE_DATE_EPOCH"] = "1700000000"  # 2023-11-14T22:13:20Z
+        with zipfile.ZipFile(self.builder.build(self.tmp / "sde")) as archive:
+            self.assertEqual({i.date_time for i in archive.infolist()},
+                             {(2023, 11, 14, 22, 13, 20)})
+        os.environ["SOURCE_DATE_EPOCH"] = "0"
+        with zipfile.ZipFile(self.builder.build(self.tmp / "clamp")) as archive:
+            self.assertEqual({i.date_time for i in archive.infolist()},
+                             {(1980, 1, 1, 0, 0, 0)})
 
 
 if __name__ == "__main__":

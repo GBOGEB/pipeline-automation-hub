@@ -6,15 +6,37 @@ import csv
 import hashlib
 import html
 import json
+import os
+import time
 import zipfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+# ZIP's DOS timestamp cannot go below 1980-01-01; it is the reproducible default.
+ZIP_EPOCH = (1980, 1, 1, 0, 0, 0)
 
 
-def build(out: Path) -> Path:
+def _zip_date_time() -> tuple[int, int, int, int, int, int]:
+    """Entry timestamp: SOURCE_DATE_EPOCH (UTC, clamped to 1980) or 1980-01-01."""
+    raw = os.environ.get("SOURCE_DATE_EPOCH", "").strip()
+    if not raw:
+        return ZIP_EPOCH
+    stamp = time.gmtime(int(raw))[:6]
+    return max(stamp, ZIP_EPOCH)
+
+
+def _zip_entry(name: str, date_time: tuple[int, int, int, int, int, int]) -> zipfile.ZipInfo:
+    """Fixed per-entry metadata, so equal inputs give equal bytes on any host."""
+    info = zipfile.ZipInfo(name, date_time=date_time)
+    info.compress_type = zipfile.ZIP_DEFLATED
+    info.create_system = 3  # Unix; ZipInfo defaults to 0 on Windows hosts.
+    info.external_attr = 0o100644 << 16  # regular file, rw-r--r--
+    return info
+
+
+def build(out: Path, src: Path = HERE) -> Path:
     out.mkdir(parents=True, exist_ok=True)
-    evidence = json.loads((HERE / "POSTMERGE_AUDIT.json").read_text(encoding="utf-8"))
+    evidence = json.loads((src / "POSTMERGE_AUDIT.json").read_text(encoding="utf-8"))
     cols = ["number", "head_sha", "merge_commit_sha", "merged_at",
             "fpc_failure_at", "fpc_failure_run", "approved_review_count",
             "historical_outcome"]
@@ -52,7 +74,7 @@ draw(current);
     (out / "index.html").write_text(page, encoding="utf-8", newline="\n")
     names = ["POSTMERGE_AUDIT.json", "DAG.json", "DAG.mmd",
              "README.md", "test_p0009.py", "build_p0009.py"]
-    sources = {name: (HERE / name).read_bytes() for name in names}
+    sources = {name: (src / name).read_bytes() for name in names}
     sources["PR_MERGE_MATRIX.csv"] = (out / "PR_MERGE_MATRIX.csv").read_bytes()
     sources["index.html"] = (out / "index.html").read_bytes()
     manifest = {
@@ -66,9 +88,10 @@ draw(current);
     sources["RELEASE_MANIFEST.json"] = (
         json.dumps(manifest, sort_keys=True, indent=2) + "\n").encode()
     archive = out / "GMIC_P0009_POSTMERGE_EVIDENCE.zip"
+    date_time = _zip_date_time()
     with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as output:
         for name, value in sorted(sources.items()):
-            output.writestr(name, value)
+            output.writestr(_zip_entry(name, date_time), value, compresslevel=9)
     digest = hashlib.sha256(archive.read_bytes()).hexdigest()
     (out / (archive.name + ".sha256")).write_text(
         f"{digest}  {archive.name}\n", encoding="utf-8", newline="\n")
