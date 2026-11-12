@@ -192,15 +192,18 @@ def expand(paths: list[str], excludes: list[str]) -> list[Path]:
     return result
 
 
-def git_blob_oids(files: list[Path], root: Path = ROOT) -> dict[str, Path]:
-    """{blob OID: file} for the given files, as `git hash-object` computes them."""
+def git_blob_oids(files: list[Path], root: Path = ROOT) -> dict[str, list[Path]]:
+    """{blob OID: [files]} for the given files, as `git hash-object` computes them.
+
+    Identical files share one OID, so each OID keeps every file that hashes to it.
+    """
     # One call per file, run from the file's own folder: git applies that repo's clean filters (so a
     # CRLF checkout still hashes to the committed blob) and files outside any repo hash raw.
-    oids = {}
+    oids: dict[str, list[Path]] = {}
     for f in files:
         out = subprocess.run(["git", "hash-object", "--", f.name], cwd=f.resolve().parent,
                              capture_output=True, text=True, check=True)
-        oids[out.stdout.strip()] = f
+        oids.setdefault(out.stdout.strip(), []).append(f)
     return oids
 
 
@@ -225,15 +228,16 @@ def frozen_blobs(files: list[Path], root: Path = ROOT) -> dict[Path, list[str]]:
         raise RuntimeError(f"git grep failed: {out.stderr.strip()}")
     hits = [h for h in out.stdout.splitlines() if h]
     result: dict[Path, list[str]] = {}
-    for oid, wf in oids.items():
-        own = wf.resolve()
-        pinners = []
-        for h in hits:
-            hp = (root / h).resolve()
-            if hp != own and oid in read_text(hp):
-                pinners.append(h)
-        if pinners:
-            result[wf] = sorted(pinners)
+    for oid, wfs in oids.items():
+        for wf in wfs:
+            own = wf.resolve()
+            pinners = []
+            for h in hits:
+                hp = (root / h).resolve()
+                if hp != own and oid in read_text(hp):
+                    pinners.append(h)
+            if pinners:
+                result[wf] = sorted(pinners)
     return result
 
 

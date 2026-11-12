@@ -204,6 +204,13 @@ class FrozenBlobTests(unittest.TestCase):
         want = hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
         self.assertEqual(list(pa.git_blob_oids([self.free], self.root)), [want])
 
+    def test_scan_keeps_every_file_sharing_a_blob(self):
+        twin = self.frozen.with_name("twin.yml")
+        twin.write_bytes(self.frozen.read_bytes())
+        frozen = pa.frozen_blobs([self.frozen, twin, self.free], self.root)
+        self.assertEqual(sorted(frozen), sorted([self.frozen, twin]))
+        self.assertEqual(frozen[twin], ["lineage.json"])
+
     def test_scan_lists_only_pinned_file(self):
         frozen = pa.frozen_blobs([self.frozen, self.free], self.root)
         self.assertEqual(list(frozen), [self.frozen])
