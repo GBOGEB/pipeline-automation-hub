@@ -437,18 +437,30 @@ if ($Publish) {
     $head = (Invoke-Git $Worktree rev-parse HEAD).Text
     if (-not $state.test -or $state.test.exit -ne 0 -or $state.test.head -ne $head) { throw "Refusing -Publish: no passing -Test recorded on HEAD $($head.Substring(0, 8))." }
     $why = Test-ExpectedHead -Dir $Worktree -Recorded $state.expected_head -Remote $diag.HeadSha
-    if ($why) { throw "Refusing -Publish: $why" }
-    if ($head -eq $diag.HeadSha) { Write-Host 'Nothing new to push: HEAD is already the PR head.' }
-    else {
+    if ($head -eq $diag.HeadSha) {
+        # Already the PR head (for example an earlier -Publish whose readback timed out): nothing to push.
+        Write-Host 'Nothing new to push: HEAD is already the PR head.'
+        $state.expected_head = $head
+    } else {
+        if ($why) { throw "Refusing -Publish: $why" }
         $wt = $Worktree; $ref = $diag.HeadRef
         $p = Invoke-WithoutTokens { Invoke-Git $wt push origin "HEAD:refs/heads/$ref" }
         if ($p.Code -ne 0) {
             if ($p.Text -match 'GH013|repository rule') { throw "Push rejected by a repository rule (GH013). $(Get-NextStep 'PUSH_BLOCKED' $diag $self)" }
             throw "push failed: $($p.Text)"
         }
-        $back = (Invoke-GhJson pr view $Pr -R $full --json headRefOid).headRefOid
-        if ($back -ne $head) { throw "Readback: PR head is $back, expected $head." }
-        $state.expected_head = $head
+        $state.expected_head = $head; $state.published = @{ head = $head; at = (Get-Date).ToString('o'); readback = 'pending' }
+        Save-State $statePath $state
+        # The branch updates at once; the PR's head can lag a few seconds behind it.
+        $remote = ((Invoke-WithoutTokens { Invoke-Git $wt ls-remote origin "refs/heads/$ref" }).Text -split '\s')[0]
+        if ($remote -ne $head) { throw "Readback: branch $ref is at $remote, expected $head." }
+        $back = $null
+        foreach ($i in 1..15) {
+            $back = (Invoke-GhJson pr view $Pr -R $full --json headRefOid).headRefOid
+            if ($back -eq $head) { break }
+            Start-Sleep -Seconds 2
+        }
+        if ($back -ne $head) { throw "Readback: branch is at $head but the PR still shows $back after 30 s; re-run -Publish to confirm." }
     }
     $state.published = @{ head = $head; at = (Get-Date).ToString('o') }
     Save-State $statePath $state
