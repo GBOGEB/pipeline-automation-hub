@@ -1058,7 +1058,8 @@ def is_parked(node: dict) -> bool:
 
 
 def rank(snap: dict, now: float | None = None, overlay: dict | None = None,
-         draws: int = MC_DRAWS, seed: int = MC_SEED) -> dict:
+         draws: int = MC_DRAWS, seed: int = MC_SEED,
+         criterion_history: dict | None = None) -> dict:
     g = build_graph(snap)
     nodes, edges = g["nodes"], g["edges"]
     names = sorted(nodes)
@@ -1121,6 +1122,11 @@ def rank(snap: dict, now: float | None = None, overlay: dict | None = None,
             "priority": prio, "priority_basis": basis,
             "overlay": (overlay or {}).get(k),
         })
+    if criterion_history is not None:
+        provenance = criterion_provenance(criterion_history, nodes, snap)
+        for item in items:
+            item["criterion_provenance"] = provenance.get(item["key"], {
+                "status": "UNKNOWN_NOT_CAPTURED", "closure_credit": 0})
     associated = tt.associated_families(items, edges, max_hops=2)
     for item in items:
         item["title_taxonomy"]["related_families"] = associated[item["key"]]
@@ -1359,6 +1365,172 @@ def _criterion_inventory(checklist: dict) -> dict | None:
     return dict(inventory)
 
 
+CRITERION_PROVENANCE_SCHEMA = "jade.issue-criterion.provenance-input.v1"
+
+
+def criterion_provenance(evidence: dict, nodes: dict, snap: dict) -> dict:
+    """Bind retained bytes and explicit declarations; never attest their authority.
+
+    Public issues only in v1. Raw historical bodies are consumed by the existing
+    parser and never projected. Git blob/SHA256 agreement proves byte identity,
+    not remote custody, capture time, authorship, review or original intent.
+    """
+    def demand(condition, code):
+        if not condition:
+            raise ValueError("CRITERION_PROVENANCE_" + code)
+
+    demand(isinstance(evidence, dict) and evidence.get("schema") == CRITERION_PROVENANCE_SCHEMA,
+           "SCHEMA")
+    histories = evidence.get("histories")
+    demand(isinstance(histories, list), "HISTORIES")
+    seen, result = set(), {}
+    for history in histories:
+        demand(isinstance(history, dict) and isinstance(history.get("key"), str), "ISSUE_KEY")
+        k = history["key"]
+        demand(k not in seen, "DUPLICATE_ISSUE")
+        seen.add(k)
+        node = nodes.get(k)
+        demand(isinstance(node, dict) and node.get("type") == "Issue" and not node.get("stub"),
+               "UNKNOWN_ISSUE")
+        base = {"schema": "jade.issue-criterion.provenance.v1", "closure_credit": 0,
+                "grade": "DECLARED_PROVENANCE_NOT_QUALIFIED", "remote_custody_verified": False,
+                "origin_authenticity_verified": False}
+        if node.get("private") is not False:
+            result[k] = {**base, "status": "WITHHELD_PRIVATE_SCOPE"}
+            continue
+        try:
+            result[k] = {**base, **_bind_criterion_history(history, node, snap, demand)}
+        except ValueError as exc:
+            code = str(exc)
+            if not code.startswith("CRITERION_PROVENANCE_"):
+                raise
+            result[k] = {**base, "status": ("WITHHELD_SOURCE_SCOPE" if code.endswith("SOURCE_SCOPE")
+                                           else "INVALID_EVIDENCE"), "reason": code}
+    return result
+
+
+def _bind_criterion_history(history: dict, node: dict, snap: dict, demand) -> dict:
+    """Validate one public issue's content-bound origin and adjacent transitions."""
+    public = {r for r, meta in snap["repos"].items() if meta.get("private") is False}
+
+    def timestamp(value):
+        demand(isinstance(value, str), "TIMESTAMP")
+        try:
+            stamp = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        except ValueError:
+            demand(False, "TIMESTAMP")
+        demand(stamp.utcoffset() is not None, "TIMESTAMP_ZONE")
+        return stamp.timestamp()
+
+    def digest(value, size):
+        return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{%d}" % size, value) is not None
+
+    def citation(value):
+        match = re.fullmatch(
+            r"https://github\.com/([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)/(issues|pull)/([1-9][0-9]*)"
+            r"(?:#(?:issuecomment-[0-9]+|discussion_r[0-9]+))?", value) if isinstance(value, str) else None
+        demand(match is not None, "CITATION")
+        demand(match.group(1) in public, "SOURCE_SCOPE")
+        return match
+
+    basis = history.get("origin_basis")
+    demand(basis in ("CREATION_RESPONSE_CAPTURE", "FIRST_OBSERVED"), "ORIGIN_BASIS")
+    revisions, links = history.get("snapshots"), history.get("links")
+    demand(isinstance(revisions, list) and bool(revisions) and isinstance(links, list), "SHAPE")
+    ids, inventories, metadata = [], [], []
+    all_ids, first_seen = set(), {}
+    prior_time = None
+    for index, revision in enumerate(revisions):
+        demand(isinstance(revision, dict), "SNAPSHOT")
+        rid, body, source = revision.get("id"), revision.get("body"), revision.get("source")
+        demand(revision.get("source_visibility") == "PUBLIC", "SOURCE_SCOPE")
+        demand(isinstance(rid, str) and re.fullmatch(r"[A-Za-z0-9_-]{1,64}", rid) is not None
+               and rid not in ids, "SNAPSHOT_ID")
+        demand(isinstance(body, str) and digest(revision.get("body_sha256"), 64), "BODY")
+        encoded = body.encode("utf-8")
+        demand(sha256(encoded) == revision["body_sha256"], "BODY_DIGEST")
+        demand(isinstance(source, dict) and set(source) == {"repo", "blob_sha"}, "SOURCE")
+        demand(source["repo"] in public if isinstance(source.get("repo"), str) else False, "SOURCE_SCOPE")
+        demand(digest(source.get("blob_sha"), 40), "BLOB_SHA")
+        # Git's SHA1 object name is an addressing format, not an authenticity primitive.
+        blob = hashlib.sha1(b"blob " + str(len(encoded)).encode("ascii") + b"\0" + encoded,
+                            usedforsecurity=False).hexdigest()
+        demand(blob == source["blob_sha"], "BLOB_DIGEST")
+        observed = timestamp(revision.get("observed_at"))
+        demand(prior_time is None or observed > prior_time, "CHRONOLOGY")
+        demand(timestamp(node["created_at"]) <= observed <= timestamp(snap["fetched_at"]), "TIME_SCOPE")
+        prior_time = observed
+        inventory = _criterion_inventory(parse_checklist(body))
+        demand(inventory is not None, "INVENTORY")
+        ids.append(rid)
+        inventories.append(inventory)
+        all_ids.update(inventory)
+        for identity in inventory:
+            first_seen.setdefault(identity, rid)
+        metadata.append({"id": rid, "observed_at": revision["observed_at"],
+                         "source_visibility": "PUBLIC",
+                         "body_sha256": revision["body_sha256"], "source": dict(source),
+                         "source_url": f"https://api.github.com/repos/{source['repo']}/git/blobs/{blob}"})
+    demand(sha256((node.get("body") or "").encode("utf-8")) == revisions[-1]["body_sha256"],
+           "STALE_CURRENT_BODY")
+    origin, current = inventories[0], inventories[-1]
+    introduced, successors, predecessors, normalized = {}, {}, {}, []
+    for link in links:
+        demand(isinstance(link, dict) and link.get("kind") in ("INTRODUCED_BY", "SUPERSEDES"), "LINK_KIND")
+        rid = link.get("snapshot")
+        demand(isinstance(rid, str) and rid in ids and ids.index(rid) > 0, "LINK_SNAPSHOT")
+        position = ids.index(rid)
+        before, after = inventories[position - 1], inventories[position]
+        cite = citation(link.get("evidence_url"))
+        kind = link["kind"]
+        if kind == "INTRODUCED_BY":
+            identity, pr = link.get("criterion_sha256"), link.get("pr")
+            demand(digest(identity, 64) and identity in after and first_seen[identity] == rid
+                   and sum(after[identity].values()) == 1, "INTRODUCTION_TRANSITION")
+            demand(identity not in introduced, "DUPLICATE_INTRODUCTION")
+            demand(isinstance(pr, dict) and set(pr) == {"repo", "number", "head_sha"}, "PR")
+            demand(isinstance(pr["repo"], str) and pr["repo"] in public, "SOURCE_SCOPE")
+            demand(type(pr["number"]) is int and pr["number"] > 0 and digest(pr["head_sha"], 40), "PR_IDENTITY")
+            demand((cite.group(1), cite.group(2), int(cite.group(3))) ==
+                   (pr["repo"], "pull", pr["number"]), "PR_CITATION_MISMATCH")
+            introduced[identity] = {"pr": dict(pr), "snapshot": rid, "evidence_url": link["evidence_url"]}
+            normalized.append({"kind": kind, "criterion_sha256": identity, **introduced[identity]})
+        else:
+            old, new = link.get("from"), link.get("to")
+            demand(digest(old, 64) and digest(new, 64) and old != new, "SUPERSESSION_IDENTITY")
+            demand(old in before and old not in after and new not in before and new in after
+                   and sum(before[old].values()) == sum(after[new].values()) == 1,
+                   "SUPERSESSION_TRANSITION")
+            demand(old not in successors and new not in predecessors, "SUPERSESSION_CONFLICT")
+            successors[old], predecessors[new] = new, old
+            normalized.append({"kind": kind, "from": old, "to": new,
+                               "snapshot": rid, "evidence_url": link["evidence_url"]})
+    path = HERE.parent / "jade_temple" / "devops" / "lifecycle.py"
+    spec = importlib.util.spec_from_file_location("criterion_lifecycle", path)
+    lifecycle = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(lifecycle)
+    try:
+        layers = lifecycle.topo_layers(sorted(all_ids), [(a, b, "FEEDFORWARD") for a, b in successors.items()])
+    except ValueError:
+        demand(False, "SUPERSESSION_CYCLE")
+    criteria = []
+    for identity in sorted(all_ids):
+        states = current.get(identity, {})
+        criteria.append({"criterion_sha256": identity, "present_at_origin": identity in origin,
+                         "first_observed_snapshot": first_seen[identity],
+                         "current_occurrences": sum(states.values()),
+                         "current_states": [{"kind": k, "state": s, "count": n}
+                                            for (k, s), n in sorted(states.items())],
+                         "introduced_by": introduced.get(identity),
+                         "supersedes": predecessors.get(identity), "superseded_by": successors.get(identity)})
+    return {"status": "CONTENT_BOUND_UNATTESTED", "origin_basis": basis,
+            "issue_origin": ("CREATION_CAPTURE_REPORTED_UNATTESTED" if basis == "CREATION_RESPONSE_CAPTURE"
+                             else "UNKNOWN_FIRST_OBSERVED_ONLY"),
+            "snapshots": metadata, "criteria": criteria, "links": normalized,
+            "mapping_layers": layers, "mapping_role": "PROVENANCE_ONLY_NOT_ISSUE_PRECEDENCE",
+            "unmapped_origin_removals": sorted(set(origin) - set(current) - set(successors))}
+
+
 def criterion_evolution(previous: dict, current: dict) -> dict:
     """Compare observed criterion text/state, never reconstruct issue-origin intent.
 
@@ -1559,7 +1731,24 @@ def redact(model: dict, delta: dict | None = None, private_repos=None):
     out = walk(json.loads(json.dumps({"model": model, "delta": delta})))
     m = out["model"]
     private_refs = {i["key"] for i in m["items"] if i["repo"] in priv}
+
+    def provenance_private(value):
+        if isinstance(value, dict):
+            return any(provenance_private(v) for v in value.values())
+        if isinstance(value, list):
+            return any(provenance_private(v) for v in value)
+        if isinstance(value, str):
+            return value in priv or any(
+                value.startswith(f"https://github.com/{repo}/")
+                or value.startswith(f"https://api.github.com/repos/{repo}/") for repo in priv)
+        return False
+
     for i in m["items"]:
+        if provenance_private(i.get("criterion_provenance")):
+            # A later/authoritative private roster supersedes a public snapshot.
+            # Withhold every linked fingerprint, not only the private source URL.
+            i["criterion_provenance"] = {"schema": "jade.issue-criterion.provenance.v1",
+                                         "status": "WITHHELD_SOURCE_SCOPE", "closure_credit": 0}
         if i["repo"] not in priv and "title_taxonomy" in i:  # no family candidate sourced from a private item
             i["title_taxonomy"]["related_families"] = [
                 r for r in i["title_taxonomy"].get("related_families", []) if r["source_item"] not in private_refs]
@@ -1961,6 +2150,8 @@ def main(argv=None) -> int:
     r.add_argument("--prev", type=Path, help="previous issue_rank.json, for the delta")
     r.add_argument("--out", type=Path, default=DEFAULT_OUT)
     for p in (sub.choices["run"], r):
+        p.add_argument("--criterion-history", type=Path,
+                       help="explicit content-bound origin/supersession JSON; advisory public scope only")
         p.add_argument("--parser-sha", help="exact parser source SHA for taxonomy attribution")
         p.add_argument("--previous-parser-sha", help="previous parser source SHA")
         p.add_argument("--redact-private", action="store_true")
@@ -1995,7 +2186,9 @@ def main(argv=None) -> int:
             return 0
         last = out / "issue_rank.json"
         prev = json.loads(last.read_text(encoding="utf-8")) if last.exists() else None
-    model = rank(snap, overlay=load_overlay(args.overlay), draws=args.draws)
+    history = (json.loads(args.criterion_history.read_text(encoding="utf-8"))
+               if args.criterion_history else None)
+    model = rank(snap, overlay=load_overlay(args.overlay), draws=args.draws, criterion_history=history)
     full = model  # validate source heads before public projection in taxonomy_pulse
     def comparable_public(m):
         if m is None:

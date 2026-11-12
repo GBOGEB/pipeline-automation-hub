@@ -44,7 +44,7 @@ SOURCES = {
                       {"open": "outstanding", "fixed": "closed", "dismissed": "deferred"}),
     "secret_scanning": ("secret-scanning/alerts", ("open", "resolved"),
                         {"open": "outstanding", "resolved": "closed"}),
-    # Review findings left on closed PRs. Not an alert API: review_threads.py fetches them into their own
+    # Active and historical PR findings. Not an alert API: review_threads.py fetches them into their own
     # raw file (`build --review`), for named repositories only; others are recorded as not_in_scope.
     "review_threads": (None, ("open", "resolved"), {"open": "outstanding", "resolved": "closed"}),
 }
@@ -112,7 +112,10 @@ def manifestation(repo: str, source: str, a: dict) -> dict:
         # One root per theme in a repository: Copilot and Codex flagging the same defect is one fix.
         # `advisory` carries the PR, so a root lists the PRs its threads came from. A thread on a PR that
         # closed without merging is about a change that never landed: set aside, not post-merge debt.
-        if disposition == "outstanding" and a.get("pr_merged") is False:
+        state = a.get("pr_state")
+        if state is None and a.get("closed_at"):
+            state = "closed"  # compatibility with historical raw receipts that predate pr_state
+        if disposition == "outstanding" and a.get("pr_merged") is False and state == "closed":
             disposition = "deferred"
         return {"repo": repo, "source": source, "number": a["number"], "disposition": disposition,
                 "severity": a["severity"], "family": a["theme"], "subject": a["theme"], "path": a.get("path"),
@@ -144,7 +147,10 @@ def roots_of(manifestations: list[dict]) -> list[dict]:
                 "outstanding": counts["outstanding"], "closed": counts["closed"], "deferred": counts["deferred"],
                 "paths": sorted({m["path"] for m in open_ms if m["path"]}),
                 "advisories": sorted({m["advisory"] for m in open_ms if m["advisory"]}),
-                "alerts": sorted(m["number"] for m in open_ms)}
+                "alerts": sorted(m["number"] for m in open_ms),
+                # Positive provider observations, retained even after a finding is no longer open.
+                # Snapshot absence alone cannot prove fixed/resolved or deferred.
+                "alert_dispositions": {str(m["number"]): m["disposition"] for m in ms}}
         if source == "dependabot" and open_ms:
             root["fix"] = (f"upgrade {subject} to >= {patched[-1]}" if patched
                            else f"no patched {subject} release yet: remove, replace or defer with a reason")
@@ -211,7 +217,8 @@ def review_scope(review: dict | None) -> dict:
     `proven` is True only for a window read in full (coverage `ok`). A partial sample is recorded but
     proves nothing: a PR missing from it may simply not have been read."""
     return {repo: {"prs": sorted(p["number"] for p in entry.get("prs", [])), "window": entry.get("window"),
-                   "head_sha": entry.get("head_sha"), "proven": entry.get("coverage") == "ok"}
+                   "head_sha": entry.get("head_sha"), "proven": entry.get("coverage") == "ok",
+                   "scope_state": entry.get("scope_state", (review or {}).get("state", "closed"))}
             for repo, entry in (review or {}).get("repos", {}).items() if "prs" in entry}
 
 
@@ -302,14 +309,14 @@ def write_outputs(receipt: dict, out: Path) -> None:
 def diff(old: dict, new: dict) -> dict:
     """What moved between two receipts: roots and alerts that left or joined the outstanding set.
 
-    An alert leaves when GitHub marks it fixed (for example after a merged PR lands the fix on the
-    default branch), dismissed or resolved, or when its repository drops out of the read. Coverage
-    changes are listed so a source that became unreadable is not mistaken for a fix.
+    An alert leaves only when a complete current source read positively records it as closed or
+    deferred. Missing observations, unreadable coverage and legacy receipts without per-alert
+    dispositions are UNKNOWN, never a closure. Provider resolution is not proof of a code fix.
 
     Review threads are read from a moving window of recent PRs. A thread whose PR is no longer in the
     new receipt's sample was evicted, not resolved: it is listed under `evicted` and never counted as
     left or as clearing its root. A thread moved to another root is reclassified, not resolved or new.
-    Without a recorded sample on both sides, nothing is called evicted."""
+    Without a recorded sample on both sides, nothing is called evicted or inferred resolved."""
     def outstanding(receipt):
         return {r["id"]: r for r in receipt["roots"] if r["outstanding"]}
     a, b = outstanding(old), outstanding(new)
@@ -321,7 +328,11 @@ def diff(old: dict, new: dict) -> dict:
     old_assignments, new_assignments = review_assignments(a), review_assignments(b)
     reclassified = {key for key, rid in old_assignments.items()
                     if key in new_assignments and new_assignments[key] != rid}
-    left, joined, evicted = [], [], []
+    observed = {(root["repo"], root["source"], number): disposition
+                for root in new["roots"]
+                for number, disposition in root.get("alert_dispositions", {}).items()}
+    left, joined, evicted, unobserved = [], [], [], []
+    resolved_count = deferred_count = 0
     for rid in sorted(set(a) | set(b)):
         was, now = set(a.get(rid, {}).get("alerts", [])), set(b.get(rid, {}).get("alerts", []))
         root = b.get(rid) or a[rid]
@@ -332,18 +343,28 @@ def diff(old: dict, new: dict) -> dict:
                      and new_assignments[(repo, alert)] == rid}
                     if root["source"] == "review_threads" else set())
         gone, aged_out = was - now - moved_from, set()
+        complete = new.get("coverage", {}).get(root["repo"], {}).get(root["source"]) == "ok"
+        resolved_alerts = {n for n in gone if complete and observed.get((root["repo"], root["source"], str(n))) == "closed"}
+        deferred_alerts = {n for n in gone if complete and observed.get((root["repo"], root["source"], str(n))) == "deferred"}
+        terminal = resolved_alerts | deferred_alerts
         if (root["source"] == "review_threads" and old_scope is not None and new_scope is not None
                 and (old_scope.get(root["repo"]) or {}).get("proven", True)
                 and (new_scope.get(root["repo"]) or {}).get("proven", True)
                 and root["repo"] in old_scope and root["repo"] in new_scope):
             sampled = set((new_scope.get(root["repo"]) or {}).get("prs", []))
             prs = a[rid].get("alert_prs", {}) if rid in a else {}
-            aged_out = {n for n in gone if str(n) in prs and prs[str(n)] not in sampled}
+            aged_out = {n for n in gone - terminal if str(n) in prs and prs[str(n)] not in sampled}
         if aged_out:
             evicted.append({"id": rid, "repo": root["repo"], "source": root["source"], "alerts": sorted(aged_out)})
-        if gone - aged_out:
-            left.append({"id": rid, "repo": root["repo"], "source": root["source"], "alerts": sorted(gone - aged_out),
-                         "root_cleared": rid not in b and not aged_out and not moved_from})
+        if terminal:
+            left.append({"id": rid, "repo": root["repo"], "source": root["source"], "alerts": sorted(terminal),
+                         "root_cleared": bool(was) and was <= resolved_alerts and rid not in b and not moved_from})
+            resolved_count += len(resolved_alerts)
+            deferred_count += len(deferred_alerts)
+        unknown = gone - terminal - aged_out
+        if unknown:
+            unobserved.append({"id": rid, "repo": root["repo"], "source": root["source"], "alerts": sorted(unknown),
+                               "status": "UNKNOWN", "reason": "observation_missing" if complete else "coverage_gap"})
         if now - was - moved_to:
             joined.append({"id": rid, "repo": root["repo"], "source": root["source"],
                            "alerts": sorted(now - was - moved_to),
@@ -360,15 +381,19 @@ def diff(old: dict, new: dict) -> dict:
             "closes_findings": False, "merge_authority": False,
             "alerts_left": sum(len(x["alerts"]) for x in left), "alerts_joined": sum(len(x["alerts"]) for x in joined),
             "alerts_evicted": sum(len(x["alerts"]) for x in evicted),
+            "alerts_unobserved": sum(len(x["alerts"]) for x in unobserved),
+            "alerts_resolved": resolved_count, "alerts_deferred": deferred_count,
             "roots_cleared": sum(x["root_cleared"] for x in left), "roots_new": sum(x["root_new"] for x in joined),
             "roots_outstanding": {"old": old["roots_outstanding"], "new": new["roots_outstanding"]},
-            "coverage_changes": coverage, "left": left, "joined": joined, "evicted": evicted}
+            "closure_evidence": "positive_provider_disposition; not code-fix proof",
+            "coverage_changes": coverage, "left": left, "joined": joined, "evicted": evicted, "unobserved": unobserved}
 
 
 def delta_counts(delta: dict) -> dict:
     """Counts only, with no root ids, so the delta can be shown wherever MAROON_PUBLIC.json can."""
     keep = ("schema", "programme", "owner", "old_fetched_at", "new_fetched_at", "closes_findings", "merge_authority",
-            "alerts_left", "alerts_joined", "alerts_evicted", "roots_cleared", "roots_new", "roots_outstanding")
+            "alerts_left", "alerts_joined", "alerts_evicted", "alerts_unobserved", "alerts_resolved", "alerts_deferred",
+            "roots_cleared", "roots_new", "roots_outstanding")
     return {**{k: delta[k] for k in keep}, "coverage_changes": len(delta["coverage_changes"])}
 
 

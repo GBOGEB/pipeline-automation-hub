@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import importlib.util
 import json
-import math
 import subprocess
 import sys
 from pathlib import Path
@@ -182,7 +181,7 @@ def world(tmp_path, monkeypatch):
         return None
 
     def plan(tasks, snapshot, policy):
-        return {"tasks": [dict(t) for t in tasks], "generated_at": "2026-10-30T00:00:00Z",
+        return {"tasks": [{**t, "needs": sorted(t["needs"])} for t in tasks], "generated_at": "2026-10-30T00:00:00Z",
                 "dispatch_authorized": False, "snapshot": snapshot, "cohort": policy["cohort"]}
 
     def broker_run_local(tasks, handlers, workers=2, max_pending=8, root=None, policy=None):
@@ -256,24 +255,18 @@ def world(tmp_path, monkeypatch):
     return w
 
 
-def receipt_for(model, waits=(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7), state="succeeded"):
-    tasks = {}
-    for t, wait in zip(model["broker"]["tasks"], waits):
-        tasks[t["id"]] = {"state": state, "repo": t["repo"], "needs": t["needs"], "ready_wait_seconds": wait,
-                          "execution_seconds": 1.0, "verification_seconds": None}
-    count = len(tasks)
-    ordered = sorted(waits)
-    return {"schema": "atlas.local-broker.receipt.v1", "source_sha": model["source"]["head_sha"],
-            "source_digest": model["source"]["source_digest"], "local_process_only": True,
-            "dispatch_authorized": False, "merge_authorized": False, "authority_transfer": False,
-            "source_changed_during_run": False, "success": state == "succeeded",
-            "outcome": "LOCAL_GENERATORS_PASS" if state == "succeeded" else "LOCAL_GENERATORS_FAIL",
-            "bounds": {"task_count": count, "workers": 2, "max_pending": 4},
-            "metrics": {"elapsed_seconds": 5.0, "max_running": 2, "peak_ready": 3, "ready_wait_sample_count": count,
-                        "deferred_ready_count": 0, "peak_deferred_ready": 0, "succeeded": count, "failed": 0,
-                        "blocked": 0, "ready_wait_p50_seconds": ordered[math.ceil(count * .5) - 1],
-                        "ready_wait_p95_seconds": ordered[math.ceil(count * .95) - 1]},
-            "tasks": tasks}
+def receipt_for(model):
+    # Use the real finite executor for a causal receipt over this synthetic DAG.
+    # The outer fixture still isolates generator effects and source files.
+    spec = importlib.util.spec_from_file_location("cw_receipt_broker", MOD_DIR / "broker.py")
+    broker = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(broker)
+    tasks = [{**task, "input_contract": {"required_paths": []}} for task in model["broker"]["tasks"]]
+    receipt = broker.run_local(tasks, {task["id"]: lambda: {"status": "fixture product"} for task in tasks},
+                               workers=2, max_pending=4)
+    receipt.update(source_sha=model["source"]["head_sha"], source_digest=model["source"]["source_digest"],
+                   source_changed_during_run=False)
+    return receipt
 
 
 # ---------------------------------------------------------------- source model
@@ -481,17 +474,12 @@ def test_verify_bundle_detects_coverage_drift(world):
 
 # ---------------------------------------------------------------- local receipt edge
 def test_receipt_percentile_without_samples_is_rejected():
-    tasks = [{"id": "only", "repo": "r", "needs": []}]
-    model = {"source": {"head_sha": HEAD, "source_digest": "d" * 64}, "broker": {"tasks": tasks}}
-    receipt = {"schema": "atlas.local-broker.receipt.v1", "source_sha": HEAD, "source_digest": "d" * 64,
-               "local_process_only": True, "dispatch_authorized": False, "merge_authorized": False,
-               "authority_transfer": False, "source_changed_during_run": False, "success": False,
-               "outcome": "LOCAL_GENERATORS_FAIL", "bounds": {"task_count": 1, "workers": 1, "max_pending": 1},
-               "metrics": {"elapsed_seconds": 0, "max_running": 0, "peak_ready": 0, "ready_wait_sample_count": 0,
-                           "deferred_ready_count": 0, "peak_deferred_ready": 0, "succeeded": 0, "failed": 0,
-                           "blocked": 1, "ready_wait_p50_seconds": None, "ready_wait_p95_seconds": None},
-               "tasks": {"only": {"state": "blocked", "repo": "r", "needs": [], "ready_wait_seconds": None,
-                                  "execution_seconds": None}}}
+    # A fabricated blocked root is causally impossible. Use the real broker's
+    # empty terminal run to exercise the legitimate no-sample case.
+    broker = atlas.module("empty_receipt_broker", MOD_DIR / "broker.py")
+    receipt = broker.run_local([], {})
+    receipt.update(source_sha=HEAD, source_digest="d" * 64, source_changed_during_run=False)
+    model = {"source": {"head_sha": HEAD, "source_digest": "d" * 64}, "broker": {"tasks": []}}
     assert atlas.validate_local_receipt(receipt, model) is receipt
     receipt["metrics"]["ready_wait_p95_seconds"] = 0.0
     with pytest.raises(ValueError, match="^percentile without local samples$"):
@@ -511,8 +499,10 @@ def test_run_local_executes_every_registered_handler(world):
         assert results[identity]["artifacts"][0]["path"] == "result.json"
         assert (out / (identity + ".log")).read_text(encoding="utf-8") == identity + " out\n"
     assert results["orchestration"]["status"] == "LOCAL_SOURCE_BUILD_PASS"
-    assert results["assemble"] == {"status": "VERIFIED_MEMBERS_JOINED"}
-    assert results["portal"] == {"status": "LOCAL_PACKAGE_PASS_NOT_PUBLISHED"}
+    assert results["assemble"]["status"] == "VERIFIED_MEMBERS_JOINED"
+    assert results["portal"]["status"] == "LOCAL_PACKAGE_PASS_NOT_PUBLISHED"
+    for identity in TASK_IDS[1:]:
+        assert results[identity]["output_files_sha256"] == atlas.output_files(out / identity)
     assert (out / "assemble" / "orchestration" / "manifest.json").is_file()
     assert (out / "assemble" / "superstitch" / "result.json").is_file()
     assert (out / "portal.log").read_text(encoding="utf-8") == "portal ok\n"

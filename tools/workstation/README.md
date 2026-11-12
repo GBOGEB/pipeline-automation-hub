@@ -172,3 +172,64 @@ To restore a branch, run `git push origin <sha>:refs/heads/<branch>` for a GitHu
 plus the top dashboards, GitHub Pages sites and claude.ai artifacts. It is rebuilt daily by a scheduled task.
 Install it with `pwsh -NoProfile -File tools\workstation\dashboards\Install-Dashboards.ps1`; see
 [dashboards/README.md](dashboards/README.md).
+
+## Mermaid render check (`build_mermaid_check.py`)
+
+It renders every Mermaid diagram in the given Markdown or `.mmd` files and folders with one pinned Mermaid version, in your browser. For each diagram it reports "rendered" or the parse error, and a Gantt's axis labels. It also flags a Gantt `axisFormat` with `%W`, which is not the ISO week; use `%V` (see `mission-control/jade_temple/devops/WDDD_WEEK_CODES.md`). It needs only the standard library.
+
+```powershell
+Set-Location "<repo root>"
+python tools\workstation\build_mermaid_check.py docs mission-control\some\README.md --serve
+```
+
+- **`--serve`:** binds `127.0.0.1` exclusively, from port 8796 or the next free one. Python's default server on Windows can share a busy port silently. Ctrl+C stops it; nothing runs in the background.
+- **`--strict`:** exits with 1 on a lint warning.
+- **`--mermaid X.Y.Z`:** pins a different Mermaid version.
+- **The page:** it has a **Dark background** button for diagrams themed for dark pages. It is written to `%TEMP%\mermaid_check\` unless you pass `-o`.
+
+### Native browser evidence
+
+`--headless <evidence folder>` runs this same generated page in Playwright Chromium,
+saves one SVG and PNG per successful diagram, a full-page PNG and `receipt.json`, and
+exits nonzero for parser errors, zero diagrams, lint warnings, missing SVGs, zero
+geometry, a cluster title overlapping a node, browser errors, a missing browser,
+or an unqualified Mermaid bundle.
+The renderer is Mermaid **11.4.1**, with SHA256 checked against the qualified bundle
+digest. Browser requests other than that locally supplied bundle are blocked.
+Interactive `--mermaid X.Y.Z` remains available; headless mode requires adding an
+explicit distribution digest before using another version.
+
+```powershell
+python -m pip install -r mission-control/issue_rank/browser-qa-requirements.txt
+python -m playwright install chromium
+python tools/workstation/build_mermaid_check.py path/to/diagram.mmd --headless out/render --source-root .
+```
+
+`--source-root` verifies that the actual input bytes equal the named Git checkout,
+and that the in-memory diagram payloads match extraction from those committed
+bytes (or the owner's explicitly declared ISO-week comparison expansion).
+The receipt records that input SHA separately from the renderer's own HEAD and
+module hash, and states whether the renderer file matches its commit. `--bundle`
+accepts a previously downloaded distribution with the same required hash.
+`--chromium-executable` is an explicit, recorded local override; native CI uses
+the browser supplied by the existing pinned Playwright dependency.
+
+The narrowly triggered `workstation-mermaid-qa.yml` runs the method-owner tests,
+actual Gantt/flowchart ID-collision and wrapped-cluster-title regressions, invalid
+syntax and empty-input negative cases. The P0005 consumer workflow on PR #1179
+checks out an immutable qualified method commit and delegates its three current
+diagrams to this owner. Each consumer receipt identifies the method and input
+source roles separately. Changing either requires evidence for the changed SHA.
+
+Renderer execution proves parse/render/geometry behavior. The receipt leaves
+semantic review unassessed, merge admission HOLD and closure credit zero. The
+existing P0006 source-DAG Kahn tests remain a separate proof; this method does not
+replace them or transfer their result to a different source.
+
+## Extracting pasted handovers (`extract_pasted_content.py`)
+
+A handover pasted into a Claude Code chat lives only in that session's transcript. Before a session is deleted, run this to save every `<pasted_content>` block byte-exact, with `SHA256SUMS` and a report of identical blocks:
+
+```powershell
+python tools\workstation\extract_pasted_content.py "$env:USERPROFILE\.claude\projects\<project>\<cliSessionId>.jsonl" "<out folder>"
+```

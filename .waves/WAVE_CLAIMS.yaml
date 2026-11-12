@@ -1,0 +1,15 @@
+# GBOGEB/pipeline-automation-hub wave claims -- this repository's prerogative.
+# Rules (must obey): GBOGEB/CODEX federation/waves/WAVE_NAMING_RULES.yaml
+# Elevated (federation-owned) waves: GBOGEB/CODEX federation/waves/GLOBAL_WAVES.yaml
+# Roll-up: CODEX scripts/build_wave_register.py reads this file at the exact commit.
+# Validate with CODEX scripts/wave_claims.py (MIP kit >= 1.2.3):
+#   wave_claims.py validate .waves/WAVE_CLAIMS.yaml \
+#     --expected-repo GBOGEB/pipeline-automation-hub
+schema: gbogeb.wave_claims/1
+repo: GBOGEB/pipeline-automation-hub
+owns: []
+participates:
+  - key: QPS:W264
+    role: mirror   # grand-missions evidence mirror; elevated
+  - key: QPS:W284
+    role: producer   # origin; golden thread MIP; elevated
