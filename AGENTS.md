@@ -65,7 +65,9 @@ someone asks for one.
   ledgers, rulesets): merge each `--no-ff` into one batch PR and ask for one review (#1164 = #1163 + #1162
   + #1138). A PR whose base is another PR's branch goes with that PR.
 - Ask for `@codex security review` only for changes to workflow permissions, `pull_request_target`, secrets
-  or tokens, or new third-party dependencies. CodeQL and osv-scanner cover the rest on every head.
+  or tokens, or any dependency that is added or changes version. CodeQL covers the rest on every head. The
+  hub has no osv-scanner job (ABACUS does), so nothing here scans dependency versions for known
+  vulnerabilities.
 - If Codex replies with its usage-limit message, don't ask again in the same window.
 
 ### L6. Snapshots come from one pulse
