@@ -1,0 +1,145 @@
+name: Method Atlas G9 read-only local scale feasibility
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/federation-atlas/orchestration/scout_feasibility.py'
+      - 'mission-control/federation-atlas/orchestration/test_scout_feasibility.py'
+      - 'mission-control/federation-atlas/orchestration/SCOUT_FEASIBILITY.md'
+      - '.github/workflows/method-atlas-g9-scout-feasibility.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: method-atlas-g9-local-scale-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  local-g9-scout-scale:
+    name: Real G9 tasks · 1/4/16/32 cold + 16 warm · 4 paired blocks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout immutable exact head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Prove checkout identity and source authority
+        shell: bash
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXACT_HEAD"
+          test -f mission-control/gogreen/outcome_convergence/outcome_flight.py
+          test -f mission-control/gogreen/outcome_convergence/samples/native_full_window_20261017.json
+          test -f mission-control/federation-atlas/orchestration/read_scout_scale.py
+
+      - name: Use pinned Python 3.12 without recurring dependency installation
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+
+      - name: Adversarial unit and actual-entrypoint smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/federation-atlas/orchestration \
+            -p test_scout_feasibility.py -v 2>&1 | tee "$RUNNER_TEMP/g9-scale-tests.log"
+          python - <<'PY'
+          import os,re
+          from pathlib import Path
+          t=(Path(os.environ["RUNNER_TEMP"])/"g9-scale-tests.log").read_text()
+          count=[int(x) for x in re.findall(r'^Ran (\d+) tests? in ',t,re.M)]
+          if not count or count[-1]<13 or 'FAILED' in t or 'skipped=' in t:
+              raise SystemExit("G9_SCALE_TEST_POPULATION_FIRST_RED")
+          print("G9_SCALE_TESTS="+str(count[-1]))
+          PY
+
+      - name: Four balanced source-bound local scale blocks; no remote dispatch
+        shell: bash
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/federation-atlas/orchestration/scout_feasibility.py \
+            --root . --head "$EXACT_HEAD" --tasks 32 --pulses 4 \
+            --out "$RUNNER_TEMP/g9-local-scale"
+
+      - name: Cross-member hash, semantic parity, negative and authority receipt
+        shell: bash
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          out=Path(os.environ['RUNNER_TEMP'])/'g9-local-scale'
+          r=json.loads((out/'scale_feasibility.json').read_text())
+          m=json.loads((out/'manifest.json').read_text())
+          if r['source']['head'] != os.environ['EXACT_HEAD'] or m['source_head'] != os.environ['EXACT_HEAD']:
+              raise SystemExit('SCALE_HEAD_DRIFT')
+          for name,expected in m['files'].items():
+              if hashlib.sha256((out/name).read_bytes()).hexdigest() != expected:
+                  raise SystemExit('SCALE_MEMBER_HASH_TAMPER')
+          if (r['workload']['total_task_executions'] != 640 or
+              r['workload']['negative_rejections_total'] != 80 or
+              r['workload']['task_count'] != 32 or
+              r['workload']['pulses'] != 4):
+              raise SystemExit('INCOMPLETE_SCALE_COHORT_DENOMINATOR')
+          for block in r['blocks']:
+              if len(block['cohorts']) != 5 or block['all_production_outputs_sha_verified'] is not True:
+                  raise SystemExit('UNQUALIFIED_SCALE_BLOCK')
+              for row in block['cohorts']:
+                  if row['accepted_outputs'] != 28 or row['negative_rejections'] != 4:
+                      raise SystemExit('FALSE_PRODUCTION_ORACLE')
+                  if row['wall_seconds'] <= 0 or row['requested_workers'] > 32:
+                      raise SystemExit('UNBOUNDED_WORKER_OR_CLOCK')
+          s=r['safety']
+          if any((s['remote_github_dispatch_performed'],s['mutating_broker_policy_changed'],
+                  s['source_files_modified'],s['input_private_qps'],
+                  s['scale_promotion'],s['engineering_credit_delta'])):
+              raise SystemExit('GOVERNANCE_AUTHORITY_ESCALATION')
+          if s['native_four_pulse_scout_gate'] != 'NOT_SATISFIED':
+              raise SystemExit('FALSE_FLEET_SCALE_PROOF')
+          if r['summary']['confidence_interval'] is not None:
+              raise SystemExit('UNJUSTIFIED_INFERENTIAL_INTERVAL')
+          print('G9_SCALE_DESCRIPTIVE_RESULTS='+json.dumps({
+              'by_mode':{k:{n:v[n] for n in ('workers','median_wall_seconds',
+                         'median_outputs_per_second','observed_peak_local_tasks')}
+                         for k,v in r['summary']['by_mode'].items()},
+              'paired':r['summary']['paired'],
+              'fleet_qualified':False},sort_keys=True))
+          PY
+          python mission-control/federation-atlas/orchestration/read_scout_scale.py \
+            --out "$RUNNER_TEMP/g9-local-scale/native_gate_hold.json"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'g9-local-scale/native_gate_hold.json'
+          d=json.loads(p.read_text())
+          assert d['classification']=='HOLD_NO_MATCHED_NATIVE_OBSERVATIONS'
+          assert d['dispatch_authorized'] is False
+          assert d['engineering_credit_delta']==0
+          print("CANONICAL_FOUR_NATIVE_PULSE_GATE=HOLD")
+          PY
+          test -z "$(git status --porcelain)"
+
+      - name: Preserve locally measured scale proof and bounded HOLD
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: method-atlas-g9-scale-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/g9-local-scale/
+            ${{ runner.temp }}/g9-scale-tests.log
+          retention-days: 21
+          if-no-files-found: warn
