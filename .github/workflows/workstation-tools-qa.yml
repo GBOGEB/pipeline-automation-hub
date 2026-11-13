@@ -1,0 +1,48 @@
+name: Workstation Tools Offline QA
+on:
+  pull_request:
+    paths:
+      - 'tools/workstation/Invoke-PrFixInSitu.ps1'
+      - 'tools/workstation/build_tool_catalog.py'
+      - 'tools/workstation/test_build_tool_catalog.py'
+      - 'tools/workstation/TOOLS_CATALOG.json'
+      - '.github/workflows/workstation-tools-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tools-offline:
+    name: Tools offline / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2022]
+    steps:
+      - name: Checkout immutable candidate head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Set up Python 3.12
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Assert exact head
+        shell: bash
+        env:
+          EXPECTED: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED"
+      - name: In-situ PR fix tool self-test (git fixtures, no gh)
+        shell: pwsh
+        run: |
+          git config --global user.email ci@example.invalid
+          git config --global user.name ci
+          pwsh -NoProfile -File tools/workstation/Invoke-PrFixInSitu.ps1 -SelfTest
+      - name: Tool catalog builder tests and an offline build
+        shell: bash
+        run: |
+          python -W error::DeprecationWarning -m unittest tools/workstation/test_build_tool_catalog.py -v
+          python tools/workstation/build_tool_catalog.py --offline --out "$RUNNER_TEMP/tools_catalog.html"
+          test -s "$RUNNER_TEMP/tools_catalog.html"
