@@ -19,6 +19,8 @@ metric and owns no dashboard: it only links to pages that their own owners produ
 
 Pages sites are linked at their root only. A per-page Pages URL is never inferred from committed HTML.
 
+The burn-down pulse scripts behind the two claude.ai burn-down dashboards live in [`pulse/`](pulse/README.md).
+
 ## Install
 
 ```powershell
