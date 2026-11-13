@@ -107,6 +107,8 @@ class SVGBridgeContracts(TestCase):
         self.assertIn('id="toggle-flows"', html)
         self.assertIn('id="toggle-labels"', html)
         self.assertIn("UNMAPPED: no verified source object", html)
+        self.assertIn('document.getElementById("source-link").removeAttribute("href")', html)
+        self.assertIn('buttons.forEach(b=>b.setAttribute("aria-pressed","false"))', html)
         self.assertIn("document.getElementById", html)
         self.assertIn("source-node-", html)
         self.assertIn('id="drawing"', html)
