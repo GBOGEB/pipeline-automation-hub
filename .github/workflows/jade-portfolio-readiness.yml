@@ -1,0 +1,97 @@
+name: JADE Portfolio Readiness QA
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/jade_temple/portfolio_readiness/**'
+      - 'mission-control/jade_temple/tools/build_gate12_dov.py'
+      - 'mission-control/jade_temple/tools/rolling5.py'
+      - 'mission-control/jade_temple/tools/private_boundary.py'
+      - 'mission-control/jade_temple/devops/lifecycle.py'
+      - 'mission-control/jade_temple/data/GATE12_DOV_ACTIONS.json'
+      - 'mission-control/jade_temple/data/FOCUS5_*.json'
+      - 'mission-control/jade_temple/data/ROLLING5_*.json'
+      - 'mission-control/jade_temple/data/TOP21_PORTFOLIO.json'
+      - 'mission-control/gogreen/token_census/REGISTRY.json'
+      - 'mission-control/issue_rank/*.py'
+      - 'mission-control/jade_temple/sprint/requirements-optional.txt'
+      - 'mission-control/qps-triage-ultra/issue-expedition/triway_burndown.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/mip_statistical_qualification.py'
+      - 'mission-control/federation-atlas/flightdeck/pulses/mip_provider_execution.py'
+      - '.github/workflows/jade-portfolio-readiness.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jade-portfolio-${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}
+  cancel-in-progress: false
+
+jobs:
+  portfolio-qa:
+    name: portfolio-readiness offline contracts and browser
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PORTFOLIO_EXPECTED_SHA: ${{ github.event.pull_request.head.sha }}
+      PORTFOLIO_PLANNING_SHA: 897298dc3ed1a45607121b205617d4c103e7b226
+    steps:
+      - name: Checkout the exact candidate source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify source identity
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$PORTFOLIO_EXPECTED_SHA"
+          echo "PORTFOLIO_QA_OUT=$RUNNER_TEMP/jade-portfolio-readiness" >> "$GITHUB_ENV"
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Run nonzero offline contract population
+        run: |
+          python - <<'PY'
+          import sys
+          import unittest
+          suite = unittest.defaultTestLoader.discover(
+              'mission-control/jade_temple/portfolio_readiness',
+              pattern='test_portfolio_readiness.py')
+          count = suite.countTestCases()
+          if count <= 0:
+              raise SystemExit('PORTFOLIO_ZERO_TEST_POPULATION')
+          print(f'PORTFOLIO_CONTRACT_TESTS={count}', flush=True)
+          result = unittest.TextTestRunner(verbosity=2).run(suite)
+          sys.exit(0 if result.wasSuccessful() else 1)
+          PY
+      - name: Build source-bound offline review artifacts
+        run: |
+          set -euo pipefail
+          python mission-control/jade_temple/portfolio_readiness/portfolio_readiness.py \
+            --as-of "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --source-sha "$PORTFOLIO_PLANNING_SHA" \
+            --out "$PORTFOLIO_QA_OUT/site"
+      - name: Install the existing pinned browser QA dependency
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check -c mission-control/jade_temple/sprint/requirements-optional.txt playwright
+          python -m playwright install --with-deps chromium
+      - name: Verify offline responsive UI and inert hostile text
+        run: |
+          set -euo pipefail
+          python mission-control/jade_temple/portfolio_readiness/run_browser_qa.py \
+            --html "$PORTFOLIO_QA_OUT/site/index.html" \
+            --model "$PORTFOLIO_QA_OUT/site/portfolio_readiness.json" \
+            --expected-source-sha "$PORTFOLIO_PLANNING_SHA" \
+            --expected-checkout-sha "$PORTFOLIO_EXPECTED_SHA" \
+            --out "$PORTFOLIO_QA_OUT/browser"
+      - name: Upload source-bound review evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: jade-portfolio-readiness-${{ github.event.pull_request.head.sha }}
+          path: ${{ runner.temp }}/jade-portfolio-readiness/
+          if-no-files-found: warn
+          retention-days: 14
