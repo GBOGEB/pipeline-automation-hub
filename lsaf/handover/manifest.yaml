@@ -1,0 +1,128 @@
+schema: lsaf/handover/v0.1
+
+handover:
+  id: LSAF-P0-HO-20261113
+  repository: GBOGEB/pipeline-automation-hub
+  parent_issue: 1230
+  pull_request: 1231
+  branch: feat/lsaf-session-genome-pilot
+  base: master
+  prior_verified_head: b3feb4c962fe5bff2eaf3d3bb6adbd2632a3df80
+  dependency_prs:
+    - 1211
+  authority_transfer: false
+  production_assimilation: deferred
+
+source_of_truth:
+  machine:
+    - lsaf/taxonomy.yaml
+    - lsaf/schemas/
+    - lsaf/cohorts/
+    - lsaf/handover/manifest.yaml
+  generated:
+    - lsaf/generated/
+  external_mirror:
+    provider: google_drive
+    folder_name: codex_history
+    authority: false
+
+pilot:
+  cohort: C-20261110-12-48H
+  sessions: 10
+  recurrence_fingerprints: 5
+  repositories_represented: 6
+  pin_order: UNKNOWN
+
+lanes:
+  A:
+    name: dependency_dag
+    state: READY
+    requires:
+      - session_cohort
+      - fragment_contract
+    provides:
+      - normalized_nodes
+      - normalized_edges
+      - kahn_ready
+      - kahn_blocked
+      - cycle_detection
+      - missing_authority
+      - missing_evidence
+  B:
+    name: deterministic_projections
+    state: WAITING_PRECEDENT
+    requires:
+      - A.normalized_nodes
+      - A.normalized_edges
+    provides:
+      - handover_projection
+      - dropin_projection
+      - bd_queue_projection
+      - dag_mermaid
+      - sipoc_mermaid
+  C:
+    name: prediction_receipts
+    state: READY
+    requires:
+      - prediction_schema
+      - source_state_binding
+    provides:
+      - immutable_predictions
+      - outcome_reconciliation
+      - calibration_metrics
+  D:
+    name: cold_start_replay
+    state: WAITING_PRECEDENT
+    requires:
+      - A.kahn_ready
+      - B.handover_projection
+      - C.immutable_predictions
+    provides:
+      - reconstruction_equivalence_receipt
+
+governance:
+  max_state_this_pr: ASSIMILABLE
+  prohibited:
+    - merge_without_requalification
+    - issue_close
+    - chat_title_mutation
+    - branch_protection_mutation
+    - child_repo_authority_transfer
+    - production_worker_dispatch
+    - inferred_pass_fail
+    - duplicate_session_census_producer
+
+evidence_classes:
+  - SOURCE
+  - DERIVED
+  - PREDICTED
+  - UNKNOWN
+  - SUPERSEDED
+
+required_tests:
+  - schema_validation
+  - deterministic_normalization
+  - recurrence_dedup
+  - kahn_acyclic
+  - kahn_cycle
+  - missing_authority
+  - missing_evidence
+  - deterministic_projection
+  - immutable_prediction
+  - false_ready_negative
+  - false_blocked_negative
+  - cold_start_equivalence
+
+dod:
+  fragment_disposition:
+    - BOUND
+    - SUPERSEDED
+    - QUARANTINED
+    - UNKNOWN
+  deterministic_outputs:
+    - epic_membership
+    - recurrence_fingerprints
+    - dependency_graph
+    - ready_blocked
+    - handover_dropin
+    - prediction_source_bindings

@@ -1,0 +1,130 @@
+schema: lsaf/cohort/v0.1
+cohort_id: C-20261110-12-48H
+window:
+  start: "2026-11-10T05:00:00+01:00"
+  end: "2026-11-12T05:00:00+01:00"
+source: recovered_chat_context
+pin_order_authority: UNKNOWN
+
+sessions:
+  - id: S-20261110-HUB-DOCX-GEMINI
+    title: Continue PR Buildout
+    canonical_title: "[FEDERATION][B46] Hub + DOCX + GEMINI closure frontier"
+    repos: [GBOGEB/pipeline-automation-hub, GBOGEB/DOCX_RTM_Automation, GBOGEB/GEMINI]
+    epics: [EPIC-closure-engine, EPIC-admission-governance]
+    state: BOUND
+    evidence:
+      - "Hub #1175/#1179 qualified; GEMINI #48 qualified; DOCX #110 evidence packet ready"
+    next:
+      - "owner/review/protection predicates"
+
+  - id: S-20261110-MIP-N10
+    title: MIP Perpetual Closure
+    canonical_title: "[FEDERATION][MIP] N+10 closure-convergence"
+    repos: [GBOGEB/pipeline-automation-hub, GBOGEB/ABACUS, GBOGEB/CODEX, GBOGEB/gg_MATH]
+    epics: [EPIC-admission-governance, EPIC-closure-engine]
+    state: BOUND
+    next:
+      - "independent accepted closures"
+      - "six-repository qualification"
+
+  - id: S-20261110-N6
+    title: N6 Queue Drain Watch
+    canonical_title: "[HUB][N6] Queue-drain backpressure watch"
+    repos: [GBOGEB/pipeline-automation-hub, GBOGEB/ABACUS, GBOGEB/CODEX]
+    epics: [EPIC-admission-governance, EPIC-agentic-automation]
+    state: BOUND
+    constraints:
+      - "N6 is sole notification owner"
+      - "read-only monitoring"
+    next:
+      - "continue deduplicated queue census"
+
+  - id: S-20261110-COVERAGE
+    title: Pipeline Coverage Scaling
+    canonical_title: "[CI][COVERAGE] Zero-coverage + scaling federation"
+    repos: [GBOGEB/pipeline-automation-hub, GBOGEB/ABACUS, GBOGEB/CODEX, GBOGEB/gg_MATH]
+    epics: [EPIC-coverage-reliability]
+    state: BOUND
+    next:
+      - "peer/sibling workflow coverage"
+      - "negative/stress/capacity scaling"
+
+  - id: S-20261111-GEMINI
+    title: Plan Repo Issue Closure
+    canonical_title: "[GEMINI][CLOSURE] Issue DOV/DOD + repo narrative"
+    repos: [GBOGEB/GEMINI]
+    epics: [EPIC-closure-engine, EPIC-evidence-artifact-qa]
+    state: BOUND
+    next:
+      - "protection/review completion"
+
+  - id: S-20261111-PCA-BT
+    title: Execute Frontier Waves
+    canonical_title: "[MATH][PCA-BT] Evidence-derived prioritisation and scree pilot"
+    repos: [GBOGEB/gg_MATH, GBOGEB/pipeline-automation-hub]
+    epics: [EPIC-mathematical-intelligence]
+    state: BOUND
+    next:
+      - "historical sample binding and calibrated rollout"
+
+  - id: S-20261111-AUTOMATION
+    title: Plan Automation Workflows
+    canonical_title: "[HUB][AUTOMATION] Watchers to analytical action fabric"
+    repos: [GBOGEB/pipeline-automation-hub, GBOGEB/ABACUS, GBOGEB/CODEX, GBOGEB/gg_MATH]
+    epics: [EPIC-agentic-automation, EPIC-session-continuity]
+    state: BOUND
+    next:
+      - "shared manifest and scheduler contracts"
+
+  - id: S-20261111-MAROON
+    title: Maroon Automation Upgrade
+    canonical_title: "[HUB][MAROON] Agentic PR closure + 8h census scheduler"
+    repos: [GBOGEB/pipeline-automation-hub, GBOGEB/ABACUS, GBOGEB/CODEX, GBOGEB/GEMINI]
+    epics: [EPIC-agentic-automation, EPIC-closure-engine]
+    state: BOUND
+    evidence:
+      - "MAROON pilot expanded intake/orchestration/repeat-history/hardening"
+      - "126 tests passed in prior pilot evidence"
+    next:
+      - "shared-ledger reconcile before worker release"
+
+  - id: S-20261112-MAROON-CAS
+    title: CODE MAROON ambitious slice
+    canonical_title: "[HUB][MAROON] CAS/ledger recovery after external merges"
+    repos: [GBOGEB/pipeline-automation-hub]
+    epics: [EPIC-agentic-automation, EPIC-admission-governance]
+    state: BOUND
+    next:
+      - "reconcile MAROON_OPERATIONS.json"
+      - "recompute Kahn plan"
+      - "exact-version persist/readback"
+
+  - id: S-20261112-LSAF
+    title: Lossless Session Assimilation Fabric pilot
+    canonical_title: "[LSAF][P0] Multi-session lossless assimilation pilot"
+    repos: [GBOGEB/pipeline-automation-hub]
+    epics: [EPIC-session-continuity]
+    state: BOUND
+    evidence:
+      - "Hub issue #1230"
+      - "Draft PR #1231"
+      - "Drive codex_history mirror"
+    next:
+      - "48h replay"
+      - "recurrence fingerprints"
+      - "cold-start proof"
+
+summary:
+  recovered_sessions: 10
+  repos_represented:
+    - GBOGEB/pipeline-automation-hub
+    - GBOGEB/ABACUS
+    - GBOGEB/CODEX
+    - GBOGEB/gg_MATH
+    - GBOGEB/DOCX_RTM_Automation
+    - GBOGEB/GEMINI
+  provisional_dov:
+    sessions_ge_10: true
+    recurring_topics_ge_3: true
+    repos_ge_3: true

@@ -1,0 +1,56 @@
+schema: lsaf/taxonomy/v0.1
+
+lifecycle:
+  - RAW
+  - CAPTURED
+  - INDEXED
+  - SEMANTICALLY_BOUND
+  - DEPENDENCY_ORDERED
+  - EXECUTABLE
+  - EXECUTED
+  - VERIFIED
+  - ASSIMILABLE
+  - ASSIMILATED
+  - MONITORED
+  - RETIRED
+
+side_states:
+  - UNKNOWN
+  - BLOCKED
+  - SUPERSEDED
+  - QUARANTINED
+  - REJECTED
+
+maturity:
+  - NOVEL
+  - OBSERVED
+  - RECURRING
+  - METHOD_PROPOSED
+  - METHOD_VALIDATED
+  - PILOT
+  - SCALING_PROOF
+  - SCALE_CANDIDATE
+  - SCALE_VALIDATED
+  - STANDARD
+  - REGRESSION
+  - SUPERSEDED
+
+fragment_disposition:
+  - BOUND
+  - SUPERSEDED
+  - QUARANTINED
+  - UNKNOWN
+
+execution_state:
+  - OFF
+  - ARMED
+  - ON
+  - DRAINING
+  - BLOCKED
+  - QUARANTINED
+
+governance:
+  authority_transfer_default: false
+  production_mutation_default: false
+  automatic_chat_rename_default: false
+  hub_assimilation_default: deferred
