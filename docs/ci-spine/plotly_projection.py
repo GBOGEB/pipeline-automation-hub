@@ -209,7 +209,9 @@ def render(explorer="explorer.html"):
     bindings = point_bindings(data, explorer)
     uids = [b["point_id"] for b in bindings]
     labels = [x["name"][:64]+" #"+str(x["run_id"]) for x in data]
-    custom = [[x["run_id"], x["attempt"], x["source_sha"], x["job"]] for x in data]
+    # Five fields: the click guard reads the point id from customdata[4] and checks it
+    # against the trace ids, so every row must carry its own binding's point_id.
+    custom = [[b["run_id"], b["attempt"], b["source_sha"], b["job"], b["point_id"]] for b in bindings]
     fig = go.Figure()
     fig.add_bar(name="Runner queue (s)", x=[x["queue_seconds"] for x in data], y=labels,
                 orientation="h", marker_color="#d6a1c9", customdata=custom, ids=uids,

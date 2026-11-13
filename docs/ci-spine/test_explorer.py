@@ -331,6 +331,24 @@ class PlotlyPointProvenanceTests(unittest.TestCase):
         self.assertIn("UNMAPPED:", html)
         self.assertIn("PDF page, bbox and OCG remain UNMAPPED", html)
 
+    def test_rendered_customdata_carries_point_id_for_click_guard(self):
+        try:
+            rendered = plotly_companion.render().decode("utf-8")
+        except RuntimeError as exc:
+            self.skipTest(str(exc))
+        decoder, key, traces, pos = json.JSONDecoder(), '"customdata":', 0, 0
+        while (pos := rendered.find(key, pos)) != -1:
+            custom, end = decoder.raw_decode(rendered, pos + len(key))
+            ids_at = rendered.index('"ids":', end)
+            ids, _ = decoder.raw_decode(rendered, ids_at + len('"ids":'))
+            self.assertEqual(len(custom), len(ids))
+            for row, point_id in zip(custom, ids):
+                self.assertEqual(len(row), 5)  # the inspector requires d.length === 5
+                self.assertEqual(row[4], point_id)
+                self.assertEqual(point_id, f"run:{row[0]}:attempt:{row[1]}")
+            traces, pos = traces + 1, end
+        self.assertEqual(traces, 2)
+
     def test_sidecar_binds_actual_html_bytes_and_avoids_pdf_claims(self):
         html = b"pretend actual Plotly output bytes"
         points = self.bindings()
