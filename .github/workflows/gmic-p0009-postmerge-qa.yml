@@ -1,0 +1,47 @@
+name: GM-I-C P0009 Postmerge Evidence QA
+on:
+  pull_request:
+    paths:
+      - 'mission-control/v2/handoff/closeout/w12-gmic-r2-p0009/**'
+      - '.github/workflows/gmic-p0009-postmerge-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  postmerge-source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact PR head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify exact source
+        env:
+          EXPECTED: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED"
+      - name: Python runtime
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Run postmerge, frozen-row and manifest negative tests
+        run: python -m unittest discover -s mission-control/v2/handoff/closeout/w12-gmic-r2-p0009 -p 'test_*.py' -v
+      - name: Generate read-only 46-row historical projection
+        run: |
+          python mission-control/v2/handoff/closeout/w12-gmic-r2-p0009/postmerge_reconcile.py --out "$RUNNER_TEMP/p0009"
+          python - "$RUNNER_TEMP/p0009/POSTMERGE_PROJECTION.json" <<'PY'
+          import json,sys
+          p=json.load(open(sys.argv[1]))
+          assert len(p['historical_unchanged_46'])==46
+          assert p['current_parent_closure_count_verified'] is None
+          assert not p['controls']['merge_admission_retroactively_verified']
+          assert not p['controls']['authority_transfer']
+          print('P0009_BASELINE_CONTINUITY=PASS')
+          PY
+      - name: Save source-bound output
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v4.6.2
+        with:
+          name: p0009-postmerge-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/p0009
+          retention-days: 30

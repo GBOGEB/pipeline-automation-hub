@@ -1,0 +1,30 @@
+{
+  "schema": "missioncontrol.gmic.postmerge-witness.v1",
+  "observed_date": "2026-11-12",
+  "source_repo": "GBOGEB/pipeline-automation-hub",
+  "source_head": "2c74687ef07211acf9b626a3897bfbfb2b0e47ea",
+  "historical_projection": "mission-control/v2/handoff/closeout/w11-gmic-r2-p0008/BD_B01_B46_READONLY.json",
+  "historical_counts": {"total": 46, "done": 22, "open": 24, "original_cohort_open": 18},
+  "commit_observations": [
+    {"pr": 1135, "head": "ed57bb0209983301597752ab23a10b81a6e49c51", "merge": "7a56b0084f33f42c56a69aaaa4b32fe4cd7a578a", "approved_reviews_observed": 0, "b_items": ["B08", "B21"]},
+    {"pr": 1138, "head": "dbf45627ffef9e39386797aa8f4bb8d249c681fe", "merge": "1fe3ca19d1160def697625b3187ae213b8e90684", "approved_reviews_observed": 0, "b_items": ["B15", "B22"]},
+    {"pr": 1152, "head": "3a633e21c8bdf4f949efbb73d74c8e3436a05cf8", "merge": "6c1860883fb537a9ff1251cdbcacf65bd7e5ebb2", "approved_reviews_observed": 0, "b_items": ["B23"]},
+    {"pr": 1160, "head": "f9e460d2d75e7c4250869709420b51f32b2b3dc4", "merge": "1ae5128bc13f5d99d4208552217f58e15a4189c7", "approved_reviews_observed": 0, "b_items": ["B24", "B13"]},
+    {"pr": 1164, "head": "68c0a4e9a9438b1d67af726e445562cdd3e10394", "merge": "7316977302c51a150f2697323a50a7942162eb88", "approved_reviews_observed": 0, "b_items": ["B32"]},
+    {"pr": 1175, "head": "10c93e2268e62ab8584f8e915d60c3707116f81d", "merge": "f3d40093b0aff759af75579907b585245f0fd6ca", "approved_reviews_observed": 0, "b_items": ["B34"]},
+    {"pr": 1179, "head": "859071e0e62050fb2cf1f82c02b909554028999c", "merge": "b62aecfda7958e786f72a659532619443045d16f", "approved_reviews_observed": 0, "b_items": ["B34", "B38"]},
+    {"pr": 1193, "head": "da6ee01b2c1f8c2a0b0b403da978443c42b0d5a7", "merge": "62964bd10c5c4bf20b30db9c910055827077fd1b", "approved_reviews_observed": 0, "b_items": ["B42"]}
+  ],
+  "open_owner_issues": ["GBOGEB/GEMINI#12", "GBOGEB/GEMINI#44", "GBOGEB/GEMINI#50", "GBOGEB/pipeline-automation-hub#188", "GBOGEB/pipeline-automation-hub#308", "GBOGEB/pipeline-automation-hub#336"],
+  "controls": {
+    "hub_required_approving_review_count": 0,
+    "hub_last_push_review_required": false,
+    "gemini_required_pr_rule_present": false,
+    "ic3_hosted_pass_verified": false,
+    "wire_owner_decision_verified": false,
+    "authority_transfer": false,
+    "merge_admission_retroactively_verified": false,
+    "formal_credit_delta": 0
+  },
+  "source_evidence_class": "NONATOMIC_API_OBSERVATION_NOT_MERGE_POLICY_PROOF"
+}

@@ -1,0 +1,14 @@
+flowchart TD
+  S["Freeze current main and historical P0008 source"] --> A["A: postmerge PR head/review/FPC audit"]
+  S --> B["B: GEMINI #44 owner wire and CHANGED replay decision"]
+  S --> C["C: hosted IC3 #12 and protection #50 / Hub ruleset"]
+  S --> T["B42 taxonomy source-shadow — advisory only"]
+  A --> E["Independently verified source admission"]
+  B --> F["W1/W2 owner protocol and fixture DoV"]
+  C --> G["W3 hosted + two effective protection canaries"]
+  E --> W{"W4 ALL predecessors PASS?"}
+  F --> W
+  G --> W
+  W --> H["W4 hosted integration"]
+  H --> I["W5 independent second-consumer parity"]
+  I --> J["W6 replay CONTROL"]
