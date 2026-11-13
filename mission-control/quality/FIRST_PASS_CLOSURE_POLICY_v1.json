@@ -89,7 +89,8 @@
     "NO_ALLOWLISTED_PROOF_RUN_ON_EXACT_HEAD",
     "POLICY_DEPENDENCY_EXEMPTION_INVALID",
     "POLICY_CODEX_BLOCKING_PRIORITIES_INVALID",
-    "REVIEW_THREADS_UNAVAILABLE"
+    "REVIEW_THREADS_UNAVAILABLE",
+    "POLICY_CODEX_QUOTA_WAIVER_INVALID"
   ],
   "non_compensation": {
     "r3_release_credit": "NONE",
@@ -204,31 +205,24 @@
       "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP"
     ]
   },
-  "codex_unavailable_waiver": {
-    "purpose": "CODEX_COULD_NOT_REVIEW_THE_EXACT_HEAD_BECAUSE_OF_QUOTA_NOT_BECAUSE_OF_A_FINDING",
-    "applies_when": "CODEX_SUMMARY_CODE_REVIEW_FAILED_ON_EXACT_HEAD_AND_USAGE_LIMIT_COMMENT_FOLLOWS_AND_OWNER_LABEL_APPLIED_AFTER_HEAD_COMMIT_AND_NO_FORBIDDEN_PATH_AND_NO_OPEN_CODEX_FINDING",
-    "label": "fpc:codex-unavailable",
-    "labeler_logins": [
+  "codex_quota_waiver": {
+    "applies_when": "CODEX_REVIEWER_POSTED_quota_notice_ON_THE_PR_AND_AN_owner_logins_COMMENT_AFTER_IT_CARRIES_THE_WAIVER_LINE_FOR_THE_EXACT_HEAD",
+    "quota_notice": "You have reached your Codex usage limits for code reviews",
+    "owner_logins": [
       "GBOGEB"
     ],
-    "limit_comment_phrase": "You have reached your Codex usage limits",
-    "forbidden_path_patterns": [
-      ".github/workflows/*",
-      ".github/actions/*",
-      ".github/dependabot.yml",
-      ".github/CODEOWNERS",
-      "SECURITY.md",
-      "mission-control/quality/*",
-      "scripts/first_pass_closure_gate.py"
-    ],
+    "waiver_line": "FPC_WAIVER_V1 head=<40-char PR head SHA> waives=CODEX_REVIEW reason=<text>",
+    "voided_by": "ANY_NEW_PUSH_TO_THE_PR_HEAD",
     "waives": [
       "CODEX_REVIEW"
     ],
     "never_waives": [
       "EXACT_HEAD_PROOF_RUNS",
-      "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP",
-      "OPEN_CODEX_FINDINGS_ON_EXACT_HEAD"
+      "OPEN_BLOCKING_CODEX_FINDINGS_ON_EXACT_HEAD",
+      "CONTROL_PLANE_CHANGE_REQUIRES_BOOTSTRAP"
     ],
-    "receipt_marks_first_pass_not_clean": true
+    "receipt_field": "codex_quota_waiver",
+    "post_merge": "CODEX_REVIEW_OWED_WHEN_QUOTA_RETURNS; receipt records post_merge_review_owed=true",
+    "owner_decision": "2026-11-10"
   }
 }
