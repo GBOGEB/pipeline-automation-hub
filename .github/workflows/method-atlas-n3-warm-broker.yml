@@ -1,0 +1,155 @@
+name: Method Atlas N3 warm broker two-processor DAG pilot
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/federation-atlas/orchestration/warm_broker_pilot.py'
+      - 'mission-control/federation-atlas/orchestration/test_warm_broker_pilot.py'
+      - 'mission-control/federation-atlas/orchestration/N3_WARM_BROKER.md'
+      - '.github/workflows/method-atlas-n3-warm-broker.yml'
+      - 'mission-control/federation-atlas/orchestration/broker.py'
+      - 'mission-control/federation-atlas/orchestration/main.py'
+      - 'mission-control/gogreen/outcome_convergence/outcome_flight.py'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: n3-warm-broker-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  n3-bounded-producers:
+    name: Method Atlas broker · two actual producers · six cold/warm modes
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout the exact immutable PR head
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+
+      - name: Assert source head
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXACT_HEAD"
+
+      - name: Reuse pinned Python 3.12
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+
+      - name: Install only existing Method Atlas YAML parser once
+        run: python -m pip install --disable-pip-version-check pyyaml==6.0.3
+
+      - name: Cheap syntax preflight before any processor launches
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+          files=("warm_broker_pilot.py","test_warm_broker_pilot.py")
+          base=Path("mission-control/federation-atlas/orchestration")
+          for name in files:
+              ast.parse((base/name).read_text(encoding="utf-8"), filename=name)
+              print("N3_SOURCE_PARSE_PASS="+name)
+          PY
+
+      - name: Adversarial contracts and actual 2-producer DAG smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/federation-atlas/orchestration \
+            -p test_warm_broker_pilot.py -v 2>&1 | tee "$RUNNER_TEMP/n3-test-results.log"
+          python - <<'PY'
+          import os,re
+          from pathlib import Path
+          data=(Path(os.environ["RUNNER_TEMP"])/"n3-test-results.log").read_text()
+          found=[int(x) for x in re.findall(r'^Ran (\d+) tests? in ',data,re.M)]
+          if not found or found[-1]<13 or 'FAILED' in data or 'skipped=' in data:
+              raise SystemExit("N3_TEST_POPULATION_FIRST_RED")
+          print("N3_TESTS="+str(found[-1]))
+          PY
+
+      - name: Actually execute existing broker on two real registered producers
+        shell: bash
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/federation-atlas/orchestration/warm_broker_pilot.py \
+            --root . --head "$EXACT_HEAD" --pulses 4 \
+            --out "$RUNNER_TEMP/n3-warm-broker"
+
+      - name: Reconcile all source, DAG, causal negative, hash and authority receipts
+        shell: bash
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          directory=Path(os.environ['RUNNER_TEMP'])/'n3-warm-broker'
+          result=json.loads((directory/'n3_receipt.json').read_text())
+          manifest=json.loads((directory/'manifest.json').read_text())
+          if result['source']['head']!=os.environ['EXACT_HEAD'] or manifest['source_sha']!=result['source']['head']:
+              raise SystemExit("N3_EXACT_SHA_DRIFT")
+          for name,sha in manifest['files_sha256'].items():
+              if hashlib.sha256((directory/name).read_bytes()).hexdigest()!=sha:
+                  raise SystemExit("N3_OUTWARD_MEMBER_HASH_MISMATCH")
+          p=result['plan']
+          if p['pulses']!=4 or len(p['modes'])!=6 or p['positive_dag_count']!=24 or p['invalid_dag_count']!=24 or p['tamper_dag_count']!=2:
+              raise SystemExit("N3_MISSING_EXECUTION_POPULATION")
+          rows=result['rows']
+          if len(rows)!=50 or sum(bool(x['accepted_fan_in']) for x in rows)!=24:
+              raise SystemExit("N3_FALSE_FAN_IN_CREDIT")
+          if sum(x['error_phase']=='output_contract' for x in rows)!=2:
+              raise SystemExit("N3_MISSING_POSTPRODUCER_TAMPER_REJECTION")
+          if any(x['max_running']>x['workers'] or x['workers']>4 for x in rows):
+              raise SystemExit("N3_LOCAL_BROKER_CAP_CHANGED")
+          if len({x['profile_sha256'] for x in rows})!=1:
+              raise SystemExit("N3_PROFILE_PROCESSOR_COLD_WARM_DIVERGENCE")
+          for variant in ('baseline','counterfactual'):
+              received={r['fan_in_sha256'] for r in rows if r['variant']==variant and r['accepted_fan_in']}
+              if len(received)!=1:
+                  raise SystemExit("N3_MODE_OR_PULSE_JOIN_SHA_DIVERGENCE_"+variant)
+          for key in ('remote_dispatch','source_changed','mutator_max_workers_changed',
+                      'external_watcher_added','fleet_capacity_proven',
+                      'independent_native_job_identity_verified'):
+              if result['safety'][key] is not False:
+                  raise SystemExit("N3_AUTHORITY_OR_FLEET_PROOF_ESCALATION_"+key)
+          if result['safety']['native_4_pulse_scale_admission']!='HOLD' or result['safety']['merger_admission']!='HOLD':
+              raise SystemExit("N3_FALSE_ADMISSION")
+          html=(directory/'runtime-replay.html').read_text()
+          if 'id="play"' not in html or 'id="timeline"' not in html or 'does not launch work' not in html:
+              raise SystemExit("N3_REPLAY_NOT_EXISTING_RENDERER")
+          print("N3_REAL_TWO_PROCESSOR_DAG_PASS="+json.dumps({
+              'dags':len(rows),'valid_fan_ins':24,'expected_negatives':26,
+              'source_head':result['source']['head'],
+              'seconds_by_mode':{k:v['median_positive_wall_seconds']
+                    for k,v in result['summary']['by_mode'].items()},
+              'speedup_cold_to_warm':result['summary']['cold_to_warm_speedup_by_worker_count'],
+              'native_fleet_scale_admitted':False},sort_keys=True))
+          PY
+          test -z "$(git status --porcelain)"
+
+      - name: Preserve actual receipt and replay; never publish or dispatch
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: n3-warm-broker-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/n3-test-results.log
+            ${{ runner.temp }}/n3-warm-broker/
+          retention-days: 21
+          if-no-files-found: warn
