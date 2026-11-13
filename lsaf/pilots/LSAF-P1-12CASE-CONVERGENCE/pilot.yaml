@@ -1,0 +1,75 @@
+schema: lsaf/pilot/v0.1
+pilot_id: LSAF-P1-12CASE-CONVERGENCE
+purpose: >
+  Test whether LSAF converges on deterministic, reusable classifications before
+  expanding from the bounded 48-hour cohort to PINNED / 7-day / broader history.
+
+source_cohort: C-20261110-12-48H
+authority_transfer: false
+production_mutation: false
+
+cases:
+  recurring_roots:
+    count: 4
+    selection_rule: choose four known repeated semantic fingerprints with at least two observations
+    required_outcomes:
+      - stable_fingerprint
+      - occurrence_counter
+      - no_duplicate_todo_creation
+      - retained_source_links
+
+  stale_or_admission:
+    count: 4
+    selection_rule: choose four cases involving stale-head, exact-head review, or admission predicates
+    required_outcomes:
+      - head_state_explicit
+      - stale_vs_current_discriminated
+      - authority_preserved
+      - no_false_ready
+
+  negative_controls:
+    count: 4
+    selection_rule: choose four intentionally similar-but-distinct or incomplete-evidence cases
+    required_outcomes:
+      - no_false_merge_of_fingerprints
+      - UNKNOWN_preserved_where_required
+      - missing_authority_or_evidence_detected
+      - no_false_ready
+
+metrics:
+  required:
+    - deterministic_classification_rate
+    - duplicate_suppression_rate
+    - false_match_rate
+    - unresolved_provenance_rate
+    - causal_source_coverage
+    - false_ready_rate
+    - false_blocked_rate
+  prediction_when_available:
+    - top1_accuracy
+    - top3_accuracy
+    - brier_score
+    - run_count_mae
+    - closure_age_mae
+
+admission:
+  minimum:
+    deterministic_classification_rate: 1.0
+    false_ready_rate: 0.0
+    negative_controls_correct: 4
+  decision:
+    pass: SCALE_CANDIDATE
+    fail: PILOT_REPAIR_REQUIRED
+
+next_scale_if_pass:
+  sequence:
+    - PINNED_RECOVERABLE_SET
+    - 7_DAY_WINDOW
+    - BROADER_HISTORY
+  constraint: expand semantic diversity before raw volume
+
+outputs:
+  - lsaf/pilots/LSAF-P1-12CASE-CONVERGENCE/results.yaml
+  - lsaf/pilots/LSAF-P1-12CASE-CONVERGENCE/receipt.md
+  - lsaf/generated/dag.mmd
+  - lsaf/generated/bd_queue.md
