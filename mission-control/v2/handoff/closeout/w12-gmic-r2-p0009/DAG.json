@@ -1,0 +1,111 @@
+{
+  "schema": "missioncontrol.gmic_p0009.kahn_dependencies.v1",
+  "nodes": [
+    "FPC_HISTORY",
+    "PR_REVIEWS",
+    "AUDIT",
+    "HUB_336_OWNER",
+    "HUB_RULE_EFFECTIVE",
+    "RED_CANARY",
+    "GREEN_CANARY",
+    "W0_POSTMERGE_DOV",
+    "GEM_44_DECISION",
+    "W1_W2_OWNER",
+    "GEM_12_IC3",
+    "GEM_50_RULE",
+    "W4_JOIN",
+    "W5_PARITY",
+    "W6_CONTROL"
+  ],
+  "edges": [
+    [
+      "FPC_HISTORY",
+      "AUDIT",
+      "FEEDFORWARD"
+    ],
+    [
+      "PR_REVIEWS",
+      "AUDIT",
+      "FEEDFORWARD"
+    ],
+    [
+      "AUDIT",
+      "HUB_336_OWNER",
+      "FEEDFORWARD"
+    ],
+    [
+      "HUB_336_OWNER",
+      "HUB_RULE_EFFECTIVE",
+      "FEEDFORWARD"
+    ],
+    [
+      "HUB_RULE_EFFECTIVE",
+      "RED_CANARY",
+      "FEEDFORWARD"
+    ],
+    [
+      "HUB_RULE_EFFECTIVE",
+      "GREEN_CANARY",
+      "FEEDFORWARD"
+    ],
+    [
+      "RED_CANARY",
+      "W0_POSTMERGE_DOV",
+      "FEEDFORWARD"
+    ],
+    [
+      "GREEN_CANARY",
+      "W0_POSTMERGE_DOV",
+      "FEEDFORWARD"
+    ],
+    [
+      "GEM_44_DECISION",
+      "W1_W2_OWNER",
+      "FEEDFORWARD"
+    ],
+    [
+      "W0_POSTMERGE_DOV",
+      "W4_JOIN",
+      "FEEDFORWARD"
+    ],
+    [
+      "W1_W2_OWNER",
+      "W4_JOIN",
+      "FEEDFORWARD"
+    ],
+    [
+      "GEM_12_IC3",
+      "W4_JOIN",
+      "FEEDFORWARD"
+    ],
+    [
+      "GEM_50_RULE",
+      "W4_JOIN",
+      "FEEDFORWARD"
+    ],
+    [
+      "W4_JOIN",
+      "W5_PARITY",
+      "FEEDFORWARD"
+    ],
+    [
+      "W5_PARITY",
+      "W6_CONTROL",
+      "FEEDFORWARD"
+    ]
+  ],
+  "W4_AND_JOIN": [
+    "W0_POSTMERGE_DOV",
+    "W1_W2_OWNER",
+    "GEM_12_IC3",
+    "GEM_50_RULE"
+  ],
+  "owner_scope": {
+    "HUB_336_OWNER": "HUMAN_ADMIN_DECISION",
+    "HUB_RULE_EFFECTIVE": "ADMIN_ONLY",
+    "GEM_44_DECISION": "GEMINI_OWNER",
+    "GEM_12_IC3": "GOOGLE_GITHUB_OWNER",
+    "GEM_50_RULE": "GEMINI_ADMIN"
+  },
+  "promotion_authorized": false
+}
