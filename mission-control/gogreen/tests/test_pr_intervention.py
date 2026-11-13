@@ -64,12 +64,17 @@ class FakeClient:
         self.commit_files = {}
         self.parents = {}
         self.pr_files = {}
+        self.runs = {}       # head SHA -> workflow runs on that head
+        self.jobs = {}       # run id -> latest-attempt jobs
+        self.run_state = {}  # run id -> /actions/runs/{id}
         self.calls = []
 
     def get(self, route):
         self.calls.append(('get', route))
         if route == f'/repos/{REPO}':
             return {'default_branch': 'master'}
+        if '/actions/runs/' in route:
+            return copy.deepcopy(self.run_state[int(route.rsplit('/', 1)[1])])
         prefix = f'/repos/{REPO}/commits/'
         if route.startswith(prefix):
             ref = route[len(prefix):]
@@ -81,6 +86,10 @@ class FakeClient:
 
     def paginate(self, route, key=None):
         self.calls.append(('paginate', route))
+        if '/actions/runs?head_sha=' in route:
+            return copy.deepcopy(self.runs.get(route.split('head_sha=')[1], []))
+        if route.endswith('/jobs'):
+            return copy.deepcopy(self.jobs.get(int(route.split('/actions/runs/')[1].split('/')[0]), []))
         n = int(route.split('/pulls/')[1].split('/')[0])
         return [{'filename': f} for f in self.pr_files.get(n, [])]
 
@@ -115,9 +124,31 @@ class FakeWriter:
             self.client.parents[new] = [expected_head, self.client.heads['master']]
         return self.answer
 
+    def rerun_failed(self, repo, run_id, debug):
+        self.calls.append((repo, run_id, debug))
+        if self.client is not None and self.answer[0] == 'ACCEPTED':
+            state = self.client.run_state[run_id]
+            state.update(run_attempt=state['run_attempt'] + 1, status='queued', conclusion=None)
+        return self.answer
+
 
 def no_sleep(seconds):
     pass
+
+
+def failed_run(fc, n, kind):
+    """Give PR n's head one completed run whose failed job matches a classifier case."""
+    head, rid = sha(f'h{n}'), 1000 + n
+    steps = {'runner_lost': [], 'thin_logs': [{'name': 'Run tests', 'conclusion': 'success'}],
+             'failed_step': [{'name': 'Run tests', 'conclusion': 'failure'}],
+             'green': [{'name': 'Run tests', 'conclusion': 'success'}]}[kind]
+    conclusion = 'success' if kind == 'green' else 'failure'
+    run = {'id': rid, 'head_sha': head, 'status': 'completed', 'conclusion': conclusion, 'run_attempt': 1,
+           'name': 'CI', 'updated_at': '2026-11-10T00:00:00Z'}
+    fc.runs[head] = [run]
+    fc.jobs[rid] = [{'id': 5000 + n, 'name': 'unit', 'conclusion': conclusion, 'steps': steps}]
+    fc.run_state[rid] = dict(run)
+    fc.compares[(BASE0, head)] = cmp(head, behind=0)
 
 
 def policy(**kw):
@@ -489,6 +520,127 @@ class Transport(unittest.TestCase):
         self.assertEqual(run.calls[0][0], ['gh', 'api', f'repos/{REPO}/compare/{BASE0}...{BASE1}'])
         with self.assertRaises(ValueError):
             c.compare(REPO, 'master', BASE1)
+
+
+class Reruns(unittest.TestCase):
+    """Slice 2: rerun_triage decides, act reruns failed jobs, debug reruns become LDAB observations."""
+
+    KINDS = {1: 'runner_lost', 2: 'thin_logs', 3: 'failed_step', 4: 'green', 5: 'runner_lost'}
+
+    def client(self):
+        fc = FakeClient([pr(n, sha(f'h{n}'), ci='SUCCESS' if k == 'green' else 'FAILURE')
+                         for n, k in self.KINDS.items()])
+        for n, k in self.KINDS.items():
+            failed_run(fc, n, k)
+        fc.compares[(BASE0, sha('h5'))] = cmp(sha('h5'), behind=4)  # behind main: RECONCILE_MAIN
+        return fc
+
+    def test_classifier(self):
+        run = {'conclusion': 'failure'}
+        self.assertEqual(mod.classify(run, [{'id': 1, 'conclusion': 'failure', 'steps': []}])[:3],
+                         ('TRANSIENT', 'runner_lost', False))
+        self.assertEqual(mod.classify(run, [{'id': 1, 'conclusion': 'failure',
+                                             'steps': [{'conclusion': 'success'}]}])[:3], ('UNCLASSIFIED', None, True))
+        self.assertEqual(mod.classify(run, [{'id': 1, 'conclusion': 'failure',
+                                             'steps': [{'conclusion': 'failure'}]}])[:3], ('UNCLASSIFIED', None, False))
+        self.assertEqual(mod.classify({'conclusion': 'success'}, [{'id': 1}])[:3], ('NONE', None, False))
+        # `rerun --failed` reruns every failed job: one actionable failed step anywhere means inspect first.
+        lost = {'id': 1, 'conclusion': 'failure', 'steps': []}
+        red = {'id': 2, 'conclusion': 'failure', 'steps': [{'conclusion': 'failure'}]}
+        thin = {'id': 3, 'conclusion': 'failure', 'steps': [{'conclusion': 'success'}]}
+        kind, cause, insufficient, job = mod.classify(run, [lost, red, thin])
+        self.assertEqual((kind, cause, insufficient, job['id']), ('UNCLASSIFIED', None, False, 2))
+        self.assertEqual(mod.classify(run, [lost, thin])[:3], ('UNCLASSIFIED', None, True))
+        self.assertEqual(mod.classify(run, [lost, {**lost, 'id': 4}])[:3], ('TRANSIENT', 'runner_lost', False))
+
+    def test_triage_owner_decides_eligibility(self):
+        decisions = {}
+        for level, wanted in (('RERUN', 1), ('DEBUG_RERUN', 2)):
+            b = mod.before(self.client(), [REPO], policy(intervention=level, holdout=0.5), 'PRX-R', T0, {})
+            rows = {r['number']: r for r in b['prs']}
+            decisions = {n: r['triage']['decision'] for n, r in rows.items()}
+            self.assertEqual([n for n, r in rows.items() if not r['skip']], [wanted])
+        self.assertEqual(decisions, {1: 'RERUN_FAILED_JOBS_CANDIDATE', 2: 'DEBUG_RERUN_CANDIDATE',
+                                     3: 'INSPECT_FIRSTRED', 4: 'EVALUATE_INDEPENDENT_GATES', 5: 'RECONCILE_MAIN'})
+        self.assertEqual(rows[3]['skip'], ['TRIAGE_INSPECT_FIRSTRED'])
+        self.assertEqual(b['pulse'][REPO]['triage_counts']['RECONCILE_MAIN'], 1)
+        self.assertEqual(rows[1]['triage']['run_id'], 1001)
+
+    def test_act_reruns_only_the_judged_attempt(self):
+        fc = self.client()
+        b = mod.before(fc, [REPO], policy(intervention='DEBUG_RERUN', holdout=0.01), 'PRX-D', T0, {})
+        w = FakeWriter(fc)
+        rec = mod.act(fc, w, b, True, T0, sleep=no_sleep)
+        self.assertEqual(w.calls, [(REPO, 1002, True)])
+        self.assertEqual((rec['intervention'], rec['fpc_receipts_invalidated']), ('DEBUG_RERUN', 0))
+        self.assertEqual((rec['results'][0]['run_id'], rec['results'][0]['run_attempt']), (1002, 1))
+        fc2 = self.client()
+        fc2.run_state[1002]['run_attempt'] = 2  # someone already reran it
+        w2 = FakeWriter(fc2)
+        rec2 = mod.act(fc2, w2, b, True, T0, sleep=no_sleep)
+        self.assertEqual((w2.calls, rec2['results'][0]['detail']), ([], 'RUN_MOVED'))
+
+    def test_debug_rerun_ldab_observation(self):
+        abacus = 'GBOGEB/ABACUS'
+        fc = FakeClient([])
+        fc.run_state[77] = {'run_attempt': 2, 'status': 'completed', 'conclusion': 'success'}
+        fc.jobs[77] = [{'id': 901, 'name': 'other'}, {'id': 902, 'name': 'unit'}]
+        b = {'prs': [{'repo': abacus, 'number': 9, 'triage': {'job_name': 'unit'}},
+                     {'repo': REPO, 'number': 8, 'triage': {'job_name': 'unit'}}]}
+        act_rec = {'intervention': 'DEBUG_RERUN', 'results': [
+            {'repo': abacus, 'number': 9, 'head_sha': sha('h9'), 'result': 'ACCEPTED', 'run_id': 77, 'run_attempt': 1},
+            {'repo': REPO, 'number': 8, 'head_sha': sha('h8'), 'result': 'ACCEPTED', 'run_id': 77, 'run_attempt': 1}]}
+        out = {r['number']: r for r in mod.reruns(fc, b, act_rec)}
+        obs = out[9]['ldab']
+        self.assertEqual((obs['job_id'], obs['proof_level'], obs['real_probe_steps']), (902, 'REPORTED_UNVERIFIED', 0))
+        self.assertEqual(obs['evidence_url'], 'https://github.com/GBOGEB/ABACUS/actions/runs/77')
+        self.assertEqual(out[8]['ldab'], 'NOT_IN_LDAB_SCOPE')
+        self.assertEqual((out[9]['attempt_before'], out[9]['attempt_after'], out[9]['conclusion']), (1, 2, 'success'))
+        self.assertIn(('paginate', f'/repos/{abacus}/actions/runs/77/attempts/2/jobs'), fc.calls)  # our attempt's jobs
+        fc.run_state[77]['run_attempt'] = 3  # someone reran again after us: attempt 3 is not our evidence
+        later = {r['number']: r for r in mod.reruns(fc, b, act_rec)}
+        self.assertEqual((later[9]['ldab'], later[9]['conclusion']), ('DISPATCHED_ATTEMPT_UNIDENTIFIABLE', None))
+        fc.run_state[77]['run_attempt'] = 1
+        self.assertEqual(mod.reruns(fc, b, act_rec)[0]['ldab'], 'NO_NEW_ATTEMPT')
+        self.assertEqual(mod.reruns(fc, b, {**act_rec, 'intervention': 'RERUN'})[0]['ldab'], 'NOT_A_DEBUG_RERUN')
+        with self.assertRaises(ValueError):  # the LDAB consumer refuses evidence outside ABACUS / CODEX
+            mod.ldab_observation(REPO, sha('h8'), 77, 902)
+
+    def test_green_after_our_rerun_is_delivered_by_rerun(self):
+        kinds = {n: 'runner_lost' for n in range(1, 13)}
+        fc = FakeClient([pr(n, sha(f'h{n}'), ci='FAILURE') for n in kinds])
+        for n in kinds:
+            failed_run(fc, n, 'runner_lost')
+        b = mod.before(fc, [REPO], policy(intervention='RERUN', holdout=0.5, min_arm=2), 'PRX-G', T0, {})
+        treated = [r['number'] for r in b['prs'] if r['arm'] == 'TREATED']
+        holdout = [r['number'] for r in b['prs'] if r['arm'] == 'HOLDOUT']
+        self.assertTrue(treated and holdout)
+        a = mod.act(fc, FakeWriter(fc), b, True, T0, sleep=no_sleep)
+        for n in treated + holdout[:1]:
+            fc.views[(REPO, n)] = pr(n, sha(f'h{n}'), ci='SUCCESS')
+        rows = [mod.pr_row(fc, REPO, fc.pr(REPO, r['number']), BASE0, b['policy'], T0) for r in b['prs']]
+        ev = mod.evaluate(fc, b, a, rows)
+        attribution = {p['number']: p['attribution'] for p in ev['positives']}
+        self.assertTrue(all(attribution[n] == 'DELIVERED_BY_RERUN' for n in treated))
+        self.assertEqual(attribution[holdout[0]], 'EXTERNAL')
+        # Rerun again by someone else after us: the green is not credited to our rerun.
+        ev2 = mod.evaluate(fc, b, a, rows, foreign={(REPO, treated[0])})
+        self.assertEqual({p['number']: p['attribution'] for p in ev2['positives']}[treated[0]], 'UNVERIFIED')
+
+    def test_writer_rerun_args_and_policy_flags(self):
+        run = Transport.Run()
+        mod.Writer(run).rerun_failed(REPO, 42, True)
+        self.assertEqual(run.calls[0][0], ['gh', 'run', 'rerun', '42', '--failed', '-R', REPO, '--debug'])
+        mod.Writer(run).rerun_failed(REPO, 42, False)
+        self.assertNotIn('--debug', run.calls[1][0])
+        with tempfile.TemporaryDirectory() as d:
+            with patch('builtins.print'):
+                mod.main(['before', '--ledger', str(Path(d) / 'l.jsonl'), '--experiment', 'PRX-F',
+                          '--intervention', 'debug-rerun', '--gate-check', 'PR Feedback Gate',
+                          '--gate-check', 'first-pass-closure', '--census-ledger', str(Path(d) / 'none.jsonl')],
+                         client=self.client(), now=T0)
+            p = mod.read_ledger(Path(d) / 'l.jsonl')[0][0]['policy']
+        self.assertEqual((p['intervention'], p['gate_checks']), ('DEBUG_RERUN', ['PR Feedback Gate', 'first-pass-closure']))
 
 
 class Cli(unittest.TestCase):
