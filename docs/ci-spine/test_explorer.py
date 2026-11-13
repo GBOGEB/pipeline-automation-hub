@@ -268,5 +268,115 @@ class ExplorerProvenanceTests(unittest.TestCase):
         self.assertEqual(proc.returncode, 0, proc.stderr)
 
 
+
+class PlotlyPointProvenanceTests(unittest.TestCase):
+    """JQ-08: immutable run/attempt identity across two Plotly bar traces."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.samples = plotly_companion.rows()
+
+    def bindings(self, samples=None, route="explorer.html"):
+        return plotly_companion.point_bindings(
+            self.samples if samples is None else samples, route)
+
+    def test_eight_stable_ids_and_both_navigation_targets(self):
+        points = self.bindings()
+        self.assertEqual(len(points), 8)
+        self.assertEqual(len({p["point_id"] for p in points}), 8)
+        for p in points:
+            self.assertEqual(p["point_id"],
+                             f'run:{p["run_id"]}:attempt:{p["attempt"]}')
+            self.assertEqual(p["explorer_href"],
+                             f'explorer.html#lens=timing&kind=run&id={p["run_id"]}')
+            self.assertTrue(p["github_href"].endswith(
+                f'/actions/runs/{p["run_id"]}/attempts/{p["attempt"]}'))
+            self.assertEqual(p["precision"], "PLOTLY_POINT_SELECTION")
+            self.assertEqual(len(p["source_sha"]), 40)
+
+    def test_duplicate_run_attempt_is_fail_closed(self):
+        samples = copy.deepcopy(self.samples)
+        samples[1]["run_id"], samples[1]["attempt"] = samples[0]["run_id"], samples[0]["attempt"]
+        with self.assertRaisesRegex(ValueError, "PLOTLY_DUPLICATE_POINT_FIRST_RED"):
+            self.bindings(samples)
+
+    def test_invalid_attempt_source_sha_and_job_are_first_red(self):
+        for field, value in (("attempt", 0), ("attempt", True), ("run_id", "123"),
+                             ("run_id", -5), ("source_sha", "a"*39),
+                             ("source_sha", "b"*40+"?"), ("job", "")):
+            with self.subTest(field=field, value=value):
+                samples = copy.deepcopy(self.samples)
+                samples[0][field] = value
+                with self.assertRaisesRegex(ValueError, "PLOTLY_INVALID_RUN_SOURCE_FIRST_RED"):
+                    self.bindings(samples)
+
+    def test_invalid_remote_or_query_navigation_first_red(self):
+        for route in ("https://host.example/x.html", "//host.example/a",
+                      "../explorer.html?run=1", "explorer.html#injected",
+                      "explorer.html/../../secret", ""):
+            with self.subTest(route=route), self.assertRaisesRegex(
+                    ValueError, "PLOTLY_UNTRUSTED_EXPLORER_ROUTE_FIRST_RED"):
+                self.bindings(route=route)
+        self.assertEqual(len(self.bindings(route="../../explorer.html")), 8)
+
+    def test_no_script_escape_from_untrusted_job_text(self):
+        points = copy.deepcopy(self.bindings())
+        points[0]["job"] = '</script><script src="https://evil.example/x.js"></script>'
+        html = plotly_companion.point_inspector(points)
+        self.assertNotIn('</script><script src="https://evil.example', html)
+        self.assertIn("\\u003c/script\\u003e", html)
+        self.assertIn("Object.hasOwn(points, id)", html)
+        self.assertIn('gd.on("plotly_click", selectPoint)', html)
+        self.assertIn("traceId !== id", html)
+        self.assertIn("UNMAPPED:", html)
+        self.assertIn("PDF page, bbox and OCG remain UNMAPPED", html)
+
+    def test_rendered_customdata_carries_point_id_for_click_guard(self):
+        try:
+            rendered = plotly_companion.render().decode("utf-8")
+        except RuntimeError as exc:
+            self.skipTest(str(exc))
+        decoder, key, traces, pos = json.JSONDecoder(), '"customdata":', 0, 0
+        while (pos := rendered.find(key, pos)) != -1:
+            custom, end = decoder.raw_decode(rendered, pos + len(key))
+            ids_at = rendered.index('"ids":', end)
+            ids, _ = decoder.raw_decode(rendered, ids_at + len('"ids":'))
+            self.assertEqual(len(custom), len(ids))
+            for row, point_id in zip(custom, ids):
+                self.assertEqual(len(row), 5)  # the inspector requires d.length === 5
+                self.assertEqual(row[4], point_id)
+                self.assertEqual(point_id, f"run:{row[0]}:attempt:{row[1]}")
+            traces, pos = traces + 1, end
+        self.assertEqual(traces, 2)
+
+    def test_sidecar_binds_actual_html_bytes_and_avoids_pdf_claims(self):
+        html = b"pretend actual Plotly output bytes"
+        points = self.bindings()
+        receipt = plotly_companion.point_receipt(html, points)
+        import hashlib
+        self.assertEqual(receipt["chart"]["sha256"], hashlib.sha256(html).hexdigest())
+        self.assertEqual(receipt["count"], 8)
+        self.assertEqual(receipt["precision"], "PLOTLY_POINT_SELECTION")
+        self.assertEqual(receipt["pdf_mapping"], "UNMAPPED_NO_VERIFIED_BINARY")
+        self.assertIs(receipt["authority_transfer"], False)
+        self.assertIs(receipt["merge_authorized"], False)
+        self.assertEqual(receipt["source"]["snapshot_commit"],
+                         "ca623ab83793df6edd245942884ad5428a5fe079")
+
+    @unittest.skipUnless(shutil.which("node"), "Node not installed; browser QA must attest")
+    def test_point_inspector_inline_js_is_node_parseable(self):
+        panel = plotly_companion.point_inspector(self.bindings())
+        parser = InlineScriptReader()
+        parser.feed(panel)
+        self.assertFalse(parser.has_external_script)
+        self.assertEqual(len(parser.inline_scripts), 1)
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "point-inspector.js"
+            path.write_text(parser.inline_scripts[0], encoding="utf-8")
+            proc = subprocess.run(["node", "--check", str(path)], capture_output=True,
+                                  text=True, timeout=20)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

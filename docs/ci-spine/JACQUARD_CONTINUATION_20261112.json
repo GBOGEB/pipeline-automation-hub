@@ -1,0 +1,131 @@
+{
+  "schema": "gbo.ci-spine.jacquard-continuation.v1",
+  "record_type": "read_only_branch_stack_and_dod_dov_chaperone",
+  "observed_date": "2026-11-12",
+  "source": {
+    "repository": "GBOGEB/pipeline-automation-hub",
+    "master_sha_at_census": "c66feef5c886ebc359bf38d4ea832e23b5ec5c46",
+    "master_commit_utc": "2026-11-12T12:33:28Z",
+    "advisory_not_release_authority": true
+  },
+  "historical_baselines": [
+    {
+      "id": "JQ-00",
+      "pr": 989,
+      "state": "MERGED_VERIFIED",
+      "role": "root README and trustworthy badges"
+    },
+    {
+      "id": "JQ-00B",
+      "pr": 992,
+      "state": "MERGED_VERIFIED",
+      "role": "frozen 182 workflow/307 test-source catalog and B00-B09 conceptual DAG"
+    },
+    {
+      "id": "JQ-01",
+      "pr": 1002,
+      "state": "MERGED_VERIFIED",
+      "role": "offline five-lens explorer and Plotly source pattern"
+    },
+    {
+      "id": "JQ-02",
+      "pr": 1017,
+      "state": "MERGED_VERIFIED",
+      "role": "interactive provenance notebook"
+    },
+    {
+      "id": "JQ-04",
+      "pr": 1018,
+      "state": "MERGED_VERIFIED",
+      "role": "three exact-source to HTML selection pointers; no PDF rectangle"
+    },
+    {
+      "id": "JQ-04B",
+      "pr": 1021,
+      "state": "MERGED_VERIFIED",
+      "role": "unknown clock and view link fixes"
+    }
+  ],
+  "current_branch": {
+    "pr": 1239,
+    "branch": "feat/ci-spine-jacquard-plotly-point-link-20261112",
+    "stage": "IMPLEMENTED_CANDIDATE_NATIVE_DOV_PENDING",
+    "merge_admission": "HOLD",
+    "owner": "ci-spine Plotly presentation adapter",
+    "execution_changes": "existing scoped QA only; no new job/permissions/dependency/runtime publisher"
+  },
+  "dod_dov": [
+    {
+      "id": "JQ08-01",
+      "dod": "8 stable run/attempt point identities on two traces",
+      "implementation": "COMMITTED",
+      "dov": "native source-bound positive and negative tests",
+      "verification": "QUEUED_NOT_CREDITED"
+    },
+    {
+      "id": "JQ08-02",
+      "dod": "user selects Plotly point to find exact explorer and GitHub attempt",
+      "implementation": "COMMITTED",
+      "dov": "Chromium user interaction and screenshot",
+      "verification": "PENDING"
+    },
+    {
+      "id": "JQ08-03",
+      "dod": "SHA256 input/chart sidecar receipt",
+      "implementation": "COMMITTED",
+      "dov": "actual Plotly CI output digest and 8-point check",
+      "verification": "QUEUED_NOT_CREDITED"
+    },
+    {
+      "id": "JQ08-04",
+      "dod": "offline trust, no fabricated PDF mapping",
+      "implementation": "COMMITTED",
+      "dov": "source/head/route/mismatch and external script negatives",
+      "verification": "QUEUED_NOT_CREDITED"
+    },
+    {
+      "id": "JQ08-05",
+      "dod": "real owner-PDF page/OCG/normalized bbox link",
+      "implementation": "NOT_IMPLEMENTED",
+      "dov": "physical input binary, exact hash, page/box transform and stale-rebuild test",
+      "verification": "UNMAPPED_NO_VERIFIED_BINARY"
+    },
+    {
+      "id": "JQ08-06",
+      "dod": "PR admission",
+      "implementation": "DRAFT_ONLY",
+      "dov": "exact-head CI + FPC + effective rules + eligible independent review",
+      "verification": "HOLD"
+    }
+  ],
+  "research_crosswalk": [
+    {
+      "source": "https://www.inkandswitch.com/jacquard/notebook/",
+      "idea": "provenance as map + fine-grained build/source pointers",
+      "adoption": "NAVIGATION_ONLY"
+    },
+    {
+      "source": "https://www.inkandswitch.com/patchwork/notebook/11/",
+      "idea": "media-specific pointers + universal comments",
+      "adoption": "SOURCE_POINTER_CONTRACT_ONLY"
+    },
+    {
+      "source": "https://plotly.com/javascript/plotlyjs-events/",
+      "idea": "plotly_click with datum metadata",
+      "adoption": "BOUND_EXISTING_CHART"
+    }
+  ],
+  "fail_closed_rules": [
+    "No implicit promotion of display/badge/plot navigation into merge or engineering authority",
+    "No invented PDF layers, bbox precision or mapped comment coordinates",
+    "No direct shell watcher, mutating API or job dispatch from published HTML",
+    "No cross-head source or digest substitutions, missing evidence remains UNKNOWN"
+  ],
+  "next_execution_order": [
+    "N1: native CI terminal results and test counts at exact latest PR head",
+    "N2: Chromium click-selection proof at desktop/mobile; verify both bar traces and broken route negatives",
+    "N3: owner-supplied real PDF/SVG figure and cross-medium page/layer mapping as a separate PR",
+    "N4: controlled replay after source change with STALE pointer invalidation",
+    "N5: independent review and owner admission for each separately qualified lane"
+  ]
+}
