@@ -1,0 +1,55 @@
+schema: lsaf/glob/v0.1
+
+scope:
+  include:
+    - "lsaf/**"
+    - "tools/threads/session_census.py"
+    - "tests/**/session*census*"
+    - "tests/**/lsaf*"
+    - "docs/**/lsaf*"
+
+  inspect_only:
+    - ".github/workflows/**"
+    - "AGENTS.md"
+    - "**/AGENTS.md"
+    - "pyproject.toml"
+    - "requirements*.txt"
+    - "package.json"
+    - "package-lock.json"
+
+  exclude_write:
+    - ".github/workflows/**"
+    - ".github/CODEOWNERS"
+    - ".github/dependabot.yml"
+    - "secrets/**"
+    - "**/*.pem"
+    - "**/*.key"
+    - "**/.env"
+    - "**/.env.*"
+    - "vendor/**"
+    - "node_modules/**"
+    - ".git/**"
+
+authority_boundaries:
+  no_child_repo_writes_from_this_branch: true
+  no_protection_changes: true
+  no_merge_actions: true
+  no_issue_closure: true
+  no_chat_rename: true
+  no_drive_as_source_of_truth: true
+
+search_priority:
+  - "lsaf/handover/**"
+  - "lsaf/schemas/**"
+  - "lsaf/cohorts/**"
+  - "lsaf/examples/**"
+  - "tools/threads/session_census.py"
+
+generated:
+  allowed_roots:
+    - "lsaf/generated/"
+  never_authoritative: true
+
+unknown_policy:
+  preserve_unknown: true
+  forbid_inferred_pass_fail: true
