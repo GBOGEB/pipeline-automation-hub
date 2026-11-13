@@ -47,9 +47,15 @@ with their `# vX` comments.
 
 ## 5. JADE regeneration
 
-If any `--allow`ed frozen file changed, regenerate what pinned its OID in the same PR (hub:
-`python mission-control/jade_temple/tools/cicd_dag.py` and the census generators), then re-run
-`--frozen-blob-scan` and confirm the new OIDs are the pinned ones.
+If any `--allow`ed frozen file changed, regenerate what pinned its OID in the same PR. In the hub, use the
+mandated entrypoint (AGENTS.md L7), which runs the generators in dependency order and then verifies them:
+
+```powershell
+python mission-control/jade_temple/tools/regen.py --write
+```
+
+If it reports `REGEN_DEFER launcher`, commit and run it again. Then re-run `--frozen-blob-scan` and confirm
+the new OIDs are the pinned ones.
 
 ## 6. Waiver row
 
