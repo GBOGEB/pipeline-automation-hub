@@ -18,9 +18,16 @@ but is never collected in CI cannot go red, so it gives a false green (an uncoll
    recorded, not hidden; a workstation-only error (missing optional dependency) is noted in `reason`.
 3. CI vector (`ci`): from the runs at the same `head_sha`
    (`gh api "repos/<owner>/<repo>/actions/runs?head_sha=<sha>"`), read the `collected` / `passed` lines of each
-   pytest job log and sum per lane. Record the run ids in `ci_lanes`. For CODEX, record the
+   pytest job log per lane. Record the run ids and per-lane counts in `ci_lanes`. For CODEX, record the
    `tests/coverage_waves` lane separately in `coverage_waves`.
-4. Verdict per row: `PASS` only when local collection had zero errors (`local_errors` is 0) and ci >= local;
+   `ci` is the number of distinct test node IDs collected across all lanes, never the sum of lane totals: matrix
+   jobs run the same suite more than once (e.g. hub `coverage-waves.yml` runs `tests/coverage_waves` on Ubuntu and
+   Windows), so a sum counts those tests twice and can hide an uncollected family. Take the union of the lanes'
+   collected node IDs (e.g. `pytest --collect-only -q` output or a junit report per lane). If node IDs cannot be
+   read, a lane total may be added only when the lane is shown to be disjoint from the others (different test
+   paths, not a matrix copy); otherwise record `ci` as null and give the row `UNKNOWN`.
+4. Verdict per row: `PASS` only when local collection had zero errors (`local_errors` is 0) and ci >= local,
+   with `ci` computed as in step 3;
    `GAP` when ci < local (open a G-lane issue naming the uncollected families and put it in `issue`); `UNKNOWN`
    with a written `reason` when either vector cannot be read at that SHA, or when local collection had errors
    (the local count is then only a partial denominator; keep `UNKNOWN` until collection succeeds on the
