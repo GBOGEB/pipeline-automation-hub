@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright, expect
@@ -45,7 +46,7 @@ def run() -> dict:
                 page.locator("#source-node-next").click()
                 expect(page.locator("#selected-label")).to_have_text("Next / React")
                 expect(page.locator("#source-link")).to_have_attribute(
-                    "href", r"https://github\.com/GBOGEB/pipeline-automation-hub/blob/[0-9a-f]{40}/.+#L\d+")
+                    "href", re.compile(r"https://github\.com/GBOGEB/pipeline-automation-hub/blob/[0-9a-f]{40}/.+#L\d+"))
                 assert page.url.endswith("#node=next"), page.url
                 page.locator("#zoom-in").click()
                 expect(page.locator("#zoom-reset")).to_have_text("95%")
