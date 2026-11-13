@@ -75,7 +75,7 @@ jobs:
           from pathlib import Path
           data=(Path(os.environ["RUNNER_TEMP"])/"n3-test-results.log").read_text()
           found=[int(x) for x in re.findall(r'^Ran (\d+) tests? in ',data,re.M)]
-          if not found or found[-1]<13 or 'FAILED' in data or 'skipped=' in data:
+          if not found or found[-1]<14 or 'FAILED' in data or 'skipped=' in data:
               raise SystemExit("N3_TEST_POPULATION_FIRST_RED")
           print("N3_TESTS="+str(found[-1]))
           PY
@@ -131,7 +131,10 @@ jobs:
           if result['safety']['native_4_pulse_scale_admission']!='HOLD' or result['safety']['merger_admission']!='HOLD':
               raise SystemExit("N3_FALSE_ADMISSION")
           html=(directory/'runtime-replay.html').read_text()
-          if 'id="play"' not in html or 'id="timeline"' not in html or 'does not launch work' not in html:
+          if ('id="play"' not in html or 'id="timeline"' not in html or
+              'does not launch work' not in html or
+              '4 registered local broker tasks' not in html or
+              'Eight registered tasks' in html):
               raise SystemExit("N3_REPLAY_NOT_EXISTING_RENDERER")
           print("N3_REAL_TWO_PROCESSOR_DAG_PASS="+json.dumps({
               'dags':len(rows),'valid_fan_ins':24,'expected_negatives':26,

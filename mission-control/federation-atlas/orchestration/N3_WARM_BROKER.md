@@ -132,3 +132,20 @@ two repos before scaling tokenized actions. No private file inference.
 
 **Disposition:** \`N3_REAL_LOCAL_BROKER_PILOT / MERGE_HOLD /
 NATIVE_FLEET_SCALING_UNQUALIFIED / FORMAL_CREDIT_0\`.
+
+## 5. N3 review-feedback regression
+
+The first native N3 run passed its 50 DAG/13-test qualification, but an
+independent Chromium screenshot caught a **semantic label defect**: the
+existing generic playback renderer described the original eight-task
+Method Atlas demonstration even though the N3 broker DAG has **four tasks**.
+The underlying recorded task and edge JSON was correct.
+
+The N3 consumer now uses an exact-anchor, fail-closed presentation adapter
+around the **same existing** `runtime_evidence.render` output. It changes
+only static explanatory copy and a mobile horizontal-scroll cue: it does
+not change the canonical renderer or replay event script. Both native and
+browser tests must now reject an "Eight registered tasks" claim on N3 data,
+verify the four-task label and preserve real Replay/Reset functions.
+The original 50-DAG receipt remains historical evidence on its previous
+head; a new exact-head testflight is mandatory for this change.

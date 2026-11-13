@@ -363,6 +363,37 @@ def render(report):
 """
 
 
+def adapt_recorded_replay(markup, task_count):
+    """Keep the canonical replay controller, adapt only N3-specific prose/CSS.
+
+    Fail closed if the upstream renderer's exact prose/style anchors change.
+    JSON event/timing semantics and browser controls are NEVER rewritten.
+    """
+    demand(type(task_count) is int and 1 <= task_count <= 4, "N3_REPLAY_COUNT_INVALID")
+    old = "Eight registered tasks, their dependency order and their generated products."
+    updated = (str(task_count) +
+               " registered local broker tasks, their dependencies and verified output products.")
+    old_contract = ("Receipt source identity, dependency completion before successors start, "
+                    "output contracts, exact producer-to-assembly bytes, and package member hashes.")
+    new_contract = ("Exact source identity, Kahn dependency completion, actual Method Atlas "
+                    "and G9 execution, output-member hashes, and ALL-join verification.")
+    old_style = "</style><header>"
+    mobile = (
+        "@media(max-width:520px){.scroll table{min-width:590px}"
+        ".scroll::before{content:'Swipe horizontally for all execution columns';"
+        "display:block;color:#773893;font-size:.8rem;margin:6px 0}}"
+    )
+    for needle in (old, old_contract, old_style):
+        demand(markup.count(needle) == 1, "CANONICAL_REPLAY_TEMPLATE_ANCHOR_DRIFT")
+    result = (markup.replace(old, updated)
+                    .replace(old_contract, new_contract)
+                    .replace(old_style, mobile + old_style))
+    demand("Eight registered tasks" not in result and
+           str(task_count) + " registered local broker tasks" in result,
+           "N3_REPLAY_TASK_POPULATION_MISLABELED")
+    return result
+
+
 def run(root, head, out, *, pulses=4, modes=None, tamper=True):
     root, out = Path(root).resolve(), Path(out).resolve()
     modes = list(MODES) if modes is None else list(modes)
@@ -458,7 +489,7 @@ def run(root, head, out, *, pulses=4, modes=None, tamper=True):
             "registered_dependency_edges": 4, "observed_verified_dependency_edges": 4}
         reply["interpretation"] = ("Observed local broker DAG with two actual processors;"
                                     " replay is evidence, not live scheduling.")
-        markup = viewer.render(reply)
+        markup = adapt_recorded_replay(viewer.render(reply), count)
     out.mkdir(parents=True, exist_ok=True)
     (out / "n3_receipt.json").write_bytes(canonical(report))
     (out / "index.html").write_text(render(report), encoding="utf-8", newline="\n")

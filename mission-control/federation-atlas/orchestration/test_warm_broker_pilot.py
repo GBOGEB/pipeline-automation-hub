@@ -127,6 +127,21 @@ class ProductAndFaultContracts(unittest.TestCase):
         self.assertIn("clock progression",m.NEGATIVE_ERRORS["invalid_clock"])
         self.assertEqual(set(m.EXPECTED),{"baseline","counterfactual"})
 
+    def test_replay_template_population_prose_must_reflect_actual_broker(self):
+        markup=("<style></style><header>"
+                "Eight registered tasks, their dependency order and their generated products."
+                "Receipt source identity, dependency completion before successors start, "
+                "output contracts, exact producer-to-assembly bytes, and package member hashes.")
+        updated=m.adapt_recorded_replay(markup,4)
+        self.assertIn("4 registered local broker tasks",updated)
+        self.assertNotIn("Eight registered tasks",updated)
+        self.assertIn("ALL-join verification",updated)
+        self.assertIn("min-width:590px",updated)
+        with self.assertRaisesRegex(ValueError,"CANONICAL_REPLAY_TEMPLATE_ANCHOR_DRIFT"):
+            m.adapt_recorded_replay(markup.replace("Eight registered tasks","Seven registered tasks"),4)
+        with self.assertRaisesRegex(ValueError,"N3_REPLAY_COUNT_INVALID"):
+            m.adapt_recorded_replay(markup,8)
+
     def test_summary_comparisons_are_descriptive_without_fake_independent_cis(self):
         rows=[]
         for mode in m.MODES:
@@ -163,6 +178,9 @@ class ActualMethodAtlasDAG(unittest.TestCase):
             self.assertIn('id="play"',text)
             self.assertIn('id="timeline"',text)
             self.assertIn("Recorded execution",text)
+            self.assertIn("4 registered local broker tasks",text)
+            self.assertNotIn("Eight registered tasks",text)
+            self.assertIn("Swipe horizontally for all execution columns",text)
             self.assertEqual(set(json.loads((target/"manifest.json").read_text())["files_sha256"]),
                              {"n3_receipt.json","index.html","runtime-replay.html","n3_dag.mmd"})
             manifest=json.loads((target/"manifest.json").read_text())
