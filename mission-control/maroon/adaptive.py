@@ -239,10 +239,15 @@ def project(
         finding_rows = _finding_rows(hints_result, item_ids)
         codes = set().union(*(_obs_hints(hints_result, i) for i in item_ids)) if item_ids else set()
         row = route_root(root, members, finding_rows, codes, everred, set(source_signals.get(root_id) or []))
-        packet = packets.get(root_id) or {}
+        packet = packets.get(root_id)
         row["kahn_wave"] = wave_index.get(root_id)
-        row["admission_reasons"] = list(packet.get("admission_reasons") or [])
-        row["admitted_by_kahn"] = queue_plan is not None and not row["admission_reasons"] and root.get("state") == "OPEN"
+        row["admission_reasons"] = list((packet or {}).get("admission_reasons") or [])
+        row["admitted_by_kahn"] = (
+            queue_plan is not None
+            and packet is not None
+            and not row["admission_reasons"]
+            and root.get("state") == "OPEN"
+        )
         rows.append(row)
 
     open_obs = [o for o in (ledger.get("observations") or {}).values() if o.get("semantic_state") != "closed"]
@@ -257,7 +262,14 @@ def project(
 
     # Advisory first wave only. Canonical operations.claim still performs the real conflict check.
     selected, occupied = [], set()
-    order = sorted(rows, key=lambda r: (r["kahn_wave"] is None, r["kahn_wave"] or 10**9, r["root_id"] or ""))
+    order = sorted(
+        rows,
+        key=lambda r: (
+            r["kahn_wave"] is None,
+            r["kahn_wave"] if r["kahn_wave"] is not None else 10**9,
+            r["root_id"] or "",
+        ),
+    )
     executable = {"PR_LOCAL_REPAIR", "REUSE_METHOD", "RESTACK_FIRST", "FOLD_BACK_DEFAULT", "LEDGER_RECONCILE"}
     for row in order:
         if len(selected) >= max_workers or row["lane"] not in executable or not row["admitted_by_kahn"]:
