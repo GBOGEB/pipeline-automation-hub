@@ -156,8 +156,21 @@ def added_lines(diff: str) -> dict[str, dict[int, str]]:
     return out
 
 
+def resolve_base(root: Path, base: str) -> str:
+    """`base` if it names a commit; for the default `origin/HEAD` (absent in many clones) fall back to
+    `origin/main`, then `origin/master`. Anything else unresolvable stops with a clear message."""
+    candidates = [base] + (["origin/main", "origin/master"] if base == "origin/HEAD" else [])
+    for ref in candidates:
+        try:
+            git("rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}", cwd=root)
+        except subprocess.CalledProcessError:
+            continue
+        return ref
+    raise SystemExit(f"rex: base {' / '.join(candidates)} not found; pass --base <ref>")
+
+
 def changed(root: Path, base: str) -> dict[str, dict[int, str]]:
-    mb = git("merge-base", base, "HEAD", cwd=root).strip()
+    mb = git("merge-base", resolve_base(root, base), "HEAD", cwd=root).strip()
     committed = added_lines(git("diff", "-U0", "--no-color", "--diff-filter=AMR", mb, "HEAD", cwd=root))
     working = added_lines(git("diff", "-U0", "--no-color", "--diff-filter=AMR", "HEAD", cwd=root))
     for p, lines in working.items():

@@ -154,6 +154,27 @@ class Detectors(unittest.TestCase):
         g("update-index", "--chmod=+x", "s.py")
         self.assertEqual(self.run_kind("REX-004", {"s.py": lines}), [])
 
+    @unittest.skipUnless(shutil.which("git"), "git not available")
+    def test_base_falls_back_when_origin_head_is_absent(self):
+        def g(*a):
+            return subprocess.run(["git", "-c", "safe.directory=*", "-c", "user.name=t", "-c", "user.email=t@t",
+                                   *a], cwd=self.root, capture_output=True, text=True, check=True).stdout
+        orig = R.git
+        R.git = lambda *a, cwd=None: g(*a)
+        self.addCleanup(setattr, R, "git", orig)
+        g("init", "-q")
+        self.put("a.txt", "a\n")
+        g("add", "a.txt")
+        g("commit", "-q", "-m", "base")
+        g("update-ref", "refs/remotes/origin/main", "HEAD")
+        self.put("b.py", "x = 1\n")
+        g("add", "b.py")
+        g("commit", "-q", "-m", "change")
+        self.assertEqual(R.resolve_base(self.root, "origin/HEAD"), "origin/main")
+        self.assertEqual(list(R.changed(self.root, "origin/HEAD")), ["b.py"])
+        with self.assertRaises(SystemExit):
+            R.resolve_base(self.root, "origin/nope")
+
     @unittest.skipUnless(shutil.which("ruff"), "ruff not installed")
     def test_ruff_hits_only_added_lines_and_respects_test_exclude(self):
         lines = self.put("pkg/a.py", "import os\nimport sys\nassert sys\n")
