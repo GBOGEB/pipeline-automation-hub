@@ -37,5 +37,5 @@ jobs:
           EXPECTED: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           test "$(git rev-parse HEAD)" = "$EXPECTED"
-          python -W error::DeprecationWarning -m unittest discover -s tools/threads -p 'test_threads.py' -v
+          python -W error::DeprecationWarning -m unittest discover -s tools/threads -p 'test_*.py' -v
           python -m unittest discover -s mission-control/qps-triage-ultra/issue-expedition -p 'test_triway_burndown.py'
