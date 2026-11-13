@@ -319,7 +319,7 @@ def render(report):
         str(v["median_outputs_per_second"]) + " verified/s</span></div>"
         for lane, v in report["summary"]["by_mode"].items()
     )
-    return """<!doctype html><html lang="en"><meta charset="utf-8">
+    return ("""<!doctype html><html lang="en"><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Method Atlas | Read-only G9 Scale Feasibility</title>
 <style>body{background:#160b24;color:#f6eef9;font:15px/1.5 Aptos,system-ui,sans-serif;
@@ -361,7 +361,7 @@ rejected. Task completion order is hashed for audit; Kahn dependencies and domai
 approval remain owned by the existing Method Atlas / GOGREEN graph.</p></details>
 <footer><small>Single-runner read-only G9 feasibility. No native job-step
 readback, live root causality or federation owner authority transferred.</small></footer></html>
-"""
+""")
 
 
 def run(root, head, out, pulses=4, task_count=32):

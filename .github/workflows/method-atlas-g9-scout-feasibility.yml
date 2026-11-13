@@ -47,6 +47,21 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Parse source and tests before any workload starts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+          for name in (
+              "mission-control/federation-atlas/orchestration/scout_feasibility.py",
+              "mission-control/federation-atlas/orchestration/test_scout_feasibility.py",
+          ):
+              ast.parse(Path(name).read_text(encoding="utf-8"), filename=name)
+              print("SOURCE_SYNTAX_PASS="+name)
+          PY
+
       - name: Adversarial unit and actual-entrypoint smoke
         shell: bash
         run: |
