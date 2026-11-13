@@ -131,3 +131,43 @@ def test_without_queue_plan_nothing_is_dispatched():
     out = A.project(ledger, hints, queue_plan=None)
     assert out["matrix"][0]["admitted_by_kahn"] is False
     assert out["dispatch_preview"]["selected_root_ids"] == []
+
+
+def test_queue_plan_missing_root_packet_fails_closed():
+    ledger = {"observations": {"o1": {**member(), "semantic_state": "open"}},
+              "roots": {"r1": {**root(), "id": "r1"}}}
+    hints = {"findings": {"f1": {"recurrence": "ONCE"}},
+             "observations": {"o1": {"finding": "f1", "hints": []}}, "proposals": []}
+    out = A.project(ledger, hints, queue_plan={"layers": [["r1:diagnose"]], "packets": []})
+    assert out["matrix"][0]["admitted_by_kahn"] is False
+    assert out["dispatch_preview"]["selected_root_ids"] == []
+
+
+def test_wave_zero_precedes_later_wave_in_bounded_preview():
+    ledger = {
+        "observations": {
+            "o1": {**member(repo="GBOGEB/R0"), "semantic_state": "open"},
+            "o2": {**member(repo="GBOGEB/R1", path="y.py"), "semantic_state": "open"},
+        },
+        "roots": {
+            "r0": {**root(id="r0", repo="GBOGEB/R0", target_repo="GBOGEB/R0", branch="fix/zero", member_ids=["o1"]), "id": "r0"},
+            "r1": {**root(id="r1", repo="GBOGEB/R1", target_repo="GBOGEB/R1", branch="fix/one", member_ids=["o2"]), "id": "r1"},
+        },
+    }
+    hints = {
+        "findings": {"f0": {"recurrence": "ONCE"}, "f1": {"recurrence": "ONCE"}},
+        "observations": {
+            "o1": {"finding": "f0", "hints": []},
+            "o2": {"finding": "f1", "hints": []},
+        },
+        "proposals": [],
+    }
+    plan = {
+        "layers": [["r0:diagnose"], ["r1:diagnose"]],
+        "packets": [
+            {"root_id": "r0", "admission_reasons": []},
+            {"root_id": "r1", "admission_reasons": []},
+        ],
+    }
+    out = A.project(ledger, hints, queue_plan=plan, max_workers=1)
+    assert out["dispatch_preview"]["selected_root_ids"] == ["r0"]
