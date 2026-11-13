@@ -180,7 +180,14 @@ const buttons=Array.from(document.querySelectorAll("#objects [data-choice]"));
 let active="ssot",scale=.75;
 function choose(id,withHash){
  if(!Object.prototype.hasOwnProperty.call(records,id)){
-   document.getElementById("selection-status").textContent="UNMAPPED: no verified source object";
+   active=null;
+   document.querySelectorAll("[data-bridge-id]").forEach(e=>e.classList.remove("selected"));
+   buttons.forEach(b=>b.setAttribute("aria-pressed","false"));
+   document.getElementById("selected-label").textContent="UNMAPPED";
+   document.getElementById("selected-line").textContent="UNKNOWN";
+   document.getElementById("selected-bbox").textContent="UNKNOWN";
+   document.getElementById("source-link").removeAttribute("href");
+   document.getElementById("selection-status").textContent="UNMAPPED: no verified source object; previous source link invalidated";
    return;
  }
  active=id;
