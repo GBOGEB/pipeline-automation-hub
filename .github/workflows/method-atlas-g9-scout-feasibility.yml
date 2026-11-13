@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   local-g9-scout-scale:
-    name: Real G9 tasks · 1/4/16/32 cold + 16 warm · 4 paired blocks
+    name: Real G9 tasks · 1/4/16/32 cold + 1/4/16 warm · 4 paired blocks
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     env:
@@ -105,13 +105,13 @@ jobs:
           for name,expected in m['files'].items():
               if hashlib.sha256((out/name).read_bytes()).hexdigest() != expected:
                   raise SystemExit('SCALE_MEMBER_HASH_TAMPER')
-          if (r['workload']['total_task_executions'] != 640 or
-              r['workload']['negative_rejections_total'] != 80 or
+          if (r['workload']['total_task_executions'] != 896 or
+              r['workload']['negative_rejections_total'] != 112 or
               r['workload']['task_count'] != 32 or
               r['workload']['pulses'] != 4):
               raise SystemExit('INCOMPLETE_SCALE_COHORT_DENOMINATOR')
           for block in r['blocks']:
-              if len(block['cohorts']) != 5 or block['all_production_outputs_sha_verified'] is not True:
+              if len(block['cohorts']) != 7 or block['all_production_outputs_sha_verified'] is not True:
                   raise SystemExit('UNQUALIFIED_SCALE_BLOCK')
               for row in block['cohorts']:
                   if row['accepted_outputs'] != 28 or row['negative_rejections'] != 4:

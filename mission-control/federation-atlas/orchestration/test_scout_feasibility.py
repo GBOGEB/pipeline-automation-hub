@@ -151,20 +151,22 @@ class OutputTruthTests(unittest.TestCase):
         self.assertEqual(scale.MAX_TASKS,32)
         self.assertEqual(scale.MAX_PULSES,4)
         self.assertEqual(scale.LANES["cold32"],(32,"SUBPROCESS_CLI"))
+        self.assertEqual(scale.LANES["warm1"],(1,"IN_PROCESS_LIBRARY"))
+        self.assertEqual(scale.LANES["warm4"],(4,"IN_PROCESS_LIBRARY"))
         self.assertEqual(scale.LANES["warm16"],(16,"IN_PROCESS_LIBRARY"))
         self.assertEqual(scale.SCHEMA,"method-atlas.g9-local-scale-feasibility.v1")
 
 
 class ActualProductionSmoke(unittest.TestCase):
     def test_real_g9_two_backend_pilot_has_output_parity_and_negative_rejection(self):
-        # Execute the real producer, not a mock: 8 tasks per mode, 1 block.
+        # Execute the real producer, not a mock: 8 tasks per mode, 1 block (7 modes).
         sha = subprocess.check_output(["git","-C",str(ROOT),"rev-parse","HEAD"],
                                       text=True).strip()
         with tempfile.TemporaryDirectory() as td:
             result = scale.run(ROOT,sha,Path(td)/"smoke",pulses=1,task_count=8)
-            self.assertEqual(result["workload"]["total_task_executions"],40)
-            self.assertEqual(result["workload"]["negative_rejections_total"],5)
-            self.assertEqual(len(result["blocks"][0]["cohorts"]),5)
+            self.assertEqual(result["workload"]["total_task_executions"],56)
+            self.assertEqual(result["workload"]["negative_rejections_total"],7)
+            self.assertEqual(len(result["blocks"][0]["cohorts"]),7)
             self.assertFalse(result["summary"]["causal_fleet_scale_proven"])
             self.assertFalse(result["safety"]["remote_github_dispatch_performed"])
             for row in result["blocks"][0]["cohorts"]:

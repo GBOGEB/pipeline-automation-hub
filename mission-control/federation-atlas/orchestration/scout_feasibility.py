@@ -45,6 +45,8 @@ LANES = {
     "cold4": (4, "SUBPROCESS_CLI"),
     "cold16": (16, "SUBPROCESS_CLI"),
     "cold32": (32, "SUBPROCESS_CLI"),
+    "warm1": (1, "IN_PROCESS_LIBRARY"),
+    "warm4": (4, "IN_PROCESS_LIBRARY"),
     "warm16": (16, "IN_PROCESS_LIBRARY"),
 }
 MEMBERS = {"metrics.json", "sipoc_dag.json", "source_window.json", "index.html"}
@@ -289,15 +291,23 @@ def summarize(blocks):
         cohort = {row["lane"]: row for row in block["cohorts"]}
         speed32 = cohort["cold16"]["wall_seconds"] / cohort["cold32"]["wall_seconds"]
         speedwarm = cohort["cold16"]["wall_seconds"] / cohort["warm16"]["wall_seconds"]
+        speedwarm4 = cohort["warm16"]["wall_seconds"] / cohort["warm4"]["wall_seconds"]
+        speedwarm4vscli4 = cohort["cold4"]["wall_seconds"] / cohort["warm4"]["wall_seconds"]
         pairs.append({
             "pulse": block["pulse"], "cold32_vs_cold16_speedup": round(speed32, 4),
             "warm16_vs_cold16_speedup": round(speedwarm, 4),
+            "warm4_vs_warm16_speedup": round(speedwarm4, 4),
+            "warm4_vs_cold4_speedup": round(speedwarm4vscli4, 4),
         })
     return {"by_mode": modes, "paired": pairs,
             "median_cold32_vs_cold16_speedup": round(statistics.median(
                 x["cold32_vs_cold16_speedup"] for x in pairs), 4),
             "median_warm16_vs_cold16_speedup": round(statistics.median(
                 x["warm16_vs_cold16_speedup"] for x in pairs), 4),
+            "median_warm4_vs_warm16_speedup": round(statistics.median(
+                x["warm4_vs_warm16_speedup"] for x in pairs), 4),
+            "median_warm4_vs_cold4_speedup": round(statistics.median(
+                x["warm4_vs_cold4_speedup"] for x in pairs), 4),
             "inference": "DESCRIPTIVE_SAME_RUNNER_REPEATS_NOT_INDEPENDENT_NATIVE_PULSES",
             "confidence_interval": None, "causal_fleet_scale_proven": False}
 
@@ -332,7 +342,12 @@ table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px so
 .tableWrap{overflow-x:auto}meter{width:55%;height:1.1rem;margin:0 12px}label{display:inline-block;width:80px}
 summary{cursor:pointer}details{background:#2e193f;border:1px solid #86559e;padding:14px;
 margin-top:12px;border-radius:12px}small{color:#d8b5dd}
-@media(max-width:520px){body{padding:13px}.card{min-width:130px}table{font-size:12px}}</style>
+meter::-webkit-meter-optimum-value{background:#d47cbf}
+meter::-webkit-meter-bar{background:#544069}meter::-moz-meter-bar{background:#d47cbf}
+details code{overflow-wrap:anywhere;word-break:break-all}
+@media(max-width:520px){body{padding:13px}.card{min-width:130px}table{font-size:12px}
+.tableWrap:before{content:'Swipe horizontally to see the full table';display:block;font-size:.82rem;color:#eac0e3;margin:10px 0}}
+</style>
 <h1>Read-only scout scaling · actual G9 execution</h1>
 <p>The same bounded source-bound workload was executed across separate local concurrency modes.</p>
 <aside><strong>Qualification: LOCAL_FEASIBILITY_ONLY — not GitHub fleet admission.</strong>
@@ -351,6 +366,10 @@ str(report["workload"]["negative_rejections_total"]) + """</strong></div></div>
 str(report["summary"]["median_cold32_vs_cold16_speedup"]) +
 """×</strong>. Warm16 / Cold16 median paired speedup: <strong>""" +
 str(report["summary"]["median_warm16_vs_cold16_speedup"]) +
+"""×</strong>. Warm4 / Cold4 median paired speedup: <strong>""" +
+str(report["summary"]["median_warm4_vs_cold4_speedup"]) +
+"""×</strong>. Warm4 / Warm16 median paired speedup: <strong>""" +
+str(report["summary"]["median_warm4_vs_warm16_speedup"]) +
 """×</strong>. Four repeated blocks are descriptive and correlated; no CI or
 independent runner-scale conclusion.</p>
 <details><summary>Execution lineage and evidence boundaries</summary>
@@ -464,6 +483,8 @@ def run(root, head, out, pulses=4, task_count=32):
         "negative_controls": workload["negative_rejections_total"],
         "median_32_vs_16": summary["median_cold32_vs_cold16_speedup"],
         "median_warm16_vs_cold16": summary["median_warm16_vs_cold16_speedup"],
+        "median_warm4_vs_cold4": summary["median_warm4_vs_cold4_speedup"],
+        "median_warm4_vs_warm16": summary["median_warm4_vs_warm16_speedup"],
         "native_scale_qualified": False,
     }, sort_keys=True))
     return report

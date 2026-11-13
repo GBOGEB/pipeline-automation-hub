@@ -141,3 +141,46 @@ review, effective required-status and owner acceptance before merge or
 scale promotion. The present feasibility pilot cannot authorize 32
 GitHub runners, 32 mutating workers, QPS engineering credit or permanent
 causal-root closure.
+
+
+## 6. Feedback iteration N2.1 (13 November 2026)
+
+N2 first native source-bound execution at PR head 4ac2b58 verified
+**640 actual tasks**, 560 positive and 80 expected negatives.
+Its real single-runner median accepted outputs/second were:
+
+| Mode | Median verified/s | Median wall (s), 32 cases |
+|---|---:|---:|
+| cold1 | 19.387 | 1.444 |
+| cold4 | 49.263 | 0.568 |
+| cold16 | 46.178 | 0.606 |
+| cold32 | 44.799 | 0.625 |
+| warm16 | 199.928 | 0.140 |
+
+Cold32/cold16 paired median speedup = 0.9701 (slower); warm16/
+cold16 = 4.345 (faster). Those are source-bound DESCRIPTIVE outcomes
+from four correlated blocks on one runner, not a fleet scalability claim.
+
+Rather than increasing remote workers, **N2.1 adds warm1 and warm4**:
+same G9 build() function, one-time import, identical source-variant
+workload and deterministic semantic member hashes. The new seven-mode
+experiment is 4 blocks x 32 cases x 7 = **896 actual task
+executions**, with **784 positive and 112 controlled negative cases**.
+
+Additional paired speedups:
+- warm4/cold4: time(cold4) divided by time(warm4);
+- warm4/warm16: time(warm16) divided by time(warm4).
+
+A value >1 means warm4 was faster under the observed trial. The
+warm4 versus warm16 comparison isolates concurrency effects within
+the same warm-process backend; warm4 versus cold4 quantifies the
+same-concurrency effect of not repeatedly booting Python.
+
+The review page is also refined after actual mobile screenshot QA:
+provenance hashes wrap, mobile comparison table advertises horizontal
+scroll, and native meters use violet/magenta rather than browser green.
+
+The previous **640-execution receipt remains immutable historical
+evidence** at 4ac2b58. The new exact-head receipt must be produced
+independently before recording N2.1 as PASS. No 32-runner deployment,
+owner admission or four-native-job qualification is implied.
