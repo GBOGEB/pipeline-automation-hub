@@ -1,0 +1,100 @@
+{
+  "schema": "missioncontrol.cross_media.source_view_contract.candidate.v0",
+  "status": "PROPOSED_READ_ONLY_NOT_ADMISSION",
+  "owner_integration": "docs/ci-spine/pointers/pointer_contract.py",
+  "record_shape": {
+    "semantic_object_id": "stable source-owned identifier or null",
+    "source": {
+      "repository": "owner/repo or private registry reference",
+      "path": "repo-relative path or restricted opaque key",
+      "revision": "immutable source revision or null",
+      "artifact_sha256": "64 hex or null",
+      "medium": "docx|xlsx|pptx|pdf|svg|html|plotly",
+      "native_locator": "medium-specific typed selector",
+      "source_class": "CONTROLLED|SOURCE_SUPPORTED|DERIVED|POSTULATED"
+    },
+    "rendered": {
+      "medium": "pdf|html|svg|pptx|plotly|png",
+      "artifact_sha256": "64 hex or null",
+      "locator": "typed rendered selector or null",
+      "producer_receipt": "source-bound producer receipt ID or null"
+    },
+    "relation": {
+      "kind": "PROJECTION_OF|DERIVED_FROM|SAME_SEMANTIC_OBJECT|ANNOTATION_ON|UNKNOWN",
+      "precision": "UNMAPPED|VIEW_SELECTION|NATIVE_OBJECT_ID|PDF_RECT_CANDIDATE|SOURCE_RENDER_VERIFIED|OWNER_ACCEPTED",
+      "evidence": "immutable receipt or null",
+      "method": "validated producer algorithm or null"
+    },
+    "review": {
+      "source_object_id": "source-owned anchor or null",
+      "comment_id": "source system ID or null",
+      "projection_state": "UNMAPPED|CURRENT|STALE|AMBIGUOUS",
+      "write_authorized": false
+    },
+    "visibility": {
+      "layers": "medium-specific group/OCG IDs or null",
+      "zoom": "viewer-only, never authority",
+      "selection": "source semantic id or null"
+    },
+    "history": {
+      "source_revision": "exact source ID or null",
+      "previous_digest": "SHA256 or null",
+      "successor_digest": "SHA256 or null",
+      "rebinding_state": "PENDING|VERIFIED|REJECTED"
+    }
+  },
+  "medium_locators": {
+    "docx": [
+      "bookmark",
+      "w14:paraId",
+      "table_cell",
+      "RTM object ID"
+    ],
+    "xlsx": [
+      "sheet+cell",
+      "named_range",
+      "RTM row key"
+    ],
+    "pptx": [
+      "slide 1-based",
+      "cNvPr shape ID",
+      "parent group path"
+    ],
+    "pdf": [
+      "page 1-based",
+      "normalized rect with origin/rotation/crop",
+      "OCG xref if present"
+    ],
+    "svg": [
+      "element ID",
+      "group ancestry",
+      "transform/viewBox"
+    ],
+    "html": [
+      "DOM element ID"
+    ],
+    "plotly": [
+      "stable trace UID",
+      "stable point ID",
+      "customdata evidence"
+    ]
+  },
+  "hard_rules": [
+    "Do not claim source-to-render provenance from a visual label match",
+    "Do not equate PPTX group with PDF Optional Content Group",
+    "Do not equate PDF drawing primitive count with engineering component count",
+    "Do not infer source authority from HTML/Plotly/PDF navigation",
+    "Do not promote UNKNOWN, missing source bytes or synthetic fixture evidence",
+    "Prove both source/output digests and producer receipt before SOURCE_RENDER_VERIFIED",
+    "Treat comments as source-first, generated locations as derived, stale mappings as HOLD",
+    "Never include restricted engineering binaries in a public Hub PR",
+    "Do not alter merge-required status contexts or GitHub governance controls"
+  ],
+  "current_status": {
+    "release_qualified": false,
+    "engineering_accepted": false,
+    "native_user_binary_verification": "EXTERNAL_PRIVATE_PILOT_ONLY",
+    "source_to_pdf_geometry": "UNMAPPED",
+    "pdf_ocg_membership": "UNMAPPED"
+  }
+}
