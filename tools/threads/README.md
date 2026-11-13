@@ -11,6 +11,7 @@ call them.
 | `wake_check.py --pulse-dir DIR` | Read only. Lists open parked intents whose wake triggers matched new activity. A strong hit is a path change, a referenced issue update or a comment; a weak hit is a keyword in a PR title. Unread repos are reported, never treated as quiet. | `DIR/<date>/WAKE_CANDIDATES.md` and `.json`, `DIR/wake_state.json` |
 | `check_presence.py OUT.json REPO…` | Read only. Shows which check runs appeared on every recent merged PR, which is the safe set for required checks. | `OUT.json` |
 | `thread_wire.py DIR/wire` | Builds the per-thread wireframe (repo, branch, OID → intent, TODO, next, verdict) from `list_sessions` output and per-thread records. | `DIR/THREAD_MAP.md`, `DIR/THREAD_WIRE.json` |
+| `session_census.py --sessions-dir S --pulse P --out OUT [--memory M] [--git-root D] [--git-home-re RX] [--task-title T]` | Read only. Census of every desktop session from the app's per-session JSON and transcripts, past the 200-row `list_sessions` cap: lineage, reserved number, PRs, outputs that still exist, sole-copy writes, pasted blocks, fold-back, and a capture verdict (CAPTURED / PARTIAL / AT_RISK / TASK_RUN) with a wake line. | `OUT/SESSION_CENSUS.json`, `OUT/ARCHIVE_WIREFRAME.md`, `OUT/REENTRY_CARDS.md` |
 
 The tools reuse existing owners and do not copy them (AGENTS.md "Metric ownership"):
 
