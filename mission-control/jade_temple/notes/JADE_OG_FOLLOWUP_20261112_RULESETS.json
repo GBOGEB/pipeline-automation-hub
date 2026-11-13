@@ -1,0 +1,512 @@
+{
+  "observed_date": "2026-11-12",
+  "scope": "public OG focus-five ruleset readback; supplemental observation, not a new FOCUS5 pulse",
+  "source_hub_sha": "c66feef5c886ebc359bf38d4ea832e23b5ec5c46",
+  "effective_branch_rules_endpoint": "UNAVAILABLE_CONNECTOR_URL_NOT_ALLOWED",
+  "gate_promotion": false,
+  "rulesets": [
+    {
+      "id": 25789280,
+      "name": "P-BASIC pipeline-automation-hub default branch",
+      "target": "branch",
+      "source_type": "Repository",
+      "source": "GBOGEB/pipeline-automation-hub",
+      "enforcement": "active",
+      "conditions": {
+        "ref_name": {
+          "exclude": [],
+          "include": [
+            "~DEFAULT_BRANCH"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "type": "deletion"
+        },
+        {
+          "type": "non_fast_forward"
+        },
+        {
+          "type": "pull_request",
+          "parameters": {
+            "required_approving_review_count": 0,
+            "dismiss_stale_reviews_on_push": true,
+            "required_reviewers": [],
+            "require_code_owner_review": false,
+            "require_last_push_approval": false,
+            "required_review_thread_resolution": true,
+            "require_extra_approval_for_unattributed_changes": true,
+            "allowed_merge_methods": [
+              "squash",
+              "rebase"
+            ]
+          }
+        },
+        {
+          "type": "required_status_checks",
+          "parameters": {
+            "strict_required_status_checks_policy": false,
+            "do_not_enforce_on_create": false,
+            "required_status_checks": [
+              {
+                "context": "validate-ultra-control",
+                "integration_id": 15368
+              },
+              {
+                "context": "canonical-self-test-and-mutation",
+                "integration_id": 15368
+              },
+              {
+                "context": "GOGREEN required gate",
+                "integration_id": 15368
+              },
+              {
+                "context": "Launcher outputs current and tests",
+                "integration_id": 15368
+              },
+              {
+                "context": "frozen-head-census",
+                "integration_id": 15368
+              },
+              {
+                "context": "CodeQL",
+                "integration_id": 57789
+              }
+            ]
+          }
+        },
+        {
+          "type": "required_linear_history"
+        },
+        {
+          "type": "copilot_code_review",
+          "parameters": {
+            "review_on_push": true,
+            "review_draft_pull_requests": false
+          }
+        }
+      ],
+      "node_id": "RRS_lACqUmVwb3NpdG9yec4-2wytzgGJg2A",
+      "created_at": "2026-10-24T19:07:50.169+02:00",
+      "updated_at": "2026-11-11T01:16:26.373+01:00",
+      "bypass_actors": [],
+      "current_user_can_bypass": "never",
+      "_links": {
+        "self": {
+          "href": "https://api.github.com/repos/GBOGEB/pipeline-automation-hub/rulesets/25789280"
+        },
+        "html": {
+          "href": "https://github.com/GBOGEB/pipeline-automation-hub/rules/25789280"
+        }
+      }
+    },
+    {
+      "id": 26995106,
+      "name": "P-SOFT first-pass gate (owner bypass on pull request)",
+      "target": "branch",
+      "source_type": "Repository",
+      "source": "GBOGEB/pipeline-automation-hub",
+      "enforcement": "active",
+      "conditions": {
+        "ref_name": {
+          "exclude": [],
+          "include": [
+            "~DEFAULT_BRANCH"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "type": "required_status_checks",
+          "parameters": {
+            "strict_required_status_checks_policy": false,
+            "do_not_enforce_on_create": false,
+            "required_status_checks": [
+              {
+                "context": "First-Pass Closure Gate / first-pass-closure",
+                "integration_id": 15368
+              }
+            ]
+          }
+        }
+      ],
+      "node_id": "RRS_lACqUmVwb3NpdG9yec4-2wytzgGb6aI",
+      "created_at": "2026-11-11T01:16:08.434+01:00",
+      "updated_at": "2026-11-11T01:16:08.561+01:00",
+      "bypass_actors": [
+        {
+          "actor_id": 5,
+          "actor_type": "RepositoryRole",
+          "bypass_mode": "pull_request"
+        }
+      ],
+      "current_user_can_bypass": "pull_requests_only",
+      "_links": {
+        "self": {
+          "href": "https://api.github.com/repos/GBOGEB/pipeline-automation-hub/rulesets/26995106"
+        },
+        "html": {
+          "href": "https://github.com/GBOGEB/pipeline-automation-hub/rules/26995106"
+        }
+      }
+    },
+    {
+      "id": 25252917,
+      "name": "QPS TRAIGE project",
+      "target": "branch",
+      "source_type": "Repository",
+      "source": "GBOGEB/pipeline-automation-hub",
+      "enforcement": "active",
+      "conditions": {
+        "ref_name": {
+          "exclude": [],
+          "include": [
+            "~DEFAULT_BRANCH",
+            "refs/heads/main"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "type": "deletion"
+        },
+        {
+          "type": "non_fast_forward"
+        },
+        {
+          "type": "required_linear_history"
+        },
+        {
+          "type": "copilot_code_review",
+          "parameters": {
+            "review_on_push": true,
+            "review_draft_pull_requests": false
+          }
+        },
+        {
+          "type": "code_quality",
+          "parameters": {
+            "severity": "errors"
+          }
+        },
+        {
+          "type": "code_scanning",
+          "parameters": {
+            "code_scanning_tools": [
+              {
+                "tool": "CodeQL",
+                "security_alerts_threshold": "high_or_higher",
+                "alerts_threshold": "errors"
+              }
+            ]
+          }
+        },
+        {
+          "type": "code_coverage",
+          "parameters": {
+            "minimum_coverage": null,
+            "max_coverage_drop": null
+          }
+        },
+        {
+          "type": "required_status_checks",
+          "parameters": {
+            "strict_required_status_checks_policy": true,
+            "do_not_enforce_on_create": true,
+            "required_status_checks": []
+          }
+        }
+      ],
+      "node_id": "RRS_lACqUmVwb3NpdG9yec4-2wytzgGBVDU",
+      "created_at": "2026-10-16T18:22:55.714+02:00",
+      "updated_at": "2026-11-09T01:32:25.857+01:00",
+      "bypass_actors": [],
+      "current_user_can_bypass": "never",
+      "_links": {
+        "self": {
+          "href": "https://api.github.com/repos/GBOGEB/pipeline-automation-hub/rulesets/25252917"
+        },
+        "html": {
+          "href": "https://github.com/GBOGEB/pipeline-automation-hub/rules/25252917"
+        }
+      }
+    },
+    {
+      "id": 26047741,
+      "name": "Main_Protect2",
+      "target": "branch",
+      "source_type": "Repository",
+      "source": "GBOGEB/DOCX_RTM_Automation",
+      "enforcement": "active",
+      "conditions": {
+        "ref_name": {
+          "exclude": [],
+          "include": [
+            "~DEFAULT_BRANCH"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "type": "deletion"
+        },
+        {
+          "type": "non_fast_forward"
+        },
+        {
+          "type": "copilot_code_review",
+          "parameters": {
+            "review_on_push": false,
+            "review_draft_pull_requests": true
+          }
+        }
+      ],
+      "node_id": "RRS_lACqUmVwb3NpdG9yec46_E2vzgGNdP0",
+      "created_at": "2026-10-28T15:20:16.393+01:00",
+      "updated_at": "2026-11-02T17:12:35.849+01:00",
+      "bypass_actors": [],
+      "current_user_can_bypass": "never",
+      "_links": {
+        "self": {
+          "href": "https://api.github.com/repos/GBOGEB/DOCX_RTM_Automation/rulesets/26047741"
+        },
+        "html": {
+          "href": "https://github.com/GBOGEB/DOCX_RTM_Automation/rules/26047741"
+        }
+      }
+    },
+    {
+      "id": 26380979,
+      "name": "Main_Protect",
+      "target": "branch",
+      "source_type": "Repository",
+      "source": "GBOGEB/yaml-grammar",
+      "enforcement": "active",
+      "conditions": {
+        "ref_name": {
+          "exclude": [],
+          "include": [
+            "~DEFAULT_BRANCH"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "type": "deletion"
+        },
+        {
+          "type": "non_fast_forward"
+        },
+        {
+          "type": "pull_request",
+          "parameters": {
+            "required_approving_review_count": 0,
+            "dismiss_stale_reviews_on_push": true,
+            "required_reviewers": [],
+            "require_code_owner_review": false,
+            "require_last_push_approval": false,
+            "required_review_thread_resolution": false,
+            "require_extra_approval_for_unattributed_changes": true,
+            "allowed_merge_methods": [
+              "merge",
+              "squash",
+              "rebase"
+            ]
+          }
+        },
+        {
+          "type": "code_scanning",
+          "parameters": {
+            "code_scanning_tools": [
+              {
+                "tool": "CodeQL",
+                "security_alerts_threshold": "high_or_higher",
+                "alerts_threshold": "errors"
+              }
+            ]
+          }
+        },
+        {
+          "type": "code_quality",
+          "parameters": {
+            "severity": "errors"
+          }
+        }
+      ],
+      "node_id": "RRS_lACqUmVwb3NpdG9yec5JwkepzgGSirM",
+      "created_at": "2026-11-02T17:17:08.034+01:00",
+      "updated_at": "2026-11-02T17:17:08.119+01:00",
+      "bypass_actors": [],
+      "current_user_can_bypass": "never",
+      "_links": {
+        "self": {
+          "href": "https://api.github.com/repos/GBOGEB/yaml-grammar/rulesets/26380979"
+        },
+        "html": {
+          "href": "https://github.com/GBOGEB/yaml-grammar/rules/26380979"
+        }
+      }
+    },
+    {
+      "id": 26811226,
+      "name": "gg_MATH required checks (default branch)",
+      "target": "branch",
+      "source_type": "Repository",
+      "source": "GBOGEB/gg_MATH",
+      "enforcement": "active",
+      "conditions": {
+        "ref_name": {
+          "exclude": [],
+          "include": [
+            "~DEFAULT_BRANCH"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "type": "required_status_checks",
+          "parameters": {
+            "strict_required_status_checks_policy": false,
+            "do_not_enforce_on_create": false,
+            "required_status_checks": [
+              {
+                "context": "Exact-head release gate",
+                "integration_id": 15368
+              },
+              {
+                "context": "first-kernel",
+                "integration_id": 15368
+              },
+              {
+                "context": "signal-stack",
+                "integration_id": 15368
+              },
+              {
+                "context": "deterministic-w011",
+                "integration_id": 15368
+              },
+              {
+                "context": "monte-carlo-reference",
+                "integration_id": 15368
+              }
+            ]
+          }
+        },
+        {
+          "type": "deletion"
+        },
+        {
+          "type": "code_quality",
+          "parameters": {
+            "severity": "all"
+          }
+        },
+        {
+          "type": "copilot_code_review",
+          "parameters": {
+            "review_on_push": false,
+            "review_draft_pull_requests": true
+          }
+        }
+      ],
+      "node_id": "RRS_lACqUmVwb3NpdG9yec5LptzrzgGZG1o",
+      "created_at": "2026-11-08T20:53:14.038+01:00",
+      "updated_at": "2026-11-12T00:43:19.698+01:00",
+      "bypass_actors": [],
+      "current_user_can_bypass": "never",
+      "_links": {
+        "self": {
+          "href": "https://api.github.com/repos/GBOGEB/gg_MATH/rulesets/26811226"
+        },
+        "html": {
+          "href": "https://github.com/GBOGEB/gg_MATH/rules/26811226"
+        }
+      }
+    },
+    {
+      "id": 25554283,
+      "name": "math_protect",
+      "target": "branch",
+      "source_type": "Repository",
+      "source": "GBOGEB/gg_MATH",
+      "enforcement": "active",
+      "conditions": {
+        "ref_name": {
+          "exclude": [],
+          "include": [
+            "~DEFAULT_BRANCH"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "type": "deletion"
+        },
+        {
+          "type": "non_fast_forward"
+        },
+        {
+          "type": "code_scanning",
+          "parameters": {
+            "code_scanning_tools": [
+              {
+                "tool": "CodeQL",
+                "security_alerts_threshold": "high_or_higher",
+                "alerts_threshold": "errors"
+              },
+              {
+                "tool": "semgrep",
+                "security_alerts_threshold": "high_or_higher",
+                "alerts_threshold": "errors"
+              }
+            ]
+          }
+        },
+        {
+          "type": "code_quality",
+          "parameters": {
+            "severity": "errors"
+          }
+        },
+        {
+          "type": "copilot_code_review",
+          "parameters": {
+            "review_on_push": false,
+            "review_draft_pull_requests": true
+          }
+        },
+        {
+          "type": "pull_request",
+          "parameters": {
+            "required_approving_review_count": 0,
+            "dismiss_stale_reviews_on_push": false,
+            "required_reviewers": [],
+            "require_code_owner_review": false,
+            "require_last_push_approval": false,
+            "required_review_thread_resolution": true,
+            "require_extra_approval_for_unattributed_changes": true,
+            "allowed_merge_methods": [
+              "merge",
+              "squash",
+              "rebase"
+            ]
+          }
+        }
+      ],
+      "node_id": "RRS_lACqUmVwb3NpdG9yec5LptzrzgGF7Ws",
+      "created_at": "2026-10-21T16:38:31.587+02:00",
+      "updated_at": "2026-11-12T03:44:20.471+01:00",
+      "bypass_actors": [],
+      "current_user_can_bypass": "never",
+      "_links": {
+        "self": {
+          "href": "https://api.github.com/repos/GBOGEB/gg_MATH/rulesets/25554283"
+        },
+        "html": {
+          "href": "https://github.com/GBOGEB/gg_MATH/rules/25554283"
+        }
+      }
+    }
+  ]
+}
