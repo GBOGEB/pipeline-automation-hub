@@ -1,0 +1,442 @@
+{
+  "schema": "mip.closure-dispatch.v1",
+  "as_of_utc": "2026-11-13",
+  "authority": "DRAFT_NOT_ADMISSION",
+  "source_repo": "GBOGEB/pipeline-automation-hub",
+  "source_base_sha": "54e6b01ac7ada5bfad15562b4f99f7381a4fd73f",
+  "frozen": {
+    "cohort_date": "2026-10-28",
+    "root_count": 17,
+    "primary_groups": 6,
+    "known_dependency_edge_count": 16,
+    "root_weights": "UNKNOWN_UNCHANGED",
+    "accepted_new_in_this_pilot": 0
+  },
+  "baseline_workflows": {
+    "window_utc": "2026-10-21/2026-10-27",
+    "created": 38618,
+    "hub": 11623,
+    "abacus": 19895,
+    "codex": 7100,
+    "success": 27554,
+    "failure": 2776,
+    "cancelled": 5875,
+    "skipped": 1493,
+    "action_required": 918,
+    "unmatched_abacus": 2,
+    "note": "Preserved user-supplied frozen baseline; not independently re-censused in this change."
+  },
+  "owners": [
+    {
+      "id": "H1196",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "pr": 1196,
+      "head": "fba45cb85a18abae2a0495d8a978d36fd3b3bde0",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1196",
+      "review_threads_unresolved": 0,
+      "review_threads_total": 6,
+      "independent_approved": 0,
+      "state": "PROVE",
+      "commit_lane": "H",
+      "files": "mission-control/gogreen/pr_intervention.py"
+    },
+    {
+      "id": "A2746",
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2746,
+      "head": "dc33e86232e8fad4891f10ecbde76528009005fa",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2746",
+      "review_threads_unresolved": 17,
+      "review_threads_total": 18,
+      "independent_approved": 0,
+      "state": "HOLD",
+      "commit_lane": "B",
+      "files": "DMAIC_V3/binary_engines/"
+    },
+    {
+      "id": "A2745",
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2745,
+      "head": "eca6782f9850b61c083c25a03371a7be74aa0a98",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2745",
+      "review_threads_unresolved": 6,
+      "review_threads_total": 10,
+      "independent_approved": 0,
+      "state": "HOLD",
+      "commit_lane": "S",
+      "files": "DMAIC_V3/svg_engine/"
+    },
+    {
+      "id": "A2708",
+      "repo": "GBOGEB/ABACUS",
+      "pr": 2708,
+      "head": "b9580da8b7c638e7f63d896516a938ce9820e0f2",
+      "url": "https://github.com/GBOGEB/ABACUS/pull/2708",
+      "review_threads_unresolved": 13,
+      "review_threads_total": 15,
+      "independent_approved": 0,
+      "state": "HOLD",
+      "commit_lane": "R",
+      "files": ".github/workflows/{launcher-gate,red-census}.yml"
+    },
+    {
+      "id": "M136",
+      "repo": "GBOGEB/gg_MATH",
+      "pr": 136,
+      "head": "198ec510dc0b929c28fee41c29ab3f9da8affada",
+      "url": "https://github.com/GBOGEB/gg_MATH/pull/136",
+      "review_threads_unresolved": 2,
+      "review_threads_total": 2,
+      "independent_approved": 0,
+      "state": "PROVE",
+      "commit_lane": "M",
+      "files": "kernels/{set_similarity,plane_geometry}.py"
+    }
+  ],
+  "roots": [
+    {
+      "id": "LIVE-20261112-HUB-REBASE-HEAD-RACE",
+      "owner": "H1196",
+      "parent": null,
+      "cohort": "live-discovery-2026-11-13",
+      "fingerprint": "pr_intervention:update_branch:expected_head_race",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1196",
+      "source_head": null,
+      "first_run": null,
+      "first_job": null,
+      "first_step": null,
+      "discovered_utc": "2026-11-13",
+      "state": "PROVE",
+      "required": true,
+      "weight": null,
+      "impact": null,
+      "urgency": null,
+      "objective": "Repair source-specific failure without weakening admission",
+      "dod": [
+        "native exact-head positive proof",
+        "adversarial negative proof",
+        "eligible independent review",
+        "source owner acceptance",
+        "recurrence control"
+      ],
+      "reentry": "new source head or new attributable run/finding",
+      "accepted": false
+    },
+    {
+      "id": "LIVE-20261112-HUB-INTERVENTION-RECEIPT-LOSS",
+      "owner": "H1196",
+      "parent": null,
+      "cohort": "live-discovery-2026-11-13",
+      "fingerprint": "pr_intervention:later_exception_drops_prior_receipts",
+      "source": "https://github.com/GBOGEB/pipeline-automation-hub/pull/1196",
+      "source_head": null,
+      "first_run": null,
+      "first_job": null,
+      "first_step": null,
+      "discovered_utc": "2026-11-13",
+      "state": "PROVE",
+      "required": true,
+      "weight": null,
+      "impact": null,
+      "urgency": null,
+      "objective": "Repair source-specific failure without weakening admission",
+      "dod": [
+        "native exact-head positive proof",
+        "adversarial negative proof",
+        "eligible independent review",
+        "source owner acceptance",
+        "recurrence control"
+      ],
+      "reentry": "new source head or new attributable run/finding",
+      "accepted": false
+    },
+    {
+      "id": "LIVE-20261113-ABACUS-BE-DEPENDENCY-VULNS",
+      "owner": "A2746",
+      "parent": null,
+      "cohort": "live-discovery-2026-11-13",
+      "fingerprint": "binary_engines:osv:dependency_advisory",
+      "source": "https://github.com/GBOGEB/ABACUS/actions/runs/43398329153",
+      "source_head": null,
+      "first_run": null,
+      "first_job": null,
+      "first_step": null,
+      "discovered_utc": "2026-11-13",
+      "state": "PROVE",
+      "required": true,
+      "weight": null,
+      "impact": null,
+      "urgency": null,
+      "objective": "Repair source-specific failure without weakening admission",
+      "dod": [
+        "native exact-head positive proof",
+        "adversarial negative proof",
+        "eligible independent review",
+        "source owner acceptance",
+        "recurrence control"
+      ],
+      "reentry": "new source head or new attributable run/finding",
+      "accepted": false
+    },
+    {
+      "id": "LIVE-20261113-ABACUS-BE-SKIP-CONTRACT",
+      "owner": "A2746",
+      "parent": "P1-S1",
+      "cohort": "live-discovery-2026-11-13",
+      "fingerprint": "binary_engines:b0:skip_marker_invariant",
+      "source": "https://github.com/GBOGEB/ABACUS/actions/runs/43398328683",
+      "source_head": null,
+      "first_run": null,
+      "first_job": null,
+      "first_step": null,
+      "discovered_utc": "2026-11-13",
+      "state": "PROVE",
+      "required": true,
+      "weight": null,
+      "impact": null,
+      "urgency": null,
+      "objective": "Repair source-specific failure without weakening admission",
+      "dod": [
+        "native exact-head positive proof",
+        "adversarial negative proof",
+        "eligible independent review",
+        "source owner acceptance",
+        "recurrence control"
+      ],
+      "reentry": "new source head or new attributable run/finding",
+      "accepted": false
+    },
+    {
+      "id": "LIVE-20261113-ABACUS-BE-DOCS-LINT",
+      "owner": "A2746",
+      "parent": null,
+      "cohort": "live-discovery-2026-11-13",
+      "fingerprint": "binary_engines:doc_validation:MD013_YAML",
+      "source": "https://github.com/GBOGEB/ABACUS/actions/runs/43398328482",
+      "source_head": null,
+      "first_run": null,
+      "first_job": null,
+      "first_step": null,
+      "discovered_utc": "2026-11-13",
+      "state": "PROVE",
+      "required": true,
+      "weight": null,
+      "impact": null,
+      "urgency": null,
+      "objective": "Repair source-specific failure without weakening admission",
+      "dod": [
+        "native exact-head positive proof",
+        "adversarial negative proof",
+        "eligible independent review",
+        "source owner acceptance",
+        "recurrence control"
+      ],
+      "reentry": "new source head or new attributable run/finding",
+      "accepted": false
+    },
+    {
+      "id": "LIVE-20261113-ABACUS-SVG-OSV-PILLOW95",
+      "owner": "A2745",
+      "parent": null,
+      "cohort": "live-discovery-2026-11-13",
+      "fingerprint": "svg_engine:osv:pillow_9_5_0",
+      "source": "https://github.com/GBOGEB/ABACUS/actions/runs/43352119011",
+      "source_head": null,
+      "first_run": null,
+      "first_job": null,
+      "first_step": null,
+      "discovered_utc": "2026-11-13",
+      "state": "PROVE",
+      "required": true,
+      "weight": null,
+      "impact": null,
+      "urgency": null,
+      "objective": "Repair source-specific failure without weakening admission",
+      "dod": [
+        "native exact-head positive proof",
+        "adversarial negative proof",
+        "eligible independent review",
+        "source owner acceptance",
+        "recurrence control"
+      ],
+      "reentry": "new source head or new attributable run/finding",
+      "accepted": false
+    },
+    {
+      "id": "LIVE-20261113-ABACUS-SVG-B9-COVERAGE",
+      "owner": "A2745",
+      "parent": "P1-S1",
+      "cohort": "live-discovery-2026-11-13",
+      "fingerprint": "svg_engine:b0:changed_line_coverage",
+      "source": "https://github.com/GBOGEB/ABACUS/actions/runs/43352118373",
+      "source_head": null,
+      "first_run": null,
+      "first_job": null,
+      "first_step": null,
+      "discovered_utc": "2026-11-13",
+      "state": "PROVE",
+      "required": true,
+      "weight": null,
+      "impact": null,
+      "urgency": null,
+      "objective": "Repair source-specific failure without weakening admission",
+      "dod": [
+        "native exact-head positive proof",
+        "adversarial negative proof",
+        "eligible independent review",
+        "source owner acceptance",
+        "recurrence control"
+      ],
+      "reentry": "new source head or new attributable run/finding",
+      "accepted": false
+    },
+    {
+      "id": "LIVE-20261113-ABACUS-2708-PYTHON-SSOT-DRIFT",
+      "owner": "A2708",
+      "parent": null,
+      "cohort": "live-discovery-2026-11-13",
+      "fingerprint": "python_versions:ssot:3_12_vs_3_14",
+      "source": "https://github.com/GBOGEB/ABACUS/actions/runs/43428774268",
+      "source_head": null,
+      "first_run": null,
+      "first_job": null,
+      "first_step": null,
+      "discovered_utc": "2026-11-13",
+      "state": "PROVE",
+      "required": true,
+      "weight": null,
+      "impact": null,
+      "urgency": null,
+      "objective": "Repair source-specific failure without weakening admission",
+      "dod": [
+        "native exact-head positive proof",
+        "adversarial negative proof",
+        "eligible independent review",
+        "source owner acceptance",
+        "recurrence control"
+      ],
+      "reentry": "new source head or new attributable run/finding",
+      "accepted": false
+    }
+  ],
+  "edges": [
+    {
+      "from": "M136",
+      "to": "A2746",
+      "kind": "REQUIRED_PROVIDER_BEFORE_ADMISSION",
+      "verified_source": "https://github.com/GBOGEB/ABACUS/pull/2746"
+    },
+    {
+      "from": "A2745",
+      "to": "A2746",
+      "kind": "CONDITIONAL_IF_SVG_LANDS_FIRST",
+      "enabled": false,
+      "verified_source": "https://github.com/GBOGEB/ABACUS/pull/2746"
+    }
+  ],
+  "lanes": [
+    {
+      "id": "H-RACE",
+      "owner": "H1196",
+      "paths": [
+        "mission-control/gogreen/pr_intervention.py"
+      ],
+      "test": "concurrent_push_lease_negative",
+      "execution": "SERIALIZE_SHARED_SOURCE"
+    },
+    {
+      "id": "H-RECEIPT",
+      "owner": "H1196",
+      "paths": [
+        "mission-control/gogreen/test_pr_intervention.py"
+      ],
+      "test": "success_then_later_exception_durable_receipt",
+      "execution": "PARALLEL_TEST_ONLY"
+    },
+    {
+      "id": "B-SEC",
+      "owner": "A2746",
+      "paths": [
+        "requirements-binary-engines.txt"
+      ],
+      "test": "osv_dependency_review",
+      "execution": "DISJOINT"
+    },
+    {
+      "id": "B-SKIP",
+      "owner": "A2746",
+      "paths": [
+        "tests/binary_engines/test_binary_engines_drawings.py"
+      ],
+      "test": "b0_no_skip_under_required_deps",
+      "execution": "DISJOINT"
+    },
+    {
+      "id": "B-DOCS",
+      "owner": "A2746",
+      "paths": [
+        "DMAIC_V3/binary_engines/README.md",
+        "DMAIC_V3/binary_engines/*.example.yaml"
+      ],
+      "test": "markdown_yaml_lint",
+      "execution": "DISJOINT"
+    },
+    {
+      "id": "S-SEC",
+      "owner": "A2745",
+      "paths": [
+        "requirements-svg-engine.txt"
+      ],
+      "test": "osv_dependency_review",
+      "execution": "DISJOINT"
+    },
+    {
+      "id": "S-COV",
+      "owner": "A2745",
+      "paths": [
+        "tests/svg_engine/test_svg_engine_pdf.py",
+        "tests/svg_engine/test_svg_engine_ooxml.py"
+      ],
+      "test": "b0_changed_line_threshold",
+      "execution": "DISJOINT"
+    },
+    {
+      "id": "R-SSOT",
+      "owner": "A2708",
+      "paths": [
+        ".github/workflows/launcher-gate.yml",
+        ".github/workflows/red-census.yml"
+      ],
+      "test": "python_version_3_14_guard",
+      "execution": "DISJOINT"
+    },
+    {
+      "id": "R-REGISTRY",
+      "owner": "A2708",
+      "paths": [
+        "ci/governance/workflow_policy.json",
+        "docs/ci/WORKFLOW_RATIONALIZATION.md"
+      ],
+      "test": "registry_and_generated_report_equality",
+      "execution": "DISJOINT"
+    }
+  ],
+  "method": {
+    "status": "PILOT_NOT_OFFICIALLY_ADMITTED",
+    "execution": "NOT_DISPATCHED",
+    "docker": "NOT_REQUIRED_FOR_OFFLINE_CENSUS; OPTIONAL_OWNER_RUNTIME_ONLY",
+    "ldab": "UNKNOWN_NOT_COLLECTED",
+    "worktree": "NOT_CREATED_BY_GITHUB_API",
+    "ledger": "this manifest is a review seed, not canonical 17-root SSOT",
+    "statistics": "NO_NEW_NATIVE_RESULTS",
+    "nevergreen": "requires complete comparable native test-ID history, not inferred from red workflow runs",
+    "zero_coverage": "requires source production-module census and matched coverage reports",
+    "badge_policy": {
+      "HOLD": "#9C6A13",
+      "PROVE": "#7B4DA4",
+      "HEAD_STALE": "#786A89",
+      "MERGED_NOT_ADMITTED": "#B04957",
+      "ACCEPTED_CONTROL": "#26745C"
+    }
+  }
+}
