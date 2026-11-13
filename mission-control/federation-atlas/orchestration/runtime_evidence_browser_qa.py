@@ -104,6 +104,19 @@ def check_browser(markup, expected_head, executable=None):
                           {"slider": slider(), "expected_first_tick": tick})
                     check("direct_replay_uses_recorded_states", timeline() == states_at(tasks, tick), timeline())
                     page.locator("#reset").click()
+                    # Fault regression: a scrub just below the terminal float is
+                    # still terminal for replay, not an almost-finished run.
+                    page.locator("#time").evaluate(
+                        """el => { const end = Number(el.max);
+                        el.value = String(end - Math.min(1e-9, end * 1e-10));
+                        el.dispatchEvent(new Event('input', {bubbles:true})); }""")
+                    page.locator("#play").click()
+                    page.clock.run_for(55)
+                    check("near_terminal_scrub_restarts", close(slider(), tick),
+                          {"slider": slider(), "expected_first_tick": tick})
+                    check("near_terminal_replay_uses_recorded_states",
+                          timeline() == states_at(tasks, tick), timeline())
+                    page.locator("#reset").click()
                     check("reset_restores_zero_states", slider() == 0 and timeline() == states_at(tasks, 0), timeline())
                     page.locator("#play").click()
                     page.clock.run_for(55)
