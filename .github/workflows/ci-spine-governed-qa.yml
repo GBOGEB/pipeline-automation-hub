@@ -15,6 +15,7 @@ on:
       - 'mission-control/jade_temple/tools/rolling5.py'
       - 'mission-control/gogreen/scale_dock.py'
       - 'AGENTS.md'
+      - 'docs/ci-spine/svg-bridge/**'
       - 'docs/ci-spine/notebook.html'
       - 'docs/ci-spine/notebook.template.html'
       - 'docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json'
@@ -33,6 +34,7 @@ on:
       - 'mission-control/jade_temple/tools/rolling5.py'
       - 'mission-control/gogreen/scale_dock.py'
       - 'AGENTS.md'
+      - 'docs/ci-spine/svg-bridge/**'
       - 'docs/ci-spine/notebook.html'
       - 'docs/ci-spine/notebook.template.html'
       - 'docs/ci-spine/LOGICAL_BUNDLE_DAG_v1.json'
@@ -94,6 +96,21 @@ jobs:
         run: |
           set -euo pipefail
           python scripts/ci_spine_notebook.py --check
+      - name: JQ09 build deterministic SVG source-to-view derivative and negative tests
+        run: |
+          set -euo pipefail
+          python docs/ci-spine/svg-bridge/svg_bridge.py
+          python docs/ci-spine/svg-bridge/svg_bridge.py --check
+          python docs/ci-spine/svg-bridge/test_svg_bridge.py 2>&1 | tee "$RUNNER_TEMP/svg-bridge-tests.log"
+          python - <<'PY'
+          import os,re
+          from pathlib import Path
+          data=(Path(os.environ["RUNNER_TEMP"])/"svg-bridge-tests.log").read_text()
+          tests=[int(t) for t in re.findall(r"^Ran ([0-9]+) tests? in ",data,re.M)]
+          if not tests or tests[-1]<14 or "skipped=" in data:
+              raise SystemExit("SVG_BRIDGE_TEST_POPULATION_FIRST_RED")
+          print("SVG_BRIDGE_TESTS_EXECUTED="+str(tests[-1]))
+          PY
       - name: Publish exact-source topology receipt for review
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -103,6 +120,9 @@ jobs:
             ci-spine-index.json
             docs/ci-spine/notebook.html
             ${{ runner.temp }}/ci-spine-tests.log
+            ${{ runner.temp }}/svg-bridge-tests.log
+            docs/ci-spine/svg-bridge/index.html
+            docs/ci-spine/svg-bridge/SOURCE_SVG_POINTERS_v1.json
           retention-days: 21
           if-no-files-found: warn
   browser:
@@ -139,6 +159,12 @@ jobs:
           set -euo pipefail
           python scripts/ci_spine_notebook_browser.py
           test -s qa/ci_spine/receipt.json
+      - name: JQ09 verify SVG object selection, layer toggles, zoom and stale routes
+        run: |
+          set -euo pipefail
+          python docs/ci-spine/svg-bridge/svg_bridge.py
+          python docs/ci-spine/svg-bridge/browser_svg_bridge_qa.py
+          test -s qa/ci_spine/svg_bridge/receipt.json
       - name: Upload source-bound browser screenshots and receipt
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -147,5 +173,7 @@ jobs:
           path: |
             qa/ci_spine/receipt.json
             qa/ci_spine/*.png
+            qa/ci_spine/svg_bridge/receipt.json
+            qa/ci_spine/svg_bridge/*.png
           retention-days: 21
           if-no-files-found: warn
