@@ -252,3 +252,28 @@ A handover pasted into a Claude Code chat lives only in that session's transcrip
 ```powershell
 python tools\workstation\extract_pasted_content.py "$env:USERPROFILE\.claude\projects\<project>\<cliSessionId>.jsonl" "<out folder>"
 ```
+
+## Fixing one PR in place (`Invoke-PrFixInSitu.ps1`)
+
+The write side of `Invoke-DraftPrPass.ps1`, for one PR: diagnose (push rules, conflicts, red checks,
+threads, live session), `-Prepare` a worktree on the PR head, `-Sync` the base in, `-Test` at HEAD,
+`-Publish` to the same branch without force, `-ResolveThread` with proof. Commands and stage rules are in
+[PR_CONFLICT_RUNBOOK.md](PR_CONFLICT_RUNBOOK.md) sections 6 and 7. Offline self-test:
+`pwsh -NoProfile -File tools/workstation/Invoke-PrFixInSitu.ps1 -SelfTest`.
+
+## Tool catalog (`build_tool_catalog.py`)
+
+`TOOLS_CATALOG.json` lists every operational tool: goal, when to use it and when not, what it writes, how
+to run it, artefacts, docs, CI and the PRs/issues that change it. `build_tool_catalog.py` renders one page
+and adds the code facts from git at one commit (blob OID, last commit, GitHub link at that commit, the
+source) and, with `--online`, every open PR touching each tool with its checkout and in-situ fix command.
+
+```powershell
+Set-Location "<pipeline-automation-hub checkout>"
+python tools/workstation/build_tool_catalog.py --online      # writes ~/DASHBOARDS/tools_catalog.html
+python -m unittest tools/workstation/test_build_tool_catalog.py -v
+```
+
+The PC dashboard launcher links it as "Workstation tool catalog". Add a tool by adding an entry to the
+JSON; a tool that is not on the default branch yet must name its PR in `prs`.
+
