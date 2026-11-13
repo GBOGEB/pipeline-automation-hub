@@ -115,7 +115,7 @@ h1{font-size:clamp(24px,3vw,38px);margin:0 0 6px}h2{font-size:18px;margin:0 0 10
 .toolbar label{white-space:nowrap}.viewport{width:100%;min-width:0;overflow:auto;background:#1f1726;border:1px solid var(--line);border-radius:8px;min-height:285px;max-height:500px}
 #drawing{display:block;height:auto;max-width:none;color:#e7c5ea;background:#211725}
 #drawing .box{stroke:#c6a4d9}#drawing .label,#drawing .small{fill:#f4e6f3}
-#drawing [data-bridge-id]{cursor:pointer;transition:fill .15s}
+#drawing [data-bridge-id]{cursor:pointer;pointer-events:all;transition:fill .15s}
 #drawing [data-bridge-id]:hover{fill:#ad72c1;fill-opacity:.18}
 #drawing [data-bridge-id].selected{fill:#ea96c0;fill-opacity:.32;stroke:#f0b6d3;stroke-width:4}
 #drawing.flows-off .flow{display:none}#drawing.labels-off .label,#drawing.labels-off .small{display:none}
