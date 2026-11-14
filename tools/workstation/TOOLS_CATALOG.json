@@ -1,0 +1,438 @@
+{
+  "schema": "gbogeb.workstation-tool-catalog.v1",
+  "note": "One entry per operational tool. build_tool_catalog.py adds the code facts (blob OID, last commit, GitHub link, source, open PRs touching the file). {hub} in commands is replaced by the hub checkout the page is built from. Edit here, then rebuild; never hand-edit the HTML.",
+  "repo": "GBOGEB/pipeline-automation-hub",
+  "groups": [
+    {
+      "id": "pr",
+      "title": "PRs: triage, fix, close"
+    },
+    {
+      "id": "gate",
+      "title": "Gates and ownership"
+    },
+    {
+      "id": "ws",
+      "title": "Workstation and worktrees"
+    },
+    {
+      "id": "view",
+      "title": "Dashboards and evidence"
+    }
+  ],
+  "tools": [
+    {
+      "id": "pr-fix-in-situ",
+      "group": "pr",
+      "name": "Invoke-PrFixInSitu.ps1",
+      "path": "tools/workstation/Invoke-PrFixInSitu.ps1",
+      "goal": "Fix one open PR in place: diagnose, check out, merge the base in, test, push to the same branch, then reply to and resolve review threads with proof.",
+      "when": "A PR is red, conflicting or has open review threads, and you want to fix it on its own branch rather than open a superseding PR.",
+      "not_for": "Triage across many PRs (Invoke-DraftPrPass). Fork PRs. Branches another session is working (LIVE). Generated-output conflicts (Resolve-RegenConflicts).",
+      "writes": "Worktree + commits only with -Prepare/-Sync; pushes only with -Publish (never force); replies and resolves threads only with -ResolveThread after a passing -Test on the published head. Diagnose alone is read-only.",
+      "commands": [
+        "Set-Location \"{hub}\"",
+        "pwsh -NoProfile -File tools/workstation/Invoke-PrFixInSitu.ps1 -Repo gg_MATH -Pr 128",
+        "pwsh -NoProfile -File tools/workstation/Invoke-PrFixInSitu.ps1 -Repo gg_MATH -Pr 128 -Clone <clone> -Prepare -Sync",
+        "pwsh -NoProfile -File tools/workstation/Invoke-PrFixInSitu.ps1 -Repo gg_MATH -Pr 128 -Test \"python -m pytest -q tests\" -Publish",
+        "pwsh -NoProfile -File tools/workstation/Invoke-PrFixInSitu.ps1 -Repo gg_MATH -Pr 128 -ResolveThread <PRRT_id> -Note \"<what changed>\"",
+        "pwsh -NoProfile -File tools/workstation/Invoke-PrFixInSitu.ps1 -SelfTest"
+      ],
+      "artefacts": [
+        "$env:TEMP/prfix_<owner>_<repo>_<pr>.json (stage state)",
+        "$env:TEMP/prfix_<owner>_<repo>_<pr>_diag.json",
+        "$env:TEMP/prfix_<owner>_<repo>_<pr>_proofs.json (closure evidence; MAROON adds item_id and discussion_hash)"
+      ],
+      "docs": [
+        "tools/workstation/PR_CONFLICT_RUNBOOK.md"
+      ],
+      "ci": ".github/workflows/workstation-tools-qa.yml",
+      "related": [
+        "draft-pr-pass",
+        "maroon",
+        "regen-conflicts"
+      ],
+      "prs": [],
+      "issues": []
+    },
+    {
+      "id": "draft-pr-pass",
+      "group": "pr",
+      "name": "Invoke-DraftPrPass.ps1",
+      "path": "tools/workstation/Invoke-DraftPrPass.ps1",
+      "goal": "Read-only triage of open PRs: conflicts, red checks, unresolved bot review threads (P0-P3, security) and live sessions; one class per PR.",
+      "when": "Start of a PR pass, or to pick which PR to fix next. Feeds Invoke-PrFixInSitu.",
+      "not_for": "Changing anything; it never pushes, comments or resolves.",
+      "writes": "Read-only. Table plus JSON report in $env:TEMP.",
+      "commands": [
+        "Set-Location \"{hub}\"",
+        "pwsh -NoProfile -File tools/workstation/Invoke-DraftPrPass.ps1",
+        "pwsh -NoProfile -Command \"& ./tools/workstation/Invoke-DraftPrPass.ps1 -Repo ABACUS,pipeline-automation-hub,gg_MATH -IncludeReady -ShowThreads\""
+      ],
+      "artefacts": [
+        "$env:TEMP JSON report"
+      ],
+      "docs": [
+        "tools/workstation/PR_CONFLICT_RUNBOOK.md"
+      ],
+      "related": [
+        "pr-fix-in-situ"
+      ],
+      "prs": [],
+      "issues": []
+    },
+    {
+      "id": "regen-conflicts",
+      "group": "pr",
+      "name": "Resolve-RegenConflicts.ps1",
+      "path": "tools/workstation/Resolve-RegenConflicts.ps1",
+      "goal": "Clear merge conflicts that sit only in generated, SHA-pinned outputs (launcher.json, JADE pages) by re-running their generators on the merged sources.",
+      "when": "A PR conflicts with master only in generated files.",
+      "not_for": "Hand-written source conflicts: resolve those hunk by hunk (runbook section 2).",
+      "writes": "Merges master into the PR branch, regenerates, commits and pushes (skips LIVE and FORK PRs).",
+      "commands": [
+        "Set-Location \"{hub}\"",
+        "pwsh -NoProfile -File tools/workstation/Resolve-RegenConflicts.ps1 -Pr <N>"
+      ],
+      "artefacts": [
+        "merge commit on the PR branch"
+      ],
+      "docs": [
+        "tools/workstation/PR_CONFLICT_RUNBOOK.md"
+      ],
+      "related": [
+        "pr-fix-in-situ"
+      ],
+      "prs": [],
+      "issues": []
+    },
+    {
+      "id": "pr-intervention",
+      "group": "pr",
+      "name": "pr_intervention.py",
+      "path": "mission-control/gogreen/pr_intervention.py",
+      "goal": "PR intervention ledger: decide stale-branch update vs holdout per PR (slice 1); rerun / debug-rerun via rerun_triage (slice 2).",
+      "when": "Deciding whether a stale PR should be updated from master or held out.",
+      "not_for": "Fixing a PR's content.",
+      "writes": "Ledger records; see its PR.",
+      "commands": [
+        "Set-Location \"{hub}\"",
+        "python mission-control/gogreen/pr_intervention.py --help"
+      ],
+      "artefacts": [
+        "intervention ledger"
+      ],
+      "docs": [
+        "mission-control/gogreen/PR_INTERVENTION.md"
+      ],
+      "related": [
+        "pr-fix-in-situ"
+      ],
+      "prs": [
+        1196,
+        1213
+      ],
+      "issues": [],
+      "level": "write"
+    },
+    {
+      "id": "maroon",
+      "group": "pr",
+      "name": "CODE MAROON (census + worker)",
+      "path": "mission-control/maroon/operations.py",
+      "goal": "Review- and security-debt programme: census of alerts and review threads into roots and lanes; worker plans a Kahn wave of disjoint roots (max 2), fixes, and closes threads only with code_maroon.closure-proof.v1 proofs.",
+      "when": "Bulk, disjoint fixes of review threads across repos; nightly security census.",
+      "not_for": "Native Windows: operations.py needs fcntl (Linux, macOS or WSL). On Windows use Invoke-PrFixInSitu; its closure evidence uses MAROON's field shapes but is not a finished MAROON proof.",
+      "writes": "Private ledger ~/.maroon; worker commits and thread closure only with proof; never merges.",
+      "commands": [
+        "Set-Location \"{hub}\"",
+        "python mission-control/maroon/maroon.py fetch --owner GBOGEB --out <private dir>",
+        "python mission-control/maroon/operations.py --ledger ~/.maroon/MAROON_OPERATIONS.json scan --repos <scope> --pulse <id>",
+        "python mission-control/maroon/operations.py --ledger ~/.maroon/MAROON_OPERATIONS.json plan --workers 2"
+      ],
+      "artefacts": [
+        "MAROON_RECEIPT.json (private)",
+        "MAROON_PUBLIC.json",
+        "MAROON_OPERATIONS.json ledger"
+      ],
+      "docs": [
+        "mission-control/maroon/README.md",
+        "mission-control/maroon/OPERATIONS.md",
+        "mission-control/maroon/SKILL.md"
+      ],
+      "related": [
+        "pr-fix-in-situ"
+      ],
+      "prs": [],
+      "issues": [],
+      "level": "push"
+    },
+    {
+      "id": "fpc-receipt",
+      "group": "gate",
+      "name": "fpc_receipt.py",
+      "path": "scripts/fpc_receipt.py",
+      "goal": "Build and write the FPC_RECEIPT_V1 receipt in a PR body so the first-pass-closure gate can go green.",
+      "when": "A hub PR is CLEAN except for the first-pass-closure gate.",
+      "not_for": "Repos without the FPC gate.",
+      "writes": "PR body (only with --write).",
+      "commands": [
+        "Set-Location \"{hub}\"",
+        "python scripts/fpc_receipt.py --pr <N> --repo GBOGEB/pipeline-automation-hub --dry-run",
+        "python scripts/fpc_receipt.py --pr <N> --repo GBOGEB/pipeline-automation-hub --write"
+      ],
+      "artefacts": [
+        "FPC_RECEIPT_V1 block in the PR body"
+      ],
+      "docs": [
+        "docs/W305_FIRST_PASS_CLOSURE_GATE.md"
+      ],
+      "related": [],
+      "prs": [],
+      "issues": []
+    },
+    {
+      "id": "preflight-overlap",
+      "group": "gate",
+      "name": "preflight_overlap.py",
+      "path": "scripts/preflight_overlap.py",
+      "goal": "Before building a metric, page or tool: is it already owned on master or in an open PR?",
+      "when": "Before every new tool or metric (AGENTS.md L4: one owner, import, never copy).",
+      "not_for": "Proof of absence when its open-PR step fails; then check gh pr list by hand.",
+      "writes": "Read-only.",
+      "commands": [
+        "Set-Location \"{hub}\"",
+        "python scripts/preflight_overlap.py <term> <term>"
+      ],
+      "artefacts": [
+        "stdout report"
+      ],
+      "docs": [
+        "AGENTS.md"
+      ],
+      "related": [],
+      "prs": [],
+      "issues": []
+    },
+    {
+      "id": "workspace-audit",
+      "group": "ws",
+      "name": "Invoke-WorkspaceAudit.ps1",
+      "path": "tools/workstation/Invoke-WorkspaceAudit.ps1",
+      "goal": "Stale GitHub tokens, unpushed branches (PUSH-ME) and reclaimable worktrees/clones (REMOVABLE) on this PC.",
+      "when": "Weekly, or when C: is tight, or before retiring a thread.",
+      "not_for": "Deleting anything without -Apply; clone deletion needs -AllowCloneDelete and goes to the Recycle Bin.",
+      "writes": "Read-only by default; -Apply removes REMOVABLE worktrees without --force.",
+      "commands": [
+        "Set-Location \"{hub}\"",
+        "pwsh -NoProfile -File tools/workstation/Invoke-WorkspaceAudit.ps1",
+        "pwsh -NoProfile -File tools/workstation/Invoke-WorkspaceAudit.ps1 -Apply"
+      ],
+      "artefacts": [
+        "$env:TEMP audit JSON"
+      ],
+      "docs": [
+        "tools/workstation/README.md"
+      ],
+      "related": [
+        "workspace-overview"
+      ],
+      "prs": [],
+      "issues": [],
+      "level": "write"
+    },
+    {
+      "id": "workspace-overview",
+      "group": "ws",
+      "name": "Invoke-WorkspaceOverview.ps1",
+      "path": "tools/workstation/Invoke-WorkspaceOverview.ps1",
+      "goal": "One read-only view of every repo and worktree on this PC (runs the audit per root, lists Claude worktrees and stale worktree entries).",
+      "when": "Finding where a branch or worktree lives; before cleanup.",
+      "not_for": "Removing anything.",
+      "writes": "WORKSPACE_OVERVIEW.md/.csv/.json in -OutDir.",
+      "commands": [
+        "Set-Location \"{hub}\"",
+        "pwsh -NoProfile -File tools/workstation/Invoke-WorkspaceOverview.ps1"
+      ],
+      "artefacts": [
+        "WORKSPACE_OVERVIEW_latest.md"
+      ],
+      "docs": [
+        "tools/workstation/README.md"
+      ],
+      "related": [
+        "workspace-audit",
+        "pycharm-config"
+      ],
+      "prs": [],
+      "issues": []
+    },
+    {
+      "id": "branch-hygiene",
+      "group": "ws",
+      "name": "Invoke-BranchHygiene.ps1",
+      "path": "tools/workstation/Invoke-BranchHygiene.ps1",
+      "goal": "Remove merged branches across all repos and local clones, lossless only (delete decision owned by scripts/branch_hygiene_delete.py).",
+      "when": "After a batch of merges.",
+      "not_for": "Unmerged or open-PR branches; it skips them with a reason.",
+      "writes": "Dry run by default; -Execute deletes.",
+      "commands": [
+        "Set-Location \"{hub}\"",
+        "pwsh -NoProfile -File tools/workstation/Invoke-BranchHygiene.ps1",
+        "pwsh -NoProfile -File tools/workstation/Invoke-BranchHygiene.ps1 -Repo GBOGEB/GEMINI -Execute"
+      ],
+      "artefacts": [
+        "dry-run report"
+      ],
+      "docs": [],
+      "related": [],
+      "prs": [],
+      "issues": []
+    },
+    {
+      "id": "pycharm-config",
+      "group": "ws",
+      "name": "Set-PyCharmWorkspaceConfig.ps1",
+      "path": "tools/workstation/Set-PyCharmWorkspaceConfig.ps1",
+      "goal": "Write PyCharm project and IDE settings for the workspace folder built by Invoke-WorkspaceOverview.",
+      "when": "After rebuilding the PyCharm workspace folder.",
+      "not_for": "",
+      "writes": "PyCharm config files in -Workspace.",
+      "commands": [
+        "Set-Location \"{hub}\"",
+        "pwsh -NoProfile -File tools/workstation/Set-PyCharmWorkspaceConfig.ps1 -Workspace C:\\repos\\GBOGEB_WORKSPACE"
+      ],
+      "artefacts": [
+        ".idea settings"
+      ],
+      "docs": [
+        "tools/workstation/PYCHARM_WORKSPACE.md"
+      ],
+      "related": [
+        "workspace-overview"
+      ],
+      "prs": [],
+      "issues": []
+    },
+    {
+      "id": "hv03-custody",
+      "group": "ws",
+      "name": "hv03_custody.py",
+      "path": "tools/workstation/hv03_custody.py",
+      "goal": "HV-03 private, read-only worktree custody inventory.",
+      "when": "Recording which worktree holds what before a handover.",
+      "not_for": "",
+      "writes": "Read-only inventory.",
+      "commands": [
+        "Set-Location \"{hub}\"",
+        "python tools/workstation/hv03_custody.py --help"
+      ],
+      "artefacts": [
+        "custody inventory (private)"
+      ],
+      "docs": [
+        "tools/workstation/HV03_CUSTODY_README.md"
+      ],
+      "related": [],
+      "prs": [],
+      "issues": []
+    },
+    {
+      "id": "pc-dashboards",
+      "group": "view",
+      "name": "build_dashboards.py",
+      "path": "tools/workstation/dashboards/build_dashboards.py",
+      "goal": "PC dashboard launcher: one page linking every HTML page in every local clone, plus pinned dashboards (this catalog is one of them).",
+      "when": "Finding a dashboard; daily refresh task.",
+      "not_for": "Computing metrics; it only links.",
+      "writes": "%USERPROFILE%/DASHBOARDS/index.html",
+      "commands": [
+        "Set-Location \"{hub}\"",
+        "pwsh -NoProfile -File tools/workstation/dashboards/Install-Dashboards.ps1",
+        "python tools/workstation/dashboards/build_dashboards.py --offline"
+      ],
+      "artefacts": [
+        "~/DASHBOARDS/index.html"
+      ],
+      "docs": [
+        "tools/workstation/dashboards/README.md"
+      ],
+      "ci": ".github/workflows/workstation-dashboards-qa.yml",
+      "related": [
+        "tool-catalog"
+      ],
+      "prs": [],
+      "issues": []
+    },
+    {
+      "id": "tool-catalog",
+      "group": "view",
+      "name": "build_tool_catalog.py",
+      "path": "tools/workstation/build_tool_catalog.py",
+      "goal": "This page: what each operational tool is for, when to use it, how to run it, what it writes, its code at the exact commit, and the PRs/issues changing it.",
+      "when": "Choosing a tool; checking which PR changes one; onboarding a session.",
+      "not_for": "",
+      "writes": "One self-contained HTML file (default ~/DASHBOARDS/tools_catalog.html).",
+      "commands": [
+        "Set-Location \"{hub}\"",
+        "python tools/workstation/build_tool_catalog.py --online",
+        "python tools/workstation/build_tool_catalog.py --offline --out $env:TEMP/tools_catalog.html"
+      ],
+      "artefacts": [
+        "~/DASHBOARDS/tools_catalog.html"
+      ],
+      "docs": [
+        "tools/workstation/README.md"
+      ],
+      "ci": ".github/workflows/workstation-tools-qa.yml",
+      "related": [
+        "pc-dashboards"
+      ],
+      "prs": [],
+      "issues": []
+    },
+    {
+      "id": "extract-pasted",
+      "group": "view",
+      "name": "extract_pasted_content.py",
+      "path": "tools/workstation/extract_pasted_content.py",
+      "goal": "Extract every pasted_content block from a Claude Code session transcript, byte-exact.",
+      "when": "Recovering a handover paste from a session.",
+      "not_for": "",
+      "writes": "Extracted files.",
+      "commands": [
+        "Set-Location \"{hub}\"",
+        "python tools/workstation/extract_pasted_content.py --help"
+      ],
+      "artefacts": [
+        "extracted paste files"
+      ],
+      "docs": [],
+      "related": [],
+      "prs": [],
+      "issues": []
+    },
+    {
+      "id": "mermaid-check",
+      "group": "view",
+      "name": "build_mermaid_check.py",
+      "path": "tools/workstation/build_mermaid_check.py",
+      "goal": "Render-check Mermaid diagrams from Markdown or .mmd files in a browser.",
+      "when": "Before merging docs with Mermaid diagrams.",
+      "not_for": "",
+      "writes": "A check page.",
+      "commands": [
+        "Set-Location \"{hub}\"",
+        "python tools/workstation/build_mermaid_check.py --help"
+      ],
+      "artefacts": [
+        "mermaid check HTML"
+      ],
+      "docs": [],
+      "ci": ".github/workflows/workstation-mermaid-qa.yml",
+      "related": [],
+      "prs": [],
+      "issues": []
+    }
+  ]
+}
