@@ -136,14 +136,28 @@ jobs:
              'schema':'method-atlas.n32.native-run-self-report.v1',
              'run_id_claim':os.environ.get('GITHUB_RUN_ID'),
              'attempt_claim':os.environ.get('GITHUB_RUN_ATTEMPT'),
-             'source_head':os.environ.get('GITHUB_SHA'),
+             'source_head':os.environ['EXACT_HEAD'],
+             'event_merge_or_push_sha':os.environ.get('GITHUB_SHA'),
              'runner_os':os.environ.get('RUNNER_OS'),
              'queue_wait_p95_seconds':None,
              'paid_runner_cost':None,
              'source_owner_authenticated_readback':False,
+             'checkout_source_head_verified':True,
+             'merge_context_is_not_source_head':os.environ.get('GITHUB_SHA')!=os.environ['EXACT_HEAD'],
              'candidate_fleet_promotion':False,
              'note':'Self-report cannot replace independent Actions API run/job/step readback.'
           },indent=2,sort_keys=True)+'\n')
+          PY
+          python - <<'PY'
+          import json,os,subprocess
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'n32-real-dag/native_environment.json'
+          r=json.loads(p.read_text())
+          expected=os.environ['EXACT_HEAD']
+          observed=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          if r['source_head']!=expected or observed!=expected:
+              raise SystemExit('N32_ENVIRONMENT_RECEIPT_WRONG_EXECUTED_HEAD')
+          print('N32_CHECKOUT_HEAD_VERIFIED='+expected)
           PY
           test -z "$(git status --porcelain)"
       - name: Upload executable evidence (no release)
