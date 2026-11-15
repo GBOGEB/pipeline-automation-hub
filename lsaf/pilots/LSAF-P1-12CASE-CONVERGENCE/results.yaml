@@ -1,0 +1,24 @@
+schema: lsaf/pilot-results/v0.1
+pilot_id: LSAF-P1-12CASE-CONVERGENCE
+status: PENDING_NATIVE_CI
+exact_head_sha: PENDING_FINAL_SLICE_HEAD
+
+implemented:
+  case_count: 12
+  recurring_root_cases: 4
+  stale_or_admission_cases: 4
+  negative_control_cases: 4
+
+required_before_pass:
+  - native test execution on exact final head
+  - deterministic 12_of_12 classification
+  - false_ready_rate == 0
+  - negative_controls_correct == 4
+
+observed_during_implementation:
+  - id: DEFECT-EVIDENCE-CLASS-01
+    finding: SUPERSEDED and PREDICTED evidence must not be executable
+    repair: DAG compiler now admits only SOURCE or DERIVED evidence
+    classification: PILOT_CAUGHT_PRE_CI
+
+disposition: PILOT_IMPLEMENTED_NOT_YET_QUALIFIED
