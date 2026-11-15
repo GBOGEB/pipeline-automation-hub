@@ -36,7 +36,7 @@ pilot:
 lanes:
   A:
     name: dependency_dag
-    state: READY
+    state: IMPLEMENTED_PENDING_CI
     requires:
       - session_cohort
       - fragment_contract
@@ -50,7 +50,7 @@ lanes:
       - missing_evidence
   B:
     name: deterministic_projections
-    state: WAITING_PRECEDENT
+    state: IMPLEMENTED_PENDING_CI
     requires:
       - A.normalized_nodes
       - A.normalized_edges
@@ -62,7 +62,7 @@ lanes:
       - sipoc_mermaid
   C:
     name: prediction_receipts
-    state: READY
+    state: IMPLEMENTED_PENDING_CI
     requires:
       - prediction_schema
       - source_state_binding
@@ -72,7 +72,7 @@ lanes:
       - calibration_metrics
   D:
     name: cold_start_replay
-    state: WAITING_PRECEDENT
+    state: BLOCKED_ON_ABC_QUALIFICATION
     requires:
       - A.kahn_ready
       - B.handover_projection
@@ -126,3 +126,15 @@ dod:
     - ready_blocked
     - handover_dropin
     - prediction_source_bindings
+
+scale_gate:
+  id: LSAF-P1-12CASE-CONVERGENCE
+  state: HARNESS_IMPLEMENTED_PENDING_CI
+  cases:
+    recurring_roots: 4
+    stale_or_admission: 4
+    negative_controls: 4
+  pass_requires:
+    deterministic_classification_rate: 1.0
+    false_ready_rate: 0.0
+    negative_controls_correct: 4
