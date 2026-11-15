@@ -28,24 +28,31 @@ def load_frozen_rows(path: Path = HIST) -> dict:
     """Return the pinned per-row map, refusing any projection whose bytes differ from the frozen blob."""
     raw = path.read_bytes()
     oid = git_blob_sha(raw)
-    assert oid == FROZEN_BLOB, f'frozen B01-B46 projection drifted: {oid} != {FROZEN_BLOB}'
+    if not (oid == FROZEN_BLOB):
+        raise ValueError(f'frozen B01-B46 projection drifted: {oid} != {FROZEN_BLOB}')
     items = json.loads(raw.decode('utf-8'))['items']
     rows = {x['id']: tuple(x[k] for k in PINNED_FIELDS) for x in items}
-    assert len(rows) == len(items) == 46
+    if not (len(rows) == len(items) == 46):
+        raise ValueError("RECONCILIATION_INTEGRITY_FAILURE")
     return rows
 
 
 def verify_manifest(manifest: dict, base: Path = HERE) -> None:
     """Every manifest member must exist under base and match its sha256; no external or nested paths."""
     files = manifest['files_sha256']
-    assert files, 'empty release manifest'
+    if not (files):
+        raise ValueError('empty release manifest')
     for name, digest in files.items():
-        assert name and '/' not in name and '\\' not in name and name not in ('.', '..'), f'bad member {name!r}'
-        assert HEX64.fullmatch(digest), f'bad digest for {name}'
+        if not (name and '/' not in name and '\\' not in name and name not in ('.', '..')):
+            raise ValueError(f'bad member {name!r}')
+        if not (HEX64.fullmatch(digest)):
+            raise ValueError(f'bad digest for {name}')
         target = base / name
-        assert target.is_file(), f'release member missing: {name}'
+        if not (target.is_file()):
+            raise ValueError(f'release member missing: {name}')
         actual = hashlib.sha256(target.read_bytes()).hexdigest()
-        assert actual == digest, f'checksum mismatch for {name}: {actual} != {digest}'
+        if not (actual == digest):
+            raise ValueError(f'checksum mismatch for {name}: {actual} != {digest}')
 
 
 def project(baseline: dict, witness: dict, frozen: dict | None = None) -> dict:
@@ -53,34 +60,61 @@ def project(baseline: dict, witness: dict, frozen: dict | None = None) -> dict:
     if frozen is None:
         frozen = load_frozen_rows()
     items = baseline['items']
-    assert [x['id'] for x in items] == [f'B{i:02d}' for i in range(1, 47)]
+    # The frozen row-level evidence also pins all historical count metadata.
+    frozen_bytes = HIST.read_bytes()
+    if git_blob_sha(frozen_bytes) != FROZEN_BLOB:
+        raise ValueError("FROZEN_BASELINE_BLOB_MISMATCH")
+    baseline_source = json.loads(frozen_bytes.decode("utf-8"))
+    if baseline.get("counts") != baseline_source.get("counts"):
+        raise ValueError("FROZEN_COUNT_METADATA_DRIFT")
+    if items != baseline_source.get("items"):
+        raise ValueError("FROZEN_ITEM_METADATA_DRIFT")
+    if not ([x['id'] for x in items] == [f'B{i:02d}' for i in range(1, 47)]):
+        raise ValueError("RECONCILIATION_INTEGRITY_FAILURE")
     for x in items:
         got = tuple(x.get(k) for k in PINNED_FIELDS)
-        assert got == frozen.get(x['id']), f'historical row {x["id"]} differs from frozen projection'
-    assert len(items) == 46
-    assert baseline['counts']['done'] == 22
-    assert baseline['counts']['open'] == 24
-    assert sum(x['state'] == 'DONE' for x in items[:38]) == 20
-    assert witness['schema'] == 'missioncontrol.gmic.postmerge-witness.v1'
-    assert SHA.fullmatch(witness['source_head'])
-    assert witness['historical_counts'] == {
+        if not (got == frozen.get(x['id'])):
+            raise ValueError(f'historical row {x["id"]} differs from frozen projection')
+    if not (len(items) == 46):
+        raise ValueError("RECONCILIATION_INTEGRITY_FAILURE")
+    if not (baseline['counts']['done'] == 22):
+        raise ValueError("RECONCILIATION_INTEGRITY_FAILURE")
+    if not (baseline['counts']['open'] == 24):
+        raise ValueError("RECONCILIATION_INTEGRITY_FAILURE")
+    if not (sum(x['state'] == 'DONE' for x in items[:38]) == 20):
+        raise ValueError("RECONCILIATION_INTEGRITY_FAILURE")
+    if not (witness['schema'] == 'missioncontrol.gmic.postmerge-witness.v1'):
+        raise ValueError("RECONCILIATION_INTEGRITY_FAILURE")
+    if not (SHA.fullmatch(witness['source_head'])):
+        raise ValueError("RECONCILIATION_INTEGRITY_FAILURE")
+    if witness['historical_counts'] != {
         'total': 46, 'done': 22, 'open': 24, 'original_cohort_open': 18,
-    }
-    assert witness['controls']['authority_transfer'] is False
-    assert witness['controls']['formal_credit_delta'] == 0
-    assert witness['controls']['merge_admission_retroactively_verified'] is False
-    assert witness['controls']['ic3_hosted_pass_verified'] is False
-    assert witness['controls']['wire_owner_decision_verified'] is False
+    }:
+        raise ValueError("WITNESS_HISTORICAL_COUNTS_DRIFT")
+    if not (witness['controls']['authority_transfer'] is False):
+        raise ValueError("RECONCILIATION_INTEGRITY_FAILURE")
+    if not (witness['controls']['formal_credit_delta'] == 0):
+        raise ValueError("RECONCILIATION_INTEGRITY_FAILURE")
+    if not (witness['controls']['merge_admission_retroactively_verified'] is False):
+        raise ValueError("RECONCILIATION_INTEGRITY_FAILURE")
+    if not (witness['controls']['ic3_hosted_pass_verified'] is False):
+        raise ValueError("RECONCILIATION_INTEGRITY_FAILURE")
+    if not (witness['controls']['wire_owner_decision_verified'] is False):
+        raise ValueError("RECONCILIATION_INTEGRITY_FAILURE")
     known = {item['id'] for item in items}
     overlays = {item['id']: [] for item in items}
     prs = set()
     for pr in witness['commit_observations']:
-        assert isinstance(pr['pr'], int) and pr['pr'] not in prs
+        if not (isinstance(pr['pr'], int) and pr['pr'] not in prs):
+            raise ValueError("RECONCILIATION_INTEGRITY_FAILURE")
         prs.add(pr['pr'])
-        assert SHA.fullmatch(pr['head']) and SHA.fullmatch(pr['merge'])
-        assert pr['approved_reviews_observed'] >= 0
+        if not (SHA.fullmatch(pr['head']) and SHA.fullmatch(pr['merge'])):
+            raise ValueError("RECONCILIATION_INTEGRITY_FAILURE")
+        if not (pr['approved_reviews_observed'] >= 0):
+            raise ValueError("RECONCILIATION_INTEGRITY_FAILURE")
         for bid in pr['b_items']:
-            assert bid in known
+            if not (bid in known):
+                raise ValueError("RECONCILIATION_INTEGRITY_FAILURE")
             overlays[bid].append({
                 'pr': pr['pr'], 'merge_sha': pr['merge'],
                 'phase': 'MERGED_SOURCE_REVIEW_PROOF_MISSING'
