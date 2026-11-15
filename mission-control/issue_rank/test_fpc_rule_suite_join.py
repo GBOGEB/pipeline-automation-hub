@@ -104,6 +104,16 @@ class RuleSuiteReplay(unittest.TestCase):
                                                    "BYPASS_OBSERVED_FPC_SCOPE_UNPROVEN"),
             "metadata_fpc_success_not_bypass": ([{"context": j.FPC_CONTEXT, "state": "success"}], None,
                                                 "BYPASS_OBSERVED_FPC_SCOPE_UNPROVEN"),
+            "metadata_fpc_neutral_not_bypass": ([{"context": j.FPC_CONTEXT, "state": "neutral"}], None,
+                                                "BYPASS_OBSERVED_FPC_SCOPE_UNPROVEN"),
+            "metadata_fpc_skipped_not_bypass": ([{"context": j.FPC_CONTEXT, "state": "skipped"}], None,
+                                                "BYPASS_OBSERVED_FPC_SCOPE_UNPROVEN"),
+            "metadata_fpc_missing_state_not_bypass": ([{"context": j.FPC_CONTEXT}], None,
+                                                "BYPASS_OBSERVED_FPC_SCOPE_UNPROVEN"),
+            "metadata_fpc_pending_not_bypass": ([{"context": j.FPC_CONTEXT, "state": "pending"}], None,
+                                                "BYPASS_OBSERVED_FPC_SCOPE_UNPROVEN"),
+            "metadata_fpc_failure_is_bypass": ([{"context": j.FPC_CONTEXT, "state": "failure"}], None,
+                                                "FPC_BYPASS_OBSERVED_OWNER_DECISION_REQUIRED"),
             "metadata_near_miss_context": ([{"context": j.FPC_CONTEXT + " (shadow)", "state": "failure"}], None,
                                            "BYPASS_OBSERVED_FPC_SCOPE_UNPROVEN"),
         }
@@ -305,6 +315,23 @@ class OwnerExportReplay(unittest.TestCase):
         for key in ("state", "pagination_complete", "details_complete", "metadata_truncated",
                     "window_start", "window_end", "suites"):
             self.assertEqual(got[key], export[key], key)
+
+    def test_indexed_join_matches_linear_reference_1_to_32x(self):
+        """Source-parity scale pilot: 29 real events repeated as synthetic cases."""
+        export = self._load("OWNER_RULE_SUITES_EXPORT.json")
+        suites = export["suites"]
+        events = self._events()["events"]
+        index = j.index_rule_suites(suites)
+        for factor in (1, 2, 4, 8, 16, 32):
+            with self.subTest(factor=factor):
+                replayed = events * factor
+                for event in replayed:
+                    linear = sorted(s["id"] for s in suites if j.scoped_suite(s, event))
+                    indexed = sorted(s["id"] for s in index.get((event["merge_commit_sha"], j.REF), ())
+                                     if j.scoped_suite(s, event))
+                    self.assertEqual(indexed, linear)
+                self.assertEqual(len(events), 29)
+                self.assertLess(len(suites) + len(replayed), len(suites) * len(replayed))
 
     def test_owner_export_fpc_bypasses_named_by_check_metadata(self):
         export = self._load("OWNER_RULE_SUITES_EXPORT.json")
