@@ -1,17 +1,17 @@
 # B02 external early-adoption pilot: Taxonomy browser QA pip cache A/B
 
-Status: **experimental, opt-in only**; no default PR behavior change and no gate promotion.
+Status: **experimental, opt-in only**; the workflow_dispatch A/B matrix below adds no gate promotion. Since #1051 the default pull_request `browser-qa` job is itself cached (`cache: pip` plus a pinned Playwright Chromium cache); that change is separate from this A/B pilot.
 
 ## Authoritative reuse
 
 - Existing observed workflow: .github/workflows/taxonomy-browser-qa.yml.
 - Existing synthetic/no-network behavioral suite: mission-control/issue_rank/taxonomy_browser_qa.py.
-- Existing pinned actions/setup-python action (v7.0.0 commit SHA in workflow); built-in pip download-store caching, keyed by mission-control/issue_rank/browser-qa-requirements.txt. It does not cache the installed environment, Chromium browser, OS packages, test artefacts or secrets.
+- Existing pinned actions/setup-python action (v7.1.0 commit SHA in workflow); built-in pip download-store caching, keyed by mission-control/issue_rank/browser-qa-requirements.txt. It does not cache the installed environment, Chromium browser, OS packages, test artefacts or secrets.
 - No third-party action introduced, new cache action required, ADMISSION change, credential write, branch rules change, or new workflow file.
 
 ## Execution and measurement protocol
 
-Default pull_request still runs the original, uncached browser-qa job with source SHA assertion. Manual workflow_dispatch adds one *optional* 2x matrix (`none` and `pip`) only when the user explicitly checks `cache_pilot=true`; each runner has isolated filesystem and identical Python 3.12 / Ubuntu 24.04 / pinned Playwright / synthetic tests.
+Since #1051, default pull_request runs the `browser-qa` job with source SHA assertion, `actions/setup-python` `cache: pip` and a pinned Playwright Chromium cache (`actions/cache`, keyed on `browser-qa-requirements.txt`), and records both cache-hit outputs in the step summary. Manual workflow_dispatch adds one *optional* 2x matrix (`none` and `pip`) only when the user explicitly checks `cache_pilot=true`; each runner has isolated filesystem and identical Python 3.12 / Ubuntu 24.04 / pinned Playwright / synthetic tests.
 
 1. On a reviewed pilot ref, dispatch the existing Taxonomy Explorer Playwright 3-view QA workflow with `cache_pilot=true`. Observe `cache-ab / none` and `cache-ab / pip`, which both execute exactly the same full synthetic QA. The baseline on first dispatch is cold if no matching cache exists; verify the GitHub `cache-hit` output, do not presume.
 2. Repeat the same dispatch at the exact same source SHA at least three times, without changing the Python version or requirements file. The `pip` mode should report cache-hit=true on subsequent runs if the cache was saved and restored. A/B comparison of the first dispatch alone is **not** a warm-cache experiment.
@@ -23,7 +23,7 @@ Default pull_request still runs the original, uncached browser-qa job with sourc
 
 Before this opt-in pilot there is no matched Taxonomy cold/warm clock in the supplied CI-spine timing sample. **T0 for the matched experiment is UNKNOWN**, not zero. The separate JADE browser QA sample showed a 28-second browser-install step, which is a candidate hypothesis, not a Taxonomy baseline or a pip cache saving.
 
-Success requires: source-identical A/B runs, measured cache hits, 0 behavioral regressions, no test skips, no supply-chain trust regression, and a repeatable positive p50 benefit. No promoted gate, positive financial savings, or portfolio runtime reduction is claimed before complete receipts. Roll back by leaving `cache_pilot=false`; existing PR browser QA remains unchanged.
+Success requires: source-identical A/B runs, measured cache hits, 0 behavioral regressions, no test skips, no supply-chain trust regression, and a repeatable positive p50 benefit. No promoted gate, positive financial savings, or portfolio runtime reduction is claimed before complete receipts. Roll back by leaving `cache_pilot=false`; the pilot flag does not change the PR `browser-qa` job.
 
 ## Admission separation
 

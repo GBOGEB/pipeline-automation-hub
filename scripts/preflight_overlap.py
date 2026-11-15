@@ -8,7 +8,9 @@ Run it BEFORE building a metric, page, gate or tool (AGENTS.md, Working rules L4
     python scripts/preflight_overlap.py scale_dock --path mission-control/jade_temple/tools
 
 For every search term and path it lists
-  (a) open PRs whose title, head branch or changed files match, and
+  (a) open PRs whose title, head branch or changed files match, or whose diff
+      adds lines containing the term (`gh pr diff`; a def/class whose name holds
+      the term is reported as "defined in open PR #n at path:line"), and
   (b) what origin/master already has: matching file paths, def/class names and
       the number of files whose content mentions the term (git grep).
 It ends with an "already owned by" summary per term/path.
@@ -16,7 +18,8 @@ It ends with an "already owned by" summary per term/path.
 Matching on titles, branches and paths is case-insensitive and ignores
 punctuation, so "rolling-5" also finds rolling5.py. When both terms and --path
 are given, the master search for the terms is narrowed to those paths (PR
-matching is not narrowed). Read-only: it never pushes,
+matching is not narrowed). PR diffs are scanned for at most --diff-limit PRs
+and --diff-max-chars characters each (--no-diff skips them). Read-only: it never pushes,
 comments or edits. It always exits 0; a missing gh or git is reported, not fatal.
 On a workstation with a stale GITHUB_TOKEN run it as
 `unset GITHUB_TOKEN GH_TOKEN; python scripts/preflight_overlap.py ...`.
@@ -28,9 +31,13 @@ import json
 import re
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from typing import Callable, Sequence
 
 Runner = Callable[[Sequence[str]], "tuple[int, str, str]"]
+HUNK = re.compile(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@")
+DIFF_LIMIT = 50  # open PRs whose diff is scanned
+DIFF_MAX_CHARS = 2_000_000  # per PR diff; a longer diff is truncated with a warning
 ERE_SPECIAL = re.compile(r"([.^$*+?()\[\]{}|\\])")
 
 
@@ -103,6 +110,74 @@ def pr_matches(pr: dict, terms: Sequence[str], paths: Sequence[str]) -> list[str
     return why
 
 
+def term_idents(term: str) -> list[str]:
+    """Identifier spellings of a term: 'rolling-5' -> ['rolling5', 'rolling_5']."""
+    return sorted({re.sub(r"[^0-9A-Za-z_]", "_", term), re.sub(r"[^0-9A-Za-z_]", "", term)} - {""})
+
+
+def def_regex(term: str) -> "re.Pattern | None":
+    idents = term_idents(term)
+    if not idents:
+        return None
+    alt = "|".join(re.escape(i) for i in idents)
+    return re.compile(r"^\s*(?:async\s+)?(?:def|class)\s+[A-Za-z0-9_]*(?:" + alt + ")", re.IGNORECASE)
+
+
+def added_lines(diff: str):
+    """Yield (path, new_line_number, text) for every '+' line of a unified diff.
+
+    Binary files carry no hunks, so only text files yield lines."""
+    path, line = None, 0
+    for raw in diff.splitlines():
+        if raw.startswith("diff --git "):
+            path, line = None, 0
+        elif raw.startswith("+++ ") and not line:
+            target = raw[4:].strip()
+            path = None if target == "/dev/null" else (target[2:] if target.startswith("b/") else target)
+        elif raw.startswith("@@"):
+            m = HUNK.match(raw)
+            line = int(m.group(1)) if m else 0
+        elif path is None or not line:
+            continue
+        elif raw.startswith("+"):
+            yield path, line, raw[1:]
+            line += 1
+        elif raw.startswith(" "):
+            line += 1
+
+
+def pr_diff(runner: Runner, repo: str | None, number, max_chars: int) -> tuple[str, str | None]:
+    cmd = ["gh", "pr", "diff", str(number)]
+    if repo:
+        cmd += ["--repo", repo]
+    rc, out, err = runner(cmd)
+    if rc != 0:
+        return "", f"gh pr diff {number} failed (rc={rc}): {err.strip() or out.strip()}"
+    if len(out) > max_chars:
+        return out[:max_chars], f"gh pr diff {number} truncated to {max_chars} characters"
+    return out, None
+
+
+def diff_matches(diff: str, number, terms: Sequence[str]) -> list[str]:
+    """Reasons from a PR diff: definitions first, then a count of other added lines naming the term."""
+    why = []
+    lines = list(added_lines(diff))
+    for t in terms:
+        rx = def_regex(t)
+        defs, mentions = [], []
+        for path, n, text in lines:
+            if rx and rx.match(text):
+                defs.append(f"{path}:{n}")
+            elif term_hit(t, text):
+                mentions.append(f"{path}:{n}")
+        why += [f"'{t}' defined in open PR #{number} at {d}" for d in defs[:5]]
+        if len(defs) > 5:
+            why.append(f"'{t}' defined in {len(defs) - 5} more place(s) in open PR #{number}")
+        if mentions:
+            why.append(f"'{t}' in {len(mentions)} added line(s) of open PR #{number}, first at {mentions[0]}")
+    return why
+
+
 # --- (b) origin/master ----------------------------------------------------
 
 def master_files(runner: Runner, ref: str) -> tuple[list[str], str | None]:
@@ -114,7 +189,7 @@ def master_files(runner: Runner, ref: str) -> tuple[list[str], str | None]:
 
 def master_defs(runner: Runner, ref: str, term: str, limit_paths: Sequence[str]) -> list[str]:
     """def/class lines on `ref` whose name contains the term ('rolling-5' tries rolling_5 and rolling5)."""
-    idents = sorted({re.sub(r"[^0-9A-Za-z_]", "_", term), re.sub(r"[^0-9A-Za-z_]", "", term)} - {""})
+    idents = term_idents(term)
     if not idents:
         return []
     alt = "|".join(ere_escape(i) for i in idents)
@@ -153,14 +228,26 @@ def _clip(items: list[str], n: int) -> list[str]:
 
 
 def analyse(terms: Sequence[str], paths: Sequence[str], *, runner: Runner = run, ref: str = "origin/master",
-            repo: str | None = None, pr_limit: int = 100) -> dict:
+            repo: str | None = None, pr_limit: int = 100, diff_limit: int = DIFF_LIMIT,
+            diff_max_chars: int = DIFF_MAX_CHARS) -> dict:
     report: dict = {"ref": ref, "terms": list(terms), "paths": list(paths), "warnings": [],
                     "open_prs": [], "master": {"terms": {}, "paths": {}}}
     prs, warn = open_prs(runner, repo, pr_limit)
     if warn:
         report["warnings"].append(warn)
+    diff_why: dict = {}
+    if terms and diff_limit > 0 and prs:
+        scan = [pr.get("number") for pr in prs[:diff_limit]]
+        if len(prs) > diff_limit:
+            report["warnings"].append(f"diffs scanned for the first {diff_limit} of {len(prs)} open PRs (--diff-limit)")
+        with ThreadPoolExecutor(max_workers=min(8, len(scan))) as pool:
+            diffs = list(pool.map(lambda n: pr_diff(runner, repo, n, diff_max_chars), scan))
+        for n, (diff, warn) in zip(scan, diffs):
+            if warn:
+                report["warnings"].append(warn)
+            diff_why[n] = diff_matches(diff, n, terms)
     for pr in prs:
-        why = pr_matches(pr, terms, paths)
+        why = pr_matches(pr, terms, paths) + diff_why.get(pr.get("number"), [])
         if why:
             report["open_prs"].append({"number": pr.get("number"), "title": pr.get("title"),
                                        "branch": pr.get("headRefName"), "url": pr.get("url"),
@@ -235,6 +322,11 @@ def main(argv: Sequence[str] | None = None, runner: Runner = run) -> int:
     ap.add_argument("--ref", default="origin/master", help="ref to search (default origin/master)")
     ap.add_argument("--repo", help="OWNER/REPO for gh (default: the current checkout)")
     ap.add_argument("--pr-limit", type=int, default=100)
+    ap.add_argument("--diff-limit", type=int, default=DIFF_LIMIT,
+                    help=f"scan the added lines of at most this many open PR diffs (default {DIFF_LIMIT})")
+    ap.add_argument("--diff-max-chars", type=int, default=DIFF_MAX_CHARS,
+                    help=f"truncate each PR diff to this many characters (default {DIFF_MAX_CHARS})")
+    ap.add_argument("--no-diff", action="store_true", help="do not scan open PR diffs")
     ap.add_argument("--no-fetch", action="store_true", help="skip `git fetch origin` before searching")
     ap.add_argument("--json", action="store_true", help="print the full report as JSON")
     args = ap.parse_args(argv)
@@ -248,7 +340,8 @@ def main(argv: Sequence[str] | None = None, runner: Runner = run) -> int:
             if rc != 0:
                 print(f"WARNING: git fetch origin failed; {args.ref} may be stale: {err.strip()}")
         report = analyse(args.terms, args.path, runner=runner, ref=args.ref, repo=args.repo,
-                         pr_limit=args.pr_limit)
+                         pr_limit=args.pr_limit, diff_limit=0 if args.no_diff else args.diff_limit,
+                         diff_max_chars=args.diff_max_chars)
         print(json.dumps(report, indent=1) if args.json else render(report))
     except Exception as exc:  # advisory tool: never block a session
         print(f"WARNING: preflight_overlap could not finish: {exc!r}")
