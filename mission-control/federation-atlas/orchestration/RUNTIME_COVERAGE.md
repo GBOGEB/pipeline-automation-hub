@@ -38,7 +38,15 @@ Atlas CI job asserts a clean, commit-bound
 The existing Method Atlas CI job also runs `runtime_evidence_browser_qa.py`
 against that generated HTML. It checks source identity, desktop/mobile layout,
 Replay, Reset and the exact terminal slider position with its existing pinned
-browser installation. A local browser launch restriction is a blocked check;
+browser installation.
+
+Replay from the terminal view and from a slider value numerically within the
+UI's near-terminal floating-point tolerance must both restart at the first
+recorded tick. The browser test uses the real rendered HTML at desktop/mobile;
+a passing local runner does not waive a failed visual replay. This regression
+was isolated from native Method Atlas execution receipt checks, which already
+verified the eight tasks, eleven edges and fifteen required output ports.
+ A local browser launch restriction is a blocked check;
 it cannot be recorded as a visual pass.
 
 The actual local graph contains eight tasks and eleven dependency edges:
