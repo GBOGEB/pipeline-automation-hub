@@ -1,0 +1,316 @@
+{
+  "schema": "lsaf/pilot-cases/v0.1",
+  "pilot_id": "LSAF-P1-12CASE-CONVERGENCE",
+  "cases": [
+    {
+      "id": "R1",
+      "class": "recurring_root",
+      "observations": [
+        {
+          "occurrence_id": "R1-a",
+          "repo_class": "hub",
+          "workflow": "FPC",
+          "job": "review",
+          "failure_signature": "independent review missing",
+          "changed_component": "admission",
+          "topic": "exact head",
+          "predicate": "independent review"
+        },
+        {
+          "occurrence_id": "R1-b",
+          "repo_class": "HUB",
+          "workflow": " fpc ",
+          "job": "review",
+          "failure_signature": " independent review missing ",
+          "changed_component": "admission",
+          "topic": "exact head",
+          "predicate": "independent review"
+        }
+      ],
+      "expected_occurrence_count": 2
+    },
+    {
+      "id": "R2",
+      "class": "recurring_root",
+      "observations": [
+        {
+          "occurrence_id": "R2-a",
+          "repo_class": "hub",
+          "workflow": "N6",
+          "job": "queue census",
+          "failure_signature": "backpressure threshold",
+          "changed_component": "scheduler",
+          "topic": "queue",
+          "predicate": "sole notification owner"
+        },
+        {
+          "occurrence_id": "R2-b",
+          "repo_class": "hub",
+          "workflow": "n6",
+          "job": "QUEUE CENSUS",
+          "failure_signature": "backpressure threshold",
+          "changed_component": "scheduler",
+          "topic": "queue",
+          "predicate": "sole notification owner"
+        }
+      ],
+      "expected_occurrence_count": 2
+    },
+    {
+      "id": "R3",
+      "class": "recurring_root",
+      "observations": [
+        {
+          "occurrence_id": "R3-a",
+          "repo_class": "federation",
+          "workflow": "closure",
+          "job": "issue-pr",
+          "failure_signature": "dod dov incomplete",
+          "changed_component": "ledger",
+          "topic": "closure",
+          "predicate": "proof before close"
+        },
+        {
+          "occurrence_id": "R3-b",
+          "repo_class": "federation",
+          "workflow": "closure",
+          "job": "issue-pr",
+          "failure_signature": "DOD DOV incomplete",
+          "changed_component": "ledger",
+          "topic": "closure",
+          "predicate": "proof before close"
+        }
+      ],
+      "expected_occurrence_count": 2
+    },
+    {
+      "id": "R4",
+      "class": "recurring_root",
+      "observations": [
+        {
+          "occurrence_id": "R4-a",
+          "repo_class": "ci",
+          "workflow": "coverage",
+          "job": "scale",
+          "failure_signature": "zero coverage",
+          "changed_component": "test matrix",
+          "topic": "coverage",
+          "predicate": "negative scaling"
+        },
+        {
+          "occurrence_id": "R4-b",
+          "repo_class": "CI",
+          "workflow": "coverage",
+          "job": "scale",
+          "failure_signature": " zero coverage ",
+          "changed_component": "test matrix",
+          "topic": "coverage",
+          "predicate": "negative scaling"
+        }
+      ],
+      "expected_occurrence_count": 2
+    },
+    {
+      "id": "S1",
+      "class": "stale_or_admission",
+      "nodes": [
+        {
+          "id": "source",
+          "requires": [],
+          "authority": "Hub",
+          "evidence": "SOURCE"
+        },
+        {
+          "id": "review",
+          "requires": [
+            "source"
+          ],
+          "authority": "Hub",
+          "evidence": "UNKNOWN"
+        }
+      ],
+      "expected_ready": [
+        "source"
+      ],
+      "expected_blocked": [
+        "review"
+      ]
+    },
+    {
+      "id": "S2",
+      "class": "stale_or_admission",
+      "nodes": [
+        {
+          "id": "head",
+          "requires": [],
+          "authority": "Hub",
+          "evidence": "SOURCE"
+        },
+        {
+          "id": "admit",
+          "requires": [
+            "head"
+          ],
+          "authority": "UNKNOWN",
+          "evidence": "SOURCE"
+        }
+      ],
+      "expected_ready": [
+        "head"
+      ],
+      "expected_blocked": [
+        "admit"
+      ]
+    },
+    {
+      "id": "S3",
+      "class": "stale_or_admission",
+      "nodes": [
+        {
+          "id": "old-head",
+          "requires": [],
+          "authority": "Hub",
+          "evidence": "SUPERSEDED"
+        },
+        {
+          "id": "current-head",
+          "requires": [],
+          "authority": "Hub",
+          "evidence": "SOURCE"
+        },
+        {
+          "id": "gate",
+          "requires": [
+            "current-head"
+          ],
+          "authority": "Hub",
+          "evidence": "SOURCE"
+        }
+      ],
+      "expected_ready": [
+        "current-head",
+        "old-head"
+      ],
+      "expected_blocked": []
+    },
+    {
+      "id": "S4",
+      "class": "stale_or_admission",
+      "nodes": [
+        {
+          "id": "impl",
+          "requires": [],
+          "authority": "Hub",
+          "evidence": "SOURCE"
+        },
+        {
+          "id": "gate",
+          "requires": [
+            "missing-review"
+          ],
+          "authority": "Hub",
+          "evidence": "SOURCE"
+        }
+      ],
+      "expected_ready": [
+        "impl"
+      ],
+      "expected_blocked": [
+        "gate"
+      ]
+    },
+    {
+      "id": "N1",
+      "class": "negative_control",
+      "left": {
+        "repo_class": "hub",
+        "workflow": "FPC",
+        "job": "review",
+        "failure_signature": "review missing",
+        "changed_component": "admission",
+        "topic": "exact head",
+        "predicate": "independent review"
+      },
+      "right": {
+        "repo_class": "hub",
+        "workflow": "FPC",
+        "job": "review",
+        "failure_signature": "security review missing",
+        "changed_component": "admission",
+        "topic": "exact head",
+        "predicate": "independent review"
+      },
+      "expected_same_fingerprint": false
+    },
+    {
+      "id": "N2",
+      "class": "negative_control",
+      "left": {
+        "repo_class": "hub",
+        "workflow": "N6",
+        "job": "queue census",
+        "failure_signature": "backpressure threshold",
+        "changed_component": "scheduler",
+        "topic": "queue",
+        "predicate": "sole notification owner"
+      },
+      "right": {
+        "repo_class": "hub",
+        "workflow": "N6",
+        "job": "queue census",
+        "failure_signature": "credentials 401",
+        "changed_component": "scheduler",
+        "topic": "queue",
+        "predicate": "sole notification owner"
+      },
+      "expected_same_fingerprint": false
+    },
+    {
+      "id": "N3",
+      "class": "negative_control",
+      "nodes": [
+        {
+          "id": "unknown",
+          "requires": [],
+          "authority": "Hub",
+          "evidence": "UNKNOWN"
+        }
+      ],
+      "expected_ready": [],
+      "expected_blocked": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "N4",
+      "class": "negative_control",
+      "nodes": [
+        {
+          "id": "a",
+          "requires": [
+            "b"
+          ],
+          "authority": "Hub",
+          "evidence": "SOURCE"
+        },
+        {
+          "id": "b",
+          "requires": [
+            "a"
+          ],
+          "authority": "Hub",
+          "evidence": "SOURCE"
+        }
+      ],
+      "expected_ready": [],
+      "expected_blocked": [
+        "a",
+        "b"
+      ],
+      "expected_cycle": [
+        "a",
+        "b"
+      ]
+    }
+  ]
+}
