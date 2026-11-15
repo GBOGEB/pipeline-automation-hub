@@ -16,7 +16,13 @@ import subprocess
 
 HEAD = re.compile(r"^[0-9a-f]{40}$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
-SOURCE = ("broker.py", "main.py", "outcome_flight.py", "warm_broker_pilot.py")
+SOURCE_PATHS = {
+    "broker.py": "mission-control/federation-atlas/orchestration/broker.py",
+    "main.py": "mission-control/federation-atlas/orchestration/main.py",
+    "outcome_flight.py": "mission-control/gogreen/outcome_convergence/outcome_flight.py",
+    "warm_broker_pilot.py": "mission-control/federation-atlas/orchestration/warm_broker_pilot.py",
+}
+SOURCE = tuple(SOURCE_PATHS)
 SCHEMA = "method-atlas.n32.real-broker-coverage.v1"
 
 
@@ -60,11 +66,13 @@ def load_coverage(path):
 def select_files(data):
     found={}
     for path,entry in data["files"].items():
-        matches=[name for name in SOURCE if Path(path).name==name]
+        normalized=path.replace("\\","/")
+        matches=[name for name,suffix in SOURCE_PATHS.items()
+                 if normalized==suffix or normalized.endswith("/"+suffix)]
         guard(len(matches)<=1,"AMBIGUOUS_SOURCE_PATH")
         if not matches:continue
         name=matches[0]
-        guard(name not in found,"DUPLICATE_SOURCE_BASENAME")
+        guard(name not in found,"DUPLICATE_EXACT_SOURCE_PATH")
         found[name]=entry["summary"]
     return found
 
@@ -104,8 +112,7 @@ def compare(testpath,runtimepath,actualpath,head,root):
     r,rm=summarize_pop(runtime)
     guard(not rm,"PRODUCTION_SOURCE_INSTRUMENTATION_INCOMPLETE")
     for name in SOURCE:
-        location = ("mission-control/gogreen/outcome_convergence/" if name=="outcome_flight.py"
-                    else "mission-control/federation-atlas/orchestration/") + name
+        location = SOURCE_PATHS[name]
         src=root/location
         guard(src.is_file(),"MISSING_TRACKED_SOURCE")
         guard(r[name]["statements"]["eligible"]>0 and

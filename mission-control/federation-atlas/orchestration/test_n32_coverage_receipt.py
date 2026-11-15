@@ -16,7 +16,7 @@ HEAD="a"*40
 def cover(branch=4,covered=2):
     files={}
     for path in m.SOURCE:
-        files["x/"+path]={"summary":{"num_statements":12,"covered_lines":9,
+        files["/source/"+m.SOURCE_PATHS[path]]={"summary":{"num_statements":12,"covered_lines":9,
             "num_branches":branch,"covered_branches":covered}}
     return {"meta":{"branch_coverage":True,"version":"7.13.3"},"files":files}
 
@@ -35,9 +35,22 @@ class CoverageAxis(unittest.TestCase):
         self.assertIsNone(m.summarize_pop({"files":{}})[0]["broker.py"]["branches"])
         self.assertEqual(rows["broker.py"]["status"],"MEASURED_PARTIAL_OR_FULL")
 
+    def test_unrelated_same_basename_does_not_double_count_source(self):
+        raw=cover()
+        raw["files"]["/other/untrusted/main.py"]={
+            "summary":{"num_statements":999,"covered_lines":999,
+                       "num_branches":999,"covered_branches":999}}
+        selected,missing=m.summarize_pop(raw)
+        self.assertEqual(selected["main.py"]["branches"]["eligible"],4)
+        self.assertEqual(missing,[])
+        raw["files"]["/duplicate/"+m.SOURCE_PATHS["main.py"]]=raw["files"][
+            "/source/"+m.SOURCE_PATHS["main.py"]]
+        with self.assertRaisesRegex(ValueError,"DUPLICATE_EXACT_SOURCE_PATH"):
+            m.summarize_pop(raw)
+
     def test_uninstrumented_is_not_zero(self):
         data=cover()
-        del data["files"]["x/broker.py"]
+        del data["files"]["/source/"+m.SOURCE_PATHS["broker.py"]]
         rows,missing=m.summarize_pop(data)
         self.assertEqual(rows["broker.py"]["status"],"NOT_INSTRUMENTED_OR_NOT_EXECUTED")
         self.assertIn("broker.py",missing)
@@ -82,7 +95,7 @@ class CoverageAxis(unittest.TestCase):
     def test_false_green_missing_runtime_source_cannot_qualify(self):
         with tempfile.TemporaryDirectory() as td:
             base=Path(td);runtime=cover()
-            del runtime["files"]["x/outcome_flight.py"]
+            del runtime["files"]["/source/"+m.SOURCE_PATHS["outcome_flight.py"]]
             for path,obj in (("unit.json",cover()),("runtime.json",runtime),
                              ("actual.json",dag())):
                 (base/path).write_text(json.dumps(obj))
