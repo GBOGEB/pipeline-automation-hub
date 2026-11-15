@@ -31,11 +31,39 @@ TREE = [
 ]
 
 
+# PR #9's title, branch and files say nothing about transitive_reduction; only its diff defines it (#1216).
+DIFFS = {
+    9: "\n".join([
+        "diff --git a/mission-control/jade_temple/tools/oid_federation.py"
+        " b/mission-control/jade_temple/tools/oid_federation.py",
+        "new file mode 100644",
+        "--- /dev/null",
+        "+++ b/mission-control/jade_temple/tools/oid_federation.py",
+        "@@ -0,0 +60,4 @@",
+        "+",
+        "+",
+        "+def transitive_reduction(edges):",
+        "+    return edges  # transitive_reduction stub",
+        "diff --git a/logo.png b/logo.png",
+        "Binary files a/logo.png and b/logo.png differ",
+        "diff --git a/README.md b/README.md",
+        "--- a/README.md",
+        "+++ b/README.md",
+        "@@ -10,3 +10,4 @@ intro",
+        " keep",
+        "-old transitive_reduction text",
+        " keep",
+        "+See transitive-reduction.",
+    ]) + "\n",
+}
+
+
 class FakeRunner:
     """Answers gh/git calls from canned data and records every command."""
 
-    def __init__(self, prs=PRS, gh_rc=0, git_rc=0):
+    def __init__(self, prs=PRS, gh_rc=0, git_rc=0, diffs=DIFFS, diff_rc=0):
         self.prs, self.gh_rc, self.git_rc, self.calls = prs, gh_rc, git_rc, []
+        self.diffs, self.diff_rc = diffs, diff_rc
 
     def __call__(self, cmd):
         cmd = list(cmd)
@@ -43,6 +71,10 @@ class FakeRunner:
         if cmd[0] == "gh":
             if self.gh_rc:
                 return self.gh_rc, "", "HTTP 401: Bad credentials"
+            if cmd[1:3] == ["pr", "diff"]:
+                if self.diff_rc:
+                    return self.diff_rc, "", "HTTP 406: diff too large"
+                return 0, self.diffs.get(int(cmd[3]), ""), ""
             return 0, json.dumps(self.prs), ""
         if self.git_rc:
             return self.git_rc, "", "fatal: not a git repository"
@@ -141,6 +173,57 @@ class AnalyseTests(unittest.TestCase):
         gh = next(c for c in runner.calls if c[0] == "gh")
         self.assertEqual(gh[gh.index("--repo") + 1], "GBOGEB/pipeline-automation-hub")
         self.assertIn("files", gh[gh.index("--json") + 1])
+
+
+class PrDiffTests(unittest.TestCase):
+    def test_added_lines_track_paths_and_new_line_numbers(self):
+        got = list(po.added_lines(DIFFS[9]))
+        self.assertEqual(got[2], ("mission-control/jade_temple/tools/oid_federation.py", 62,
+                                  "def transitive_reduction(edges):"))
+        self.assertEqual(got[-1], ("README.md", 12, "See transitive-reduction."))
+        self.assertFalse(any(p == "logo.png" for p, _, _ in got))
+        self.assertFalse(any("old transitive_reduction" in t for _, _, t in got))
+
+    def test_definition_only_in_pr_diff_is_reported(self):
+        r = po.analyse(["transitive_reduction"], [], runner=FakeRunner())
+        self.assertEqual([p["number"] for p in r["open_prs"]], [9])
+        why = r["open_prs"][0]["why"]
+        self.assertIn("'transitive_reduction' defined in open PR #9 at "
+                      "mission-control/jade_temple/tools/oid_federation.py:62", why)
+        self.assertIn("'transitive_reduction' in 2 added line(s) of open PR #9, first at "
+                      "mission-control/jade_temple/tools/oid_federation.py:63", why)
+        self.assertEqual(r["owners"]["transitive_reduction"], ["PR #9 (docs/x)"])
+        self.assertIn("defined in open PR #9 at mission-control/jade_temple/tools/oid_federation.py:62",
+                      po.render(r))
+
+    def test_diff_limit_and_no_diff(self):
+        runner = FakeRunner()
+        r = po.analyse(["transitive_reduction"], [], runner=runner, diff_limit=2)
+        self.assertEqual(r["open_prs"], [])
+        self.assertIn("diffs scanned for the first 2 of 3 open PRs (--diff-limit)", r["warnings"])
+        self.assertEqual(sorted(int(c[3]) for c in runner.calls if c[1:3] == ["pr", "diff"]), [781, 787])
+        runner = FakeRunner()
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            po.main(["transitive_reduction", "--no-diff", "--no-fetch"], runner=runner)
+        self.assertFalse(any(c[1:3] == ["pr", "diff"] for c in runner.calls))
+        self.assertIn("transitive_reduction: nothing found", buf.getvalue())
+
+    def test_paths_only_skip_diffs_and_repo_is_passed(self):
+        runner = FakeRunner()
+        po.analyse([], ["README.md"], runner=runner)
+        self.assertFalse(any(c[1:3] == ["pr", "diff"] for c in runner.calls))
+        runner = FakeRunner()
+        po.analyse(["x"], [], runner=runner, repo="o/r")
+        diff = next(c for c in runner.calls if c[1:3] == ["pr", "diff"])
+        self.assertEqual(diff[diff.index("--repo") + 1], "o/r")
+
+    def test_diff_failure_and_truncation_are_warnings(self):
+        r = po.analyse(["transitive_reduction"], [], runner=FakeRunner(diff_rc=1))
+        self.assertEqual(r["open_prs"], [])
+        self.assertTrue(any(w.startswith("gh pr diff 9 failed (rc=1)") for w in r["warnings"]))
+        r = po.analyse(["transitive_reduction"], [], runner=FakeRunner(), diff_max_chars=300)
+        self.assertIn("gh pr diff 9 truncated to 300 characters", r["warnings"])
 
 
 class FailureTests(unittest.TestCase):
