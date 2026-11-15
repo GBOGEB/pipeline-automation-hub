@@ -82,3 +82,48 @@ commit a merge from main. ABACUS `a10_guard.py` blocks on files already on main,
 very large merges. Run the CI form (`python tools/a10_guard.py --diff origin/main`). If it is OK,
 commit that merge with `--no-verify` only with the owner's approval, and say so in the commit
 message.
+
+## 6. Fix one PR in place
+
+`Invoke-DraftPrPass.ps1` picks the PR; `Invoke-PrFixInSitu.ps1` fixes it on its own branch, one stage at a
+time. Each stage refuses to run unless the previous one left the PR as it expects:
+
+```powershell
+Set-Location "<pipeline-automation-hub checkout>"
+Remove-Item Env:GITHUB_TOKEN, Env:GH_TOKEN -ErrorAction SilentlyContinue
+pwsh -NoProfile -File tools/workstation/Invoke-PrFixInSitu.ps1 -Repo gg_MATH -Pr 128                       # diagnose
+pwsh -NoProfile -File tools/workstation/Invoke-PrFixInSitu.ps1 -Repo gg_MATH -Pr 128 -Clone <clone> -Prepare -Sync
+# resolve any conflict hunks by hand (section 2), commit your fix, then:
+pwsh -NoProfile -File tools/workstation/Invoke-PrFixInSitu.ps1 -Repo gg_MATH -Pr 128 -Test "python -m pytest -q tests" -Publish
+pwsh -NoProfile -File tools/workstation/Invoke-PrFixInSitu.ps1 -Repo gg_MATH -Pr 128 -ResolveThread <PRRT_id> -Note "<what changed>"
+```
+
+- `-Sync` merges the base in; it never rebases and never takes a whole side of a file. On conflict it stops
+  with the merge in progress and prints, per file, the diff of what the PR changed.
+- `-Publish` pushes without force, and only when `-Test` passed on that exact HEAD and the PR head on GitHub
+  is still the one recorded at `-Prepare`.
+- `-ResolveThread` replies "Fixed in <sha>" with the test evidence, resolves, reads back, and writes a
+  closure-evidence record to `$env:TEMP` in the field shapes of `code_maroon.closure-proof.v1`
+  (`-Classification fixed` needs a passing test; `already_fixed` / `false_positive` do not).
+  It is not a finished MAROON proof: MAROON (`mission-control/maroon`) owns ledger-bound closure and adds
+  `item_id` and `discussion_hash` from its own provider read. Its worker needs Linux, so this script is the
+  path on the Windows workstation; each record says `maroon_ready: false`.
+
+## 7. Push rejected with GH013 on a feature branch
+
+`remote: error: GH013: Repository rule violations ... Changes must be made through a pull request` on a
+push to a PR's own branch means a ruleset applies its `pull_request` rule to **every** branch
+(`conditions.ref_name.include` contains `~ALL`), not only the default branch. Then no PR can be fixed in
+place: each review round needs a new branch and a superseding PR, and GitHub's "Resolve conflicts" button
+fails too (gg_MATH, 2026-11-11: #111 -> #115 -> #118 -> #122 -> #124).
+`Invoke-PrFixInSitu.ps1` reports it as class `PUSH_BLOCKED`. The owner's fix keeps every protection on the
+default branch:
+
+```powershell
+gh api repos/<owner>/<repo>/rulesets --jq '.[] | "\(.id) \(.name)"'
+'{"conditions":{"ref_name":{"include":["~DEFAULT_BRANCH"],"exclude":[]}}}' | gh api -X PUT repos/<owner>/<repo>/rulesets/<id> --input -
+gh api repos/<owner>/<repo>/rulesets/<id> --jq '.conditions.ref_name.include'   # expect ["~DEFAULT_BRANCH"]
+```
+
+Without the owner: push the fix to a new branch (creating a branch is allowed) and open a superseding PR.
+
