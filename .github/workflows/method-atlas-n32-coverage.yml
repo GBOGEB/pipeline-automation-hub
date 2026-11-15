@@ -12,6 +12,11 @@ on:
       - 'mission-control/federation-atlas/orchestration/broker.py'
       - 'mission-control/federation-atlas/orchestration/main.py'
       - 'mission-control/gogreen/outcome_convergence/outcome_flight.py'
+  push:
+    branches: [feat/method-atlas-n32-runtime-branches-20261115]
+    paths:
+      - 'mission-control/federation-atlas/orchestration/n32_coverage_receipt.py'
+      - '.github/workflows/method-atlas-n32-coverage.yml'
   workflow_dispatch: {}
 
 permissions:
