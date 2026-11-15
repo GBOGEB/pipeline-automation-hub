@@ -133,7 +133,11 @@ def names_failed_fpc(rule):
     """
     checks = (rule.get("metadata") or {}).get("checks") if isinstance(rule.get("metadata"), dict) else None
     if isinstance(checks, list):
-        return any(isinstance(c, dict) and c.get("context") == FPC_CONTEXT and c.get("state") != "success"
+        # Required checks treat success, neutral and skipped as passing.
+        # An absent or unknown state is not evidence of an FPC-specific failure.
+        failing = frozenset({"failure", "error", "cancelled", "timed_out", "action_required", "stale"})
+        return any(isinstance(c, dict) and c.get("context") == FPC_CONTEXT
+                   and isinstance(c.get("state"), str) and c["state"].casefold() in failing
                    for c in checks)
     details = rule.get("details")
     return isinstance(details, str) and FPC_CONTEXT.casefold() in details.casefold()
@@ -158,12 +162,24 @@ def classify_match(suite):
     return "BYPASS_OBSERVED_FPC_SCOPE_UNPROVEN"
 
 
+def index_rule_suites(suites):
+    """Index by merge SHA and ref; verify time and policy in scoped_suite."""
+    grouped = {}
+    for suite in suites:
+        after, ref = suite.get("after_sha"), suite.get("ref")
+        if isinstance(after, str) and isinstance(ref, str):
+            grouped.setdefault((after, ref), []).append(suite)
+    return grouped
+
+
 def replay(cohort, source):
     events = validate_cohort(cohort)
     state, suites = source_state(source, events)
+    index = index_rule_suites(suites) if state == "COMPLETE" else {}
     rows = []
     for e in events:
-        matching = sorted((s for s in suites if scoped_suite(s, e)), key=lambda s: s["id"]) if state == "COMPLETE" else []
+        candidates = index.get((e["merge_commit_sha"], REF), ())
+        matching = sorted((s for s in candidates if scoped_suite(s, e)), key=lambda s: s["id"]) if state == "COMPLETE" else []
         if state == "FORBIDDEN":
             verdict = "ADMIN_READ_403_UNRESOLVED"
         elif state == "INCOMPLETE":
