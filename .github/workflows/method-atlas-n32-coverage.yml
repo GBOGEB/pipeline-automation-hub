@@ -2,7 +2,7 @@ name: Method Atlas N3.2 measured broker branch coverage (read-only)
 
 on:
   pull_request:
-    branches: [master]
+    branches: [master, feat/method-atlas-n3-warm-broker-20261113]
     paths:
       - 'mission-control/federation-atlas/orchestration/n32_coverage_receipt.py'
       - 'mission-control/federation-atlas/orchestration/test_n32_coverage_receipt.py'
