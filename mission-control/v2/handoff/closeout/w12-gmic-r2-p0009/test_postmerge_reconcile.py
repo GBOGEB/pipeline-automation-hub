@@ -43,25 +43,25 @@ class PostmergeWitnessTests(unittest.TestCase):
     def test_duplicate_pr_rejected(self):
         bad = copy.deepcopy(WITNESS)
         bad['commit_observations'].append(bad['commit_observations'][0])
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             project(fixture(), bad)
 
     def test_unknown_item_rejected(self):
         bad = copy.deepcopy(WITNESS)
         bad['commit_observations'][0]['b_items'].append('B99')
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             project(fixture(), bad)
 
     def test_claimed_retroactive_admission_rejected(self):
         bad = copy.deepcopy(WITNESS)
         bad['controls']['merge_admission_retroactively_verified'] = True
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             project(fixture(), bad)
 
     def test_hosted_ic3_fabrication_rejected(self):
         bad = copy.deepcopy(WITNESS)
         bad['controls']['ic3_hosted_pass_verified'] = True
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             project(fixture(), bad)
 
     def test_baseline_truncation_or_promotion_rejected(self):
@@ -71,7 +71,7 @@ class PostmergeWitnessTests(unittest.TestCase):
                 bad['items'].pop()
             else:
                 bad['items'][20]['state'] = 'DONE'
-            with self.assertRaises(AssertionError):
+            with self.assertRaises(ValueError):
                 project(bad, WITNESS)
 
 
@@ -91,20 +91,20 @@ class FrozenRowPinTests(unittest.TestCase):
             by_state[x['state']] = by_state.get(x['state'], 0) + 1
         self.assertEqual(by_state, fixture()['counts']['by_state'])
         self.assertEqual(sum(x['state'] == 'DONE' for x in bad['items'][:38]), 20)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             project(bad, WITNESS)
 
     def test_dod_rewrite_rejected(self):
         bad = fixture()
         row(bad, 'B24')['minimum_dod_dov'] += ' (closed by merged PR)'
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             project(bad, WITNESS)
 
     def test_priority_change_rejected(self):
         bad = fixture()
         target = row(bad, 'B09')
         target['priority'] = 'P1' if target['priority'] == 'P0' else 'P0'
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             project(bad, WITNESS)
 
     def test_tampered_frozen_file_rejected(self):
@@ -112,7 +112,7 @@ class FrozenRowPinTests(unittest.TestCase):
             copy_path = Path(tmp) / HIST.name
             raw = HIST.read_bytes().replace(b'"REVIEW_WAIT"', b'"DONE"', 1)
             copy_path.write_bytes(raw)
-            with self.assertRaises(AssertionError):
+            with self.assertRaises(ValueError):
                 load_frozen_rows(copy_path)
 
 
@@ -132,7 +132,7 @@ class ReleaseManifestTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             manifest = self._staged(tmp)
             manifest['files_sha256']['dashboard.html'] = hashlib.sha256(b'absent').hexdigest()
-            with self.assertRaises(AssertionError):
+            with self.assertRaises(ValueError):
                 verify_manifest(manifest, Path(tmp))
 
     def test_checksum_mismatch_rejected(self):
@@ -140,15 +140,100 @@ class ReleaseManifestTests(unittest.TestCase):
             manifest = self._staged(tmp)
             with (Path(tmp) / 'README.md').open('ab') as fh:
                 fh.write(b'tampered\n')
-            with self.assertRaises(AssertionError):
+            with self.assertRaises(ValueError):
                 verify_manifest(manifest, Path(tmp))
 
     def test_nested_or_parent_path_rejected(self):
         for name in ('../README.md', 'sub/README.md', '..'):
             manifest = copy.deepcopy(MANIFEST)
             manifest['files_sha256'][name] = MANIFEST['files_sha256']['README.md']
-            with self.assertRaises(AssertionError):
+            with self.assertRaises(ValueError):
                 verify_manifest(manifest, HERE)
+
+
+class OptimizationIntegrityTests(unittest.TestCase):
+    """Runtime validation must remain active under -O and PYTHONOPTIMIZE."""
+
+    def _optimized(self, source):
+        import subprocess
+        import sys
+        import os
+        env = dict(os.environ, PYTHONOPTIMIZE="1")
+        result = subprocess.run([sys.executable, "-O", "-c", source],
+                                cwd=HERE, env=env, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_optimized_state_swap_still_rejected(self):
+        self._optimized("""import json
+from postmerge_reconcile import HIST, WITNESS, project
+b = json.loads(HIST.read_text(encoding='utf-8'))
+w = json.loads(WITNESS.read_text(encoding='utf-8'))
+b['items'][0]['state'], b['items'][7]['state'] = b['items'][7]['state'], b['items'][0]['state']
+try:
+    project(b, w)
+except ValueError:
+    raise SystemExit(0)
+raise SystemExit(1)
+""")
+
+    def test_optimized_wrong_historical_total_rejected(self):
+        self._optimized("""import json
+from postmerge_reconcile import HIST, WITNESS, project
+b = json.loads(HIST.read_text(encoding='utf-8'))
+w = json.loads(WITNESS.read_text(encoding='utf-8'))
+b['counts']['total'] = 999
+try:
+    project(b, w)
+except ValueError:
+    raise SystemExit(0)
+raise SystemExit(1)
+""")
+
+    def test_optimized_missing_release_member_rejected(self):
+        self._optimized("""import json
+from postmerge_reconcile import MANIFEST, verify_manifest
+m = json.loads(MANIFEST.read_text(encoding='utf-8'))
+m['files_sha256']['missing.html'] = '0' * 64
+try:
+    verify_manifest(m)
+except ValueError:
+    raise SystemExit(0)
+raise SystemExit(1)
+""")
+
+    def test_optimized_authority_promotion_rejected(self):
+        self._optimized("""import json
+from postmerge_reconcile import HIST, WITNESS, project
+b = json.loads(HIST.read_text(encoding='utf-8'))
+w = json.loads(WITNESS.read_text(encoding='utf-8'))
+w['controls']['authority_transfer'] = True
+try:
+    project(b, w)
+except ValueError:
+    raise SystemExit(0)
+raise SystemExit(1)
+""")
+
+
+class FrozenMetadataTests(unittest.TestCase):
+    def test_all_historical_count_metadata_is_immutable(self):
+        for field, wrong in (
+            ('total', 999),
+            ('by_state', {'DONE': 46}),
+            ('raw_completion_percent', -1),
+        ):
+            with self.subTest(field=field):
+                b = fixture()
+                b['counts'][field] = wrong
+                with self.assertRaises(ValueError):
+                    project(b, WITNESS)
+
+    def test_unapproved_extra_historical_row_data_rejected(self):
+        b = fixture()
+        b['items'][0]['unverified_admission'] = True
+        with self.assertRaises(ValueError):
+            project(b, WITNESS)
+
 
 
 if __name__ == '__main__':
