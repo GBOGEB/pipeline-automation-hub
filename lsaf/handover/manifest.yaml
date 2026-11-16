@@ -36,7 +36,7 @@ pilot:
 lanes:
   A:
     name: dependency_dag
-    state: IMPLEMENTED_PENDING_CI
+    state: IMPLEMENTED_REVIEW_REPAIRED
     requires:
       - session_cohort
       - fragment_contract
@@ -72,7 +72,7 @@ lanes:
       - calibration_metrics
   D:
     name: cold_start_replay
-    state: BLOCKED_ON_ABC_QUALIFICATION
+    state: SHADOW_HARNESS_IMPLEMENTED_BLOCKED_INDEPENDENT
     requires:
       - A.kahn_ready
       - B.handover_projection
@@ -129,7 +129,7 @@ dod:
 
 scale_gate:
   id: LSAF-P1-12CASE-CONVERGENCE
-  state: HARNESS_IMPLEMENTED_PENDING_CI
+  state: HARNESS_IMPLEMENTED_REVIEW_REPAIRED_PENDING_EXACT_HEAD
   cases:
     recurring_roots: 4
     stale_or_admission: 4
@@ -138,3 +138,13 @@ scale_gate:
     deterministic_classification_rate: 1.0
     false_ready_rate: 0.0
     negative_controls_correct: 4
+
+qualification:
+  repaired_head_review:
+    inline_threads_resolved: true
+    codex_exact_head_review: BLOCKED_USAGE_LIMIT
+    fpc: PENDING_OR_FAIL_CLOSED_UNTIL_REVIEW
+  sg10:
+    shadow_harness: true
+    independent_qualification: false
+    required_external_condition: separate no-chat-context reconstruction
