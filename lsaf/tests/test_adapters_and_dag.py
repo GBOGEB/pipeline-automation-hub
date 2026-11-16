@@ -22,6 +22,11 @@ def test_session_census_adapter_preserves_unknown_worktree():
     assert got["temporal"]["observed_at"] == "2026-11-13T11:30:00Z"
 
 
+def test_session_census_adapter_preserves_unknown_timestamp_as_null():
+    got = session_from_census({"id": "local_x", "title": "unknown time", "last": "?", "prs_app": []})
+    assert got["temporal"]["observed_at"] is None
+
+
 def test_kahn_is_deterministic_and_orders_dependencies():
     nodes = [
         {"id": "B", "requires": ["A"], "authority": "Hub", "evidence": "SOURCE"},
@@ -56,3 +61,24 @@ def test_missing_authority_and_evidence_fail_closed():
     assert got["missing_authority"] == ["A"]
     assert got["missing_evidence"] == ["B"]
     assert set(got["blocked"]) == {"A", "B", "C"}
+
+
+def test_blocked_status_propagates_transitively_without_false_cycle():
+    got = compile_dag([
+        {"id": "A", "requires": [], "authority": "UNKNOWN", "evidence": "SOURCE"},
+        {"id": "B", "requires": ["A"], "authority": "Hub", "evidence": "SOURCE"},
+        {"id": "C", "requires": ["B"], "authority": "Hub", "evidence": "SOURCE"},
+    ])
+    assert got["ready"] == []
+    assert got["cycle"] == []
+    assert got["blocked"] == ["A", "B", "C"]
+
+
+def test_superseded_and_predicted_evidence_never_enter_ready():
+    got = compile_dag([
+        {"id": "old", "requires": [], "authority": "Hub", "evidence": "SUPERSEDED"},
+        {"id": "forecast", "requires": [], "authority": "Hub", "evidence": "PREDICTED"},
+        {"id": "source", "requires": [], "authority": "Hub", "evidence": "SOURCE"},
+    ])
+    assert got["ready"] == ["source"]
+    assert set(got["missing_evidence"]) == {"old", "forecast"}
