@@ -128,11 +128,13 @@ def positive_viewport(browser, width: int, height: int, out: Path, model: dict, 
                 "horizontal document overflow " + repr(dims))
         require(not dims["brokenImages"], "broken images")
         clean_events(events)
-        page.evaluate("window.scrollTo({top: 0, behavior: 'instant'})")
-        # Older Playwright implements string predicates through page eval,
-        # which correctly fails under script-src 'self'. Instant scroll is
-        # synchronous; inspect it directly without relaxing the production CSP.
-        require(page.evaluate("() => window.scrollY") == 0, "initial screenshot scroll position")
+        # Capture the initial state in a fresh navigation after exercising the
+        # controls. Smooth scrolling/focus from the drilldown can otherwise
+        # move the viewport during capture. This also needs no eval-based
+        # Playwright polling, which production CSP correctly rejects.
+        page.goto(origin + "original/gate12_hub.html?capture=initial", wait_until="load")
+        page.wait_for_selector("#q-body tr")
+        clean_events(events)
         photo = out / f"gate12_{width}x{height}.png"
         page.screenshot(path=str(photo), full_page=True)
         return {"viewport": [width, height], "source_queue": 252,

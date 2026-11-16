@@ -90,10 +90,10 @@
   }
   const m = d.metrics;
   const scores = [
-    [m.observed_repositories + "/" + m.top21_repositories, "Observed repos", "16 not qualified on this snapshot"],
+    [m.observed_repositories + "/" + m.top21_repositories, "Observed repos", m.unassessed_repositories + " not qualified on this snapshot"],
     [m.observed_pass + "/" + m.observed_gate_denominator, "Recorded gate PASS", latest ? d.source.pulse_id + " · " + date : "Original frozen baseline"],
     [m.observed_fail + "/" + m.observed_gate_denominator, "Observed FAIL", "Failures do not disappear in aggregate"],
-    [m.unassessed_gate_slots, "Unassessed gate slots", "16 unassessed repositories × 12"],
+    [m.unassessed_gate_slots, "Unassessed gate slots", m.unassessed_repositories + " unassessed repositories × 12"],
     ["HOLD", "Owner release", "No deployed or hosted status inferred"]
   ];
   for (const [value, label, sub] of scores) {
