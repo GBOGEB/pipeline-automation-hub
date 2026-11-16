@@ -1,8 +1,10 @@
 # Unsticking conflicted and stacked PRs
 
 Method lessons from the 2026-11-09 pass over all open GBOGEB PRs. Use them together with
-`Invoke-DraftPrPass.ps1` (triage), `Resolve-RegenConflicts.ps1` (generated outputs) and
-`scripts/fpc_receipt.py` (FPC gate). Start every PowerShell 7 window with:
+`Invoke-DraftPrPass.ps1` (triage), `Resolve-RegenConflicts.ps1` (generated outputs),
+`Restack-Pr.ps1` (checkout-free rebase) and `scripts/fpc_receipt.py` (FPC gate). To choose between
+rebasing in memory, merging bottom-up, regen-resolving and the ABACUS `tools/stack/` tools, read
+[README.md, "Which restack tool"](README.md#which-restack-tool) first. Start every PowerShell 7 window with:
 
 ```powershell
 Remove-Item Env:GITHUB_TOKEN, Env:GH_TOKEN -ErrorAction SilentlyContinue
