@@ -174,20 +174,27 @@ def gg_math_kernel(prereqs: dict[str, list[str]], root: str | Path | None = None
     if got != GG_MATH_PIN:
         out["reason"] = f"gg_MATH checkout at {got or 'unknown commit'}, pin is {GG_MATH_PIN}"
         return out
-    dm = _import_kernel(root)
-    if getattr(dm, "SCHEMA", None) != GG_MATH_SCHEMA:
-        out["reason"] = f"schema {getattr(dm, 'SCHEMA', None)!r} != {GG_MATH_SCHEMA}"
+    try:
+        dm = _import_kernel(root)
+        if getattr(dm, "SCHEMA", None) != GG_MATH_SCHEMA:
+            out["reason"] = f"schema {getattr(dm, 'SCHEMA', None)!r} != {GG_MATH_SCHEMA}"
+            return out
+        lanes = [{"id": k, "cost": float((durations or {}).get(k, 1.0)), "deps": list(v)}
+                 for k, v in prereqs.items()]
+        result = dm.evaluate(lanes, workers=list(GG_MATH_WORKERS))
+        out.update(status="OK", result=result)
+        if durations is None:
+            waves = schedule(prereqs)["wave_count"]
+            length = result["critical_path"]["length"]
+            if length != waves:
+                out.update(status="FAIL", reason=f"gg_MATH unit critical path {length:g} != hub waves {waves}")
         return out
-    lanes = [{"id": k, "cost": float((durations or {}).get(k, 1.0)), "deps": list(v)}
-             for k, v in prereqs.items()]
-    result = dm.evaluate(lanes, workers=list(GG_MATH_WORKERS))
-    out.update(status="OK", result=result)
-    if durations is None:
-        waves = schedule(prereqs)["wave_count"]
-        length = result["critical_path"]["length"]
-        if length != waves:
-            out.update(status="FAIL", reason=f"gg_MATH unit critical path {length:g} != hub waves {waves}")
-    return out
+    except Exception as e:
+        # Fail-closed: kernel missing/misconfigured or evaluation error -> UNKNOWN, no numbers.
+        out["status"] = "UNKNOWN"
+        out["reason"] = f"{type(e).__name__}: {e}"
+        out["result"] = None
+        return out
 
 
 # ---------------------------------------------------------------- crosswalk
