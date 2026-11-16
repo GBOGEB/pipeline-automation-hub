@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gbo.example/lsaf/fragment.schema.json",
+  "title": "LSAF Semantic Fragment",
+  "type": "object",
+  "required": ["schema", "fragment_id", "session_id", "semantic", "allocation", "state", "authority"],
+  "properties": {
+    "schema": {"const": "lsaf/fragment/v0.1"},
+    "fragment_id": {"type": "string"},
+    "session_id": {"type": "string"},
+    "semantic": {
+      "type": "object",
+      "required": ["topic", "epic", "class"],
+      "properties": {
+        "topic": {"type": "string"},
+        "epic": {"type": "string"},
+        "class": {"type": "string"},
+        "fingerprint": {"type": ["string", "null"]}
+      }
+    },
+    "allocation": {
+      "type": "object",
+      "required": ["primary_repo"],
+      "properties": {
+        "primary_repo": {"type": ["string", "null"]},
+        "secondary_repos": {"type": "array", "items": {"type": "string"}},
+        "logical_worktree": {"type": ["string", "null"]},
+        "physical_worktree": {"type": ["string", "null"]}
+      }
+    },
+    "state": {
+      "type": "object",
+      "required": ["lifecycle", "disposition"],
+      "properties": {
+        "lifecycle": {"type": "string"},
+        "disposition": {"enum": ["BOUND", "SUPERSEDED", "QUARANTINED", "UNKNOWN"]},
+        "next_predicate": {"type": ["string", "null"]}
+      }
+    },
+    "authority": {
+      "type": "object",
+      "required": ["authority_transfer"],
+      "properties": {
+        "canonical_owner": {"type": ["string", "null"]},
+        "authority_transfer": {"const": false}
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "properties": {
+        "requires": {"type": "array", "items": {"type": "string"}},
+        "provides": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "evidence": {"type": "object"},
+    "forecast": {"type": "object"}
+  },
+  "additionalProperties": true
+}
