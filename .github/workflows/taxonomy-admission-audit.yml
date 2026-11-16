@@ -38,6 +38,6 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ matrix.python }}
-      - name: Run negative security admission contracts
+      - name: Run taxonomy and FPC rule-suite admission contracts
         working-directory: mission-control/issue_rank
-        run: python -m unittest -v test_taxonomy_admission_audit
+        run: python -m unittest -v test_taxonomy_admission_audit test_fpc_rule_suite_join
