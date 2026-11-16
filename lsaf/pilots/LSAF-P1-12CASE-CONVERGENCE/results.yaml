@@ -1,19 +1,35 @@
 schema: lsaf/pilot-results/v0.1
 pilot_id: LSAF-P1-12CASE-CONVERGENCE
-status: PENDING_NATIVE_CI
-exact_head_sha: PENDING_FINAL_SLICE_HEAD
+status: REVIEW_REPAIRED_PENDING_EXACT_HEAD_REQUALIFICATION
+exact_head_sha: 79a946f721d26cb45fe2567adf4c352f768ac63b
 
 implemented:
   case_count: 12
   recurring_root_cases: 4
   stale_or_admission_cases: 4
   negative_control_cases: 4
+  sg10_shadow_cold_start_harness: true
 
 required_before_pass:
   - native test execution on exact final head
   - deterministic 12_of_12 classification
   - false_ready_rate == 0
   - negative_controls_correct == 4
+  - independent exact-head review
+  - cold-start reconstruction from a separate no-chat-context worker/session
+
+review_repair:
+  prior_reviewed_head: 364fb967e51b18f96b6f196d20844d0fde3e0139
+  repaired_roots:
+    - superseded_or_predicted_evidence_entering_READY
+    - prediction_constructor_missing_made_at
+    - outcome_schema_missing_required_observed_fields
+    - unsupported_top3_score
+    - unknown_timestamp_schema_mismatch
+    - transitive_blocker_false_cycle
+    - dangling_second_fragment_fixture
+  unresolved_inline_threads: 0
+  codex_exact_head_review: BLOCKED_USAGE_LIMIT
 
 observed_during_implementation:
   - id: DEFECT-EVIDENCE-CLASS-01
@@ -21,4 +37,4 @@ observed_during_implementation:
     repair: DAG compiler now admits only SOURCE or DERIVED evidence
     classification: PILOT_CAUGHT_PRE_CI
 
-disposition: PILOT_IMPLEMENTED_NOT_YET_QUALIFIED
+disposition: SOURCE_REPAIRED / SHADOW_COLD_START_IMPLEMENTED / INDEPENDENT_REVIEW_AND_EXACT_HEAD_CI_PENDING
