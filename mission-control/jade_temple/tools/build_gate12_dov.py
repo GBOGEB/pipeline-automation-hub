@@ -15,6 +15,9 @@ ROOT = Path(__file__).resolve().parents[1]
 _pb = importlib.util.spec_from_file_location("jade_private_boundary", ROOT / "tools" / "private_boundary.py")
 PB = importlib.util.module_from_spec(_pb)
 _pb.loader.exec_module(PB)
+_r5 = importlib.util.spec_from_file_location("jade_rolling5", ROOT / "tools" / "rolling5.py")
+ROLLING5 = importlib.util.module_from_spec(_r5)
+_r5.loader.exec_module(ROLLING5)
 FILES = {
     "actions": "data/GATE12_DOV_ACTIONS.json",
     "focus": "data/FOCUS5_POINT_RELEASE_NPLUS7.json",
@@ -55,8 +58,11 @@ def project(root: Path = ROOT) -> dict:
     return PB.project(_project(root))
 
 
-def _project(root: Path = ROOT) -> dict:
+def _project(root: Path = ROOT, focus: dict | None = None) -> dict:
     a, f, roster, p = [read(root, name) for name in ("actions", "focus", "roster", "dependencies")]
+    latest = focus is not None
+    if latest:
+        f = focus
     need(a.get("schema") == "jade.temple.gate12.actions.v1"
          and a.get("merge_admission") == "HOLD"
          and a.get("formal_release_credit") == 0
@@ -77,8 +83,18 @@ def _project(root: Path = ROOT) -> dict:
     need(len(members) == 21 and len(set(names)) == 21
          and len({x["rank"] for x in members}) == 21, "Top21 population drift")
     by_repo = {x["repo"]: x for x in f["rows"]}
-    need(len(by_repo) == len(f["rows"]) == 5 and set(by_repo) <= set(names),
+    observed_count = len(f["rows"])
+    need(len(by_repo) == observed_count and set(by_repo) <= set(names)
+         and (0 < observed_count <= p["window_size"] if latest else observed_count == 5),
          "focus-five population drift")
+    unassessed_count = len(members) - observed_count
+    if latest:
+        need(f["source"]["focus_repositories"] == observed_count
+             and f["metrics"]["required_gate_count_per_repo"] == len(ids)
+             and f["metrics"]["required_gate_total"] == observed_count * len(ids)
+             and f["metrics"]["top21_master_population"] == len(members)
+             and f["metrics"]["top21_unassessed_outside_focus"] == unassessed_count,
+             "misstated latest cohort denominator")
     counts = {"PASS": 0, "FAIL": 0, "UNKNOWN": 0}
     for r in f["rows"]:
         need(bool(HEAD.fullmatch(r["source_sha"])), "invalid observed head")
@@ -87,7 +103,7 @@ def _project(root: Path = ROOT) -> dict:
         for g in gs:
             need(g["status"] in STATES, "invalid evidence state")
             counts[g["status"]] += 1
-    need(sum(counts.values()) == 60
+    need(sum(counts.values()) == observed_count * len(ids)
          and counts["PASS"] == f["metrics"]["passed"]
          and counts["FAIL"] == f["metrics"]["failed"]
          and counts["UNKNOWN"] == f["metrics"]["unknown"], "misstated evidence totals")
@@ -121,6 +137,7 @@ def _project(root: Path = ROOT) -> dict:
                 "action": pillar["action"],
                 "source_sha": observed["source_sha"] if observed else None,
                 "evidence": evidence,
+                **({"reason": gate.get("reason") if gate else None} if latest else {}),
             })
         repo_rows.append({
             "rank": r["rank"], "repository": r["repo"], "observed": bool(observed),
@@ -135,7 +152,7 @@ def _project(root: Path = ROOT) -> dict:
             **item, "label": defn["label"], "phase": defn["phase"],
             "prerequisites": p["gate_prerequisites"][item["id"]],
             "observed_counts": per_gate[item["id"]],
-            "unassessed_repos": 16,
+            "unassessed_repos": unassessed_count,
         })
     return {
         "schema": "jade.temple.gate12.dov_projection.v1",
@@ -152,12 +169,12 @@ def _project(root: Path = ROOT) -> dict:
             "live_current_head": None,
         },
         "metrics": {
-            "observed_repositories": 5,
-            "unassessed_repositories": 16,
+            "observed_repositories": observed_count,
+            "unassessed_repositories": unassessed_count,
             "top21_repositories": 21,
-            "observed_gate_denominator": 60,
+            "observed_gate_denominator": observed_count * len(ids),
             "portfolio_gate_slots": 252,
-            "unassessed_gate_slots": 192,
+            "unassessed_gate_slots": unassessed_count * len(ids),
             "observed_pass": counts["PASS"],
             "observed_fail": counts["FAIL"],
             "observed_unknown": counts["UNKNOWN"],
@@ -179,18 +196,60 @@ def _project(root: Path = ROOT) -> dict:
     }
 
 
+def latest_recorded(root: Path = ROOT) -> dict:
+    """Latest hash-verified recorded pulse, never a live-head recertification.
+
+    There is deliberately no fallback to the frozen view on ledger or source
+    failure. Canonical rolling5 owns history validation and streak calculation.
+    """
+    ledger_path = root / ROLLING5.LEDGER
+    ledger_raw = ledger_path.read_bytes()
+    pairs = ROLLING5.verified_pulses(root, json.loads(ledger_raw))
+    pulse, focus = pairs[-1]
+    need(pulse["observed_date"] == focus["source"]["observed_date"],
+         "latest pulse/snapshot date mismatch")
+    model = _project(root, focus=focus)
+    history = ROLLING5.project(root)
+    need(history["latest_pulse"] == pulse["id"], "latest pulse changed during projection")
+    streaks = {row["repo"]: row["streaks"] for row in history["repos"]}
+    for task in model["queue"]:
+        task["streak"] = streaks.get(task["repository"], {}).get(task["pillar"])
+    for row in model["repositories"]:
+        row["streaks"] = streaks.get(row["repository"])
+    model["race"] = history["race"]
+    model["nirvana_ledger"] = history["nirvana_ledger"]
+    model["progress_history"] = history["pulse_progress"]
+    model["source"].update({
+        "observation": "LATEST_RECORDED_PULSE",
+        "pulse_id": pulse["id"],
+        "snapshot_path": pulse["snapshot"],
+        "snapshot_sha256": pulse["snapshot_sha256"],
+        "ledger_sha256": hashlib.sha256(ledger_raw).hexdigest(),
+    })
+    model["source"]["git_blob_oids"]["focus"] = blob_oid((root / pulse["snapshot"]).read_bytes())
+    return PB.project(model)
+
+
 def outputs(root: Path = ROOT) -> dict[str, bytes]:
     view = project(root)
+    view["latest_recorded"] = latest_recorded(root)
     buf = io.StringIO()
     writer = csv.writer(buf, lineterminator="\n")
     writer.writerow(COLUMNS)
     for task in view["queue"]:
         writer.writerow([task.get(col) or "" for col in COLUMNS])
+    latest_buf = io.StringIO()
+    latest_writer = csv.writer(latest_buf, lineterminator="\n")
+    latest_columns = COLUMNS + ["reason"]
+    latest_writer.writerow(latest_columns)
+    for task in view["latest_recorded"]["queue"]:
+        latest_writer.writerow([task.get(col) or "" for col in latest_columns])
     compact = canonical(view).decode("ascii").rstrip("\n")
     return {
         "gate12_data.json": canonical(view, pretty=True),
         "gate12_data.js": ("window.JADE_GATE12=" + compact + ";\n").encode("ascii"),
         "gate12_bd_queue.csv": buf.getvalue().encode("utf-8"),
+        "gate12_latest_queue.csv": latest_buf.getvalue().encode("utf-8"),
     }
 
 

@@ -18,6 +18,7 @@ JADE_TEMPLE is the read-only presentation and handover project for owner-approve
 
 | I want to… | Open |
 |---|---|
+| Start from verified inputs and work the original use case | [OG five release desk](site/gate12_hub.html) · [initialization and execution runbook](notes/GATE12_FLYING_START.md) · [latest recorded queue](site/gate12_latest_queue.csv) |
 | Follow the original five toward point release | [Current evidence, H01–H12 work fronts and REX transfer](notes/JADE_OG_FOLLOWUP_20261112.md) · [rolling pulse / race projection](site/rolling5.json) |
 | Review all H01–H12 gates as owner | [Gate12 DoV cockpit](site/gate12_hub.html) · [playbook](notes/GATE12_DOV_OPERATING_PLAYBOOK.md) · [KPI projection](site/gate12_data.json) · [252-slot owner queue](site/gate12_bd_queue.csv) |
 | See the CI/CD process model | [Interactive DAG / SIPOC](site/cicd_dag.html) · [model JSON](site/cicd_dag.json) · [crosswalk CSV](site/cicd_dag_crosswalk.csv) · [policy](data/CICD_DAG_POLICY.json) |

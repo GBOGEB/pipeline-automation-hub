@@ -6,7 +6,7 @@
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="description" content="JADE H01-H12 owner-facing, source-bound readiness and release-operations cockpit. Unqualified publication is not release.">
-<title>JADE | H01-H12 DoV &amp; Operations</title>
+<title>JADE | OG five release desk</title>
 <link rel="stylesheet" href="gate12.css">
 <script src="gate12_data.js" defer></script>
 <script src="gate12_ui.js" defer></script>
@@ -22,6 +22,8 @@
     <div class="sidebar-title">MISSION CONTROL / USER DESK</div>
     <nav aria-label="DoV sections">
       <a href="#executive">01 / Executive scorecard</a>
+      <a href="#foundation">Start / Evidence &amp; progress</a>
+      <a href="#gate-matrix">Original five / Gate ledger</a>
       <a href="#pillars">02 / Twelve gate pillars</a>
       <a href="#content-health">03 / Content &amp; code health</a>
       <a href="#bd-queue">04 / Owner TODO &amp; BD queue</a>
@@ -35,12 +37,24 @@
   <main id="main">
     <section id="executive" class="hero" aria-labelledby="hero-title">
       <div class="eyebrow">READ-ONLY / SOURCE-BOUND / ZERO RELEASE CREDIT</div>
-      <h1 id="hero-title">A release is more than <em>green code.</em></h1>
-      <p class="lede">One central cockpit for the twelve generic JADE release pillars, content thresholds, semantic quality, code health, user-facing assets, Pages publication, deployed runtime and the owner burndown. Evidence is never borrowed from another source head or converted into release authority.</p>
-      <div class="hero-actions"><a class="primary" href="#bd-queue">Open action queue →</a><a href="gate12_bd_queue.csv" download>Export the H01–H12 queue CSV</a><a href="gate12_data.json" download>Projection JSON</a></div>
+      <h1 id="hero-title">Five repos. Twelve gates.<br><em>One honest start.</em></h1>
+      <p class="lede">Follow the original release-readiness use case from recorded proof to the next hurdle. Compare the latest recorded pulse with the original baseline; each repository keeps its own source, acceptance criteria and release decision.</p>
+      <div class="filters"><label>Observation <select id="source-mode"><option value="latest">Latest recorded pulse</option><option value="frozen">Original frozen baseline</option></select></label></div>
+      <div class="hero-actions"><a class="primary" href="#gate-matrix">Open the five-repo ledger →</a><a id="queue-export" href="gate12_latest_queue.csv" download>Export selected H01–H12 queue CSV</a><a href="gate12_data.json" download>Projection JSON</a></div>
       <p class="caution" id="source-warning">Source readback is historical and non-atomic; live current-head recertification, hosted parity and runtime health are NOT PROVEN.</p>
     </section>
     <section aria-label="Executive KPIs" class="scoreboard"><div id="scoreboard" class="kpi-grid"><p>Loading frozen source metrics. If the source script is absent, run the native generator; nothing is marked PASS by default.</p></div></section>
+    <section id="foundation" class="section" aria-labelledby="foundation-title">
+      <div class="section-head"><div><div class="eyebrow">START / SOURCE, SCOPE, PROOF</div><h2 id="foundation-title">Know the starting state</h2><p id="initialization-status" role="status">Initialization pending. No source is qualified by default.</p></div></div>
+      <div id="foundation-cards" class="pub-grid"></div>
+      <h3>Recorded progress</h3><p class="minor">Historical PASS totals describe each recorded pulse. Source changes and newly assessed work can change the population; they are not a controlled improvement experiment.</p>
+      <div id="pulse-history" class="history-grid" aria-label="Recorded pulse progress"></div>
+    </section>
+    <section id="gate-matrix" class="section" aria-labelledby="matrix-title">
+      <div class="section-head"><div><div class="eyebrow">ORIGINAL USE CASE / TWELVE INDEPENDENT HURDLES</div><h2 id="matrix-title">Five-repo gate ledger</h2><p>Choose a cell to inspect its source reason, prerequisite and owner action. Shared readiness is a tie; a NIRVANA badge requires sustained complete proof.</p></div></div>
+      <div class="table-scroll" role="region" tabindex="0" aria-label="Observed repository gate matrix"><table class="matrix"><caption>Observed repositories and H01–H12 proof</caption><thead id="matrix-head"></thead><tbody id="matrix-body"></tbody></table></div>
+      <p id="race-summary" class="queue-note"></p>
+    </section>
     <section id="pillars" class="section">
       <div class="section-head"><div><div class="eyebrow">01 / NONCOMPENSATING RELEASE GATES</div><h2>H01–H12 Definition of Value</h2><p>Original gate labels and status belong to the pinned JADE focus-five source; the new registry adds measurable owner actions but cannot issue a PASS.</p></div><span class="note-label">12 declared gates × 21 roster rows</span></div>
       <div id="pillar-grid" class="pillar-grid" aria-live="polite"></div>
@@ -50,7 +64,7 @@
       <div id="quality-axes" class="facet-grid"></div>
     </section>
     <section id="bd-queue" class="section">
-      <div class="section-head"><div><div class="eyebrow">03 / 21-REPO × 12-GATE BACKLOG</div><h2>Owner TODO and blocked-dependency queue</h2><p>Every missing, unknown or failed gate remains an open candidate, including all 192 unassessed slots outside the frozen focus five. Filters do not rewrite the source.</p></div><a href="gate12_bd_queue.csv" download>Machine queue CSV ↗</a></div>
+      <div class="section-head"><div><div class="eyebrow">03 / 21-REPO × 12-GATE BACKLOG</div><h2>Owner TODO and blocked-dependency queue</h2><p>Every missing, unknown or failed gate remains open, including unassessed slots outside the selected five. READY means prerequisites permit investigation; owner approval and other proof may still be needed.</p></div><a id="queue-export-secondary" href="gate12_latest_queue.csv" download>Selected queue CSV ↗</a></div>
       <div class="filters">
         <label>Find repo, task, owner or pillar <input id="q-search" type="search" placeholder="Search H08, CODEX, CodeQL…" autocomplete="off"></label>
         <label>Evidence <select id="q-status"><option value="ALL">All statuses</option><option value="FAIL">FAIL</option><option value="UNKNOWN">UNKNOWN</option><option value="UNOBSERVED">UNOBSERVED</option><option value="PASS">PASS</option></select></label>
@@ -77,9 +91,9 @@
     </section>
     <section id="source" class="section source-card">
       <div class="eyebrow">06 / GOLDEN THREAD &amp; RECEIPT</div><h2>What this dashboard can and cannot qualify</h2>
-      <p>Source-bound H01–H12 gates are read from <code>FOCUS5_POINT_RELEASE_NPLUS7.json</code>; Top21 membership is independently sourced from <code>TOP21_PORTFOLIO.json</code>; prerequisites are from <code>ROLLING5_POLICY.json</code>. Additional action thresholds are proposals in <code>GATE12_DOV_ACTIONS.json</code>.</p>
+      <p id="selected-source">Latest mode reads the hash-verified rolling pulse ledger; original mode preserves <code>FOCUS5_POINT_RELEASE_NPLUS7.json</code>. Top21 membership and gate prerequisites retain their canonical owners. Additional action thresholds remain owner proposals.</p>
       <dl id="source-oids"></dl>
-      <p>Unknown, unobserved, neutral and pending evidence never becomes PASS. A future N+10 pulse must re-read exact heads, qualify the full roster and join two independent native runs before any new acceptance claim.</p>
+      <p>Unknown, unobserved, neutral and pending evidence never becomes PASS. A new pulse must re-read each assessed source head, qualify its required native evidence and retain the private boundary before any new acceptance claim.</p>
       <a href="https://github.com/GBOGEB/pipeline-automation-hub/tree/master/mission-control/jade_temple" target="_blank" rel="noopener noreferrer">Open authoritative JADE repository ↗</a>
     </section>
     <footer>JADE_CASTE · Review projection only · MERGE_ADMISSION=HOLD · Formal release credit = 0</footer>

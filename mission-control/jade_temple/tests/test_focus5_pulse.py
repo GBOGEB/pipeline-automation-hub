@@ -209,6 +209,8 @@ class Focus5PulseTests(unittest.TestCase):
         rows = r5.rows_of(snap)
         self.assertEqual(rows["O/R"]["source_sha"], NEW)
         self.assertEqual(snap["metrics"]["required_gate_total"], 12)
+        self.assertEqual(snap["metrics"]["required_gate_count_per_repo"],
+                         len(r5.REQUIRED_GATES))
         self.assertIsNone(snap["metrics"]["globally_admitted_point_release"])
         self.assertFalse(snap["source"]["release_authority_transfer"])
 

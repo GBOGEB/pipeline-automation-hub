@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import datetime as dt
 import hashlib
 import importlib.util
 import io
@@ -44,24 +45,69 @@ def load(root: Path, rel: str):
 
 # --- Ledger ---------------------------------------------------------------
 
+def snapshot_path(root: Path, rel: str) -> Path:
+    """Resolve a ledger input only inside its JADE root, including symlinks."""
+    if (not isinstance(rel, str) or not rel or "\\" in rel or ":" in rel
+            or Path(rel).is_absolute() or ".." in Path(rel).parts):
+        raise ValueError("snapshot path must stay inside the JADE root")
+    path = (root / rel).resolve()
+    if not path.is_relative_to(root.resolve()):
+        raise ValueError("snapshot path must stay inside the JADE root")
+    return path
+
+
+def observed_date(value: object) -> str:
+    """The ledger uses ISO calendar dates, not lexicographically sortable guesses."""
+    if not isinstance(value, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+        raise ValueError("pulse observed_date must be an ISO calendar date")
+    try:
+        dt.date.fromisoformat(value)
+    except ValueError as exc:
+        raise ValueError("pulse observed_date must be an ISO calendar date") from exc
+    return value
+
+
 def verified_pulses(root: Path, ledger: dict) -> list[tuple[dict, dict]]:
     """Return (pulse, snapshot) pairs; fail closed on any drift or reorder."""
+    if (not isinstance(ledger, dict)
+            or ledger.get("schema")
+            != "jade.temple.rolling5.pulses/1.0"):
+        raise ValueError("unknown pulse ledger schema")
     pulses = ledger.get("pulses")
     if not isinstance(pulses, list) or not pulses:
         raise ValueError("pulse ledger is empty")
     seen_ids, seen_hashes, out = set(), set(), []
     for pulse in pulses:
+        if not isinstance(pulse, dict):
+            raise ValueError("invalid pulse record")
         pid, digest = pulse.get("id"), pulse.get("snapshot_sha256")
+        if not isinstance(pid, str) or not pid.strip():
+            raise ValueError("pulse id must be a nonempty string")
+        if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
+            raise ValueError(f"invalid snapshot sha256 for pulse {pid}")
+        date = observed_date(pulse.get("observed_date"))
         if pid in seen_ids or digest in seen_hashes:
             raise ValueError(f"duplicate pulse id or snapshot: {pid}")
         if out and pulse["observed_date"] < out[-1][0]["observed_date"]:
             raise ValueError(f"pulse {pid} is older than its predecessor")
-        raw = (root / pulse["snapshot"]).read_bytes()
+        raw = snapshot_path(root, pulse.get("snapshot")).read_bytes()
         if sha256(raw) != digest:
             raise ValueError(f"snapshot drift for pulse {pid}: {pulse['snapshot']}")
+        snapshot = json.loads(raw)
+        if (not isinstance(snapshot, dict)
+                or snapshot.get("schema") != "jade.temple.focus5.readonly/1.0"):
+            raise ValueError(f"invalid snapshot schema for pulse {pid}")
+        source = snapshot.get("source")
+        if not isinstance(source, dict) or source.get("observed_date") != date:
+            raise ValueError(f"snapshot date mismatch for pulse {pid}")
+        rows = rows_of(snapshot)
+        for repo, row in rows.items():
+            sha = row["source_sha"]
+            if sha != PB.MARK and (not isinstance(sha, str) or not SHA40.fullmatch(sha)):
+                raise ValueError(f"invalid source SHA in {repo} for pulse {pid}")
         seen_ids.add(pid)
         seen_hashes.add(digest)
-        out.append((pulse, json.loads(raw)))
+        out.append((pulse, snapshot))
     return out
 
 
@@ -69,7 +115,7 @@ def append_pulse(root: Path, snapshot_rel: str, pulse_id: str) -> dict:
     """Temporal hook: pin a new snapshot as the next pulse (append-only)."""
     ledger = load(root, LEDGER)
     verified_pulses(root, ledger)  # never extend a ledger that already drifted
-    raw = (root / snapshot_rel).read_bytes()
+    raw = snapshot_path(root, snapshot_rel).read_bytes()
     snapshot = json.loads(raw)
     rows_of(snapshot)  # validate shape before pinning
     pulse = {
@@ -87,16 +133,35 @@ def append_pulse(root: Path, snapshot_rel: str, pulse_id: str) -> dict:
 
 
 def rows_of(snapshot: dict) -> dict[str, dict]:
+    if (not isinstance(snapshot, dict) or not isinstance(snapshot.get("rows"), list)
+            or not snapshot["rows"]):
+        raise ValueError("snapshot rows must be a nonempty list")
     rows = {}
+    ranks = set()
     for row in snapshot["rows"]:
+        if not isinstance(row, dict):
+            raise ValueError("invalid repository row in pulse")
+        repo, rank = row.get("repo"), row.get("rank")
+        if not isinstance(repo, str) or not re.fullmatch(r"[^/\s]+/[^/\s]+", repo):
+            raise ValueError("invalid repository identity in pulse")
+        if type(rank) is not int or rank < 1:
+            raise ValueError(f"invalid repository rank in {repo}")
+        if repo in rows:
+            raise ValueError(f"duplicate repository in pulse: {repo}")
+        if rank in ranks:
+            raise ValueError(f"duplicate repository rank in pulse: {rank}")
+        if (not isinstance(row.get("gates"), list)
+                or any(not isinstance(g, dict) or not isinstance(g.get("id"), str)
+                       or not isinstance(g.get("status"), str)
+                       for g in row["gates"])):
+            raise ValueError(f"invalid H01-H12 gate inventory in {repo}")
         gate_ids = [g["id"] for g in row["gates"]]
         if len(gate_ids) != len(REQUIRED_GATES) or set(gate_ids) != REQUIRED_GATES:
             raise ValueError(f"invalid H01-H12 gate inventory in {row['repo']}")
         gates = {g["id"]: g["status"] for g in row["gates"]}
         if any(s not in (PASS, FAIL, UNKNOWN) for s in gates.values()):
             raise ValueError(f"unknown gate status in {row['repo']}")
-        if row["repo"] in rows:
-            raise ValueError(f"duplicate repository in pulse: {row['repo']}")
+        ranks.add(rank)
         rows[row["repo"]] = {
             "rank": row["rank"],
             "source_sha": row.get("source_sha"),
@@ -105,6 +170,17 @@ def rows_of(snapshot: dict) -> dict[str, dict]:
             "candidate_sha": row.get("candidate_sha"),
             "blockers": list(row.get("blockers", [])),
         }
+    metrics = snapshot.get("metrics")
+    if metrics is not None:
+        counts = {s: sum(list(r["gates"].values()).count(s) for r in rows.values())
+                  for s in (PASS, FAIL, UNKNOWN)}
+        totals = {"passed": counts[PASS], "failed": counts[FAIL], "unknown": counts[UNKNOWN],
+                  "required_gate_count_per_repo": len(REQUIRED_GATES),
+                  "required_gate_total": len(rows) * len(REQUIRED_GATES)}
+        if (not isinstance(metrics, dict)
+                or any(type(metrics.get(k)) is not int or metrics[k] != v
+                       for k, v in totals.items())):
+            raise ValueError("snapshot metrics disagree with gate inventory")
     return rows
 
 
@@ -396,6 +472,14 @@ def _project(root: Path = ROOT) -> dict:
         },
         "pulses": [{"id": p["id"], "observed_date": p["observed_date"],
                     "snapshot_sha256": p["snapshot_sha256"]} for p, _ in pairs],
+        "pulse_progress": [
+            {"id": pulse["id"], "observed_date": pulse["observed_date"],
+             "passed": sum(list(r["gates"].values()).count(PASS) for r in rows.values()),
+             "failed": sum(list(r["gates"].values()).count(FAIL) for r in rows.values()),
+             "unknown": sum(list(r["gates"].values()).count(UNKNOWN) for r in rows.values()),
+             "denominator": sum(len(r["gates"]) for r in rows.values())}
+            for (pulse, _), rows in zip(pairs, timeline)
+        ],
         "history_depth": len(pairs),
         "history_note": (
             "Streaks need history: with fewer pulses than "

@@ -50,7 +50,8 @@ class Sandbox:
         shutil.copy(ROOT / "data" / "ROLLING5_POLICY.json", self.root / "data")
         roster = [{"repo": f"o/r{i}", "rank": i} for i in range(1, roster_size + 1)]
         self.write("data/TOP21_PORTFOLIO.json", {"repositories": roster})
-        self.write("data/ROLLING5_PULSES.json", {"pulses": []})
+        self.write("data/ROLLING5_PULSES.json", {
+            "schema": "jade.temple.rolling5.pulses/1.0", "pulses": []})
 
     def write(self, rel, obj):
         (self.root / rel).write_text(json.dumps(obj), encoding="utf-8", newline="\n")
@@ -111,6 +112,15 @@ class RealDataTests(unittest.TestCase):
         self.assertEqual(len(w["current"]), 5)
         self.assertEqual(w["next"], w["current"])
         self.assertEqual(w["admitted"], [])
+
+    def test_progress_history_preserves_each_pulse_denominator(self):
+        history = self.model["pulse_progress"]
+        self.assertEqual([r["passed"] for r in history], [14, 17, 21, 24, 25])
+        self.assertEqual([r["id"] for r in history],
+                         ["P0001", "P0002", "P0003", "P0004", "P0005"])
+        for r in history:
+            self.assertEqual(r["denominator"], 60)
+            self.assertEqual(r["passed"] + r["failed"] + r["unknown"], r["denominator"])
 
     def test_unattended_is_inferred_only_from_three_pulses(self):
         # Five pulses (P0001-P0005): 'unattended' is inferred, and only for gates UNKNOWN in
@@ -351,6 +361,93 @@ class EndToEndTests(unittest.TestCase):
         self.assertEqual(len(csv_text.strip().splitlines()), 6)
         with redirect_stdout(io.StringIO()), self.assertRaises(SystemExit):
             r5.main(["--append-pulse", "data/x.json"], root=self.box.root)
+
+
+class InitializationTests(unittest.TestCase):
+    def setUp(self):
+        self.box = Sandbox()
+        self.addCleanup(self.box.close)
+        self.box.add("P1", snapshot("2026-10-01", five()))
+
+    def ledger(self):
+        return json.loads((self.box.root / r5.LEDGER).read_text(encoding="utf-8"))
+
+    def test_ledger_schema_and_pulse_identity_are_required(self):
+        for field, value, message in (("schema", None, "schema"),
+                                      ("id", "", "pulse id"),
+                                      ("snapshot_sha256", "short", "sha256"),
+                                      ("observed_date", "2026-02-30", "calendar date")):
+            with self.subTest(field=field):
+                ledger = self.ledger()
+                target = ledger if field == "schema" else ledger["pulses"][0]
+                target[field] = value
+                with self.assertRaisesRegex(ValueError, message):
+                    r5.verified_pulses(self.box.root, ledger)
+
+    def test_relative_absolute_drive_and_symlink_escape_paths_are_rejected(self):
+        for rel in ("../outside.json", "/tmp/outside.json", "C:/outside.json",
+                    "data/../../outside.json", "data\\outside.json"):
+            with self.subTest(path=rel), self.assertRaisesRegex(ValueError, "inside"):
+                r5.snapshot_path(self.box.root, rel)
+        outside = Path(self.box.dir.name).parent / (self.box.root.name + "-outside.json")
+        outside.write_text("{}", encoding="utf-8", newline="\n")
+        self.addCleanup(outside.unlink, missing_ok=True)
+        link = self.box.root / "data/link.json"
+        try:
+            link.symlink_to(outside)
+        except OSError:
+            self.skipTest("symlinks unavailable to this test user")
+        with self.assertRaisesRegex(ValueError, "inside"):
+            r5.snapshot_path(self.box.root, "data/link.json")
+
+    def test_declared_date_cannot_disagree_with_hash_pinned_snapshot(self):
+        ledger = self.ledger()
+        ledger["pulses"][0]["observed_date"] = "2026-10-02"
+        with self.assertRaisesRegex(ValueError, "date mismatch"):
+            r5.verified_pulses(self.box.root, ledger)
+
+    def test_empty_rows_missing_head_and_rank_collision_are_rejected(self):
+        for mode in ("empty", "head", "rank"):
+            with self.subTest(mode=mode):
+                snap = snapshot("2026-10-01", five())
+                if mode == "empty":
+                    snap["rows"] = []
+                elif mode == "head":
+                    snap["rows"][0]["source_sha"] = None
+                else:
+                    snap["rows"][1]["rank"] = snap["rows"][0]["rank"]
+                raw = json.dumps(snap).encode()
+                path = self.box.root / "data/snap_1.json"
+                path.write_bytes(raw)
+                ledger = self.ledger()
+                ledger["pulses"][0]["snapshot_sha256"] = hashlib.sha256(raw).hexdigest()
+                with self.assertRaisesRegex(ValueError, "nonempty|source SHA|rank"):
+                    r5.verified_pulses(self.box.root, ledger)
+
+    def test_private_source_marker_is_valid_but_never_nirvana(self):
+        snap = snapshot("2026-10-01", five(sha=r5.PB.MARK))
+        raw = json.dumps(snap).encode()
+        (self.box.root / "data/snap_1.json").write_bytes(raw)
+        ledger = self.ledger()
+        ledger["pulses"][0]["snapshot_sha256"] = hashlib.sha256(raw).hexdigest()
+        rows = r5.rows_of(r5.verified_pulses(self.box.root, ledger)[0][1])
+        self.assertFalse(r5.nirvana("o/r1", [rows, rows], 2))
+
+    def test_false_declared_metrics_are_rejected_even_with_matching_file_digest(self):
+        snap = snapshot("2026-10-02", five())
+        snap["metrics"] = {"passed": 1, "failed": 0, "unknown": 59,
+                           "required_gate_count_per_repo": 12, "required_gate_total": 60}
+        with self.assertRaisesRegex(ValueError, "metrics disagree"):
+            r5.rows_of(snap)
+        snap["metrics"].update(passed=0, unknown=60)
+        self.assertEqual(len(r5.rows_of(snap)), 5)
+
+    def test_failed_append_leaves_ledger_bytes_unchanged(self):
+        before = (self.box.root / r5.LEDGER).read_bytes()
+        self.box.write("data/invalid.json", snapshot("2026-10-02", []))
+        with self.assertRaisesRegex(ValueError, "nonempty"):
+            r5.append_pulse(self.box.root, "data/invalid.json", "P2")
+        self.assertEqual((self.box.root / r5.LEDGER).read_bytes(), before)
 
 
 class GoldenThreadSourceRedTests(unittest.TestCase):
