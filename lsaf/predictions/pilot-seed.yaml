@@ -1,0 +1,35 @@
+schema: lsaf/prediction-seed/v0.1
+created_from_cohort: C-20261110-12-48H
+evidence_class: PREDICTED
+outcomes_observed_at_creation: false
+
+predictions:
+  - prediction_id: PRED-001
+    source: S-20261110-MIP-N10
+    predicted_next_state: DEPENDENCY_ORDERED
+    predicted_blocker: INDEPENDENT_ACCEPTED_CLOSURES
+    confidence: 0.55
+  - prediction_id: PRED-002
+    source: S-20261110-N6
+    predicted_next_state: MONITORED
+    predicted_blocker: null
+    confidence: 0.72
+  - prediction_id: PRED-003
+    source: S-20261111-MAROON
+    predicted_next_state: EXECUTABLE
+    predicted_blocker: SHARED_LEDGER_RECONCILIATION
+    confidence: 0.60
+  - prediction_id: PRED-004
+    source: S-20261112-MAROON-CAS
+    predicted_next_state: DEPENDENCY_ORDERED
+    predicted_blocker: EXACT_VERSION_READBACK
+    confidence: 0.58
+  - prediction_id: PRED-005
+    source: S-20261112-LSAF
+    predicted_next_state: DEPENDENCY_ORDERED
+    predicted_blocker: KAHN_PROJECTION
+    confidence: 0.80
+
+immutability:
+  rewrite_prediction_after_outcome: false
+  append_outcome_only: true
