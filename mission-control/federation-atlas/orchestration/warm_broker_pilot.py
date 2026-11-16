@@ -82,6 +82,14 @@ def pin(root, head):
     p = subprocess.run(["git", "-C", str(root), "rev-parse", "HEAD"],
                        capture_output=True, text=True, timeout=10, check=False)
     demand(p.returncode == 0 and p.stdout.strip() == head, "CHECKOUT_HEAD_MISMATCH")
+    # Matching HEAD is insufficient when tracked source bytes are dirty.
+    # Reject staged, unstaged, deleted and conflicted tracked changes.
+    status = subprocess.run(
+        ["git", "-C", str(root), "status", "--porcelain=v1", "--untracked-files=no"],
+        capture_output=True, text=True, timeout=10, check=False,
+    )
+    demand(status.returncode == 0 and not status.stdout.strip(),
+           "TRACKED_SOURCE_WORKTREE_DIRTY_OR_UNVERIFIED")
     return head
 
 
