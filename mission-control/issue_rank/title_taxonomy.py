@@ -73,6 +73,60 @@ TECHNICAL_CLUSTERS = {
     "retirement": ("retire", "supersede", "archive"),
 }
 
+# Hook families: the shared structure a change attaches to, so that the shared
+# thing can block it or must change with it. Non-exclusive, title and labels
+# only, like the vocabularies above. MIP stays its own hook here even though
+# the "dmaic" topic family above also matches it (kept for compatibility).
+# "3P" covers the 3P* control family: 3PR (Refresh, Probe, Rank), 3PC
+# (Prepare, Prove, then a separate launch), 3PSTAR (3PR + MIP + 3PC) as in
+# grand-missions/GM_V_3PSTAR_MIP_CONTROL_v1.json, and pinned N-2/N-1/N pulses.
+HOOK_FAMILIES = {
+    "structural": ("agents.md", "readme", "codeowners", "inventory", "landing",
+                   "structural", "skeleton"),
+    "configuration": ("config", "configuration", "policy", "ruleset", "threshold",
+                      "workflow", "gate", "guard", "matrix", "secret"),
+    "dependency": ("dependency", "dependencies", "deps", "deps-pip", "deps-npm",
+                   "dependabot", "bump", "pin", "pinned", "kit_ref", "lockfile"),
+    "recursive": ("recursive", "recursion", "census", "recensus", "refresh",
+                  "regen", "regenerate", "snapshot", "n+1", "n+2", "self-test",
+                  "bootstrap", "ratchet"),
+    "mycelium": ("mycelium", "dispatch", "ecosystem", "reverse pressure"),
+    "golden-thread": ("golden thread", "golden-thread", "lineage", "provenance",
+                      "receipt", "witness", "source-bound", "source-pinned",
+                      "hash-chained", "hash chain"),
+    "dmaic": ("dmaic", "sigma", "dpmo", "root-red", "root red", "first-red",
+              "maroon", "burndown", "burn-down"),
+    "mip": ("mip", "mip2", "mip kit", "modernize", "perpetuate"),
+    "three-pulse": ("3p", "3pr", "3pc", "3pstar", "3p*", "three-pulse",
+                    "three pulse", "pulse", "pulses", "wave", "waves"),
+}
+
+# Scope incarnation: where a change lives, from widest to narrowest. Exactly
+# one per item (first match in this order, else "repo"). Advisory only, like
+# every other field of this module.
+SCOPE_INCARNATIONS = {
+    "global": ("portfolio", "fleet", "top21", "cross-repo", "all repos",
+               "every repo", "landing"),
+    "federation": ("federation", "federated", "mesh", "kit_ref", "mip kit",
+                   "dispatch", "ecosystem", "delta_1"),
+    "bridge": ("bridge", "provider pin", "rebind", "crosswalk", "pin"),
+    "orchestration": ("orchestrator", "orchestration", "router",
+                      "scheduler", "warm handler", "maroon", "kahn"),
+    "agent": ("session", "sessions", "thread", "threads", "handover", "agent",
+              "agents", "skill", "codex review", "copilot"),
+    "branch": ("update-branch", "update branch", "restack", "rebase",
+               "rerun", "stacked"),
+    "worktree": ("worktree", "pre-commit", "pre-push", "workstation"),
+    "pipeline": ("pipeline", "workflow", "ci-spine", "publishing", "lane"),
+}
+SCOPE_ORDER = tuple(SCOPE_INCARNATIONS) + ("repo",)
+
+
+def _scope(text: str) -> str:
+    hits = _matches(text, SCOPE_INCARNATIONS)
+    return next((name for name in SCOPE_ORDER if name in hits), "repo")
+
+
 def _matches(text: str, definitions: dict) -> list[str]:
     return sorted(key for key, aliases in definitions.items()
                   if any(re.search(r"(?<![a-z0-9])" + re.escape(alias.casefold())
@@ -196,6 +250,7 @@ def parse_title(title: str | None, item_type: str | None = None, labels=()) -> d
                 "path": "UNCLASSIFIED", "prefix_segments": [], "raw_prefix": "",
                 "remaining_title": "", "programmes": [], "codes": [], "priority": None,
                 "policy_flags": [], "topic_families": [], "technical_clusters": [],
+                "hook_families": [], "scope_incarnation": "repo",
                 "lint": ["EMPTY_TITLE"], "classification": "UNCLASSIFIED"}
     if len(text) > MAX_CHARS:
         warnings.append("TITLE_TOO_LONG_TRUNCATED_FOR_PARSING")
@@ -283,6 +338,8 @@ def parse_title(title: str | None, item_type: str | None = None, labels=()) -> d
         "codes": codes, "priority": priority, "policy_flags": flags,
         "topic_families": topic_families,
         "technical_clusters": technical_clusters,
+        "hook_families": _matches(semantic_text, HOOK_FAMILIES),
+        "scope_incarnation": _scope(semantic_text),
         "lint": sorted(set(warnings)),
         "classification": "EXPLICIT_ACTION" if actions else "CODES_ONLY" if tags else "UNCLASSIFIED",
     }
@@ -297,6 +354,8 @@ def summary(items: list[dict]) -> dict:
     codes = defaultdict(Counter)
     topics = defaultdict(Counter)
     clusters = defaultdict(Counter)
+    hooks = defaultdict(Counter)
+    scopes = defaultdict(Counter)
     classifications, lint, types = Counter(), Counter(), Counter()
     for item in items:
         obj = item.get("title_taxonomy") or parse_title(item.get("title"), item.get("type"))
@@ -315,6 +374,9 @@ def summary(items: list[dict]) -> dict:
             topics[name][kind] += 1
         for name in set(obj.get("technical_clusters", [])):
             clusters[name][kind] += 1
+        for name in set(obj.get("hook_families", [])):
+            hooks[name][kind] += 1
+        scopes[obj.get("scope_incarnation", "repo")][kind] += 1
         classifications[obj["classification"]] += 1
         lint.update(obj["lint"])
     def compact(group):
@@ -328,6 +390,8 @@ def summary(items: list[dict]) -> dict:
         "codes_nonexclusive": compact(codes),
         "topic_families_nonexclusive": compact(topics),
         "technical_clusters_nonexclusive": compact(clusters),
+        "hook_families_nonexclusive": compact(hooks),
+        "scope_incarnations_exclusive": compact(scopes),
         "classification": dict(sorted(classifications.items())),
         "lint": dict(sorted(lint.items())), "family_counts_additive_only": True,
         "hierarchy_nodes_additive": False, "merge_admission_authority": False,

@@ -144,6 +144,70 @@ class TitleParsing(unittest.TestCase):
             tax.associated_families(items, edges, max_hops=8)
 
 
+class HookAndScope(unittest.TestCase):
+    """Additive hook-family and scope-incarnation vocabularies (advisory only)."""
+
+    def test_hook_families_from_real_titles(self):
+        cases = {
+            "mip kit 1.3.2: bump CODEX_KIT_REF (wave elevation)": {"dependency", "mip", "three-pulse"},
+            "docs(landing): refresh root README — snapshot main@da5b6b7, 15 Nov 2026": {"structural", "recursive"},
+            "maroon: pulse OPR-20261114 ledger (58 dispositions, census W0→W2, backlog)": {"dmaic", "recursive", "three-pulse"},
+            "feat(r07/ts): source-pinned layered T-s SVG reconstruction and fail-closed QA pilot": {"golden-thread"},
+            "ci: add ecosystem_worktree_sync receiver stub": set(),
+            "feat(cpath): critical path, levers and reverse pressure over the backlog graph": {"mycelium"},
+        }
+        for title, expected in cases.items():
+            with self.subTest(title=title):
+                self.assertTrue(expected <= set(tax.parse_title(title)["hook_families"]),
+                                tax.parse_title(title)["hook_families"])
+
+    def test_mip_is_its_own_hook_and_dmaic_topic_is_unchanged(self):
+        m = tax.parse_title("feat(mip): draft cross-repo disjoint closure census")
+        self.assertIn("mip", m["hook_families"])
+        self.assertNotIn("dmaic", m["hook_families"])
+        self.assertIn("dmaic", m["topic_families"])  # legacy topic grouping kept
+
+    def test_short_aliases_need_word_boundaries(self):
+        self.assertNotIn("three-pulse", tax.parse_title("feat: 3pm pipeline note")["hook_families"])
+        self.assertIn("three-pulse", tax.parse_title("GM-V 3PSTAR MIP control")["hook_families"])
+        self.assertNotIn("dependency", tax.parse_title("fix: spinner alignment")["hook_families"])
+
+    def test_scope_incarnation_is_exclusive_and_ordered(self):
+        expect = {
+            "feat(jade): weekly Top21 source-bound portfolio watch": "global",
+            "mip kit 1.3.2: bump CODEX_KIT_REF (wave elevation)": "federation",
+            "fix(qps-triage): rebind gg_MATH provider pin to main": "bridge",
+            "feat(maroon): route repairs via the adaptive router": "orchestration",
+            "feat(threads): move session_census.py into tools/threads": "agent",
+            "feat(workstation): land Restack-Pr.ps1 and the restack choice rule": "branch",
+            "feat(maroon): REX known-fix catalog and pre-push scan": "orchestration",
+            "fix(a10): merge-aware --staged mode for pre-commit": "worktree",
+            "feat(ci-spine): JQ09 real SVG source-to-view bridge": "bridge",
+            "fix(scripts): PD-L3-003/004/005": "repo",
+        }
+        for title, scope in expect.items():
+            with self.subTest(title=title):
+                self.assertEqual(tax.parse_title(title)["scope_incarnation"], scope)
+        self.assertEqual(tax.parse_title("")["scope_incarnation"], "repo")
+        self.assertEqual(tax.parse_title(None)["hook_families"], [])
+
+    def test_labels_feed_hooks_and_scope(self):
+        m = tax.parse_title("chore: tidy", labels=["dependencies", {"name": "federation"}])
+        self.assertIn("dependency", m["hook_families"])
+        self.assertEqual(m["scope_incarnation"], "federation")
+
+    def test_summary_rollups_are_additive_where_declared(self):
+        items = [{"title": "mip kit 1.3.2: bump CODEX_KIT_REF (wave elevation)", "type": "PullRequest"},
+                 {"title": "docs(landing): refresh root README", "type": "PullRequest"},
+                 {"title": "fix(scripts): PD-L3-003", "type": "Issue"}]
+        s = tax.summary(items)
+        scopes = s["scope_incarnations_exclusive"]
+        self.assertEqual(sum(v["total"] for v in scopes.values()), 3)
+        self.assertEqual(scopes["repo"], {"Issue": 1, "PullRequest": 0, "total": 1})
+        self.assertEqual(s["hook_families_nonexclusive"]["mip"]["PullRequest"], 1)
+        self.assertFalse(s["merge_admission_authority"])
+
+
 class Integration(unittest.TestCase):
     def changed(self):
         s = base.fixture()
