@@ -52,11 +52,11 @@ class SourceAndDagContracts(unittest.TestCase):
         completed = lambda stdout="", returncode=0: subprocess.CompletedProcess(
             args=["git"], returncode=returncode, stdout=stdout, stderr=""
         )
-        for dirty in (" M mission-control/federation-atlas/orchestration/main.py\\n",
-                      "M  mission-control/gogreen/outcome_convergence/outcome_flight.py\\n",
-                      "D  mission-control/federation-atlas/orchestration/broker.py\\n"):
+        for dirty in (" M mission-control/federation-atlas/orchestration/main.py\n",
+                      "M  mission-control/gogreen/outcome_convergence/outcome_flight.py\n",
+                      "D  mission-control/federation-atlas/orchestration/broker.py\n"):
             with self.subTest(dirty=dirty), mock.patch.object(
-                m.subprocess, "run", side_effect=[completed(head+"\\n"), completed(dirty)]
+                m.subprocess, "run", side_effect=[completed(head+"\n"), completed(dirty)]
             ):
                 with self.assertRaisesRegex(ValueError, "TRACKED_SOURCE_WORKTREE_DIRTY"):
                     m.pin(ROOT, head)
@@ -67,12 +67,12 @@ class SourceAndDagContracts(unittest.TestCase):
             args=["git"], returncode=returncode, stdout=stdout, stderr=""
         )
         with mock.patch.object(m.subprocess, "run", side_effect=[
-            completed(head+"\\n"), completed("")
+            completed(head+"\n"), completed("")
         ]) as git:
             self.assertEqual(m.pin(ROOT, head), head)
             self.assertIn("--untracked-files=no", git.call_args_list[1].args[0])
         with mock.patch.object(m.subprocess, "run", side_effect=[
-            completed(head+"\\n"), completed("", returncode=1)
+            completed(head+"\n"), completed("", returncode=1)
         ]):
             with self.assertRaisesRegex(ValueError, "TRACKED_SOURCE_WORKTREE_DIRTY"):
                 m.pin(ROOT, head)
