@@ -58,7 +58,10 @@ GG_MATH_WORKERS = (1, 2, 4)
 
 
 def _load(name: str, rel: str):
-    spec = importlib.util.spec_from_file_location(name, ROOT / rel)
+    path = (ROOT / rel).resolve()
+    spec = importlib.util.spec_from_file_location(name, path)
+    if spec is None or spec.loader is None:
+        raise ValueError(f"Unable to load module {name!r} from {path}")
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
