@@ -57,7 +57,7 @@
 
 1. **Preflight**: `scripts/preflight_overlap.py` checks `master` and open PR diffs for an existing owner.
 2. **Branch early, one concern**: push after the first commit, open a draft PR against `master`.
-3. **Census**: the JADE DevOps census and Actions metrics re-read the five JADE repositories at one SHA.
+3. **Census**: the JADE DevOps census and Actions metrics read each JADE repository's head SHA once per pulse and use that repo's SHA for every snapshot in the pulse ([AGENTS.md](AGENTS.md)).
 4. **Gate**: the required checks on `master` plus the First-Pass Closure receipt for the exact head (§6).
 5. **Dispatch**: Level-1 routes accepted work to CODEX, ABACUS or cryoplant and records the receipt.
 6. **Show**: Mission Control pages project the result, dated and SHA-bound.
@@ -70,7 +70,7 @@
 | Level-1 routing kernel | [`level1/`](level1/), [`LEVEL1.md`](LEVEL1.md) | Worker receipts → dispatch decisions and digests | Routing readiness, not engineering truth |
 | JADE DevOps census | [`mission-control/jade_temple/devops/`](mission-control/jade_temple/devops/) (`census.py`, `actions_metrics.py`) | GitHub API reads of the JADE repos → census JSON and readings | Read-only measurement |
 | CI/CD DAG and waves | [`mission-control/jade_temple/site/build_cicd_dag.py`](mission-control/jade_temple/site/build_cicd_dag.py) | Workflow policy → DAG, crosswalk and page | Declared architecture |
-| First-Pass Closure gate | [`scripts/first_pass_closure_gate.py`](scripts/first_pass_closure_gate.py), [W305 doc](docs/W305_FIRST_PASS_CLOSURE_GATE.md) | PR head, runs, reviews → pass / hold | Needs a completed Codex review on the exact head |
+| First-Pass Closure gate | [`scripts/first_pass_closure_gate.py`](scripts/first_pass_closure_gate.py), [W305 doc](docs/W305_FIRST_PASS_CLOSURE_GATE.md) | PR head, runs, reviews → pass / hold | Needs a completed Codex review on the exact head, or the owner's `fpc:codex-unavailable` waiver |
 | GOGREEN | [`mission-control/gogreen/`](mission-control/gogreen/) | Fleet runs and outcomes → required gate, scale dock, launcher | Evidence of runs, not of correctness |
 | MAROON ledger | [`mission-control/maroon/`](mission-control/maroon/) | Security repair routing and fold-backs | Routes repairs; fixes land in the owning repo |
 | QPS TRIAGE ULTRA | [`mission-control/qps-triage-ultra/`](mission-control/qps-triage-ultra/) | Telemetry, DMAIC, PCA/BT, burn-down views | No second QPS SSOT |
@@ -114,10 +114,10 @@ Interactive views: [CI Spine explorer](docs/ci-spine/explorer.html) (frozen 28�
 | Gate | Status | What would close it |
 |---|---|---|
 | `master` protection | **Two rulesets**: PR required, linear history, Copilot code review; required checks *validate-ultra-control*, *canonical-self-test-and-mutation*, *GOGREEN required gate*, *Launcher outputs current and tests*, *frozen-head-census*, *CodeQL*, and *First-Pass Closure Gate*. Second-ruleset clean-up open in [#1159](https://github.com/GBOGEB/pipeline-automation-hub/issues/1159). | Owner disposition of #1159, read back from the rulesets |
-| Codex review budget | Quota exhausted since 9 Nov; FPC needs an exact-head review. Tiering decision [#1245](https://github.com/GBOGEB/pipeline-automation-hub/issues/1245); waiver bootstrap [#1172](https://github.com/GBOGEB/pipeline-automation-hub/pull/1172) open | Owner decision on #1245 |
+| Codex review budget | Quota exhausted since 9 Nov; FPC needs an exact-head review. **Unblock path today**: the merged `codex_unavailable_waiver` lets the owner apply `fpc:codex-unavailable` after the head commit ([W305 doc](docs/W305_FIRST_PASS_CLOSURE_GATE.md)); tiering decision [#1245](https://github.com/GBOGEB/pipeline-automation-hub/issues/1245); waiver bootstrap [#1172](https://github.com/GBOGEB/pipeline-automation-hub/pull/1172) open | Owner decision on #1245 |
 | `master` red | [#1157](https://github.com/GBOGEB/pipeline-automation-hub/issues/1157): CODE PURPLE live census and GOGREEN token census failing | Both workflows green on `master` |
 | GOGREEN fan-out | [#1136](https://github.com/GBOGEB/pipeline-automation-hub/issues/1136): PR-side fan-out cancels most runs | Cancellation scoped; re-check recorded |
-| CI collection parity | [#1204](https://github.com/GBOGEB/pipeline-automation-hub/issues/1204): re-census all 5 JADE repos at one SHA | Census run and reading committed |
+| CI collection parity | [#1204](https://github.com/GBOGEB/pipeline-automation-hub/issues/1204): re-census all 5 JADE repos in one pulse, each at its own head SHA | Census run and reading committed |
 | Machine-local pulses | [#1199](https://github.com/GBOGEB/pipeline-automation-hub/issues/1199): scheduled pulses call scripts that exist on one PC only | Scripts landed in `tools/` or retired |
 | MAROON | [#1246](https://github.com/GBOGEB/pipeline-automation-hub/issues/1246) P1 watch; routing [#1232](https://github.com/GBOGEB/pipeline-automation-hub/pull/1232) open | Watch landed; ledger runs on Windows |
 | Workflow estate | 212 workflow YAML files at this snapshot | [`governance/ci_spine/`](governance/ci_spine/) kept current |
@@ -127,7 +127,7 @@ Interactive views: [CI Spine explorer](docs/ci-spine/explorer.html) (frozen 28�
 Python **3.12** is the main CI leg (the zero-test guard runs on 3.11). From the repository root:
 
 ```bash
-pip install -r scripts/requirements.txt
+pip install -r scripts/requirements.txt -r excel_schedule_engine/requirements.txt   # openpyxl is needed at test collection
 python -m pytest tests -q                       # pytest.ini anchors rootdir here
 python scripts/preflight_overlap.py <term> ...  # before building anything
 python scripts/run_processing.py                # legacy PPTX metadata pipeline
@@ -161,7 +161,7 @@ On Windows, start `gh` and `git push` commands with `unset GITHUB_TOKEN GH_TOKEN
 
 **Frozen views kept for reference** (dated, read-only): [CI Spine explorer](docs/ci-spine/explorer.html) (28–29 Oct) · [JADE N+2 burn-down](mission-control/jade_temple/site/burndown.html) (19 Oct) · [Top21 GoGREEN readiness](mission-control/jade_temple/site/green.html) (18 Oct) · [P4 SIPOC explorer](mission-control/federation-atlas/flightdeck/pulses/federation_landing_p4.html) (16 Oct) · [M2 Mission Control](docs/mission-control/m2/index.html) (15 Oct).
 
-**Next actions** (match §6): owner decision on Codex review tiers (#1245) → `master` back to green (#1157) → JADE re-census at one SHA (#1204) → land machine-local pulse scripts (#1199) → MAROON P1 watch (#1246).
+**Next actions** (match §6): owner decision on Codex review tiers (#1245) → `master` back to green (#1157) → JADE re-census in one pulse (#1204) → land machine-local pulse scripts (#1199) → MAROON P1 watch (#1246).
 
 ---
 
