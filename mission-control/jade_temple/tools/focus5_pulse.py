@@ -110,6 +110,21 @@ def mark_unstarted_failures(repo: str, latest: dict[str, dict], paths, lookup=gh
                 latest[path] = dict(run, conclusion=NOT_STARTED)
 
 
+def head_runs(repo: str, sha: str, lookup=gh) -> list[dict]:
+    """Every workflow run on this exact SHA. A busy head carries more than 100 runs (schedule and
+    workflow_run events land on it too), so read every page: the push runs that evidence a gate
+    can sit past the first page."""
+    out: list[dict] = []
+    page = 1
+    while True:
+        data = lookup(f"repos/{repo}/actions/runs?head_sha={sha}&per_page=100&page={page}")
+        batch = data.get("workflow_runs") or []
+        out.extend(batch)
+        if not batch or len(batch) < 100 or len(out) >= int(data.get("total_count") or 0):
+            return out
+        page += 1
+
+
 def any_job_started(repo: str, run_id, run_attempt, lookup=gh) -> bool:
     """True if any job in the observed run attempt executed a step.
 
@@ -180,7 +195,7 @@ def observe_repo(repo: str, prev_row: dict | None, lookup=gh, declared: dict[str
          "Root README present at this SHA" if readme else "No root README at this SHA")
     gate("H03", "UNKNOWN", None, "Owner acceptance of release applicability not evidenced in this pulse")
 
-    runs = lookup(f"repos/{repo}/actions/runs?head_sha={sha}&per_page=100")["workflow_runs"]
+    runs = head_runs(repo, sha, lookup)
     latest: dict[str, dict] = {}
     for run in sorted(runs, key=lambda r: r["created_at"]):
         if run["status"] == "completed":
