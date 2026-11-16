@@ -55,6 +55,12 @@ jobs:
       - name: Fetch pinned provider by exact SHA and verify digests (fail closed)
         run: python ggmath_bridge.py fetch
 
+      - name: Report how far the pin is behind gg_MATH main (warning only)
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python ggmath_bridge.py check-stale
+
       - name: Bridge unit and negative controls (digest, authority, PCA-not-BT, reverse trials, flow, Plotly, JADE hook)
         env:
           GGMATH_REQUIRE_PROVIDER: '1'
