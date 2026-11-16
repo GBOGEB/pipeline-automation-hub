@@ -182,6 +182,25 @@ class Focus5PulseTests(unittest.TestCase):
                 )
                 self.assertEqual(latest["a.yml"]["conclusion"], "failure")
 
+    def test_evidence_run_past_the_first_page_of_head_runs_counts(self):
+        # 130 runs on the head: 100 scheduled runs on page 1, the declared push run on page 2.
+        declared = {"H05": [".github/workflows/a.yml"]}
+        sched = [dict(run(".github/workflows/sched.yml", "success"), id=i) for i in range(100)]
+        page2 = [dict(run(".github/workflows/sched.yml", "success"), id=200 + i) for i in range(29)]
+        page2.append(run(".github/workflows/a.yml", "success"))
+        base = fake_github()
+        pages = []
+
+        def lookup(path):
+            if path.startswith("repos/O/R/actions/runs?head_sha="):
+                n = int(path.rsplit("page=", 1)[1])
+                pages.append(n)
+                return {"total_count": 130, "workflow_runs": sched if n == 1 else page2}
+            return base(path)
+
+        self.assertEqual(self.gates(fp.observe_repo("O/R", None, lookup, declared))["H05"], "PASS")
+        self.assertEqual(pages, [1, 2])
+
     def test_registry_rejects_owner_gates_and_unstated_evidence(self):
         ok = {"schema": "jade.focus5.gate_evidence_registry.v1",
               "repos": {"O/R": {"H05": [{"workflow": ".github/workflows/a.yml", "proves": "tests"}]}}}
