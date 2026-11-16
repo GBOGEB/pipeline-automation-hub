@@ -13,12 +13,12 @@ _PR = re.compile(r"^(?P<repo>[^#]+)#(?P<number>\d+):(?P<state>[^:]+)$")
 _TS = re.compile(r"^(?P<date>\d{4}-\d{2}-\d{2}) (?P<time>\d{2}:\d{2})$")
 
 
-def _iso_or_unknown(value: Any) -> str:
+def _iso_or_none(value: Any) -> str | None:
     if not isinstance(value, str):
-        return UNKNOWN
+        return None
     m = _TS.match(value.strip())
     if not m:
-        return UNKNOWN
+        return None
     return f"{m.group('date')}T{m.group('time')}:00Z"
 
 
@@ -37,9 +37,9 @@ def repository_bindings(record: dict[str, Any]) -> list[str]:
 def session_from_census(record: dict[str, Any]) -> dict[str, Any]:
     """Project one canonical census record into an LSAF session genome.
 
-    Missing/ambiguous values remain UNKNOWN or null. In particular, cwd is retained
-    only as a physical-worktree *candidate*; the census does not prove it is a git
-    worktree.
+    Missing/ambiguous values remain null/UNKNOWN in schema-supported fields.
+    In particular, cwd is retained only as a physical-worktree *candidate*;
+    the census does not prove it is a git worktree.
     """
     sid = str(record.get("id") or UNKNOWN)
     repos = repository_bindings(record)
@@ -53,8 +53,8 @@ def session_from_census(record: dict[str, Any]) -> dict[str, Any]:
             "aliases": [],
         },
         "temporal": {
-            "observed_at": _iso_or_unknown(record.get("last")),
-            "created_at": _iso_or_unknown(record.get("created")),
+            "observed_at": _iso_or_none(record.get("last")),
+            "created_at": _iso_or_none(record.get("created")),
             "window": None,
             "predecessor": record.get("parent"),
         },
