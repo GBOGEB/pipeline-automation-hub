@@ -23,6 +23,7 @@ import ast
 import collections
 import contextlib
 import fnmatch
+import hashlib
 import importlib.util
 import json
 import re
@@ -54,6 +55,21 @@ def load_catalog(path: Path = CATALOG) -> dict:
     ids = [e["rex_id"] for e in cat["entries"]]
     if len(ids) != len(set(ids)):
         raise SystemExit("rex: duplicate rex_id in catalog")
+    for e in cat["entries"]:
+        match = re.fullmatch(r"REX-(\d{3})", e["rex_id"])
+        if not match:
+            raise SystemExit("rex: invalid rule identity")
+        if int(match.group(1)) > 21:
+            q = e.get("qualification", {})
+            if (not isinstance(q.get("distinct_prs"), int)
+                    or q["distinct_prs"] < 3
+                    or not re.fullmatch(r"[a-fA-F0-9]{40}", str(q.get("source_head", "")))
+                    or not re.fullmatch(r"[a-fA-F0-9]{64}", str(q.get("negative_fixture_sha256", "")))
+                    or not q.get("review_fingerprint_source")
+                    or not q.get("owner_path")
+                    or q.get("detector_reproduced") is not True
+                    or any(len(term.strip()) < 12 for term in e.get("review_match", []))):
+                raise SystemExit("rex: unqualified new rule " + e["rex_id"])
     return cat
 
 
@@ -80,39 +96,148 @@ def match_entry(cat: dict, text: str) -> str | None:
 # ---------------------------------------------------------------- mine
 
 
-def mine(cat: dict, comments: list[dict], min_prs: int = 3, top: int = 25) -> dict:
-    """Coverage of the catalog over review comments, plus recurring findings it does not cover."""
+def matching_rules(cat: dict, title: str) -> list[str]:
+    low = title.lower()
+    return [e["rex_id"] for e in cat["entries"]
+            if any(term.lower() in low for term in e.get("review_match", []))]
+
+
+def coverage_ratchet(cat: dict, report: dict) -> dict:
+    if report["scope"] != "historical":
+        return {"status": "NOT_APPLICABLE", "reasons": ["forward_cohort_separate"], "admitted_delta": None}
+    policy = cat.get("coverage_policy", {}).get("historical")
+    if not policy:
+        return {"status": "HOLD", "reasons": ["frozen_policy_missing"], "admitted_delta": None}
+    failures, holds = [], []
+    if report["comments"] != policy["frozen_comments"]:
+        failures.append("frozen_denominator_changed")
+    if report["comments"] == policy["frozen_comments"] and report["covered"] < policy["baseline_covered"]:
+        failures.append("unique_coverage_regression")
+    digest = report["identity"]["cohort_sha256"]
+    if not digest:
+        holds.append("immutable_comment_ids_missing")
+    elif not policy.get("cohort_sha256"):
+        holds.append("frozen_cohort_sha256_missing")
+    elif digest != policy["cohort_sha256"]:
+        failures.append("frozen_identity_mismatch")
+    if not policy.get("independent_precision_receipt_sha256"):
+        holds.append("independent_precision_and_negative_proof_missing")
+    state = "FAIL" if failures else "HOLD" if holds else "PASS"
+    return {"status": state, "reasons": failures + holds,
+            "baseline": policy["baseline_covered"],
+            "admitted_delta": (report["covered"] - policy["baseline_covered"]
+                               if state == "PASS" else None)}
+
+
+def mine(cat: dict, comments: list[dict], min_prs: int = 3, top: int = 25,
+         scope: str = "historical") -> dict:
+    """Unique-comment coverage, overlaps and a non-admitting DMAIC candidate queue."""
+    if scope not in ("historical", "forward"):
+        raise ValueError("rex: invalid scope")
     rows = [c for c in comments if not c.get("reply")]
-    hit = collections.Counter()
-    hit_prs = collections.defaultdict(set)
-    miss = collections.Counter()
-    miss_prs = collections.defaultdict(set)
-    example = {}
+    seen, identities, missing_id = set(), [], 0
+    hits, miss, overlap = collections.Counter(), collections.Counter(), collections.Counter()
+    hit_prs, miss_prs = collections.defaultdict(set), collections.defaultdict(set)
+    missing_comment_ids = collections.defaultdict(set)
+    missing_source_shas = collections.defaultdict(set)
+    examples, overlap_comments = {}, 0
     for c in rows:
-        t = first_line(c.get("body", ""))
-        pr = (c.get("repo"), str(c.get("pr")))
-        rid = match_entry(cat, t)
-        if rid:
-            hit[rid] += 1
-            hit_prs[rid].add(pr)
+        repo, cid, pr = c.get("repo"), c.get("id"), c.get("pr")
+        if not repo or cid is None or pr is None:
+            missing_id += 1
+        else:
+            if isinstance(cid, bool) or not str(cid).isdigit():
+                raise ValueError("rex: immutable comment ID must be numeric")
+            identity = (str(repo), str(cid))
+            if identity in seen:
+                raise ValueError("rex: duplicate immutable comment ID " + repr(identity))
+            seen.add(identity)
+            body_sha = hashlib.sha256((c.get("body") or "").encode("utf-8")).hexdigest()
+            identities.append((str(repo), str(cid), str(pr), body_sha))
+        title = first_line(c.get("body", ""))
+        prs = (repo, str(pr))
+        matches = matching_rules(cat, title)
+        if len(matches) > 1:
+            overlap_comments += 1
+            overlap.update(matches)
+        if matches:
+            hits[matches[0]] += 1
+            hit_prs[matches[0]].add(prs)
             continue
-        k = HINTS.finding_key(c.get("repo") or "", t)
-        miss[k] += 1
-        miss_prs[k].add(pr)
-        example.setdefault(k, {"title": t[:160], "reviewer": c.get("user"), "repo": c.get("repo")})
-    candidates = sorted((k for k in miss if len(miss_prs[k]) >= min_prs), key=lambda k: (-len(miss_prs[k]), -miss[k], k))
-    covered = sum(hit.values())
-    return {
-        "schema": MINE_SCHEMA, "authority": AUTHORITY,
+        key = HINTS.finding_key(repo or "", title)
+        miss[key] += 1
+        miss_prs[key].add(prs)
+        if repo and cid is not None:
+            missing_comment_ids[key].add(f"{repo}#{cid}")
+        sha = c.get("source_sha") or c.get("commit_id")
+        if isinstance(sha, str) and re.fullmatch(r"[0-9a-fA-F]{40}", sha):
+            missing_source_shas[key].add(sha.lower())
+        examples.setdefault(key, {"title": title[:160], "reviewer": c.get("user"), "repo": repo})
+    cohort_sha = None
+    if rows and missing_id == 0:
+        normalized = json.dumps(sorted(identities), separators=(",", ":"), ensure_ascii=False)
+        cohort_sha = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+    candidates = sorted((k for k in miss if len(miss_prs[k]) >= min_prs),
+                        key=lambda k: (-len(miss_prs[k]), -miss[k], k))
+    queue = []
+    for key in candidates[:top]:
+        shas = sorted(missing_source_shas[key])
+        queue.append(dict(examples[key], key=key, root_fingerprint=key,
+                          rule_id=None, comments=miss[key], prs=len(miss_prs[key]),
+                          comment_ids=sorted(missing_comment_ids[key]), source_shas=shas,
+                          evidence_sha=shas[0] if len(shas) == 1 else None,
+                          detector_available=False, negative_test_receipt=None,
+                          owner_path=None, status="OBSERVED", dmaic_trigger="THREE_INDEPENDENT_PRS"))
+    covered = sum(hits.values())
+    report = {
+        "schema": MINE_SCHEMA, "authority": AUTHORITY, "scope": scope,
         "comments": len(rows), "covered": covered,
         "coverage": round(covered / len(rows), 4) if rows else None,
+        "identity": {"unique_ids": len(seen), "missing": missing_id,
+                     "cohort_sha256": cohort_sha},
+        "overlaps": {"comments": overlap_comments, "by_rule": dict(sorted(overlap.items()))},
         "by_reviewer": dict(collections.Counter(c.get("user") for c in rows).most_common()),
-        "entries": {e["rex_id"]: {"comments": hit[e["rex_id"]], "prs": len(hit_prs[e["rex_id"]])} for e in cat["entries"]},
-        "candidates": [dict(example[k], key=k, comments=miss[k], prs=len(miss_prs[k])) for k in candidates[:top]],
+        "entries": {e["rex_id"]: {"comments": hits[e["rex_id"]],
+                                 "prs": len(hit_prs[e["rex_id"]])} for e in cat["entries"]},
+        "candidates": queue,
     }
+    report["ratchet"] = coverage_ratchet(cat, report)
+    return report
+
+
+def qualification_dag(report: dict) -> dict:
+    """Use the existing canonical JADE Kahn scheduler; never imply admission."""
+    path = HERE.parent / "jade_temple" / "devops" / "lifecycle.py"
+    spec = importlib.util.spec_from_file_location("maroon_rex_jade_canonical", path)
+    owner = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(owner)
+    nodes = ["INTAKE", "UNIQUE_MATCH", "FINGERPRINT", "RATCHET",
+             "NEGATIVE_TEST", "INDEPENDENT_REVIEW", "ACCEPTED_CONTROL"]
+    edges = [("INTAKE", "UNIQUE_MATCH", "FEEDFORWARD"),
+             ("UNIQUE_MATCH", "FINGERPRINT", "FEEDFORWARD"),
+             ("UNIQUE_MATCH", "RATCHET", "FEEDFORWARD"),
+             ("FINGERPRINT", "NEGATIVE_TEST", "FEEDFORWARD"),
+             ("NEGATIVE_TEST", "INDEPENDENT_REVIEW", "FEEDFORWARD"),
+             ("RATCHET", "INDEPENDENT_REVIEW", "FEEDFORWARD"),
+             ("INDEPENDENT_REVIEW", "ACCEPTED_CONTROL", "FEEDFORWARD")]
+    status = {node: "HOLD" for node in nodes}
+    for n in ("INTAKE", "UNIQUE_MATCH", "FINGERPRINT"):
+        status[n] = "PROVE"
+    if report["ratchet"]["status"] == "PASS":
+        status["RATCHET"] = "PROVE"
+    return {"schema": "code_maroon.rex_kahn.v1", "authority": AUTHORITY,
+            "scheduler_owner": "jade_temple/devops/lifecycle.py::topo_layers",
+            "layers": owner.topo_layers(nodes, edges), "edges": edges,
+            "status": status,
+            "legend": ["HOLD", "PROVE", "MERGED", "NOT_ADMITTED", "ACCEPTED_CONTROL"],
+            "admission": "NOT_ADMITTED",
+            "historical_16_edges_reconstructed": False}
+
 
 
 def write_evidence(path: Path, report: dict, source: str) -> None:
+    if report.get("scope") != "historical" or report.get("ratchet", {}).get("status") != "PASS":
+        raise SystemExit("rex: frozen historical evidence rewrite requires ratchet PASS")
     cat = json.loads(path.read_text(encoding="utf-8"))
     for e in cat["entries"]:
         e["evidence"] = report["entries"].get(e["rex_id"], {"comments": 0, "prs": 0})
@@ -414,7 +539,7 @@ def render(report: dict, cat: dict) -> str:
 def fetch(repos: list[str], limit: int) -> list[dict]:
     rows = []
     q = ('.[] | {pr:(.pull_request_url|split("/")|last), path, user:.user.login, created:.created_at,'
-         ' body:(.body[0:600]), reply:(.in_reply_to_id!=null)}')
+         ' id:.id, source_sha:.commit_id, body:(.body[0:600]), reply:(.in_reply_to_id!=null)}')
     for repo in repos:
         argv = [tool("gh"), "api", f"repos/{repo}/pulls/comments?per_page=100&sort=created&direction=desc", "--paginate", "-q", q]
         run = subprocess.run(argv, capture_output=True, text=True, encoding="utf-8", check=True)  # noqa: S603 (resolved gh, no shell)
@@ -449,6 +574,9 @@ def main(argv=None) -> int:
     m.add_argument("--min-prs", type=int, default=3)
     m.add_argument("--out")
     m.add_argument("--write-evidence", action="store_true")
+    m.add_argument("--scope", choices=["historical", "forward"], default="historical")
+    m.add_argument("--ratchet-strict", action="store_true")
+    m.add_argument("--dag-json")
     s = sub.add_parser("scan")
     s.add_argument("--base", default="origin/HEAD")
     s.add_argument("--repo", default=".")
@@ -474,16 +602,19 @@ def main(argv=None) -> int:
         return 0
     if a.cmd == "mine":
         rows = [json.loads(line) for p in a.comments for line in Path(p).read_text(encoding="utf-8").splitlines() if line.strip()]
-        rep = mine(cat, rows, a.min_prs)
+        rep = mine(cat, rows, a.min_prs, scope=a.scope)
+        if a.dag_json:
+            Path(a.dag_json).write_text(json.dumps(qualification_dag(rep), indent=2) + "\n", encoding="utf-8", newline="\n")
         if a.out:
             Path(a.out).write_text(json.dumps(rep, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
         if a.write_evidence:
             write_evidence(CATALOG, rep, source=f"{rep['comments']} top-level review comments")
-        print(f"rex: {rep['covered']}/{rep['comments']} review comments covered ({rep['coverage']:.1%}); "
-              f"{len(rep['candidates'])} uncatalogued finding(s) on >= {a.min_prs} PRs")
+        pct = f"{rep['coverage']:.1%}" if rep["coverage"] is not None else "UNKNOWN"
+        print(f"rex: {rep['covered']}/{rep['comments']} unique comment matches ({pct}); "
+              f"{len(rep['candidates'])} candidates; ratchet={rep['ratchet']['status']}")
         for c in rep["candidates"][:10]:
             print(f"  {c['prs']:3d} PRs {c['comments']:4d}x  {c['title'][:110]}")
-        return 0
+        return 2 if a.ratchet_strict and rep["ratchet"]["status"] != "PASS" else 0
     root = Path(git("rev-parse", "--show-toplevel", cwd=Path(a.repo)).strip())
     if a.cmd == "install-hook":
         print(f"rex: advisory pre-push hook written to {install_hook(root, a.force)}")

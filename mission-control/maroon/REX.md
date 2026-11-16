@@ -96,3 +96,35 @@ The REX-016 JADE prescription now calls the owner `regen.py --write` and require
 CI/CD DAG JSON, crosswalk CSV and Mermaid output classes rather than arbitrary JADE files.
 Use `regen.py --check` for full source-bound generator parity. This patch does not confer
 review approval, rule precision or coverage-ratchet admission.
+
+## MAROON REX v2 — unique historical coverage and canonical JADE DAG
+
+Baseline remains 2,253 / 7,969 uniquely matched review comments (28.27%),
+with all 21 existing REX identifiers retained. Milestones are cumulative:
+3,188 / 40% (+935), 3,985 / 50% (+1,732) and 4,384 / 55% (+2,131).
+These are TARGETS, not achieved coverage improvements.
+
+Run: python mission-control/maroon/rex.py mine --scope historical --comments PRIVATE/review_comments.jsonl --out PRIVATE/rex_historical.json --dag-json PRIVATE/rex_kahn.json --ratchet-strict
+Run: python mission-control/maroon/rex.py mine --scope forward --comments PRIVATE/incoming.jsonl --out PRIVATE/rex_forward.json
+
+Historical ratchet checks frozen comment IDs and body digests, cohort SHA256,
+denominator, unique coverage regression and independently reviewed precision
+and negative-fixture receipts. Current catalog deliberately has NULL cohort
+and precision SHA: the ratchet must HOLD. Duplicate IDs and denominator drift
+fail. Overlapping rule matches cannot inflate unique-comment coverage.
+
+Candidates carry HINTS finding fingerprints, distinct PR count, immutable
+comment IDs, source SHA hints, detector and negative fixture placeholders,
+owner path and OBSERVED status. A repeated finding across three distinct
+PRs triggers DMAIC review, never automatic CONTROL or approval. New REX
+entries must be source pinned and negative tested. Source commit references
+are NOT authenticated exact PR-head proofs.
+
+Qualification DAG is emitted with JADE lifecycle.py::topo_layers, using
+HOLD / PROVE / MERGED / NOT_ADMITTED / ACCEPTED_CONTROL semantics. It is
+not a reconstruction of the frozen 16 historical edges. Acceptance remains
+HOLD until independent review, owner gate, source receipts and recurrence.
+
+Native MAROON workflow pins Ruff 0.17.0 and rejects skipped tests on
+Python 3.11 / 3.12. Previous successful test runs had two Ruff skips.
+PREPUSH_HINT_NOT_REVIEW_PROOF, FPC policy and Hub #336 stay binding.

@@ -67,7 +67,7 @@ class Mine(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d) / "c.json"
             shutil.copy(R.CATALOG, p)
-            R.write_evidence(p, {"entries": {"REX-001": {"comments": 9, "prs": 4}}, "comments": 10, "coverage": 0.9}, "t")
+            R.write_evidence(p, {"scope": "historical", "ratchet": {"status": "PASS"}, "entries": {"REX-001": {"comments": 9, "prs": 4}}, "comments": 10, "coverage": 0.9}, "t")
             back = R.load_catalog(p)
             self.assertEqual(back["entries"][0]["evidence"], {"comments": 9, "prs": 4})
             self.assertEqual(back["entries"][1]["evidence"], {"comments": 0, "prs": 0})
@@ -258,6 +258,87 @@ class SnapshotCollision(unittest.TestCase):
         result = R.scan_snapshots(CAT, self.root, "origin/main")
         self.assertTrue(any(f["rex_id"] == "REX-001" and f["snapshot"] == "worktree"
                             for f in result["findings"]))
+
+
+
+class RatchetV2(unittest.TestCase):
+    def test_duplicate_immutable_id_rejected(self):
+        row = {"id": 17, "repo": "x", "pr": 2, "body": "Unpinned tag for a non-immutable Action"}
+        with self.assertRaisesRegex(ValueError, "duplicate immutable"):
+            R.mine(CAT, [row, dict(row)])
+
+    def test_id_scoped_per_repository(self):
+        rows = [{"id": 17, "repo": name, "pr": 2,
+                 "body": "Unpinned tag for a non-immutable Action"} for name in ("x", "y")]
+        self.assertEqual(R.mine(CAT, rows, scope="forward")["identity"]["unique_ids"], 2)
+
+    def test_overlap_never_double_counts_comment(self):
+        row = {"id": 17, "repo": "x", "pr": 2, "body": "Unpinned tag for a non-immutable Action"}
+        expanded = json.loads(json.dumps(CAT))
+        expanded["entries"][1]["review_match"].append("Unpinned tag for a non-immutable Action")
+        rep = R.mine(expanded, [row], scope="forward")
+        self.assertEqual(rep["covered"], 1)
+        self.assertEqual(rep["overlaps"]["comments"], 1)
+
+    def test_frozen_denominator_change_is_failure(self):
+        row = {"id": 17, "repo": "x", "pr": 2, "body": "Unpinned tag for a non-immutable Action"}
+        rep = R.mine(CAT, [row])
+        self.assertEqual(rep["ratchet"]["status"], "FAIL")
+        self.assertIn("frozen_denominator_changed", rep["ratchet"]["reasons"])
+
+    def test_frozen_size_without_source_digest_stays_hold(self):
+        rows = [{"id": i, "repo": "x", "pr": 1, "body": "Unpinned tag for a non-immutable Action"}
+                for i in range(7969)]
+        rep = R.mine(CAT, rows)
+        self.assertEqual(rep["ratchet"]["status"], "HOLD")
+        self.assertIn("frozen_cohort_sha256_missing", rep["ratchet"]["reasons"])
+
+    def test_candidate_queue_is_deterministic_and_observed(self):
+        rows = [{"id": i, "repo": "x", "pr": i, "source_sha": "a" * 40,
+                 "body": "Brand new audit fingerprint without known fix"} for i in (1, 2, 3)]
+        left = R.mine(CAT, rows, scope="forward")["candidates"]
+        right = R.mine(CAT, list(reversed(rows)), scope="forward")["candidates"]
+        self.assertEqual(left, right)
+        self.assertEqual(left[0]["comment_ids"], ["x#1", "x#2", "x#3"])
+        self.assertEqual(left[0]["status"], "OBSERVED")
+        self.assertFalse(left[0]["detector_available"])
+
+    def test_unqualified_new_rule_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "catalog.json"
+            new = json.loads(json.dumps(CAT))
+            new["entries"].append({"rex_id": "REX-022", "review_match": ["warning"],
+                                   "detector": {"kind": "regex", "pattern": "warning"},
+                                   "known_fix": "fix", "mode": "fix"})
+            path.write_text(json.dumps(new), encoding="utf-8", newline="\n")
+            with self.assertRaisesRegex(SystemExit, "unqualified new rule"):
+                R.load_catalog(path)
+
+    def test_unqualified_evidence_write_refused(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "catalog.json"
+            shutil.copy(R.CATALOG, path)
+            before = path.read_bytes()
+            with self.assertRaisesRegex(SystemExit, "ratchet PASS"):
+                R.write_evidence(path, {"scope": "historical", "ratchet": {"status": "HOLD"}}, "bad")
+            self.assertEqual(path.read_bytes(), before)
+
+    def test_kahn_reuses_canonical_owner_and_preserves_hold(self):
+        dag = R.qualification_dag(R.mine(CAT, [], scope="forward"))
+        self.assertIn("topo_layers", dag["scheduler_owner"])
+        self.assertEqual(dag["layers"][0], ["INTAKE"])
+        self.assertEqual(dag["layers"][-1], ["ACCEPTED_CONTROL"])
+        self.assertEqual(dag["status"]["ACCEPTED_CONTROL"], "HOLD")
+        self.assertEqual(dag["admission"], "NOT_ADMITTED")
+
+    def test_action_detector_positive_negative_fixtures(self):
+        e = CAT["entries"][0]
+        path = ".github/workflows/ci.yml"
+        pos = {path: {1: "      - uses: actions/checkout@v4"}}
+        neg = {path: {1: "      - uses: actions/checkout@" + "a" * 40}}
+        self.assertEqual(len(list(R.det_regex(e, pos, Path(".")))), 1)
+        self.assertEqual(list(R.det_regex(e, neg, Path("."))), [])
+
 
 
 if __name__ == "__main__":

@@ -7,6 +7,38 @@
     "comments": 7969,
     "coverage": 0.2827
   },
+  "coverage_policy": {
+    "schema": "code_maroon.rex_coverage_policy.v2",
+    "historical": {
+      "frozen_comments": 7969,
+      "baseline_covered": 2253,
+      "baseline_coverage": 0.2827,
+      "cohort_sha256": null,
+      "independent_precision_receipt_sha256": null,
+      "milestones": [
+        {
+          "name": "A",
+          "target": 3188,
+          "coverage": 0.4
+        },
+        {
+          "name": "B",
+          "target": 3985,
+          "coverage": 0.5
+        },
+        {
+          "name": "STRETCH",
+          "target": 4384,
+          "coverage": 0.55
+        }
+      ]
+    },
+    "forward": {
+      "separate_denominator": true,
+      "require_independent_precision_labels": true
+    },
+    "authority": "NOT_ADMISSION_UNTIL_FROZEN_SOURCE_AND_PRECISION_RECEIPTS"
+  },
   "entries": [
     {
       "rex_id": "REX-001",
