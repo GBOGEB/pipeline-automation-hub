@@ -47,6 +47,36 @@ class SourceAndDagContracts(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"OUTPUT_PATH_OVERLAPS_SOURCE"):
                 m.run(ROOT,"a"*40,ROOT/"bad",pulses=1)
 
+    def test_pin_refuses_dirty_tracked_bytes_at_matching_head(self):
+        head = "a" * 40
+        completed = lambda stdout="", returncode=0: subprocess.CompletedProcess(
+            args=["git"], returncode=returncode, stdout=stdout, stderr=""
+        )
+        for dirty in (" M mission-control/federation-atlas/orchestration/main.py\\n",
+                      "M  mission-control/gogreen/outcome_convergence/outcome_flight.py\\n",
+                      "D  mission-control/federation-atlas/orchestration/broker.py\\n"):
+            with self.subTest(dirty=dirty), mock.patch.object(
+                m.subprocess, "run", side_effect=[completed(head+"\\n"), completed(dirty)]
+            ):
+                with self.assertRaisesRegex(ValueError, "TRACKED_SOURCE_WORKTREE_DIRTY"):
+                    m.pin(ROOT, head)
+
+    def test_pin_clean_tracked_checkout_and_git_error(self):
+        head = "b" * 40
+        completed = lambda stdout="", returncode=0: subprocess.CompletedProcess(
+            args=["git"], returncode=returncode, stdout=stdout, stderr=""
+        )
+        with mock.patch.object(m.subprocess, "run", side_effect=[
+            completed(head+"\\n"), completed("")
+        ]) as git:
+            self.assertEqual(m.pin(ROOT, head), head)
+            self.assertIn("--untracked-files=no", git.call_args_list[1].args[0])
+        with mock.patch.object(m.subprocess, "run", side_effect=[
+            completed(head+"\\n"), completed("", returncode=1)
+        ]):
+            with self.assertRaisesRegex(ValueError, "TRACKED_SOURCE_WORKTREE_DIRTY"):
+                m.pin(ROOT, head)
+
     def test_all_variants_have_same_source_populations(self):
         found=m.input_variants(ROOT)
         self.assertEqual(set(found),{"baseline","counterfactual","invalid_census","invalid_clock"})
