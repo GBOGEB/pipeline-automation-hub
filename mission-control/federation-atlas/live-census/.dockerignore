@@ -1,0 +1,6 @@
+# Build context is this folder (compose.yaml: `build: .`). The Dockerfile only
+# COPYs source/serve.py and view/; output/ is bind-mounted read-only at run
+# time. Allowlist those so data, tests, docs and snapshots stay out of context.
+*
+!source/serve.py
+!view/

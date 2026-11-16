@@ -30,8 +30,11 @@ EVERRED and the P-process metrics were built twice (#781 and the JADE DAG #787) 
 - Before writing a metric, page, gate or tool, check master and open PRs:
   `python scripts/preflight_overlap.py <term> [<term> ...] [--path <dir-or-file>]`
   (for example `python scripts/preflight_overlap.py everred p_decide rolling5 --path mission-control/gogreen`).
-  It lists matching open PRs (title, branch, changed files) and matching files and `def`/`class`
-  names on `origin/master`, then prints an "Already owned by" summary.
+  It lists matching open PRs (title, branch, changed files, and the added lines of each PR's diff,
+  so a function that exists only inside an open PR is reported as "defined in open PR #n at
+  path:line") and matching files and `def`/`class` names on `origin/master`, then prints an
+  "Already owned by" summary. The diff scan covers at most `--diff-limit` PRs (default 50), each cut
+  at `--diff-max-chars`; `--no-diff` skips it (2026-11-12: it had missed `transitive_reduction` in #1209).
 - If something already owns it, import its function (see [Metric ownership](#metric-ownership)) or
   extend its PR. Do not copy the code into a second module. `cicd_dag.scale_docks()` is the pattern:
   it loads `scale_dock.py` with `importlib` and calls its dockers instead of re-implementing them.

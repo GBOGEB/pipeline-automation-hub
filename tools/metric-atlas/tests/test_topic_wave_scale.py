@@ -98,6 +98,39 @@ class ScaleTests(unittest.TestCase):
                 {key:value for key,value in duplicate.items() if key!='packet_sha256'})
         self.bad(overlap,'OVERLAPPING_SOURCE_SCOPE')
 
+    @staticmethod
+    def resign(row,head):
+        p=row['packet']
+        keep={k:p[k] for k in ('topic','producer_repo','scope_sha256','source_sha256','receipt_sha256',
+              'recipients','sequence','observed_at','expires_at','prior_packet_sha256','evidence_class')}
+        row['packet']=m.topic_wave.exchange.create_packet(producer_head=head,**keep)
+        row['current_head']=head
+
+    def test_seed_pins_one_head_per_producer_across_waves(self):
+        heads={}
+        for w in self.p['waves']:
+            for row in w['packets']:
+                heads.setdefault(row['packet']['producer_repo'],set()).add(row['packet']['producer_head'])
+        self.assertEqual({k:len(v) for k,v in heads.items()},{k:1 for k in heads})
+        self.assertEqual(m.plan(self.p)['wave_count'],2)
+
+    def test_same_repo_at_two_heads_across_waves_rejected(self):
+        # The pre-#1063 seed: PAH at 824b44c in wave 1 and a067818 in wave 2.
+        # Each wave stays valid on its own; only the cross-wave check sees the mix.
+        def mixed(doc):
+            row=doc['waves'][0]['packets'][1]
+            self.assertEqual(row['packet']['producer_repo'],'GBOGEB/pipeline-automation-hub')
+            self.resign(row,'824b44c83fff76017bb5fe0ac384936f8eedee30')
+        self.bad(mixed,'MIXED_PRODUCER_HEAD_ACROSS_WAVES')
+
+    def test_whole_repo_retaken_at_one_new_head_accepted(self):
+        doc=copy.deepcopy(self.p)
+        for w in doc['waves']:
+            for row in w['packets']:
+                if row['packet']['producer_repo']=='GBOGEB/pipeline-automation-hub':
+                    self.resign(row,'e'*40)
+        self.assertEqual(m.plan(doc)['planned_topic_count'],6)
+
     def test_common_method_version_retained(self):
         self.assertEqual(m.plan(self.p)['method_version'],self.p['waves'][0]['method_version'])
 
