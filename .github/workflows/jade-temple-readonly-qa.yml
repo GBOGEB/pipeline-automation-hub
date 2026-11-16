@@ -139,11 +139,9 @@ jobs:
           python mission-control/jade_temple/tools/run_nplus1_browser_qa.py
           python mission-control/jade_temple/tools/run_nplus2_browser_qa.py
           python mission-control/jade_temple/tools/run_eight_browser_qa.py
-          python mission-control/jade_temple/tools/run_gate12_browser_qa.py
           test -s mission-control/jade_temple/qa/nplus1/receipt.json
           test -s mission-control/jade_temple/qa/nplus2/receipt.json
           test -s mission-control/jade_temple/qa/nplus3/receipt.json
-          test -s mission-control/jade_temple/qa/gate12/receipt.json
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
@@ -155,7 +153,5 @@ jobs:
             mission-control/jade_temple/qa/nplus2/*.png
             mission-control/jade_temple/qa/nplus3/receipt.json
             mission-control/jade_temple/qa/nplus3/*.png
-            mission-control/jade_temple/qa/gate12/receipt.json
-            mission-control/jade_temple/qa/gate12/*.png
           retention-days: 21
           if-no-files-found: warn

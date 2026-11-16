@@ -56,8 +56,9 @@ Gate12 browser QA serves exact source bytes on ephemeral loopback HTTP, retainin
 production CSP. It tests latest/baseline/repeated switching, matrix drilldown,
 queue filters, missing/unsafe/inconsistent initialization and hostile reason text
 at 1440×1000, 1280×800 and 390×844. The receipt hashes the tested HTML/CSS/UI/data
-bytes. The existing native JADE browser job now runs this exact tool and uploads
-its receipts/screenshots. No new publisher or scheduled job is introduced.
+bytes. The existing dedicated Gate12 preview job runs this exact tool and uploads
+its receipts/screenshots and latest queue; the broader JADE source job checks
+generated-data parity. No new publisher or scheduled job is introduced.
 
 The launcher reads committed inputs: after committing upstream generated changes,
 run `regen.py --write` again and commit its dependent launcher outputs. Verify

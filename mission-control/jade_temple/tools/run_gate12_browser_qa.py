@@ -129,7 +129,10 @@ def positive_viewport(browser, width: int, height: int, out: Path, model: dict, 
         require(not dims["brokenImages"], "broken images")
         clean_events(events)
         page.evaluate("window.scrollTo({top: 0, behavior: 'instant'})")
-        page.wait_for_function("window.scrollY === 0")
+        # Older Playwright implements string predicates through page eval,
+        # which correctly fails under script-src 'self'. Instant scroll is
+        # synchronous; inspect it directly without relaxing the production CSP.
+        require(page.evaluate("() => window.scrollY") == 0, "initial screenshot scroll position")
         photo = out / f"gate12_{width}x{height}.png"
         page.screenshot(path=str(photo), full_page=True)
         return {"viewport": [width, height], "source_queue": 252,
