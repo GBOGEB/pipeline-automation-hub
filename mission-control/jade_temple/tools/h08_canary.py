@@ -11,7 +11,9 @@ every receipt live with verify_receipt(), on the exact current configuration:
     actors, and the reading user can never bypass it;
   * the receipt's failing check is one of the required contexts, and its ruleset is still in force;
   * the canary PR targets the default branch, was never merged, still has the receipt's head SHA,
-    and that head's latest run of the failing check concluded failure;
+    and that head's latest run of the failing check concluded failure. When the ruleset pins the
+    context to an integration_id, only runs from that GitHub App count: a same-named run from
+    another app is not the required check (as in p-process/rulesets/verify_rulesets.py);
   * the receipt records HTTP 405 for that head with a response digest.
 
 Anything missing is UNKNOWN, never PASS. Private repositories are rejected: their PR numbers and
@@ -21,8 +23,8 @@ Producing a receipt attempts a real merge, so `attempt` checks every preconditio
 unless all hold, and requires --confirm-merge-attempt. It is an owner action (or explicitly
 owner-authorised); the pulse and `verify` only read.
 
-  python tools/h08_canary.py verify --repo GBOGEB/yaml-grammar
-  python tools/h08_canary.py attempt --repo GBOGEB/yaml-grammar --pr 9 \
+  python mission-control/jade_temple/tools/h08_canary.py verify --repo GBOGEB/yaml-grammar
+  python mission-control/jade_temple/tools/h08_canary.py attempt --repo GBOGEB/yaml-grammar --pr 9 \
       --check "Offline fixture integrity (211 productions) (3.12)" --confirm-merge-attempt
 """
 from __future__ import annotations
@@ -93,16 +95,20 @@ def load_receipts(root: Path = ROOT) -> dict[str, list[dict]]:
     return validate_receipts(json.loads(path.read_text(encoding="utf-8"))) if path.exists() else {}
 
 
-def effective_protection(repo: str, branch: str, lookup=gh) -> tuple[bool, str, set[int], set[str]]:
-    """(ok, detail, ruleset ids carrying the rules, required check contexts)."""
+def effective_protection(repo: str, branch: str, lookup=gh) -> tuple[bool, str, set[int], dict[str, set]]:
+    """(ok, detail, ruleset ids carrying the rules, required context -> integration ids pinning it;
+    None in the set means some rule accepts that context from any app)."""
     rules = lookup(f"repos/{repo}/rules/branches/{branch}")
     types = {r["type"] for r in rules}
     if "pull_request" not in types:
-        return False, "no pull request rule", set(), set()
+        return False, "no pull request rule", set(), {}
     if "required_status_checks" not in types:
-        return False, "no required status checks rule", set(), set()
-    contexts = {c["context"] for r in rules if r["type"] == "required_status_checks"
-                for c in (r.get("parameters") or {}).get("required_status_checks", [])}
+        return False, "no required status checks rule", set(), {}
+    contexts: dict[str, set] = {}
+    for r in rules:
+        if r["type"] == "required_status_checks":
+            for c in (r.get("parameters") or {}).get("required_status_checks", []):
+                contexts.setdefault(c["context"], set()).add(c.get("integration_id"))
     ids = {r["ruleset_id"] for r in rules if r["type"] in ("pull_request", "required_status_checks")
            and r.get("ruleset_id") is not None}
     if not ids:
@@ -119,9 +125,22 @@ def effective_protection(repo: str, branch: str, lookup=gh) -> tuple[bool, str, 
     return True, f"rulesets {sorted(ids)} active, no bypass; {len(contexts)} required checks", ids, contexts
 
 
-def latest_check(repo: str, sha: str, name: str, lookup=gh) -> dict | None:
+def pinned_apps(contexts: dict[str, set], check: str) -> set[int] | None:
+    """Integration ids a run of `check` must come from, or None when no rule pins it.
+
+    GitHub enforces every rule, so one rule's pin binds the context even if another rule lists the
+    same context unpinned."""
+    pinned = {i for i in contexts.get(check, set()) if i is not None}
+    return pinned or None
+
+
+def from_app(run: dict, apps: set[int] | None) -> bool:
+    return apps is None or (run.get("app") or {}).get("id") in apps
+
+
+def latest_check(repo: str, sha: str, name: str, lookup=gh, apps: set[int] | None = None) -> dict | None:
     runs = lookup(f"repos/{repo}/commits/{sha}/check-runs?per_page=100")["check_runs"]
-    done = [r for r in runs if r.get("name") == name and r.get("status") == "completed"]
+    done = [r for r in runs if r.get("name") == name and r.get("status") == "completed" and from_app(r, apps)]
     return max(done, key=lambda r: (r.get("completed_at") or "", r.get("id") or 0)) if done else None
 
 
@@ -135,12 +154,17 @@ def verify_receipt(repo: str, branch: str, receipt: dict, lookup=gh) -> tuple[st
         return "UNKNOWN", None, f"canary check {check!r} is not a required context now"
     if receipt["ruleset_id"] not in ids:
         return "UNKNOWN", None, f"receipt ruleset {receipt['ruleset_id']} is no longer in force"
+    apps = pinned_apps(contexts, check)
+    if receipt.get("integration_id") is not None:
+        if apps is not None and receipt["integration_id"] not in apps:
+            return "UNKNOWN", None, f"{check!r} is now pinned to integration {sorted(apps)}, not the receipt's"
+        apps = {receipt["integration_id"]} if apps is None else apps & {receipt["integration_id"]}
     pr = lookup(f"repos/{repo}/pulls/{pr_n}")
     if pr.get("merged_at") or pr.get("merged"):
         return "UNKNOWN", None, f"canary PR #{pr_n} was merged"
     if (pr.get("base") or {}).get("ref") != branch or (pr.get("head") or {}).get("sha") != receipt["head_sha"]:
         return "UNKNOWN", None, f"canary PR #{pr_n} base or head changed since the receipt"
-    run = latest_check(repo, receipt["head_sha"], check, lookup)
+    run = latest_check(repo, receipt["head_sha"], check, lookup, apps)
     if not run or run.get("conclusion") != "failure":
         return "UNKNOWN", None, f"latest {check!r} on the canary head is not a failure"
     return ("PASS", pr.get("html_url"),
@@ -174,10 +198,11 @@ def attempt(repo: str, pr_n: int, check: str, lookup=gh, merge=None) -> dict:
     head = pr["head"]["sha"]
     if pr.get("state") != "open" or pr["base"]["ref"] != branch or pr.get("draft"):
         raise SystemExit("REFUSED: canary PR must be open, ready for review (not draft) and target the default branch")
+    apps = pinned_apps(contexts, check)
     runs = lookup(f"repos/{repo}/commits/{head}/check-runs?per_page=100")["check_runs"]
-    if any(r.get("name") == check and r.get("status") != "completed" for r in runs):
+    if any(r.get("name") == check and r.get("status") != "completed" and from_app(r, apps) for r in runs):
         raise SystemExit(f"REFUSED: a run of {check!r} on {head[:12]} is still queued or in progress; wait for it")
-    run = latest_check(repo, head, check, lookup)
+    run = latest_check(repo, head, check, lookup, apps)
     if not run or run.get("conclusion") != "failure":
         raise SystemExit(f"REFUSED: latest {check!r} on {head[:12]} is not a completed failure")
     status, body = (merge or _merge)(repo, pr_n, head)
@@ -186,7 +211,8 @@ def attempt(repo: str, pr_n: int, check: str, lookup=gh, merge=None) -> dict:
     if not PROTECTION_405.search(_message(body)) or PENDING_405.search(_message(body)):
         raise SystemExit(f"NOT A CANARY: 405 was not a RED-check refusal ({_message(body)[:200]}); no receipt written")
     rule_id = min(ids)
-    return {"repo": repo, "pr_number": pr_n, "head_sha": head, "base_branch": branch, "failing_check": check,
+    pinned = {"integration_id": (run.get("app") or {}).get("id")} if apps is not None else {}
+    return {**pinned, "repo": repo, "pr_number": pr_n, "head_sha": head, "base_branch": branch, "failing_check": check,
             "failing_check_run": run.get("html_url"), "ruleset_id": rule_id, "proof_class": PROOF,
             "attempt": {"at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                         "http_status": status, "message": _message(body)[:300],
