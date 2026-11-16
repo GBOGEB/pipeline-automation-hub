@@ -1,0 +1,145 @@
+name: Method Atlas N3.3 source-bound main.py CLI execution expansion
+
+on:
+  pull_request:
+    branches: [master, feat/method-atlas-n3-warm-broker-20261113]
+    paths:
+      - 'mission-control/federation-atlas/orchestration/n33_main_expansion.py'
+      - 'mission-control/federation-atlas/orchestration/test_n33_main_expansion.py'
+      - 'mission-control/federation-atlas/orchestration/N33_EXECUTION_EXPANSION.md'
+      - '.github/workflows/method-atlas-n33-main-execution.yml'
+      - 'mission-control/federation-atlas/orchestration/main.py'
+      - 'mission-control/federation-atlas/orchestration/broker.py'
+      - 'mission-control/federation-atlas/orchestration/warm_broker_pilot.py'
+  push:
+    branches: [feat/method-atlas-n33-main-execution-20261116]
+    paths:
+      - 'mission-control/federation-atlas/orchestration/n33_main_expansion.py'
+      - 'mission-control/federation-atlas/orchestration/test_n33_main_expansion.py'
+      - '.github/workflows/method-atlas-n33-main-execution.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: method-atlas-n33-main-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  n33-execute-broker:
+    name: Real plan + build + full local 1/2/4 with branch identity proof
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout immutable N3.3 source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Verify exact source HEAD and unchanged main.py blob
+        shell: bash
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXACT_HEAD"
+          test "$(git hash-object mission-control/federation-atlas/orchestration/main.py)" = \
+            "41f04e8719981be6564cf6de33f365d83c7a2264"
+          test -z "$(git status --porcelain)"
+      - name: Pinned Python 3.12 and execution dependencies
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Install pinned instrument and producer dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check \
+            coverage==7.13.3 pyyaml==6.0.3 plotly==6.5.2
+      - name: Cheap AST and adversarial contract gate before heavy producers
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import ast
+          from pathlib import Path
+          base=Path("mission-control/federation-atlas/orchestration")
+          for name in ("n33_main_expansion.py","test_n33_main_expansion.py"):
+              ast.parse((base/name).read_text(encoding="utf-8"),filename=name)
+              print("N33_AST_PASS="+name)
+          PY
+          python -m unittest discover -s mission-control/federation-atlas/orchestration \
+            -p test_n33_main_expansion.py -v 2>&1 | tee "$RUNNER_TEMP/n33-tests.log"
+          python - <<'PY'
+          import os,re
+          from pathlib import Path
+          s=(Path(os.environ["RUNNER_TEMP"])/"n33-tests.log").read_text()
+          matches=[int(x) for x in re.findall(r'^Ran (\d+) tests? in ',s,re.M)]
+          if not matches or matches[-1]<9 or "FAILED" in s or "skipped=" in s:
+              raise SystemExit("N33_ZERO_OR_RED_TEST_POPULATION")
+          print("N33_ADVERSARIAL_TESTS="+str(matches[-1]))
+          PY
+      - name: Execute exact-source baseline + plan + build + bounded full pipeline
+        shell: bash
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/federation-atlas/orchestration/n33_main_expansion.py \
+            --root . --head "$EXACT_HEAD" --out "$RUNNER_TEMP/n33-expansion" \
+            2>&1 | tee "$RUNNER_TEMP/n33-driver.log"
+      - name: Independently read back per-cohort arc identity and all source hashes
+        shell: bash
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,os
+          from pathlib import Path
+          root=Path(os.environ['RUNNER_TEMP'])/'n33-expansion'
+          receipt=json.loads((root/'n33_receipt.json').read_bytes())
+          manifest=json.loads((root/'n33_manifest.json').read_bytes())
+          assert receipt['schema']=='method-atlas.n33.main-execution-coverage.v1'
+          assert receipt['source']['head']==os.environ['EXACT_HEAD']
+          assert receipt['coverage']['baseline_covered_arcs']==27
+          assert receipt['coverage']['eligible_branch_arcs']==276
+          assert receipt['coverage']['previously_covered_preserved']==27
+          assert receipt['coverage']['newly_reached']>0
+          assert not receipt['coverage']['regression_arcs']
+          assert len(receipt['observed']['negative_controls'])==6
+          assert set(receipt['observed']['runtime_modes'])=={'run1','run2','run4'}
+          for name,expected in manifest['files_sha256'].items():
+              path=root/name
+              assert hashlib.sha256(path.read_bytes()).hexdigest()==expected, name
+          for k,detail in receipt['observed']['runtime_modes'].items():
+              assert detail['verified_children']==7 and detail['broker_tasks']==8
+              assert detail['max_running']<=detail['workers']<=4
+              assert detail['remote_dispatch'] is False
+          assert receipt['governance']['whole_repo_coverage'] is None
+          assert receipt['governance']['fleet_capacity_proven'] is False
+          assert receipt['governance']['merge_authorized'] is False
+          print("N33_PROVEN_BRANCH_ARCS="+str(receipt['coverage']['union_covered']))
+          print("N33_NEWLY_EXECUTED_ARCS="+str(receipt['coverage']['newly_reached']))
+          print("N33_TARGET_60_ARCS="+str(receipt['coverage']['target_reached']))
+          PY
+          test -z "$(git status --porcelain)"
+      - name: Save source-bound receipts; no remote launch or auto publication
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: n33-main-execution-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/n33-tests.log
+            ${{ runner.temp }}/n33-driver.log
+            ${{ runner.temp }}/n33-expansion/n33_receipt.json
+            ${{ runner.temp }}/n33-expansion/n33_manifest.json
+            ${{ runner.temp }}/n33-expansion/coverage/
+            ${{ runner.temp }}/n33-expansion/receipts/
+            ${{ runner.temp }}/n33-expansion/logs/
+          retention-days: 21
+          if-no-files-found: warn
