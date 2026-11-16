@@ -7,7 +7,8 @@ each open observation, so N repeats of one defect are diagnosed once and past fi
 
 - **Finding identity** across PRs, branches and pulses: a scanner rule id where the title has one
   (`yaml.github-actions...mutable-action-tag`, `B602`, `CWE-79`), otherwise repository, theme and the
-  significant words of the first line. Near-duplicates merge; two rules never do.
+  significant words of the first line (the whole normalized line when it has none, e.g. only code).
+  Near-duplicates merge; two rules never do.
 - **Recurrence** per finding: `ONCE`, `REPEAT`, `RECURRING` (2 PRs), `SYSTEMIC` (3+ PRs), with sightings,
   frequency per pulse, reopens, first and last seen, modal path and reviewer.
 - **Tags** from PR branch, title and thread: `METHOD`, `REX`, `SCALING_PROOF`, `SCALING_PILOT`, `SCALING`,
@@ -63,7 +64,7 @@ GENERATED_RE = re.compile(r"(^|/)(site|outputs?|generated|dist|build)/|(^|/)data
                           r"(package-lock\.json|poetry\.lock|uv\.lock|\.lock)$|_GENERATED|(^|/)snapshot\.json$")
 # Paths whose git OIDs JADE outputs pin (scale_dock.py, p-process files, the census): a change needs the
 # JADE DAG generator re-run in the same push.
-PINNED_OID_RE = re.compile(r"^mission-control/gogreen/scale_dock\.py$|(^|/)p-process[^/]*$|"
+PINNED_OID_RE = re.compile(r"^mission-control/gogreen/scale_dock\.py$|(^|/)p-process(/|[^/]*$)|"
                            r"^mission-control/.*census.*\.(json|csv|ya?ml)$", re.IGNORECASE)
 BOT_BRANCH_RE = re.compile(r"^(dependabot|renovate|pre-commit-ci|copilot/)", re.IGNORECASE)
 TAGS = [
@@ -101,7 +102,10 @@ def rule_of(title: str) -> str | None:
 def finding_key(repo: str, title: str) -> str:
     rule = rule_of(title)
     theme = RT.theme_of(title or "")
-    ident = f"rule:{rule}" if rule else f"{theme}|{' '.join(sorted(words(title)))}"
+    sig = words(title)
+    # a title that is only code has no significant words: fall back to the whole normalized line
+    ident = (f"rule:{rule}" if rule else f"{theme}|{' '.join(sorted(sig))}" if sig
+             else f"{theme}|title:{' '.join((title or '').lower().split())}")
     return "f-" + hashlib.sha256(f"{repo}|{ident}".encode()).hexdigest()[:16]
 
 
@@ -197,13 +201,16 @@ def load_ledger(path: Path) -> dict:
 
 
 def history_rows(review_raw: dict | None) -> list[dict]:
-    """Closed-PR threads from `review_threads.py fetch` as ledger-shaped rows: history only, never work."""
+    """Closed-PR threads from `review_threads.py fetch` as ledger-shaped rows: history only, never work.
+
+    A resolved thread on a merged PR carries no disposition (fixed, false positive, duplicate, obsolete),
+    so it is `resolved_unknown`, never `closed`: it must not read as a known fix (SEEN_FIXED)."""
     rows = []
     for repo, entry in (review_raw or {}).get("repos", {}).items():
         for t in entry.get("alerts", []):
             rows.append({"id": f"hist-{repo}#{t['pr']}/{t['number']}", "repo": repo, "pr": t["pr"],
                          "title": t.get("title"), "path": t.get("path"), "reviewer": t.get("reviewer"),
-                         "semantic_state": "closed" if t.get("state") == "resolved" and t.get("pr_merged") else "history",
+                         "semantic_state": "resolved_unknown" if t.get("state") == "resolved" and t.get("pr_merged") else "history",
                          "history": True, "first_seen": t.get("closed_at"), "last_seen": t.get("closed_at"),
                          "sighting_count": 1, "reopen_count": 0, "closure_receipts": []})
     return rows
