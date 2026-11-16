@@ -1,0 +1,56 @@
+schema: lsaf/recurrence-ledger/v0.1
+cohort_id: C-20261110-12-48H
+
+fingerprints:
+  - id: GATE.EXACT_HEAD.INDEPENDENT_REVIEW
+    maturity: RECURRING
+    epics: [EPIC-admission-governance]
+    repos: [GBOGEB/pipeline-automation-hub, GBOGEB/ABACUS, GBOGEB/CODEX, GBOGEB/DOCX_RTM_Automation, GBOGEB/GEMINI]
+    semantic_signature:
+      - exact-head qualification
+      - independent review
+      - post-change requalification
+    next_method_state: METHOD_PROPOSED
+
+  - id: QUEUE.BACKPRESSURE.N6
+    maturity: RECURRING
+    epics: [EPIC-admission-governance, EPIC-agentic-automation]
+    repos: [GBOGEB/pipeline-automation-hub, GBOGEB/ABACUS, GBOGEB/CODEX]
+    semantic_signature:
+      - queued-run census
+      - fanout threshold
+      - sole notification owner
+    next_method_state: METHOD_VALIDATED
+
+  - id: CLOSURE.DOV_DOD.ISSUE_PR
+    maturity: RECURRING
+    epics: [EPIC-closure-engine]
+    repos: [GBOGEB/pipeline-automation-hub, GBOGEB/GEMINI, GBOGEB/DOCX_RTM_Automation, GBOGEB/ABACUS]
+    semantic_signature:
+      - issue checklist
+      - DOV/DOD predicates
+      - linked PR evidence
+      - closure hold until proof
+    next_method_state: METHOD_PROPOSED
+
+  - id: AUTOMATION.CENSUS_TO_ACTION
+    maturity: PILOT
+    epics: [EPIC-agentic-automation, EPIC-session-continuity]
+    repos: [GBOGEB/pipeline-automation-hub]
+    semantic_signature:
+      - session/open-PR census
+      - semantic grouping
+      - Kahn ready queue
+      - disjoint worker dispatch
+    next_method_state: SCALING_PROOF
+
+  - id: COVERAGE.ZERO_TO_SCALE
+    maturity: RECURRING
+    epics: [EPIC-coverage-reliability]
+    repos: [GBOGEB/pipeline-automation-hub, GBOGEB/ABACUS, GBOGEB/CODEX, GBOGEB/gg_MATH]
+    semantic_signature:
+      - zero coverage
+      - branch/peer coverage
+      - negative test
+      - stress/capacity scaling
+    next_method_state: METHOD_PROPOSED
