@@ -1,0 +1,42 @@
+schema: lsaf/fragment/v0.1
+fragment_id: F-20261111-2128-001
+session_id: S-20261111-2128
+
+semantic:
+  topic: agentic-pr-closure
+  epic: EPIC-agentic-automation
+  class: architecture
+  fingerprint: null
+
+allocation:
+  primary_repo: GBOGEB/pipeline-automation-hub
+  secondary_repos:
+    - GBOGEB/ABACUS
+    - GBOGEB/CODEX
+    - GBOGEB/GEMINI
+  logical_worktree: "VSW:S-20261111-2128"
+  physical_worktree: null
+
+state:
+  lifecycle: SEMANTICALLY_BOUND
+  disposition: BOUND
+  next_predicate: HISTORICAL_REPLAY
+
+authority:
+  canonical_owner: GBOGEB/pipeline-automation-hub
+  authority_transfer: false
+
+dependencies:
+  requires:
+    - SESSION_CENSUS
+  provides:
+    - MULTI_SESSION_RECOVERY
+
+evidence:
+  commits: []
+  prs: []
+  workflow_runs: []
+
+forecast:
+  predicted_next_state: DEPENDENCY_ORDERED
+  confidence: 0.65

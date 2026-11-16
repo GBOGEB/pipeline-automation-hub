@@ -124,6 +124,41 @@ For each PR, the script merges `origin/<base>` into the PR head in one reused sc
 
 The script exits 1 if any PR ends FAIL or STALE. A JSON report is written to `-ReportPath`.
 
+# Checkout-free PR restack
+
+`Restack-Pr.ps1` rebases PR branches without a checkout or worktree, so it needs almost no disk. It restacked hub #930, CODEX#1211 and CODEX#1214 with 0.9 GB free on C: (issue #946, 2026-10-27). It needs git 2.40 or later and refuses to start on older git.
+
+For each PR it fetches the head and the base into `refs/restack/<n>/{head,onto}` and refuses if the head moved since `gh` read it. It then replays each non-merge commit with `git merge-tree --write-tree` and `git commit-tree`, keeping the author. A commit whose change is already upstream is skipped, as `git rebase` does.
+
+```powershell
+Remove-Item Env:GITHUB_TOKEN, Env:GH_TOKEN -ErrorAction SilentlyContinue
+# Dry run (the default): prints the replay plan, writes only refs/restack/<n>/rebased, pushes nothing
+pwsh -NoProfile -File tools\workstation\Restack-Pr.ps1 -Clone C:\repos\pah_tools -Repo GBOGEB/pipeline-automation-hub -Pr 930
+# Drop regen/autoregen commits (rerun the generator afterwards), or cut a squash-merged parent's commits
+pwsh -NoProfile -File tools\workstation\Restack-Pr.ps1 -Clone <clone> -Repo <owner/repo> -Pr 930 -Drop 'regen'
+pwsh -NoProfile -File tools\workstation\Restack-Pr.ps1 -Clone <clone> -Repo <owner/repo> -Pr 2094 -Upstream <old parent head SHA>
+# Push, only after reading the dry run
+pwsh -NoProfile -File tools\workstation\Restack-Pr.ps1 -Clone <clone> -Repo <owner/repo> -Pr 930 -Apply
+```
+
+The dry run prints one `plan:` line per PR, then `pick`, `drop` or `skip` for each commit, and ends with `CLEAN` or `CONFLICT at <commit>` plus the conflicted files. It never changes `refs/heads/*` or the remote. `-Apply` pushes the result with `--force-with-lease=<branch>:<head SHA GitHub reported>`, so a concurrent push is never overwritten. Fork PRs and closed PRs are skipped. Clean up afterwards with `git -C <clone> for-each-ref --format='%(refname)' refs/restack | % { git -C <clone> update-ref -d $_ }`.
+
+`test_restack_pr.py` runs the dry run against a throwaway repo with a fake `gh` (plan output, `refs/heads` untouched, head-moved refusal, conflict report). It never passes `-Apply`.
+
+## Which restack tool
+
+Pick by the shape of the branch and of the conflict, not by habit. Check first that no other session is live on the branch (`Invoke-DraftPrPass.ps1` shows `LIVE`).
+
+| Case | Tool | Why |
+| --- | --- | --- |
+| Conflicts only in generated, SHA-pinned outputs (launcher, JADE site, `CHAIN` in `regen.py`) | `Resolve-RegenConflicts.ps1` | The right content is what the generators produce from the merged sources. Merging keeps history; nothing is rewritten. |
+| Linear PR branch, behind or conflicting with its base; regen commits to drop; parent PR squash-merged; little disk | `Restack-Pr.ps1` (in-memory rebase) | No checkout. `-Drop` removes regen commits (rerun the generator after), `-Upstream` cuts the squash-merged parent. The dry run tells you whether it is clean before anything is pushed. Required linear history on the base also favours a rebase. |
+| Stack built from merge commits, or a branch other people have pulled | Merge the base (or the parent PR) into each branch, bottom-up, by hand | A rebase would flatten the stack and rewrite shared history. Each push is a fast-forward with a lease. Resolve hunk by hunk ([PR_CONFLICT_RUNBOOK.md](PR_CONFLICT_RUNBOOK.md), section 2). |
+| A whole ABACUS stack to rebuild in one go | ABACUS `tools/stack/` (`Rebase-Stack.ps1`, `Fix-AllStacks.ps1`, `Stack-Helper.ps1`; see its `README.md`) | Rebuilds the stack with an auto-resolve rule (keep both sides for prose, newer side otherwise). Never trust the newer-side rule on code or workflow files: `-Push` refuses auto-resolved files unless you pass `-AcceptAuto`, so read them first. |
+| GitHub-native stack (`gh stack`) | `gh stack sync` | See [PR_CONFLICT_RUNBOOK.md](PR_CONFLICT_RUNBOOK.md), section 3. |
+
+When `Restack-Pr.ps1` reports `CONFLICT` in a source file, fall back to the merge row. When the conflicted files are all generated, use `Resolve-RegenConflicts.ps1` instead.
+
 # Branch hygiene across repos
 
 `Invoke-BranchHygiene.ps1` removes merged branches from every non-archived repo of an owner (default `GBOGEB`) and from the matching local clones. It deletes only what can be restored. It is a dry run unless you pass `-Execute`.

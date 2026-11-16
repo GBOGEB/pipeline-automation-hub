@@ -34,6 +34,7 @@ _pb = importlib.util.spec_from_file_location("jade_private_boundary", ROOT / "to
 PB = importlib.util.module_from_spec(_pb)
 _pb.loader.exec_module(PB)
 POLICY = "data/CICD_DAG_POLICY.json"
+JT_PREFIX = ROOT.relative_to(ROOT.parents[1]).as_posix() + "/"  # mission-control/jade_temple/
 OUT_JSON = "site/cicd_dag.json"
 OUT_CSV = "site/cicd_dag_crosswalk.csv"
 MMD = "diagrams/CICD_DAG_{scope}_{lens}.mmd"
@@ -133,6 +134,13 @@ def load_census(root: Path, policy: dict) -> dict | None:
             f"then run: {REGEN_CMD}")
     if objects.get("census_digest_sha256") != cfg["digest_sha256"]:
         raise ValueError("devops objects are not bound to the pinned census")
+    # The CENSUS producer binds OIDs from the object registry, not from this pin: both must name the same pulse.
+    registry = {o["id"]: o.get("path") for o in policy.get("objects", [])}
+    for obj_id, rel in (("OBJ.DEVOPS_CENSUS", cfg["census"]), ("OBJ.DEVOPS_OBJECTS", cfg["objects"])):
+        want = f"{JT_PREFIX}{rel}"
+        if obj_id in registry and registry[obj_id] != want:
+            raise ValueError(f"{obj_id} binds {registry[obj_id]} but devops_census pins {want}; "
+                             f"re-pin both in {POLICY}, then run: {REGEN_CMD}")
     auth = census.get("authority", {})
     if auth.get("authority_transfer") is not False or auth.get("merge_admission") != "HOLD":
         raise ValueError("devops census claims authority")

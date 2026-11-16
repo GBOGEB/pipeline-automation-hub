@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gbo.example/lsaf/epic.schema.json",
+  "title": "LSAF Epic",
+  "type": "object",
+  "required": ["schema", "epic_id", "title", "authority", "topics", "repositories"],
+  "properties": {
+    "schema": {"const": "lsaf/epic/v0.1"},
+    "epic_id": {"type": "string"},
+    "title": {"type": "string"},
+    "authority": {
+      "type": "object",
+      "required": ["canonical_owner", "authority_transfer"],
+      "properties": {
+        "canonical_owner": {"type": ["string", "null"]},
+        "authority_transfer": {"const": false}
+      }
+    },
+    "topics": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "repositories": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "sessions": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "maturity": {"type": ["string", "null"]},
+    "next_predicate": {"type": ["string", "null"]}
+  },
+  "additionalProperties": true
+}
