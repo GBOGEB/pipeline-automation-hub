@@ -104,6 +104,19 @@ design until the outputs are regenerated.
 - Line endings are hashed. `.gitattributes` keeps text LF on every platform; on Windows write generated
   files with `newline="\n"` and `encoding="utf-8"`.
 
+### Conflicted PRs and stacks: which tool
+
+"The stack/conflict tool" exists twice, in two repos. Look in both before you write a new one (2026-10-27,
+issue #946: a session searched only the hub, missed ABACUS and rewrote a restack tool).
+
+- Hub `tools/workstation/`: `Restack-Pr.ps1` (checkout-free rebase, dry run by default),
+  `Resolve-RegenConflicts.ps1` (generated-output conflicts), `Invoke-DraftPrPass.ps1` (triage) and
+  `PR_CONFLICT_RUNBOOK.md`.
+- ABACUS `tools/stack/`: `Rebase-Stack.ps1`, `Fix-AllStacks.ps1`, `Stack-Helper.ps1` (whole-stack rebuild with
+  an auto-resolve rule; read its `README.md`).
+- The choice rule (rebase in memory, merge bottom-up, regen-resolve or ABACUS stack tools) is in
+  `tools/workstation/README.md`, section "Which restack tool".
+
 ### Windows shell pitfalls
 
 Each of these cost time on the owner's workstation (2026-11-09/10, GEMINI#40, GEMINI#47, #1162).
@@ -139,6 +152,7 @@ One canonical module per metric. Import these; do not re-implement them. Paths a
 | EVERRED census (occurrences, roots, root closure / recurrence rates) | `mission-control/qps-triage-ultra/p-process/everred/harvest.py` | `harvest()`, `matches()`, `run_probes()`; metrics are computed in `main()` and written to `everred.json` | `site/everred/data/everred.json` (`everred.census/1.0`) |
 | EVERRED register page | `mission-control/qps-triage-ultra/p-process/everred/build_page.py` | CLI only (renders from `everred.json`) | `site/everred/index.html` |
 | QA engines and K-<TYPE>-NN checks by binary type | `mission-control/registry/engine_catalog.py` + `ENGINE_CATALOG.yaml` | CLI: `validate`, `matrix`, `probe` | Check matrix, engine probe JSON |
+| CI collection parity (CI vs local collected tests, 5 repos) | `docs/ci-spine/COLLECTION_PARITY_METHOD.md` (method) + `scripts/coverage_waves_parity_guard.py` (code guard) | Follow the method; append rows | `docs/ci-spine/COLLECTION_PARITY_LEDGER.jsonl` |
 | P-process mode per repo | `mission-control/qps-triage-ultra/p-process/p_decide.py` | `decide(census, everred, drift, cp_repos)`, `repo_of()` | `site/data/p_state.json` (`p-process.state/1.0`) |
 | P-process home page and deck | `mission-control/qps-triage-ultra/p-process/build_p_process.py` | CLI only | `site/index.html`, `site/P-process-deck.pdf` |
 | Scale dock (first-red / root-red metrics, EVERRED / Code Purple / P-process docks, cross-source consistency) | `mission-control/gogreen/scale_dock.py` | `red_metrics()`, `dock_everred()`, `DOCKERS[name]()` (`dock_code_purple`, `dock_p_process`, `dock_issue_bd`, `dock_crosswalk`), `dock_consistency()`, `DOCK_SCHEMAS`, `evaluate()` | `codepurple.scale-dock.series.v1` |
@@ -154,6 +168,7 @@ One canonical module per metric. Import these; do not re-implement them. Paths a
 | Topological layering (Kahn waves; wave index = longest-path layer; cycle check that names the stuck nodes) | `mission-control/jade_temple/devops/lifecycle.py` | `topo_layers(nodes, edges)`; from other trees load it with `importlib` as `tools/alkane_dag.py` and metric-atlas `lane_lifecycle.py` do | waves as `list[list[str]]`; `ValueError` on a cycle or an unknown endpoint |
 | Actions usage + performance metrics (per workflow / repo / FOCUS5 fleet: billable minutes, job run and queue time, job failure rate, failed-job minutes, class / band / event groupings) | `mission-control/jade_temple/devops/actions_metrics.py` | `aggregate()`, `project()`, `fetch` / `project` subcommands; reuses `bd_queue_wave.utc()` / `percentile()` / `queue_seconds()` and `wddd.iso_week_key()` | `data/ACTIONS_METRICS_FOCUS5.json` (`jade.devops.actions-metrics.v1`), `site/actions_metrics.csv` |
 | Week codes on the ISO 8601 week calendar for every GBOGEB repo (`YYYY-w##DDD` codes and `w##DDD` labels, which are project codes, not ISO 8601 syntax; `YYYY-Www` week key, weeks per ISO year, 13-week quarter convention, workday spans; Mermaid schedule patterns with `axisFormat w%V`) | `mission-control/jade_temple/devops/wddd.py` + `WDDD_WEEK_CODES.md` | `to_w_code()`, `from_w_code()`, `iso_week_key()`, `weeks_in_iso_year()`, `quarter_13w()`, `add_workdays()`; `actions_metrics.iso_week()` delegates to it; other trees and repos load it with `importlib` from a pinned hub commit | `2026-w46MON`, `2026-W46`; `ValueError` on a bare code without an ISO year |
+| Transcript file recovery (last Write per path plus replayed Edits from Claude Code JSONL; `complete` / `partial` per path; refuses output inside a git work tree) | `tools/threads/extract_writes.py` | `iter_calls()`, `rebuild()`, `dump()`; CLI `list` / `dump` | `OUTDIR/MANIFEST.json` and rebuilt files in a private scratch folder (never committed) |
 
 Note the two EVERRED views: `harvest.py` owns the root register metrics (per root, from Actions
 failures); `cicd_dag.everred_metrics()` owns the per-workflow red-trace ratios (`everred_ratio`,
