@@ -1,6 +1,6 @@
 {
   "authority_transfer": false,
-  "binding_sha256": "3b3feee4ee04aaed593395c8a01c61d8bfdc683bacbd7ca5f0fe4c68405c7412",
+  "binding_sha256": "a8e4ad26e9804452e8805695e61efd343174eb24b698c8b5829f6b6fd101f253",
   "engineering_acceptance": false,
   "inputs": {
     "analytics/EXPEDITION_FLEET_ITERATION_LEDGER_v1.json": "aa7d90845ccc95b08d9d671e4d4533ad7e3afe0e936c1eec2f725230dc8eee42",
@@ -19,7 +19,7 @@
       },
       "provider": {
         "repo": "GBOGEB/gg_MATH",
-        "sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc"
+        "sha": "b3af2544999a7eaed422d368677f4bdd484c44cb"
       },
       "result": {
         "comparison_semantics": "longer measured duration wins runtime-pressure comparison",
@@ -51,7 +51,7 @@
       },
       "provider": {
         "repo": "GBOGEB/gg_MATH",
-        "sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc"
+        "sha": "b3af2544999a7eaed422d368677f4bdd484c44cb"
       },
       "result": {
         "comparison_semantics": "explicit observed winner/loser outcomes only",
@@ -456,7 +456,7 @@
       },
       "schema": "qps-ggmath-flow-kpi/v1",
       "source": "mission/GRANDMISSION_I_B_TEMPORAL_PCA/inbound/GM_I_A_MULTI_CLOCK_MEASURED_PULSES_v1.json",
-      "source_sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc",
+      "source_sha": "b3af2544999a7eaed422d368677f4bdd484c44cb",
       "status": "PASS_FLOW_KPI",
       "threshold_kind": {
         "flow_efficiency": "EXACT_IDENTITY",
@@ -470,16 +470,16 @@
       "bt_admissible": false,
       "engineering_acceptance": false,
       "kernels": {
-        "kernels/matrix_core.py": "a6cec382bdd827310568416fcc113e408483662d3813f58b0d99493ebddb929e",
+        "kernels/matrix_core.py": "10fdfe480009eb9831efe0be1f6c07fe64eeb6321803a83551e2a3895e3eb12c",
         "kernels/pca_reference.py": "acafe56e3006a054b9fbd4770a52c6a51a9bc807a86faab47362893b297c6096",
-        "kernels/pca_uncertainty.py": "49d7b2f122bf8175ea523c98107c387ae982e7cb6edb4469a5a75cf00ba4382d",
+        "kernels/pca_uncertainty.py": "64002861ca8d3933abb7f40ff931e8e513a549cf02f43fb50d82a44ee4535dc3",
         "kernels/rmt_calibration.py": "52e77790fe24a663ba22073a71113a54b409eab82168269b3576e1f96ef5805c",
         "kernels/rmt_signal.py": "815285216e83995bb96f344415dac2283049b44fa155f7600a459aad11b27677",
-        "kernels/stats_core.py": "c35d9d886ba809a9b6cb6320668dc8ed24ffd2bd35b0cda450dc3424602bbbed"
+        "kernels/stats_core.py": "367f2953a4fae0a1e3e57458b89217db8718af91d4db22b60c992db015896fdc"
       },
       "provider": {
         "repo": "GBOGEB/gg_MATH",
-        "sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc"
+        "sha": "b3af2544999a7eaed422d368677f4bdd484c44cb"
       },
       "result": {
         "bt_admissible": false,
@@ -518,16 +518,16 @@
       "bt_admissible": false,
       "engineering_acceptance": false,
       "kernels": {
-        "kernels/matrix_core.py": "a6cec382bdd827310568416fcc113e408483662d3813f58b0d99493ebddb929e",
+        "kernels/matrix_core.py": "10fdfe480009eb9831efe0be1f6c07fe64eeb6321803a83551e2a3895e3eb12c",
         "kernels/pca_reference.py": "acafe56e3006a054b9fbd4770a52c6a51a9bc807a86faab47362893b297c6096",
-        "kernels/pca_uncertainty.py": "49d7b2f122bf8175ea523c98107c387ae982e7cb6edb4469a5a75cf00ba4382d",
+        "kernels/pca_uncertainty.py": "64002861ca8d3933abb7f40ff931e8e513a549cf02f43fb50d82a44ee4535dc3",
         "kernels/rmt_calibration.py": "52e77790fe24a663ba22073a71113a54b409eab82168269b3576e1f96ef5805c",
         "kernels/rmt_signal.py": "815285216e83995bb96f344415dac2283049b44fa155f7600a459aad11b27677",
-        "kernels/stats_core.py": "c35d9d886ba809a9b6cb6320668dc8ed24ffd2bd35b0cda450dc3424602bbbed"
+        "kernels/stats_core.py": "367f2953a4fae0a1e3e57458b89217db8718af91d4db22b60c992db015896fdc"
       },
       "provider": {
         "repo": "GBOGEB/gg_MATH",
-        "sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc"
+        "sha": "b3af2544999a7eaed422d368677f4bdd484c44cb"
       },
       "result": {
         "bootstrap": {
@@ -665,7 +665,7 @@
             1.93899067485,
             1.17954023539,
             0.513136249636,
-            6.63285683613e-17
+            2.15299455662e-16
           ],
           "pa_retained_candidate": [
             true,
@@ -692,11 +692,11 @@
       "engineering_acceptance": false,
       "kernels": {
         "kernels/bt_uncertainty.py": "a2a727366cd7c6e5c4860d10848f6a536135204bbc3e597cc0c156a037245121",
-        "kernels/pca_uncertainty.py": "49d7b2f122bf8175ea523c98107c387ae982e7cb6edb4469a5a75cf00ba4382d"
+        "kernels/pca_uncertainty.py": "64002861ca8d3933abb7f40ff931e8e513a549cf02f43fb50d82a44ee4535dc3"
       },
       "provider": {
         "repo": "GBOGEB/gg_MATH",
-        "sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc"
+        "sha": "b3af2544999a7eaed422d368677f4bdd484c44cb"
       },
       "result": {
         "bayesian_bt": {
@@ -722,7 +722,7 @@
   },
   "provider": {
     "repo": "GBOGEB/gg_MATH",
-    "sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc"
+    "sha": "b3af2544999a7eaed422d368677f4bdd484c44cb"
   },
   "reference_challenges": {
     "convergence_reference_cohort": {
@@ -732,11 +732,11 @@
       "engineering_acceptance": false,
       "kernels": {
         "kernels/convergence_control.py": "f672b5dceacef19e637fedad6cf17d6080c2c68cbe4b1f21441f73fe215b150e",
-        "kernels/visual_engine_bridge.py": "b269dee5e1c9dfd0423f84384b039cc984f650a7473b69f4b9774fc2c134ab18"
+        "kernels/visual_engine_bridge.py": "dbebf371a54c9341d4a557b9dec31f5ae5364c388d3c329de46e88ed86debe80"
       },
       "provider": {
         "repo": "GBOGEB/gg_MATH",
-        "sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc"
+        "sha": "b3af2544999a7eaed422d368677f4bdd484c44cb"
       },
       "result": {
         "receipt": {
@@ -912,16 +912,16 @@
       "bt_admissible": false,
       "engineering_acceptance": false,
       "kernels": {
-        "kernels/matrix_core.py": "a6cec382bdd827310568416fcc113e408483662d3813f58b0d99493ebddb929e",
+        "kernels/matrix_core.py": "10fdfe480009eb9831efe0be1f6c07fe64eeb6321803a83551e2a3895e3eb12c",
         "kernels/pca_reference.py": "acafe56e3006a054b9fbd4770a52c6a51a9bc807a86faab47362893b297c6096",
-        "kernels/stats_core.py": "c35d9d886ba809a9b6cb6320668dc8ed24ffd2bd35b0cda450dc3424602bbbed",
-        "kernels/subspace_metrics.py": "6130a69d14efa02cc12483ed037a7578dac0c200480f0d5562f7c012164ebc91",
+        "kernels/stats_core.py": "367f2953a4fae0a1e3e57458b89217db8718af91d4db22b60c992db015896fdc",
+        "kernels/subspace_metrics.py": "58bf37943f1baac70b86697a957fb905ee4c6c887be670c481f160380e17fc44",
         "kernels/temporal_pca_receipt.py": "f5e8fdf390b4fe9b55cb8fa8a4815eda046ae9621efba760d6dfede4fc096c63",
         "kernels/temporal_subspace_trace.py": "c26b1c339dab5f26035f06abaf3cb586333142b5e14a5ac4adbf670fb5c2d6e2"
       },
       "provider": {
         "repo": "GBOGEB/gg_MATH",
-        "sha": "e857f44531388add95230afec8b7e2c8d5f2e8cc"
+        "sha": "b3af2544999a7eaed422d368677f4bdd484c44cb"
       },
       "result": {
         "bt_admissible": false,
