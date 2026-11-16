@@ -135,6 +135,9 @@ class Detectors(unittest.TestCase):
         files = {"mission-control/gogreen/scale_dock.py": {1: "x"}}
         self.assertEqual(len(self.run_kind("REX-016", files)), 1)
         files["mission-control/jade_temple/site/cicd_dag.json"] = {1: "{}"}
+        self.assertEqual(len(self.run_kind("REX-016", files)), 1)
+        files["mission-control/jade_temple/site/cicd_dag_crosswalk.csv"] = {1: "x"}
+        files["mission-control/jade_temple/diagrams/CICD_DAG_TEST.mmd"] = {1: "graph TD"}
         self.assertEqual(self.run_kind("REX-016", files), [])
 
     @unittest.skipUnless(shutil.which("git"), "git not available")
@@ -205,6 +208,56 @@ class Detectors(unittest.TestCase):
         self.assertEqual(rep["authority"], R.AUTHORITY)
         self.assertEqual(rep["findings"], [])
         self.assertTrue(rep["notes"] and "ruff not on PATH" in rep["notes"][0])
+
+
+
+class SnapshotCollision(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory(prefix="maroon_rex_p0_")
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self.g("init", "-q")
+        self.put(".github/workflows/ci.yml", "name: example\n")
+        self.g("add", "-A")
+        self.g("commit", "-qm", "baseline")
+        self.g("update-ref", "refs/remotes/origin/main", "HEAD")
+
+    def g(self, *args):
+        return subprocess.run(["git", "-c", "user.name=REX", "-c", "user.email=rex@example.org", *args],
+                              cwd=self.root, capture_output=True, text=True, check=True).stdout
+
+    def put(self, path, text):
+        p = self.root / path
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(text, encoding="utf-8", newline="\n")
+
+    @unittest.skipUnless(shutil.which("git"), "git not installed")
+    def test_worktree_rewrite_cannot_hide_committed_unpinned_action(self):
+        sha = "a" * 40
+        self.put(".github/workflows/ci.yml", "jobs:\n  test:\n    steps:\n      - uses: actions/checkout@v4\n")
+        self.g("add", "-A")
+        self.g("commit", "-qm", "unfixed committed action")
+        self.put(".github/workflows/ci.yml",
+                 "jobs:\n  test:\n    steps:\n      - uses: actions/checkout@" + sha + "\n")
+        committed, worktree = R.changed_snapshots(self.root, "origin/main")
+        self.assertIn("checkout@v4", committed[".github/workflows/ci.yml"][4])
+        self.assertIn(sha, worktree[".github/workflows/ci.yml"][4])
+        result = R.scan_snapshots(CAT, self.root, "origin/main")
+        self.assertTrue(any(f["rex_id"] == "REX-001" and f["snapshot"] == "committed"
+                            for f in result["findings"]))
+        self.assertFalse(any(f["rex_id"] == "REX-001" and f["snapshot"] == "worktree"
+                             for f in result["findings"]))
+
+    @unittest.skipUnless(shutil.which("git"), "git not installed")
+    def test_committed_clean_worktree_bad_still_flags(self):
+        self.put(".github/workflows/ci.yml",
+                 "jobs:\n  test:\n    steps:\n      - uses: actions/checkout@" + "a" * 40 + "\n")
+        self.g("add", "-A")
+        self.g("commit", "-qm", "safe action")
+        self.put(".github/workflows/ci.yml", "jobs:\n  test:\n    steps:\n      - uses: actions/checkout@v4\n")
+        result = R.scan_snapshots(CAT, self.root, "origin/main")
+        self.assertTrue(any(f["rex_id"] == "REX-001" and f["snapshot"] == "worktree"
+                            for f in result["findings"]))
 
 
 if __name__ == "__main__":

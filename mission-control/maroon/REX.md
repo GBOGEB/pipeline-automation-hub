@@ -82,3 +82,17 @@ The `companion` trigger can be a glob, or `when_hints_regex` to reuse a `hints.p
   closure.
 - When a finding is noise at its source, the fix is the scanner configuration, not one answer per
   comment. Bandit B101 in tests is the main example (REX-019).
+
+## P0: committed/worktree isolation (REX v2 prerequisite)
+
+`scan` evaluates committed HEAD additions and uncommitted worktree edits as **separate snapshots**.
+A worktree rewrite can no longer overwrite the committed addition at the same line in the
+pre-push evidence. The HEAD snapshot is reconstructed from committed Git blobs, modes and
+companion-source files in a disposable temporary repository; safe `--fix` applies **only** to
+worktree files. Each finding carries `snapshot: committed|worktree`. Under `--strict`,
+missing scanner/tool evidence also blocks rather than counting as a negative detection.
+
+The REX-016 JADE prescription now calls the owner `regen.py --write` and requires exact
+CI/CD DAG JSON, crosswalk CSV and Mermaid output classes rather than arbitrary JADE files.
+Use `regen.py --check` for full source-bound generator parity. This patch does not confer
+review approval, rule precision or coverage-ratchet admission.

@@ -21,12 +21,14 @@ from __future__ import annotations
 import argparse
 import ast
 import collections
+import contextlib
 import fnmatch
 import importlib.util
 import json
 import re
 import shutil
 import subprocess
+import tempfile
 import sys
 from pathlib import Path
 
@@ -169,13 +171,56 @@ def resolve_base(root: Path, base: str) -> str:
     raise SystemExit(f"rex: base {' / '.join(candidates)} not found; pass --base <ref>")
 
 
-def changed(root: Path, base: str) -> dict[str, dict[int, str]]:
+def changed_snapshots(root: Path, base: str) -> tuple[dict, dict]:
+    """Independent HEAD and worktree diff views. Never replace committed text by local edits."""
     mb = git("merge-base", resolve_base(root, base), "HEAD", cwd=root).strip()
     committed = added_lines(git("diff", "-U0", "--no-color", "--diff-filter=AMR", mb, "HEAD", cwd=root))
-    working = added_lines(git("diff", "-U0", "--no-color", "--diff-filter=AMR", "HEAD", cwd=root))
-    for p, lines in working.items():
-        committed.setdefault(p, {}).update(lines)
+    worktree = added_lines(git("diff", "-U0", "--no-color", "--diff-filter=AMR", "HEAD", cwd=root))
+    return committed, worktree
+
+
+def changed(root: Path, base: str) -> dict[str, dict[int, str]]:
+    """Legacy view: committed text wins collisions; CLI scans both snapshots separately."""
+    committed, worktree = changed_snapshots(root, base)
+    for path, lines in worktree.items():
+        dst = committed.setdefault(path, {})
+        for line, text in lines.items():
+            dst.setdefault(line, text)
     return committed
+
+
+@contextlib.contextmanager
+def head_source_snapshot(root: Path, changed_files: dict, cat: dict):
+    """Isolated minimal HEAD index: full committed file bytes, mode and owner companion paths.
+
+    The current working tree is not used to interpret committed source. The temporary
+    repository contains only exact HEAD blobs and is deleted on exit.
+    """
+    with tempfile.TemporaryDirectory(prefix="maroon_rex_head_") as tmp:
+        snapshot = Path(tmp)
+        git("init", "-q", cwd=snapshot)
+        required = {e["detector"].get("requires_file") for e in cat["entries"]}
+        required.discard(None)
+        requested = set(changed_files) | required | {".python-version"}
+        for path in sorted(requested):
+            relative = Path(path)
+            if relative.is_absolute() or ".." in relative.parts or not relative.parts:
+                raise ValueError("rex: unsafe source path " + repr(path))
+            try:
+                blob = git("show", "HEAD:" + path, cwd=root)
+            except subprocess.CalledProcessError:
+                if path in changed_files:
+                    raise RuntimeError("rex: changed committed source not found at HEAD: " + path)
+                continue
+            target = snapshot / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(blob, encoding="utf-8", newline="\n")
+            git("add", "--", path, cwd=snapshot)
+            mode = git("ls-tree", "HEAD", "--", path, cwd=root)
+            if mode.startswith("100755 "):
+                git("update-index", "--chmod=+x", "--", path, cwd=snapshot)
+        yield snapshot
+
 
 
 def _match(path: str, globs: list[str]) -> bool:
@@ -256,8 +301,9 @@ def det_companion(e, files, root):
         trig = sorted(p for p in files if rx.search(p))
     else:
         trig = sorted(p for p in files if _match(p, d["when"]))
-    if trig and not any(_match(p, d["expect"]) for p in files):
-        yield trig[0], 0, f"{len(trig)} trigger path(s) changed, none of {d['expect']} changed"
+    missing = [g for g in d["expect"] if not any(_match(p, [g]) for p in files)]
+    if trig and (bool(missing) if d.get("expect_all") else len(missing) == len(d["expect"])):
+        yield trig[0], 0, f"{len(trig)} trigger path(s); missing required output(s): {missing}"
 
 
 def ruff_findings(cat, files, root, target, fix=False):
@@ -319,6 +365,32 @@ def scan(cat: dict, files: dict[str, dict[int, str]], root: Path, target: str | 
     return {"schema": SCAN_SCHEMA, "authority": AUTHORITY, "files": len(files), "target": target,
             "findings": findings, "by_rex": dict(collections.Counter(f["rex_id"] for f in findings)),
             "notes": [note] if note else [], "self_review": cat.get("self_review", [])}
+
+
+
+def scan_snapshots(cat: dict, root: Path, base: str,
+                   target: str | None = None, fix: bool = False) -> dict:
+    """Fail-visible dual-source scan. Safe fixes modify worktree only, never HEAD."""
+    committed, worktree = changed_snapshots(root, base)
+    parts = []
+    if committed:
+        with head_source_snapshot(root, committed, cat) as snap:
+            parts.append(("committed", scan(cat, committed, snap, target=target, fix=False)))
+    if worktree:
+        parts.append(("worktree", scan(cat, worktree, root, target=target, fix=fix)))
+    findings, notes = [], []
+    for label, report in parts:
+        for finding in report["findings"]:
+            findings.append(dict(finding, snapshot=label))
+        notes.extend(label + ": " + note for note in report["notes"])
+    findings.sort(key=lambda f: (f["rex_id"], f["path"], f["line"], f["snapshot"]))
+    return {"schema": SCAN_SCHEMA, "authority": AUTHORITY,
+            "files": len(set(committed) | set(worktree)), "target": target,
+            "findings": findings,
+            "by_rex": dict(collections.Counter(f["rex_id"] for f in findings)),
+            "notes": notes, "snapshots": [name for name, _ in parts],
+            "self_review": cat.get("self_review", [])}
+
 
 
 def render(report: dict, cat: dict) -> str:
@@ -416,9 +488,9 @@ def main(argv=None) -> int:
     if a.cmd == "install-hook":
         print(f"rex: advisory pre-push hook written to {install_hook(root, a.force)}")
         return 0
-    rep = scan(cat, changed(root, a.base), root, a.target_version or target_version(root), fix=a.fix)
+    rep = scan_snapshots(cat, root, a.base, a.target_version or target_version(root), fix=a.fix)
     print(json.dumps(rep, indent=2) if a.json else render(rep, cat))
-    return 1 if a.strict and rep["findings"] else 0
+    return 1 if a.strict and (rep["findings"] or rep["notes"]) else 0
 
 
 if __name__ == "__main__":

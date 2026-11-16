@@ -326,11 +326,13 @@
         "requires_file": "mission-control/jade_temple/tools/cicd_dag.py",
         "when_hints_regex": "PINNED_OID_RE",
         "expect": [
-          "mission-control/jade_temple/site/*",
-          "mission-control/jade_temple/data/*"
-        ]
+          "mission-control/jade_temple/site/cicd_dag.json",
+          "mission-control/jade_temple/site/cicd_dag_crosswalk.csv",
+          "mission-control/jade_temple/diagrams/CICD_DAG_*.mmd"
+        ],
+        "expect_all": true
       },
-      "known_fix": "Re-run the JADE DAG generator (`mission-control/jade_temple/tools/cicd_dag.py`) and commit the regenerated outputs.",
+      "known_fix": "Run `python mission-control/jade_temple/tools/regen.py --write`, then `python mission-control/jade_temple/tools/regen.py --check`. Commit the exact DAG JSON, crosswalk CSV and Mermaid outputs.",
       "mode": "fix",
       "evidence": {
         "comments": 3,
