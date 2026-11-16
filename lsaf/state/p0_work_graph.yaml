@@ -1,0 +1,72 @@
+schema: lsaf/work-graph/v0.1
+observed_at: "2026-11-15"
+authority_transfer: false
+
+source_bindings:
+  session_census:
+    pr: 1211
+    head_sha: 9a32a8c87577168f0ce8f338df11d88c43d388cf
+    state: OPEN
+    exact_head_runs_observed: 8
+    exact_head_runs_success: 8
+    evidence_class: SOURCE
+  lsaf_pr:
+    pr: 1231
+    evidence_class: SOURCE
+    note: head changes as this implementation slice advances; bind validation receipts after final write
+
+nodes:
+  - id: CENSUS_SOURCE_1211
+    requires: []
+    authority: Hub
+    evidence: SOURCE
+
+  - id: LEGACY_V1_SOURCE
+    requires: []
+    authority: Hub
+    evidence: SOURCE
+
+  - id: PILOT_COHORT_48H
+    requires: []
+    authority: Hub
+    evidence: SOURCE
+
+  - id: PREDICTION_SCHEMA
+    requires: []
+    authority: Hub
+    evidence: SOURCE
+
+  - id: SESSION_ADAPTER
+    requires: [CENSUS_SOURCE_1211]
+    authority: Hub
+    evidence: UNKNOWN
+
+  - id: V1_IMPORTER
+    requires: [LEGACY_V1_SOURCE]
+    authority: Hub
+    evidence: UNKNOWN
+
+  - id: DAG_COMPILER
+    requires: [SESSION_ADAPTER, PILOT_COHORT_48H]
+    authority: Hub
+    evidence: UNKNOWN
+
+  - id: PROJECTION_COMPILER
+    requires: [DAG_COMPILER, V1_IMPORTER]
+    authority: Hub
+    evidence: UNKNOWN
+
+  - id: PREDICTION_RECEIPTS
+    requires: [PREDICTION_SCHEMA, PILOT_COHORT_48H]
+    authority: Hub
+    evidence: UNKNOWN
+
+  - id: CONVERGENCE_12CASE
+    requires: [DAG_COMPILER, PREDICTION_RECEIPTS]
+    authority: Hub
+    evidence: UNKNOWN
+
+  - id: COLD_START_EQUIVALENCE
+    requires: [PROJECTION_COMPILER, CONVERGENCE_12CASE]
+    authority: Hub
+    evidence: UNKNOWN

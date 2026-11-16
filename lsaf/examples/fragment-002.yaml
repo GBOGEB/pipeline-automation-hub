@@ -1,0 +1,39 @@
+schema: lsaf/fragment/v0.1
+fragment_id: F-20261111-2128-002
+session_id: S-20261111-2128
+
+semantic:
+  topic: scheduler-census
+  epic: EPIC-session-continuity
+  class: execution
+  fingerprint: null
+
+allocation:
+  primary_repo: GBOGEB/pipeline-automation-hub
+  secondary_repos: []
+  logical_worktree: "VSW:S-20261111-2128"
+  physical_worktree: null
+
+state:
+  lifecycle: SEMANTICALLY_BOUND
+  disposition: BOUND
+  next_predicate: DEPENDENCY_ORDERED
+
+authority:
+  canonical_owner: GBOGEB/pipeline-automation-hub
+  authority_transfer: false
+
+dependencies:
+  requires:
+    - MULTI_SESSION_RECOVERY
+  provides:
+    - SESSION_CENSUS_TO_ACTION
+
+evidence:
+  commits: []
+  prs: []
+  workflow_runs: []
+
+forecast:
+  predicted_next_state: DEPENDENCY_ORDERED
+  confidence: 0.60
