@@ -519,8 +519,12 @@ def fetch(days: int, cache: Path, lookups_only: bool = False) -> None:
         runs += _runs_for_day((today - dt.timedelta(days=i)).isoformat(), token)
     todo = [r for r in runs if r["status"] == "completed" and r["conclusion"] in ("success", "failure") and r["id"] not in done]
     print(f"runs={len(runs)} evaluations_to_fetch={len(todo)} cached={len(done)}", flush=True)
-    with path.open("a", encoding="utf-8", newline="\n") as fh, cf.ThreadPoolExecutor(8) as ex:
-        for k, row in enumerate(ex.map(lambda r: _reason_or_none(r, token), todo), 1):
+    # NOTE: Avoid concurrent network fetches through urllib in case a shared opener/handler stack
+    # (e.g., a global opener) is used under the hood. urllib openers/handlers are not guaranteed
+    # to be thread-safe, and concurrency can cause intermittent failures.
+    with path.open("a", encoding="utf-8", newline="\n") as fh:
+        for k, r in enumerate(todo, 1):
+            row = _reason_or_none(r, token)
             if row is None:
                 continue
             fh.write(json.dumps(row) + "\n")
