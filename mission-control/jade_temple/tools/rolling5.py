@@ -302,12 +302,23 @@ def race(latest: dict[str, dict]) -> list[dict]:
             "rank": row["rank"],
         })
     out.sort(key=lambda x: (x["remaining"], x["fail"], x["rank"]))
+
+    # Precompute competition ranking metadata in O(n) time:
+    # - first_index: first occurrence of each (remaining, fail) score
+    # - counts: how many repos share the same score
     scores = [(item["remaining"], item["fail"]) for item in out]
+    first_index: dict[tuple[int, int], int] = {}
+    counts: dict[tuple[int, int], int] = {}
+    for idx, score in enumerate(scores):
+        if score not in first_index:
+            first_index[score] = idx
+        counts[score] = counts.get(score, 0) + 1
+
     for i, item in enumerate(out, 1):
         item["position"] = i
         score = scores[i - 1]
-        item["readiness_placement"] = scores.index(score) + 1
-        item["readiness_tied"] = scores.count(score) > 1
+        item["readiness_placement"] = first_index[score] + 1
+        item["readiness_tied"] = counts[score] > 1
     return out
 
 
