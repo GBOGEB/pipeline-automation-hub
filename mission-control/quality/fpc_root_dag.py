@@ -438,17 +438,23 @@ class _NoRedirect(urllib.request.HTTPRedirectHandler):
         return None
 
 
-_API = urllib.request.build_opener(_NoRedirect)
-
-
 def _get(url: str, token: str, raw: bool = False):
     """GET from the GitHub API. A redirect (artifact downloads go to blob storage) is followed
     without the Authorization header, so the token never leaves api.github.com."""
-    req = urllib.request.Request(url if url.startswith("http") else "https://api.github.com" + url,
-                                 headers={"Authorization": "Bearer " + token, "Accept": "application/vnd.github+json",
-                                          "X-GitHub-Api-Version": "2022-11-28"})
+    # urllib opener/handlers are not guaranteed to be thread-safe; build an opener per request
+    # to avoid sharing state across concurrent fetches.
+    api = urllib.request.build_opener(_NoRedirect)
+
+    req = urllib.request.Request(
+        url if url.startswith("http") else "https://api.github.com" + url,
+        headers={
+            "Authorization": "Bearer " + token,
+            "Accept": "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28",
+        },
+    )
     try:
-        with _API.open(req, timeout=60) as r:
+        with api.open(req, timeout=60) as r:
             data = r.read()
     except urllib.error.HTTPError as e:
         if e.code not in (301, 302, 303, 307, 308):
