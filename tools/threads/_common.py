@@ -67,8 +67,13 @@ def split_ref(ref, home: str) -> tuple[str, int]:
     if isinstance(ref, bool):
         raise ValueError(ref)
     if isinstance(ref, int):
+        if ref <= 0:
+            raise ValueError(ref)
         return home, ref
     m = re.fullmatch(r"(?:([\w.-]+)#|#)?(\d+)", str(ref).strip())
     if not m:
         raise ValueError(ref)
-    return (m.group(1) or home), int(m.group(2))
+    n = int(m.group(2))
+    if n <= 0:
+        raise ValueError(ref)
+    return (m.group(1) or home), n
