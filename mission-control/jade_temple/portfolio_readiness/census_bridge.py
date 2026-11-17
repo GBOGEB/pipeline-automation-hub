@@ -31,8 +31,15 @@ def need(condition: bool, reason: str) -> None:
 
 
 def canonical(value: dict) -> bytes:
-    return json.dumps(value, sort_keys=True, ensure_ascii=False,
-                      separators=(",", ":")).encode("utf-8")
+    # Digest verification depends on matching the producer's canonical JSON.
+    # Be explicit about JSON settings instead of relying on `json.dumps` defaults.
+    return json.dumps(
+        value,
+        sort_keys=True,
+        ensure_ascii=False,
+        separators=(",", ":"),
+        allow_nan=False,
+    ).encode("utf-8")
 
 
 def sha256(value: bytes) -> str:
