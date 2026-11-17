@@ -220,13 +220,17 @@ def attribute_all(evals: list[dict], prs: dict, heads: dict | None = None) -> li
     for e in evals:
         by_head[history_key(e)].append(e)
     out = []
+    pos_in_head = defaultdict(int)
     for e in evals:
-        seq = by_head[history_key(e)]
+        key = history_key(e)
+        seq = by_head[key]
+        i = pos_in_head[key]
+        pos_in_head[key] += 1
         row = dict(e, head_first_status=seq[0]["status"])
         if e["status"] == "PASS":
             row.update(reason_node=None, source=None, klass="PASS")
         else:
-            later = seq[seq.index(e) + 1:]
+            later = seq[i + 1:]
             src = attribute(e, later, prs.get(str(e.get("pr")), {}))
             row.update(reason_node=reason_node(e.get("reason")), source=src, klass=NODES[src][1])
         out.append(row)
