@@ -946,7 +946,7 @@ class RunStormResilience(unittest.TestCase):
             root = M.repo_dir(Path(td), REPO) / "runs"
             root.mkdir(parents=True)
             old = root / f"{self.D1}.json"  # an older partial snapshot must not stand in for the day
-            old.write_text(json.dumps(self.quiet(self.D1, 9000)), encoding="utf-8")
+            old.write_text(json.dumps(self.quiet(self.D1, 9000)), encoding="utf-8", newline="\n")
             summary, logs = self.fetch(td, SearchWindow(runs))
             s = summary[REPO]
             self.assertNotIn("error", s)
