@@ -899,6 +899,180 @@ class Stability(unittest.TestCase):
                 self.assertEqual(M.PB.project(doc), doc)  # a fixed point of the private boundary
 
 
+class RunStormResilience(unittest.TestCase):
+    """2026-11-15 TOP21 pulse: ABACUS's 1179-run hour and an IncompleteRead must not abort a fleet fetch."""
+
+    D1, D2, D3 = date(2026, 10, 23), date(2026, 10, 24), date(2026, 10, 25)
+
+    @staticmethod
+    def quiet(day, first_id, n=3):
+        return [run(first_id + i, created=f"{day}T0{i}:15:00Z") for i in range(n)]
+
+    def fetch(self, td, rd, repos=(REPO,), until=None):
+        logs = []
+        summary = M.fetch(Path(td), list(repos), self.D1, until or self.D3, 0, rd, workers=1, log=logs.append)
+        return summary, logs
+
+    def test_abacus_1179_run_hour_completes_through_fetch(self):
+        runs = busy_hour(1179, day=str(self.D1), hour=8) + self.quiet(self.D2, 5000) + self.quiet(self.D3, 6000)
+        with tempfile.TemporaryDirectory() as td:
+            summary, _ = self.fetch(td, SearchWindow(runs))
+            self.assertEqual((summary[REPO]["days_fetched"], summary[REPO]["unknown_days"]), (3, []))
+            self.assertEqual(summary[REPO]["runs"], 1185)
+            path = M.repo_dir(Path(td), REPO) / "runs" / f"{self.D1}.json"
+            rec = json.loads(M.cache_receipt_path(path).read_text(encoding="utf-8"))
+            self.assertEqual((rec["records"], rec["pagination"]["unknown_slices"]), (1179, []))
+            self.assertGreater(rec["pagination"]["bisected"], 0)
+
+    def test_unsplittable_slice_is_unknown_for_that_slice_only(self):
+        storm = [run(i + 1, created=f"{self.D1}T10:00:00Z") for i in range(1001)]
+        rd, receipt = SearchWindow(storm + self.quiet(self.D1, 9000)), {}
+        with self.assertRaises(M.IncompleteDay) as ctx:
+            M.fetch_runs_day(rd, REPO, self.D1, receipt=receipt)
+        self.assertIs(ctx.exception.receipt, receipt)
+        unknown = receipt["unknown_slices"]
+        self.assertEqual([(u["lo"], u["hi"], u["reason"]) for u in unknown],
+                         [(f"{self.D1}T10:00:00Z", f"{self.D1}T10:00:00Z", "SEARCH_CAP")])
+        self.assertEqual((unknown[0]["total_count"], unknown[0]["rows_read"]), (1001, 1000))
+        # every other window was still read, and the quiet hours stayed one query each
+        self.assertEqual([w[4] for w in receipt["windows"]].count("UNSPLITTABLE"), 1)
+        self.assertEqual(sum(f"{self.D1}T0{i}:00:00Z.." in c for i in range(3) for c in rd.calls), 3)
+        self.assertEqual(receipt["queries"], len(rd.calls))
+
+    def test_incomplete_day_is_unknown_and_later_days_continue(self):
+        storm = [run(i + 1, created=f"{self.D1}T10:00:00Z") for i in range(1001)]
+        runs = storm + self.quiet(self.D1, 9000) + self.quiet(self.D2, 5000) + self.quiet(self.D3, 6000)
+        with tempfile.TemporaryDirectory() as td:
+            root = M.repo_dir(Path(td), REPO) / "runs"
+            root.mkdir(parents=True)
+            old = root / f"{self.D1}.json"  # an older partial snapshot must not stand in for the day
+            old.write_text(json.dumps(self.quiet(self.D1, 9000)), encoding="utf-8", newline="\n")
+            summary, logs = self.fetch(td, SearchWindow(runs))
+            s = summary[REPO]
+            self.assertNotIn("error", s)
+            self.assertEqual(s["days_fetched"], 2)
+            self.assertEqual(s["unknown_days"], [{"day": str(self.D1), "reason": "INCOMPLETE_SLICES",
+                                                  "unknown_slices": 1}])
+            self.assertFalse(old.exists())
+            self.assertFalse(M.cache_receipt_path(old).exists())
+            side = json.loads(M.unknown_day_path(old).read_text(encoding="utf-8"))
+            self.assertEqual((side["schema"], side["coverage"]), (M.UNKNOWN_DAY_SCHEMA, "UNKNOWN"))
+            self.assertEqual(side["pagination"]["unknown_slices"][0]["reason"], "SEARCH_CAP")
+            # the day reads as missing (UNKNOWN), never as 3 runs or 0 runs
+            self.assertEqual(M.missing_run_days(Path(td), REPO, self.D1, self.D3), [str(self.D1)])
+            self.assertEqual(s["runs"], 6)
+            problems, proof = M.pressure_cache_evidence(Path(td), REPO, self.D1, self.D1, "2026-10-26T00:00:00Z")
+            self.assertEqual((problems, proof), ([f"{self.D1}:MISSING_RUNS_OR_RECEIPT"], None))
+            self.assertTrue(any("UNKNOWN" in line for line in logs))
+            # once the source reads in full, the sidecar goes and the day is cached
+            summary, _ = self.fetch(td, SearchWindow(storm[:999] + self.quiet(self.D1, 9000)), until=self.D1)
+            self.assertEqual((summary[REPO]["days_fetched"], summary[REPO]["unknown_days"]), (1, []))
+            self.assertFalse(M.unknown_day_path(old).exists())
+            self.assertTrue(old.exists())
+
+    def test_lying_total_count_is_bounded_by_the_day_query_budget(self):
+        class Lying:
+            calls = 0
+            def pages(self, route, key):
+                Lying.calls += 1
+                return [run(1, created="2026-10-23T00:00:00Z")], 2
+        receipt = {}
+        with self.assertRaises(M.IncompleteDay):
+            M.fetch_runs_day(Lying(), REPO, self.D1, receipt=receipt)
+        self.assertLessEqual(Lying.calls, M.DAY_QUERY_BUDGET)
+        self.assertEqual(receipt["queries"], Lying.calls)
+        self.assertIn("QUERY_BUDGET", {u["reason"] for u in receipt["unknown_slices"]})
+
+    def test_reader_retries_incomplete_read_from_json_load(self):
+        import http.client
+        import io
+        from unittest.mock import patch
+
+        class Truncated(io.BytesIO):
+            def read(self, *a):
+                raise http.client.IncompleteRead(b'{"total_count": 1, "workflow_r', 40)
+
+        rd = M.Reader()
+        with patch.object(M.urllib.request, "urlopen",
+                          side_effect=[Truncated(), io.BytesIO(b'{"total_count": 0}')]) as req, \
+             patch.object(M.time, "sleep") as sleeping:
+            self.assertEqual(rd.get("/repos/a/b/actions/runs"), {"total_count": 0})
+        self.assertEqual((req.call_count, rd.calls), (2, 2))
+        self.assertEqual([c.args[0] for c in sleeping.call_args_list], [3])
+
+    def test_reader_retries_remote_disconnected_bounded(self):
+        import http.client
+        from unittest.mock import patch
+        rd = M.Reader()
+        err = http.client.RemoteDisconnected("Remote end closed connection without response")
+        with patch.object(M.urllib.request, "urlopen", side_effect=err) as req, \
+             patch.object(M.time, "sleep"):
+            with self.assertRaises(http.client.RemoteDisconnected):
+                rd.get("/repos/a/b")
+        self.assertEqual(req.call_count, 4)
+
+    def test_incomplete_read_after_retries_is_one_unknown_day_not_a_crash(self):
+        import http.client
+
+        class Flaky(SearchWindow):
+            def pages(self, route, key):
+                if str(RunStormResilience.D2) in route:
+                    raise http.client.IncompleteRead(b"[", 100)
+                return super().pages(route, key)
+
+        runs = self.quiet(self.D1, 4000) + self.quiet(self.D3, 6000)
+        with tempfile.TemporaryDirectory() as td:
+            summary, _ = self.fetch(td, Flaky(runs))
+            s = summary[REPO]
+            self.assertNotIn("error", s)
+            self.assertEqual(s["days_fetched"], 2)
+            self.assertEqual(s["unknown_days"], [{"day": str(self.D2), "reason": "TRANSPORT:IncompleteRead"}])
+            self.assertEqual(M.missing_run_days(Path(td), REPO, self.D1, self.D3), [str(self.D2)])
+
+    def test_persistent_transport_fault_stops_that_repo_only(self):
+        import http.client
+        other = "GBOGEB/ABACUS"
+
+        class Down(SearchWindow):
+            def pages(self, route, key):
+                if REPO in route:
+                    raise http.client.IncompleteRead(b"", 10)
+                return super().pages(route, key)
+
+        with tempfile.TemporaryDirectory() as td:
+            summary = M.fetch(Path(td), [REPO, other], self.D1, date(2026, 10, 27), 0,
+                                 Down(self.quiet(self.D1, 1)), workers=1, log=lambda _: None)
+            self.assertEqual(summary[REPO]["stopped_at"], str(self.D3))  # third fault in a row
+            self.assertEqual(len(summary[REPO]["unknown_days"]), 2)
+            self.assertEqual((summary[other]["days_fetched"], summary[other]["unknown_days"]), (5, []))
+
+    def test_http_4xx_still_stops_the_repo_without_unknown_markers(self):
+        from urllib.error import HTTPError
+
+        class Gone:
+            def pages(self, route, key):
+                raise HTTPError("https://api.github.com" + route, 404, "not found", {}, None)
+
+        with tempfile.TemporaryDirectory() as td:
+            summary, _ = self.fetch(td, Gone())
+            self.assertEqual((summary[REPO]["stopped_at"], summary[REPO]["unknown_days"]), (str(self.D1), []))
+            self.assertFalse(M.unknown_day_path(M.repo_dir(Path(td), REPO) / "runs" / f"{self.D1}.json").exists())
+
+    def test_job_list_incomplete_read_is_a_job_error_not_a_crash(self):
+        import http.client
+
+        class Jobs(SearchWindow):
+            def pages(self, route, key):
+                if "/jobs" in route:
+                    raise http.client.IncompleteRead(b"", 10)
+                return super().pages(route, key)
+
+        with tempfile.TemporaryDirectory() as td:
+            summary = M.fetch(Path(td), [REPO], self.D1, self.D1, 5, Jobs(self.quiet(self.D1, 1)),
+                              workers=2, log=lambda _: None)
+            self.assertEqual((summary[REPO]["job_lists_fetched"], summary[REPO]["job_errors"]), (0, 3))
+
+
 class IsoWeekOwner(unittest.TestCase):
     """iso_week() is a thin UTC wrapper over wddd.iso_week_key(), the one owner of the week key (AGENTS.md L4)."""
 
