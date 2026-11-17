@@ -39,6 +39,16 @@ class Identity(unittest.TestCase):
         self.assertEqual(H.finding_key("o/r", RULE + " at ci.yml:4"), H.finding_key("o/r", RULE + " elsewhere"))
         self.assertNotEqual(H.finding_key("o/r", RULE), H.finding_key("o/x", RULE))
 
+    def test_wordless_titles_keep_distinct_identities(self):
+        """Review 4543096689: titles that are only code have no significant words; they must not share one key."""
+        titles = ["Use `permissions: read-all`", "Use `timeout-minutes: 10`", "Use `set -euo pipefail`",
+                  "Use `shell: bash`", "Use `pathlib.Path`"]
+        self.assertEqual([H.words(t) for t in titles], [[]] * len(titles))
+        self.assertEqual(len({H.finding_key("o/r", t) for t in titles}), len(titles))
+        self.assertEqual(H.finding_key("o/r", "Use  `shell: bash`"), H.finding_key("o/r", "use `shell: bash` "))
+        result = H.analyse(ledger(obs("o1", 1, title=titles[0]), obs("o2", 2, title=titles[1])))
+        self.assertEqual(len(result["findings"]), 2)
+
     def test_near_duplicates_merge_rules_never(self):
         items = [{"key": k, "repo": "o/r", "title": t} for k, t in (
             ("a", "Silent failure: exit 0 swallows the error"), ("b", "exit 0 swallows the error silently: failure"),
@@ -72,8 +82,22 @@ class Analyse(unittest.TestCase):
                                                 "state": "resolved", "pr_merged": True, "closed_at": "2026-11-01"}]}}}
         result = H.analyse(ledger(obs("o1", 1)), review)
         self.assertEqual(list(result["observations"]), ["o1"])
-        self.assertIn("SEEN_FIXED", {h["code"] for h in result["observations"]["o1"]["hints"]})
         self.assertEqual(next(iter(result["findings"].values()))["recurrence"], "RECURRING")
+
+    def test_imported_resolution_is_disposition_unknown_not_fixed(self):
+        """Review 4543212663: a resolved thread on a merged PR may have been a false positive, a duplicate or
+        obsolete; with no receipt it must not read as a known fix, so no SEEN_FIXED for the live recurrence."""
+        review = {"repos": {"o/r": {"alerts": [{"pr": 9, "number": 90, "title": RULE, "path": ".github/workflows/ci.yml",
+                                                "state": "resolved", "pr_merged": True, "closed_at": "2026-11-01"}]}}}
+        (row,) = H.history_rows(review)
+        self.assertNotEqual(row["semantic_state"], "closed")
+        result = H.analyse(ledger(obs("o1", 1)), review)
+        self.assertNotIn("SEEN_FIXED", {h["code"] for h in result["observations"]["o1"]["hints"]})
+        fixed = obs("o2", 2, state="closed", closure_receipts=[{"receipt": {"classification": "fixed"}}])
+        result = H.analyse(ledger(obs("o1", 1), fixed), review)
+        seen = [h for h in result["observations"]["o1"]["hints"] if h["code"] == "SEEN_FIXED"]
+        self.assertEqual(len(seen), 1)
+        self.assertNotIn("o/r#9", seen[0]["detail"])
 
     def test_bot_fork_generated_and_tags(self):
         rows = [obs("o1", 1, ref="dependabot/pip/x"), obs("o2", 2, title="Stale number", path="mission-control/x/data/y.json"),
@@ -85,6 +109,16 @@ class Analyse(unittest.TestCase):
         self.assertIn("GENERATED_PATH", codes["o2"])
         self.assertIn("NO_PUSH_FORK", codes["o3"])
         self.assertTrue({"PINNED_OID", "SCALING_PILOT"} <= set(result["observations"]["o3"]["tags"]))
+
+    def test_pinned_oid_covers_the_p_process_subtree(self):
+        """Review 4543212656: every file under p-process/ is a pinned JADE input (CICD_DAG_POLICY objects)."""
+        for path in ("mission-control/qps-triage-ultra/p-process/p_decide.py",
+                     "mission-control/qps-triage-ultra/p-process/everred/harvest.py",
+                     "mission-control/qps-triage-ultra/p-process/site/data/p_state.json",
+                     ".github/workflows/p-process.yml", "mission-control/gogreen/scale_dock.py"):
+            self.assertIn("PINNED_OID", H.tags_of(path=path), path)
+        for path in ("mission-control/qps-triage-ultra/README.md", "mission-control/p-processing-notes/x.py"):
+            self.assertNotIn("PINNED_OID", H.tags_of(path=path), path)
 
     def test_head_signals_read_only(self):
         calls = []
