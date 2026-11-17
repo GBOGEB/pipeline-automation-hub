@@ -53,7 +53,12 @@ def utc_stamp(value: str) -> str:
     except ValueError as exc:
         raise ValueError("BAD_TIMESTAMP") from exc
     need(parsed.tzinfo is not None, "NAIVE_TIMESTAMP")
-    return parsed.astimezone(timezone.utc).isoformat()
+    stamped = parsed.astimezone(timezone.utc).isoformat()
+    # Canonicalize UTC on-wire format to RFC3339-style "Z" to avoid diffs
+    # (Python renders UTC as "+00:00" by default).
+    if stamped.endswith("+00:00"):
+        stamped = stamped[:-6] + "Z"
+    return stamped
 
 
 def convert(census: dict, registry: dict, require_count: int | None = None) -> tuple[dict, dict]:
