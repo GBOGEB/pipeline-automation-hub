@@ -136,8 +136,13 @@ def is_codex(login: str | None) -> bool:
 
 def quota_notices(comments: list[dict]) -> list[str]:
     """Timestamps of every Codex connector comment saying it hit its review usage limit, oldest first."""
-    return sorted(c.get("created_at") or c.get("createdAt") or "" for c in comments
-                  if is_codex((c.get("user") or c.get("author") or {}).get("login")) and QUOTA_RE.search(c.get("body") or ""))
+    return sorted(
+        c.get("created_at") or c.get("createdAt")
+        for c in comments
+        if (c.get("created_at") or c.get("createdAt"))
+        and is_codex((c.get("user") or c.get("author") or {}).get("login"))
+        and QUOTA_RE.search(c.get("body") or "")
+    )
 
 
 def quota_notice(comments: list[dict]) -> bool:
