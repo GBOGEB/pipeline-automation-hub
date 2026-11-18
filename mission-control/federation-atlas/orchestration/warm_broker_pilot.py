@@ -82,8 +82,8 @@ def verify_committed_source_blobs(root):
     """Prove working bytes are in HEAD even if Git index flags hide changes.
 
     Git status ignores assume-unchanged and skip-worktree payload edits.
-    git hash-object --path applies the file's repository clean filters,
-    so the comparison is against the actual committed Git blob identity.
+    Compare raw working bytes to the committed blob directly; hash-object
+    with --path is insufficient because a clean filter can hide real changes.
     Every declared source plus this executable pilot script is checked.
     """
     for rel in (*SOURCE_FILES, PILOT_SOURCE):
@@ -98,12 +98,12 @@ def verify_committed_source_blobs(root):
         demand(expected.returncode == 0 and
                bool(SHA40.fullmatch(expected.stdout.strip())),
                "PINNED_HEAD_BLOB_UNAVAILABLE")
-        observed = subprocess.run(
-            ["git", "-C", str(root), "hash-object", "--path", key, "--", key],
-            capture_output=True, text=True, timeout=10, check=False,
+        committed = subprocess.run(
+            ["git", "-C", str(root), "cat-file", "blob", expected.stdout.strip()],
+            capture_output=True, timeout=10, check=False,
         )
-        demand(observed.returncode == 0 and
-               observed.stdout.strip() == expected.stdout.strip(),
+        demand(committed.returncode == 0, "PINNED_HEAD_BLOB_UNAVAILABLE")
+        demand(candidate.read_bytes() == committed.stdout,
                "PINNED_SOURCE_BYTES_NOT_IN_HEAD")
 
 

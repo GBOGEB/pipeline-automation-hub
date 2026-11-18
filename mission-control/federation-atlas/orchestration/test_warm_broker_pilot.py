@@ -108,6 +108,39 @@ class SourceAndDagContracts(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError,"PINNED_SOURCE_BYTES_NOT_IN_HEAD"):
                     m.pin(root,head)
 
+    def test_pin_rejects_clean_filter_that_hides_raw_byte_change(self):
+        # Real clean filter makes 'alpha' hash as committed 'ALPHA';
+        # index assume-unchanged hides the working edit from git status.
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            def git(*args):
+                proc=subprocess.run(["git","-C",str(root),*args],
+                                    text=True,capture_output=True,check=True)
+                return proc.stdout.strip()
+            git("init","-q")
+            git("config","user.name","N3 Filter Test")
+            git("config","user.email","n3-filter@example.invalid")
+            git("config","filter.fold.clean","tr a-z A-Z")
+            git("config","filter.fold.smudge","cat")
+            (root/".gitattributes").write_text(
+                m.ATLAS.as_posix()+" filter=fold\\n",encoding="utf-8")
+            for rel in (*m.SOURCE_FILES,m.PILOT_SOURCE):
+                file=root/rel
+                file.parent.mkdir(parents=True,exist_ok=True)
+                file.write_text("ALPHA\\n",encoding="utf-8")
+            git("add","--all")
+            git("commit","-qm","committed bytes with clean filter")
+            head=git("rev-parse","HEAD")
+            self.assertEqual(m.pin(root,head),head)
+            git("update-index","--assume-unchanged",m.ATLAS.as_posix())
+            (root/m.ATLAS).write_text("alpha\\n",encoding="utf-8")
+            self.assertEqual(git("status","--porcelain=v1","--untracked-files=no"),"")
+            self.assertEqual(git("hash-object","--path",m.ATLAS.as_posix(),
+                                 "--",m.ATLAS.as_posix()),
+                             git("rev-parse","HEAD:"+m.ATLAS.as_posix()))
+            with self.assertRaisesRegex(ValueError,"PINNED_SOURCE_BYTES_NOT_IN_HEAD"):
+                m.pin(root,head)
+
     def test_all_variants_have_same_source_populations(self):
         found=m.input_variants(ROOT)
         self.assertEqual(set(found),{"baseline","counterfactual","invalid_census","invalid_clock"})
