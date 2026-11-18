@@ -23,25 +23,25 @@ def render(model: dict) -> str:
 <h1>From cluster to evidence.</h1><p>Point-release readiness, source history and the next bounded wave across the federation.</p>
 <p class="tiny" id="cap-label">Read-only review surface · source owners retain authority</p></header>
 <nav role="tablist" aria-label="Portfolio views">
-<button role="tab" aria-selected="true" data-tab="portfolio" aria-controls="portfolio">Portfolio</button>
-<button role="tab" aria-selected="false" data-tab="frontier" aria-controls="frontier">Frontier &amp; TODO</button>
-<button role="tab" aria-selected="false" data-tab="clusters" aria-controls="clusters">Topics &amp; clusters</button>
-<button role="tab" aria-selected="false" data-tab="history" aria-controls="history">Temporal evidence</button>
-<button role="tab" aria-selected="false" data-tab="sources" aria-controls="sources">Sources &amp; watch</button></nav>
-<main><section class="panel" role="tabpanel" id="portfolio">
+<button id="portfolio-tab" role="tab" tabindex="0" aria-selected="true" data-tab="portfolio" aria-controls="portfolio">Portfolio</button>
+<button id="frontier-tab" role="tab" tabindex="-1" aria-selected="false" data-tab="frontier" aria-controls="frontier">Frontier &amp; TODO</button>
+<button id="clusters-tab" role="tab" tabindex="-1" aria-selected="false" data-tab="clusters" aria-controls="clusters">Topics &amp; clusters</button>
+<button id="history-tab" role="tab" tabindex="-1" aria-selected="false" data-tab="history" aria-controls="history">Temporal evidence</button>
+<button id="sources-tab" role="tab" tabindex="-1" aria-selected="false" data-tab="sources" aria-controls="sources">Sources &amp; watch</button></nav>
+<main><section class="panel" role="tabpanel" aria-labelledby="portfolio-tab" id="portfolio">
 <div class="kpis" id="kpis"></div><div class="callout"><strong>Admission remains HOLD.</strong> A merged change, a green check or a historical gate count does not establish a qualified point release. The current qualified release denominator and live weighted closure rate remain unknown.</div>
 <div class="box"><h2>Core repository observations</h2><p class="note">Bounded source readback. Native check counts retain their own unit; main checks do not substitute for required PR contexts.</p><div class="tablewrap" id="repos"></div></div>
 <div class="split"><div class="box"><h2>Frozen Gate12 cockpit</h2><p class="note" id="frozen-date"></p><div id="frozen"></div><p class="note">21 repositories × 12 gate slots. The original snapshot remains an immutable historical view.</p></div>
 <div class="box"><h2>Latest rolling observation</h2><p class="note" id="rolling-date"></p><div id="rolling"></div><p class="note">Historical gate progress at the recorded sources. Current-source recertification remains separate.</p></div></div>
 <div class="box"><h2>Historical source → observed source</h2><div class="tablewrap" id="alignment"></div></div></section>
-<section class="panel" role="tabpanel" id="frontier" hidden><div class="box"><h2>Reconciled frontier</h2><p class="note">Each row binds the observation to its own issue, pull request or native execution.</p><div class="tablewrap" id="frontier-table"></div></div>
+<section class="panel" role="tabpanel" aria-labelledby="frontier-tab" id="frontier" hidden><div class="box"><h2>Reconciled frontier</h2><p class="note">Each row binds the observation to its own issue, pull request or native execution.</p><div class="tablewrap" id="frontier-table"></div></div>
 <div class="box"><h2>Proposed execution waves</h2><p class="note">Canonical Kahn layers show dependency order. The planner selects candidates only; no worker, workflow, merge or schedule is launched by this page.</p><div id="waves"></div></div>
 <div class="box"><div class="ledgerbar"><div><h2>Action burndown · review annotations</h2><p class="note">Checkboxes record local reviewer inspection only. They cannot verify a DOV/DOD, close an issue, dispatch a worker, advance a gate, or add release credit. Source declarations and native receipts remain separate.</p></div><button type="button" id="export-ledger">Export review JSON</button></div><div id="ledger-summary"></div><p class="note" id="ledger-persistence"></p><div class="preview-note"><strong>Preview candidate</strong> means eligible for a bounded candidate selection, not launched. <strong>NOT_READY</strong> means a dependency or source/owner proof is missing. A worker becomes READY only after exact-head source capture, predecessor completion, disjoint path/PR ownership, and permitted execution are verified; DOV and DOD need independent evidence afterward.</div></div><h2>Action detail · DOV / DOD</h2><div class="tools"><input id="task-search" aria-label="Search actions" placeholder="Find an action, repository or acceptance criterion"><select id="task-cluster" aria-label="Filter action cluster"><option value="">All clusters</option></select></div><p class="counter" id="task-count"></p><div class="taskgrid" id="tasks"></div></section>
-<section class="panel" role="tabpanel" id="clusters" hidden><div class="box"><h2>Owner topics, epics and domains</h2><p id="topic-title"></p><p class="note">Declared entry points attach to existing issue identities. Cross-links and overlapping membership never add extra fleet closure credit.</p><div id="cluster-list" class="taskgrid"></div></div>
+<section class="panel" role="tabpanel" aria-labelledby="clusters-tab" id="clusters" hidden><div class="box"><h2>Owner topics, epics and domains</h2><p id="topic-title"></p><p class="note">Declared entry points attach to existing issue identities. Cross-links and overlapping membership never add extra fleet closure credit.</p><div id="cluster-list" class="taskgrid"></div></div>
 <div class="box"><h2>Canonical issue discovery and pressure</h2><div id="issue-summary"></div><p class="note">Rank is advisory. A row may be a pull request rather than an issue. Local triage checkbox is neither a GitHub issue close nor a source-authenticated DOD/DoV.</p><div class="tablewrap" id="issues"></div></div>
 <div class="box"><h2>Mathematical qualification</h2><p>Dependency pressure is the existing issue owner's advisory PageRank model. Fitted Bradley–Terry requires observed pairwise outcomes. PCA requires a qualified temporal feature matrix and alignment across fits.</p><p class="rule">PCA fit: WITHHELD · Bradley–Terry fit: WITHHELD</p><p class="note">The gg_MATH provider and statistical qualification owners supply the execution contract. This view creates no new statistical kernel or acceptance score.</p></div></section>
-<section class="panel" role="tabpanel" id="history" hidden><div class="box"><h2>Recorded pulses, newest first</h2><p class="note">Counts below come from hash-verified owner snapshots. They are observations of their recorded cohorts, not current release qualification or a count of root closures.</p><div class="tablewrap" id="history-table"></div></div><div class="box"><h2>Control before scale</h2><p>Record each expected N+1 and N+2 outcome before observing the next wave. Compare unchanged identities, scanner configuration, source scope and native units. Keep new discoveries separate from the frozen closure denominator.</p><div class="callout">Source correction → exact-head native proof → independent review → effective admission → owner decision → comparable CONTROL pulse.</div></div></section>
-<section class="panel" role="tabpanel" id="sources" hidden><div class="box"><h2>One owner per definition</h2><p class="note">This page imports or displays these canonical owners. Source receipts in the JSON export carry their content hashes.</p><div id="owners" class="source-list"></div></div><div class="box"><h2>Cluster watch development</h2><p><span class="badge hold">INACTIVE REQUEST</span> Connect the exported watch request to the existing owners after native and independent review.</p><div class="tablewrap" id="watch-table"></div><p class="note">Timezone: Europe/Brussels. Repeated unchanged reads yield NO_UPDATE. Existing N6 owns queue threshold notifications.</p><p id="delta"></p></div><div class="box"><h2>Review artifacts</h2><p>The accompanying bundle contains the source-bound JSON, action CSV, Mermaid execution DAG, inactive watch request and SHA-256 manifest. This HTML opens offline and makes no network requests.</p><p class="mono" id="baseline"></p></div></section>
+<section class="panel" role="tabpanel" aria-labelledby="history-tab" id="history" hidden><div class="box"><h2>Recorded pulses, newest first</h2><p class="note">Counts below come from hash-verified owner snapshots. They are observations of their recorded cohorts, not current release qualification or a count of root closures.</p><div class="tablewrap" id="history-table"></div></div><div class="box"><h2>Control before scale</h2><p>Record each expected N+1 and N+2 outcome before observing the next wave. Compare unchanged identities, scanner configuration, source scope and native units. Keep new discoveries separate from the frozen closure denominator.</p><div class="callout">Source correction → exact-head native proof → independent review → effective admission → owner decision → comparable CONTROL pulse.</div></div></section>
+<section class="panel" role="tabpanel" aria-labelledby="sources-tab" id="sources" hidden><div class="box"><h2>One owner per definition</h2><p class="note">This page imports or displays these canonical owners. Source receipts in the JSON export carry their content hashes.</p><div id="owners" class="source-list"></div></div><div class="box"><h2>Cluster watch development</h2><p><span class="badge hold">INACTIVE REQUEST</span> Connect the exported watch request to the existing owners after native and independent review.</p><div class="tablewrap" id="watch-table"></div><p class="note">Timezone: Europe/Brussels. Repeated unchanged reads yield NO_UPDATE. Existing N6 owns queue threshold notifications.</p><p id="delta"></p></div><div class="box"><h2>Review artifacts</h2><p>The accompanying bundle contains the source-bound JSON, action CSV, Mermaid execution DAG, inactive watch request and SHA-256 manifest. This HTML opens offline and makes no network requests.</p><p class="mono" id="baseline"></p></div></section>
 <footer>GBO · JADE portfolio readiness · generated from canonical source owners. Engineering, security and release authority remain with their owners.</footer></main>
 <script type="application/json" id="portfolio-data">__PAYLOAD__</script><script>
 'use strict';const m=JSON.parse(document.getElementById('portfolio-data').textContent);
@@ -50,7 +50,7 @@ function link(text,url){let good=false;try{const u=new URL(url);good=u.protocol=
 function badge(text){return el('span',text,'badge '+(/FAIL|RED/.test(text)?'fail':/HOLD|UNKNOWN|CHANGED|WAIT|NOT_/.test(text)?'hold':''))}
 function table(target,heads,rows){const t=el('table'),h=el('thead'),tr=el('tr');heads.forEach(x=>tr.append(el('th',x)));h.append(tr);t.append(h);const b=el('tbody');rows.forEach(row=>{const r=el('tr');row.forEach(v=>{const c=el('td');c.append(v instanceof Node?v:document.createTextNode(v===null||v===undefined?'UNKNOWN':String(v)));r.append(c)});b.append(r)});t.append(b);$(target).replaceChildren(t)}
 function empty(target,text){$(target).replaceChildren(el('div',text,'empty'))}
-const latest=m.history[m.history.length-1],gm=m.gate12_frozen.metrics,rm=m.rolling5_historical.metrics,cap=m.plan.matrix?.concurrency.max_parallel;
+const latest=m.history[m.history.length-1],gm=m.gate12_frozen.metrics,rm=m.rolling5_historical.metrics,cap=m.plan.matrix?.concurrency?.max_parallel;
 $('stamp').textContent=new Date(m.as_of).toLocaleString('en-GB',{timeZone:'Europe/Brussels',dateStyle:'long',timeStyle:'short'})+' · Brussels';
 $('cap-label').textContent+=' · proposed worker cap '+(cap??'UNKNOWN');$('topic-title').textContent=m.plan.topic||'No owner topic supplied';
 [['Current release','UNKNOWN','Native, review and owner gates remain open'],['Canonical cohort',gm.top21_repositories+' repos',gm.portfolio_gate_slots+' historical gate slots'],['Latest historical PASS',rm.verified_pass+'/'+rm.gate_denominator,latest.id+' · '+latest.observed_date],['Worker preview cap',cap??'UNKNOWN','Canonical RF planner · no dispatch']].forEach(([a,b,c])=>{const n=el('div',undefined,'card');n.append(el('div',a,'eyebrow'),el('div',b,'value'),el('div',c,'note'));$('kpis').append(n)});
@@ -65,7 +65,7 @@ m.plan.waves.forEach((ids,i)=>{const row=el('div',undefined,'wave'),items=el('di
 if(!m.plan.waves.length)empty('waves','No execution proposal supplied.');
 const selected=new Set(m.plan.matrix?.on.map(x=>x.id)||[]),held=new Map(m.plan.matrix?.held.map(x=>[x.id,x.reason])||[]);
 // Source-bound reader notes. These are deliberately not issue_rank / native receipts.
-const reviewKey='jade.reader.review.v1/'+m.planning_source_sha+'/'+(m.issues.source_digest||'no-issue-source');
+const reviewKey='jade.reader.review.v1/'+m.planning_source_sha+'/'+(m.plan.source_digest||'no-plan-source')+'/'+(m.issues.source_digest||'no-issue-source');
 let review={schema:'jade.reader.review.v1',key:reviewKey,tasks:{},issues:{}};
 let persisted=false;
 try{const saved=JSON.parse(localStorage.getItem(reviewKey)||'null');if(saved?.schema===review.schema&&saved.key===reviewKey&&saved.tasks&&saved.issues)review=saved;persisted=true}catch{}
@@ -135,6 +135,25 @@ if(!m.issues.model){empty('issue-summary','Canonical issue snapshot not supplied
 table('history-table',['Pulse','Observed date','PASS','FAIL','UNKNOWN','Cohort','Age'],[...m.history].reverse().map(p=>[p.id,p.observed_date,p.metrics.passed,p.metrics.failed,p.metrics.unknown,p.cohort.length+' repos',p.age_days+' days']));
 Object.entries(m.owners).forEach(([k,v])=>{const n=el('div',undefined,'task');n.append(el('div',k,'eyebrow'),link(v,m.source_binding?.canonical_inputs_match?'https://github.com/GBOGEB/pipeline-automation-hub/blob/'+m.planning_source_sha+'/'+v:null));$('owners').append(n)});
 table('watch-table',['Responsibility','Existing owner'],Object.entries(m.watch.owners));$('delta').append(badge(m.delta.notification));$('baseline').textContent='Planning baseline: '+m.planning_source_sha+' · '+(m.source_binding?.status||'UNVERIFIED');
-document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('.panel').forEach(x=>x.hidden=x.id!==b.dataset.tab)}));
+const tabButtons=[...document.querySelectorAll('[data-tab]')];
+function activateTab(button, focus=false){
+ tabButtons.forEach(x=>{const active=x===button;x.setAttribute('aria-selected',String(active));x.tabIndex=active?0:-1});
+ document.querySelectorAll('.panel').forEach(x=>x.hidden=x.id!==button.dataset.tab);
+ if(focus)button.focus();
+}
+tabButtons.forEach((button,index)=>{
+ button.addEventListener('click',()=>activateTab(button));
+ button.addEventListener('keydown',event=>{
+  let next;
+  if(event.key==='Home')next=0;
+  else if(event.key==='End')next=tabButtons.length-1;
+  else if(event.key==='ArrowRight')next=(index+1)%tabButtons.length;
+  else if(event.key==='ArrowLeft')next=(index-1+tabButtons.length)%tabButtons.length;
+  else return;
+  event.preventDefault();
+  activateTab(tabButtons[next],true);
+ });
+});
+activateTab(tabButtons[0]);
 </script></body></html>'''
     return template.replace("__TITLE__", title).replace("__PAYLOAD__", payload)
