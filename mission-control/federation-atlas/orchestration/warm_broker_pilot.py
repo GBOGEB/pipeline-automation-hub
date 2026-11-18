@@ -42,6 +42,7 @@ FIXTURE = Path("mission-control/gogreen/outcome_convergence/samples/native_full_
 PROFILE = Path("mission-control/federation-atlas/orchestration/PIPELINE_CONTRACTS_v1.json")
 POLICY = Path("mission-control/federation-atlas/orchestration/BROKER_POLICY_v1.json")
 SOURCE_FILES = (ATLAS, BROKER, G9, FIXTURE, PROFILE, POLICY)
+PILOT_SOURCE = Path("mission-control/federation-atlas/orchestration/warm_broker_pilot.py")
 MODES = {"cold1": ("CLI_PER_TASK", 1), "cold2": ("CLI_PER_TASK", 2),
          "cold4": ("CLI_PER_TASK", 4),
          "warm1": ("PRELOADED_FUNCTIONS", 1), "warm2": ("PRELOADED_FUNCTIONS", 2),
@@ -77,6 +78,35 @@ def load_module(name, path):
     return mod
 
 
+def verify_committed_source_blobs(root):
+    """Prove working bytes are in HEAD even if Git index flags hide changes.
+
+    Git status ignores assume-unchanged and skip-worktree payload edits.
+    git hash-object --path applies the file's repository clean filters,
+    so the comparison is against the actual committed Git blob identity.
+    Every declared source plus this executable pilot script is checked.
+    """
+    for rel in (*SOURCE_FILES, PILOT_SOURCE):
+        key = rel.as_posix()
+        candidate = root / rel
+        demand(candidate.is_file() and not candidate.is_symlink(),
+               "PINNED_SOURCE_NOT_REGULAR")
+        expected = subprocess.run(
+            ["git", "-C", str(root), "rev-parse", "HEAD:" + key],
+            capture_output=True, text=True, timeout=10, check=False,
+        )
+        demand(expected.returncode == 0 and
+               bool(SHA40.fullmatch(expected.stdout.strip())),
+               "PINNED_HEAD_BLOB_UNAVAILABLE")
+        observed = subprocess.run(
+            ["git", "-C", str(root), "hash-object", "--path", key, "--", key],
+            capture_output=True, text=True, timeout=10, check=False,
+        )
+        demand(observed.returncode == 0 and
+               observed.stdout.strip() == expected.stdout.strip(),
+               "PINNED_SOURCE_BYTES_NOT_IN_HEAD")
+
+
 def pin(root, head):
     demand(bool(SHA40.fullmatch(head or "")), "SOURCE_HEAD_SHA_INVALID")
     p = subprocess.run(["git", "-C", str(root), "rev-parse", "HEAD"],
@@ -90,6 +120,7 @@ def pin(root, head):
     )
     demand(status.returncode == 0 and not status.stdout.strip(),
            "TRACKED_SOURCE_WORKTREE_DIRTY_OR_UNVERIFIED")
+    verify_committed_source_blobs(root)
     return head
 
 

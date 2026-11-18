@@ -66,16 +66,47 @@ class SourceAndDagContracts(unittest.TestCase):
         completed = lambda stdout="", returncode=0: subprocess.CompletedProcess(
             args=["git"], returncode=returncode, stdout=stdout, stderr=""
         )
-        with mock.patch.object(m.subprocess, "run", side_effect=[
+        with mock.patch.object(m, "verify_committed_source_blobs") as parity, mock.patch.object(m.subprocess, "run", side_effect=[
             completed(head+"\n"), completed("")
         ]) as git:
             self.assertEqual(m.pin(ROOT, head), head)
             self.assertIn("--untracked-files=no", git.call_args_list[1].args[0])
+            parity.assert_called_once_with(ROOT)
         with mock.patch.object(m.subprocess, "run", side_effect=[
             completed(head+"\n"), completed("", returncode=1)
         ]):
             with self.assertRaisesRegex(ValueError, "TRACKED_SOURCE_WORKTREE_DIRTY"):
                 m.pin(ROOT, head)
+
+    def test_pin_rejects_hidden_dirty_source_bytes_in_real_git_repo(self):
+        # Real Git index flags bypass status; raw source OIDs must still fail.
+        for flag, victim in (("--assume-unchanged", m.ATLAS),
+                             ("--skip-worktree", m.PILOT_SOURCE)):
+            with self.subTest(flag=flag), tempfile.TemporaryDirectory() as td:
+                root=Path(td)
+                def git(*args):
+                    proc=subprocess.run(["git","-C",str(root),*args],
+                                        text=True,capture_output=True,check=True)
+                    return proc.stdout.strip()
+                git("init","-q")
+                git("config","user.name","N3 Test")
+                git("config","user.email","n3-test@example.invalid")
+                for rel in (*m.SOURCE_FILES, m.PILOT_SOURCE):
+                    file=root/rel
+                    file.parent.mkdir(parents=True,exist_ok=True)
+                    file.write_text("committed fixture\\n",encoding="utf-8")
+                git("add","--all")
+                git("commit","-qm","source-bound fixture")
+                head=git("rev-parse","HEAD")
+                self.assertEqual(m.pin(root,head),head)
+                git("update-index",flag,victim.as_posix())
+                (root/victim).write_text("UNCOMMITTED BYTES\\n",encoding="utf-8")
+                self.assertEqual(git("status","--porcelain=v1","--untracked-files=no"),"")
+                self.assertNotEqual(git("hash-object","--path",victim.as_posix(),
+                                        "--",victim.as_posix()),
+                                    git("rev-parse","HEAD:"+victim.as_posix()))
+                with self.assertRaisesRegex(ValueError,"PINNED_SOURCE_BYTES_NOT_IN_HEAD"):
+                    m.pin(root,head)
 
     def test_all_variants_have_same_source_populations(self):
         found=m.input_variants(ROOT)
