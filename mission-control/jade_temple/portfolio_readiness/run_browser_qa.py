@@ -111,7 +111,10 @@ def main(argv=None) -> int:
             if args.browser_executable:
                 launch["executable_path"] = str(args.browser_executable)
             browser = playwright.chromium.launch(**launch)
-            receipt["chromium_version"] = browser.version
+            browser_version = browser.version
+            receipt["chromium_version"] = str(
+                browser_version() if callable(browser_version) else browser_version
+            )
             try:
                 for name, viewport in VIEWPORTS.items():
                     context = browser.new_context(
@@ -138,7 +141,27 @@ def main(argv=None) -> int:
                                 "nodes => nodes.filter(n => !n.hidden).map(n => n.id)")
                             check(visible == [tab], name + " activates only tab " + tab)
                             no_overflow(page, name + " / " + tab)
-                        page.locator('[data-tab="portfolio"]').click()
+                        # Actual keyboard tab-navigation proof, not a presence-only check.
+                        first_tab = page.locator('[data-tab="portfolio"]')
+                        first_tab.click()
+                        first_tab.press("End")
+                        last_tab = page.locator('[data-tab="sources"]')
+                        expect(last_tab).to_have_attribute("aria-selected", "true")
+                        expect(last_tab).to_be_focused()
+                        expect(page.locator("#sources")).to_be_visible()
+                        last_tab.press("Home")
+                        expect(first_tab).to_have_attribute("aria-selected", "true")
+                        expect(first_tab).to_be_focused()
+                        first_tab.press("ArrowRight")
+                        frontier_tab = page.locator('[data-tab="frontier"]')
+                        expect(frontier_tab).to_be_focused()
+                        expect(page.locator("#frontier")).to_be_visible()
+                        frontier_tab.press("ArrowLeft")
+                        expect(first_tab).to_be_focused()
+                        check(True, name + " keyboard tabs: Home/End/Left/Right and focus")
+                        check(all(page.locator("#" + tab).get_attribute(
+                            "aria-labelledby") == tab + "-tab" for tab in TABS),
+                              name + " tab panels have stable ARIA labels")
                         screenshot(page, name + "-portfolio.png")
 
                         page.locator('[data-tab="frontier"]').click()
@@ -210,6 +233,8 @@ def main(argv=None) -> int:
                           'window.__portfolioInjected=true</script>'
                           '<img src="https://qa.invalid/pixel" '
                           'onerror="window.__portfolioInjected=true">')
+                # Matrix with omitted concurrency must not crash the dashboard.
+                hostile["plan"]["matrix"] = {"on": [], "held": []}
                 hostile["plan"]["tasks"][0]["title"] = marker
                 hostile["plan"]["tasks"][0]["t0_ref"] = "javascript:window.__portfolioInjected=true"
                 hostile_path = args.out / "inert-text-fixture.html"
