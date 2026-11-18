@@ -416,6 +416,35 @@ class DashboardBoundaryTests(unittest.TestCase):
         self.assertIn("NOT_READY", page)
         self.assertIn("0 verified completion credits", page)
 
+    def test_reader_review_key_changes_with_plan_criteria(self):
+        original = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA,
+                                     plan=plan(task()))
+        revised = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA,
+                                    plan=plan(task(dov=["New source-bound criterion"])))
+        self.assertNotEqual(original["plan"]["source_digest"],
+                            revised["plan"]["source_digest"])
+        page = portfolio.artifacts(revised)["index.html"].decode()
+        self.assertIn("m.plan.source_digest||'no-plan-source'", page)
+        self.assertIn("m.issues.source_digest||'no-issue-source'", page)
+
+    def test_dashboard_has_keyboard_tabs_and_missing_concurrency_guard(self):
+        model = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA,
+                                  plan=plan(task()))
+        page = portfolio.artifacts(model)["index.html"].decode()
+        for tab in ("portfolio", "frontier", "clusters", "history", "sources"):
+            self.assertIn(f'id="{tab}-tab"', page)
+            self.assertIn(f'aria-labelledby="{tab}-tab"', page)
+        for key in ("Home", "End", "ArrowRight", "ArrowLeft"):
+            self.assertIn("event.key==='" + key + "'", page)
+        self.assertIn("m.plan.matrix?.concurrency?.max_parallel", page)
+        self.assertNotIn("m.plan.matrix?.concurrency.max_parallel", page)
+
+    def test_browser_receipt_handles_callable_and_string_versions(self):
+        source = (HERE / "run_browser_qa.py").read_text(encoding="utf-8")
+        self.assertIn("browser_version() if callable(browser_version) else browser_version",
+                      source)
+        self.assertIn('hostile["plan"]["matrix"] = {"on": [], "held": []}', source)
+
     def test_reader_ranking_is_derived_from_canonical_issue_model(self):
         result = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA,
                                    plan=plan(task()), issue_snapshot=issue_snapshot())
