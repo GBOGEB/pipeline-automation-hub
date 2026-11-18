@@ -4,6 +4,13 @@ Start here for **purpose → structure → dependencies → decisions → measur
 This root entry extends the existing JADE owners. It is a navigation and reporting
 contract, not a new scheduler or a deployment approval.
 
+**Development view:** the [profile registry](tools/repo-bios/profiles.json) and
+[report guide](tools/repo-bios/README.md#development-map-explicit-pipeline-scope-sipoc-adr-and-job-observations)
+add explicit pipeline entry scopes, source-bound SIPOC cards, keyboard/clickable
+Kahn job graphs, separate reported prerequisite failures/unknowns, and ADR source
+declarations. Private selectors stay in a private local profile. Existing owners
+retain Kahn, critical-path, metric and decision authority.
+
 ## Repository BIOS: why each repository exists
 
 | Repository | Purpose / reason for existence | Inputs → outputs | Owning lane |
