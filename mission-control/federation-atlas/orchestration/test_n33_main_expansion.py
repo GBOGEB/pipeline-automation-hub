@@ -42,9 +42,20 @@ class SourceAndArcContract(unittest.TestCase):
     def test_native_relative_main_path_is_accepted(self):
         with tempfile.TemporaryDirectory() as td:
             p=Path(td)/"native.json"
-            p.write_text(json.dumps(fake_coverage([(1,2)])))
+            obj=fake_coverage([(1,2)])
+            # Coverage may use a repository-relative key; preserve it.
+            obj["files"]={n.MAIN:next(iter(obj["files"].values()))}
+            p.write_text(json.dumps(obj))
             measured, found=n.arcs(p)
             self.assertEqual(measured["file"],n.MAIN)
+            self.assertEqual(found,{(1,2)})
+
+    def test_native_absolute_main_path_preserves_source_key(self):
+        with tempfile.TemporaryDirectory() as td:
+            p=Path(td)/"absolute.json"
+            p.write_text(json.dumps(fake_coverage([(1,2)])))
+            measured, found=n.arcs(p)
+            self.assertEqual(measured["file"],"/repo/"+n.MAIN)
             self.assertEqual(found,{(1,2)})
 
     def test_zero_or_multiple_main_population_rejected(self):
