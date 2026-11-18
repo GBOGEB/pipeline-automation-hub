@@ -108,7 +108,27 @@ jobs:
           assert receipt['source']['head']==os.environ['EXACT_HEAD']
           assert receipt['coverage']['baseline_covered_arcs']==27
           assert receipt['coverage']['eligible_branch_arcs']==276
-          assert receipt['coverage']['previously_covered_preserved']==27
+          # Re-read actual native coverage: importing main reaches the false
+          # __main__ guard; direct CLI invocation reaches the true branch.
+          # Do not excuse any other missing old arc.
+          def branch_arcs(cohort):
+              doc=json.loads((root/'coverage'/(cohort+'.json')).read_bytes())
+              matching=[v for k,v in doc['files'].items()
+                        if k.replace('\\','/').endswith(
+                            'mission-control/federation-atlas/orchestration/main.py')]
+              assert len(matching)==1, cohort
+              return {tuple(x) for x in matching[0]['executed_branches']}
+          old=branch_arcs('baseline')
+          cli=set().union(*(branch_arcs(k) for k in
+                            ('plan','build','run1','run2','run4')))
+          assert len(old)==27
+          assert old-cli=={(1262,-1)}
+          assert (1262,1263) in cli
+          assert receipt['coverage']['previously_covered_preserved']==len(old & cli)==26
+          assert receipt['coverage']['baseline_only_import_guard_arcs']==[[1262,-1]]
+          assert receipt['coverage']['source_union_including_real_baseline']==len(old | cli)
+          assert receipt['coverage']['union_covered']==len(cli)
+          assert receipt['coverage']['newly_reached']==len(cli-old)
           assert receipt['coverage']['newly_reached']>0
           assert not receipt['coverage']['regression_arcs']
           assert len(receipt['observed']['negative_controls'])==6
