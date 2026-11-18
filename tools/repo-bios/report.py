@@ -14,7 +14,9 @@ import sys
 from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(ROOT / "mission-control/jade_temple/devops"))
+import development
 import lifecycle
 import workflows
 
@@ -184,7 +186,7 @@ def markdown(doc):
 
 def webpage(doc):
     data = json.dumps(doc, sort_keys=True).replace("<", "\\u003c")
-    return r'''<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+    page = r'''<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Repository BIOS report</title><style>body{font:16px system-ui;max-width:1200px;margin:auto;padding:24px;background:#101727;color:#e6edf6}a{color:#a8ceff}input{padding:12px;width:90%;max-width:600px}section,details{border:1px solid #53617b;padding:14px;margin:14px 0;border-radius:8px}summary{cursor:pointer;font-weight:600}pre{white-space:pre-wrap;overflow-wrap:anywhere}table{border-collapse:collapse;width:100%;min-width:640px}td,th{min-width:90px;text-align:left;padding:8px;border-bottom:1px solid #53617b;overflow-wrap:anywhere}.scroll{overflow-x:auto}code{overflow-wrap:anywhere}</style>
 <h1>Repository BIOS report</h1><p>Source inventory at recorded commits. Runtime readiness, hosted parity and native KPI results are UNKNOWN. Local report; potentially private. No automatic network requests.</p>
 <label for="search">Filter repositories</label><br><input id="search" type="search" placeholder="Repository name"><main id="report"></main>
@@ -204,6 +206,9 @@ let k=detail('As-is DMAIC / KPI source snapshots (freshness unqualified)',s);for
 el('p','Current DMAIC/runtime KPI verification: UNKNOWN. Committed values above retain their original scope and observation window.',s)}}
 document.getElementById('search').addEventListener('input',render);render();
 </script></html>'''
+    script = Path(__file__).with_name("development.js").read_text(encoding="utf-8")
+    return page.replace("function render(){", script + "\nfunction render(){").replace(
+        "let l=detail('Languages:", "renderDevelopment(r,s);let l=detail('Languages:")
 
 
 def assignment(value):
@@ -217,8 +222,13 @@ def main(argv=None):
     p.add_argument("--repo", action="append", required=True)
     p.add_argument("--entry", action="append", default=[])
     p.add_argument("--metric", action="append", default=[], help="OWNER/REPO=committed.json; copy as-is")
+    p.add_argument("--profiles", type=Path, help="explicit scope/purpose/ADR registry; optional")
+    p.add_argument("--job-observations", type=Path, help="source-bound run/job metadata, never admission proof")
+    p.add_argument("--max-age-seconds", type=int, default=86400)
     p.add_argument("--out", type=Path, required=True)
     args = p.parse_args(argv)
+    if args.job_observations and not args.profiles:
+        p.error("job observations require explicit pipeline profiles")
     repos = [assignment(v) for v in args.repo]
     if len({n for n, _ in repos}) != len(repos):
         p.error("duplicate repository")
@@ -241,6 +251,25 @@ def main(argv=None):
     doc = dict(schema="jade.repo-bios.source-report.v1", authority="SOURCE_INVENTORY_ONLY",
                merge_authorized=False, release_authorized=False,
                repositories=[snapshot(n, path, entries.get(n, []), metrics.get(n, [])) for n, path in repos])
+    doc["generator"] = dict(commit=git(ROOT, "rev-parse", "HEAD^{commit}").decode().strip(),
+        working_tree_dirty=bool(git(ROOT, "status", "--porcelain", "--", "tools/repo-bios")),
+        files_sha256={name: hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+                      for name in ("report.py", "development.py", "development.js")})
+    if args.profiles:
+        registry = json.loads(args.profiles.read_text(encoding="utf-8"))
+        if registry.get("schema") != "jade.repo-bios.profiles.v1":
+            p.error("unknown profile registry schema")
+        observations = json.loads(args.job_observations.read_text(encoding="utf-8")) if args.job_observations else []
+        if not isinstance(observations, list):
+            p.error("job observations must be a list")
+        roots = dict(repos)
+        for snap in doc["repositories"]:
+            profile = registry["repositories"].get(snap["repository"])
+            if profile is None:
+                p.error("no explicit profile for " + snap["repository"])
+            development.extend(snap, profile, roots[snap["repository"]], git,
+                               source_link, workflows, observations, max_age=args.max_age_seconds)
+        doc["profile_registry_sha256"] = hashlib.sha256(args.profiles.read_bytes()).hexdigest()
     out.mkdir(parents=True, exist_ok=True)
     outputs = {"report.json": json.dumps(doc, indent=2, sort_keys=True) + "\n",
                "report.md": markdown(doc), "index.html": webpage(doc)}
