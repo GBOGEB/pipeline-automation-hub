@@ -1,4 +1,3 @@
-
 ---
 name: 📄 Document Processing Issue
 about: Report issues with PPT, PDF, or Markdown processing engines
