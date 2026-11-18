@@ -39,6 +39,28 @@ class SourceAndArcContract(unittest.TestCase):
             self.assertEqual(measured["covered"],2)
             self.assertEqual(arcs,{(1,2),(2,3)})
 
+    def test_native_relative_main_path_is_accepted(self):
+        with tempfile.TemporaryDirectory() as td:
+            p=Path(td)/"native.json"
+            p.write_text(json.dumps(fake_coverage([(1,2)])))
+            measured, found=n.arcs(p)
+            self.assertEqual(measured["file"],n.MAIN)
+            self.assertEqual(found,{(1,2)})
+
+    def test_zero_or_multiple_main_population_rejected(self):
+        with tempfile.TemporaryDirectory() as td:
+            p=Path(td)/"ambiguous.json"
+            obj=fake_coverage([(1,2)])
+            obj["files"]={"/repo/other.py":next(iter(obj["files"].values()))}
+            p.write_text(json.dumps(obj))
+            with self.assertRaisesRegex(ValueError,"MAIN_SOURCE_ARC_POPULATION_NOT_UNIQUE"):
+                n.arcs(p)
+            item=next(iter(obj["files"].values()))
+            obj["files"]={n.MAIN:item,"/repo/"+n.MAIN:copy.deepcopy(item)}
+            p.write_text(json.dumps(obj))
+            with self.assertRaisesRegex(ValueError,"MAIN_SOURCE_ARC_POPULATION_NOT_UNIQUE"):
+                n.arcs(p)
+
     def test_missing_arc_identity_rejected_even_if_green_percentage_claimed(self):
         with tempfile.TemporaryDirectory() as td:
             p=Path(td)/"c.json"
