@@ -30,6 +30,10 @@ N3="mission-control/federation-atlas/orchestration/warm_broker_pilot.py"
 BASELINE_BLOB="41f04e8719981be6564cf6de33f365d83c7a2264"
 BASELINE_BRANCHES=27
 BASELINE_ELIGIBLE=276
+# Source-pinned main.py entrypoint: import reaches the false guard arc;
+# invoking the direct CLI reaches the true guard arc.
+IMPORT_ONLY_MAIN_GUARD_ARC=(1262,-1)
+CLI_MAIN_GUARD_ARC=(1262,1263)
 SHA40=re.compile(r"^[a-f0-9]{40}$")
 CHECKS=("stale_head","missing_source_input","malformed_snapshot",
         "tampered_bundle_member","dependency_cycle","source_drift_receipt")
@@ -149,7 +153,14 @@ def compare_coverage(base,observations):
                    "new_vs_baseline":len(covered-base_arcs),
                    "source_file":measured["file"]}
     unpreserved=base_arcs-combined
-    demand(not unpreserved,"PREVIOUS_RUNTIME_ARCS_NOT_REACHED_BY_N33_COMMANDS")
+    # The real N3.2 subprocess imports main.py (false __main__ branch).
+    # The new real CLI cohorts execute main.py (true __main__ branch).
+    # Preserve every other original branch, fail closed on any broader loss,
+    # and bind the sole exception to the immutable main.py source blob.
+    demand(not unpreserved or
+           (unpreserved=={IMPORT_ONLY_MAIN_GUARD_ARC} and
+            CLI_MAIN_GUARD_ARC in combined),
+           "PREVIOUS_RUNTIME_ARCS_NOT_REACHED_BY_N33_COMMANDS")
     demand(len(combined)>len(base_arcs),"N33_NO_ACTUAL_MAIN_BRANCH_EXPANSION")
     return {
         "source_blob":BASELINE_BLOB,
@@ -161,7 +172,9 @@ def compare_coverage(base,observations):
         "union_executed_arcs":sorted([list(x) for x in combined]),
         "union_covered":len(combined),
         "newly_reached":len(combined-base_arcs),
-        "previously_covered_preserved":BASELINE_BRANCHES,
+        "previously_covered_preserved":len(base_arcs & combined),
+        "baseline_only_import_guard_arcs":sorted([list(x) for x in unpreserved]),
+        "source_union_including_real_baseline":len(base_arcs | combined),
         "regression_arcs":[],
         "coverage_target":60,
         "target_reached":len(combined)>=60,

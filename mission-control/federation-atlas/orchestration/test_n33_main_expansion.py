@@ -103,6 +103,36 @@ class SourceAndArcContract(unittest.TestCase):
             self.assertEqual(report["previously_covered_preserved"],27)
             self.assertIsNone(report["whole_repository_coverage"])
 
+    def test_entry_guard_pinned_to_actual_main_source(self):
+        lines=(ROOT/n.MAIN).read_text(encoding="utf-8").splitlines()
+        self.assertEqual(lines[n.IMPORT_ONLY_MAIN_GUARD_ARC[0]-1].strip(),
+                         'if __name__ == "__main__":')
+        self.assertEqual(lines[n.CLI_MAIN_GUARD_ARC[1]-1].strip(),
+                         'raise SystemExit(main())')
+
+    def test_real_import_only_arc_preserved_separately_and_no_broad_exemption(self):
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            shared={(i,i+1) for i in range(1,27)}
+            baseline=shared|{n.IMPORT_ONLY_MAIN_GUARD_ARC}
+            cli=shared|{n.CLI_MAIN_GUARD_ARC,(200,201)}
+            (root/"old.json").write_text(json.dumps(fake_coverage(baseline)))
+            (root/"new.json").write_text(json.dumps(fake_coverage(cli)))
+            r=n.compare_coverage(root/"old.json",{"cli":root/"new.json"})
+            self.assertEqual(r["previously_covered_preserved"],26)
+            self.assertEqual(r["baseline_only_import_guard_arcs"],[[1262,-1]])
+            self.assertEqual(r["source_union_including_real_baseline"],29)
+            self.assertEqual(r["newly_reached"],2)
+            # An arbitrary old arc missing is still a hard failure.
+            (root/"new.json").write_text(json.dumps(fake_coverage(cli-{(1,2)})))
+            with self.assertRaisesRegex(ValueError,"PREVIOUS_RUNTIME_ARCS_NOT_REACHED"):
+                n.compare_coverage(root/"old.json",{"cli":root/"new.json"})
+            # The specific import-only exception is only valid if CLI entry
+            # really reached the complementary main guard branch.
+            (root/"new.json").write_text(json.dumps(fake_coverage(cli-{n.CLI_MAIN_GUARD_ARC})))
+            with self.assertRaisesRegex(ValueError,"PREVIOUS_RUNTIME_ARCS_NOT_REACHED"):
+                n.compare_coverage(root/"old.json",{"cli":root/"new.json"})
+
     def test_false_green_new_arcs_without_old_arcs_rejected(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td)
