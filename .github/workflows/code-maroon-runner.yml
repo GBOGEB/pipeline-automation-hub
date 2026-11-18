@@ -30,5 +30,12 @@ jobs:
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Run tests
-        run: python -m unittest discover -s mission-control/maroon -p "test_*.py" -v
+      - name: Install pinned Ruff for no-skip detector QA
+        run: python -m pip install --disable-pip-version-check ruff==0.17.0
+      - name: Run tests with zero skips
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/maroon -p "test_*.py" -v 2>&1 | tee maroon-tests.log
+          if grep -Eq "OK \(skipped=|^FAILED" maroon-tests.log; then
+            echo "MAROON_TEST_INVENTORY_INCOMPLETE"; exit 1
+          fi
