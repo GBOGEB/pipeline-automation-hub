@@ -116,7 +116,7 @@ def arcs(path):
     demand(obj.get("meta",{}).get("branch_coverage") is True,
            "NOT_INSTRUMENTED_FOR_BRANCH_ARCS")
     matched=[(name,item) for name,item in obj.get("files",{}).items()
-             if name.replace("\\","/").endswith("/"+MAIN)]
+             if name.replace("\\","/")==MAIN or name.replace("\\","/").endswith("/"+MAIN)]
     demand(len(matched)==1,"MAIN_SOURCE_ARC_POPULATION_NOT_UNIQUE")
     name,item=matched[0]
     sm=item["summary"]
