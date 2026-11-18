@@ -34,7 +34,10 @@ jobs:
     timeout-minutes: 15
     env:
       PORTFOLIO_EXPECTED_SHA: ${{ github.event.pull_request.head.sha }}
-      PORTFOLIO_PLANNING_SHA: 897298dc3ed1a45607121b205617d4c103e7b226
+      # Frozen 18 Nov candidate-owner-input anchor; do not substitute dynamic HEAD.
+      # Historical 09 Nov plan tasks remain pinned to 897298dc... and are HOLD
+      # in the current projection until separately source-requalified.
+      PORTFOLIO_PLANNING_SHA: 6bd23f96821d44c9ab81ec759340d8aa660f3de8
     steps:
       - name: Checkout the exact candidate source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
