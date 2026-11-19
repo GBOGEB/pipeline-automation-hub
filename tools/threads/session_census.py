@@ -73,6 +73,18 @@ OUT_EXT = r"xlsx|xlsm|xls|pptx|docx|pdf|html?|svg|png|csv|zip|mmd|ipynb"
 PATH_RE = re.compile(
     r"(?<![A-Za-z0-9/:\\])(?:[A-Za-z]:(?:\\{1,4}|/)|/[a-z]/)(?!/)[^\s\"'<>|*?\r\n`]*?\.(?:" + OUT_EXT + r")\b", re.I
 )
+QUOTED_PATH_RE = re.compile(
+    r"""(?P<quote>["'])(?P<path>(?:[A-Za-z]:(?:\\\\{1,4}|/)|/[a-z]/)(?!/)[^"'<>|*?\\r\\n\x60]*?\\.(?:" + OUT_EXT + r"))(?P=quote)""", re.I
+)
+
+
+def output_paths(text: str) -> set[str]:
+    """Find deliverables, including Windows paths with spaces inside matching quotes."""
+    paths = set(PATH_RE.findall(text))
+    paths.update(m.group('path') for m in QUOTED_PATH_RE.finditer(text))
+    return paths
+
+
 # Placeholders, temp caches and pasted-image caches are never deliverables.
 SKIP_RE = re.compile(
     r"\\path\\to\\|\\\.\.\.\\|[<{]|\\Temp\\tmp|\\Temp\\claude\\[^\\]+\\[^\\]+\\images\\", re.I
@@ -199,7 +211,7 @@ def scan_transcript(paths: list[str]) -> dict:
                         isinstance(p, dict) and p.get("type") == "tool_result" for p in c)
                     txt = text_of(c)
                     if is_tool:
-                        for m in PATH_RE.findall(txt):
+                        for m in output_paths(txt):
                             r["outputs"].add(norm(m))
                         continue
                     if "This session is being continued from a previous conversation" in txt:
@@ -217,10 +229,12 @@ def scan_transcript(paths: list[str]) -> dict:
                     for pc in PASTE_RE.findall(clean):
                         r["pasted"] += 1
                         r["pasted_bytes"] += len(pc.encode("utf-8"))
-                    for m in PATH_RE.findall(clean):
+                    for m in output_paths(clean):
                         r["outputs"].add(norm(m))
                 elif t == "assistant":
-                    for p in c or []:
+                    parts = ([{"type": "text", "text": c}] if isinstance(c, str)
+                             else c if isinstance(c, list) else [])
+                    for p in parts:
                         if not isinstance(p, dict):
                             continue
                         if p.get("type") == "text":
@@ -229,7 +243,7 @@ def scan_transcript(paths: list[str]) -> dict:
                                 r["last_outcome"] = tx[:900]
                             if FOLDBACK_RE.search(tx):
                                 r["foldback"] = True
-                            for m in PATH_RE.findall(tx):
+                            for m in output_paths(tx):
                                 r["outputs"].add(norm(m))
                             r["artifacts"].update(ARTIFACT_RE.findall(tx))
                             r["prs"].update(f"{a}#{b}" for a, b in PR_RE.findall(tx))
@@ -243,7 +257,7 @@ def scan_transcript(paths: list[str]) -> dict:
                             elif name in ("Edit", "NotebookEdit") and fp:
                                 r["edits"].add(norm(fp))
                             blob = json.dumps(inp, ensure_ascii=False)[:20000]
-                            for m in PATH_RE.findall(blob):
+                            for m in output_paths(blob):
                                 r["outputs"].add(norm(m))
                             r["artifacts"].update(ARTIFACT_RE.findall(blob))
     return r
@@ -487,11 +501,21 @@ def main(argv: list[str] | None = None) -> int:
 
 def write_md(recs, path: Path) -> None:
     by = {r["id"]: r for r in recs}
-    kids = collections.defaultdict(list)
-    for r in recs:
-        if r["parent"] in by:
-            kids[r["parent"]].append(r["id"])
     real = [r for r in recs if not r["task_run"]]
+    visible_parent = {}
+    kids = collections.defaultdict(list)
+    for r in real:
+        # Contract only task ancestors in the view; original parent IDs stay in JSON.
+        parent = r["parent"]
+        seen = {r["id"]}
+        while parent in by and by[parent]["task_run"] and parent not in seen:
+            seen.add(parent)
+            parent = by[parent]["parent"]
+        if parent in seen:
+            parent = None  # malformed cycle: retain a visible root, never recurse forever
+        visible_parent[r["id"]] = parent if parent in by and not by[parent]["task_run"] else None
+        if visible_parent[r["id"]]:
+            kids[visible_parent[r["id"]]].append(r["id"])
     tasks = [r for r in recs if r["task_run"]]
     L = ["# Archive wireframe", "",
          f"Generated {dt.datetime.now(dt.timezone.utc):%Y-%m-%d %H:%M}Z by `session_census.py` (read-only).",
@@ -515,7 +539,7 @@ def write_md(recs, path: Path) -> None:
             if not by[k]["task_run"]:
                 line(by[k], dep + 1)
 
-    roots = [r for r in real if r["parent"] not in by]
+    roots = [r for r in real if visible_parent[r["id"]] is None]
     for r in sorted(roots, key=lambda r: r["last"], reverse=True):
         line(r, 0)
     L += ["", "## At-risk threads (wake or mine first)", ""]
