@@ -190,6 +190,18 @@ class Census(unittest.TestCase):
         self.assertIn("D:/share/deck.pdf", self.sc.output_paths("D:/share/deck.pdf"))
         self.assertIn("D:\\work\\deck.pptx", self.sc.output_paths("D:\\work\\deck.pptx"))
 
+    def test_quoted_path_preserves_opposite_quote_style(self):
+        double_quoted = r'''"D:\O'Brien\OneDrive - Org\deck.pdf"'''
+        single_quoted = r"""'D:\Company "East"\OneDrive - Org\slides.pptx'"""
+        self.assertIn(
+            r"D:\O'Brien\OneDrive - Org\deck.pdf",
+            self.sc.output_paths(double_quoted),
+        )
+        self.assertIn(
+            r'D:\Company "East"\OneDrive - Org\slides.pptx',
+            self.sc.output_paths(single_quoted),
+        )
+
     def test_assistant_string_content_preserves_outcome(self):
         with tempfile.TemporaryDirectory() as d:
             path = Path(d) / "conversation.jsonl"
