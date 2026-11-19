@@ -87,7 +87,7 @@ def verify_build_inputs_at_head(root):
     listing=subprocess.run(["git","-C",str(root),"ls-files","-z","--",subtree],
                            capture_output=True,timeout=30,check=False)
     demand(listing.returncode==0,"PINNED_SOURCE_LIST_UNAVAILABLE")
-    names=[p.decode("utf-8") for p in listing.stdout.split(b"\\0") if p]
+    names=[p.decode("utf-8") for p in listing.stdout.split(b"\0") if p]
     demand(MAIN in names and
            subtree+"/render.py" in names and
            subtree+"/n33_main_expansion.py" in names,
