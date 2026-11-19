@@ -56,7 +56,7 @@ class SourceAndArcContract(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"PINNED_SOURCE_BYTES_NOT_IN_HEAD"):
                 n.verify_build_inputs_at_head(root)
 
-    def test_n33_direct_source_comparison_rejects_smudge_filter_and_symlink(self):
+    def test_n33_direct_source_comparison_rejects_skip_worktree_hidden_edit(self):
         import subprocess
         with tempfile.TemporaryDirectory() as td:
             root=Path(td)
