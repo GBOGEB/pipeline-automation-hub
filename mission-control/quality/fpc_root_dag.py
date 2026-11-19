@@ -137,11 +137,12 @@ def is_codex(login: str | None) -> bool:
 def quota_notices(comments: list[dict]) -> list[str]:
     """Timestamps of every Codex connector comment saying it hit its review usage limit, oldest first."""
     return sorted(
-        c.get("created_at") or c.get("createdAt")
-        for c in comments
-        if (c.get("created_at") or c.get("createdAt"))
-        and is_codex((c.get("user") or c.get("author") or {}).get("login"))
-        and QUOTA_RE.search(c.get("body") or "")
+        (c.get("created_at") or c.get("createdAt")
+         for c in comments
+         if (c.get("created_at") or c.get("createdAt"))
+         and is_codex((c.get("user") or c.get("author") or {}).get("login"))
+         and QUOTA_RE.search(c.get("body") or "")),
+        key=ts,
     )
 
 
@@ -198,7 +199,11 @@ def attribute(ev: dict, later_on_head: list[dict], pr: dict) -> str:
 
 
 def ts(s: str) -> dt.datetime:
-    return dt.datetime.fromisoformat(s.replace("Z", "+00:00"))
+    """Parse an offset-aware GitHub timestamp as a UTC instant, never local wall time."""
+    value = dt.datetime.fromisoformat(s.replace("Z", "+00:00"))
+    if value.tzinfo is None or value.utcoffset() is None:
+        raise ValueError(f"timestamp lacks UTC offset: {s!r}")
+    return value.astimezone(dt.timezone.utc)
 
 
 def history_key(e: dict) -> tuple:
@@ -215,7 +220,7 @@ def attribute_all(evals: list[dict], prs: dict, heads: dict | None = None) -> li
     commit never lend each other evidence.
     """
     heads = heads or {}
-    evals = sorted(({**e, "pr": e.get("pr") or heads.get(e["head_sha"])} for e in evals), key=lambda e: e["created_at"])
+    evals = sorted(({**e, "pr": e.get("pr") or heads.get(e["head_sha"])} for e in evals), key=lambda e: ts(e["created_at"]))
     by_head = defaultdict(list)
     for e in evals:
         by_head[history_key(e)].append(e)
@@ -542,14 +547,16 @@ def _lookups(path: Path, cache: Path, token: str) -> None:
             heads[sha] = pulls[0]["number"] if pulls else None
             _save(cache / "heads.json", heads)
     prs = _load(cache / "prs.json")
-    recent = (dt.datetime.now(dt.timezone.utc) - REFRESH_SPAN).isoformat()
-    newest = defaultdict(str)
+    recent = dt.datetime.now(dt.timezone.utc) - REFRESH_SPAN
+    newest = {}
     for r in rows:
         n = r["pr"] or heads.get(r["head_sha"])
         if n:
-            newest[n] = max(newest[n], r["created_at"])
-    # Comments change: re-read every PR without timestamped notices (cache v1) or active recently.
-    stale = {n for n, t in newest.items() if "quota_at" not in prs.get(str(n), {}) or t >= recent[:19]}
+            when = ts(r["created_at"])
+            newest[n] = max(newest.get(n, when), when)
+    # Compare UTC instants, not lexically sorted local times or truncated offsets.
+    stale = {n for n, when in newest.items()
+             if "quota_at" not in prs.get(str(n), {}) or when >= recent}
     for n in sorted(stale):
         comments = _get_comments(n, token)
         if comments is not None:

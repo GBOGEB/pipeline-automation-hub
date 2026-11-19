@@ -80,9 +80,10 @@ class Attribution(unittest.TestCase):
 
     def test_quota_notice_matches_rest_and_graphql_logins(self):
         body = "You have reached your Codex usage limits for code reviews."
-        self.assertTrue(m.quota_notice([{"user": {"login": "chatgpt-codex-connector[bot]"}, "body": body}]))
-        self.assertTrue(m.quota_notice([{"author": {"login": "chatgpt-codex-connector"}, "body": body}]))
-        self.assertFalse(m.quota_notice([{"user": {"login": "someone"}, "body": body}]))
+        self.assertTrue(m.quota_notice([{"user": {"login": "chatgpt-codex-connector[bot]"}, "body": body, "created_at": "2026-11-10T10:00:00Z"}]))
+        self.assertTrue(m.quota_notice([{"author": {"login": "chatgpt-codex-connector"}, "body": body, "createdAt": "2026-11-10T11:00:00+01:00"}]))
+        self.assertFalse(m.quota_notice([{"user": {"login": "someone"}, "body": body, "created_at": "2026-11-10T10:00:00Z"}]))
+        self.assertFalse(m.quota_notice([{"user": {"login": "chatgpt-codex-connector[bot]"}, "body": body}]))
         self.assertFalse(m.quota_notice([{"user": {"login": "chatgpt-codex-connector[bot]"}, "body": "Review done"}]))
 
     def test_head_map_fills_the_pr_and_finds_the_quota(self):
@@ -119,6 +120,51 @@ class Attribution(unittest.TestCase):
         got = m.quota_notices([{"user": {"login": "chatgpt-codex-connector[bot]"}, "body": body, "created_at": "2026-11-10T22:36:02Z"},
                                {"user": {"login": "someone"}, "body": body, "created_at": "2026-11-10T22:00:00Z"}])
         self.assertEqual(got, ["2026-11-10T22:36:02Z"])
+
+    def test_timezone_aware_timestamps_and_quota_sort(self):
+        self.assertEqual(m.ts("2026-11-10T12:00:00Z"),
+                         m.ts("2026-11-10T13:00:00+01:00"))
+        self.assertEqual(m.ts("2026-11-10T12:00:00Z"),
+                         m.ts("2026-11-10T07:00:00-05:00"))
+        with self.assertRaises(ValueError):
+            m.ts("2026-11-10T12:00:00")
+        body = "You have reached your Codex usage limits for code reviews."
+        notice = lambda when: {"user": {"login": "chatgpt-codex-connector[bot]"},
+                               "body": body, "created_at": when}
+        first = "2026-11-10T23:30:00-05:00"  # 11 Nov 04:30 UTC
+        second = "2026-11-11T05:00:00Z"       # 11 Nov 05:00 UTC
+        self.assertEqual(m.quota_notices([notice(second), notice(first)]),
+                         [first, second])
+
+    def test_evaluations_are_sorted_by_utc_instant_not_offset_text(self):
+        later = ev(22, "head", 1, "PASS", run=2)
+        later["created_at"] = "2026-11-11T05:00:00Z"
+        earlier = ev(22, "head", 2, "FAIL", "MISSING_REQUIRED_PROOF_PURPOSE", run=1)
+        earlier["created_at"] = "2026-11-10T23:30:00-05:00"
+        rows = m.attribute_all([later, earlier], {})
+        self.assertEqual([r["run_id"] for r in rows], [1, 2])
+        self.assertEqual(rows[0]["source"], "SRC_PROOF_PENDING")
+
+    def test_lookup_refresh_uses_offset_aware_instant(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = Path(tmp)
+            fresh = (dt.datetime.now(dt.timezone.utc) - m.REFRESH_SPAN
+                     + dt.timedelta(minutes=30)).astimezone(
+                         dt.timezone(dt.timedelta(hours=-12))).isoformat()
+            old = (dt.datetime.now(dt.timezone.utc) - m.REFRESH_SPAN
+                   - dt.timedelta(minutes=30)).astimezone(
+                       dt.timezone(dt.timedelta(hours=12))).isoformat()
+            (cache / "heads.json").write_text(json.dumps({"fresh": 9, "old": 10}))
+            (cache / "prs.json").write_text(json.dumps({
+                "9": {"codex_quota": False, "quota_at": []},
+                "10": {"codex_quota": False, "quota_at": []}}))
+            path = cache / "evaluations.jsonl"
+            path.write_text("\n".join(json.dumps(x) for x in [
+                {"pr": 9, "head_sha": "fresh", "created_at": fresh},
+                {"pr": 10, "head_sha": "old", "created_at": old}]) + "\n")
+            with mock.patch.object(m, "_get_comments", return_value=[]) as get_comments:
+                m._lookups(path, cache, "unused-token")
+            get_comments.assert_called_once_with(9)
 
     def test_receipt_head_and_pr_win_over_the_run(self):
         buf = io.BytesIO()
