@@ -10,6 +10,7 @@ on:
   workflow_dispatch: {}
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: section10-bios-top21-${{ github.event.pull_request.head.sha || github.sha }}
   cancel-in-progress: false
@@ -47,17 +48,28 @@ jobs:
           set -euo pipefail
           python tools/repo-bios/report.py --repo GBOGEB/pipeline-automation-hub=. --out "$RUNNER_TEMP/bios"
           test -s "$RUNNER_TEMP/bios/report.json"
-      - name: Generate historical canonical 21-repository Top21 pair
+      - name: Retrieve immutable native Top21 pair from qualified historical producer run
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TOP21_PRODUCER_SHA: 1e71a34db868dc5fca006bdcd37826ff320365a8
+          TOP21_PRODUCER_RUN: '44588374270'
         run: |
           set -euo pipefail
-          python mission-control/jade_temple/portfolio_readiness/census_bridge.py \
-            --census mission-control/jade_temple/data/DEVOPS_CENSUS_N11.json \
-            --private-registry mission-control/gogreen/token_census/REGISTRY.json \
-            --require-count 21 \
-            --out "$RUNNER_TEMP/top21-observation.json" \
-            --receipt "$RUNNER_TEMP/top21-receipt.json"
-          test -s "$RUNNER_TEMP/top21-observation.json"
-          test -s "$RUNNER_TEMP/top21-receipt.json"
+          producer_sha="$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$TOP21_PRODUCER_RUN" --jq '.head_sha')"
+          test "$producer_sha" = "$TOP21_PRODUCER_SHA"
+          mkdir -p "$RUNNER_TEMP/top21-native"
+          gh run download "$TOP21_PRODUCER_RUN" --repo "$GITHUB_REPOSITORY" \
+            --name "jade-devops-offline-${TOP21_PRODUCER_SHA}-${TOP21_PRODUCER_RUN}" \
+            --dir "$RUNNER_TEMP/top21-native"
+          test -s "$RUNNER_TEMP/top21-native/jade-portfolio-N11-observation.json"
+          test -s "$RUNNER_TEMP/top21-native/jade-portfolio-N11-receipt.json"
+          printf '%s  %s\n' \
+            f350a512481715974ec955e66b98d3606c7d6752779e617aaabcad95a232462c \
+            "$RUNNER_TEMP/top21-native/jade-portfolio-N11-observation.json" \
+            ba55a5bf6c9f4c2e6dfd57a094291276812cc0d0f2e5240042782deccc901aa4 \
+            "$RUNNER_TEMP/top21-native/jade-portfolio-N11-receipt.json" | sha256sum -c -
+          cp "$RUNNER_TEMP/top21-native/jade-portfolio-N11-observation.json" "$RUNNER_TEMP/top21-observation.json"
+          cp "$RUNNER_TEMP/top21-native/jade-portfolio-N11-receipt.json" "$RUNNER_TEMP/top21-receipt.json"
       - name: Execute real-source join at exact head
         env:
           EXPECTED: ${{ github.event.pull_request.head.sha || github.sha }}
