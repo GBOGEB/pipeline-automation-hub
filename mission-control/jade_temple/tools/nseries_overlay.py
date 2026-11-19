@@ -39,6 +39,15 @@ def validate(data: dict) -> dict:
         raise ValueError("authority boundary violated")
     if data.get("merge_admission") != "HOLD":
         raise ValueError("overlay cannot declare merge admission")
+    # Use the canonical public/private projection contract, never duplicate its regex.
+    projection = JADE / "tools" / "private_boundary.py"
+    privacy_spec = importlib.util.spec_from_file_location("jade_existing_private_boundary", projection)
+    if privacy_spec is None or privacy_spec.loader is None:
+        raise ValueError("JADE privacy projection unavailable")
+    privacy = importlib.util.module_from_spec(privacy_spec)
+    privacy_spec.loader.exec_module(privacy)
+    if privacy.project(data) != data:
+        raise ValueError("private boundary projection required")
     nodes = data.get("nodes")
     edges = data.get("edges")
     if not isinstance(nodes, list) or not isinstance(edges, list) or not nodes:
