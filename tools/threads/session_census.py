@@ -355,7 +355,28 @@ def main(argv: list[str] | None = None) -> int:
     task_titles = TASK_TITLES | set(a.task_title)
     git_roots = tuple(norm(g) for g in a.git_root) + tuple(re.compile(x, re.I) for x in a.git_home_re)
 
-    jsonl = {Path(f).stem: f for f in glob.glob(os.path.join(a.projects, "*", "*.jsonl"))}
+    # Build transcript index (<cliSessionId>.jsonl) while detecting duplicate stems across projects.
+    # Preserve prior behavior (stem -> single path) but choose deterministically and warn.
+    by_stem = collections.defaultdict(list)
+    for f in glob.glob(os.path.join(a.projects, "*", "*.jsonl")):
+        by_stem[Path(f).stem].append(f)
+
+    jsonl = {}
+    for stem, paths in by_stem.items():
+        if len(paths) == 1:
+            jsonl[stem] = paths[0]
+            continue
+        # Deterministic choice: newest mtime wins (fallback to lexical ordering if mtime ties).
+        chosen = max(paths, key=lambda p: (os.path.getmtime(p), p))
+        print(
+            "WARNING: duplicate transcript stem {!r}; choosing newest mtime: {}\n"
+            "         candidates:\n         {}".format(
+                stem, chosen, "\n         ".join(sorted(paths))
+            ),
+            file=sys.stderr,
+        )
+        jsonl[stem] = chosen
+
     rescue_roots = [Path(a.pulse)]
     rescued = mention_index(rescue_roots, skip=Path(a.out))
     indexed = mention_index([Path(m) for m in a.memory], skip=Path(a.out))
