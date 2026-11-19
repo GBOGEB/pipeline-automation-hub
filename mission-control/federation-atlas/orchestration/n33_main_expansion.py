@@ -62,12 +62,50 @@ def git(root,*args):
     return r.stdout.strip()
 
 
+def source_bytes_at_head(root, rel):
+    """Raw committed bytes, independent of index flags and clean/smudge filters."""
+    key=rel.as_posix() if isinstance(rel,Path) else rel
+    demand(isinstance(key,str) and key and not key.startswith("/") and
+           ".." not in Path(key).parts,"PINNED_SOURCE_PATH_INVALID")
+    commit=subprocess.run(["git","-C",str(root),"rev-parse","HEAD:"+key],
+                          capture_output=True,text=True,timeout=30,check=False)
+    demand(commit.returncode==0 and bool(SHA40.fullmatch(commit.stdout.strip())),
+           "PINNED_HEAD_BLOB_UNAVAILABLE")
+    blob=subprocess.run(["git","-C",str(root),"cat-file","blob",commit.stdout.strip()],
+                        capture_output=True,timeout=30,check=False)
+    demand(blob.returncode==0,"PINNED_HEAD_BLOB_UNAVAILABLE")
+    return blob.stdout
+
+
+def verify_build_inputs_at_head(root):
+    """Fail closed for all tracked orchestration inputs, including render.py.
+
+    A hidden assume-unchanged/skip-worktree edit, local Git clean filter or
+    symlink cannot substitute executable bytes while receipts claim HEAD.
+    """
+    subtree="mission-control/federation-atlas/orchestration"
+    listing=subprocess.run(["git","-C",str(root),"ls-files","-z","--",subtree],
+                           capture_output=True,timeout=30,check=False)
+    demand(listing.returncode==0,"PINNED_SOURCE_LIST_UNAVAILABLE")
+    names=[p.decode("utf-8") for p in listing.stdout.split(b"\\0") if p]
+    demand(MAIN in names and
+           subtree+"/render.py" in names and
+           subtree+"/n33_main_expansion.py" in names,
+           "PINNED_BUILD_INPUT_SET_INCOMPLETE")
+    for name in names:
+        p=Path(root)/name
+        demand(p.is_file() and not p.is_symlink(),"PINNED_SOURCE_NOT_REGULAR")
+        demand(p.read_bytes()==source_bytes_at_head(root,name),
+               "PINNED_SOURCE_BYTES_NOT_IN_HEAD")
+
+
 def exact_root(root,head):
     demand(bool(SHA40.fullmatch(head or "")),"INVALID_EXACT_HEAD")
     demand(git(root,"rev-parse","HEAD")==head,"CHECKOUT_HEAD_DRIFT")
     demand(git(root,"hash-object",MAIN)==BASELINE_BLOB,
            "N33_MAIN_SOURCE_CHANGED_FROM_N32_27_ARC_BASELINE")
     demand(git(root,"status","--porcelain")=="","SOURCE_CHECKOUT_DIRTY")
+    verify_build_inputs_at_head(root)
 
 
 def producer(root,path,identity):
