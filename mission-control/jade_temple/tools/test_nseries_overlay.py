@@ -60,6 +60,22 @@ class OverlayChecks(unittest.TestCase):
                      "to": "GLOBAL:N1", "kind": "HARD_DAG", "evidence": "NEGATIVE"}),
                      "unverified cross-namespace hard dependency")
 
+    def test_private_source_url_must_be_projected(self):
+        self._reject(
+            lambda d: d["sources"].append({
+                "owner": "GBOGEB/cryoplant-project",
+                "path": "private/file.json",
+                "role": "REFERENCE_ONLY",
+                "url": "https://github.com/GBOGEB/cryoplant-project/blob/main/private/file.json",
+            }),
+            "private boundary projection required",
+        )
+
+    def test_private_source_pointer_is_not_a_browser_link(self):
+        html = mod.webpage(self.data, mod.validate(self.data))
+        self.assertNotIn("github.com/GBOGEB/cryoplant-project/", html)
+        self.assertIn("PRIVATE_AGGREGATE_ONLY", html)
+
     def test_missing_authority_and_false_green_rejected(self):
         self._reject(lambda d: d.update(merge_admission="ADMITTED"), "merge admission")
         self._reject(lambda d: d["nodes"][0].update(status="PASS"), "cannot assert success")
