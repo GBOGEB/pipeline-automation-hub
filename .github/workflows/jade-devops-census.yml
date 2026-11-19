@@ -123,7 +123,7 @@ jobs:
           python mission-control/jade_temple/devops/workflows.py lint .github/workflows/jade-reusable-ci.yml
       - name: Native full-population consumer smoke on canonical N11
         env:
-          JADE_PLANNING_SHA: 897298dc3ed1a45607121b205617d4c103e7b226
+          JADE_PLANNING_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
           P=mission-control/jade_temple/portfolio_readiness
@@ -147,6 +147,7 @@ jobs:
           assert r["source_repos"] == 21
           import hashlib
           path = "mission-control/jade_temple/portfolio_readiness/census_bridge.py"
+          assert m["planning_source_sha"] == os.environ["JADE_PLANNING_SHA"]
           assert m["source_binding"]["status"] == "BASELINE_INPUTS_MATCH"
           assert m["source_hashes"][path]["sha256"] == hashlib.sha256(Path(path).read_bytes()).hexdigest()
           assert m["authority"]["current_point_release_readiness"] is None
@@ -221,7 +222,7 @@ jobs:
           PY
       - name: Project the private-safe portfolio from the same weekly census
         env:
-          JADE_PLANNING_SHA: 897298dc3ed1a45607121b205617d4c103e7b226
+          JADE_PLANNING_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
           P=mission-control/jade_temple/portfolio_readiness
@@ -245,6 +246,7 @@ jobs:
           assert receipt["source_repos"] == 21 and receipt["merge_admission"] == "HOLD"
           import hashlib
           path = "mission-control/jade_temple/portfolio_readiness/census_bridge.py"
+          assert model["planning_source_sha"] == os.environ["JADE_PLANNING_SHA"]
           assert model["source_binding"]["status"] == "BASELINE_INPUTS_MATCH"
           assert model["source_hashes"][path]["sha256"] == hashlib.sha256(Path(path).read_bytes()).hexdigest()
           assert model["authority"]["current_point_release_readiness"] is None
