@@ -177,10 +177,10 @@ class Census(unittest.TestCase):
         self.assertEqual(v(self.base(outputs=gone, mined_in=["c.md"]))[0], "CAPTURED")
 
     def test_quoted_windows_deliverables_with_spaces(self):
-        text = 'Output: "D:\\\\OneDrive - Org\\\\deck.pptx" and D:/share/deck.pdf'
+        text = r'Output: "D:\OneDrive - Org\deck.pptx" and D:/share/deck.pdf'
         paths = {self.sc.norm(p) for p in self.sc.output_paths(text)}
-        self.assertIn("D:\\\\OneDrive - Org\\\\deck.pptx", paths)
-        self.assertIn("D:\\\\share\\\\deck.pdf", paths)
+        self.assertIn(r"D:\OneDrive - Org\deck.pptx", paths)
+        self.assertIn(r"D:\share\deck.pdf", paths)
 
     def test_assistant_string_content_preserves_outcome(self):
         with tempfile.TemporaryDirectory() as d:
@@ -189,10 +189,10 @@ class Census(unittest.TestCase):
                 "type": "assistant",
                 "message": {"content": "Method fold-back. Delivered D:/share/deck.pptx; "
                                        "PR https://github.com/O/R/pull/7"}
-            }) + "\\n", encoding="utf-8")
+            }) + "\n", encoding="utf-8")
             report = self.sc.scan_transcript([str(path)])
         self.assertTrue(report["foldback"])
-        self.assertIn("D:\\\\share\\\\deck.pptx", report["outputs"])
+        self.assertIn(r"D:\share\deck.pptx", report["outputs"])
         self.assertIn("O/R#7", report["prs"])
 
     def test_scheduled_task_parent_preserves_normal_descendants(self):
