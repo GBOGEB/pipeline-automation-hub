@@ -41,6 +41,7 @@ ORDER = (
 # Root pages outside the standard for now, with the reason.
 DEFERRED = {
     "DROPIN_NEXT_CHAT.md": "append-only CP.HANDOFF log, each wave prepends its checkpoint (W2 decision)",
+    "N_SERIES_ATLAS_README.md": "bounded read-only atlas source guide; outside the canonical root navigation pending independent owner review",
 }
 INDEX = "00_START_HERE.md"
 NAV = "**Nav:** "
