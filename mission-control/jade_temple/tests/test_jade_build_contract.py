@@ -18,7 +18,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 JT = ROOT / "mission-control/jade_temple"
 MANIFEST = JT / "sprint/requirements-optional.txt"
-CI_PATH = (ROOT / ".github/workflows/jade-temple-readonly-qa.yml", ROOT / ".github/workflows/jade-devops-census.yml")
+CI_PATH = (ROOT / ".github/workflows/jade-temple-readonly-qa.yml",
+           ROOT / ".github/workflows/jade-devops-census.yml",
+           ROOT / ".github/workflows/jade-portfolio-readiness.yml")
 FLOOR = (3, 12)
 MANAGED = {"coverage", "playwright"}  # pinned in MANIFEST; Dependabot group pip-jade-sprint-minor-patch
 
@@ -26,7 +28,8 @@ MANAGED = {"coverage", "playwright"}  # pinned in MANIFEST; Dependabot group pip
 THIRD_PARTY = {
     "playwright": {"files": {"tools/run_eight_browser_qa.py", "tools/run_gate12_browser_qa.py",
                              "tools/run_nplus1_browser_qa.py", "tools/run_nplus2_browser_qa.py",
-                             "tools/run_redtrace_browser_qa.py", "tools/render_redtrace_pdf.py"},
+                             "tools/run_redtrace_browser_qa.py", "tools/render_redtrace_pdf.py",
+                             "portfolio_readiness/run_browser_qa.py"},
                    "pinned": "sprint/requirements-optional.txt"},
     "yaml": {"files": {"devops/workflows.py"}, "pinned": "jade-devops-census.yml pyyaml=="},
     # local operator tool, not on the CI path; nothing in CI installs or runs it
