@@ -23,6 +23,8 @@ The tools reuse existing owners and do not copy them (AGENTS.md "Metric ownershi
 
 ## Rules
 
+- `extract_writes.py dump` output is private: transcripts can hold confidential content. Dump into a
+  scratch folder outside every repo; the tool refuses a folder inside a git work tree.
 - `DIR`, specs and wire records are local and private. Never commit them to this public
   repo. Session titles and briefs may hold confidential project content.
 - Every tool removes `GITHUB_TOKEN` and `GH_TOKEN` before calling `gh`, so `gh` uses its
@@ -32,4 +34,4 @@ The tools reuse existing owners and do not copy them (AGENTS.md "Metric ownershi
   checks, and save before, after and rollback ruleset JSON. Verify with
   `rules/branches/<branch>`. Re-run `check_presence.py` after any workflow rename.
 
-Tests: `python -m unittest discover -s tools/threads -p 'test_threads.py'` (offline).
+Tests: `python -m unittest discover -s tools/threads -p 'test_*.py'` (offline).

@@ -104,6 +104,19 @@ design until the outputs are regenerated.
 - Line endings are hashed. `.gitattributes` keeps text LF on every platform; on Windows write generated
   files with `newline="\n"` and `encoding="utf-8"`.
 
+### Conflicted PRs and stacks: which tool
+
+"The stack/conflict tool" exists twice, in two repos. Look in both before you write a new one (2026-10-27,
+issue #946: a session searched only the hub, missed ABACUS and rewrote a restack tool).
+
+- Hub `tools/workstation/`: `Restack-Pr.ps1` (checkout-free rebase, dry run by default),
+  `Resolve-RegenConflicts.ps1` (generated-output conflicts), `Invoke-DraftPrPass.ps1` (triage) and
+  `PR_CONFLICT_RUNBOOK.md`.
+- ABACUS `tools/stack/`: `Rebase-Stack.ps1`, `Fix-AllStacks.ps1`, `Stack-Helper.ps1` (whole-stack rebuild with
+  an auto-resolve rule; read its `README.md`).
+- The choice rule (rebase in memory, merge bottom-up, regen-resolve or ABACUS stack tools) is in
+  `tools/workstation/README.md`, section "Which restack tool".
+
 ### Windows shell pitfalls
 
 Each of these cost time on the owner's workstation (2026-11-09/10, GEMINI#40, GEMINI#47, #1162).
@@ -139,6 +152,7 @@ One canonical module per metric. Import these; do not re-implement them. Paths a
 | EVERRED census (occurrences, roots, root closure / recurrence rates) | `mission-control/qps-triage-ultra/p-process/everred/harvest.py` | `harvest()`, `matches()`, `run_probes()`; metrics are computed in `main()` and written to `everred.json` | `site/everred/data/everred.json` (`everred.census/1.0`) |
 | EVERRED register page | `mission-control/qps-triage-ultra/p-process/everred/build_page.py` | CLI only (renders from `everred.json`) | `site/everred/index.html` |
 | QA engines and K-<TYPE>-NN checks by binary type | `mission-control/registry/engine_catalog.py` + `ENGINE_CATALOG.yaml` | CLI: `validate`, `matrix`, `probe` | Check matrix, engine probe JSON |
+| CI collection parity (CI vs local collected tests, 5 repos) | `docs/ci-spine/COLLECTION_PARITY_METHOD.md` (method) + `scripts/coverage_waves_parity_guard.py` (code guard) | Follow the method; append rows | `docs/ci-spine/COLLECTION_PARITY_LEDGER.jsonl` |
 | P-process mode per repo | `mission-control/qps-triage-ultra/p-process/p_decide.py` | `decide(census, everred, drift, cp_repos)`, `repo_of()` | `site/data/p_state.json` (`p-process.state/1.0`) |
 | P-process home page and deck | `mission-control/qps-triage-ultra/p-process/build_p_process.py` | CLI only | `site/index.html`, `site/P-process-deck.pdf` |
 | Scale dock (first-red / root-red metrics, EVERRED / Code Purple / P-process docks, cross-source consistency) | `mission-control/gogreen/scale_dock.py` | `red_metrics()`, `dock_everred()`, `DOCKERS[name]()` (`dock_code_purple`, `dock_p_process`, `dock_issue_bd`, `dock_crosswalk`), `dock_consistency()`, `DOCK_SCHEMAS`, `evaluate()` | `codepurple.scale-dock.series.v1` |
@@ -152,9 +166,11 @@ One canonical module per metric. Import these; do not re-implement them. Paths a
 | Issue/PR title-family grammar and recursive vocabulary (sole SSOT, additive; classification and linked candidates never alter issue state) | `mission-control/issue_rank/title_taxonomy.py` | `parse_title()`, `summary()`, `associated_families()`; consumed by issue_rank and triway | `jade.title-taxonomy.v1` / per-repo, JADE and USER family and leaf-cluster views |
 | DevOps fleet census (exact-head blob ids, lifecycle stages) | `mission-control/jade_temple/devops/census.py` | `fetch` / `scan` / `check` / `report` subcommands | `data/DEVOPS_CENSUS_N9.json`, `data/DEVOPS_OBJECTS_N9.json` |
 | MAROON diagnosis hints (finding identity by scanner rule or significant words, recurrence ONCE/REPEAT/RECURRING/SYSTEMIC, frequency and modal path, METHOD/REX/SCALING/PINNED_OID tags, bot/fork no-push, seen-fixed and false-positive history, group / one-method / fold-back proposals) | `mission-control/maroon/hints.py` | `finding_key()`, `rule_of()`, `analyse()`; reads the `operations.py` ledger as JSON and never writes it; queue, leases, Kahn plan and closure stay with `operations.py` / `closure.py` | `code_maroon.hints.v1` (private), `code_maroon.hints_public.v1` counts only |
+| MAROON REX known fixes before push (catalog of recurring review findings with a local detector and one agreed fix; advisory scan of the lines a branch adds; coverage mining and uncatalogued-candidate list from review comments) | `mission-control/maroon/rex.py` + `data/REX_KNOWN_FIXES_v1.json` | `scan()`, `mine()`, `added_lines()`; finding identity from `hints.finding_key`, pinned paths from `hints.PINNED_OID_RE`; never posts, resolves or pushes | `code_maroon.rex_scan.v1`, `code_maroon.rex_mine.v1` (counts only in the catalog) |
 | Topological layering (Kahn waves; wave index = longest-path layer; cycle check that names the stuck nodes) | `mission-control/jade_temple/devops/lifecycle.py` | `topo_layers(nodes, edges)`; from other trees load it with `importlib` as `tools/alkane_dag.py` and metric-atlas `lane_lifecycle.py` do | waves as `list[list[str]]`; `ValueError` on a cycle or an unknown endpoint |
 | Actions usage + performance metrics (per workflow / repo / FOCUS5 fleet: billable minutes, job run and queue time, job failure rate, failed-job minutes, class / band / event groupings) | `mission-control/jade_temple/devops/actions_metrics.py` | `aggregate()`, `project()`, `fetch` / `project` subcommands; reuses `bd_queue_wave.utc()` / `percentile()` / `queue_seconds()` and `wddd.iso_week_key()` | `data/ACTIONS_METRICS_FOCUS5.json` (`jade.devops.actions-metrics.v1`), `site/actions_metrics.csv` |
 | Week codes on the ISO 8601 week calendar for every GBOGEB repo (`YYYY-w##DDD` codes and `w##DDD` labels, which are project codes, not ISO 8601 syntax; `YYYY-Www` week key, weeks per ISO year, 13-week quarter convention, workday spans; Mermaid schedule patterns with `axisFormat w%V`) | `mission-control/jade_temple/devops/wddd.py` + `WDDD_WEEK_CODES.md` | `to_w_code()`, `from_w_code()`, `iso_week_key()`, `weeks_in_iso_year()`, `quarter_13w()`, `add_workdays()`; `actions_metrics.iso_week()` delegates to it; other trees and repos load it with `importlib` from a pinned hub commit | `2026-w46MON`, `2026-W46`; `ValueError` on a bare code without an ISO year |
+| Burn-down pulses for the owner's burn-down dashboards (PR next step and red kinds, default-branch red workflow streaks, merges per day; issue-PR closing / mention links, issue link state, opened / closed per day; read-only `gh` guard) | `tools/workstation/dashboards/pulse/burndown_pulse.py`, `tools/workstation/dashboards/pulse/issue_pulse.py` | CLI `OUT_DIR`; `assert_read_only()`, `gh()`, `gh_retry()`, `check_state()`; `issue_pulse` imports the open-issue register (`recensus.retrieve_issue_register`) from a git ref instead of copying it | `pulse.json`, `issue_pulse.json` (rows by `kind`, local only) |
 
 Note the two EVERRED views: `harvest.py` owns the root register metrics (per root, from Actions
 failures); `cicd_dag.everred_metrics()` owns the per-workflow red-trace ratios (`everred_ratio`,
