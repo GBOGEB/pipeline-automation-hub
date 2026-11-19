@@ -246,8 +246,8 @@ def main(argv=None):
     result = build(json.loads(a.events.read_text(encoding="utf-8")), catalog,
                    json.loads(a.heads.read_text(encoding="utf-8")))
     a.out.mkdir(parents=True, exist_ok=True)
-    (a.out / "root_receipt.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    (a.out / "root_receipt.html").write_text(render_html(result), encoding="utf-8")
+    (a.out / "root_receipt.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    (a.out / "root_receipt.html").write_text(render_html(result), encoding="utf-8", newline="\n")
     print("CANDIDATES", result["counts"]["canonically_matched_candidates"],
           "ROOTS", len(result["roots"]), "OCCURRENCES", result["counts"]["unique"])
     return 0

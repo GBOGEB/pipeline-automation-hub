@@ -167,13 +167,13 @@ class RootReceipts(unittest.TestCase):
             d = Path(d)
             files = {"events.json": [ev()], "catalog.json": CATALOG, "heads.json": {REF: A}}
             for name, data in files.items():
-                (d/name).write_text(json.dumps(data), encoding="utf-8")
+                (d/name).write_text(json.dumps(data), encoding="utf-8", newline="\n")
             before = {k: (d/k).read_bytes() for k in files}
             out = d/"out"
             self.assertEqual(r.main(["--events", str(d/"events.json"), "--catalog", str(d/"catalog.json"),
                                      "--heads", str(d/"heads.json"), "--out", str(out)]), 0)
             self.assertEqual(before, {k: (d/k).read_bytes() for k in files})
-            self.assertEqual(json.loads((out/"root_receipt.json").read_text())["counts"]["unique"], 1)
+            self.assertEqual(json.loads((out/"root_receipt.json").read_text(encoding="utf-8"))["counts"]["unique"], 1)
             self.assertTrue((out/"root_receipt.html").exists())
 
 if __name__ == "__main__":
