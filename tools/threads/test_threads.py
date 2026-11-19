@@ -176,6 +176,42 @@ class Census(unittest.TestCase):
         self.assertEqual(v(self.base(outputs=gone, rescue_dirs=["r"]))[0], "PARTIAL")
         self.assertEqual(v(self.base(outputs=gone, mined_in=["c.md"]))[0], "CAPTURED")
 
+    def test_quoted_windows_deliverables_with_spaces(self):
+        text = 'Output: "D:\\\\OneDrive - Org\\\\deck.pptx" and D:/share/deck.pdf'
+        paths = {self.sc.norm(p) for p in self.sc.output_paths(text)}
+        self.assertIn("D:\\\\OneDrive - Org\\\\deck.pptx", paths)
+        self.assertIn("D:\\\\share\\\\deck.pdf", paths)
+
+    def test_assistant_string_content_preserves_outcome(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "conversation.jsonl"
+            path.write_text(json.dumps({
+                "type": "assistant",
+                "message": {"content": "Method fold-back. Delivered D:/share/deck.pptx; "
+                                       "PR https://github.com/O/R/pull/7"}
+            }) + "\\n", encoding="utf-8")
+            report = self.sc.scan_transcript([str(path)])
+        self.assertTrue(report["foldback"])
+        self.assertIn("D:\\\\share\\\\deck.pptx", report["outputs"])
+        self.assertIn("O/R#7", report["prs"])
+
+    def test_scheduled_task_parent_preserves_normal_descendants(self):
+        root = self.base(id="local_parent", parent=None, task_run=True)
+        child = self.base(id="local_child", parent="local_parent")
+        grandchild = self.base(id="local_grandchild", parent="local_child")
+        for item in (root, child, grandchild):
+            item.update(id8=item["id"][6:14], archived=False,
+                        verdict="PARTIAL", flags=[], prs_app=[], title=item["id"],
+                        last="2026-11-19", number=None, family=None, wake="")
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "wireframe.md"
+            self.sc.write_md([root, child, grandchild], path)
+            body = path.read_text(encoding="utf-8")
+        self.assertIn("local_ch", body)
+        self.assertIn("local_gr", body)
+        self.assertLess(body.index("local_ch"), body.index("local_gr"))
+        self.assertNotIn("local_pa", body.split("## Threads by parent")[1].split("## At-risk")[0])
+
     def test_census_from_fixture(self):
         sid = "local_abcdef12-0000-0000-0000-000000000000"
         transcript = [
