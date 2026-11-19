@@ -247,12 +247,14 @@ def attribute_all(evals: list[dict], prs: dict, heads: dict | None = None) -> li
 
 def summarize(rows: list[dict]) -> dict:
     n = len(rows)
-    red = [r for r in rows if r["klass"] not in ("PASS", "UNKNOWN")]
-    unverified = sum(r["klass"] == "UNKNOWN" for r in rows)
+    # A proven FAIL can still have UNKNOWN causal attribution. Only evaluator
+    # status UNKNOWN is unverified, never a source-class UNKNOWN for a RED.
+    red = [r for r in rows if r["status"] == "FAIL"]
+    unverified = sum(r["status"] == "UNKNOWN" for r in rows)
     verified = n - unverified
     klass = Counter(r["klass"] for r in red)
     if unverified:
-        klass["UNKNOWN"] = unverified
+        klass["UNVERIFIED"] = unverified
     heads = defaultdict(list)
     for r in rows:
         heads[history_key(r)].append(r)
@@ -298,7 +300,7 @@ def ledger(rows: list[dict]) -> list[dict]:
     """Known failures by source: count, PRs, first and last seen; no merge-enforcement inference."""
     by = defaultdict(list)
     for r in rows:
-        if r["klass"] not in ("PASS", "UNKNOWN"):
+        if r["status"] == "FAIL":
             by[r["source"]].append(r)
     out = []
     for src, rs in by.items():
@@ -312,7 +314,7 @@ def ledger(rows: list[dict]) -> list[dict]:
 def node_counts(rows: list[dict]) -> dict:
     c = Counter()
     for r in rows:
-        if r["klass"] not in ("PASS", "UNKNOWN"):
+        if r["status"] == "FAIL":
             c[r["source"]] += 1
             c[r["reason_node"]] += 1
             c["FPC_RED"] += 1
@@ -322,8 +324,8 @@ def node_counts(rows: list[dict]) -> dict:
 
 # ------------------------------------------------------------------ plots (plain SVG)
 COLORS = {"INHERITED": "#c2410c", "TRANSIENT": "#a3a3a3", "PR_CAUSED": "#2563eb", "PROCESS": "#7c3aed",
-          "UNKNOWN": "#111827", "PASS": "#16a34a"}
-ORDER = ["PASS", "TRANSIENT", "PROCESS", "PR_CAUSED", "INHERITED", "UNKNOWN"]
+          "UNKNOWN": "#111827", "UNVERIFIED": "#6b7280", "PASS": "#16a34a"}
+ORDER = ["PASS", "TRANSIENT", "PROCESS", "PR_CAUSED", "INHERITED", "UNKNOWN", "UNVERIFIED"]
 
 
 def _esc(s) -> str:
