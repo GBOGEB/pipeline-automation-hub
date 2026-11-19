@@ -298,7 +298,7 @@ def verdict(rec) -> tuple[str, list[str]]:
     flags = []
     gone_deliv = [o for o in rec["outputs"] if not o["exists"] and o["where"] in ("scratch-ws", "user-docs", "other")]
     sole_writes = [w for w in rec["writes"] if not w["exists"] and not w["in_git"]
-                   and w["where"] not in ("git-home", "skip") and w["chars"] >= 1500
+                   and w["where"] not in ("git-home", "skip", "temp", "scratchpad") and w["chars"] >= 1500
                    and w["path"].lower().endswith(SOLE_EXT)]
     live_scratch = rec["scratch"] and rec["scratch"].get("files", 0)
     if gone_deliv:
