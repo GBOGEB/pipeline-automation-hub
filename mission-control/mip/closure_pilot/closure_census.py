@@ -82,7 +82,7 @@ def validate(doc: dict[str, Any]) -> None:
 def kahn_layers(nodes: list[str], edges: list[dict[str, Any]]) -> list[list[str]]:
     """Adapter to JADE's sole source-owned Kahn implementation."""
     require(len(nodes) == len(set(nodes)), "duplicate DAG node")
-    owner = Path(__file__).resolve().parents[2] / "jade_temple" / "devops" / "lifecycle.py"
+    owner = Path(__file__).resolve().parents[1] / "jade_temple" / "devops" / "lifecycle.py"
     require(owner.is_file(), "canonical JADE Kahn owner unavailable")
     spec = importlib.util.spec_from_file_location("mip_canonical_jade_kahn", owner)
     require(spec is not None and spec.loader is not None, "canonical JADE Kahn owner unavailable")
