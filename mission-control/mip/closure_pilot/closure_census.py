@@ -9,7 +9,10 @@ Reports UNKNOWN when native run/test/coverage history is absent.
 from __future__ import annotations
 
 import argparse
+import fnmatch
+import importlib.util
 import json
+import re
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
@@ -48,7 +51,9 @@ def validate(doc: dict[str, Any]) -> None:
     require(len(owner_ids) == len(set(owner_ids)), "duplicate owner IDs")
     for owner in owners:
         require(owner["state"] in ALLOWED, "unknown status")
-        require(owner.get("head") and len(owner["head"]) == 40, "unbound owner head SHA")
+        require(isinstance(owner.get("head"), str) and
+                re.fullmatch(r"[0-9a-fA-F]{40}", owner["head"]) is not None,
+                "unbound owner head SHA")
     root_ids = [r["id"] for r in doc["roots"]]
     require(len(root_ids) == len(set(root_ids)), "duplicate live root IDs")
     for root in doc["roots"]:
@@ -75,30 +80,51 @@ def validate(doc: dict[str, Any]) -> None:
 
 
 def kahn_layers(nodes: list[str], edges: list[dict[str, Any]]) -> list[list[str]]:
-    """Kahn layering, evaluating only enabled edges. Cycles are a hard error."""
+    """Adapter to JADE's sole source-owned Kahn implementation."""
     require(len(nodes) == len(set(nodes)), "duplicate DAG node")
-    incoming = {node: 0 for node in nodes}
-    outgoing: dict[str, set[str]] = defaultdict(set)
-    for edge in edges:
-        if edge.get("enabled", True) is False:
-            continue
-        a, b = edge["from"], edge["to"]
-        require(a in incoming and b in incoming, "unknown edge endpoint")
-        if b not in outgoing[a]:
-            outgoing[a].add(b)
-            incoming[b] += 1
-    pending = set(nodes)
-    layers: list[list[str]] = []
-    while pending:
-        ready = sorted(n for n in pending if incoming[n] == 0)
-        if not ready:
-            raise CensusError("dependency cycle: " + ", ".join(sorted(pending)))
-        layers.append(ready)
-        for node in ready:
-            pending.remove(node)
-            for dependent in outgoing[node]:
-                incoming[dependent] -= 1
-    return layers
+    owner = Path(__file__).resolve().parents[2] / "jade_temple" / "devops" / "lifecycle.py"
+    require(owner.is_file(), "canonical JADE Kahn owner unavailable")
+    spec = importlib.util.spec_from_file_location("mip_canonical_jade_kahn", owner)
+    require(spec is not None and spec.loader is not None, "canonical JADE Kahn owner unavailable")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    active = [(e["from"], e["to"], "FEEDFORWARD")
+              for e in edges if e.get("enabled", True) is not False]
+    try:
+        return module.topo_layers(nodes, active)
+    except ValueError as exc:
+        raise CensusError(str(exc)) from exc
+
+
+_GLOB_META = re.compile(r"[*?\\[]")
+
+
+def _static_prefix(pattern: str) -> str:
+    """Literal prefix ending before the first wildcard, for fail-closed overlap."""
+    match = _GLOB_META.search(pattern)
+    return pattern[:match.start()] if match else pattern
+
+
+def _path_overlap(a: str, b: str) -> bool:
+    """Reject same-file, parent-folder, glob/file, and possibly intersecting glob lanes.
+
+    When two globs cannot be proven disjoint, conservatively serialize them.
+    """
+    a, b = a.strip("/"), b.strip("/")
+    if a == b or not a or not b:
+        return True
+    if a.startswith(b + "/") or b.startswith(a + "/"):
+        return True
+    a_glob, b_glob = bool(_GLOB_META.search(a)), bool(_GLOB_META.search(b))
+    if not a_glob and not b_glob:
+        return False
+    if a_glob and not b_glob:
+        return fnmatch.fnmatchcase(b, a) or b.startswith(_static_prefix(a))
+    if b_glob and not a_glob:
+        return fnmatch.fnmatchcase(a, b) or a.startswith(_static_prefix(b))
+    pa, pb = _static_prefix(a), _static_prefix(b)
+    return pa.startswith(pb) or pb.startswith(pa)
+
 
 
 def score_range(parts: list[float | None], weights: list[float]) -> list[float]:
@@ -126,9 +152,13 @@ def classify_tests(tests: list[dict[str, Any]] | None) -> dict[str, Any]:
         return {"denominator": None, "nevergreen": None, "evergreen": None,
                 "zero_coverage_modules": None, "reason": "no_complete_native_test_inventory"}
     never = evergreen = 0
+    seen_ids: set[tuple[str, str, str]] = set()
     for t in tests:
         require(bool(t.get("test_id")) and bool(t.get("contract_version")) and
                 bool(t.get("runner")), "test identity incomplete")
+        identity = (t["test_id"], t["contract_version"], t["runner"])
+        require(identity not in seen_ids, "duplicate test identity")
+        seen_ids.add(identity)
         history = t.get("outcomes")
         require(t.get("history_complete") is True and history, "history is incomplete")
         require(all(x in ("PASS", "FAIL", "ERROR", "SKIP") for x in history),
@@ -145,11 +175,20 @@ def census(doc: dict[str, Any], tests: list[dict[str, Any]] | None = None) -> di
     validate(doc)
     owners = doc["owners"]
     paths: dict[str, list[str]] = defaultdict(list)
+    declared: list[tuple[str, str, str]] = []
+    owner_repos = {o["id"]: o["repo"] for o in owners}
     for lane in doc["lanes"]:
         for path in lane["paths"]:
+            require(isinstance(path, str) and path.strip() and
+                    not path.startswith("/") and ".." not in path.split("/"),
+                    "unsafe commit lane path")
             paths[path].append(lane["id"])
-    collisions = {p: sorted(ids) for p, ids in paths.items() if len(ids) > 1}
-    # Disjoint workers are safely parallel only when they do not share exact paths.
+            declared.append((owner_repos[lane["owner"]], lane["id"], path))
+    collisions: list[tuple[str, str, str, str]] = []
+    for i, (repo_a, lane_a, path_a) in enumerate(declared):
+        for repo_b, lane_b, path_b in declared[i + 1:]:
+            if repo_a == repo_b and lane_a != lane_b and _path_overlap(path_a, path_b):
+                collisions.append((lane_a, path_a, lane_b, path_b))
     require(not collisions, "commit lane path collision: " + repr(collisions))
     layers = kahn_layers([o["id"] for o in owners], doc["edges"])
     counts = {s: sum(o["state"] == s for o in owners) for s in sorted(ALLOWED)}
