@@ -455,8 +455,8 @@ def main(argv: list[str] | None = None) -> int:
                 "writes": [{"path": p, "chars": n, "exists": os.path.exists(p), "in_git": in_git(p),
                             "where": where(p, git_roots)} for p, n in sorted(tr["writes"].items())],
                 "edits": len(tr["edits"]),
-                "outputs": [{"path": p, "exists": os.path.exists(p), "where": where(p, git_roots)}
-                            for p in sorted(tr["outputs"]) if where(p, git_roots) != "skip"],
+                "outputs": [{"path": p, "exists": os.path.exists(p), "where": w}
+                            for p in sorted(tr["outputs"]) if (w := where(p, git_roots)) != "skip"],
                 "artifacts": sorted(tr["artifacts"]),
                 "prs_text": sorted(tr["prs"])[:40],
                 "pasted": tr["pasted"],
