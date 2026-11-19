@@ -48,6 +48,17 @@ class Model(unittest.TestCase):
         self.assertEqual(rows[0]["status"], "FAIL")
         self.assertEqual(rows[0]["merged_at"], "2026-11-19T12:42:53Z")
 
+    def test_malformed_receipt_is_process_debt_not_unknown_root(self):
+        for reason in ("INVALID_RECEIPT_JSON", "INVALID_RECEIPT_FIELDS",
+                       "INVALID_RECEIPT_SCHEMA", "MISSING_REQUIRED_RUNS"):
+            with self.subTest(reason=reason):
+                self.assertEqual(m.reason_node(reason), "R_RECEIPT_MISSING")
+                rows = m.attribute_all([ev(33, "x" * 40, 1, "FAIL", reason, 300)], {})
+                self.assertEqual((rows[0]["klass"], rows[0]["source"]),
+                                 ("PROCESS", "SRC_RECEIPT_ABSENT"))
+                self.assertTrue(m.ledger(rows)[0]["pr_can_fix"])
+                self.assertEqual(m.summarize(rows)["red"], 1)
+
     def test_every_source_has_a_class(self):
         for n, (kind, klass, _) in m.NODES.items():
             if kind == "SOURCE":
