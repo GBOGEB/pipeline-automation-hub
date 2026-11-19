@@ -90,7 +90,7 @@ NODES = {
     "R_GATE_ERROR": ("REASON", None, "PR_HEAD_UNAVAILABLE / POLICY_* / other gate errors"),
     "R_OTHER": ("REASON", None, "any other reason code"),
     "FPC_RED": ("OUTCOME", None, "First-Pass Closure status red on the PR head"),
-    "MERGE_BLOCKED": ("OUTCOME", None, "required check red: the ruleset refuses the merge"),
+    "MERGE_ADMISSION_UNVERIFIED": ("OUTCOME", None, "FPC red alone does not prove GitHub merge-block enforcement; obtain a rule/denial receipt"),
 }
 EDGES = [
     ("SRC_CODEX_QUOTA", "R_CODEX_REVIEW_NOT_COMPLETED", "CAUSES"),
@@ -105,7 +105,7 @@ EDGES = [
     ("SRC_CODE_FINDINGS", "R_CODEX_FINDINGS", "CAUSES"),
     ("SRC_GATE_INFRA", "R_GATE_ERROR", "CAUSES"),
     ("SRC_UNCLASSIFIED", "R_OTHER", "CAUSES"),
-] + [(r, "FPC_RED", "CAUSES") for r, v in NODES.items() if v[0] == "REASON"] + [("FPC_RED", "MERGE_BLOCKED", "CAUSES")]
+] + [(r, "FPC_RED", "CAUSES") for r, v in NODES.items() if v[0] == "REASON"] + [("FPC_RED", "MERGE_ADMISSION_UNVERIFIED", "PROOF_REQUIRED")]
 
 REASON_NODE = [
     # Before the gate-error catch-all: the candidate chose or changed this proof, so the PR can fix it.
@@ -286,7 +286,7 @@ def iterations(rows: list[dict], block: int = ITER_BLOCK) -> list[dict]:
 
 
 def ledger(rows: list[dict]) -> list[dict]:
-    """Known failures by source: count, PRs, first and last seen. INHERITED rows are the merge-route candidates."""
+    """Known failures by source: count, PRs, first and last seen; no merge-enforcement inference."""
     by = defaultdict(list)
     for r in rows:
         if r["klass"] != "PASS":
@@ -307,7 +307,7 @@ def node_counts(rows: list[dict]) -> dict:
             c[r["source"]] += 1
             c[r["reason_node"]] += 1
             c["FPC_RED"] += 1
-            c["MERGE_BLOCKED"] += 1
+            c["MERGE_ADMISSION_UNVERIFIED"] += 1
     return dict(c)
 
 
@@ -387,6 +387,9 @@ def pct(v):
 
 def markdown(doc: dict) -> str:
     L = [f"# FPC root-red DAG, {doc['generated_at']}", "",
+          "**Admission boundary:** FPC_RED proves evaluator failure, not GitHub merge denial. "
+          "The MERGE_ADMISSION_UNVERIFIED node is a request for separately sourced required-status "
+          "ruleset and real merge-block readback. Do not count it as MERGE_BLOCKED or CONTROL.", "",
          f"Source: `{REPO}` First-Pass Closure Gate runs since {doc['since']} ({doc['totals']['evaluations']} evaluations, "
          f"{doc['totals']['prs']} PRs, {doc['totals']['unresolved_pr_evaluations']} with no resolved PR). Each red evaluation is traced to one source node; Kahn waves come from "
          "`lifecycle.topo_layers`.", "", "## Kahn waves (source → reason → outcome)", ""]
