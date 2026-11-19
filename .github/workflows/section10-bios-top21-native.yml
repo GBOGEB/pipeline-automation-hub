@@ -1,0 +1,104 @@
+name: Section10 BIOS Top21 native integration (read-only)
+on:
+  pull_request:
+    paths:
+      - 'tools/repo-bios/section10_consumer.py'
+      - 'tools/repo-bios/test_section10_consumer.py'
+      - '.github/workflows/section10-bios-top21-native.yml'
+      - 'tools/repo-bios/report.py'
+      - 'mission-control/jade_temple/portfolio_readiness/census_bridge.py'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: section10-bios-top21-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+jobs:
+  native:
+    name: Generate exact-head BIOS and canonical Top21; fail-closed join
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Assert exact source and clean tracked checkout
+        env:
+          EXPECTED: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED"
+          test -z "$(git status --porcelain=v1 --untracked-files=no)"
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Install pinned producer dependency
+        run: python -m pip install --disable-pip-version-check pyyaml==6.0.3
+      - name: Adversarial tests of authority-neutral contract
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s tools/repo-bios -p test_section10_consumer.py -v 2>&1 | tee "$RUNNER_TEMP/section10-tests.log"
+          grep -Eq 'Ran 16 tests in ' "$RUNNER_TEMP/section10-tests.log"
+          grep -Eq '^OK$' "$RUNNER_TEMP/section10-tests.log"
+      - name: Generate real exact-head BIOS source report
+        run: |
+          set -euo pipefail
+          python tools/repo-bios/report.py --repo GBOGEB/pipeline-automation-hub=. --out "$RUNNER_TEMP/bios"
+          test -s "$RUNNER_TEMP/bios/report.json"
+      - name: Generate historical canonical 21-repository Top21 pair
+        run: |
+          set -euo pipefail
+          python mission-control/jade_temple/portfolio_readiness/census_bridge.py \
+            --census mission-control/jade_temple/data/DEVOPS_CENSUS_N11.json \
+            --private-registry mission-control/gogreen/token_census/REGISTRY.json \
+            --require-count 21 \
+            --out "$RUNNER_TEMP/top21-observation.json" \
+            --receipt "$RUNNER_TEMP/top21-receipt.json"
+          test -s "$RUNNER_TEMP/top21-observation.json"
+          test -s "$RUNNER_TEMP/top21-receipt.json"
+      - name: Execute real-source join at exact head
+        env:
+          EXPECTED: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python tools/repo-bios/section10_consumer.py \
+            --bios "$RUNNER_TEMP/bios/report.json" \
+            --top21 "$RUNNER_TEMP/top21-observation.json" \
+            --receipt "$RUNNER_TEMP/top21-receipt.json" \
+            --expected-sha "$EXPECTED" \
+            --out "$RUNNER_TEMP/section10-result.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          x=json.loads((Path(os.environ["RUNNER_TEMP"])/"section10-result.json").read_text())
+          assert x["integration_sha"]==os.environ["EXPECTED"]
+          assert x["top21_count"]==21
+          assert x["merge_admission"]=="HOLD"
+          assert x["release_authorized"] is False
+          assert x["qualification"]=="NATIVE_INPUT_VALIDATED_SOURCE_ONLY"
+          print("SECTION10_REAL_SOURCE_CONSUMER=PASS; OWNER_ADMISSION=HOLD")
+          PY
+      - name: Generate source-bound SHA256 evidence
+        if: always()
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP"
+          for f in bios/report.json top21-observation.json top21-receipt.json section10-result.json section10-tests.log; do
+            test ! -e "$f" || sha256sum "$f"
+          done > section10-sha256sums.txt
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: section10-native-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/bios/report.json
+            ${{ runner.temp }}/bios/report.md
+            ${{ runner.temp }}/top21-observation.json
+            ${{ runner.temp }}/top21-receipt.json
+            ${{ runner.temp }}/section10-result.json
+            ${{ runner.temp }}/section10-tests.log
+            ${{ runner.temp }}/section10-sha256sums.txt
+          if-no-files-found: error
+          retention-days: 30
