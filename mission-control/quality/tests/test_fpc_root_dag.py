@@ -164,7 +164,7 @@ class Attribution(unittest.TestCase):
                 {"pr": 10, "head_sha": "old", "created_at": old}]) + "\n")
             with mock.patch.object(m, "_get_comments", return_value=[]) as get_comments:
                 m._lookups(path, cache, "unused-token")
-            get_comments.assert_called_once_with(9)
+            get_comments.assert_called_once_with(9, "unused-token")
 
     def test_receipt_head_and_pr_win_over_the_run(self):
         buf = io.BytesIO()
