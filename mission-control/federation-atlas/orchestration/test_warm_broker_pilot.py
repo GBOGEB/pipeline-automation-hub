@@ -47,6 +47,12 @@ class SourceAndDagContracts(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,"OUTPUT_PATH_OVERLAPS_SOURCE"):
                 m.run(ROOT,"a"*40,ROOT/"bad",pulses=1)
 
+    def test_runtime_replay_renderer_is_a_pinned_executed_source(self):
+        renderer = Path("mission-control/federation-atlas/orchestration/runtime_evidence.py")
+        self.assertIn(renderer, m.SOURCE_FILES)
+        self.assertIn(renderer.as_posix(), m.source_hashes(ROOT))
+        self.assertEqual(m.SOURCE_FILES.count(renderer), 1)
+
     def test_pin_refuses_dirty_tracked_bytes_at_matching_head(self):
         head = "a" * 40
         completed = lambda stdout="", returncode=0: subprocess.CompletedProcess(
