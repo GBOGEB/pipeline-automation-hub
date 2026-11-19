@@ -181,6 +181,54 @@ class Attribution(unittest.TestCase):
                 m._lookups(path, cache, "unused-token")
             get_comments.assert_called_once_with(9, "unused-token")
 
+    def test_successful_wrapper_without_fpc_receipt_is_unverified(self):
+        """A green Actions wrapper may not manufacture an evaluator PASS."""
+        run = {"id": 444, "created_at": "2026-11-19T20:10:00Z",
+               "event": "pull_request_target", "conclusion": "success",
+               "head_sha": "b" * 40, "pull_requests": []}
+        with mock.patch.object(m, "_get", return_value={"artifacts": []}):
+            row = m._reason(run, "unused")
+        self.assertEqual((row["status"], row["reason"], row["head_from"]),
+                         ("UNKNOWN", "NO_RECEIPT_ARTIFACT", "run"))
+        enriched = m.attribute_all([row], {})
+        self.assertEqual((enriched[0]["klass"], enriched[0]["source"]),
+                         ("UNKNOWN", None))
+        summary = m.summarize(enriched)
+        self.assertEqual((summary["pass"], summary["red"], summary["unverified"],
+                          summary["verified_evaluations"]), (0, 0, 1, 0))
+        self.assertIsNone(summary["red_rate"])
+        self.assertEqual(m.node_counts(enriched), {})
+        self.assertEqual(m.ledger(enriched), [])
+
+    def test_receipt_without_boolean_decision_cannot_make_green_or_red(self):
+        """Non-boolean/malformed decision is unverified even when wrapper succeeds."""
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w") as z:
+            z.writestr("r.json", json.dumps({"merge_allowed": "true",
+                                            "head_sha": "a" * 40,
+                                            "pr_number": "1187"}))
+        def fake(url, token, raw=False):
+            return buf.getvalue() if raw else {"artifacts": [
+                {"name": m.ARTIFACT, "expired": False, "archive_download_url": "u"}]}
+        run = {"id": 445, "created_at": "2026-11-19T20:11:00Z",
+               "event": "pull_request_target", "conclusion": "success",
+               "head_sha": "b" * 40, "pull_requests": []}
+        with mock.patch.object(m, "_get", fake):
+            row = m._reason(run, "unused")
+        self.assertEqual((row["status"], row["reason"], row["head_sha"]),
+                         ("UNKNOWN", "NO_EVALUATOR_DECISION", "a" * 40))
+
+    def test_missing_receipt_does_not_dilute_verified_red_rate(self):
+        good = ev(1, "a", 3, "PASS", run=1)
+        bad = ev(2, "b", 2, "FAIL", "CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD", 2)
+        missing = ev(3, "c", 1, "UNKNOWN", "NO_RECEIPT_ARTIFACT", 3)
+        rows = m.attribute_all([good, bad, missing], {})
+        s = m.summarize(rows)
+        self.assertEqual((s["evaluations"], s["verified_evaluations"], s["pass"],
+                          s["red"], s["unverified"]), (3, 2, 1, 1, 1))
+        self.assertEqual(s["red_rate"], 0.5)
+        self.assertEqual(m.node_counts(rows)["FPC_RED"], 1)
+
     def test_receipt_head_and_pr_win_over_the_run(self):
         buf = io.BytesIO()
         with zipfile.ZipFile(buf, "w") as z:
