@@ -367,11 +367,12 @@ class TestFirstPassClosureGate(unittest.TestCase):
         with self.assertRaisesRegex(fpc.GateError, "CODEX_MATERIAL_FINDINGS"):
             fpc.evaluate(self.waived(inline_findings=[(1, "P1", HEAD)]), REPO, PR, policy)
 
-    def test_quota_waiver_cannot_skip_any_priority_finding_under_strict_policy(self):
-        """Without a blocking-priority allowlist, every open exact-head finding blocks."""
+    def test_quota_waiver_cannot_skip_p3_when_all_priorities_block(self):
+        """An explicit all-priority policy must reject open P3 findings despite quota waiver."""
+        policy = {**self.WAIVER_POLICY, "codex_contract": {
+            **POLICY["codex_contract"], "blocking_priorities": ["P0", "P1", "P2", "P3"]}}
         with self.assertRaisesRegex(fpc.GateError, "CODEX_MATERIAL_FINDINGS"):
-            fpc.evaluate(self.waived(inline_findings=[(1, "P3", HEAD)]), REPO, PR,
-                         self.WAIVER_POLICY)
+            fpc.evaluate(self.waived(inline_findings=[(1, "P3", HEAD)]), REPO, PR, policy)
 
     def test_waiver_policy_that_widens_the_rule_is_invalid(self):
         rule = self.WAIVER_POLICY["codex_quota_waiver"]
