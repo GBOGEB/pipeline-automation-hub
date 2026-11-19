@@ -74,9 +74,8 @@ PATH_RE = re.compile(
     r"(?<![A-Za-z0-9/:\\])(?:[A-Za-z]:(?:\\{1,4}|/)|/[a-z]/)(?!/)[^\s\"'<>|*?\r\n`]*?\.(?:" + OUT_EXT + r")\b", re.I
 )
 QUOTED_PATH_RE = re.compile(
-    r"""(?P<quote>["'])(?P<path>(?:[A-Za-z]:(?:\\\\{1,4}|/)|/[a-z]/)(?!/)[^"'<>|*?\\r\\n\x60]*?\\.(?:" + OUT_EXT + r"))(?P=quote)""", re.I
+    r'''(?P<quote>["'])(?P<path>(?:[A-Za-z]:(?:\\{1,4}|/)|/[a-z]/)(?!/)[^"'<>|*?\r\n\x60]*?\.(?:''' + OUT_EXT + r'''))(?P=quote)''', re.I
 )
-
 
 def output_paths(text: str) -> set[str]:
     """Find deliverables, including Windows paths with spaces inside matching quotes."""
