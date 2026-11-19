@@ -182,6 +182,14 @@ class Census(unittest.TestCase):
         self.assertIn(r"D:\OneDrive - Org\deck.pptx", paths)
         self.assertIn(r"D:\share\deck.pdf", paths)
 
+    def test_unquoted_extension_prefix_is_not_a_deliverable(self):
+        for suffix in (".tmp", "-old", "+data", "_backup", "/extra", "\\extra"):
+            path = "D:\\work\\report.pdf" + suffix
+            self.assertNotIn("D:\\work\\report.pdf", self.sc.output_paths(path), path)
+        self.assertIn("D:\\work\\report.pdf", self.sc.output_paths("D:\\work\\report.pdf"))
+        self.assertIn("D:/share/deck.pdf", self.sc.output_paths("D:/share/deck.pdf"))
+        self.assertIn("D:\\work\\deck.pptx", self.sc.output_paths("D:\\work\\deck.pptx"))
+
     def test_assistant_string_content_preserves_outcome(self):
         with tempfile.TemporaryDirectory() as d:
             path = Path(d) / "conversation.jsonl"
