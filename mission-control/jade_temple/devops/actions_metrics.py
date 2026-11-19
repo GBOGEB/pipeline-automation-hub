@@ -37,6 +37,7 @@ import argparse
 import hashlib
 import concurrent.futures
 import csv
+import http.client
 import importlib.util
 import json
 import math
@@ -144,6 +145,13 @@ def token() -> str:
     return os.environ.get("GITHUB_TOKEN", "")
 
 
+# Transport faults worth a bounded retry. IncompleteRead is raised from json.load() on a
+# truncated body and RemoteDisconnected when the server drops the socket mid-response;
+# neither is an HTTP answer, so both are transient like a 5xx.
+TRANSIENT = (urllib.error.URLError, TimeoutError, ConnectionError,
+             http.client.IncompleteRead, http.client.RemoteDisconnected)
+
+
 class Reader:
     def __init__(self, tok: str = "", base: str = API):
         self.tok, self.base, self.calls = tok, base.rstrip("/"), 0
@@ -162,7 +170,7 @@ class Reader:
             except urllib.error.HTTPError as exc:
                 if exc.code < 500 or attempt == 3:
                     raise
-            except (urllib.error.URLError, TimeoutError, ConnectionError):
+            except TRANSIENT:
                 if attempt == 3:
                     raise
             time.sleep(2 ** attempt * 3)
@@ -329,21 +337,47 @@ def _unique_run_identities(rows: list[dict], scope: str) -> list[dict]:
 
 
 MIN_WINDOW_SECONDS = 1  # the search `created` qualifier resolves whole seconds; below this, fail closed
+DAY_QUERY_BUDGET = 1500  # search queries per UTC day; past it, unread windows are UNKNOWN, not bisected
 PAGINATION_SCHEMA = "jade.devops.actions-run-pagination.v1"
+UNKNOWN_DAY_SCHEMA = "jade.devops.actions-run-unknown-day.v1"
+
+
+class IncompleteDay(ValueError):
+    """Some slices of a UTC day stayed incomplete after bisection; those slices are UNKNOWN.
+
+    `receipt` is the day's pagination receipt, with `unknown_slices` naming each slice that
+    could not be read in full. Rows from the complete slices are not returned: a partial day
+    would read downstream as fewer runs, and UNKNOWN must never look like a smaller count.
+    """
+
+    def __init__(self, repo: str, day: date, receipt: dict):
+        self.repo, self.day, self.receipt = repo, day, receipt
+        unknown = receipt["unknown_slices"]
+        super().__init__(f"{repo} {day}: {len(unknown)} slice(s) UNKNOWN; first: {unknown[0]['error']}")
 
 
 def _ts(t: datetime) -> str:
     return t.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def _fetch_window(rd: Reader, repo: str, lo: datetime, hi: datetime, windows: list) -> list:
+def _fetch_window(rd: Reader, repo: str, lo: datetime, hi: datetime, windows: list,
+                  unknown: list | None = None) -> list:
     """Read the inclusive UTC window [lo, hi]; bisect it while it is incomplete or collides.
 
     A window whose total_count exceeds the rows read (the 1000-record search cap, or a short
     page) or whose pages repeat a run is split into the disjoint halves [lo, mid] and
     [mid + 1 s, hi], recursively, down to MIN_WINDOW_SECONDS. An unsplittable window that is
     still incomplete fails closed: missing runs are UNKNOWN, never zero.
+
+    With `unknown` (a list) an unsplittable window, or one past DAY_QUERY_BUDGET, is appended
+    there as an UNKNOWN slice and its siblings are still read; without it, it raises.
     """
+    if unknown is not None and len(windows) >= DAY_QUERY_BUDGET:
+        windows.append([_ts(lo), _ts(hi), None, None, "UNKNOWN"])
+        unknown.append({"lo": _ts(lo), "hi": _ts(hi), "reason": "QUERY_BUDGET",
+                        "error": f"{repo} {_ts(lo)}..{_ts(hi)}: day query budget "
+                                 f"{DAY_QUERY_BUDGET} spent; window not read"})
+        return []
     scope = f"/repos/{repo}/actions/runs?created={_ts(lo)}..{_ts(hi)}"
     part, ptotal = rd.pages(scope, "workflow_runs")
     clean = _unique_run_identities(part, scope)
@@ -355,14 +389,22 @@ def _fetch_window(rd: Reader, repo: str, lo: datetime, hi: datetime, windows: li
     if span + 1 <= MIN_WINDOW_SECONDS:
         windows.append([_ts(lo), _ts(hi), ptotal, len(part), "UNSPLITTABLE"])
         if incomplete:
-            raise ValueError(f"{repo} {_ts(lo)}: {ptotal} runs in an unsplittable "
-                             f"{MIN_WINDOW_SECONDS}s window exceeds the search cap; source incomplete")
-        raise ValueError(f"{repo} {_ts(lo)}: same-hour pagination collision persists at "
-                         f"{MIN_WINDOW_SECONDS}s resolution; source incomplete")
+            reason, error = "SEARCH_CAP", (f"{repo} {_ts(lo)}: {ptotal} runs in an unsplittable "
+                                           f"{MIN_WINDOW_SECONDS}s window exceeds the search cap; "
+                                           "source incomplete")
+        else:
+            reason, error = "PAGINATION_COLLISION", (f"{repo} {_ts(lo)}: same-hour pagination collision "
+                                                     f"persists at {MIN_WINDOW_SECONDS}s resolution; "
+                                                     "source incomplete")
+        if unknown is None:
+            raise ValueError(error)
+        unknown.append({"lo": _ts(lo), "hi": _ts(hi), "reason": reason, "total_count": ptotal,
+                        "rows_read": len(part), "error": error})
+        return clean
     windows.append([_ts(lo), _ts(hi), ptotal, len(part), "BISECTED"])
     mid = lo + timedelta(seconds=span // 2)
-    left = _fetch_window(rd, repo, lo, mid, windows)
-    right = _fetch_window(rd, repo, mid + timedelta(seconds=1), hi, windows)
+    left = _fetch_window(rd, repo, lo, mid, windows, unknown)
+    right = _fetch_window(rd, repo, mid + timedelta(seconds=1), hi, windows, unknown)
     # Exact-boundary duplicates (a run returned by both halves) collapse by immutable run ID;
     # a conflicting record for the same ID still fails closed.
     return _unique_run_identities(left + right, f"{repo} {_ts(lo)}..{_ts(hi)} bisected")
@@ -377,26 +419,61 @@ def fetch_runs_day(rd: Reader, repo: str, day: date, receipt: dict | None = None
     bisect any hour that is still over the search cap or collides (_fetch_window);
     refuse conflicting records and windows that cannot be split further.
 
+    A slice that stays incomplete (unsplittable, conflicting, or past DAY_QUERY_BUDGET) is
+    recorded in the receipt's `unknown_slices`; the other slices are still read, then the day
+    raises IncompleteDay so the caller can mark that day UNKNOWN and move on.
+
     If `receipt` is given it receives the pagination receipt: every window queried
     with its total_count, rows read and outcome.
     """
+    receipt = {} if receipt is None else receipt
     route = f"/repos/{repo}/actions/runs?created={day.isoformat()}"
     runs, total = rd.pages(route, "workflow_runs")
     unique = _unique_run_identities(runs, route)
     windows = [[day.isoformat(), day.isoformat(), total, len(runs),
                 "COMPLETE" if total <= len(runs) and len(unique) == len(runs) else "SPLIT_HOURLY"]]
+    unknown: list = []
     if total > len(runs) or len(unique) != len(runs):
         collected = []
         start = datetime(day.year, day.month, day.day, tzinfo=timezone.utc)
         for h in range(24):
             lo = start + timedelta(hours=h)
-            collected.extend(_fetch_window(rd, repo, lo, lo + timedelta(seconds=3599), windows))
+            hi = lo + timedelta(seconds=3599)
+            try:
+                collected.extend(_fetch_window(rd, repo, lo, hi, windows, unknown))
+            except ValueError as exc:  # a conflicting record: this hour is UNKNOWN, the rest still count
+                unknown.append({"lo": _ts(lo), "hi": _ts(hi), "reason": "CONFLICTING_RECORD",
+                                "error": str(exc)})
         unique = _unique_run_identities(collected, f"{repo} {day} hourly slices")
-    if receipt is not None:
-        receipt.update({"schema": PAGINATION_SCHEMA, "unique_runs": len(unique),
-                        "queries": len(windows), "bisected": sum(w[4] == "BISECTED" for w in windows),
-                        "windows": windows})
+    receipt.update({"schema": PAGINATION_SCHEMA, "unique_runs": len(unique),
+                    "queries": sum(w[2] is not None for w in windows),
+                    "bisected": sum(w[4] == "BISECTED" for w in windows),
+                    "windows": windows, "unknown_slices": unknown})
+    if unknown:
+        raise IncompleteDay(repo, day, receipt)
     return [slim(r, RUN_KEYS) for r in unique]
+
+
+def unknown_day_path(day_file: Path) -> Path:
+    return day_file.with_suffix(".unknown.json")
+
+
+def mark_day_unknown(day_file: Path, repo: str, day: date, reason: str, receipt: dict | None) -> None:
+    """Record a day that could not be read in full: no runs file, so every reader sees it missing.
+
+    Any older runs file and receipt for the day are removed, so a stale partial snapshot can't
+    stand in for the day. The sidecar keeps the evidence: the reason and, for an incomplete
+    day, the pagination receipt with its `unknown_slices`.
+    """
+    for stale in (day_file, cache_receipt_path(day_file)):
+        stale.unlink(missing_ok=True)
+    doc = {"schema": UNKNOWN_DAY_SCHEMA, "repository": repo, "day": day.isoformat(),
+           "observed_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+           "coverage": "UNKNOWN", "reason": reason[:500], "pagination": receipt}
+    side = unknown_day_path(day_file)
+    tmp = side.with_suffix(".tmp")
+    tmp.write_text(json.dumps(doc, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    tmp.replace(side)
 
 
 def stratified(runs: list) -> list:
@@ -415,15 +492,26 @@ def stratified(runs: list) -> list:
     return out
 
 
+TRANSPORT_FAULTS = (urllib.error.URLError, http.client.HTTPException, OSError)
+MAX_CONSECUTIVE_DAY_FAULTS = 3  # a run of transport failures means the repo, not a day, is unreadable
+
+
 def fetch(cache: Path, repos: list, since: date, until: date, job_budget: int, rd: Reader,
           workers: int = 6, log=print) -> dict:
+    """Fetch new run days and a job-list sample per repo; one bad slice or day never aborts the pulse.
+
+    A day with an incomplete slice (IncompleteDay) or a transport fault left after the Reader's
+    retries is marked UNKNOWN for that day only (mark_day_unknown) and later days are still
+    read. An HTTP 4xx (auth, missing repo), a malformed or conflicting day query, or
+    MAX_CONSECUTIVE_DAY_FAULTS transport faults in a row stop that repo, as before.
+    """
     today = datetime.now(timezone.utc).date()
     summary = {}
     for repo in repos:
         d = repo_dir(cache, repo)
         (d / "runs").mkdir(parents=True, exist_ok=True)
         (d / "jobs").mkdir(parents=True, exist_ok=True)
-        day, fetched_days = since, 0
+        day, fetched_days, unknown_days, faults = since, 0, [], 0
         try:
             while day <= until:
                 p = d / "runs" / f"{day}.json"
@@ -448,12 +536,30 @@ def fetch(cache: Path, repos: list, since: date, until: date, job_budget: int, r
                         stale = True
                 if stale:
                     pagination = {}
-                    rows = fetch_runs_day(rd, repo, day, receipt=pagination)
-                    write_runs_with_receipt(p, repo, day, rows, pagination=pagination)
-                    fetched_days += 1
+                    try:
+                        rows = fetch_runs_day(rd, repo, day, receipt=pagination)
+                    except IncompleteDay as exc:  # some slices UNKNOWN: this day only, keep going
+                        mark_day_unknown(p, repo, day, str(exc), exc.receipt)
+                        unknown_days.append({"day": day.isoformat(), "reason": "INCOMPLETE_SLICES",
+                                             "unknown_slices": len(exc.receipt["unknown_slices"])})
+                        log(f"{repo} {day}: UNKNOWN ({exc})"[:300])
+                    except TRANSPORT_FAULTS as exc:
+                        if isinstance(exc, urllib.error.HTTPError) and exc.code < 500:
+                            raise  # an answer about the repo, not a flaky day
+                        faults += 1
+                        if faults >= MAX_CONSECUTIVE_DAY_FAULTS:
+                            raise
+                        mark_day_unknown(p, repo, day, f"{type(exc).__name__}: {exc}", None)
+                        unknown_days.append({"day": day.isoformat(), "reason": f"TRANSPORT:{type(exc).__name__}"})
+                        log(f"{repo} {day}: UNKNOWN ({type(exc).__name__}: {exc})"[:300])
+                    else:
+                        write_runs_with_receipt(p, repo, day, rows, pagination=pagination)
+                        unknown_day_path(p).unlink(missing_ok=True)
+                        fetched_days, faults = fetched_days + 1, 0
                 day += timedelta(days=1)
-        except (urllib.error.URLError, ValueError) as exc:  # one unreadable repo is UNKNOWN, not a fleet abort
-            summary[repo] = {"error": f"{type(exc).__name__}: {exc}"[:200], "stopped_at": day.isoformat()}
+        except (ValueError, *TRANSPORT_FAULTS) as exc:  # one unreadable repo is UNKNOWN, not a fleet abort
+            summary[repo] = {"error": f"{type(exc).__name__}: {exc}"[:200], "stopped_at": day.isoformat(),
+                             "unknown_days": unknown_days}
             log(f"{repo}: {summary[repo]}")
             continue
         runs = [r for r in load_runs(cache, repo, since, until) if r["status"] == "completed"]
@@ -470,10 +576,10 @@ def fetch(cache: Path, repos: list, since: date, until: date, job_budget: int, r
             for fut in concurrent.futures.as_completed([ex.submit(one, r) for r in todo]):
                 try:
                     fut.result()
-                except (urllib.error.URLError, ValueError, OSError):
+                except (ValueError, *TRANSPORT_FAULTS):
                     errors += 1
-        summary[repo] = {"days_fetched": fetched_days, "runs": len(runs), "job_lists_fetched": len(todo) - errors,
-                         "job_errors": errors}
+        summary[repo] = {"days_fetched": fetched_days, "unknown_days": unknown_days, "runs": len(runs),
+                         "job_lists_fetched": len(todo) - errors, "job_errors": errors}
         log(f"{repo}: {summary[repo]}")
     return summary
 

@@ -33,3 +33,4 @@ jobs:
         run: |
           test "$(git rev-parse HEAD)" = "$EXPECTED"
           python -W error::DeprecationWarning -m unittest discover -s tools/workstation/dashboards -p 'test_build_dashboards.py' -v
+          python -W error::DeprecationWarning -m unittest discover -s tools/workstation/dashboards/pulse -p 'test_*.py' -v
