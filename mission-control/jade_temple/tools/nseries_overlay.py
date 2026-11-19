@@ -168,7 +168,7 @@ make("rect",{x,y:20,width:113,height:75,rx:9,fill:i===6?"#723D4E":"#4A3453",stro
 make("text",{x:x+56,y:46,"text-anchor":"middle",fill:"#FFF","font-size":16,"font-weight":700},"N"+i);
 make("text",{x:x+56,y:69,"text-anchor":"middle",fill:"#EBD3F0","font-size":10},["INVENTORY","SHA PROOF","ROOT / OID","DAG / BD","LANES","QA / REVIEW","HOLD","RECENSUS"][i])}
 }
-document.getElementById("sources").innerHTML=data.sources.map(x=>"<p><a target=_blank rel=noopener href='"+esc(x.url)+"'>"+esc(x.owner)+"/"+esc(x.path)+"</a> <small>"+esc(x.role)+"</small></p>").join("");
+document.getElementById("sources").innerHTML=data.sources.map(x=>{const name=esc(x.owner)+"/"+esc(x.path);const link=(typeof x.url==="string"&&x.url.startsWith("https://github.com/GBOGEB/pipeline-automation-hub/"))?"<a target=_blank rel=noopener href='"+esc(x.url)+"'>"+name+"</a>":name;return "<p>"+link+" <small>"+esc(x.role)+"</small></p>";}).join("");
 document.getElementById("counts").textContent="COUNTS";
 for(const e of [nsel,esel,search])e.addEventListener("input",draw);
 draw();graph();
