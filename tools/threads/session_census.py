@@ -2,7 +2,7 @@
 
     python -I tools/threads/session_census.py --sessions-dir SESSIONS --pulse PULSE --out OUT \
         [--projects PROJECTS] [--memory MEMORY ...] [--notes NOTES] [--git-root DIR ...] \
-        [--task-title TITLE ...]
+        [--git-home-re RX ...] [--task-title TITLE ...]
 
 SESSIONS is the desktop app's per-session JSON folder (`claude-code-sessions/<account>/<org>`),
 which also holds sessions past the 200-row `list_sessions` cap. PROJECTS is the transcript root
