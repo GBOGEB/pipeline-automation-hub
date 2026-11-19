@@ -31,6 +31,56 @@ class SourceAndArcContract(unittest.TestCase):
                                         "convergence","orchestration","assemble","portal"})
         self.assertEqual(n.git(ROOT,"hash-object",n.MAIN),n.BASELINE_BLOB)
 
+    def test_n33_raw_head_pinning_rejects_hidden_dirty_render_module(self):
+        import subprocess
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            def git(*args):
+                return subprocess.run(["git","-C",str(root),*args],check=True,
+                                      text=True,capture_output=True).stdout.strip()
+            git("init","-q")
+            git("config","user.name","N33 Fixture")
+            git("config","user.email","n33@example.invalid")
+            tree="mission-control/federation-atlas/orchestration/"
+            for rel in (n.MAIN,tree+"render.py",tree+"n33_main_expansion.py"):
+                p=root/rel
+                p.parent.mkdir(parents=True,exist_ok=True)
+                p.write_bytes(b"committed bytes\\n")
+            git("add","--all")
+            git("commit","-qm","fixture")
+            n.verify_build_inputs_at_head(root)
+            victim=tree+"render.py"
+            git("update-index","--assume-unchanged",victim)
+            (root/victim).write_bytes(b"uncommitted source bytes\\n")
+            self.assertEqual(git("status","--porcelain=v1","--untracked-files=no"),"")
+            with self.assertRaisesRegex(ValueError,"PINNED_SOURCE_BYTES_NOT_IN_HEAD"):
+                n.verify_build_inputs_at_head(root)
+
+    def test_n33_direct_source_comparison_rejects_smudge_filter_and_symlink(self):
+        import subprocess
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            def git(*args):
+                return subprocess.run(["git","-C",str(root),*args],check=True,
+                                      text=True,capture_output=True).stdout.strip()
+            git("init","-q")
+            git("config","user.name","N33 Fixture")
+            git("config","user.email","n33@example.invalid")
+            tree="mission-control/federation-atlas/orchestration/"
+            for rel in (n.MAIN,tree+"render.py",tree+"n33_main_expansion.py"):
+                p=root/rel
+                p.parent.mkdir(parents=True,exist_ok=True)
+                p.write_bytes(b"original bytes\\n")
+            git("add","--all")
+            git("commit","-qm","fixture")
+            tracked=root/(tree+"render.py")
+            self.assertEqual(n.source_bytes_at_head(root,tree+"render.py"),
+                             tracked.read_bytes())
+            git("update-index","--skip-worktree",tree+"render.py")
+            tracked.write_bytes(b"changed\\n")
+            with self.assertRaisesRegex(ValueError,"PINNED_SOURCE_BYTES_NOT_IN_HEAD"):
+                n.verify_build_inputs_at_head(root)
+
     def test_branch_arcs_are_identities_not_just_summary_percentages(self):
         with tempfile.TemporaryDirectory() as td:
             p=Path(td)/"c.json"
