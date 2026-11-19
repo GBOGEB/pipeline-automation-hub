@@ -89,7 +89,7 @@ NODES = {
     "R_CODEX_FINDINGS": ("REASON", None, "CODEX_MATERIAL_FINDINGS_ON_EXACT_HEAD"),
     "R_GATE_ERROR": ("REASON", None, "PR_HEAD_UNAVAILABLE / POLICY_* / other gate errors"),
     "R_OTHER": ("REASON", None, "any other reason code"),
-    "FPC_RED": ("OUTCOME", None, "First-Pass Closure status red on the PR head"),
+    "FPC_RED": ("OUTCOME", None, "Proven FPC-RED receipt on the PR head"),
     "MERGE_ADMISSION_UNVERIFIED": ("OUTCOME", None, "FPC red alone does not prove GitHub merge-block enforcement; obtain a rule/denial receipt"),
 }
 EDGES = [
@@ -234,6 +234,9 @@ def attribute_all(evals: list[dict], prs: dict, heads: dict | None = None) -> li
         row = dict(e, head_first_status=seq[0]["status"])
         if e["status"] == "PASS":
             row.update(reason_node=None, source=None, klass="PASS")
+        elif e["status"] == "UNKNOWN":
+            # No trustworthy evaluator decision: never mark red or green.
+            row.update(reason_node=None, source=None, klass="UNKNOWN")
         else:
             later = seq[i + 1:]
             src = attribute(e, later, prs.get(str(e.get("pr")), {}))
@@ -243,8 +246,13 @@ def attribute_all(evals: list[dict], prs: dict, heads: dict | None = None) -> li
 
 
 def summarize(rows: list[dict]) -> dict:
-    n, red = len(rows), [r for r in rows if r["klass"] != "PASS"]
+    n = len(rows)
+    red = [r for r in rows if r["klass"] not in ("PASS", "UNKNOWN")]
+    unverified = sum(r["klass"] == "UNKNOWN" for r in rows)
+    verified = n - unverified
     klass = Counter(r["klass"] for r in red)
+    if unverified:
+        klass["UNKNOWN"] = unverified
     heads = defaultdict(list)
     for r in rows:
         heads[history_key(r)].append(r)
@@ -253,8 +261,9 @@ def summarize(rows: list[dict]) -> dict:
     first_pass = sum(1 for seq in heads.values() if seq[0].get("head_first_status", seq[0]["status"]) == "PASS")
     closed = sum(1 for seq in heads.values() if seq[-1]["status"] == "PASS")
     return {
-        "evaluations": n, "pass": n - len(red), "red": len(red),
-        "red_rate": round(len(red) / n, 4) if n else None,
+        "evaluations": n, "pass": verified - len(red), "red": len(red),
+        "unverified": unverified, "verified_evaluations": verified,
+        "red_rate": round(len(red) / verified, 4) if verified else None,
         "inherited_share_of_red": round(klass["INHERITED"] / len(red), 4) if red else None,
         "pr_caused_share_of_red": round(klass["PR_CAUSED"] / len(red), 4) if red else None,
         "by_class": dict(sorted(klass.items())),
@@ -289,7 +298,7 @@ def ledger(rows: list[dict]) -> list[dict]:
     """Known failures by source: count, PRs, first and last seen; no merge-enforcement inference."""
     by = defaultdict(list)
     for r in rows:
-        if r["klass"] != "PASS":
+        if r["klass"] not in ("PASS", "UNKNOWN"):
             by[r["source"]].append(r)
     out = []
     for src, rs in by.items():
@@ -303,7 +312,7 @@ def ledger(rows: list[dict]) -> list[dict]:
 def node_counts(rows: list[dict]) -> dict:
     c = Counter()
     for r in rows:
-        if r["klass"] != "PASS":
+        if r["klass"] not in ("PASS", "UNKNOWN"):
             c[r["source"]] += 1
             c[r["reason_node"]] += 1
             c["FPC_RED"] += 1
@@ -391,6 +400,7 @@ def markdown(doc: dict) -> str:
           "The MERGE_ADMISSION_UNVERIFIED node is a request for separately sourced required-status "
           "ruleset and real merge-block readback. Do not count it as MERGE_BLOCKED or CONTROL.", "",
          f"Source: `{REPO}` First-Pass Closure Gate runs since {doc['since']} ({doc['totals']['evaluations']} evaluations, "
+         f"{doc['totals']['unverified']} unverified evaluator decisions, "
          f"{doc['totals']['prs']} PRs, {doc['totals']['unresolved_pr_evaluations']} with no resolved PR). Each red evaluation is traced to one source node; Kahn waves come from "
          "`lifecycle.topo_layers`.", "", "## Kahn waves (source → reason → outcome)", ""]
     for i, wave in enumerate(doc["kahn_waves"]):
@@ -494,11 +504,13 @@ def _reason(run: dict, token: str) -> dict:
     from_receipt = isinstance(rec.get("head_sha"), str) and len(rec["head_sha"]) == 40
     head = rec["head_sha"] if from_receipt else run["head_sha"]
     rec_pr = str(rec.get("pr_number") or "")
-    status = "PASS" if rec.get("merge_allowed") is True else ("FAIL" if rec else ("PASS" if run["conclusion"] == "success" else "FAIL"))
+    # Wrapper success cannot prove a passing FPC without its own evaluator receipt.
+    decision = rec.get("merge_allowed")
+    status = "PASS" if decision is True else ("FAIL" if decision is False else "UNKNOWN")
     return {"run_id": run["id"], "created_at": run["created_at"], "event": run["event"], "conclusion": run["conclusion"],
             "head_sha": head, "run_head_sha": run["head_sha"], "head_from": "receipt" if from_receipt else "run",
             "pr": int(rec_pr) if rec_pr.isdigit() else (prs[0] if prs else None), "title": run.get("display_title"),
-            "status": status, "reason": rec.get("reason") or (None if status == "PASS" else "NO_RECEIPT_ARTIFACT")}
+            "status": status, "reason": rec.get("reason") or (None if status == "PASS" else "NO_RECEIPT_ARTIFACT" if not rec else "NO_EVALUATOR_DECISION")}
 
 
 def _reason_or_none(run: dict, token: str) -> dict | None:
