@@ -119,9 +119,11 @@ def _path_overlap(a: str, b: str) -> bool:
     if not a_glob and not b_glob:
         return False
     if a_glob and not b_glob:
-        return fnmatch.fnmatchcase(b, a) or b.startswith(_static_prefix(a))
+        return (fnmatch.fnmatchcase(b, a) or b.startswith(_static_prefix(a)) or
+                _static_prefix(a).startswith(b + "/"))
     if b_glob and not a_glob:
-        return fnmatch.fnmatchcase(a, b) or a.startswith(_static_prefix(b))
+        return (fnmatch.fnmatchcase(a, b) or a.startswith(_static_prefix(b)) or
+                _static_prefix(b).startswith(a + "/"))
     pa, pb = _static_prefix(a), _static_prefix(b)
     return pa.startswith(pb) or pb.startswith(pa)
 
