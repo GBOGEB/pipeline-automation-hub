@@ -31,7 +31,22 @@ class Model(unittest.TestCase):
         self.assertEqual(len(waves), 4)
         self.assertTrue(all(m.NODES[n][0] == "SOURCE" for n in waves[0]))
         self.assertTrue(all(m.NODES[n][0] == "REASON" for n in waves[1]))
-        self.assertEqual(waves[2:], [["FPC_RED"], ["MERGE_BLOCKED"]])
+        self.assertEqual(waves[2:], [["FPC_RED"], ["MERGE_ADMISSION_UNVERIFIED"]])
+
+    def test_realistic_red_but_merged_witness_cannot_claim_enforced_denial(self):
+        """A red receipt alone is not a GitHub-enforced block (Hub #1154/#1277)."""
+        failed = ev(1154, "949dbd1b4b50dba14de146f087af8d3dc4c7d15d",
+                    2, "FAIL", "CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD", 44458722990)
+        # A later main merge is a separate event, not an FPC PASS or merge denial.
+        failed["merged_at"] = "2026-11-19T12:42:53Z"
+        rows = m.attribute_all([failed], {})
+        counts = m.node_counts(rows)
+        self.assertEqual(counts["FPC_RED"], 1)
+        self.assertEqual(counts["MERGE_ADMISSION_UNVERIFIED"], 1)
+        self.assertNotIn("MERGE_BLOCKED", counts)
+        self.assertNotIn("MERGE_BLOCKED", m.NODES)
+        self.assertEqual(rows[0]["status"], "FAIL")
+        self.assertEqual(rows[0]["merged_at"], "2026-11-19T12:42:53Z")
 
     def test_every_source_has_a_class(self):
         for n, (kind, klass, _) in m.NODES.items():
@@ -263,7 +278,7 @@ class Metrics(unittest.TestCase):
             md = (out / "fpc_root_dag.md").read_text(encoding="utf-8")
             svg = (out / "fpc_dag.svg").read_text(encoding="utf-8")
         self.assertEqual(names, ["fpc_dag.svg", "fpc_iterations.svg", "fpc_root_dag.json", "fpc_root_dag.md", "fpc_windows.svg"])
-        self.assertEqual(doc["node_counts"]["MERGE_BLOCKED"], 3)
+        self.assertEqual(doc["node_counts"]["MERGE_ADMISSION_UNVERIFIED"], 3)
         self.assertIn("FPC-CODEX_QUOTA", md)
         self.assertTrue(svg.startswith("<svg"))
 
