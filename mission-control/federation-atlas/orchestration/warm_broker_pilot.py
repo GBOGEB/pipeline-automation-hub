@@ -41,7 +41,8 @@ G9 = Path("mission-control/gogreen/outcome_convergence/outcome_flight.py")
 FIXTURE = Path("mission-control/gogreen/outcome_convergence/samples/native_full_window_20261017.json")
 PROFILE = Path("mission-control/federation-atlas/orchestration/PIPELINE_CONTRACTS_v1.json")
 POLICY = Path("mission-control/federation-atlas/orchestration/BROKER_POLICY_v1.json")
-SOURCE_FILES = (ATLAS, BROKER, G9, FIXTURE, PROFILE, POLICY)
+RUNTIME_RENDERER = Path("mission-control/federation-atlas/orchestration/runtime_evidence.py")
+SOURCE_FILES = (ATLAS, BROKER, G9, FIXTURE, PROFILE, POLICY, RUNTIME_RENDERER)
 PILOT_SOURCE = Path("mission-control/federation-atlas/orchestration/warm_broker_pilot.py")
 MODES = {"cold1": ("CLI_PER_TASK", 1), "cold2": ("CLI_PER_TASK", 2),
          "cold4": ("CLI_PER_TASK", 4),
