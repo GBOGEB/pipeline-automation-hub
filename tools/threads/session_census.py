@@ -73,14 +73,25 @@ OUT_EXT = r"xlsx|xlsm|xls|pptx|docx|pdf|html?|svg|png|csv|zip|mmd|ipynb"
 PATH_RE = re.compile(
     r"(?<![A-Za-z0-9/:\\])(?:[A-Za-z]:(?:\\{1,4}|/)|/[a-z]/)(?!/)[^\s\"'<>|*?\r\n`]*?\.(?:" + OUT_EXT + r")(?![A-Za-z0-9_.+~/\\-])", re.I
 )
-QUOTED_PATH_RE = re.compile(
-    r'''(?P<quote>["'])(?P<path>(?:[A-Za-z]:(?:\\{1,4}|/)|/[a-z]/)(?!/)[^"'<>|*?\r\n\x60]*?\.(?:''' + OUT_EXT + r'''))(?P=quote)''', re.I
-)
+def quoted_path_re(quote: str) -> re.Pattern[str]:
+    """Accept the other quote style inside a quoted Windows/Unix path."""
+    body = (
+        r"(?P<path>(?:[A-Za-z]:(?:\\{1,4}|/)|/[a-z]/)(?!/)[^"
+        + re.escape(quote)
+        + r"<>|*?\r\n" + "\x60"
+        + r"]*?\.(?:" + OUT_EXT + r"))"
+    )
+    return re.compile(re.escape(quote) + body + re.escape(quote), re.I)
+
+
+QUOTED_PATH_RES = tuple(quoted_path_re(q) for q in ('"', "'"))
+
 
 def output_paths(text: str) -> set[str]:
     """Find deliverables, including Windows paths with spaces inside matching quotes."""
     paths = set(PATH_RE.findall(text))
-    paths.update(m.group('path') for m in QUOTED_PATH_RE.finditer(text))
+    for quoted_re in QUOTED_PATH_RES:
+        paths.update(m.group("path") for m in quoted_re.finditer(text))
     return paths
 
 
