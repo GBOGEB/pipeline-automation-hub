@@ -765,9 +765,7 @@ def evaluate(
                 raise GateError("CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD")
 
         blocking = (policy.get("codex_contract") or {}).get("blocking_priorities")
-        if waiver is not None:
-            pass  # the waiver already refused any open Codex finding on the exact head
-        elif blocking is None:
+        if blocking is None:
             # Strict rule: any commented Codex review bound to the exact head blocks.
             reviews = client.get_all(f"/repos/{repo}/pulls/{pr_number}/reviews")
             findings = codex_finding_reviews_for_head(reviews, head_sha, expected_login)
