@@ -99,6 +99,50 @@ class ContractTests(unittest.TestCase):
         self.assertEqual(result["evergreen"], 1)
         self.assertEqual(result["denominator"], 3)
 
+    def test_owner_sha_must_be_hex_and_exact_length(self):
+        for invalid in ("z" * 40, "g" + "a" * 39, "0" * 39, "", None):
+            doc = copy.deepcopy(self.manifest)
+            doc["owners"][0]["head"] = invalid
+            with self.subTest(invalid=invalid), self.assertRaisesRegex(
+                module.CensusError, "unbound owner head SHA"
+            ):
+                module.census(doc)
+
+    def test_duplicate_test_identity_is_not_double_counted(self):
+        identity = {"test_id": "t", "contract_version": "v1", "runner": "py3.14",
+                    "history_complete": True, "outcomes": ["FAIL", "FAIL"]}
+        with self.assertRaisesRegex(module.CensusError, "duplicate test identity"):
+            module.classify_tests([copy.deepcopy(identity), copy.deepcopy(identity)])
+        independent = dict(identity, runner="py3.13")
+        self.assertEqual(module.classify_tests([identity, independent])["denominator"], 2)
+
+    def test_collisions_detect_glob_file_directory_and_glob_overlap(self):
+        cases = [
+            ("dir/*.py", "dir/x.py"),
+            ("dir", "dir/x.py"),
+            ("dir/*.py", "dir/f*.py"),
+            ("dir/*", "dir/sub/y.py"),
+        ]
+        for left, right in cases:
+            with self.subTest(left=left, right=right):
+                doc = copy.deepcopy(self.manifest)
+                doc["lanes"][0]["paths"] = [left]
+                doc["lanes"][1]["paths"] = [right]
+                with self.assertRaisesRegex(module.CensusError, "collision"):
+                    module.census(doc)
+
+    def test_similar_names_across_repositories_do_not_collide(self):
+        doc = copy.deepcopy(self.manifest)
+        # H lane belongs to Hub, B lane belongs to ABACUS; identical
+        # relative paths must not be equated across separate repositories.
+        doc["lanes"][0]["paths"] = ["shared/test.py"]
+        doc["lanes"][2]["paths"] = ["shared/test.py"]
+        self.assertEqual(module.census(doc)["closure"]["admission"], "NOT_ADMISSION")
+
+    def test_canonical_kahn_owner_is_imported(self):
+        import inspect
+        self.assertIn("module.topo_layers(nodes, active)", inspect.getsource(module.kahn_layers))
+
     def test_unknown_priority_never_becomes_zero(self):
         self.assertEqual(module.score_range([None] * 4, [0.35, 0.25, 0.2, 0.2]),
                          [0.0, 100.0])
