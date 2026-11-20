@@ -1,0 +1,56 @@
+{
+  "schema": "jade.repo-bios.profiles.v1",
+  "qualification": "REVIEW_SCOPE_NOT_OWNER_ACCEPTANCE",
+  "repositories": {
+    "GBOGEB/pipeline-automation-hub": {
+      "purpose": "Coordinate portfolio work and expose source-bound operational evidence.",
+      "lane": "Portfolio / orchestration",
+      "visibility": "public",
+      "purpose_source": "README.md",
+      "pipelines": [
+        {"id": "legacy-metadata", "label": "Bounded legacy PPTX metadata pipeline", "entries": ["scripts/run_processing.py"], "workflow": null, "scope_source": "README.md", "supplier": "Input package owner", "input": "Validated PPTX package", "process": "Validate package, derive metadata, recursively index", "output": "Metadata-only twins and joined receipts", "customer": "Document intake reviewer"},
+        {"id": "devops-census", "label": "DevOps census and qualification", "entries": ["mission-control/jade_temple/devops/census.py"], "workflow": ".github/workflows/jade-devops-census.yml", "scope_source": "mission-control/jade_temple/devops/README.md", "supplier": "Repository source owners", "input": "Exact-commit sources and existing census", "process": "Collect, validate and project lifecycle evidence", "output": "Source-bound census and diagnostics", "customer": "Portfolio owner"}
+      ],
+      "decisions": [{"path": "mission-control/jade_temple/devops/DR_DERIVED_OUTPUTS_OWNERSHIP.md", "informs": ["devops-census"], "relation": "REVIEW_CROSSWALK"}]
+    },
+    "GBOGEB/CODEX": {
+      "purpose": "Govern federation contracts, semantic provenance and validated publication.",
+      "lane": "KEB / provenance",
+      "visibility": "public",
+      "purpose_source": "README.md",
+      "pipelines": [
+        {"id": "truth-gate", "label": "Repository CI truth gate", "entries": ["scripts/check_manifest.py", "scripts/check_globs.py", "scripts/check_stale.py", "scripts/check_links.py"], "workflow": ".github/workflows/ci.yml", "scope_source": "README.md", "supplier": "Governed source owners", "input": "Source, manifests and federation contracts", "process": "Validate source and traceability contracts", "output": "Validation and governance receipts", "customer": "Publisher and federation consumers"}
+      ],
+      "decisions": [{"path": "governance/adr/ADR-0001-runtime-debug-governance.md", "informs": ["truth-gate"], "relation": "REVIEW_CROSSWALK"}]
+    },
+    "GBOGEB/ABACUS": {
+      "purpose": "Provide the DOW analytical runtime and governed QPLANT application surfaces.",
+      "lane": "DOW / analytics",
+      "visibility": "public",
+      "purpose_source": "README.md",
+      "pipelines": [
+        {"id": "dmaic-orchestrator", "label": "Source-declared canonical twelve-cluster orchestrator", "entries": ["DMAIC_V3/core/twelve_cluster_orchestrator.py", "local_mcp/agent_orchestrator_v3.0.py"], "workflow": ".github/workflows/ci-enhanced.yml", "scope_source": "README.md", "supplier": "DOW data and configuration owners", "input": "Repository and document inputs", "process": "Orchestrate DMAIC phases and validate the runtime", "output": "Analytical outputs and execution evidence", "customer": "Analytical and engineering reviewers"}
+      ],
+      "decisions": []
+    },
+    "GBOGEB/gg_MATH": {
+      "purpose": "Supply reproducible mathematical kernels, uncertainty and Plotly evidence.",
+      "lane": "Mathematical provider",
+      "visibility": "public",
+      "purpose_source": "README.md",
+      "pipelines": [
+        {"id": "release-evidence", "label": "Governed source and hosted-evidence release pipeline", "entries": ["release/build_release.py", "release/validate_release.py"], "workflow": ".github/workflows/release-infrastructure-v1.yml", "scope_source": "README.md", "supplier": "Mathematical method owners", "input": "Pinned source, runtime lock and numerical proofs", "process": "Validate, generate evidence and gate publication", "output": "Hashed mathematical evidence and release receipts", "customer": "Federation consumers and method reviewers"}
+      ],
+      "decisions": []
+    },
+    "GBOGEB/cryoplant-project": {
+      "purpose": "Maintain QPS OCD/ADR products and engineering traceability from governed sources.",
+      "lane": "QPS engineering",
+      "visibility": "private",
+      "purpose_source": "README.md",
+      "pipelines": [],
+      "decisions": [],
+      "scope_state": "PRIVATE_PROFILE_REQUIRED"
+    }
+  }
+}
