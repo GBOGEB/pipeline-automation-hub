@@ -10,6 +10,7 @@ import os
 import re
 import urllib.error
 import urllib.request
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -310,14 +311,69 @@ WAIVER_RE = re.compile(
 )
 
 
+def github_time(value: Any) -> datetime | None:
+    if not isinstance(value, str):
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return parsed.astimezone(timezone.utc) if parsed.tzinfo is not None else None
+
+
+def waiver_head_observation(
+    client: Any, repo: str, pr_number: int, head_sha: str, base_sha: str, policy: dict[str, Any]
+) -> dict[str, Any] | None:
+    """Latest trusted PR-proof creation is a server-side observation of this head.
+
+    Commit dates are author-controlled, and manual/push runs do not prove that
+    a SHA was the head of this PR. Select newest allowlisted runs independently
+    of a hand-written receipt, so replaying an older proof cannot revive a
+    waiver when a SHA is pushed away and later restored. Reruns keep their
+    original creation time and do not create a new head observation.
+    """
+    try:
+        specs = derive_required_runs(client, repo, head_sha, policy)
+    except GateError as exc:
+        if str(exc).startswith("NO_ALLOWLISTED_PROOF_RUN_ON_EXACT_HEAD"):
+            return None
+        raise
+    observations = []
+    for spec in specs:
+        if spec["repo"] != repo:
+            continue
+        run = client.get(f"/repos/{repo}/actions/runs/{spec['run_id']}")
+        if run.get("event") != "pull_request" or run.get("head_sha") != head_sha:
+            continue
+        links = run.get("pull_requests")
+        if not isinstance(links, list) or not any(
+            isinstance(link, dict) and link.get("number") == pr_number
+            and (link.get("head") or {}).get("sha") == head_sha for link in links
+        ):
+            continue
+        created = github_time(run.get("created_at"))
+        if created is None:
+            continue
+        # Use the same source identity/content predicate as the mandatory proofs.
+        allowed_purposes(client, policy, repo, base_sha,
+                         {**run, "repository": {"full_name": repo}})
+        observations.append((created, spec["run_id"], run["created_at"]))
+    if not observations:
+        return None
+    _, run_id, created_at = max(observations)
+    return {"run_id": run_id, "created_at": created_at, "head_sha": head_sha}
+
+
 def codex_quota_waiver(
-    comments: list[dict[str, Any]], head_sha: str, policy: dict[str, Any], expected_login: str
+    comments: list[dict[str, Any]], head_sha: str, policy: dict[str, Any], expected_login: str,
+    head_observation: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
     """The owner's head-bound waiver of a Codex review that quota prevented, or None.
 
     It applies only when the Codex reviewer itself posted its usage-limit notice on this PR and a
     declared owner then posted ``FPC_WAIVER_V1 head=<sha> waives=CODEX_REVIEW reason=<text>`` naming
-    the exact head. A new push changes the head, so the waiver stops matching. It waives only the
+    the exact head after a trusted PR proof observed it. A new push voids an earlier waiver,
+    even if a previously used SHA is restored. It waives only the
     completed-review requirement: proof runs, open blocking findings and the control-plane rule
     are still evaluated.
     """
@@ -332,6 +388,9 @@ def codex_quota_waiver(
             or not all(isinstance(o, str) and o and not o.endswith("[bot]") for o in owners)
             or waives != ["CODEX_REVIEW"]):
         raise GateError("POLICY_CODEX_QUOTA_WAIVER_INVALID")
+    observed_at = github_time((head_observation or {}).get("created_at"))
+    if observed_at is None or (head_observation or {}).get("head_sha") != head_sha:
+        return None
 
     def author(comment: dict[str, Any]) -> dict[str, Any]:
         return comment.get("user") or comment.get("author") or {}
@@ -346,7 +405,12 @@ def codex_quota_waiver(
         created = comment.get("created_at")
         if who.get("login") not in owners or who.get("type") == "Bot" or not isinstance(created, str):
             continue
-        earlier = [n for n in notices if n["created_at"] <= created]
+        created_at = github_time(created)
+        # Strictly later: equal second-resolution timestamps cannot prove order.
+        if created_at is None or created_at <= observed_at:
+            continue
+        earlier = [n for n in notices if github_time(n["created_at"]) is not None
+                   and github_time(n["created_at"]) <= created_at]
         if not earlier:
             continue
         for match in WAIVER_RE.finditer(comment.get("body") or ""):
@@ -354,6 +418,8 @@ def codex_quota_waiver(
                 return {
                     "waives": ["CODEX_REVIEW"],
                     "head_sha": head_sha,
+                    "head_observation": head_observation,
+                    "waiver_created_at": created,
                     "owner_login": who.get("login"),
                     "waiver_comment_id": comment.get("id"),
                     "quota_notice_comment_id": earlier[-1].get("id"),
@@ -760,7 +826,9 @@ def evaluate(
         )
         if not completed:
             # Only the completed-review requirement can be waived; findings are still checked below.
-            quota_waiver = codex_quota_waiver(comments, head_sha, policy, expected_login)
+            observation = (waiver_head_observation(client, repo, pr_number, head_sha, base_sha, policy)
+                           if policy.get("codex_quota_waiver") is not None else None)
+            quota_waiver = codex_quota_waiver(comments, head_sha, policy, expected_login, observation)
             if quota_waiver is None:
                 raise GateError("CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD")
 

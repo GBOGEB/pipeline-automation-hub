@@ -138,6 +138,8 @@ def mapping(
             "head_sha": run_head,
             "name": run_name,
             "path": run_path,
+            "event": "pull_request", "created_at": "2026-11-10T09:01:00Z",
+            "pull_requests": [{"number": PR, "head": {"sha": HEAD}}],
         },
         f"/repos/{REPO}/contents/{run_path}?ref={run_head}": content_payload(head_workflow),
         f"/repos/{REPO}/contents/{run_path}?ref={BASE}": content_payload(base_workflow),
@@ -321,6 +323,64 @@ class TestFirstPassClosureGate(unittest.TestCase):
     def test_completed_review_needs_no_waiver(self):
         receipt = fpc.evaluate(FakeClient(mapping()), REPO, PR, self.WAIVER_POLICY)
         self.assertIsNone(receipt["codex_quota_waiver"])
+
+    def test_preposted_or_same_second_waiver_cannot_bind_a_future_head(self):
+        for created in ("2026-11-10T09:00:30Z", "2026-11-10T09:01:00Z"):
+            with self.subTest(created=created), self.assertRaisesRegex(
+                fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"
+            ):
+                fpc.evaluate(self.waived(waiver_at=created), REPO, PR, self.WAIVER_POLICY)
+
+    def test_unrelated_manual_or_unbound_runs_cannot_attest_the_pr_head(self):
+        variants = [
+            {"event": "workflow_dispatch"}, {"event": "push"},
+            {"pull_requests": []}, {"pull_requests": [{"number": PR + 1, "head": {"sha": HEAD}}]},
+            {"pull_requests": [{"number": PR, "head": {"sha": "b" * 40}}]},
+            {"created_at": None}, {"created_at": "not-a-time"},
+            {"created_at": "2026-11-10T09:01:00"},
+        ]
+        for variant in variants:
+            with self.subTest(variant=variant), self.assertRaisesRegex(
+                fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"
+            ):
+                client = self.waived()
+                client.mapping[f"/repos/{REPO}/actions/runs/{RUN}"].update(variant)
+                fpc.evaluate(client, REPO, PR, self.WAIVER_POLICY)
+
+    def test_restoring_same_sha_cannot_replay_a_waiver_against_old_body_proofs(self):
+        client = self.waived()
+        newer = dict(client.mapping[f"/repos/{REPO}/actions/runs/{RUN}"],
+                     created_at="2026-11-10T09:06:00Z")
+        client.mapping[f"/repos/{REPO}/actions/runs/{RUN + 1}"] = newer
+        client.mapping[f"/repos/{REPO}/actions/runs?head_sha={HEAD}&per_page=100&page=1"]["workflow_runs"].append(
+            {"id": RUN + 1, "run_number": 6, "head_sha": HEAD,
+             "name": "Trusted Proof", "path": ".github/workflows/trusted.yml"})
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
+            fpc.evaluate(client, REPO, PR, self.WAIVER_POLICY)
+        # A fresh owner comment after the new head observation can qualify.
+        client.mapping[f"/repos/{REPO}/issues/{PR}/comments"][-1]["created_at"] = "2026-11-10T09:07:00Z"
+        receipt = fpc.evaluate(client, REPO, PR, self.WAIVER_POLICY)
+        self.assertEqual(receipt["codex_quota_waiver"]["head_observation"]["run_id"], RUN + 1)
+
+    def test_rerun_start_time_does_not_replace_the_original_push_observation(self):
+        client = self.waived()
+        client.mapping[f"/repos/{REPO}/actions/runs/{RUN}"].update(
+            run_started_at="2026-11-10T10:00:00Z", run_attempt=2)
+        receipt = fpc.evaluate(client, REPO, PR, self.WAIVER_POLICY)
+        self.assertEqual(receipt["codex_quota_waiver"]["head_observation"]["created_at"],
+                         "2026-11-10T09:01:00Z")
+
+    def test_editing_a_preposted_comment_requires_a_new_post_head_waiver(self):
+        client = self.waived(waiver_at="2026-11-10T09:00:30Z")
+        client.mapping[f"/repos/{REPO}/issues/{PR}/comments"][-1]["updated_at"] = "2026-11-10T09:05:00Z"
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
+            fpc.evaluate(client, REPO, PR, self.WAIVER_POLICY)
+
+    def test_missing_head_observation_fails_closed(self):
+        client = self.waived()
+        client.mapping[f"/repos/{REPO}/actions/runs?head_sha={HEAD}&per_page=100&page=1"]["workflow_runs"] = []
+        with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
+            fpc.evaluate(client, REPO, PR, self.WAIVER_POLICY)
 
     def test_waiver_for_another_head_is_void(self):
         with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
