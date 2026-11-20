@@ -508,11 +508,17 @@ def _reason(run: dict, token: str) -> dict:
     rec_pr = str(rec.get("pr_number") or "")
     # Wrapper success cannot prove a passing FPC without its own evaluator receipt.
     decision = rec.get("merge_allowed")
-    status = "PASS" if decision is True else ("FAIL" if decision is False else "UNKNOWN")
+    # A successful evaluator receipt inside a failed wrapper does not qualify the
+    # published trusted gate: fail closed rather than emit a false-green PASS.
+    status = ("PASS" if decision is True and run["conclusion"] == "success" else
+              "FAIL" if decision is False else "UNKNOWN")
     return {"run_id": run["id"], "created_at": run["created_at"], "event": run["event"], "conclusion": run["conclusion"],
             "head_sha": head, "run_head_sha": run["head_sha"], "head_from": "receipt" if from_receipt else "run",
             "pr": int(rec_pr) if rec_pr.isdigit() else (prs[0] if prs else None), "title": run.get("display_title"),
-            "status": status, "reason": rec.get("reason") or (None if status == "PASS" else "NO_RECEIPT_ARTIFACT" if not rec else "NO_EVALUATOR_DECISION")}
+            "status": status, "reason": rec.get("reason") or (
+                None if status == "PASS" else
+                "WRAPPER_NOT_SUCCESS" if decision is True and run["conclusion"] != "success" else
+                "NO_RECEIPT_ARTIFACT" if not rec else "NO_EVALUATOR_DECISION")}
 
 
 def _reason_or_none(run: dict, token: str) -> dict | None:
