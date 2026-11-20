@@ -82,7 +82,7 @@ def validate(doc: dict[str, Any]) -> None:
 def kahn_layers(nodes: list[str], edges: list[dict[str, Any]]) -> list[list[str]]:
     """Adapter to JADE's sole source-owned Kahn implementation."""
     require(len(nodes) == len(set(nodes)), "duplicate DAG node")
-    owner = Path(__file__).resolve().parents[1] / "jade_temple" / "devops" / "lifecycle.py"
+    owner = Path(__file__).resolve().parents[2] / "jade_temple" / "devops" / "lifecycle.py"
     require(owner.is_file(), "canonical JADE Kahn owner unavailable")
     spec = importlib.util.spec_from_file_location("mip_canonical_jade_kahn", owner)
     require(spec is not None and spec.loader is not None, "canonical JADE Kahn owner unavailable")
@@ -182,7 +182,9 @@ def census(doc: dict[str, Any], tests: list[dict[str, Any]] | None = None) -> di
     for lane in doc["lanes"]:
         for path in lane["paths"]:
             require(isinstance(path, str) and path.strip() and
-                    not path.startswith("/") and ".." not in path.split("/"),
+                    not path.startswith("/") and "\\" not in path and
+                    re.match(r"^[A-Za-z]:", path) is None and
+                    all(p not in {"", ".", ".."} for p in path.rstrip("/").split("/")),
                     "unsafe commit lane path")
             paths[path].append(lane["id"])
             declared.append((owner_repos[lane["owner"]], lane["id"], path))

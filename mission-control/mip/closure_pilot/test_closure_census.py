@@ -45,6 +45,14 @@ class ContractTests(unittest.TestCase):
                 {"from": "A", "to": "B"}, {"from": "B", "to": "A"}
             ])
 
+    def test_canonical_owner_rejects_unknown_endpoint(self):
+        with self.assertRaisesRegex(module.CensusError, "unknown edge endpoint"):
+            module.kahn_layers(["A"], [{"from": "A", "to": "missing"}])
+
+    def test_duplicate_dag_node_is_rejected(self):
+        with self.assertRaisesRegex(module.CensusError, "duplicate DAG node"):
+            module.kahn_layers(["A", "A"], [])
+
     def test_conditional_edge_is_not_silent_authority(self):
         manifest = copy.deepcopy(self.manifest)
         manifest["edges"][1]["enabled"] = True
@@ -129,6 +137,15 @@ class ContractTests(unittest.TestCase):
                 doc["lanes"][0]["paths"] = [left]
                 doc["lanes"][1]["paths"] = [right]
                 with self.assertRaisesRegex(module.CensusError, "collision"):
+                    module.census(doc)
+
+    def test_path_aliases_cannot_hide_overlapping_worker_writes(self):
+        for alias in ("./dir/x.py", "dir//x.py", "dir/./x.py", "dir\\x.py", "C:/dir/x.py"):
+            with self.subTest(alias=alias):
+                doc = copy.deepcopy(self.manifest)
+                doc["lanes"][0]["paths"] = ["dir/*.py"]
+                doc["lanes"][1]["paths"] = [alias]
+                with self.assertRaisesRegex(module.CensusError, "unsafe commit lane path"):
                     module.census(doc)
 
     def test_similar_names_across_repositories_do_not_collide(self):

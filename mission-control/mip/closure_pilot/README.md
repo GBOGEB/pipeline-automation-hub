@@ -58,6 +58,15 @@ A PR badge is **advisory metadata**. Changing/clearing an owner label or checkli
 
 ## Census semantics and negative controls
 
+The current repair delegates topology to the canonical JADE lifecycle module
+from `mission-control/jade_temple/devops/lifecycle.py`. The focused suite has
+36 offline tests, including all four review contracts and path-alias negatives.
+The path-filtered `mip-closure-pilot.yml` workflow runs the same suite and smoke
+on Linux and Windows, publishing source-bound test receipts. These receipts
+qualify offline behavior only; they do not accept historical roots, authorize
+dispatch, replace the official ledger, or grant merge admission. Lane paths
+must use canonical repository-relative POSIX spelling, including on Windows.
+
 Run `closure_census.py` against the checked-in manifest. It validates frozen root count/groups/edge-count invariants, unique IDs and path ownership; Kahn-sorts the active dependency DAG and fails closed on cycles. It reports `UNKNOWN` for absent workflow/test/coverage observations. Advisory priority intervals preserve missing factors; no composite admission score is calculated.
 
 **Denominators must never be mixed:** Workflow run is not a job, matrix cell, test, PR check, PR or distinct root. `EVERGREEN` means one historical matching test-ID PASS survives in historical evidence; `CURRENT_HEAD_PASSED` requires exact HEAD and contract match. `NEVERGREEN` is a new *test-level* class: across a fully enumerated, comparable history on stable test ID/version/runner, all actual executions must terminate FAIL or ERROR and at least one has run. **All SKIP** is not NEVERGREEN. Coverage 0% is a *production module* with measured executed lines over a matched source/coverage configuration, not a failed workflow. Missing JUnit and branch/coverage receipts yield UNKNOWN.
