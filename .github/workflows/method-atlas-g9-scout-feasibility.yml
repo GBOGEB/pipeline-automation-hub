@@ -80,7 +80,7 @@ jobs:
           from pathlib import Path
           t=(Path(os.environ["RUNNER_TEMP"])/"g9-scale-tests.log").read_text()
           count=[int(x) for x in re.findall(r'^Ran (\d+) tests? in ',t,re.M)]
-          if not count or count[-1]<21 or 'FAILED' in t or 'skipped=' in t:
+          if not count or count[-1]<23 or 'FAILED' in t or 'skipped=' in t:
               raise SystemExit("G9_SCALE_TEST_POPULATION_FIRST_RED")
           print("G9_SCALE_TESTS="+str(count[-1]))
           PY
@@ -158,25 +158,32 @@ jobs:
       - name: Seal all outward evidence including native HOLD and test log
         if: always()
         shell: bash
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
           python - <<'PY'
           import hashlib,json,os,shutil
           from pathlib import Path
           out=Path(os.environ['RUNNER_TEMP'])/'g9-local-scale'
+          out.mkdir(parents=True,exist_ok=True)
           manifest=out/'manifest.json'
           if manifest.is_file():
               m=json.loads(manifest.read_bytes())
               for name,expected in m['files'].items():
                   if hashlib.sha256((out/name).read_bytes()).hexdigest()!=expected:
                       raise SystemExit('SCALE_MEMBER_HASH_TAMPER_BEFORE_FINAL_SEAL')
-              log=Path(os.environ['RUNNER_TEMP'])/'g9-scale-tests.log'
-              if log.is_file():
-                  shutil.copyfile(log,out/'g9-scale-tests.log')
-              m['files']={p.relative_to(out).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
-                          for p in sorted(out.rglob('*')) if p.is_file() and p!=manifest}
-              manifest.write_text(json.dumps(m,sort_keys=True,indent=2)+'\n',encoding='utf-8',newline='\n')
-              print('G9_ALL_OUTWARD_MEMBERS_SEALED='+str(len(m['files'])))
+          else:
+              m={'schema':'method-atlas.g9-local-scale-manifest.v1',
+                 'source_head':os.environ['EXACT_HEAD'],'workload_sha256':None,'status':'FAIL',
+                 'native_jobs_authenticated':False,'scale_promotion':False,'merger_admission':'HOLD'}
+          log=Path(os.environ['RUNNER_TEMP'])/'g9-scale-tests.log'
+          if log.is_file():
+              shutil.copyfile(log,out/'g9-scale-tests.log')
+          m['files']={p.relative_to(out).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+                      for p in sorted(out.rglob('*')) if p.is_file() and p!=manifest}
+          manifest.write_text(json.dumps(m,sort_keys=True,indent=2)+'\n',encoding='utf-8',newline='\n')
+          print('G9_ALL_OUTWARD_MEMBERS_SEALED='+str(len(m['files'])))
           PY
 
       - name: Preserve locally measured scale proof and bounded HOLD
@@ -184,8 +191,6 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: method-atlas-g9-scale-${{ matrix.os }}-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
-          path: |
-            ${{ runner.temp }}/g9-local-scale/
-            ${{ runner.temp }}/g9-scale-tests.log
+          path: ${{ runner.temp }}/g9-local-scale/
           retention-days: 21
           if-no-files-found: warn

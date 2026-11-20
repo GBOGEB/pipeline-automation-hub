@@ -13,6 +13,7 @@ not 32 GitHub runners, not QPS engineering, and not scale admission.
 from __future__ import annotations
 
 import argparse
+import base64
 import copy
 from contextlib import contextmanager
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -26,6 +27,7 @@ from pathlib import Path
 import platform
 import re
 import shutil
+import stat
 import statistics
 import subprocess
 import sys
@@ -100,7 +102,12 @@ def scratch_directory():
     try:
         yield path
     finally:
-        shutil.rmtree(path)
+        def remove_readonly(function, name, error):
+            if not isinstance(error[1], PermissionError):
+                raise error[1]
+            os.chmod(name, stat.S_IREAD | stat.S_IWRITE)
+            function(name)
+        shutil.rmtree(path, onerror=remove_readonly)
 
 
 def load_inputs(root):
@@ -196,16 +203,13 @@ def run_case(task, root, input_files, objects, out, head, mode, producer, tracke
                        "--source-sha", head]
             environment = dict(os.environ)
             environment["PYTHONDONTWRITEBYTECODE"] = "1"
-            try:
-                completed = subprocess.run(command, cwd=root,
-                                           capture_output=True, timeout=30,
-                                           check=False, env=environment)
-                success = completed.returncode == 0
-                error_class = ("EXPECTED_SOURCE_DENOMINATOR" if NEGATIVE.encode()
-                               in completed.stderr else
-                               "NO_EXPECTED_DENOMINATOR_REJECTION")
-            except subprocess.TimeoutExpired:
-                raise ValueError("G9_READONLY_TASK_TIMEOUT")
+            completed = subprocess.run(command, cwd=root,
+                                       capture_output=True, timeout=30,
+                                       check=False, env=environment)
+            success = completed.returncode == 0
+            error_class = ("EXPECTED_SOURCE_DENOMINATOR" if NEGATIVE.encode()
+                           in completed.stderr else
+                           "NO_EXPECTED_DENOMINATOR_REJECTION")
         else:
             require(mode == "IN_PROCESS_LIBRARY", "UNKNOWN_ALLOWED_SCOUT_BACKEND")
             try:
@@ -261,9 +265,17 @@ def execute_lane(root, inputs, input_files, head, producer, lane, tasks,
             try:
                 row = future.result()
             except Exception as exc:
-                failures.append({"pulse": pulse, "lane": lane, "task_id": task["id"],
-                                 "kind": task["kind"], "error_type": type(exc).__name__,
-                                 "reason": str(exc)})
+                failure = {"pulse": pulse, "lane": lane, "task_id": task["id"],
+                           "kind": task["kind"], "error_type": type(exc).__name__,
+                           "reason": str(exc)}
+                if isinstance(exc, subprocess.TimeoutExpired):
+                    failure.update(reason="G9_READONLY_TASK_TIMEOUT", timeout_seconds=exc.timeout)
+                    # Preserve arbitrary bytes, including incomplete UTF-8, exactly.
+                    failure["partial_streams_base64"] = {
+                        name: base64.b64encode(value.encode() if isinstance(value, str)
+                                               else (value or b"")).decode("ascii")
+                        for name, value in (("stdout", exc.stdout), ("stderr", exc.stderr))}
+                failures.append(failure)
                 continue
             result[row["id"]] = row
             completion.append(row["id"])

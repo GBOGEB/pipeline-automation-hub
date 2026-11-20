@@ -253,10 +253,30 @@ class SourceAndFailureTests(unittest.TestCase):
                 raise RuntimeError("first-red")
         self.assertFalse(scratch.exists())
 
+    def test_scratch_cleanup_includes_readonly_git_style_files(self):
+        with scale.scratch_directory() as scratch:
+            readonly = scratch / "readonly-object"
+            readonly.write_bytes(b"git-style object")
+            readonly.chmod(scale.stat.S_IREAD)
+        self.assertFalse(scratch.exists())
+
+    def test_cold_timeout_preserves_partial_streams_and_releases_task_counter(self):
+        timeout = subprocess.TimeoutExpired("g9", 30, output=b"partial stdout", stderr=b"\xffpartial stderr")
+        tracker = {"lock": scale.threading.Lock(), "active": 0, "peak": 0}
+        with scale.scratch_directory() as tmp, \
+                mock.patch.object(scale.subprocess, "run", side_effect=timeout), \
+                self.assertRaises(subprocess.TimeoutExpired) as caught:
+            scale.run_case({"id":"T001", "kind":"baseline"}, ROOT,
+                           {"baseline":tmp/"baseline.json"}, {}, tmp/"out",
+                           "a"*40, "SUBPROCESS_CLI", None, tracker)
+        self.assertIs(caught.exception, timeout)
+        self.assertEqual(caught.exception.stderr, b"\xffpartial stderr")
+        self.assertEqual(tracker["active"], 0)
+
     def test_failure_preserves_prior_blocks_all_completed_tasks_and_actual_outputs(self):
         original = scale.run_case
         for failure in (ValueError("G9_SEMANTIC_OUTCOME_MISMATCH"),
-                        subprocess.TimeoutExpired("g9", 30)):
+                        subprocess.TimeoutExpired("g9", 30, output=b"partial stdout", stderr=b"\xffpartial stderr")):
             with self.subTest(failure=type(failure).__name__), scale.scratch_directory() as tmp:
                 out = tmp / "evidence"
                 def injected(task, root, files, objects, product, *args):
@@ -277,6 +297,10 @@ class SourceAndFailureTests(unittest.TestCase):
                 receipt = json.loads((partial / "partial_receipts.json").read_bytes())
                 self.assertEqual(len(receipt["task_receipts"]), 7)
                 self.assertEqual(receipt["failures"][0]["task_id"], "T001")
+                if isinstance(failure, subprocess.TimeoutExpired):
+                    streams = receipt["failures"][0]["partial_streams_base64"]
+                    self.assertEqual(scale.base64.b64decode(streams["stdout"]), b"partial stdout")
+                    self.assertEqual(scale.base64.b64decode(streams["stderr"]), b"\xffpartial stderr")
                 self.assertEqual((partial / "T001" / "failed-output.txt").read_text(),
                                  "diagnostic bytes")
                 self.assertFalse((out / "scale_feasibility.json").exists())
@@ -310,6 +334,15 @@ class SourceAndFailureTests(unittest.TestCase):
                 (out / "index.html").write_text("tampered after validation")
                 with self.assertRaisesRegex(SystemExit, "SCALE_MEMBER_HASH_TAMPER_BEFORE_FINAL_SEAL"):
                     exec(script, {})
+        # A pre-benchmark test failure still has a sealed FAIL artifact and log.
+        with scale.scratch_directory() as tmp:
+            (tmp / "g9-scale-tests.log").write_text("FAILED before benchmark")
+            with mock.patch.dict(scale.os.environ, {"RUNNER_TEMP": str(tmp), "EXACT_HEAD": "a"*40}):
+                exec(script, {})
+            manifest = json.loads((tmp / "g9-local-scale" / "manifest.json").read_bytes())
+            self.assertEqual(manifest["status"], "FAIL")
+            self.assertEqual(manifest["source_head"], "a"*40)
+            self.assertEqual(set(manifest["files"]), {"g9-scale-tests.log"})
 
     def test_workflow_filters_cover_all_runtime_source_dependencies(self):
         workflow = (ROOT / ".github/workflows/method-atlas-g9-scout-feasibility.yml").read_text()

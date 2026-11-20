@@ -197,13 +197,13 @@ generation and restores the previous Python setting even on import failure.
 Scratch space uses a uniquely named directory created with `os.makedirs` below
 the system temp directory and is removed in `finally`. On a task failure or
 timeout, all submitted tasks drain, and the failed lane's actual outputs, partial
-receipts, task identity/error, earlier completed cohorts and blocks are preserved
+receipts, task identity/error, exact base64-encoded partial timeout streams, earlier completed cohorts and blocks are preserved
 outside scratch. `failure.json` and a FAIL manifest remain uploadable; no PASS
 report is emitted for that failure. CI still fails closed.
 
 The final native artifact manifest is sealed after the canonical HOLD receipt
 and test log exist, checking existing member hashes before adding outward files.
-The workflow's paths cover every runtime source dependency. The 21-test suite
+The workflow's paths cover every runtime source dependency. The 23-test suite
 includes real Git index/clean-filter challenges, wrong-population verification,
 failure/timeout retention and actual 56-task producer smoke. Native qualification
 runs independently on Ubuntu 24.04 and Windows 2022, with 896 benchmark tasks
