@@ -192,6 +192,43 @@ class Attribution(unittest.TestCase):
                 m._lookups(path, cache, "unused-token")
             get_comments.assert_called_once_with(9, "unused-token")
 
+    def test_failed_wrapper_with_positive_evaluator_receipt_is_not_pass(self):
+        """Passing evaluator bytes do not override a terminal failed gate wrapper."""
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w") as z:
+            z.writestr("r.json", json.dumps({"merge_allowed": True,
+                                            "head_sha": "a" * 40,
+                                            "pr_number": "1187"}))
+        def fake(url, token, raw=False):
+            return buf.getvalue() if raw else {"artifacts": [
+                {"name": m.ARTIFACT, "expired": False, "archive_download_url": "u"}]}
+        run = {"id": 446, "created_at": "2026-11-20T11:00:00Z",
+               "event": "pull_request_target", "conclusion": "failure",
+               "head_sha": "b" * 40, "pull_requests": []}
+        with mock.patch.object(m, "_get", fake):
+            row = m._reason(run, "unused")
+        self.assertEqual((row["status"], row["reason"]),
+                         ("UNKNOWN", "WRAPPER_NOT_SUCCESS"))
+        summary = m.summarize(m.attribute_all([row], {}))
+        self.assertEqual((summary["pass"], summary["red"], summary["unverified"]),
+                         (0, 0, 1))
+
+    def test_successful_wrapper_with_positive_evaluator_receipt_is_pass(self):
+        buf = io.BytesIO()
+        with zipfile.ZipFile(buf, "w") as z:
+            z.writestr("r.json", json.dumps({"merge_allowed": True,
+                                            "head_sha": "a" * 40,
+                                            "pr_number": "1187"}))
+        def fake(url, token, raw=False):
+            return buf.getvalue() if raw else {"artifacts": [
+                {"name": m.ARTIFACT, "expired": False, "archive_download_url": "u"}]}
+        run = {"id": 447, "created_at": "2026-11-20T11:00:00Z",
+               "event": "pull_request_target", "conclusion": "success",
+               "head_sha": "b" * 40, "pull_requests": []}
+        with mock.patch.object(m, "_get", fake):
+            row = m._reason(run, "unused")
+        self.assertEqual((row["status"], row["reason"]), ("PASS", None))
+
     def test_successful_wrapper_without_fpc_receipt_is_unverified(self):
         """A green Actions wrapper may not manufacture an evaluator PASS."""
         run = {"id": 444, "created_at": "2026-11-19T20:10:00Z",
