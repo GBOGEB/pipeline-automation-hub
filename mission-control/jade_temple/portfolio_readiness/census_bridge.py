@@ -8,8 +8,10 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import re
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -25,21 +27,31 @@ CORE = frozenset({
 })
 
 
-def need(condition: bool, reason: str) -> None:
-    if not condition:
-        raise ValueError(reason)
+def _owner(path: Path, name: str):
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    original_path = list(sys.path)
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        sys.path[:] = original_path
+    return module
+
+
+HERE = Path(__file__).resolve().parent
+_CENSUS = _owner(HERE.parent / "devops" / "census.py", "jade_bridge_census_owner")
+_PORTFOLIO = _owner(HERE / "portfolio_readiness.py", "jade_bridge_portfolio_owner")
+need = _PORTFOLIO.need
 
 
 def canonical(value: dict) -> bytes:
-    # Digest verification depends on matching the producer's canonical JSON.
-    # Be explicit about JSON settings instead of relying on `json.dumps` defaults.
-    return json.dumps(
-        value,
-        sort_keys=True,
-        ensure_ascii=False,
-        separators=(",", ":"),
-        allow_nan=False,
-    ).encode("utf-8")
+    # The source producer owns the digest bytes. Keep the consumer's stricter
+    # finite-JSON boundary without reproducing the producer's serialization.
+    try:
+        json.dumps(value, allow_nan=False)
+    except (TypeError, ValueError):
+        need(False, "NONFINITE_OR_INVALID_JSON")
+    return _CENSUS.canonical(value)
 
 
 def sha256(value: bytes) -> str:
@@ -50,8 +62,8 @@ def utc_stamp(value: str) -> str:
     need(isinstance(value, str), "BAD_TIMESTAMP_TYPE")
     try:
         parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
-    except ValueError as exc:
-        raise ValueError("BAD_TIMESTAMP") from exc
+    except ValueError:
+        need(False, "BAD_TIMESTAMP")
     need(parsed.tzinfo is not None, "NAIVE_TIMESTAMP")
     stamped = parsed.astimezone(timezone.utc).isoformat()
     # Canonicalize UTC on-wire format to RFC3339-style "Z" to avoid diffs

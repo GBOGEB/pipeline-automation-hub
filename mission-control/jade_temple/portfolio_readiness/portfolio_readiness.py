@@ -40,6 +40,8 @@ OWNERS = {
 # owner, so each one is hashed and compared with the planning baseline. Keep this in step with the
 # imports in OWNERS (test_transitive_inputs_cover_owner_imports checks the sibling imports).
 TRANSITIVE_INPUTS = (
+    "mission-control/jade_temple/devops/census.py",  # bridge digest producer
+    "mission-control/jade_temple/devops/workflows.py",  # producer import
     "mission-control/issue_rank/issue_math.py",
     "mission-control/issue_rank/taxonomy_pulse.py",
     "mission-control/issue_rank/title_taxonomy.py",

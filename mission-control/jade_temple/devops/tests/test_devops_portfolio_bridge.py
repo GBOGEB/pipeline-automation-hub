@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import hashlib
+import fnmatch
 import importlib.util
 import json
 import unittest
@@ -11,6 +12,10 @@ SOURCE = Path(__file__).resolve().parents[2] / "portfolio_readiness" / "census_b
 SPEC = importlib.util.spec_from_file_location("jade_portfolio_census_bridge", SOURCE)
 bridge = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(bridge)
+PRODUCER_SOURCE = SOURCE.parents[1] / "devops" / "census.py"
+PRODUCER_SPEC = importlib.util.spec_from_file_location("bridge_producer_oracle", PRODUCER_SOURCE)
+producer = importlib.util.module_from_spec(PRODUCER_SPEC)
+PRODUCER_SPEC.loader.exec_module(producer)
 
 
 def fixture():
@@ -32,10 +37,38 @@ def fixture():
 
 def sign(census):
     body = {k: v for k, v in census.items() if k != "digest_sha256"}
-    census["digest_sha256"] = hashlib.sha256(bridge.canonical(body)).hexdigest()
+    census["digest_sha256"] = hashlib.sha256(producer.canonical(body)).hexdigest()
 
 
 class PortfolioCensusBridgeTest(unittest.TestCase):
+    def test_finite_unicode_bytes_match_the_actual_producer(self):
+        value = {"unicode": ["é", "λ"], "nested": {"float": -0.0, "null": None}}
+        self.assertEqual(bridge.canonical(value), producer.canonical(value))
+        census, reg = fixture()
+        census["producer_metadata"] = value
+        sign(census)
+        model, _ = bridge.convert(census, reg)
+        self.assertEqual(len(model["repos"]), 3)
+
+    def test_nonfinite_source_values_are_rejected_even_with_a_producer_digest(self):
+        for value in (float("nan"), float("inf"), -float("inf")):
+            with self.subTest(value=value):
+                census, reg = fixture()
+                census["producer_metadata"] = value
+                sign(census)
+                with self.assertRaisesRegex(ValueError, "^PORTFOLIO_INPUT: NONFINITE_OR_INVALID_JSON"):
+                    bridge.convert(census, reg)
+
+    def test_bridge_uses_the_owner_error_prefix(self):
+        census, reg = fixture()
+        census["repos"][0]["head_sha"] = "b" * 40
+        with self.assertRaisesRegex(ValueError, "^PORTFOLIO_INPUT: SOURCE_CENSUS_DIGEST_DRIFT"):
+            bridge.convert(census, reg)
+
+    def test_invalid_timestamp_keeps_the_owner_error_prefix(self):
+        with self.assertRaisesRegex(ValueError, "^PORTFOLIO_INPUT: BAD_TIMESTAMP"):
+            bridge.utc_stamp("not-a-time")
+
     def test_structural_projection_holds_release_and_closure(self):
         census, reg = fixture()
         model, rec = bridge.convert(census, reg, 3)
@@ -126,6 +159,41 @@ class PortfolioCensusBridgeTest(unittest.TestCase):
         self.assertIn(key, source_hashes)
         self.assertEqual(source_hashes[key]["sha256"],
                          hashlib.sha256(SOURCE.read_bytes()).hexdigest())
+        for source in (PRODUCER_SOURCE, PRODUCER_SOURCE.with_name("workflows.py")):
+            key = "mission-control/jade_temple/devops/" + source.name
+            self.assertEqual(source_hashes[key]["sha256"], hashlib.sha256(source.read_bytes()).hexdigest())
+
+
+class BridgeWorkflowContractTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        workflow = SOURCE.parents[3] / ".github/workflows/jade-devops-census.yml"
+        cls.doc = producer.W.yaml.safe_load(workflow.read_text(encoding="utf-8"))
+
+    def test_bridge_only_changes_trigger_the_real_offline_suite(self):
+        events = self.doc.get("on", self.doc.get(True))
+        bridge_path = "mission-control/jade_temple/portfolio_readiness/census_bridge.py"
+        for event in ("pull_request", "push"):
+            self.assertTrue(any(fnmatch.fnmatchcase(bridge_path, p) for p in events[event]["paths"]))
+        commands = "\n".join(s.get("run", "") for s in self.doc["jobs"]["offline"]["steps"])
+        self.assertIn("test_devops_*.py", commands)
+        self.assertTrue(fnmatch.fnmatchcase(Path(__file__).name, "test_devops_*.py"))
+        self.assertIn("CANONICAL_21_REPO_BRIDGE=PASS", commands)
+
+    def test_failed_projection_cannot_hide_required_census_artifacts(self):
+        steps = self.doc["jobs"]["refresh"]["steps"]
+        uploads = [s for s in steps if "actions/upload-artifact@" in s.get("uses", "")]
+        required = next(s for s in uploads if s["with"]["name"].startswith("jade-devops-census-fresh-"))
+        optional = next(s for s in uploads if s["with"]["name"].startswith("jade-portfolio-projection-"))
+        self.assertEqual(required["if"], "always()")
+        self.assertEqual(required["with"]["if-no-files-found"], "error")
+        self.assertEqual(optional["if"], "always()")
+        self.assertEqual(optional["with"]["if-no-files-found"], "warn")
+        guard = next(s for s in steps if s.get("name") == "Verify required census outputs if collection succeeded")
+        self.assertIn("always()", guard["if"])
+        self.assertIn("steps.fetch_census.outcome == 'success'", guard["if"])
+        for filename in ("DEVOPS_CENSUS_FRESH.json", "DEVOPS_OBJECTS_FRESH.json", "fetch.jsonl"):
+            self.assertIn('test -s "$RUNNER_TEMP/' + filename + '"', guard["run"])
 
 
 if __name__ == "__main__":
