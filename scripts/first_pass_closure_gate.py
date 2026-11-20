@@ -322,7 +322,8 @@ def github_time(value: Any) -> datetime | None:
 
 
 def waiver_head_observation(
-    client: Any, repo: str, pr_number: int, head_sha: str, base_sha: str, policy: dict[str, Any]
+    client: Any, repo: str, pr_number: int, head_sha: str, base_sha: str, policy: dict[str, Any],
+    trigger_event: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
     """Latest trusted PR-proof creation is a server-side observation of this head.
 
@@ -332,6 +333,29 @@ def waiver_head_observation(
     waiver when a SHA is pushed away and later restored. Reruns keep their
     original creation time and do not create a new head observation.
     """
+    # A synchronized head can be visible before its new proof run. Never use
+    # the presence of an old run as evidence that the latest push was observed.
+    boundaries = []
+    if trigger_event is not None and trigger_event.get("action") == "synchronize":
+        pulled = trigger_event.get("pull_request") or {}
+        if (pulled.get("number") != pr_number or (pulled.get("head") or {}).get("sha") != head_sha
+                or trigger_event.get("after") != head_sha):
+            return None
+        stamp = github_time(pulled.get("updated_at"))
+        if stamp is None:
+            return None
+        boundaries.append((stamp, {"source": "PULL_REQUEST_TARGET_SYNCHRONIZE",
+                                   "created_at": pulled["updated_at"]}))
+    timeline = client.get_all(f"/repos/{repo}/issues/{pr_number}/timeline")
+    for event in timeline:
+        if event.get("event") not in {"head_ref_force_pushed", "head_ref_deleted", "head_ref_restored"}:
+            continue
+        stamp = github_time(event.get("created_at"))
+        if stamp is None:
+            return None
+        boundaries.append((stamp, {"source": event["event"], "event_id": event.get("id"),
+                                   "created_at": event["created_at"]}))
+    boundary, boundary_receipt = max(boundaries, key=lambda row: row[0]) if boundaries else (None, None)
     try:
         specs = derive_required_runs(client, repo, head_sha, policy)
     except GateError as exc:
@@ -339,6 +363,7 @@ def waiver_head_observation(
             return None
         raise
     observations = []
+    proven = set()
     for spec in specs:
         if spec["repo"] != repo:
             continue
@@ -352,16 +377,19 @@ def waiver_head_observation(
         ):
             continue
         created = github_time(run.get("created_at"))
-        if created is None:
+        if created is None or (boundary is not None and created <= boundary):
             continue
-        # Use the same source identity/content predicate as the mandatory proofs.
-        allowed_purposes(client, policy, repo, base_sha,
-                         {**run, "repository": {"full_name": repo}})
+        # All mandatory purposes must have fresh successful PR proofs, even
+        # when a hand-written body still points at an older successful run.
+        proof = validate_run(client, spec, head_sha, repo, base_sha, policy)
+        proven.update(proof["purposes"])
         observations.append((created, spec["run_id"], run["created_at"]))
-    if not observations:
+    if not observations or REQUIRED_PURPOSES - proven:
         return None
     _, run_id, created_at = max(observations)
-    return {"run_id": run_id, "created_at": created_at, "head_sha": head_sha}
+    return {"run_id": run_id, "created_at": created_at, "head_sha": head_sha,
+            "head_occurrence": boundary_receipt,
+            "fresh_proof_run_ids": sorted(row[1] for row in observations)}
 
 
 def codex_quota_waiver(
@@ -765,7 +793,8 @@ def validate_run(
 
 
 def evaluate(
-    client: Any, repo: str, pr_number: int, policy: dict[str, Any]
+    client: Any, repo: str, pr_number: int, policy: dict[str, Any],
+    trigger_event: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     pr = client.get(f"/repos/{repo}/pulls/{pr_number}")
     head_sha = ((pr.get("head") or {}).get("sha"))
@@ -826,7 +855,7 @@ def evaluate(
         )
         if not completed:
             # Only the completed-review requirement can be waived; findings are still checked below.
-            observation = (waiver_head_observation(client, repo, pr_number, head_sha, base_sha, policy)
+            observation = (waiver_head_observation(client, repo, pr_number, head_sha, base_sha, policy, trigger_event)
                            if policy.get("codex_quota_waiver") is not None else None)
             quota_waiver = codex_quota_waiver(comments, head_sha, policy, expected_login, observation)
             if quota_waiver is None:
@@ -950,7 +979,16 @@ def main() -> int:
         if not args.repo or not args.pr or not args.token or not args.policy:
             raise GateError("ADMISSION_ARGUMENTS_MISSING: repo, pr, token and policy are required")
         policy = load_policy(args.policy)
-        receipt = evaluate(ApiClient(args.token), args.repo, args.pr, policy)
+        trigger_event = None
+        # This is the trusted controller's immutable event payload, not a PR
+        # comment or candidate artifact. Pure evaluate() calls use an explicit
+        # context so controller self-tests cannot accidentally consume it.
+        if os.environ.get("GITHUB_EVENT_NAME") == "pull_request_target":
+            event_path = os.environ.get("GITHUB_EVENT_PATH")
+            if not event_path:
+                raise GateError("TRUSTED_TRIGGER_EVENT_MISSING")
+            trigger_event = json.loads(Path(event_path).read_text(encoding="utf-8"))
+        receipt = evaluate(ApiClient(args.token), args.repo, args.pr, policy, trigger_event)
         code = 0
     except GateError as exc:
         receipt = fail_receipt(str(exc))

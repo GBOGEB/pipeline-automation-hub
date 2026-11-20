@@ -80,6 +80,13 @@ The gate accepts the waiver only when all of these hold:
    A commit's committer date or a manual run is not a push-time attestation. A new push voids an
    earlier waiver, including when a previously used SHA is restored.
 
+For a synchronize evaluation, the trusted controller reads its immutable GitHub event payload
+and requires proof creation strictly after that head occurrence. Later evaluations also read
+the PR's complete head-ref force-push/deletion/restoration timeline. Old runs for a restored SHA
+cannot satisfy this boundary while a new proof is absent, queued or failed; fresh successful
+source-validated PR proofs must cover every required purpose, independently of older body receipts.
+Missing or ambiguous occurrence metadata keeps waiver admission withheld.
+
 Wait for the current-head proof runs before posting the owner comment. Editing a pre-posted
 comment does not qualify; create a new comment. Equal second-resolution timestamps do not prove
 order. Rerunning a proof retains its original creation timestamp and does not create a new push

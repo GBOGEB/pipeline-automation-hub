@@ -132,6 +132,7 @@ def mapping(
             if changed_file_rows is not None
             else [{"filename": path} for path in (changed_files or ["docs/canary.md"])]
         ),
+        f"/repos/{REPO}/issues/{PR}/timeline": [],
         f"/repos/{REPO}/actions/runs/{RUN}": {
             "status": "completed",
             "conclusion": run_conclusion,
@@ -369,6 +370,59 @@ class TestFirstPassClosureGate(unittest.TestCase):
         receipt = fpc.evaluate(client, REPO, PR, self.WAIVER_POLICY)
         self.assertEqual(receipt["codex_quota_waiver"]["head_observation"]["created_at"],
                          "2026-11-10T09:01:00Z")
+
+    def test_synchronize_waits_for_current_occurrence_proof_before_waiving(self):
+        event = {"action": "synchronize", "after": HEAD, "pull_request": {
+            "number": PR, "head": {"sha": HEAD}, "updated_at": "2026-11-10T09:04:00Z"}}
+        client = self.waived()
+        for created in ("2026-11-10T09:01:00Z", "2026-11-10T09:04:00Z"):
+            client.mapping[f"/repos/{REPO}/actions/runs/{RUN}"]["created_at"] = created
+            with self.subTest(created=created), self.assertRaisesRegex(
+                fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"
+            ):
+                fpc.evaluate(client, REPO, PR, self.WAIVER_POLICY, event)
+        client.mapping[f"/repos/{REPO}/actions/runs/{RUN}"]["created_at"] = "2026-11-10T09:04:01Z"
+        receipt = fpc.evaluate(client, REPO, PR, self.WAIVER_POLICY, event)
+        self.assertEqual(receipt["codex_quota_waiver"]["head_observation"]["head_occurrence"]["source"],
+                         "PULL_REQUEST_TARGET_SYNCHRONIZE")
+
+    def test_later_manual_evaluation_cannot_reuse_pre_force_push_proof(self):
+        for kind in ("head_ref_force_pushed", "head_ref_deleted", "head_ref_restored"):
+            with self.subTest(kind=kind):
+                client = self.waived()
+                client.mapping[f"/repos/{REPO}/issues/{PR}/timeline"] = [
+                    {"id": 301, "event": kind, "created_at": "2026-11-10T09:04:00Z"}]
+                with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
+                    fpc.evaluate(client, REPO, PR, self.WAIVER_POLICY)
+
+    def test_new_occurrence_needs_successful_fresh_proof_despite_old_body_receipt(self):
+        client = self.waived()
+        client.mapping[f"/repos/{REPO}/issues/{PR}/timeline"] = [
+            {"id": 301, "event": "head_ref_force_pushed", "created_at": "2026-11-10T09:04:00Z"}]
+        newest = dict(client.mapping[f"/repos/{REPO}/actions/runs/{RUN}"],
+                      created_at="2026-11-10T09:04:01Z")
+        client.mapping[f"/repos/{REPO}/actions/runs/{RUN + 1}"] = newest
+        client.mapping[f"/repos/{REPO}/actions/runs?head_sha={HEAD}&per_page=100&page=1"]["workflow_runs"].append(
+            {"id": RUN + 1, "run_number": 6, "head_sha": HEAD,
+             "name": "Trusted Proof", "path": ".github/workflows/trusted.yml"})
+        for status, conclusion in (("queued", None), ("completed", "failure")):
+            newest.update(status=status, conclusion=conclusion)
+            with self.subTest(status=status), self.assertRaisesRegex(fpc.GateError, "RUN_NOT_SUCCESS"):
+                fpc.evaluate(client, REPO, PR, self.WAIVER_POLICY)
+        newest.update(status="completed", conclusion="success")
+        receipt = fpc.evaluate(client, REPO, PR, self.WAIVER_POLICY)
+        self.assertEqual(receipt["codex_quota_waiver"]["head_observation"]["fresh_proof_run_ids"], [RUN + 1])
+
+    def test_missing_or_mismatched_synchronize_epoch_cannot_grant_a_waiver(self):
+        variants = [
+            {"number": PR, "head": {"sha": HEAD}},
+            {"number": PR + 1, "head": {"sha": HEAD}, "updated_at": "2026-11-10T09:00:00Z"},
+            {"number": PR, "head": {"sha": "b" * 40}, "updated_at": "2026-11-10T09:00:00Z"},
+        ]
+        for pulled in variants:
+            with self.subTest(pulled=pulled), self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
+                fpc.evaluate(self.waived(), REPO, PR, self.WAIVER_POLICY,
+                             {"action": "synchronize", "after": HEAD, "pull_request": pulled})
 
     def test_editing_a_preposted_comment_requires_a_new_post_head_waiver(self):
         client = self.waived(waiver_at="2026-11-10T09:00:30Z")

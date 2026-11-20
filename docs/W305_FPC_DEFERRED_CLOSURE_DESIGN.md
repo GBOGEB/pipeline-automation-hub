@@ -24,10 +24,16 @@ closes itself.
 
 ## What already exists (do not duplicate)
 
+> **SUPERSEDED LABEL-PATH REFERENCES — 2026-11-20.** References below to the
+> #1173 label path describe historical design inputs, not an active waiver.
+> #1172's comment-based quota candidate is the sole current contract; see
+> [the gate guide](W305_FIRST_PASS_CLOSURE_GATE.md#codex-quota-waiver). This
+> deferred-closure design remains a proposal and grants no bootstrap or merge.
+
 | Piece | Where | Relation to this design |
 |---|---|---|
 | Owner head-bound waiver by comment (`FPC_WAIVER_V1 head=<sha> waives=CODEX_REVIEW reason=...`) | PR #1172 (open) | Authorisation shape reused in (a) |
-| Owner waiver by label `fpc:codex-unavailable`, with forbidden-path and Codex-evidence checks, `clean_first_pass: false` | PR #1173 (open) | Evidence checks and cohort rule reused in (a) |
+| Historical owner waiver by label (`fpc:codex-unavailable`) | Superseded #1173 design input | Not an active policy or canary procedure; do not configure it |
 | Soft-gate tiers and the allowed-red register | PR #1174 (open); `P-SOFT` is **live** | This design adds the record and the follow-up to tiers 2 and 3 |
 | Merged-with-red classifier (`POSSIBLE_ENFORCEMENT_FAILURE_REQUIRES_MERGE_API_AND_BYPASS_AUDIT`) | `mission-control/issue_rank/taxonomy_admission_audit.py` `audit()` | Imported by the scan in (d) (AGENTS.md L4) |
 | Thread resolution reader | `scripts/first_pass_closure_gate.py` `resolved_thread_roots()` | Imported by (c) and (e) |
@@ -37,7 +43,9 @@ closes itself.
 Neither #1172 nor #1173 creates a follow-up. #1172 records `post_merge_review_owed: true` in the
 receipt, and its own body says "CODE MAROON does not read it yet". This design is the missing half: the
 owed review gets an owner, an expiry, an issue and a controller. **It is not a third waiver.** The
-recommendation is to merge #1172 and #1173 into one tier-2 rule and extend it as in (a).
+current direction is to use only #1172's source-bound comment contract and, after independent
+admission, propose its deferred-review extension separately. Do not revive or merge a second
+label-based waiver mechanism.
 
 ## Design
 
@@ -81,8 +89,9 @@ who can edit the body can write a request, so the request alone grants nothing:
 -->
 ```
 
-The **authorisation** is a comment by a login in the policy's `owner_logins`, posted after the head
-commit's committer date. It is #1172's line, extended to bind the request's content:
+The proposed **authorisation** is a comment by a login in the policy's `owner_logins`, posted
+strictly after quota evidence and an authoritative current-head occurrence/proof observation,
+not merely after an author-controlled committer date. It would extend #1172's line to bind the request's content:
 
 ```
 FPC_DEFERRAL_AUTH_V1 head=<40-char sha> request=<sha256 of the canonical JSON request>
