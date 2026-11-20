@@ -1,0 +1,58 @@
+name: Method Atlas N3.2 DOCX peer candidate validator (read-only)
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'mission-control/federation-atlas/orchestration/n32_docx_peer_intake.py'
+      - 'mission-control/federation-atlas/orchestration/test_n32_docx_peer_intake.py'
+      - 'mission-control/federation-atlas/orchestration/N32_DOCX_PEER_INTAKE.md'
+      - '.github/workflows/method-atlas-n32-docx-peer-intake.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+jobs:
+  source-bound-peering-negative-contract:
+    name: Verify peer archive contract, never self-approve owner
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Assert exact head
+        env:
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$HEAD"
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Native 9-case peer archive negative contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/federation-atlas/orchestration \
+            -p test_n32_docx_peer_intake.py -v 2>&1 | tee "$RUNNER_TEMP/n32-peer-tests.log"
+          python - <<'PY'
+          import os,re
+          from pathlib import Path
+          data=(Path(os.environ["RUNNER_TEMP"])/"n32-peer-tests.log").read_text()
+          n=[int(x) for x in re.findall(r'^Ran (\d+) tests? in ',data,re.M)]
+          if not n or n[-1]<9 or "FAILED" in data or "skipped=" in data:
+              raise SystemExit("N32_PEER_INTAKE_FALSE_GREEN")
+          print("PEER_ARCHIVE_CONTRACT=9_OF_9_PASS_OWNER_ACCEPTANCE_PENDING")
+          PY
+          test -z "$(git status --porcelain)"
+      - name: Preserve source-bound tests; no peer execution or admission implied
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: n32-docx-peer-negative-contract-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/n32-peer-tests.log
+          retention-days: 21
+          if-no-files-found: warn
