@@ -79,32 +79,60 @@ th{position:sticky;top:0;background:var(--surface-2);font-weight:600}
 .cat td:last-child{white-space:nowrap}.cat td:last-child a{margin-right:10px}
 .cat .copy{min-height:32px;padding:0 10px;margin-top:4px;font-size:12px}
 [hidden]{display:none!important}
+.welcome{padding:24px 0 12px;max-width:980px}
+.welcome .intro{font-size:clamp(20px,2.5vw,28px);line-height:1.35;max-width:820px;margin:0 0 12px}
+.journeys{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px;margin:20px 0}
+.journeys a{display:block;min-height:120px;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:10px;text-decoration:none;color:var(--text)}
+.journeys a:hover{border-color:var(--blue)}
+.journeys strong{display:block;font-size:17px;margin-bottom:8px;font-weight:600}
+.journeys span{display:block;color:var(--muted);font-size:14px}
+.inspect{border-top:1px solid var(--line);padding-top:14px}
+.inspect>summary{min-height:44px;color:var(--blue);cursor:pointer}
+.inspect>summary h2{display:inline;font-size:18px;font-weight:500}
+.inspect[open]>summary{margin-bottom:14px}
+section[id]{scroll-margin-top:150px}
+header details{margin-top:12px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
-<a class="skip" href="#hub">Skip to dashboards</a>
+<a class="skip" href="#start">Skip to start</a>
 <header>
-  <h1>Go<span>Green</span> launcher</h1>
+  <h1>Pipeline Automation Hub</h1>
+  <p class="sub">Find the work. Follow its source. Reach the next useful action.</p>
+  <details><summary>About this recorded view</summary>
   <p class="sub" id="rule"></p>
   <div class="pulse" id="pulse"></div>
+  </details>
 </header>
 <nav aria-label="Sections"><div class="in">
-  <a href="#hub">Dashboards</a><a href="#metrics">Metrics</a><a href="#launcher">Launcher</a><a href="#access">How to access</a><a href="#ops">Operational tools</a><a href="#catalog">All pages</a><a href="#provenance">Provenance</a>
+  <a href="#start">Start</a><a href="#hub">Dashboards</a><a href="#metrics">Metrics</a><a href="#launcher">Launcher</a><a href="#access">How to access</a><a href="#ops">Operational tools</a><a href="#catalog">All pages</a><a href="#provenance">Provenance</a>
   <span class="grow"></span>
   <label for="q" class="skip">Filter</label>
   <input id="q" type="search" placeholder="Filter tiles and pages" autocomplete="off">
   <button id="theme" type="button" aria-pressed="false">Theme</button>
 </div></nav>
 <main>
-  <section id="hub" aria-labelledby="h-hub"><h2 id="h-hub">Dashboards</h2>
+  <section class="welcome" id="start" aria-labelledby="h-start">
+    <h2 id="h-start">A clear route into the federation</h2>
+    <p class="intro">Explore projects, understand their dependencies, and inspect the evidence behind the work.</p>
+    <p class="sub">Start with a task. The existing dashboards, metrics and complete page catalog are available below.</p>
+    <div class="journeys" aria-label="Recommended starting points">
+      <a href="#hub"><strong>Find a dashboard</strong><span>Choose an existing project or workstream view.</span></a>
+      <a href="#access" data-repo-path="mission-control/jade_temple/README.md"><strong>Understand JADE</strong><span>Read the project purpose, boundaries and readiness method.</span></a>
+      <a href="#launcher" data-launch-path="mission-control/jade_temple/site/cicd_dag.html"><strong>Explore dependencies</strong><span>Follow the existing CI/CD graph and its source identities.</span></a>
+      <a href="#access" data-repo-path="AGENTS.md"><strong>Prepare a change</strong><span>Start with repository rules and the overlap check.</span></a>
+    </div>
+    <p class="cap">Typical journey: choose a workstream → inspect its source → identify the next action. <a href="#access">Opening a rendered page or its source</a>.</p>
+  </section>
+  <section id="hub" aria-labelledby="h-hub"><details class="inspect"><summary><h2 id="h-hub">Dashboards</h2></summary>
     <p class="cap" id="hub-cap"></p>
     <div id="hub-clone" hidden><p class="cap">Pages in another repository render from a clone of it. Clone once, into the folder you run the row's <b>Open</b> command from (PowerShell or File Explorer's address bar):</p><pre class="cmd" id="hub-clone-cmd"></pre></div>
     <div id="hub-list"></div>
     <p class="cap" id="hub-ver"></p>
-  </section>
-  <section id="metrics" aria-labelledby="h-metrics"><h2 id="h-metrics">Metrics</h2><div class="grid" id="tiles"></div></section>
-  <section id="launcher" aria-labelledby="h-launcher"><h2 id="h-launcher">Launcher</h2><div id="pages"></div></section>
+  </details></section>
+  <section id="metrics" aria-labelledby="h-metrics"><details class="inspect"><summary><h2 id="h-metrics">Metrics</h2></summary><div class="grid" id="tiles"></div></details></section>
+  <section id="launcher" aria-labelledby="h-launcher"><details class="inspect"><summary><h2 id="h-launcher">Launcher</h2></summary><div id="pages"></div></details></section>
   <section id="access" aria-labelledby="h-access"><h2 id="h-access">How to access</h2>
     <div class="grid">
       <article class="card" data-tone="green"><h3>Local / File Explorer</h3>
@@ -126,7 +154,7 @@ th{position:sticky;top:0;background:var(--surface-2);font-weight:600}
       </article>
     </div>
   </section>
-  <section id="ops" aria-labelledby="h-ops"><h2 id="h-ops">Operational tools</h2>
+  <section id="ops" aria-labelledby="h-ops"><details class="inspect"><summary><h2 id="h-ops">Operational tools</h2></summary>
     <p class="cap">Everyday PowerShell 7 commands, run from the clone root. Each one reads only, unless the card says otherwise. Every <code>gh</code> call runs with <code>GITHUB_TOKEN</code>/<code>GH_TOKEN</code> stripped, so the keyring login is used (REX-011).</p>
     <div class="grid">
       <article class="card" data-tone="green"><h3>Draft PR pass</h3>
@@ -154,15 +182,15 @@ th{position:sticky;top:0;background:var(--surface-2);font-weight:600}
         <pre class="cmd">python mission-control\qps-triage-ultra\crew\measured\validate_rex_reuse.py</pre>
       </article>
     </div>
-  </section>
-  <section id="catalog" aria-labelledby="h-catalog"><h2 id="h-catalog">All pages</h2>
+  </details></section>
+  <section id="catalog" aria-labelledby="h-catalog"><details class="inspect"><summary><h2 id="h-catalog">All pages</h2></summary>
     <p class="cap" id="cat-cap"></p>
     <div id="cat"></div>
-  </section>
-  <section id="provenance" aria-labelledby="h-prov"><h2 id="h-prov">Provenance</h2>
+  </details></section>
+  <section id="provenance" aria-labelledby="h-prov"><details class="inspect"><summary><h2 id="h-prov">Provenance</h2></summary>
     <p class="cap">Each input is read once, at the commit shown above. Owner modules keep their metric definitions; this page only reads them.</p>
     <div class="tbl" style="max-height:none"><table class="prov"><thead><tr><th>Tile</th><th>Input</th><th>Blob OID</th><th>Owner</th><th>Schema</th></tr></thead><tbody id="prov"></tbody></table></div>
-  </section>
+  </details></section>
 </main>
 <script>
 "use strict";
@@ -269,9 +297,31 @@ function render(){
   $("#prov").innerHTML=D.tiles.filter(t=>t.input).map(t=>'<tr><td>'+esc(t.label)+'</td><td><a href="'+esc(blob(t.input))+'" rel="noopener noreferrer">'+esc(t.input)+'</a></td><td>'+esc(t.input_oid)+'</td><td>'+esc(t.owner)+'</td><td>'+val(t.schema)+'</td></tr>').join("");
 }
 render();
+document.querySelectorAll("[data-repo-path]").forEach(a=>{a.href=blob(a.dataset.repoPath);});
+document.querySelectorAll("[data-launch-path]").forEach(a=>{
+  const entry=D.pages.find(p=>p.path===a.dataset.launchPath);
+  a.href=entry?entry.href:blob(a.dataset.launchPath);
+});
+// Keep existing section anchors useful when their contents are folded.
+function revealAnchor(){
+  const id=location.hash.slice(1);
+  let decoded;try{decoded=decodeURIComponent(id);}catch{return;}
+  const target=document.getElementById(decoded);if(!target)return;
+  let node=target;
+  while(node){if(node.tagName==="DETAILS")node.open=true;node=node.parentElement;}
+  target.querySelectorAll(":scope > details.inspect").forEach(d=>{d.open=true;});
+}
+window.addEventListener("hashchange",revealAnchor);
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener("click",()=>{
+  const target=document.getElementById(a.getAttribute("href").slice(1));
+  if(target)target.querySelectorAll(":scope > details.inspect").forEach(d=>{d.open=true;});
+}));
+revealAnchor();
 $("#q").addEventListener("input",e=>{const q=e.target.value.trim().toLowerCase();
   document.querySelectorAll("[data-q]").forEach(n=>{n.hidden=q!==""&&!n.dataset.q.includes(q);});
-  document.querySelectorAll("[data-grp]").forEach(g=>{g.hidden=!g.querySelector("tr[data-q]:not([hidden])");});});
+  document.querySelectorAll("[data-grp]").forEach(g=>{g.hidden=!g.querySelector("tr[data-q]:not([hidden])");});
+  if(q)document.querySelectorAll("[data-q]:not([hidden])").forEach(n=>{let d=n.closest("details");while(d){d.open=true;d=d.parentElement.closest("details");}});
+});
 // Copy a local path; where the clipboard API is unavailable (file:// in some browsers), select the text instead.
 document.addEventListener("click",e=>{const b=e.target.closest("[data-copy]");if(!b)return;
   const select=()=>{const r=document.createRange();r.selectNodeContents(b.previousElementSibling);
