@@ -86,11 +86,11 @@ hidden or converted into a code failure without a predefined threshold.
 
 From a clean checkout of the exact desired SHA:
 
-    HEAD=$(git rev-parse HEAD)
-    python -m unittest discover -s mission-control/federation-atlas/orchestration \
+    SOURCE_HEAD=$(git rev-parse HEAD)
+    python -B -m unittest discover -s mission-control/federation-atlas/orchestration \
       -p test_scout_feasibility.py -v
     python mission-control/federation-atlas/orchestration/scout_feasibility.py \
-      --root . --head "$HEAD" --tasks 32 --pulses 4 \
+      --root . --head "$SOURCE_HEAD" --tasks 32 --pulses 4 \
       --out /tmp/method-atlas-g9-scale
 
 Interactive review: open /tmp/method-atlas-g9-scale/index.html.
@@ -184,3 +184,28 @@ The previous **640-execution receipt remains immutable historical
 evidence** at 4ac2b58. The new exact-head receipt must be produced
 independently before recording N2.1 as PASS. No 32-runner deployment,
 owner admission or four-native-job qualification is implied.
+
+## 7. Review repair qualification
+
+The benchmark now pins the raw committed bytes of its executable, G9 producer,
+input fixture and canonical scale advisory before execution and before reporting
+success. Index flags and Git clean filters cannot substitute filtered bytes.
+Each positive output's source-window digest must match the planned input variant,
+in addition to member hashes and outcome totals. Warm import disables bytecode
+generation and restores the previous Python setting even on import failure.
+
+Scratch space uses a uniquely named directory created with `os.makedirs` below
+the system temp directory and is removed in `finally`. On a task failure or
+timeout, all submitted tasks drain, and the failed lane's actual outputs, partial
+receipts, task identity/error, earlier completed cohorts and blocks are preserved
+outside scratch. `failure.json` and a FAIL manifest remain uploadable; no PASS
+report is emitted for that failure. CI still fails closed.
+
+The final native artifact manifest is sealed after the canonical HOLD receipt
+and test log exist, checking existing member hashes before adding outward files.
+The workflow's paths cover every runtime source dependency. The 21-test suite
+includes real Git index/clean-filter challenges, wrong-population verification,
+failure/timeout retention and actual 56-task producer smoke. Native qualification
+runs independently on Ubuntu 24.04 and Windows 2022, with 896 benchmark tasks
+per runner. Those two runs do not satisfy the owner's four matched independent
+native scale cohorts; promotion, merge admission and engineering credit remain HOLD.

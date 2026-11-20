@@ -5,7 +5,8 @@ import importlib.util
 import json
 from pathlib import Path
 import subprocess
-import tempfile
+import sys
+import textwrap
 import unittest
 from unittest import mock
 
@@ -68,8 +69,20 @@ class PlannerTests(unittest.TestCase):
 
 
 class OutputTruthTests(unittest.TestCase):
+    def test_hash_consistent_wrong_population_with_same_totals_is_rejected(self):
+        inputs, _ = scale.load_inputs(ROOT)
+        wrong = copy.deepcopy(inputs["baseline"])
+        wrong["cohorts"][0]["runs"][0]["head_sha"] = "b" * 40
+        with scale.scratch_directory() as temp:
+            out = temp / "wrong"
+            producer = scale.producer_module(ROOT)
+            producer.build(wrong, out, "a" * 40)
+            with self.assertRaisesRegex(ValueError, "G9_SOURCE_VARIANT_MISMATCH"):
+                scale.verify_output(out, "a" * 40, "baseline",
+                                    scale.hash_bytes(scale.canon(inputs["baseline"])))
+
     def test_tampered_output_member_fails_even_if_manifest_is_stale(self):
-        with tempfile.TemporaryDirectory() as td:
+        with scale.scratch_directory() as td:
             tmp = Path(td); out = tmp/"out";out.mkdir()
             for name in scale.MEMBERS:
                 (out/name).write_bytes(b"{}")
@@ -78,20 +91,20 @@ class OutputTruthTests(unittest.TestCase):
             (out/"manifest.json").write_bytes(scale.canon(
                 {"source_sha":"a"*40,"merge_authorized":False,"files":files}))
             with self.assertRaisesRegex(ValueError, "G9_SEMANTIC_OUTCOME_MISMATCH"):
-                scale.verify_output(out, "a"*40, "baseline")
+                scale.verify_output(out, "a"*40, "baseline", "b"*64)
             (out/"metrics.json").write_bytes(b'{"total_native_runs":57}')
             with self.assertRaisesRegex(ValueError,"G9_PRODUCT_HASH_MISMATCH"):
-                scale.verify_output(out, "a"*40, "baseline")
+                scale.verify_output(out, "a"*40, "baseline", "b"*64)
 
     def test_missing_producer_member_and_wrong_source_rejected(self):
-        with tempfile.TemporaryDirectory() as td:
+        with scale.scratch_directory() as td:
             out=Path(td);out.joinpath("manifest.json").write_text('{"source_sha": "x"}')
             with self.assertRaisesRegex(ValueError,"G9_MEMBER_SET_MISMATCH"):
-                scale.verify_output(out,"a"*40,"baseline")
+                scale.verify_output(out,"a"*40,"baseline","b"*64)
             for name in scale.MEMBERS:
                 out.joinpath(name).write_text("{}")
             with self.assertRaisesRegex(ValueError,"G9_MANIFEST_SOURCE_OR_MEMBER_MISMATCH"):
-                scale.verify_output(out,"a"*40,"baseline")
+                scale.verify_output(out,"a"*40,"baseline","b"*64)
 
     def test_fan_in_order_does_not_change_identical_expected_outputs(self):
         a=[{"id":"T001","kind":"baseline","outcome":"VALID_VERIFIED",
@@ -121,7 +134,7 @@ class OutputTruthTests(unittest.TestCase):
 
     def test_rejected_invalid_cannot_have_output_or_success_status(self):
         from types import SimpleNamespace
-        with tempfile.TemporaryDirectory() as td:
+        with scale.scratch_directory() as td:
             root=Path(td);bad=root/"bad.json";bad.write_text("{}")
             out=root/"out"
             tracker={"lock":__import__("threading").Lock(),"active":0,"peak":0}
@@ -140,7 +153,7 @@ class OutputTruthTests(unittest.TestCase):
                                    out,"a"*40,"SUBPROCESS_CLI",None,tracker)
 
     def test_source_head_and_output_boundary_fail_closed(self):
-        with tempfile.TemporaryDirectory() as td:
+        with scale.scratch_directory() as td:
             root=Path(td)
             with self.assertRaisesRegex(ValueError,"SOURCE_HEAD_SHA_INVALID"):
                 scale.exact_head(root,"not-a-hash")
@@ -162,7 +175,7 @@ class ActualProductionSmoke(unittest.TestCase):
         # Execute the real producer, not a mock: 8 tasks per mode, 1 block (7 modes).
         sha = subprocess.check_output(["git","-C",str(ROOT),"rev-parse","HEAD"],
                                       text=True).strip()
-        with tempfile.TemporaryDirectory() as td:
+        with scale.scratch_directory() as td:
             result = scale.run(ROOT,sha,Path(td)/"smoke",pulses=1,task_count=8)
             self.assertEqual(result["workload"]["total_task_executions"],56)
             self.assertEqual(result["workload"]["negative_rejections_total"],7)
@@ -177,6 +190,132 @@ class ActualProductionSmoke(unittest.TestCase):
             manifest=json.loads((Path(td)/"smoke"/"manifest.json").read_text())
             for name,hash_ in manifest["files"].items():
                 self.assertEqual(scale.hash_bytes((Path(td)/"smoke"/name).read_bytes()),hash_)
+
+
+class SourceAndFailureTests(unittest.TestCase):
+    def test_raw_blob_pin_rejects_hidden_changes_and_clean_filter(self):
+        for flag in ("--assume-unchanged", "--skip-worktree"):
+            with self.subTest(flag=flag), scale.scratch_directory() as root:
+                def git(*args):
+                    return subprocess.check_output(["git", "-C", str(root), *args],
+                                                   stderr=subprocess.PIPE, text=True).strip()
+                git("init", "-q")
+                git("config", "user.email", "fixture@example.invalid")
+                git("config", "user.name", "Fixture")
+                path = Path("source.py")
+                (root / path).write_bytes(b"value = 1\n")
+                git("add", ".")
+                git("-c", "core.hooksPath=/dev/null", "commit", "-qm", "fixture")
+                head = git("rev-parse", "HEAD")
+                # A filter that hides appended executable lines, in a real repo.
+                filt = root / ".git" / "firstline.py"
+                filt.write_text("import sys\nsys.stdout.buffer.write(sys.stdin.buffer.readline())\n")
+                git("config", "filter.firstline.clean", f'"{sys.executable}" "{filt}"')
+                (root / ".git" / "info" / "attributes").write_text("source.py filter=firstline\n")
+                git("update-index", flag, str(path))
+                with mock.patch.object(scale, "SOURCE_FILES", (path,)):
+                    self.assertEqual(scale.exact_head(root, head), head)
+                    (root / path).write_bytes(b"value = 1\nvalue = 2\n")
+                    self.assertEqual(git("status", "--porcelain", "--untracked-files=no"), "")
+                    self.assertEqual(git("hash-object", "--path=source.py", "source.py"),
+                                     git("rev-parse", "HEAD:source.py"))
+                    with self.assertRaisesRegex(ValueError, "SOURCE_BYTES_NOT_IN_REQUESTED_HEAD"):
+                        scale.exact_head(root, head)
+
+    def test_raw_blob_pin_rejects_deleted_and_uncommitted_sources(self):
+        with scale.scratch_directory() as root:
+            with mock.patch.object(scale.subprocess, "run", side_effect=[
+                    mock.Mock(returncode=0, stdout="a"*40),
+                    mock.Mock(returncode=0, stdout=b"committed")]), \
+                    mock.patch.object(scale, "SOURCE_FILES", (Path("missing"),)):
+                with self.assertRaisesRegex(ValueError, "SOURCE_BYTES_NOT_IN_REQUESTED_HEAD"):
+                    scale.exact_head(root, "a"*40)
+
+    def test_warm_import_creates_no_bytecode_and_restores_setting_on_error(self):
+        previous = sys.dont_write_bytecode
+        with scale.scratch_directory() as root:
+            path = root / "producer.py"
+            for source in ("value = 1\n", "raise RuntimeError('import-failure')\n"):
+                path.write_text(source)
+                with mock.patch.object(scale, "G9", Path("producer.py")):
+                    if source.startswith("raise"):
+                        with self.assertRaisesRegex(RuntimeError, "import-failure"):
+                            scale.producer_module(root)
+                    else:
+                        self.assertEqual(scale.producer_module(root).value, 1)
+                self.assertEqual(sys.dont_write_bytecode, previous)
+                self.assertFalse((root / "__pycache__").exists())
+
+    def test_scratch_cleanup_on_failure(self):
+        with self.assertRaisesRegex(RuntimeError, "first-red"):
+            with scale.scratch_directory() as scratch:
+                (scratch / "child-output").write_text("actual")
+                raise RuntimeError("first-red")
+        self.assertFalse(scratch.exists())
+
+    def test_failure_preserves_prior_blocks_all_completed_tasks_and_actual_outputs(self):
+        original = scale.run_case
+        for failure in (ValueError("G9_SEMANTIC_OUTCOME_MISMATCH"),
+                        subprocess.TimeoutExpired("g9", 30)):
+            with self.subTest(failure=type(failure).__name__), scale.scratch_directory() as tmp:
+                out = tmp / "evidence"
+                def injected(task, root, files, objects, product, *args):
+                    if product.parent.name == "pulse2-warm16" and task["id"] == "T001":
+                        product.mkdir(parents=True)
+                        (product / "failed-output.txt").write_text("diagnostic bytes")
+                        raise failure
+                    return original(task, root, files, objects, product, *args)
+                with mock.patch.object(scale, "exact_head", return_value="a"*40), \
+                        mock.patch.object(scale, "run_case", side_effect=injected), \
+                        self.assertRaisesRegex(ValueError, "G9_LANE_FAILED"):
+                    scale.run(ROOT, "a"*40, out, pulses=2, task_count=8)
+                report = json.loads((out / "failure.json").read_bytes())
+                self.assertEqual(len(report["completed_blocks"]), 1)
+                self.assertEqual(report["current_pulse"], 2)
+                self.assertEqual(report["current_lane"], "warm16")
+                partial = out / "failure-outputs" / "pulse2-warm16"
+                receipt = json.loads((partial / "partial_receipts.json").read_bytes())
+                self.assertEqual(len(receipt["task_receipts"]), 7)
+                self.assertEqual(receipt["failures"][0]["task_id"], "T001")
+                self.assertEqual((partial / "T001" / "failed-output.txt").read_text(),
+                                 "diagnostic bytes")
+                self.assertFalse((out / "scale_feasibility.json").exists())
+                manifest = json.loads((out / "manifest.json").read_bytes())
+                self.assertEqual(manifest["status"], "FAIL")
+                self.assertEqual(set(manifest["files"]),
+                    {p.relative_to(out).as_posix() for p in out.rglob("*")
+                     if p.is_file() and p != out / "manifest.json"})
+                for name, digest in manifest["files"].items():
+                    self.assertEqual(scale.hash_bytes((out / name).read_bytes()), digest)
+
+    def test_workflow_seals_hold_and_test_log_without_rehashing_tampered_members(self):
+        workflow = (ROOT / ".github/workflows/method-atlas-g9-scout-feasibility.yml").read_text()
+        script = textwrap.dedent(workflow.split("          import hashlib,json,os,shutil\n")[1]
+                                 .split("          PY\n")[0])
+        script = "import hashlib,json,os,shutil\n" + script
+        with scale.scratch_directory() as tmp:
+            out = tmp / "g9-local-scale"
+            out.mkdir()
+            (out / "index.html").write_text("verified report")
+            scale.write_manifest(out, "a" * 40, "b" * 64, "PASS")
+            (out / "native_gate_hold.json").write_text('{"classification":"HOLD_NO_MATCHED_NATIVE_OBSERVATIONS"}')
+            (tmp / "g9-scale-tests.log").write_text("test log")
+            with mock.patch.dict(scale.os.environ, {"RUNNER_TEMP": str(tmp)}):
+                exec(script, {})
+                manifest = json.loads((out / "manifest.json").read_bytes())
+                self.assertEqual(set(manifest["files"]),
+                                 {"index.html", "native_gate_hold.json", "g9-scale-tests.log"})
+                for name, digest in manifest["files"].items():
+                    self.assertEqual(scale.hash_bytes((out / name).read_bytes()), digest)
+                (out / "index.html").write_text("tampered after validation")
+                with self.assertRaisesRegex(SystemExit, "SCALE_MEMBER_HASH_TAMPER_BEFORE_FINAL_SEAL"):
+                    exec(script, {})
+
+    def test_workflow_filters_cover_all_runtime_source_dependencies(self):
+        workflow = (ROOT / ".github/workflows/method-atlas-g9-scout-feasibility.yml").read_text()
+        paths = workflow.split("    paths:\n", 1)[1].split("  workflow_dispatch:", 1)[0]
+        for source in scale.SOURCE_FILES:
+            self.assertIn("'" + source.as_posix() + "'", paths)
 
 
 if __name__ == "__main__":
