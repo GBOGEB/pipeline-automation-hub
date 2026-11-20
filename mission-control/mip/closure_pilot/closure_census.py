@@ -38,6 +38,12 @@ def require(condition: bool, message: str) -> None:
         raise CensusError(message)
 
 
+def edge_enabled(edge: dict[str, Any]) -> bool:
+    enabled = edge.get("enabled", True)
+    require(type(enabled) is bool, "edge enabled must be boolean")
+    return enabled
+
+
 def validate(doc: dict[str, Any]) -> None:
     require(doc.get("schema") == SCHEMA, "wrong manifest schema")
     require(doc.get("authority") == "DRAFT_NOT_ADMISSION", "manifest cannot assert release authority")
@@ -73,6 +79,7 @@ def validate(doc: dict[str, Any]) -> None:
         require(lane["paths"], "lane without owned files")
     nodes = set(owner_ids)
     for edge in doc["edges"]:
+        edge_enabled(edge)
         require(edge["from"] in nodes and edge["to"] in nodes, "unknown dependency node")
         require(edge["from"] != edge["to"], "self dependency")
         require(edge.get("kind") in {"REQUIRED_PROVIDER_BEFORE_ADMISSION",
@@ -89,7 +96,7 @@ def kahn_layers(nodes: list[str], edges: list[dict[str, Any]]) -> list[list[str]
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     active = [(e["from"], e["to"], "FEEDFORWARD")
-              for e in edges if e.get("enabled", True) is not False]
+              for e in edges if edge_enabled(e)]
     try:
         return module.topo_layers(nodes, active)
     except ValueError as exc:
@@ -175,7 +182,8 @@ def classify_tests(tests: list[dict[str, Any]] | None) -> dict[str, Any]:
         require(t.get("history_complete") is True and history, "history is incomplete")
         require(all(x in ("PASS", "FAIL", "ERROR", "SKIP") for x in history),
                 "unknown test outcome")
-        if all(x in ("FAIL", "ERROR") for x in history):
+        executed = [x for x in history if x != "SKIP"]
+        if executed and all(x in ("FAIL", "ERROR") for x in executed):
             never += 1
         if "PASS" in history:
             evergreen += 1
@@ -221,8 +229,8 @@ def census(doc: dict[str, Any], tests: list[dict[str, Any]] | None = None) -> di
         "frozen": doc["frozen"], "historical_baseline": doc["baseline_workflows"],
         "status": counts, "evidence": evidence, "dag": {
             "kahn_layers": layers, "eligible_parallel_first_layer": layers[0],
-            "active_edges": [e for e in doc["edges"] if e.get("enabled", True)],
-            "conditional_edges_not_assumed": [e for e in doc["edges"] if e.get("enabled") is False],
+            "active_edges": [e for e in doc["edges"] if edge_enabled(e)],
+            "conditional_edges_not_assumed": [e for e in doc["edges"] if not edge_enabled(e)],
             "historical_16_edge_topology": None,
             "historical_blocked_descendants": None, "historical_longest_path": None,
         },

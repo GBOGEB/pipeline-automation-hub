@@ -60,6 +60,16 @@ class ContractTests(unittest.TestCase):
         self.assertIn("A2745", report["dag"]["kahn_layers"][0])
         self.assertEqual(report["dag"]["kahn_layers"][-1], ["A2746"])
 
+    def test_edge_flags_must_be_boolean_in_both_entrypoints(self):
+        for invalid in (None, 0, 1, "false", [], {}):
+            with self.subTest(invalid=invalid):
+                doc = copy.deepcopy(self.manifest)
+                doc["edges"][0]["enabled"] = invalid
+                with self.assertRaisesRegex(module.CensusError, "edge enabled must be boolean"):
+                    module.census(doc)
+                with self.assertRaisesRegex(module.CensusError, "edge enabled must be boolean"):
+                    module.kahn_layers(["A", "B"], [{"from": "A", "to": "B", "enabled": invalid}])
+
     def test_duplicate_root_rejected(self):
         manifest = copy.deepcopy(self.manifest)
         manifest["roots"].append(copy.deepcopy(manifest["roots"][0]))
@@ -115,6 +125,18 @@ class ContractTests(unittest.TestCase):
                 module.CensusError, "unbound owner head SHA"
             ):
                 module.census(doc)
+
+    def test_nevergreen_classifies_executions_without_counting_skipped_attempts(self):
+        cases = [(["SKIP", "FAIL", "ERROR"], 1, 0), (["SKIP", "SKIP"], 0, 0),
+                 (["SKIP", "FAIL", "PASS"], 0, 1)]
+        for history, never, evergreen in cases:
+            with self.subTest(history=history):
+                result = module.classify_tests([{
+                    "test_id": "mixed", "contract_version": "v1", "runner": "py3.12",
+                    "history_complete": True, "outcomes": history}])
+                self.assertEqual(result["denominator"], 1)
+                self.assertEqual(result["nevergreen"], never)
+                self.assertEqual(result["evergreen"], evergreen)
 
     def test_duplicate_test_identity_is_not_double_counted(self):
         identity = {"test_id": "t", "contract_version": "v1", "runner": "py3.14",

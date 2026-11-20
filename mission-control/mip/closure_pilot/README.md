@@ -60,7 +60,7 @@ A PR badge is **advisory metadata**. Changing/clearing an owner label or checkli
 
 The current repair delegates topology to the canonical JADE lifecycle module
 from `mission-control/jade_temple/devops/lifecycle.py`. The focused suite has
-38 offline tests, including all four review contracts and path-alias negatives.
+40 offline tests, including all four review contracts and path-alias negatives.
 The temporal overlay imports the same lane-path validation and overlap owner;
 it cannot admit aliases or parent-directory collisions through a second guard.
 The path-filtered `mip-closure-pilot.yml` workflow runs the same suite and smoke
