@@ -1,0 +1,93 @@
+name: MIP closure pilot offline qualification
+
+on:
+  pull_request:
+    paths:
+      - 'mission-control/mip/closure_pilot/**'
+      - 'mission-control/jade_temple/devops/lifecycle.py'
+      - '.github/workflows/mip-closure-pilot.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'mission-control/mip/closure_pilot/**'
+      - 'mission-control/jade_temple/devops/lifecycle.py'
+      - '.github/workflows/mip-closure-pilot.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mip-closure-pilot-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  offline:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2022]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    env:
+      EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      MATRIX_OS: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Execute nonzero offline contracts and bind source receipt
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib, json, os, pathlib, subprocess, sys, unittest
+          source = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          assert source == os.environ['EXPECTED_SHA']
+          root = pathlib.Path('mission-control/mip/closure_pilot')
+          suite = unittest.defaultTestLoader.discover(str(root), pattern='test_*.py')
+          assert suite.countTestCases() >= 40, 'MIP_PILOT_ZERO_OR_INCOMPLETE_TEST_POPULATION'
+          class Result(unittest.TextTestResult):
+              def __init__(self, *args, **kwargs):
+                  super().__init__(*args, **kwargs)
+                  self.test_ids = []
+              def startTest(self, test):
+                  self.test_ids.append(test.id())
+                  super().startTest(test)
+          result = unittest.TextTestRunner(verbosity=2, resultclass=Result).run(suite)
+          success = (result.wasSuccessful() and not result.skipped and
+                     len(set(result.test_ids)) == result.testsRun >= 40)
+          paths = [str(root / p) for p in ('closure_census.py', 'temporal_burndown.py',
+                   'test_closure_census.py', 'test_temporal_burndown.py', 'manifest.json',
+                   'bsln_20261116.json')]
+          paths += ['mission-control/jade_temple/devops/lifecycle.py',
+                    '.github/workflows/mip-closure-pilot.yml']
+          receipt = {
+              'schema': 'mip.closure-pilot-test-receipt.v1', 'source_sha': source,
+              'status': 'PASS_OFFLINE_CONTRACTS' if success else 'FAIL_OFFLINE_CONTRACTS',
+              'source_sha256': {p: hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest() for p in paths},
+              'tests': result.testsRun, 'failures': len(result.failures), 'errors': len(result.errors),
+              'skipped': len(result.skipped), 'test_ids': sorted(result.test_ids),
+              'matrix_os': os.environ['MATRIX_OS'], 'python': sys.version,
+              'run_id': os.environ['GITHUB_RUN_ID'], 'run_attempt': os.environ['GITHUB_RUN_ATTEMPT'],
+              'authority_transfer': False, 'formal_credit_delta': 0,
+              'merge_admission': 'HOLD', 'worker_dispatch_authorized': False,
+          }
+          target = pathlib.Path(os.environ['RUNNER_TEMP']) / 'mip-closure-pilot-receipt.json'
+          target.write_text(json.dumps(receipt, sort_keys=True, indent=2) + '\n', encoding='utf-8')
+          if not success:
+              raise SystemExit('MIP_PILOT_TEST_CONTRACT_FAILED')
+          subprocess.run([sys.executable, str(root / 'closure_census.py'), '--self-test',
+                          '--out', str(target.with_name('mip-closure-census.json'))], check=True)
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: mip-closure-pilot-${{ github.event.pull_request.head.sha || github.sha }}-${{ matrix.os }}
+          path: |
+            ${{ runner.temp }}/mip-closure-pilot-receipt.json
+            ${{ runner.temp }}/mip-closure-census.json
+          if-no-files-found: error
+          retention-days: 14
