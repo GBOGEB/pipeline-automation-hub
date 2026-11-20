@@ -1,0 +1,222 @@
+{
+  "schema": "method-atlas.operational-surface-registry.v1",
+  "local_repo": "GBOGEB/pipeline-automation-hub",
+  "owner": "mission-control/federation-atlas/orchestration/main.py",
+  "metric_owner": "mission-control/federation-atlas/orchestration/coverage_contract.py",
+  "root_owner": "mission-control/qps-triage-ultra/p-process/everred/harvest.py",
+  "watch_notification_owner": "EXISTING_N6_ONLY_NO_NEW_NOTIFICATIONS",
+  "peers": [
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "role": "federation control, broker, source inventory, EVERRED, GOGREEN and Method Atlas"
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "role": "private engineering owner SSOT, source/ranking protection and artifact QA"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "role": "DOW workers, security and diagnostics"
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "role": "KEB pipeline execution and semantic/runtime evidence"
+    },
+    {
+      "repo": "GBOGEB/gg_MATH",
+      "role": "statistical kernels, PCA/BT and independent mathematical oracles"
+    },
+    {
+      "repo": "GBOGEB/GEMINI",
+      "role": "external bridge, Google Drive handover and proposal broker"
+    },
+    {
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "role": "document processing agents, TS queue and artifact execution"
+    }
+  ],
+  "surfaces": [
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/federation-atlas/orchestration/main.py",
+      "role": "ORCHESTRATOR",
+      "purpose": "registered Method Atlas source/check/build/run-local",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/federation-atlas/orchestration/broker.py",
+      "role": "ORCHESTRATOR",
+      "purpose": "bounded worker and path-lease governor",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/federation-atlas/orchestration/coverage_contract.py",
+      "role": "KNOWLEDGE_CUSTODIAN",
+      "purpose": "coverage population and immutable evidence model",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/gogreen/outcome_convergence/outcome_flight.py",
+      "role": "OUTCOME_ORACLE",
+      "purpose": "complete-window G9 native run outcome producer",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/gogreen/red_trace/red_trace.py",
+      "role": "OBSERVER",
+      "purpose": "GOGREEN EVERRED red/green history",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/gogreen/scale_dock_series.py",
+      "role": "KNOWLEDGE_CUSTODIAN",
+      "purpose": "scale-dock time-series and provenance",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/gogreen/watch_vnext/build_view.py",
+      "role": "PRESENTER",
+      "purpose": "read-only watcher flightdeck",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/gogreen/launcher/build_launcher.py",
+      "role": "PRESENTER",
+      "purpose": "read-only canonical dashboard navigation",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "path": ".github/workflows/gogreen-federation-spine.yml",
+      "role": "FEDERATION_OBSERVER",
+      "purpose": "scheduled read-only source-bound cross-repo checks",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/cryoplant-project",
+      "path": "",
+      "role": "RESTRICTED_OWNER",
+      "purpose": "private source custody; physical workbook authority cannot be inferred from public hub",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "path": "scripts/bandit_disjoint_census.py",
+      "role": "SECURITY_ORACLE",
+      "purpose": "source-compatible Bandit finding partitions (external source unmounted)",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/ABACUS",
+      "path": "orchestrator_config.yaml",
+      "role": "ORCHESTRATOR_DECLARATION",
+      "purpose": "DOW orchestration configuration (external source unmounted)",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "path": "src/pipeline/orchestrator.py",
+      "role": "ORCHESTRATOR",
+      "purpose": "KEB code pipeline (external source unmounted)",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/CODEX",
+      "path": ".github/workflows/diagnostic-coverage-receipt.yml",
+      "role": "COVERAGE_ORACLE",
+      "purpose": "native diagnostic evidence receipt (external source unmounted)",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/gg_MATH",
+      "path": "mission/federation/g3a_metric_consumer.py",
+      "role": "MATH_ORACLE",
+      "purpose": "external observed metric consumer",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/gg_MATH",
+      "path": "mission/federation/g3p_observed_dashboard.py",
+      "role": "PRESENTER",
+      "purpose": "math metrics review projection",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/GEMINI",
+      "path": "src/federation_bridge.py",
+      "role": "FEDERATION_BROKER",
+      "purpose": "Drive handover/bridge source",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/GEMINI",
+      "path": "src/proposal_broker.py",
+      "role": "ORCHESTRATOR",
+      "purpose": "proposal broker controlled actions",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/GEMINI",
+      "path": "src/handover_census.py",
+      "role": "KNOWLEDGE_CUSTODIAN",
+      "purpose": "handover records and completeness",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "path": "agents/agent_orchestrator.py",
+      "role": "AGENT_ORCHESTRATOR",
+      "purpose": "document-agent coordinator",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    },
+    {
+      "repo": "GBOGEB/DOCX_RTM_Automation",
+      "path": "orchestration_ts/src/queue/JobQueue.ts",
+      "role": "ORCHESTRATOR",
+      "purpose": "TypeScript queue producer",
+      "evidence_class": "SOURCE_PATH_CANDIDATE_NO_RUNTIME_WITNESS_EXCEPT_LOCAL_G9"
+    }
+  ],
+  "roles": [
+    "ORCHESTRATOR",
+    "AGENT_ORCHESTRATOR",
+    "FEDERATION_BROKER",
+    "FEDERATION_OBSERVER",
+    "KNOWLEDGE_CUSTODIAN",
+    "SECURITY_ORACLE",
+    "MATH_ORACLE",
+    "COVERAGE_ORACLE",
+    "OUTCOME_ORACLE",
+    "OBSERVER",
+    "PRESENTER",
+    "RESTRICTED_OWNER",
+    "ORCHESTRATOR_DECLARATION"
+  ],
+  "coverage_axes": [
+    "instrumented_lines",
+    "instrumented_python_branches",
+    "instrumented_js_ts_branches",
+    "config_schema_validation",
+    "trigger_job_step_reachability",
+    "real_production_command",
+    "input_output_effect",
+    "negative_fault_rejection",
+    "out_of_order_rejection",
+    "repeat_idempotence",
+    "peer_contract_compatibility",
+    "fleet_event_outcome_including_red",
+    "watcher_liveness_native_job",
+    "scaling_p95_queue_and_cost"
+  ],
+  "release_authority": false,
+  "remote_dispatch_authorized": false,
+  "private_source_export_authorized": false,
+  "interpretation": "Declared roles and bounded source paths; peers are NOT fetched by local CI. Do not claim live federation coverage or user data portability."
+}
