@@ -50,7 +50,8 @@ class Sandbox:
         shutil.copy(ROOT / "data" / "ROLLING5_POLICY.json", self.root / "data")
         roster = [{"repo": f"o/r{i}", "rank": i} for i in range(1, roster_size + 1)]
         self.write("data/TOP21_PORTFOLIO.json", {"repositories": roster})
-        self.write("data/ROLLING5_PULSES.json", {"pulses": []})
+        self.write("data/ROLLING5_PULSES.json", {
+            "schema": "jade.temple.rolling5.pulses/1.0", "pulses": []})
 
     def write(self, rel, obj):
         (self.root / rel).write_text(json.dumps(obj), encoding="utf-8", newline="\n")
@@ -111,6 +112,15 @@ class RealDataTests(unittest.TestCase):
         self.assertEqual(len(w["current"]), 5)
         self.assertEqual(w["next"], w["current"])
         self.assertEqual(w["admitted"], [])
+
+    def test_progress_history_preserves_each_pulse_denominator(self):
+        history = self.model["pulse_progress"]
+        self.assertEqual([r["passed"] for r in history], [14, 17, 21, 24, 25])
+        self.assertEqual([r["id"] for r in history],
+                         ["P0001", "P0002", "P0003", "P0004", "P0005"])
+        for r in history:
+            self.assertEqual(r["denominator"], 60)
+            self.assertEqual(r["passed"] + r["failed"] + r["unknown"], r["denominator"])
 
     def test_unattended_is_inferred_only_from_three_pulses(self):
         # Five pulses (P0001-P0005): 'unattended' is inferred, and only for gates UNKNOWN in
@@ -230,6 +240,14 @@ class NirvanaRotationTests(unittest.TestCase):
         self.assertEqual(race["o/r1"]["position"], 1)
         self.assertGreater(race["o/r2"]["position"], race["o/r3"]["position"])
 
+    def test_equal_readiness_ties_despite_cohort_display_order(self):
+        rows = r5.rows_of(snapshot("d", five()))
+        race = r5.race(rows)
+        self.assertEqual([r["position"] for r in race], [1, 2, 3, 4, 5])
+        self.assertEqual([r["readiness_placement"] for r in race], [1] * 5)
+        self.assertTrue(all(r["readiness_tied"] for r in race))
+        self.assertTrue(all("badge" not in r for r in race))
+
 
 class EndToEndTests(unittest.TestCase):
     def setUp(self):
@@ -245,13 +263,44 @@ class EndToEndTests(unittest.TestCase):
         self.box.add("P3", snapshot("2026-10-03", five({"o/r3": ALL_PASS})))
         model = r5.project(self.box.root)
         self.assertEqual(model["nirvana_ledger"],
-                         [{"repo": "o/r3", "pulse": "P3", "order": 1}])
+                         [{"repo": "o/r3", "pulse": "P3", "order": 1,
+                           "observed_date": "2026-10-03", "source_sha": SHA_A,
+                           "qualifying_pulses": ["P2", "P3"], "placement": 1,
+                           "tied": False, "badge": "NIRVANA #1",
+                           "release_credit": False}])
         self.assertEqual(model["window"]["admitted"], ["o/r6"])
         r3 = next(r for r in model["repos"] if r["repo"] == "o/r3")
         self.assertEqual(r3["streaks"]["H09"]["streak_on_current"], 2)
         self.assertEqual(r3["streaks"]["H01"]["streak_record"], 3)
         self.assertTrue(r3["nirvana"])
         self.assertEqual(model["metrics"]["nirvana_count"], 1)
+
+    def test_same_pulse_finishers_share_placement_before_next_finisher(self):
+        first = {"o/r1": ALL_PASS, "o/r3": ALL_PASS}
+        second = dict(first, **{"o/r2": ALL_PASS})
+        self.box.add("P1", snapshot("2026-10-01", five(first)))
+        self.box.add("P2", snapshot("2026-10-02", five(second)))
+        self.box.add("P3", snapshot("2026-10-03", five(second)))
+        ledger = r5.project(self.box.root)["nirvana_ledger"]
+        self.assertEqual([r["repo"] for r in ledger], ["o/r1", "o/r3", "o/r2"])
+        self.assertEqual([r["order"] for r in ledger], [1, 2, 3])
+        self.assertEqual([r["placement"] for r in ledger], [1, 1, 3])
+        self.assertEqual([r["badge"] for r in ledger],
+                         ["NIRVANA #1 (shared)", "NIRVANA #1 (shared)", "NIRVANA #3"])
+
+    def test_badge_requires_sustain_and_keeps_first_qualification_evidence(self):
+        self.box.add("P1", snapshot("2026-10-01", five({"o/r1": ALL_PASS})))
+        self.assertEqual(r5.project(self.box.root)["nirvana_ledger"], [])
+        self.box.add("P2", snapshot("2026-10-02", five({"o/r1": ALL_PASS}, sha=SHA_B)))
+        self.assertEqual(r5.project(self.box.root)["nirvana_ledger"], [])
+        self.box.add("P3", snapshot("2026-10-03", five({"o/r1": ALL_PASS}, sha=SHA_B)))
+        earned = r5.project(self.box.root)["nirvana_ledger"]
+        self.assertEqual(earned[0]["source_sha"], SHA_B)
+        self.assertEqual(earned[0]["qualifying_pulses"], ["P2", "P3"])
+        self.box.add("P4", snapshot("2026-10-04", five()))
+        self.assertEqual(r5.project(self.box.root)["nirvana_ledger"], earned)
+        self.assertEqual(r5.project(self.box.root)["metrics"]["verified_pass"], 0)
+        self.assertFalse(r5.project(self.box.root)["release_credit"])
 
     def test_snapshot_tamper_fails_closed(self):
         self.box.add("P1", snapshot("2026-10-01", five()))
@@ -312,6 +361,93 @@ class EndToEndTests(unittest.TestCase):
         self.assertEqual(len(csv_text.strip().splitlines()), 6)
         with redirect_stdout(io.StringIO()), self.assertRaises(SystemExit):
             r5.main(["--append-pulse", "data/x.json"], root=self.box.root)
+
+
+class InitializationTests(unittest.TestCase):
+    def setUp(self):
+        self.box = Sandbox()
+        self.addCleanup(self.box.close)
+        self.box.add("P1", snapshot("2026-10-01", five()))
+
+    def ledger(self):
+        return json.loads((self.box.root / r5.LEDGER).read_text(encoding="utf-8"))
+
+    def test_ledger_schema_and_pulse_identity_are_required(self):
+        for field, value, message in (("schema", None, "schema"),
+                                      ("id", "", "pulse id"),
+                                      ("snapshot_sha256", "short", "sha256"),
+                                      ("observed_date", "2026-02-30", "calendar date")):
+            with self.subTest(field=field):
+                ledger = self.ledger()
+                target = ledger if field == "schema" else ledger["pulses"][0]
+                target[field] = value
+                with self.assertRaisesRegex(ValueError, message):
+                    r5.verified_pulses(self.box.root, ledger)
+
+    def test_relative_absolute_drive_and_symlink_escape_paths_are_rejected(self):
+        for rel in ("../outside.json", "/tmp/outside.json", "C:/outside.json",
+                    "data/../../outside.json", "data\\outside.json"):
+            with self.subTest(path=rel), self.assertRaisesRegex(ValueError, "inside"):
+                r5.snapshot_path(self.box.root, rel)
+        outside = Path(self.box.dir.name).parent / (self.box.root.name + "-outside.json")
+        outside.write_text("{}", encoding="utf-8", newline="\n")
+        self.addCleanup(outside.unlink, missing_ok=True)
+        link = self.box.root / "data/link.json"
+        try:
+            link.symlink_to(outside)
+        except OSError:
+            self.skipTest("symlinks unavailable to this test user")
+        with self.assertRaisesRegex(ValueError, "inside"):
+            r5.snapshot_path(self.box.root, "data/link.json")
+
+    def test_declared_date_cannot_disagree_with_hash_pinned_snapshot(self):
+        ledger = self.ledger()
+        ledger["pulses"][0]["observed_date"] = "2026-10-02"
+        with self.assertRaisesRegex(ValueError, "date mismatch"):
+            r5.verified_pulses(self.box.root, ledger)
+
+    def test_empty_rows_missing_head_and_rank_collision_are_rejected(self):
+        for mode in ("empty", "head", "rank"):
+            with self.subTest(mode=mode):
+                snap = snapshot("2026-10-01", five())
+                if mode == "empty":
+                    snap["rows"] = []
+                elif mode == "head":
+                    snap["rows"][0]["source_sha"] = None
+                else:
+                    snap["rows"][1]["rank"] = snap["rows"][0]["rank"]
+                raw = json.dumps(snap).encode()
+                path = self.box.root / "data/snap_1.json"
+                path.write_bytes(raw)
+                ledger = self.ledger()
+                ledger["pulses"][0]["snapshot_sha256"] = hashlib.sha256(raw).hexdigest()
+                with self.assertRaisesRegex(ValueError, "nonempty|source SHA|rank"):
+                    r5.verified_pulses(self.box.root, ledger)
+
+    def test_private_source_marker_is_valid_but_never_nirvana(self):
+        snap = snapshot("2026-10-01", five(sha=r5.PB.MARK))
+        raw = json.dumps(snap).encode()
+        (self.box.root / "data/snap_1.json").write_bytes(raw)
+        ledger = self.ledger()
+        ledger["pulses"][0]["snapshot_sha256"] = hashlib.sha256(raw).hexdigest()
+        rows = r5.rows_of(r5.verified_pulses(self.box.root, ledger)[0][1])
+        self.assertFalse(r5.nirvana("o/r1", [rows, rows], 2))
+
+    def test_false_declared_metrics_are_rejected_even_with_matching_file_digest(self):
+        snap = snapshot("2026-10-02", five())
+        snap["metrics"] = {"passed": 1, "failed": 0, "unknown": 59,
+                           "required_gate_count_per_repo": 12, "required_gate_total": 60}
+        with self.assertRaisesRegex(ValueError, "metrics disagree"):
+            r5.rows_of(snap)
+        snap["metrics"].update(passed=0, unknown=60)
+        self.assertEqual(len(r5.rows_of(snap)), 5)
+
+    def test_failed_append_leaves_ledger_bytes_unchanged(self):
+        before = (self.box.root / r5.LEDGER).read_bytes()
+        self.box.write("data/invalid.json", snapshot("2026-10-02", []))
+        with self.assertRaisesRegex(ValueError, "nonempty"):
+            r5.append_pulse(self.box.root, "data/invalid.json", "P2")
+        self.assertEqual((self.box.root / r5.LEDGER).read_bytes(), before)
 
 
 class GoldenThreadSourceRedTests(unittest.TestCase):

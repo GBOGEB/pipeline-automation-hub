@@ -93,6 +93,7 @@ jobs:
           python mission-control/jade_temple/tools/eight_point_contract.py
           python mission-control/jade_temple/site/build_eightpoint.py --check
           python mission-control/jade_temple/tools/rolling5.py --check
+          python mission-control/jade_temple/tools/build_gate12_dov.py --check
           # --strict-pulse stays off until the census and gate snapshot are re-taken in one
           # pulse (cicd_dag.json pulse_alignment.one_pulse); then add it to both lines below.
           python mission-control/jade_temple/tools/cicd_dag.py --check

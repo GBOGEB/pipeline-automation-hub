@@ -56,7 +56,7 @@
       "owner": "mission-control/jade_temple/tools/rolling5.py",
       "input": "mission-control/jade_temple/site/rolling5.json",
       "status": "merge_admission",
-      "headline": {"label": "Verified completion", "path": "metrics.verified_completion_pct", "unit": "%"},
+      "headline": {"label": "Recorded completion", "path": "metrics.verified_completion_pct", "unit": "%"},
       "fields": [
         {"label": "Verified pass", "path": "metrics.verified_pass"},
         {"label": "Gate denominator", "path": "metrics.gate_denominator"},
@@ -65,7 +65,27 @@
         {"label": "NIRVANA count", "path": "metrics.nirvana_count"},
         {"label": "Latest pulse", "path": "latest_pulse"}
       ],
-      "pages": ["mission-control/jade_temple/site/cicd_dag.html", "mission-control/jade_temple/site/green.html"]
+      "pages": ["mission-control/jade_temple/site/gate12_hub.html", "mission-control/jade_temple/site/cicd_dag.html", "mission-control/jade_temple/site/green.html"]
+    },
+    {
+      "id": "gate12_hurdles",
+      "label": "H01–H12 recorded hurdles",
+      "owner": "mission-control/jade_temple/tools/build_gate12_dov.py (consumer of rolling5.py)",
+      "input": "mission-control/jade_temple/site/gate12_data.json",
+      "status": "latest_recorded.authority.merge_admission",
+      "headline": {"label": "Recorded gate PASS", "path": "latest_recorded.metrics.observed_pass"},
+      "fields": [
+        {"label": "Gate denominator", "path": "latest_recorded.metrics.observed_gate_denominator"},
+        {"label": "Unknown gates", "path": "latest_recorded.metrics.observed_unknown"},
+        {"label": "Pulse", "path": "latest_recorded.source.pulse_id"},
+        {"label": "Recorded date (not current readiness)", "path": "latest_recorded.source.observed_date"}
+      ],
+      "lists": [
+        {"label": "Per-gate proof", "path": "latest_recorded.pillars[]", "columns": [
+          {"label": "Gate", "key": "id"}, {"label": "PASS", "key": "observed_counts.PASS"},
+          {"label": "FAIL", "key": "observed_counts.FAIL"}, {"label": "UNKNOWN", "key": "observed_counts.UNKNOWN"}]}
+      ],
+      "pages": ["mission-control/jade_temple/site/gate12_hub.html"]
     },
     {
       "id": "progress",

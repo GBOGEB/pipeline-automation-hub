@@ -288,7 +288,8 @@ def build_snapshot(prev: dict, repos: list[str], date: str, lookup=gh,
     snap = {k: v for k, v in prev.items() if k not in ("rows", "metrics", "source")}
     snap["source"] = dict(prev["source"], observed_date=date, readback="ONE_PULSE_GITHUB_API",
                           release_authority_transfer=False)
-    snap["metrics"] = dict(prev["metrics"], required_gate_total=total, passed=passed, failed=failed,
+    snap["metrics"] = dict(prev["metrics"], required_gate_count_per_repo=12,
+                           required_gate_total=total, passed=passed, failed=failed,
                            unknown=total - passed - failed, verified_completion_pct=round(100 * passed / total, 2),
                            globally_admitted_point_release=None)
     snap["rows"] = rows
