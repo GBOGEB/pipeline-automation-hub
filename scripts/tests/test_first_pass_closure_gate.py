@@ -395,6 +395,16 @@ class TestFirstPassClosureGate(unittest.TestCase):
         with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
             fpc.evaluate(self.waived(waiver_at="2026-11-10T08:00:00Z"), REPO, PR, self.WAIVER_POLICY)
 
+    def test_equal_notice_and_waiver_timestamps_are_ambiguous_in_either_api_order(self):
+        for reverse in (False, True):
+            with self.subTest(reverse=reverse):
+                client = self.waived(notice_at="2026-11-10T09:05:00Z")
+                if reverse:
+                    rows = client.mapping[f"/repos/{REPO}/issues/{PR}/comments"]
+                    rows[-2:] = reversed(rows[-2:])
+                with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):
+                    fpc.evaluate(client, REPO, PR, self.WAIVER_POLICY)
+
     def test_waiver_from_a_non_owner_or_a_bot_is_void(self):
         for kw in ({"owner": "someone-else"}, {"owner": "GBOGEB[bot]"}, {"owner_type": "Bot"}):
             with self.assertRaisesRegex(fpc.GateError, "CODEX_REVIEW_NOT_COMPLETED"):

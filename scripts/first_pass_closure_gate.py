@@ -410,7 +410,7 @@ def codex_quota_waiver(
         if created_at is None or created_at <= observed_at:
             continue
         earlier = [n for n in notices if github_time(n["created_at"]) is not None
-                   and github_time(n["created_at"]) <= created_at]
+                   and github_time(n["created_at"]) < created_at]
         if not earlier:
             continue
         for match in WAIVER_RE.finditer(comment.get("body") or ""):

@@ -71,7 +71,8 @@ Codex reviews are metered. When the quota is spent, Codex posts "You have reache
 
 The gate accepts the waiver only when all of these hold:
 1. the Codex reviewer itself posted the usage-limit notice on the PR (the owner quoting it does not count);
-2. a login in `owner_logins` posted, after that notice, a comment with this line on its own:
+2. a login in `owner_logins` posted, strictly after that notice, a comment with this line on its own
+   (equal second-resolution timestamps are ambiguous and do not qualify):
    `FPC_WAIVER_V1 head=<40-char PR head SHA> waives=CODEX_REVIEW reason=<text>`;
 3. the SHA is the exact current head, and the comment was created **strictly after** the latest
    allowlisted PR-proof run observed that head on this PR. The run must be in this repository,
