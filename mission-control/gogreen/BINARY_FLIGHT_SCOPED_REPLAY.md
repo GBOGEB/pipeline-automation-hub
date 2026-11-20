@@ -13,7 +13,9 @@ python mission-control/gogreen/binary_flight.py input.zip \
 
 The selection passes through the same member checks. An empty selection, absent member, unsafe selected path, duplicate selected name or multi-archive selection is rejected. The archive-wide entry-count bound always applies. Unselected member payloads are not decompressed or parsed and remain unvalidated; the compressed archive bytes are still streamed for hashing. `coverage.scope`, `unselected_archive_members`, `selected_unhandled_members` and `whole_archive_member_metadata_validated` make the boundary explicit. `whole_archive_validated` stays false because metadata checks and selected parsers do not prove complete container validity. The code does not recursively traverse arbitrary nested archives.
 
-Outer source hashes are streamed before and after inspection. A changed source rejects the run before a receipt can be returned. Object and rejection receipts carry the source archive hash, central-directory member index and hashed member name. Private consumers retain their own original names and source maps; public receipts need not publish them.
+Each outer archive is streamed once into a private compressed-byte snapshot while computing its hash. The parser reads that same snapshot, so even a path replaced and restored during inspection cannot bind replacement members to the original hash. The snapshot spools to a temporary file above 8 MiB to bound memory; selected member payloads alone are decompressed and parsed. A final streamed source hash retains the stricter policy that a persistent source change rejects the run before a receipt can be returned. Object and rejection receipts carry the source archive hash, central-directory member index and hashed member name. Private consumers retain their own original names and source maps; public receipts need not publish them.
+
+Repeated identical `--member` arguments are rejected before conversion to a set, source inspection or output creation. A valid set of distinct names retains the existing selection behavior.
 
 ## PPTX and SVG changes
 
@@ -32,4 +34,4 @@ python -m unittest discover -s mission-control/gogreen/tests -p 'test_binary_fli
 python mission-control/registry/engine_catalog.py validate
 ```
 
-Generic tests exercise first-red cases, relationship identity, single-group counting, table text scope, SVG masquerading, encoded XML declarations, held unselected members, fail-closed selected admission and unchanged source bytes. Private real-source receipts belong to the consuming project and are not bundled into this public module.
+Generic tests exercise first-red cases, relationship identity, single-group counting, table text scope, SVG masquerading, encoded XML declarations, held unselected members, fail-closed selected admission, persistent source changes, restored-path replacement races, duplicate CLI selections and unchanged source bytes. Private real-source receipts belong to the consuming project and are not bundled into this public module.

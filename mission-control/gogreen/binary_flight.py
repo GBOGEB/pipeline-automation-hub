@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter, defaultdict
+from contextlib import contextmanager
 import hashlib
 from html.parser import HTMLParser
 import io
@@ -15,6 +16,7 @@ import json
 import posixpath
 import re
 import stat
+import tempfile
 import time
 from pathlib import Path, PurePosixPath
 from xml.etree import ElementTree as ET
@@ -40,6 +42,23 @@ def _file_sha256(path: Path) -> str:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+@contextmanager
+def _archive_snapshot(path: Path):
+    """Hash and parse the same private compressed-byte snapshot.
+
+    Spooling bounds memory without inflating or reading unselected members.
+    Later path replacement cannot change the bytes given to ZipFile.
+    """
+    digest = hashlib.sha256()
+    with tempfile.SpooledTemporaryFile(max_size=8 * 1024 * 1024, mode="w+b") as snapshot:
+        with path.open("rb") as source:
+            for chunk in iter(lambda: source.read(1024 * 1024), b""):
+                digest.update(chunk)
+                snapshot.write(chunk)
+        snapshot.seek(0)
+        yield snapshot, digest.hexdigest()
 
 
 class _NoDeclarations(ET.TreeBuilder):
@@ -261,9 +280,8 @@ def survey(archives: list[Path], *, member_allowlist: set[str] | None = None) ->
     runs=[];errors=[]; counts=Counter(); corpus_hasher=hashlib.sha256()
     archive_members = unselected_members = unhandled_members = 0
     for path in archives:
-        datahash=_file_sha256(path)
-        corpus_hasher.update(bytes.fromhex(datahash))
-        with ZipFile(path) as outer:
+        with _archive_snapshot(path) as (snapshot, datahash), ZipFile(snapshot) as outer:
+            corpus_hasher.update(bytes.fromhex(datahash))
             selected = _safe_members(outer, max_total=2_000_000_000, max_member=600_000_000,
                                      selected_names=member_allowlist)
             all_members = outer.infolist()
@@ -305,8 +323,8 @@ def survey(archives: list[Path], *, member_allowlist: set[str] | None = None) ->
                 except (ValueError,BadZipFile,ET.ParseError,KeyError,RuntimeError,OSError,OverflowError) as exc:
                     errors.append({"id":item_id,**lineage,"family":ext.lstrip("."),"state":"INPUT_REJECTED",
                                    "error_class":type(exc).__name__})
-        # A concurrent replacement must not bind newly read members to an older
-        # parent hash. No receipt is returned when the source bytes changed.
+        # Hash and parser already share the captured bytes. Retain the stronger
+        # source-stability policy: persistent changes still reject the receipt.
         if _file_sha256(path) != datahash:
             raise ValueError("SOURCE_ARCHIVE_CHANGED_DURING_INSPECTION")
     return {"schema":SCHEMA,"source_set_sha256":corpus_hasher.hexdigest(),
@@ -335,6 +353,8 @@ def main():
     a.add_argument("--out",required=True,type=Path)
     a.add_argument("--member",action="append",help="Exact member name; repeat for an explicit one-archive selection")
     opts=a.parse_args()
+    if opts.member is not None and len(opts.member) != len(set(opts.member)):
+        a.error("duplicate --member requests are not allowed")
     result=survey(opts.archives,member_allowlist=set(opts.member) if opts.member is not None else None)
     opts.out.parent.mkdir(parents=True,exist_ok=True)
     opts.out.write_text(json.dumps(result,indent=2,sort_keys=True)+"\n",encoding="utf-8",newline="\n")

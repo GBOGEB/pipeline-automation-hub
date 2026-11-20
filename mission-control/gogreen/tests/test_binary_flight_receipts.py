@@ -2,7 +2,9 @@
 import hashlib
 import importlib.util
 import io
+from contextlib import contextmanager
 from pathlib import Path
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -117,19 +119,56 @@ class BinaryFlightReceiptTests(unittest.TestCase):
             path = Path(directory) / "changing.zip"
             with zipfile.ZipFile(path, "w") as archive:
                 archive.writestr("safe.html", "<h1>Original</h1>")
-            original_hasher = bf._file_sha256
-            calls = 0
-            def mutate_after_first_hash(source):
-                nonlocal calls
-                value = original_hasher(source)
-                calls += 1
-                if calls == 1:
-                    with zipfile.ZipFile(source, "w") as archive:
-                        archive.writestr("safe.html", "<h1>Replacement</h1>")
-                return value
-            with patch.object(bf, "_file_sha256", side_effect=mutate_after_first_hash):
+            original_parser = bf.inspect_html
+            def mutate_during_inspection(raw):
+                with zipfile.ZipFile(path, "w") as archive:
+                    archive.writestr("safe.html", "<h1>Replacement</h1>")
+                return original_parser(raw)
+            with patch.object(bf, "inspect_html", side_effect=mutate_during_inspection):
                 with self.assertRaisesRegex(ValueError, "SOURCE_ARCHIVE_CHANGED"):
                     bf.survey([path])
+
+    def test_restored_archive_path_cannot_misbind_replacement_members(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "changing.zip"
+            original_html = b"<h1>Original</h1>"
+            with zipfile.ZipFile(path, "w") as archive:
+                archive.writestr("safe.html", original_html)
+            original = path.read_bytes()
+            replacement = io.BytesIO()
+            with zipfile.ZipFile(replacement, "w") as archive:
+                archive.writestr("safe.html", b"<h1>Replacement</h1>")
+            open_zip = bf.ZipFile
+
+            @contextmanager
+            def replace_then_restore(source, *args, **kwargs):
+                path.write_bytes(replacement.getvalue())
+                try:
+                    with open_zip(source, *args, **kwargs) as archive:
+                        yield archive
+                finally:
+                    path.write_bytes(original)
+
+            with patch.object(bf, "ZipFile", side_effect=replace_then_restore):
+                result = bf.survey([path])
+            self.assertEqual(result["objects"][0]["sha256"], hashlib.sha256(original_html).hexdigest())
+            self.assertEqual(result["objects"][0]["source_archive_sha256"], hashlib.sha256(original).hexdigest())
+            self.assertEqual(path.read_bytes(), original)
+
+    def test_cli_rejects_duplicate_member_before_survey_or_output(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "receipt.json"
+            args = ["binary_flight", "source.zip", "--out", str(output),
+                    "--member", "safe.html", "--member", "safe.html"]
+            result = {"counts": {}, "errors": [], "runtime_seconds": 0}
+            with patch.object(sys, "argv", args), patch.object(bf, "survey", return_value=result) as survey:
+                with patch.object(sys, "stderr", io.StringIO()) as errors:
+                    with self.assertRaises(SystemExit) as raised:
+                        bf.main()
+            self.assertEqual(raised.exception.code, 2)
+            self.assertIn("duplicate", errors.getvalue().lower())
+            survey.assert_not_called()
+            self.assertFalse(output.exists())
 
 
 if __name__ == "__main__":
