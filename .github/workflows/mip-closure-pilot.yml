@@ -48,7 +48,7 @@ jobs:
           assert source == os.environ['EXPECTED_SHA']
           root = pathlib.Path('mission-control/mip/closure_pilot')
           suite = unittest.defaultTestLoader.discover(str(root), pattern='test_*.py')
-          assert suite.countTestCases() >= 36, 'MIP_PILOT_ZERO_OR_INCOMPLETE_TEST_POPULATION'
+          assert suite.countTestCases() >= 38, 'MIP_PILOT_ZERO_OR_INCOMPLETE_TEST_POPULATION'
           class Result(unittest.TextTestResult):
               def __init__(self, *args, **kwargs):
                   super().__init__(*args, **kwargs)
@@ -58,7 +58,7 @@ jobs:
                   super().startTest(test)
           result = unittest.TextTestRunner(verbosity=2, resultclass=Result).run(suite)
           success = (result.wasSuccessful() and not result.skipped and
-                     len(set(result.test_ids)) == result.testsRun >= 36)
+                     len(set(result.test_ids)) == result.testsRun >= 38)
           paths = [str(root / p) for p in ('closure_census.py', 'temporal_burndown.py',
                    'test_closure_census.py', 'test_temporal_burndown.py', 'manifest.json',
                    'bsln_20261116.json')]

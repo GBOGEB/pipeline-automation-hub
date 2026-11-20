@@ -6,14 +6,13 @@ No API calls, workflow dispatch, Git writes, admission, or scaling actions.
 """
 from __future__ import annotations
 import argparse
-import fnmatch
 import json
 import re
 from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-from closure_census import CensusError, kahn_layers
+from closure_census import CensusError, kahn_layers, path_overlap, validate_lane_path
 
 SCHEMA = "mip.temporal-burndown.v1"
 SHA = re.compile(r"^[0-9a-f]{40}$")
@@ -40,30 +39,17 @@ def need(ok: bool, why: str) -> None:
         raise CensusError(why)
 
 def path_conflict(left: str, right: str) -> bool:
-    """Conservative same-repo write overlap for paths, directories and globs."""
-    need(bool(left) and bool(right) and not left.startswith("/") and
-         not right.startswith("/") and ".." not in left.split("/") and
-         ".." not in right.split("/"), "invalid owned path")
-    if left == right:
-        return True
-    if left.endswith("/") and right.startswith(left):
-        return True
-    if right.endswith("/") and left.startswith(right):
-        return True
-    lg = any(c in left for c in "*?[")
-    rg = any(c in right for c in "*?[")
-    if lg and not rg and fnmatch.fnmatchcase(right, left):
-        return True
-    if rg and not lg and fnmatch.fnmatchcase(left, right):
-        return True
-    # Two globs in a common directory cannot be proved disjoint by samples.
-    if lg and rg and left.rsplit("/", 1)[0] == right.rsplit("/", 1)[0]:
-        return True
-    return False
+    """Use the closure census's single lane ownership contract."""
+    return path_overlap(left, right)
 
 def lane_collisions(manifest: dict[str, Any]) -> list[dict[str, str]]:
     owners = {o["id"]: o["repo"] for o in manifest["owners"]}
     lanes = manifest["lanes"]
+    for lane in lanes:
+        need(lane["owner"] in owners, "unbound lane owner")
+        need(isinstance(lane["paths"], list) and bool(lane["paths"]), "lane without owned files")
+        for path in lane["paths"]:
+            validate_lane_path(path)
     conflicts = []
     for i, left in enumerate(lanes):
         for right in lanes[i + 1:]:

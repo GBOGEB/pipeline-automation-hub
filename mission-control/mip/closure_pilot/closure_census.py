@@ -105,12 +105,22 @@ def _static_prefix(pattern: str) -> str:
     return pattern[:match.start()] if match else pattern
 
 
-def _path_overlap(a: str, b: str) -> bool:
+def validate_lane_path(path: Any) -> None:
+    require(isinstance(path, str) and path.strip() and
+            not path.startswith("/") and "\\" not in path and
+            re.match(r"^[A-Za-z]:", path) is None and
+            all(p not in {"", ".", ".."} for p in path.rstrip("/").split("/")),
+            "unsafe commit lane path")
+
+
+def path_overlap(a: str, b: str) -> bool:
     """Reject same-file, parent-folder, glob/file, and possibly intersecting glob lanes.
 
     When two globs cannot be proven disjoint, conservatively serialize them.
     """
-    a, b = a.strip("/"), b.strip("/")
+    validate_lane_path(a)
+    validate_lane_path(b)
+    a, b = a.rstrip("/"), b.rstrip("/")
     if a == b or not a or not b:
         return True
     if a.startswith(b + "/") or b.startswith(a + "/"):
@@ -181,17 +191,13 @@ def census(doc: dict[str, Any], tests: list[dict[str, Any]] | None = None) -> di
     owner_repos = {o["id"]: o["repo"] for o in owners}
     for lane in doc["lanes"]:
         for path in lane["paths"]:
-            require(isinstance(path, str) and path.strip() and
-                    not path.startswith("/") and "\\" not in path and
-                    re.match(r"^[A-Za-z]:", path) is None and
-                    all(p not in {"", ".", ".."} for p in path.rstrip("/").split("/")),
-                    "unsafe commit lane path")
+            validate_lane_path(path)
             paths[path].append(lane["id"])
             declared.append((owner_repos[lane["owner"]], lane["id"], path))
     collisions: list[tuple[str, str, str, str]] = []
     for i, (repo_a, lane_a, path_a) in enumerate(declared):
         for repo_b, lane_b, path_b in declared[i + 1:]:
-            if repo_a == repo_b and lane_a != lane_b and _path_overlap(path_a, path_b):
+            if repo_a == repo_b and lane_a != lane_b and path_overlap(path_a, path_b):
                 collisions.append((lane_a, path_a, lane_b, path_b))
     require(not collisions, "commit lane path collision: " + repr(collisions))
     layers = kahn_layers([o["id"] for o in owners], doc["edges"])

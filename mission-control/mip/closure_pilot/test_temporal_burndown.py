@@ -75,7 +75,18 @@ class TemporalBurndownTests(unittest.TestCase):
         self.assertTrue(path_conflict("a/*.yaml", "a/f*.yaml"))
 
     def test_disjoint_literal_paths(self):
-        self.assertFalse(path_conflict("a/README.md", "a/*.yaml"))
+        self.assertFalse(path_conflict("a/README.md", "b/*.yaml"))
+
+    def test_parent_directory_without_trailing_slash_uses_shared_guard(self):
+        self.assertTrue(path_conflict("a/b", "a/b/test.py"))
+
+    def test_path_aliases_fail_even_without_a_second_same_repo_lane(self):
+        for alias in ("./dir/x.py", "dir//x.py", "dir/./x.py", "dir\\x.py", "C:/dir/x.py"):
+            with self.subTest(alias=alias):
+                m = copy.deepcopy(self.manifest)
+                m["lanes"] = [dict(m["lanes"][0], paths=[alias])]
+                with self.assertRaisesRegex(CensusError, "unsafe commit lane path"):
+                    lane_collisions(m)
 
     def test_reject_overlapping_lane_globs(self):
         m = copy.deepcopy(self.manifest)
