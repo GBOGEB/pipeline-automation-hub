@@ -63,6 +63,8 @@ class BinaryFlightUnittest(unittest.TestCase):
         self.assertEqual(r["slides"], 2)
         self.assertEqual(r["source_sha256"], hashlib.sha256(raw).hexdigest())
         self.assertEqual(r["slide_records"][0]["text_sha256"], bf.sha(b"section 2 complete"))
+        self.assertEqual(r["slide_records"][0]["member_path"], "ppt/slides/slide2.xml")
+        self.assertEqual(r["slide_records"][0]["relationship_id"], "rId2")
         self.assertTrue(r["unverified_render"])
         self.assertFalse(r["has_active_content"])
 
@@ -122,7 +124,9 @@ class BinaryFlightUnittest(unittest.TestCase):
         with self.assertRaises(ValueError):bf.inspect_html(b"\xff\xfe")
 
     def test_svg_doctype_is_not_accepted_as_validated(self):
-        with self.assertRaises(ValueError):bf._xml(b"<!DOCTYPE svg><svg/>")
+        for raw in (b"<!DOCTYPE svg><svg/>", b"<not_svg/>", b'<svg xmlns="urn:wrong"/>'):
+            with self.subTest(raw=raw), self.assertRaises(ValueError):bf.inspect_svg(raw)
+        self.assertEqual(bf.inspect_svg(b"<svg/>")["render"], "NOT_TESTED")
 
     def test_scoped_corpus_returns_unknown_visual_and_gate_hold(self):
         import tempfile
