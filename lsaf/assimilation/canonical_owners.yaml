@@ -1,0 +1,39 @@
+schema: lsaf/canonical-owners/v0.1
+
+rule: reuse_or_adapt_never_duplicate
+
+owners:
+  dag_sipoc:
+    module: mission-control/jade_temple/tools/cicd_dag.py
+    functions: [project, dag_stats, critical_path, gate_frontier, everred_metrics, scale_docks]
+    lsaf_role: adapter/source for graph and SIPOC evidence; LSAF may add session-fragment nodes but must not reimplement owned CI/CD metrics
+
+  recurrence_everred:
+    module: mission-control/qps-triage-ultra/p-process/everred/harvest.py
+    functions: [harvest, matches, run_probes]
+    lsaf_role: recurrence/source evidence where applicable; session semantic fingerprints remain a separate namespace but must cross-reference owned roots
+
+  scale_metrics:
+    module: mission-control/gogreen/scale_dock.py
+    functions: [red_metrics, dock_everred, evaluate]
+    lsaf_role: scaling evidence provider; do not create competing RED/root metrics
+
+  issue_graph:
+    module: mission-control/qps-triage-ultra/issue-expedition/triway_burndown.py
+    functions: [checklist, references, parked_intent_meta, project, collect]
+    lsaf_role: issue dependency/reference provider
+
+  title_taxonomy:
+    module: mission-control/issue_rank/title_taxonomy.py
+    functions: [parse_title, summary, associated_families]
+    lsaf_role: canonical title-family classifier; LSAF canonical-title proposals must not fork taxonomy
+
+  session_census:
+    source_pr: 1211
+    module: tools/threads/session_census.py
+    lsaf_role: session capture producer; LSAF consumes/adapts, never duplicates
+
+controls:
+  unknown_never_pass: true
+  authority_transfer: false
+  exact_head_binding_required: true

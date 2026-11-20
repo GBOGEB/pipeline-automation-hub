@@ -823,6 +823,52 @@ def rebind(binding: dict, new_sha: str, *, fetcher: Callable[[str], bytes] | Non
     return validate_binding(out)
 
 
+COMPARE_URL = "https://api.github.com/repos/{repo}/compare/{base}...{head}"
+
+
+def _api_fetch(url: str) -> bytes:
+    """GitHub REST GET; uses GH_TOKEN or GITHUB_TOKEN when set (Actions), anonymous otherwise."""
+    req = urllib.request.Request(url, headers={"Accept": "application/vnd.github+json",
+                                               "X-GitHub-Api-Version": "2022-11-28"})
+    token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    if token:
+        req.add_header("Authorization", f"Bearer {token}")
+    with urllib.request.urlopen(req, timeout=30) as response:  # noqa: S310 - fixed https template
+        return response.read()
+
+
+def check_stale(binding: dict, *, branch: str = "main", max_behind: int | None = None,
+                fetcher: Callable[[str], bytes] | None = None) -> dict:
+    """Report how far the pinned provider SHA is behind the provider's ``branch``.
+
+    Report-only by default: ``CURRENT`` (pin is the branch head), ``STALE`` (the branch has
+    commits the pin lacks), ``DIVERGED`` (the pin is not an ancestor of the branch) or
+    ``UNKNOWN`` (the compare call failed).  With ``max_behind``, ``over_limit`` is true when
+    the pin is more than that many commits behind or has diverged.
+    """
+    validate_binding(binding)
+    url = COMPARE_URL.format(repo=binding["provider_repo"], base=binding["provider_sha"], head=branch)
+    report = {"provider_repo": binding["provider_repo"], "provider_sha": binding["provider_sha"],
+              "branch": branch, "max_behind": max_behind, "authority_transfer": False}
+    try:
+        data = json.loads((fetcher or _api_fetch)(url))
+    except (OSError, ValueError) as exc:
+        return {**report, "status": "UNKNOWN", "behind_by": None, "over_limit": False,
+                "detail": f"{type(exc).__name__}: {exc}"[:200]}
+    compare = data.get("status")
+    behind_by = int(data.get("ahead_by") or 0)
+    if compare == "identical":
+        status = "CURRENT"
+    elif compare == "ahead":
+        status = "STALE"
+    else:
+        status = "DIVERGED"
+    over = status == "DIVERGED" or (max_behind is not None and behind_by > max_behind)
+    commits = data.get("commits") or []
+    head = commits[-1].get("sha") if commits and isinstance(commits[-1], dict) else None
+    return {**report, "status": status, "behind_by": behind_by, "branch_head": head, "over_limit": over}
+
+
 def write_json(path: Path, value: dict) -> None:
     Path(path).write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
 
@@ -837,10 +883,22 @@ def main(argv: Sequence[str] | None = None) -> int:
     b.add_argument("--out", type=Path, default=HERE / "ggmath_bridge_receipt.json")
     r = sub.add_parser("rebind", help="bump the binding to a new exact provider SHA")
     r.add_argument("--sha", required=True)
+    s = sub.add_parser("check-stale", help="report how far the pin is behind the provider branch")
+    s.add_argument("--branch", default="main")
+    s.add_argument("--max-behind", type=int, default=None,
+                   help="exit 3 when the pin is more than this many commits behind (default: report only)")
     args = ap.parse_args(argv)
     sys.path.insert(0, str(HERE))
     try:
         binding = load_binding()
+        if args.cmd == "check-stale":
+            rep = check_stale(binding, branch=args.branch, max_behind=args.max_behind)
+            print(json.dumps(rep, sort_keys=True))
+            if os.environ.get("GITHUB_ACTIONS") == "true" and rep["status"] in ("STALE", "DIVERGED", "UNKNOWN"):
+                print(f"::warning title=gg_MATH pin {rep['status']}::{rep['provider_repo']} pin "
+                      f"{rep['provider_sha'][:10]} is {rep['behind_by']} commits behind {rep['branch']}; "
+                      "rebind with `python ggmath_bridge.py rebind --sha <40-hex>`")
+            return 3 if rep["over_limit"] else 0
         if args.cmd == "rebind":
             write_json(BINDING_PATH, rebind(binding, args.sha))
             print(f"rebound to {args.sha}")

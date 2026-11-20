@@ -37,6 +37,7 @@ import argparse
 import hashlib
 import concurrent.futures
 import csv
+import http.client
 import importlib.util
 import json
 import math
@@ -66,6 +67,7 @@ def _load(name: str, path: Path):
 PB = _load("jade_private_boundary", ROOT / "tools" / "private_boundary.py")
 BQ = _load("gogreen_bd_queue_wave", ROOT.parent / "gogreen" / "bd_queue_wave.py")  # owner of utc(), percentile()
 WD = _load("jade_devops_wddd", HERE / "wddd.py")  # owner of iso_week_key() and the w##DDD week codes
+MACH2 = _load("mission_control_mach2", ROOT.parent / "v2" / "mach2" / "mach2.py")  # owner of wilson(), defects_rate()
 STRATA_DOC = "job lists are fetched round-robin over (ISO week, workflow), newest first per stratum"
 
 SCHEMA = "jade.devops.actions-metrics.v1"
@@ -143,6 +145,13 @@ def token() -> str:
     return os.environ.get("GITHUB_TOKEN", "")
 
 
+# Transport faults worth a bounded retry. IncompleteRead is raised from json.load() on a
+# truncated body and RemoteDisconnected when the server drops the socket mid-response;
+# neither is an HTTP answer, so both are transient like a 5xx.
+TRANSIENT = (urllib.error.URLError, TimeoutError, ConnectionError,
+             http.client.IncompleteRead, http.client.RemoteDisconnected)
+
+
 class Reader:
     def __init__(self, tok: str = "", base: str = API):
         self.tok, self.base, self.calls = tok, base.rstrip("/"), 0
@@ -161,7 +170,7 @@ class Reader:
             except urllib.error.HTTPError as exc:
                 if exc.code < 500 or attempt == 3:
                     raise
-            except (urllib.error.URLError, TimeoutError, ConnectionError):
+            except TRANSIENT:
                 if attempt == 3:
                     raise
             time.sleep(2 ** attempt * 3)
@@ -203,7 +212,8 @@ def cache_receipt_path(day_file: Path) -> Path:
     return day_file.with_suffix(".receipt.json")
 
 
-def write_runs_with_receipt(day_file: Path, repo: str, day: date, rows: list) -> None:
+def write_runs_with_receipt(day_file: Path, repo: str, day: date, rows: list,
+                            pagination: dict | None = None) -> None:
     """Write run bytes and a companion fetch-time/digest receipt, fail-closed on interruption."""
     raw = json.dumps(rows, sort_keys=True) + "\n"
     receipt = {
@@ -211,6 +221,8 @@ def write_runs_with_receipt(day_file: Path, repo: str, day: date, rows: list) ->
         "fetched_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "records": len(rows), "sha256": hashlib.sha256(raw.encode("utf-8")).hexdigest(),
     }
+    if pagination:
+        receipt["pagination"] = pagination
     tmp = day_file.with_suffix(".json.tmp")
     tmp.write_text(raw, encoding="utf-8", newline="\n")
     tmp.replace(day_file)
@@ -324,31 +336,144 @@ def _unique_run_identities(rows: list[dict], scope: str) -> list[dict]:
     return ordered
 
 
-def fetch_runs_day(rd: Reader, repo: str, day: date) -> list:
-    """Read one UTC day with bounded hourly recovery for incomplete/unstable pages.
+MIN_WINDOW_SECONDS = 1  # the search `created` qualifier resolves whole seconds; below this, fail closed
+DAY_QUERY_BUDGET = 1500  # search queries per UTC day; past it, unread windows are UNKNOWN, not bisected
+PAGINATION_SCHEMA = "jade.devops.actions-run-pagination.v1"
+UNKNOWN_DAY_SCHEMA = "jade.devops.actions-run-unknown-day.v1"
+
+
+class IncompleteDay(ValueError):
+    """Some slices of a UTC day stayed incomplete after bisection; those slices are UNKNOWN.
+
+    `receipt` is the day's pagination receipt, with `unknown_slices` naming each slice that
+    could not be read in full. Rows from the complete slices are not returned: a partial day
+    would read downstream as fewer runs, and UNKNOWN must never look like a smaller count.
+    """
+
+    def __init__(self, repo: str, day: date, receipt: dict):
+        self.repo, self.day, self.receipt = repo, day, receipt
+        unknown = receipt["unknown_slices"]
+        super().__init__(f"{repo} {day}: {len(unknown)} slice(s) UNKNOWN; first: {unknown[0]['error']}")
+
+
+def _ts(t: datetime) -> str:
+    return t.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _fetch_window(rd: Reader, repo: str, lo: datetime, hi: datetime, windows: list,
+                  unknown: list | None = None) -> list:
+    """Read the inclusive UTC window [lo, hi]; bisect it while it is incomplete or collides.
+
+    A window whose total_count exceeds the rows read (the 1000-record search cap, or a short
+    page) or whose pages repeat a run is split into the disjoint halves [lo, mid] and
+    [mid + 1 s, hi], recursively, down to MIN_WINDOW_SECONDS. An unsplittable window that is
+    still incomplete fails closed: missing runs are UNKNOWN, never zero.
+
+    With `unknown` (a list) an unsplittable window, or one past DAY_QUERY_BUDGET, is appended
+    there as an UNKNOWN slice and its siblings are still read; without it, it raises.
+    """
+    if unknown is not None and len(windows) >= DAY_QUERY_BUDGET:
+        windows.append([_ts(lo), _ts(hi), None, None, "UNKNOWN"])
+        unknown.append({"lo": _ts(lo), "hi": _ts(hi), "reason": "QUERY_BUDGET",
+                        "error": f"{repo} {_ts(lo)}..{_ts(hi)}: day query budget "
+                                 f"{DAY_QUERY_BUDGET} spent; window not read"})
+        return []
+    scope = f"/repos/{repo}/actions/runs?created={_ts(lo)}..{_ts(hi)}"
+    part, ptotal = rd.pages(scope, "workflow_runs")
+    clean = _unique_run_identities(part, scope)
+    incomplete, collided = ptotal > len(part), len(clean) != len(part)
+    span = int((hi - lo).total_seconds())
+    if not (incomplete or collided):
+        windows.append([_ts(lo), _ts(hi), ptotal, len(part), "COMPLETE"])
+        return clean
+    if span + 1 <= MIN_WINDOW_SECONDS:
+        windows.append([_ts(lo), _ts(hi), ptotal, len(part), "UNSPLITTABLE"])
+        if incomplete:
+            reason, error = "SEARCH_CAP", (f"{repo} {_ts(lo)}: {ptotal} runs in an unsplittable "
+                                           f"{MIN_WINDOW_SECONDS}s window exceeds the search cap; "
+                                           "source incomplete")
+        else:
+            reason, error = "PAGINATION_COLLISION", (f"{repo} {_ts(lo)}: same-hour pagination collision "
+                                                     f"persists at {MIN_WINDOW_SECONDS}s resolution; "
+                                                     "source incomplete")
+        if unknown is None:
+            raise ValueError(error)
+        unknown.append({"lo": _ts(lo), "hi": _ts(hi), "reason": reason, "total_count": ptotal,
+                        "rows_read": len(part), "error": error})
+        return clean
+    windows.append([_ts(lo), _ts(hi), ptotal, len(part), "BISECTED"])
+    mid = lo + timedelta(seconds=span // 2)
+    left = _fetch_window(rd, repo, lo, mid, windows, unknown)
+    right = _fetch_window(rd, repo, mid + timedelta(seconds=1), hi, windows, unknown)
+    # Exact-boundary duplicates (a run returned by both halves) collapse by immutable run ID;
+    # a conflicting record for the same ID still fails closed.
+    return _unique_run_identities(left + right, f"{repo} {_ts(lo)}..{_ts(hi)} bisected")
+
+
+def fetch_runs_day(rd: Reader, repo: str, day: date, receipt: dict | None = None) -> list:
+    """Read one UTC day; recover incomplete/unstable pages by hour, then by bisection.
 
     Even under 1000 records, active GitHub pagination may repeat an identical
     run across page boundaries and thereby omit some other run. Do not silently
-    drop that duplicate and claim COMPLETE. Re-read disjoint UTC hour slices;
-    refuse incomplete or internally duplicated hours and conflicting records.
+    drop that duplicate and claim COMPLETE. Re-read disjoint UTC hour slices and
+    bisect any hour that is still over the search cap or collides (_fetch_window);
+    refuse conflicting records and windows that cannot be split further.
+
+    A slice that stays incomplete (unsplittable, conflicting, or past DAY_QUERY_BUDGET) is
+    recorded in the receipt's `unknown_slices`; the other slices are still read, then the day
+    raises IncompleteDay so the caller can mark that day UNKNOWN and move on.
+
+    If `receipt` is given it receives the pagination receipt: every window queried
+    with its total_count, rows read and outcome.
     """
+    receipt = {} if receipt is None else receipt
     route = f"/repos/{repo}/actions/runs?created={day.isoformat()}"
     runs, total = rd.pages(route, "workflow_runs")
     unique = _unique_run_identities(runs, route)
+    windows = [[day.isoformat(), day.isoformat(), total, len(runs),
+                "COMPLETE" if total <= len(runs) and len(unique) == len(runs) else "SPLIT_HOURLY"]]
+    unknown: list = []
     if total > len(runs) or len(unique) != len(runs):
         collected = []
+        start = datetime(day.year, day.month, day.day, tzinfo=timezone.utc)
         for h in range(24):
-            lo, hi = f"{day}T{h:02d}:00:00Z", f"{day}T{h:02d}:59:59Z"
-            scope = f"/repos/{repo}/actions/runs?created={lo}..{hi}"
-            part, ptotal = rd.pages(scope, "workflow_runs")
-            clean = _unique_run_identities(part, scope)
-            if ptotal > len(part):
-                raise ValueError(f"{repo} {lo}: {ptotal} runs in one hour exceeds the search cap")
-            if len(clean) != len(part):
-                raise ValueError(f"{repo} {lo}: same-hour pagination collision; source incomplete")
-            collected.extend(clean)
+            lo = start + timedelta(hours=h)
+            hi = lo + timedelta(seconds=3599)
+            try:
+                collected.extend(_fetch_window(rd, repo, lo, hi, windows, unknown))
+            except ValueError as exc:  # a conflicting record: this hour is UNKNOWN, the rest still count
+                unknown.append({"lo": _ts(lo), "hi": _ts(hi), "reason": "CONFLICTING_RECORD",
+                                "error": str(exc)})
         unique = _unique_run_identities(collected, f"{repo} {day} hourly slices")
+    receipt.update({"schema": PAGINATION_SCHEMA, "unique_runs": len(unique),
+                    "queries": sum(w[2] is not None for w in windows),
+                    "bisected": sum(w[4] == "BISECTED" for w in windows),
+                    "windows": windows, "unknown_slices": unknown})
+    if unknown:
+        raise IncompleteDay(repo, day, receipt)
     return [slim(r, RUN_KEYS) for r in unique]
+
+
+def unknown_day_path(day_file: Path) -> Path:
+    return day_file.with_suffix(".unknown.json")
+
+
+def mark_day_unknown(day_file: Path, repo: str, day: date, reason: str, receipt: dict | None) -> None:
+    """Record a day that could not be read in full: no runs file, so every reader sees it missing.
+
+    Any older runs file and receipt for the day are removed, so a stale partial snapshot can't
+    stand in for the day. The sidecar keeps the evidence: the reason and, for an incomplete
+    day, the pagination receipt with its `unknown_slices`.
+    """
+    for stale in (day_file, cache_receipt_path(day_file)):
+        stale.unlink(missing_ok=True)
+    doc = {"schema": UNKNOWN_DAY_SCHEMA, "repository": repo, "day": day.isoformat(),
+           "observed_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+           "coverage": "UNKNOWN", "reason": reason[:500], "pagination": receipt}
+    side = unknown_day_path(day_file)
+    tmp = side.with_suffix(".tmp")
+    tmp.write_text(json.dumps(doc, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    tmp.replace(side)
 
 
 def stratified(runs: list) -> list:
@@ -367,15 +492,26 @@ def stratified(runs: list) -> list:
     return out
 
 
+TRANSPORT_FAULTS = (urllib.error.URLError, http.client.HTTPException, OSError)
+MAX_CONSECUTIVE_DAY_FAULTS = 3  # a run of transport failures means the repo, not a day, is unreadable
+
+
 def fetch(cache: Path, repos: list, since: date, until: date, job_budget: int, rd: Reader,
           workers: int = 6, log=print) -> dict:
+    """Fetch new run days and a job-list sample per repo; one bad slice or day never aborts the pulse.
+
+    A day with an incomplete slice (IncompleteDay) or a transport fault left after the Reader's
+    retries is marked UNKNOWN for that day only (mark_day_unknown) and later days are still
+    read. An HTTP 4xx (auth, missing repo), a malformed or conflicting day query, or
+    MAX_CONSECUTIVE_DAY_FAULTS transport faults in a row stop that repo, as before.
+    """
     today = datetime.now(timezone.utc).date()
     summary = {}
     for repo in repos:
         d = repo_dir(cache, repo)
         (d / "runs").mkdir(parents=True, exist_ok=True)
         (d / "jobs").mkdir(parents=True, exist_ok=True)
-        day, fetched_days = since, 0
+        day, fetched_days, unknown_days, faults = since, 0, [], 0
         try:
             while day <= until:
                 p = d / "runs" / f"{day}.json"
@@ -399,11 +535,31 @@ def fetch(cache: Path, repos: list, since: date, until: date, job_budget: int, r
                     except (OSError, ValueError, KeyError, TypeError):
                         stale = True
                 if stale:
-                    write_runs_with_receipt(p, repo, day, fetch_runs_day(rd, repo, day))
-                    fetched_days += 1
+                    pagination = {}
+                    try:
+                        rows = fetch_runs_day(rd, repo, day, receipt=pagination)
+                    except IncompleteDay as exc:  # some slices UNKNOWN: this day only, keep going
+                        mark_day_unknown(p, repo, day, str(exc), exc.receipt)
+                        unknown_days.append({"day": day.isoformat(), "reason": "INCOMPLETE_SLICES",
+                                             "unknown_slices": len(exc.receipt["unknown_slices"])})
+                        log(f"{repo} {day}: UNKNOWN ({exc})"[:300])
+                    except TRANSPORT_FAULTS as exc:
+                        if isinstance(exc, urllib.error.HTTPError) and exc.code < 500:
+                            raise  # an answer about the repo, not a flaky day
+                        faults += 1
+                        if faults >= MAX_CONSECUTIVE_DAY_FAULTS:
+                            raise
+                        mark_day_unknown(p, repo, day, f"{type(exc).__name__}: {exc}", None)
+                        unknown_days.append({"day": day.isoformat(), "reason": f"TRANSPORT:{type(exc).__name__}"})
+                        log(f"{repo} {day}: UNKNOWN ({type(exc).__name__}: {exc})"[:300])
+                    else:
+                        write_runs_with_receipt(p, repo, day, rows, pagination=pagination)
+                        unknown_day_path(p).unlink(missing_ok=True)
+                        fetched_days, faults = fetched_days + 1, 0
                 day += timedelta(days=1)
-        except (urllib.error.URLError, ValueError) as exc:  # one unreadable repo is UNKNOWN, not a fleet abort
-            summary[repo] = {"error": f"{type(exc).__name__}: {exc}"[:200], "stopped_at": day.isoformat()}
+        except (ValueError, *TRANSPORT_FAULTS) as exc:  # one unreadable repo is UNKNOWN, not a fleet abort
+            summary[repo] = {"error": f"{type(exc).__name__}: {exc}"[:200], "stopped_at": day.isoformat(),
+                             "unknown_days": unknown_days}
             log(f"{repo}: {summary[repo]}")
             continue
         runs = [r for r in load_runs(cache, repo, since, until) if r["status"] == "completed"]
@@ -420,10 +576,10 @@ def fetch(cache: Path, repos: list, since: date, until: date, job_budget: int, r
             for fut in concurrent.futures.as_completed([ex.submit(one, r) for r in todo]):
                 try:
                     fut.result()
-                except (urllib.error.URLError, ValueError, OSError):
+                except (ValueError, *TRANSPORT_FAULTS):
                     errors += 1
-        summary[repo] = {"days_fetched": fetched_days, "runs": len(runs), "job_lists_fetched": len(todo) - errors,
-                         "job_errors": errors}
+        summary[repo] = {"days_fetched": fetched_days, "unknown_days": unknown_days, "runs": len(runs),
+                         "job_lists_fetched": len(todo) - errors, "job_errors": errors}
         log(f"{repo}: {summary[repo]}")
     return summary
 
@@ -631,6 +787,100 @@ def recheck_pressure(runs: list[dict], repo: str, source_sha: str,
     return doc
 
 
+STABILITY_SCHEMA = "jade.devops.actions-stability.v1"
+STABILITY_DAYS = 7
+STABILITY_EVENTS = ("push", "schedule", "workflow_dispatch")
+SIGMA_SHIFT = 1.5  # conventional short-term shift; descriptive, not a process-capability proof
+TOP_RED = 5
+
+
+def _sigma(p: float | None) -> float | None:
+    """Short-term sigma NormalDist().inv_cdf(1 - p) + 1.5, defined only on 0 < p < 1."""
+    if p is None or not 0 < p < 1:
+        return None
+    return round(statistics.NormalDist().inv_cdf(1 - p) + SIGMA_SHIFT, 3)
+
+
+def _rate_block(bad: int, n: int) -> dict:
+    """Numerator, denominator, rate and 95% Wilson interval (mach2 owns the estimator); n=0 is UNKNOWN."""
+    ci = MACH2.wilson(bad, n)
+    return {"numerator": bad, "denominator": n, "rate": round(bad / n, 6) if n else None,
+            "wilson95": None if ci is None else [round(ci["lower"], 6), round(ci["upper"], 6)]}
+
+
+def stability(runs: list, branch: str | None, until: date, missing_days: list[str] | None = None) -> dict:
+    """Per-repo 7-day default-branch stability: DPMO and short-term sigma, never infinite certainty.
+
+    Opportunity: one completed default-branch run (push, schedule or workflow_dispatch) per run ID;
+    the cache keeps the latest attempt of each run, so reruns are one opportunity. Defect: that run
+    did not conclude `success`. sigma is reported only for 0 < p < 1; p = 0 or p = 1 is a
+    censored/boundary state with a Wilson-bound sigma instead, and n = 0 is UNKNOWN. A missing
+    cache day keeps the whole block PARTIAL_UNKNOWN (counts shown, no DPMO or sigma).
+
+    `workflow_run` cancellations are a separate cohort and never enter this denominator.
+    """
+    w0 = until - timedelta(days=STABILITY_DAYS - 1)
+    in_window = [r for r in runs if (t := BQ.utc(r.get("created_at"))) and w0 <= t.date() <= until
+                 and r.get("status") == "completed"]
+    missing = sorted(set(missing_days or []))
+    cohort = [r for r in in_window if branch and r.get("head_branch") == branch
+              and r.get("event") in STABILITY_EVENTS]
+    n = len(cohort)
+    red = [r for r in cohort if r.get("conclusion") != "success"]
+    d = len(red)
+    rate = _rate_block(d, n)
+    p = rate["rate"]
+    if not branch:
+        state = "UNKNOWN_DEFAULT_BRANCH"
+    elif missing:
+        state = "PARTIAL_UNKNOWN_MISSING_DAYS"
+    elif n == 0:
+        state = "UNKNOWN_NO_OPPORTUNITIES"
+    elif d == 0:
+        state = "CENSORED_ZERO_DEFECTS"
+    elif d == n:
+        state = "BOUNDARY_ALL_DEFECTS"
+    else:
+        state = "DESCRIPTIVE_ESTIMATE"
+    measured = state in ("CENSORED_ZERO_DEFECTS", "BOUNDARY_ALL_DEFECTS", "DESCRIPTIVE_ESTIMATE")
+    if not measured:  # counts stay visible; no rate is claimed over an incomplete or empty source
+        rate.update(rate=None, wilson95=None)
+    dr = MACH2.defects_rate(d, n) if measured else {"dpmo": None}
+    # A pessimistic bound from the Wilson upper defect rate: defined for p = 0 as well.
+    upper = rate["wilson95"][1] if measured and rate["wilson95"] else None
+    by_wf = defaultdict(lambda: [0, 0])
+    for r in cohort:
+        k = (r.get("name") or "", r.get("path") or "")
+        by_wf[k][0] += 1
+        by_wf[k][1] += r.get("conclusion") != "success"
+    top = sorted(((k, v) for k, v in by_wf.items() if v[1]), key=lambda kv: (-kv[1][1], kv[0]))[:TOP_RED]
+    wr = [r for r in in_window if r.get("event") == "workflow_run"]
+    wr_cancel = sum(r.get("conclusion") == "cancelled" for r in wr)
+    wr_rate = _rate_block(wr_cancel, len(wr))
+    if missing:  # same completeness gate as the main cohort: counts only, no rate over a partial window
+        wr_rate.update(rate=None, wilson95=None)
+    return {
+        "schema": STABILITY_SCHEMA, "state": state,
+        "window": {"since": w0.isoformat(), "until": until.isoformat(), "days": STABILITY_DAYS},
+        "default_branch": branch, "events": list(STABILITY_EVENTS),
+        "missing_source_days": missing,
+        "opportunity": "one completed default-branch run per run ID (latest attempt)",
+        "defect": "conclusion != success",
+        **rate,
+        "conclusions": dict(sorted(Counter(r.get("conclusion") or "UNKNOWN" for r in cohort).items())),
+        "dpmo": round(dr["dpmo"], 1) if dr.get("dpmo") is not None else None,
+        "sigma_short_term": _sigma(p) if state == "DESCRIPTIVE_ESTIMATE" else None,
+        "sigma_lower95": _sigma(upper),
+        "sigma_formula": "NormalDist().inv_cdf(1 - p) + 1.5, only for 0 < p < 1",
+        "top_red_root_workflows": [{"workflow": name, "path": path, "runs": v[0], "non_success": v[1]}
+                                   for (name, path), v in top],
+        "workflow_run_cancelled": {"cohort": "completed workflow_run-triggered runs, any branch, same window",
+                                   "state": "PARTIAL_UNKNOWN_MISSING_DAYS" if missing else "MEASURED",
+                                   **wr_rate},
+        "basis": "DESCRIPTIVE_ONE_WINDOW_NOT_PROCESS_CAPABILITY",
+    }
+
+
 def iso_week(ts: str) -> str:
     """'2026-11-09T10:00:00Z' -> '2026-W46' (UTC). The key itself comes from wddd.iso_week_key()."""
     return WD.iso_week_key(BQ.utc(ts))
@@ -686,7 +936,8 @@ def stratified_estimate(rows: list) -> dict:
             "est_unsampled_runs": sum(w["workflow_runs"] for w in rows if not w.get("job_coverage"))}
 
 
-def repo_metrics(repo: str, runs: list, jobs_by_run: dict, head: dict, census_sha: str | None) -> dict:
+def repo_metrics(repo: str, runs: list, jobs_by_run: dict, head: dict, census_sha: str | None,
+                 stab: dict | None = None) -> dict:
     by_wf = defaultdict(list)
     for r in runs:
         by_wf[(r.get("path") or "", r.get("name") or "")].append(r)
@@ -702,7 +953,7 @@ def repo_metrics(repo: str, runs: list, jobs_by_run: dict, head: dict, census_sh
     return {"repo": repo, "branch": head.get("branch"), "visibility": head.get("visibility"),
             "head_sha": head.get("head_sha"), "census_head_sha": census_sha,
             "same_pulse": None if census_sha is None else census_sha == head.get("head_sha"),
-            "totals": total, "weekly": weekly(runs, jobs_by_run),
+            "totals": total, "stability": stab, "weekly": weekly(runs, jobs_by_run),
             "by_class": group(rows, "class"), "by_band": group(rows, "band"),
             "by_event": group(rows, "dominant_event"), "workflows": rows}
 
@@ -714,7 +965,10 @@ def project(cache: Path, repos: list, since: date, until: date, heads: dict, cen
     for repo in repos:
         runs = load_runs(cache, repo, since, until)
         jobs = {r["id"]: load_jobs(cache, repo, r) for r in runs}
-        out.append(repo_metrics(repo, runs, jobs, heads.get(repo, {}), census_sha.get(repo)))
+        w0 = until - timedelta(days=STABILITY_DAYS - 1)
+        stab = stability(load_runs(cache, repo, w0, until), heads.get(repo, {}).get("branch"), until,
+                         missing_run_days(cache, repo, w0, until))
+        out.append(repo_metrics(repo, runs, jobs, heads.get(repo, {}), census_sha.get(repo), stab))
         all_runs += runs
         all_jobs.update(jobs)
     wf_rows = [w for r in out for w in r["workflows"]]
@@ -727,7 +981,10 @@ def project(cache: Path, repos: list, since: date, until: date, heads: dict, cen
                    "bands": [label for _, label in BANDS], "classes": [label for label, _ in CLASSES] + ["OTHER"],
                    "job_tier_basis": "OBSERVED over job_coverage; est_* = sum over workflows of observed / that "
                                      "workflow's job_coverage (stratified estimator), ESTIMATE not observation",
-                   "job_sample": STRATA_DOC},
+                   "job_sample": STRATA_DOC,
+                   "stability": f"repos[].stability: {STABILITY_DAYS}-day default-branch "
+                                f"{'/'.join(STABILITY_EVENTS)} cohort ending --until; DPMO, Wilson 95%, "
+                                "short-term sigma only for 0<p<1; workflow_run cancellations a separate cohort"},
         "fleet": {"totals": {**aggregate(all_runs, all_jobs), **{
                       k: (sum(r["totals"][k] for r in out if r["totals"][k] is not None)
                           if any(r["totals"][k] is not None for r in out) else None)
