@@ -1,0 +1,42 @@
+name: GM-I-C P0009 Postmerge Evidence QA
+on:
+  pull_request:
+    paths:
+      - 'mission-control/v2/handoff/closeout/w12-gmic-r2-p0009/**'
+      - '.github/workflows/gmic-p0009-evidence.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-bound-audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pinned
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # pinned
+        with:
+          python-version: '3.12'
+      - name: Canonical Kahn and native snapshot negatives
+        run: python mission-control/v2/handoff/closeout/w12-gmic-r2-p0009/test_p0009.py
+      - name: Generate offline reproducible release
+        run: python mission-control/v2/handoff/closeout/w12-gmic-r2-p0009/build_p0009.py --out "$RUNNER_TEMP/gmic-p0009"
+      - name: Test archive integrity and authority controls
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from zipfile import ZipFile
+          filename = Path(os.environ["RUNNER_TEMP"]) / "gmic-p0009/GMIC_P0009_POSTMERGE_EVIDENCE.zip"
+          with ZipFile(filename) as archive:
+              assert archive.testzip() is None
+              d = json.loads(archive.read("POSTMERGE_AUDIT.json"))
+              assert d["merge_admission_authorized"] is False
+              assert d["issue_closure_delta"] == 0
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # pinned
+        with:
+          name: gmic-p0009-archive-${{ github.event.pull_request.head.sha || github.sha }}
+          path: ${{ runner.temp }}/gmic-p0009/
+          retention-days: 30
