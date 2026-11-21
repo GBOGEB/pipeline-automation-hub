@@ -18,6 +18,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import portfolio_readiness as portfolio
+import root_next_control as root_control
 
 
 BASE_SHA = "897298dc3ed1a45607121b205617d4c103e7b226"
@@ -86,6 +87,90 @@ def issue_snapshot():
             }],
         }},
     }
+
+
+def root_item(repo="GBOGEB/pipeline-automation-hub", **changes):
+    value = {
+        "root_id": "HUB-ROOT-9-001",
+        "repo": repo,
+        "root_source": {"path": "README.md", "line": 90, "blob_sha": "a" * 40},
+        "kind": "library", "owner": "Hub owner",
+        "issue_pr": ["https://github.com/GBOGEB/pipeline-automation-hub/issues/372"],
+        "prerequisites": ["ISSUE:336"], "next_action": "Prove exact-head admission",
+        "gates": {},
+    }
+    value.update(changes)
+    return value
+
+
+class RootNextControlSafetyTests(unittest.TestCase):
+    def test_no_input_is_not_a_zero_closure_achievement(self):
+        out = root_control.project(None)
+        self.assertEqual(out["status"], "NOT_SUPPLIED")
+        self.assertEqual(out["closure_verified"], 0)
+
+    def test_open_gates_are_not_credited_as_closure(self):
+        data = {"schema": root_control.SCHEMA, "items": [root_item()]}
+        result = root_control.project(data)
+        self.assertEqual(result["total"], 1)
+        self.assertEqual(result["closure_verified"], 0)
+        self.assertEqual(result["items"][0]["status"], "PROOF_REQUIRED")
+        self.assertIn("control", result["items"][0]["pending_gates"])
+
+    def test_even_all_declared_passes_cannot_self_certify_control(self):
+        gates = {key: {"decision": "PASS", "head_sha": "b" * 40,
+                       "receipt_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/42"}
+                 for key in root_control.KINDS["library"]}
+        out = root_control.project({"schema": root_control.SCHEMA,
+                                    "items": [root_item(gates=gates)]})
+        self.assertEqual(out["items"][0]["status"], "EVIDENCE_CANDIDATE_UNVERIFIED")
+        self.assertFalse(out["items"][0]["closure_verified"])
+        self.assertEqual(out["closure_verified"], 0)
+        self.assertEqual(out["merge_admission"], "WITHHELD")
+
+    def test_na_requires_reason_owner_receipt_and_cannot_erase_control(self):
+        gates = {"release": {"decision": "NOT_APPLICABLE"}}
+        with self.assertRaises(ValueError):
+            root_control.project({"schema": root_control.SCHEMA,
+                                  "items": [root_item(gates=gates)]})
+        gates = {"control": {"decision": "NOT_APPLICABLE", "reason": "no hosting",
+                             "decision_owner": "X",
+                             "receipt_url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/372"}}
+        with self.assertRaises(ValueError):
+            root_control.project({"schema": root_control.SCHEMA,
+                                  "items": [root_item(gates=gates)]})
+
+    def test_private_owner_sources_not_leaked(self):
+        secret = root_item(repo="GBOGEB/cryoplant-project",
+                           next_action="PRIVATE CONTROL TEXT",
+                           owner="PRIVATE PERSON",
+                           issue_pr=["https://github.com/GBOGEB/cryoplant-project/issues/1"])
+        out = root_control.project({"schema": root_control.SCHEMA, "items": [secret]},
+                                   {"GBOGEB/cryoplant-project"})
+        self.assertEqual(out["private_aggregate"], 1)
+        self.assertEqual(out["items"], [])
+        self.assertNotIn("PRIVATE CONTROL TEXT", json.dumps(out))
+        self.assertNotIn("PRIVATE PERSON", json.dumps(out))
+
+    def test_duplicate_ids_and_untrusted_root_source_fail(self):
+        row = root_item()
+        with self.assertRaises(ValueError):
+            root_control.project({"schema": root_control.SCHEMA, "items": [row, row]})
+        with self.assertRaises(ValueError):
+            root_control.project({"schema": root_control.SCHEMA,
+                                  "items": [root_item(root_source={"path": "docs/README.md",
+                                                                    "line": 1,
+                                                                    "blob_sha": "a" * 40})]})
+
+    def test_portfolio_integration_emits_bounded_artifact(self):
+        input_doc = {"schema": root_control.SCHEMA, "items": [root_item()]}
+        model = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA,
+                                  plan=plan(task()), root_next=input_doc)
+        self.assertEqual(model["root_next_control"]["total"], 1)
+        self.assertEqual(model["root_next_control"]["closure_verified"], 0)
+        files = portfolio.artifacts(model)
+        self.assertIn("root_next_control.json", files)
+        self.assertEqual(json.loads(files["root_next_control.json"])["total"], 1)
 
 
 class ObservationBoundaryTests(unittest.TestCase):
