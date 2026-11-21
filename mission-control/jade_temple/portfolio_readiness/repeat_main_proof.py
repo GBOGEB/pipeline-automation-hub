@@ -45,54 +45,54 @@ def execute(repo: Path, source_sha: str, out: Path):
     scratch = Path(tempfile.gettempdir()) / ("jade-hub-main-proof-" + uuid.uuid4().hex)
     os.makedirs(scratch, mode=0o755, exist_ok=False)
     work = scratch / "source"
-    checkout_attempted = False
+    worktree_registered = False
     try:
-        checkout_attempted = True
         checkout = command(["git", "worktree", "add", "--detach", str(work), source_sha], repo)
         if checkout.returncode:
             raise RuntimeError("detached source worktree failed: " + checkout.stderr[-600:])
-            sha = command(["git", "rev-parse", "HEAD"], work)
-            if sha.returncode or sha.stdout.strip() != source_sha:
-                raise RuntimeError("source worktree head mismatch")
-            blob = command(["git", "rev-parse", "HEAD:README.md"], work)
-            if blob.returncode or not HEX40.fullmatch(blob.stdout.strip()):
-                raise RuntimeError("source root README blob missing")
-            test_file = work / "tests" / "test_main_pipeline_e2e.py"
-            if not test_file.is_file():
-                raise RuntimeError("canonical real-subprocess MAIN test suite absent")
-            test_sha256 = hashlib.sha256(test_file.read_bytes()).hexdigest()
-            begin = time.monotonic()
-            run = command([sys.executable, "-m", "unittest", "-v", SUITE], work)
-            seconds = round(time.monotonic() - begin, 3)
-            output = run.stdout + "\n" + run.stderr
-            cases = re.search(r"Ran (\d+) tests? in ", output)
-            count = int(cases.group(1)) if cases else None
-            passed = (run.returncode == 0 and count == EXPECTED_CASES
-                      and re.search(r"\nOK\s*$", output) is not None)
-            receipt = {
-                "schema": RECEIPT_SCHEMA, "source_repo": "GBOGEB/pipeline-automation-hub",
-                "source_sha": source_sha, "root_readme_blob_sha": blob.stdout.strip(),
-                "suite_path": "tests/test_main_pipeline_e2e.py",
-                "suite_sha256": test_sha256, "test_count": count,
-                "required_test_count": EXPECTED_CASES,
-                "tests": ["valid_PPTX_real_subprocess", "invalid_renamed_PPTX_rejected",
-                          "valid_PPTX_plus_Excel_real_subprocess"],
-                "started_at_utc": started, "elapsed_seconds": seconds,
-                "native_returncode": run.returncode,
-                "status": "PASS_NATIVE_REPEAT" if passed else "FAIL_NATIVE_REPEAT",
-                "authority": "METADATA_ONLY_NOT_DOCUMENT_TRUTH",
-                "release_qualified": False, "control_qualified": False,
-                "merge_admission": "WITHHELD",
-                "log_tail": output[-5500:],
-            }
-            out.parent.mkdir(parents=True, exist_ok=True)
-            out.write_text(json.dumps(receipt, sort_keys=True, indent=2) + "\n",
-                           encoding="utf-8")
-            return passed, receipt
+        worktree_registered = True
+        sha = command(["git", "rev-parse", "HEAD"], work)
+        if sha.returncode or sha.stdout.strip() != source_sha:
+            raise RuntimeError("source worktree head mismatch")
+        blob = command(["git", "rev-parse", "HEAD:README.md"], work)
+        if blob.returncode or not HEX40.fullmatch(blob.stdout.strip()):
+            raise RuntimeError("source root README blob missing")
+        test_file = work / "tests" / "test_main_pipeline_e2e.py"
+        if not test_file.is_file():
+            raise RuntimeError("canonical real-subprocess MAIN test suite absent")
+        test_sha256 = hashlib.sha256(test_file.read_bytes()).hexdigest()
+        begin = time.monotonic()
+        run = command([sys.executable, "-m", "unittest", "-v", SUITE], work)
+        seconds = round(time.monotonic() - begin, 3)
+        output = run.stdout + "\n" + run.stderr
+        cases = re.search(r"Ran (\d+) tests? in ", output)
+        count = int(cases.group(1)) if cases else None
+        passed = (run.returncode == 0 and count == EXPECTED_CASES
+                  and re.search(r"\nOK\s*$", output) is not None)
+        receipt = {
+            "schema": RECEIPT_SCHEMA, "source_repo": "GBOGEB/pipeline-automation-hub",
+            "source_sha": source_sha, "root_readme_blob_sha": blob.stdout.strip(),
+            "suite_path": "tests/test_main_pipeline_e2e.py",
+            "suite_sha256": test_sha256, "test_count": count,
+            "required_test_count": EXPECTED_CASES,
+            "tests": ["valid_PPTX_real_subprocess", "invalid_renamed_PPTX_rejected",
+                      "valid_PPTX_plus_Excel_real_subprocess"],
+            "started_at_utc": started, "elapsed_seconds": seconds,
+            "native_returncode": run.returncode,
+            "status": "PASS_NATIVE_REPEAT" if passed else "FAIL_NATIVE_REPEAT",
+            "authority": "METADATA_ONLY_NOT_DOCUMENT_TRUTH",
+            "release_qualified": False, "control_qualified": False,
+            "merge_admission": "WITHHELD",
+            "log_tail": output[-5500:],
+        }
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(json.dumps(receipt, sort_keys=True, indent=2) + "\n",
+                       encoding="utf-8")
+        return passed, receipt
     finally:
         # Remove Git registration before clearing scratch. If a Windows lock
         # prevents cleanup, do not silently claim the workspace is clean.
-        cleanup = command(["git", "worktree", "remove", "--force", str(work)], repo) if checkout_attempted else None
+        cleanup = command(["git", "worktree", "remove", "--force", str(work)], repo) if worktree_registered else None
         if cleanup is not None and cleanup.returncode:
             raise RuntimeError("detached source worktree cleanup failed: " + cleanup.stderr[-600:])
         shutil.rmtree(scratch)
