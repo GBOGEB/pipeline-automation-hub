@@ -324,9 +324,13 @@ class SourceAndFailureTests(unittest.TestCase):
             scale.write_manifest(out, "a" * 40, "b" * 64, "PASS")
             (out / "native_gate_hold.json").write_text('{"classification":"HOLD_NO_MATCHED_NATIVE_OBSERVATIONS"}')
             (tmp / "g9-scale-tests.log").write_text("test log")
-            with mock.patch.dict(scale.os.environ, {"RUNNER_TEMP": str(tmp)}):
+            with mock.patch.dict(scale.os.environ, {"RUNNER_TEMP": str(tmp),
+                                                      "EXACT_HEAD": "a" * 40,
+                                                      "BENCHMARK_OUTCOME": "success",
+                                                      "VERIFY_OUTCOME": "success"}):
                 exec(script, {})
                 manifest = json.loads((out / "manifest.json").read_bytes())
+                self.assertEqual(manifest["status"], "PASS")
                 self.assertEqual(set(manifest["files"]),
                                  {"index.html", "native_gate_hold.json", "g9-scale-tests.log"})
                 for name, digest in manifest["files"].items():
@@ -334,10 +338,35 @@ class SourceAndFailureTests(unittest.TestCase):
                 (out / "index.html").write_text("tampered after validation")
                 with self.assertRaisesRegex(SystemExit, "SCALE_MEMBER_HASH_TAMPER_BEFORE_FINAL_SEAL"):
                     exec(script, {})
+        # A completed benchmark followed by an unsuccessful authority/verifier
+        # must downgrade an initially PASS manifest; its hashes stay sealed.
+        for benchmark, verification in (("success", "failure"),
+                                        ("success", "skipped"),
+                                        ("failure", "skipped")):
+            with self.subTest(benchmark=benchmark, verification=verification):
+                with scale.scratch_directory() as tmp:
+                    out = tmp / "g9-local-scale"
+                    out.mkdir()
+                    (out / "index.html").write_text("previously verified")
+                    scale.write_manifest(out, "a" * 40, "b" * 64, "PASS")
+                    with mock.patch.dict(scale.os.environ, {
+                            "RUNNER_TEMP": str(tmp), "EXACT_HEAD": "a" * 40,
+                            "BENCHMARK_OUTCOME": benchmark,
+                            "VERIFY_OUTCOME": verification}):
+                        exec(script, {})
+                    manifest = json.loads((out / "manifest.json").read_bytes())
+                    self.assertEqual(manifest["status"], "FAIL")
+                    self.assertFalse(manifest["scale_promotion"])
+                    self.assertEqual(manifest["merger_admission"], "HOLD")
+                    for name, digest in manifest["files"].items():
+                        self.assertEqual(scale.hash_bytes((out / name).read_bytes()), digest)
         # A pre-benchmark test failure still has a sealed FAIL artifact and log.
         with scale.scratch_directory() as tmp:
             (tmp / "g9-scale-tests.log").write_text("FAILED before benchmark")
-            with mock.patch.dict(scale.os.environ, {"RUNNER_TEMP": str(tmp), "EXACT_HEAD": "a"*40}):
+            with mock.patch.dict(scale.os.environ, {"RUNNER_TEMP": str(tmp),
+                                                      "EXACT_HEAD": "a" * 40,
+                                                      "BENCHMARK_OUTCOME": "failure",
+                                                      "VERIFY_OUTCOME": "skipped"}):
                 exec(script, {})
             manifest = json.loads((tmp / "g9-local-scale" / "manifest.json").read_bytes())
             self.assertEqual(manifest["status"], "FAIL")
