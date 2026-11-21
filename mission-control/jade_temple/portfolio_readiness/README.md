@@ -24,6 +24,7 @@ Optional inputs:
 |---|---|---|
 | `--observation` | Source-bound observation supported by the projection CLI | Add current frontier observations separately from historical JADE evidence. |
 | `--issue-snapshot` | Canonical `jade.issue-rank.snapshot.v2` input | Use the existing issue-ranking owner for issue/PR lineage, checklist status, pressure and rollups. |
+| `--root-next` | `jade.root-next-control.v1` | Project the exact README/owner/issue and product-class gate deficits; never grant closure from declared PASS. |
 | `--previous` | Previous portfolio projection | Compare compatible observations while retaining missing or stale inputs. |
 | `--out` | Local generated-output directory | Keep the report and intermediate inputs outside tracked source. |
 
@@ -35,6 +36,7 @@ Run `--help` for the implemented options and validation. This first version proj
 |---|---|
 | `index.html` | Cluster-to-task navigation, dated evidence and source links. |
 | `portfolio_readiness.json` | Machine-readable projection with source identities and explicit authority. |
+| `root_next_control.json` | Source-bound root-obligation pilot, pending evidence gates and private-safe aggregates; zero auto-closure credit. |
 | `action_queue.csv` | Portable task/owner/DOV/DOD review queue. |
 | `execution_dag.mmd` | Dependency view over the canonical Kahn layering. |
 | `watch_request.json` | Inactive monitoring request for existing scheduler owners to review and bind. |
@@ -47,6 +49,39 @@ canonical owner code and recorded inputs. The consumer's working bytes are hashe
 separately. A correctly shaped SHA alone does not authenticate those files, and
 matching local Git blobs does not establish native execution or current release
 qualification.
+
+### Bounded Hub ROOT NEXT → CONTROL example (read-only)
+
+The first real two-item [Hub root README pilot](root_next_pilot_hub.json) is pinned
+to the Hub README blob `4a691127e9dd4d0a2ad4fb766f16273557b5157f`
+at source commit `aec47c4c0d0ba026e67b266a2db1ea04f1999359`.
+Its two obligation anchors are root `README.md` lines 117 and 170, linked to
+the already-closed historical MAIN proof issue #300 and the still-open
+real-workbook baseline issue #410. The closed issue is *historical context*,
+not a new CONTROL closure. The source gate has only a declared candidate PASS;
+all other missing evidence remains pending.
+
+For a local read-only review of the same fixture:
+
+```bash
+python mission-control/jade_temple/portfolio_readiness/portfolio_readiness.py \
+  --as-of 2026-11-21T06:00:00Z \
+  --source-sha 6bd23f96821d44c9ab81ec759340d8aa660f3de8 \
+  --root-next mission-control/jade_temple/portfolio_readiness/root_next_pilot_hub.json \
+  --out mission-control/issue_rank/out/root_next_control_pilot
+```
+
+Replace the example observation time with the actual later read time. Use the
+canonical owner's separately governed source snapshot when moving the pilot to
+a new README blob; the native tests explicitly check the README blob against
+the pilot. Do not change the source hash merely to silence drift.
+
+The resulting HTML shows public root obligations, their remaining gates,
+the next executable action, and the canonical owner link. A private source is
+aggregate-only. The `root_next_control.json` export is **not** a publishable
+release/CONTROL certificate; even an all-PASS supplied declaration remains
+`EVIDENCE_CANDIDATE_UNVERIFIED` until independent owner DoV and real
+post-release CONTROL.
 
 ## 2. One owner for each definition
 
