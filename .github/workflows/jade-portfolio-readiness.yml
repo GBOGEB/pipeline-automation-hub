@@ -91,6 +91,12 @@ jobs:
           assert {row["root_id"] for row in doc["items"]} == {
               "HUB-README-117-MAIN-PIPELINE", "HUB-README-170-EXCEL-SCHEDULE"}
           assert doc["gate_deficits"]["control"] == 2
+          assert sum(item["gate_candidates"] for item in doc["items"]) == 3
+          assert sum(len(item["pending_gates"]) for item in doc["items"]) == 13
+          native = doc["items"][0]["evidence_candidates"]["native"]
+          assert native["head_sha"] == os.environ["HUB_MAIN_REPEAT_SHA"]
+          assert native["verification"] == "OWNER_INDEPENDENT_DOV_PENDING"
+          assert native["receipt_url"].endswith("/runs/44878223386/artifacts/14696623268")
           assert all(row["root_source"]["blob_sha"] ==
                      "4a691127e9dd4d0a2ad4fb766f16273557b5157f"
                      for row in doc["items"])
