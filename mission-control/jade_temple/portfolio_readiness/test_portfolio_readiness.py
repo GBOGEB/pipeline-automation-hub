@@ -170,6 +170,53 @@ class RootNextControlSafetyTests(unittest.TestCase):
         self.assertEqual(result["items"][0]["status"], "PROOF_REQUIRED")
         self.assertIn("control", result["items"][0]["pending_gates"])
 
+    def test_invalid_github_urls_cannot_launder_gate_pass(self):
+        bad = (
+            "https://github.com/", "https://github.com/GBOGEB/pipeline-automation-hub",
+            "https://github.com/GBOGEB/pipeline-automation-hub/settings",
+            "https://github.com/GBOGEB/pipeline-automation-hub/actions",
+            "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/not-a-run",
+            "https://github.com/GBOGEB/pipeline-automation-hub/issues/not-a-number",
+            "https://github.com/GBOGEB/pipeline-automation-hub/blob/main/README.md",
+            "https://github.com/GBOGEB/pipeline-automation-hub/wiki/Proof",
+            "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/42/redirect",
+            "https://github.com/GBOGEB/pipeline-automation-hub/issues/372?fake=1",
+        )
+        for uri in bad:
+            with self.subTest(uri=uri):
+                self.assertIsNone(root_control.link(uri))
+                with self.assertRaisesRegex(ValueError, "PASS needs exact SHA"):
+                    root_control.project({"schema": root_control.SCHEMA, "items": [
+                        root_item(gates={"native": {"decision": "PASS",
+                                                   "head_sha": "a" * 40,
+                                                   "receipt_url": uri}})]})
+                with self.assertRaisesRegex(ValueError, "canonical GitHub issues"):
+                    root_control.project({"schema": root_control.SCHEMA, "items": [
+                        root_item(issue_pr=[uri])]})
+
+    def test_attributable_github_object_links_remain_candidates_only(self):
+        owner = "https://github.com/GBOGEB/pipeline-automation-hub"
+        good = (
+            owner + "/issues/372",
+            owner + "/pull/1284",
+            owner + "/actions/runs/44878733289",
+            owner + "/actions/runs/44878733289/artifacts/14697455294",
+            owner + "/blob/" + "a" * 40 + "/README.md",
+            owner + "/commit/" + "a" * 40,
+            owner + "/releases/tag/v1.2.3",
+        )
+        for uri in good:
+            with self.subTest(uri=uri):
+                self.assertEqual(root_control.link(uri), uri)
+                projected = root_control.project({"schema": root_control.SCHEMA, "items": [
+                    root_item(gates={"native": {"decision": "PASS", "head_sha": "a" * 40,
+                                               "receipt_url": uri}})]})
+                self.assertEqual(projected["closure_verified"], 0)
+                self.assertEqual(projected["gate_deficits"]["control"], 1)
+        self.assertEqual(root_control.link(owner + "/issues/372", issue_pr=True),
+                         owner + "/issues/372")
+        self.assertIsNone(root_control.link(owner + "/actions/runs/42", issue_pr=True))
+
     def test_even_all_declared_passes_cannot_self_certify_control(self):
         gates = {key: {"decision": "PASS", "head_sha": "b" * 40,
                        "receipt_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/42"}
