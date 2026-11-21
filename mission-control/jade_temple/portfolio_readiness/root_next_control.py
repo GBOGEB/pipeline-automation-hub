@@ -36,17 +36,25 @@ GIT_SHA = re.compile(r"^[0-9a-f]{40}$")
 
 
 def link(value, *, issue_pr=False):
-    if not isinstance(value, str) or any(ord(ch) < 32 for ch in value):
+    if (not isinstance(value, str) or any(ord(ch) < 32 for ch in value)
+            or "\\" in value):
         return None
     try:
         parts = urlsplit(value)
         if (parts.scheme != "https" or parts.hostname != "github.com"
                 or parts.username or parts.password or parts.port is not None
-                or parts.query or not parts.path):
+                or parts.query or parts.fragment or not parts.path):
             return None
     except ValueError:
         return None
+    # URL clients normalize dot segments (including encoded dots) before fetching.
+    # Reject all percent-escaped path bytes and literal dot segments rather than
+    # accepting a syntactically immutable link that resolves to another page.
+    if "%" in parts.path:
+        return None
     segments = parts.path.split("/")
+    if any(segment in (".", "..") for segment in segments) or "//" in parts.path:
+        return None
     if len(segments) < 5 or not GITHUB_REPO_PATH.fullmatch("/".join(segments[:3])):
         return None
     obj = segments[3]
