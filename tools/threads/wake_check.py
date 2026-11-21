@@ -21,7 +21,6 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
-import re
 import sys
 from pathlib import Path
 
@@ -44,11 +43,18 @@ def parked() -> list[dict]:
     return items
 
 
-def split_ref(ref: str, home: str) -> tuple[str, int]:
-    m = re.fullmatch(r"(?:([\w.-]+))?#(\d+)", ref.strip())
-    if not m:
-        raise ValueError(ref)
-    return (m.group(1) or home), int(m.group(2))
+split_ref = c.split_ref
+
+
+def parse_refs(refs, home: str) -> tuple[set[tuple[str, int]], list]:
+    """Parsed refs and the ones that could not be parsed; a bad ref never stops the whole check."""
+    good, bad = set(), []
+    for r in refs or []:
+        try:
+            good.add(split_ref(r, home))
+        except ValueError:
+            bad.append(r)
+    return good, bad
 
 
 def prs_since(repo: str, since: str) -> list[dict]:
@@ -71,7 +77,9 @@ def comments_since(repo: str, number: int, since: str) -> int:
 def match(item: dict, prs: dict[str, list[dict]], since: str, updated=updated_since, comments=comments_since) -> list[dict]:
     """Hits as {"strength": "strong"|"weak", "text": ...}; one line per PR with all its reasons."""
     w, hits = item["wake"], []
-    refs = {split_ref(r, item["repo"]) for r in w.get("refs", [])}
+    refs, bad = parse_refs(w.get("refs"), item["repo"])
+    if bad:
+        print(f"WARN {item['repo']}#{item['number']}: skipped wake ref(s) {bad!r}", file=sys.stderr)
     for pr in prs.get(item["repo"], []):
         if pr["number"] == item["number"] or (pr.get("updatedAt") or "") < since:
             continue

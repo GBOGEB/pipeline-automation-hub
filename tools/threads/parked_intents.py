@@ -53,7 +53,20 @@ def _ticks(values) -> str:
     return ", ".join("`" + v + "`" for v in values)
 
 
+def canonical_refs(refs, home: str) -> list[str]:
+    """Refs as ``#N`` (same repo) or ``repo#N`` strings, so int and bare forms render and re-parse."""
+    out = []
+    for r in refs or []:
+        repo, n = c.split_ref(r, home)
+        out.append(f"#{n}" if repo == home else f"{repo}#{n}")
+    return out
+
+
 def body(item: dict, spec_map: str, date: str) -> str:
+    wake = dict(item["wake"])
+    if "refs" in wake:
+        wake["refs"] = canonical_refs(wake["refs"], item["repo"])
+    item = {**item, "wake": wake}
     meta = {"id": item["id"], "sessions": [s[1] for s in item["sessions"]], "wake": item["wake"]}
     sessions = "\n".join("- " + t + ": `" + sid + "` (claude://claude.ai/epitaxy/" + sid + ")"
                          for t, sid in item["sessions"])
@@ -76,6 +89,18 @@ def already_commented(posted: list[str], pid: str) -> bool:
     return any(pat.search(b or "") for b in posted)
 
 
+def bad_refs(spec: dict) -> list[str]:
+    """Items whose wake refs do not parse; the filer refuses the spec so a bad marker is never filed."""
+    out = []
+    for item in spec.get("items", []):
+        for r in item.get("wake", {}).get("refs", []):
+            try:
+                c.split_ref(r, item["repo"])
+            except ValueError:
+                out.append(f"{item['id']}: {r!r}")
+    return out
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("spec", type=Path)
@@ -83,6 +108,10 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
     spec = json.loads(a.spec.read_text(encoding="utf-8"))
     date = spec.get("date", "")
+    bad = bad_refs(spec)
+    if bad:
+        print("REFUSED: wake refs must be repo#N, #N or N: " + "; ".join(bad), file=sys.stderr)
+        return 2
     results = []
     for repo in sorted({i["repo"] for i in spec.get("items", [])}):
         if not a.dry_run:
