@@ -133,6 +133,7 @@ def project(doc, private_repos=()):
              and set(gates).issubset(set(KINDS[kind])), "gate contract keys")
         pending = []
         declarations = 0
+        evidence_candidates = {}
         for gate in KINDS[kind]:
             item = gates.get(gate)
             if not isinstance(item, dict) or item.get("decision") not in DECISIONS:
@@ -149,6 +150,10 @@ def project(doc, private_repos=()):
                      and HEX40.fullmatch(item["head_sha"]),
                      "PASS needs exact SHA and GitHub receipt")
                 declarations += 1
+                evidence_candidates[gate] = {"decision": "PASS_DECLARED",
+                                             "head_sha": item["head_sha"],
+                                             "receipt_url": item["receipt_url"],
+                                             "verification": "OWNER_INDEPENDENT_DOV_PENDING"}
             else:
                 need(gate not in ("source", "issue_pr", "review", "control"),
                      "foundational gate cannot be NOT_APPLICABLE")
@@ -158,6 +163,10 @@ def project(doc, private_repos=()):
                      and link(item.get("receipt_url")) is not None,
                      "NOT_APPLICABLE needs reason, owner and decision receipt")
                 declarations += 1
+                evidence_candidates[gate] = {"decision": "NOT_APPLICABLE_DECLARED",
+                                             "decision_owner": item["decision_owner"],
+                                             "receipt_url": item["receipt_url"],
+                                             "verification": "OWNER_INDEPENDENT_DOV_PENDING"}
         next_action = row.get("next_action")
         need(isinstance(next_action, str) and bool(next_action.strip()), "next action")
         out.append({
@@ -166,6 +175,7 @@ def project(doc, private_repos=()):
             "kind": kind, "owner": owner, "issue_pr": issues,
             "prerequisites": depends, "next_action": next_action,
             "gate_candidates": declarations, "gate_total": len(KINDS[kind]),
+            "evidence_candidates": evidence_candidates,
             "pending_gates": pending,
             "status": "EVIDENCE_CANDIDATE_UNVERIFIED" if not pending
                       else "PROOF_REQUIRED",
