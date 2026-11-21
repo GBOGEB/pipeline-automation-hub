@@ -11,6 +11,8 @@ import json
 import sys
 import tempfile
 import unittest
+from types import SimpleNamespace
+from unittest import mock
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
@@ -354,6 +356,63 @@ class RootNextControlSafetyTests(unittest.TestCase):
         self.assertIn("rootCtl.closure_verified", page)
         self.assertIn("EVIDENCE CANDIDATE; UNVERIFIED", page)
         self.assertEqual(model["root_next_control"]["closure_verified"], 0)
+
+    def test_repeat_main_uses_git_readable_temp_and_cleans_on_success(self):
+        import repeat_main_proof as proof
+        pinned = "a" * 40
+        with tempfile.TemporaryDirectory() as outer:
+            scratch = Path(outer)
+            out = scratch / "receipt.json"
+            seen = []
+            def fake(args, cwd):
+                if args[:3] == ["git", "cat-file", "-t"]:
+                    return SimpleNamespace(returncode=0, stdout="commit\\n", stderr="")
+                if args[:3] == ["git", "worktree", "add"]:
+                    work = Path(args[4])
+                    self.assertEqual(work.parent.parent, scratch)
+                    self.assertTrue(work.parent.is_dir())
+                    self.assertEqual(work.parent.name[:20], "jade-hub-main-proof-")
+                    seen.append(work.parent)
+                    (work / "tests").mkdir(parents=True)
+                    (work / "tests" / "test_main_pipeline_e2e.py").write_text("# suite")
+                    return SimpleNamespace(returncode=0, stdout="", stderr="")
+                if args[:3] == ["git", "rev-parse", "HEAD"]:
+                    return SimpleNamespace(returncode=0, stdout=pinned + "\\n", stderr="")
+                if args[:3] == ["git", "rev-parse", "HEAD:README.md"]:
+                    return SimpleNamespace(returncode=0, stdout=pinned + "\\n", stderr="")
+                if args[:3] == ["git", "worktree", "remove"]:
+                    return SimpleNamespace(returncode=0, stdout="", stderr="")
+                self.assertEqual(args[1:4], ["-m", "unittest", "-v"])
+                return SimpleNamespace(returncode=0, stdout="",
+                                       stderr="Ran 3 tests in 0.010s\\n\\nOK\\n")
+            with mock.patch.object(proof, "command", side_effect=fake):
+                with mock.patch.object(proof.tempfile, "gettempdir", return_value=str(scratch)):
+                    passed, rec = proof.execute(portfolio.REPO, pinned, out)
+            self.assertTrue(passed)
+            self.assertEqual(rec["status"], "PASS_NATIVE_REPEAT")
+            self.assertTrue(seen)
+            self.assertFalse(seen[0].exists())
+            self.assertTrue(out.exists())
+
+    def test_repeat_main_cleans_git_readable_temp_on_checkout_failure(self):
+        import repeat_main_proof as proof
+        pinned = "a" * 40
+        with tempfile.TemporaryDirectory() as outer:
+            scratch = Path(outer)
+            worktree_path = []
+            def fake(args, cwd):
+                if args[:3] == ["git", "cat-file", "-t"]:
+                    return SimpleNamespace(returncode=0, stdout="commit\\n", stderr="")
+                if args[:3] == ["git", "worktree", "add"]:
+                    worktree_path.append(Path(args[4]).parent)
+                    return SimpleNamespace(returncode=1, stdout="", stderr="denied")
+                self.fail("unexpected subprocess after failed checkout")
+            with mock.patch.object(proof, "command", side_effect=fake):
+                with mock.patch.object(proof.tempfile, "gettempdir", return_value=str(scratch)):
+                    with self.assertRaisesRegex(RuntimeError, "detached source worktree failed"):
+                        proof.execute(portfolio.REPO, pinned, scratch / "receipt.json")
+            self.assertEqual(len(worktree_path), 1)
+            self.assertFalse(worktree_path[0].exists())
 
     def test_pinned_main_repeat_rejects_floating_ref_and_existing_receipt(self):
         import repeat_main_proof as proof
