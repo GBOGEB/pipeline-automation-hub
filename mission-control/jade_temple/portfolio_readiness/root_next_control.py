@@ -28,17 +28,39 @@ def need(condition, message):
         raise ValueError(message)
 
 
-def link(value):
-    if not isinstance(value, str):
+# Only attributable GitHub object URLs, never repository home, settings or
+# arbitrary GitHub paths. URL shape is necessary but not an existence check.
+GITHUB_ID = re.compile(r"^[1-9][0-9]*$")
+GITHUB_REPO_PATH = re.compile(r"^/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
+GIT_SHA = re.compile(r"^[0-9a-f]{40}$")
+
+
+def link(value, *, issue_pr=False):
+    if not isinstance(value, str) or any(ord(ch) < 32 for ch in value):
         return None
     try:
         parts = urlsplit(value)
+        if (parts.scheme != "https" or parts.hostname != "github.com"
+                or parts.username or parts.password or parts.port is not None
+                or parts.query or not parts.path):
+            return None
     except ValueError:
         return None
-    if (parts.scheme != "https" or parts.hostname != "github.com"
-            or parts.username or parts.password or parts.port or not parts.path):
+    segments = parts.path.split("/")
+    if len(segments) < 5 or not GITHUB_REPO_PATH.fullmatch("/".join(segments[:3])):
         return None
-    return value
+    obj = segments[3]
+    tail = segments[4:]
+    issue = obj in ("issues", "pull") and len(tail) == 1 and bool(GITHUB_ID.fullmatch(tail[0]))
+    if issue_pr:
+        return value if issue else None
+    action = (obj == "actions" and len(tail) in (2, 4) and
+              tail[0] == "runs" and bool(GITHUB_ID.fullmatch(tail[1])) and
+              (len(tail) == 2 or (tail[2] == "artifacts" and bool(GITHUB_ID.fullmatch(tail[3])))))
+    blob = obj == "blob" and len(tail) >= 2 and bool(GIT_SHA.fullmatch(tail[0])) and all(tail[1:])
+    commit = obj == "commit" and len(tail) == 1 and bool(GIT_SHA.fullmatch(tail[0]))
+    release = obj == "releases" and len(tail) >= 2 and tail[0] == "tag" and all(tail[1:])
+    return value if issue or action or blob or commit or release else None
 
 
 def project(doc, private_repos=()):
@@ -102,7 +124,7 @@ def project(doc, private_repos=()):
         need(isinstance(owner, str) and bool(owner.strip()), "accountable owner")
         issues = row.get("issue_pr")
         need(isinstance(issues, list) and bool(issues)
-             and all(link(u) for u in issues), "canonical GitHub issues/PR links")
+             and all(link(u, issue_pr=True) for u in issues), "canonical GitHub issues/PR links")
         depends = row.get("prerequisites", [])
         need(isinstance(depends, list) and all(isinstance(d, str) and d for d in depends),
              "typed prerequisites")
