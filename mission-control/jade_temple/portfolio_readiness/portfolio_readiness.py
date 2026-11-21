@@ -119,7 +119,8 @@ def source_hashes(jade: Path) -> dict:
     files.update(OWNERS.values())
     files.update(TRANSITIVE_INPUTS)
     files.update("mission-control/jade_temple/portfolio_readiness/" + p
-                 for p in ("portfolio_readiness.py", "dashboard.py", "census_bridge.py"))
+                 for p in ("portfolio_readiness.py", "dashboard.py", "census_bridge.py",
+                           "root_next_control.py", "repeat_main_proof.py"))
     result = {}
     for rel in sorted(files):
         path = jade / rel.removeprefix("mission-control/jade_temple/") if rel.startswith(
@@ -332,7 +333,10 @@ def semantic_state(model: dict) -> dict:
                   for i in sorted(issues["items"], key=lambda x: x["key"])],
         "closed_in_window": issues.get("closed_in_window")}
     return {"planning_source_sha": model["planning_source_sha"], "source_hashes": model["source_hashes"],
-            "root_next_control": model["root_next_control"],
+            "root_next_control": model.get("root_next_control", {
+                 "schema": "jade.root-next-control.v1", "status": "NOT_SUPPLIED",
+                 "items": [], "private_aggregate": 0, "total": 0,
+                 "closure_verified": 0, "actionable": 0, "gate_deficits": {}}),
             "history": [(p["id"], p["snapshot_sha256"]) for p in model["history"]],
             "repos": [{k: sorted(v) if k == "source_urls" else v for k, v in r.items() if k != "observed_at"}
                       for r in sorted(model["observation"]["repos"], key=lambda x: x["repo"])],
@@ -346,7 +350,16 @@ def semantic_state(model: dict) -> dict:
 def view_cohort(model: dict) -> dict:
     """Display comparability is separate from native CONTROL qualification."""
     issue_model = model["issues"].get("model")
+    root = model.get("root_next_control") or {"status": "NOT_SUPPLIED", "items": [],
+                                              "private_aggregate": 0}
+    root_identity = sorted((item["repo"], item["root_id"],
+                            item["root_source"]["path"], item["root_source"]["line"],
+                            item["root_source"]["blob_sha"], item.get("source_commit"),
+                            item["kind"]) for item in root.get("items", []))
     return {"schema": model["schema"], "planning_source_sha": model["planning_source_sha"],
+            "root_cohort": {"status": root.get("status", "NOT_SUPPLIED"),
+                            "public_source_identities": root_identity,
+                            "private_aggregate": root.get("private_aggregate", 0)},
             "history_cohort": model["history"][-1]["cohort"],
             "history_denominator": model["rolling5_historical"]["metrics"]["gate_denominator"],
             "repos": sorted((r["repo"], r.get("check_population"),
