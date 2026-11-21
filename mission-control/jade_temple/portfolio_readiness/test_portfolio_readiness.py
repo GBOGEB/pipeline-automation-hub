@@ -366,7 +366,7 @@ class RootNextControlSafetyTests(unittest.TestCase):
             seen = []
             def fake(args, cwd):
                 if args[:3] == ["git", "cat-file", "-t"]:
-                    return SimpleNamespace(returncode=0, stdout="commit\\n", stderr="")
+                    return SimpleNamespace(returncode=0, stdout="commit\n", stderr="")
                 if args[:3] == ["git", "worktree", "add"]:
                     work = Path(args[4])
                     self.assertEqual(work.parent.parent, scratch)
@@ -377,14 +377,14 @@ class RootNextControlSafetyTests(unittest.TestCase):
                     (work / "tests" / "test_main_pipeline_e2e.py").write_text("# suite")
                     return SimpleNamespace(returncode=0, stdout="", stderr="")
                 if args[:3] == ["git", "rev-parse", "HEAD"]:
-                    return SimpleNamespace(returncode=0, stdout=pinned + "\\n", stderr="")
+                    return SimpleNamespace(returncode=0, stdout=pinned + "\n", stderr="")
                 if args[:3] == ["git", "rev-parse", "HEAD:README.md"]:
-                    return SimpleNamespace(returncode=0, stdout=pinned + "\\n", stderr="")
+                    return SimpleNamespace(returncode=0, stdout=pinned + "\n", stderr="")
                 if args[:3] == ["git", "worktree", "remove"]:
                     return SimpleNamespace(returncode=0, stdout="", stderr="")
                 self.assertEqual(args[1:4], ["-m", "unittest", "-v"])
                 return SimpleNamespace(returncode=0, stdout="",
-                                       stderr="Ran 3 tests in 0.010s\\n\\nOK\\n")
+                                       stderr="Ran 3 tests in 0.010s\n\nOK\n")
             with mock.patch.object(proof, "command", side_effect=fake):
                 with mock.patch.object(proof.tempfile, "gettempdir", return_value=str(scratch)):
                     passed, rec = proof.execute(portfolio.REPO, pinned, out)
@@ -402,7 +402,7 @@ class RootNextControlSafetyTests(unittest.TestCase):
             worktree_path = []
             def fake(args, cwd):
                 if args[:3] == ["git", "cat-file", "-t"]:
-                    return SimpleNamespace(returncode=0, stdout="commit\\n", stderr="")
+                    return SimpleNamespace(returncode=0, stdout="commit\n", stderr="")
                 if args[:3] == ["git", "worktree", "add"]:
                     worktree_path.append(Path(args[4]).parent)
                     return SimpleNamespace(returncode=1, stdout="", stderr="denied")
