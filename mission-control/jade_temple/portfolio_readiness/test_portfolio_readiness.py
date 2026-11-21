@@ -104,6 +104,59 @@ def root_item(repo="GBOGEB/pipeline-automation-hub", **changes):
 
 
 class RootNextControlSafetyTests(unittest.TestCase):
+    def test_dynamic_root_consumer_and_repeat_runner_have_source_hashes(self):
+        model = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA,
+                                  plan=plan(task()))
+        for name in ("root_next_control.py", "repeat_main_proof.py"):
+            path = "mission-control/jade_temple/portfolio_readiness/" + name
+            self.assertIn(path, model["source_hashes"])
+            self.assertEqual(model["source_hashes"][path]["sha256"],
+                             hashlib.sha256((HERE / name).read_bytes()).hexdigest())
+
+    def test_legacy_previous_without_root_field_is_comparable(self):
+        original = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA,
+                                     plan=plan(task()))
+        old = copy.deepcopy(original)
+        old.pop("root_next_control")
+        new = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA,
+                                plan=plan(task()), previous=old)
+        self.assertTrue(new["delta"]["basis_comparable"])
+        self.assertFalse(new["delta"]["material_change"])
+
+    def test_changed_root_id_or_readme_blob_is_not_comparable(self):
+        original = portfolio.project(
+            as_of=AS_OF, source_sha=BASE_SHA, plan=plan(task()),
+            root_next={"schema": root_control.SCHEMA, "items": [root_item()]})
+        changed_id = portfolio.project(
+            as_of=AS_OF, source_sha=BASE_SHA, plan=plan(task()),
+            root_next={"schema": root_control.SCHEMA,
+                       "items": [root_item(root_id="HUB-ROOT-9-002")]},
+            previous=original)
+        self.assertFalse(changed_id["delta"]["basis_comparable"])
+        changed_blob = portfolio.project(
+            as_of=AS_OF, source_sha=BASE_SHA, plan=plan(task()),
+            root_next={"schema": root_control.SCHEMA,
+                       "items": [root_item(root_source={
+                           "path": "README.md", "line": 90, "blob_sha": "c" * 40})]},
+            previous=original)
+        self.assertFalse(changed_blob["delta"]["basis_comparable"])
+        self.assertTrue(changed_blob["delta"]["material_change"])
+
+    def test_same_root_identity_still_comparable_if_gate_evidence_changes(self):
+        original = portfolio.project(
+            as_of=AS_OF, source_sha=BASE_SHA, plan=plan(task()),
+            root_next={"schema": root_control.SCHEMA, "items": [root_item()]})
+        with_evidence = root_item(gates={
+            "native": {"decision": "PASS", "head_sha": "b" * 40,
+                       "receipt_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/42"}})
+        new = portfolio.project(
+            as_of=AS_OF, source_sha=BASE_SHA, plan=plan(task()),
+            root_next={"schema": root_control.SCHEMA, "items": [with_evidence]},
+            previous=original)
+        self.assertTrue(new["delta"]["basis_comparable"])
+        self.assertTrue(new["delta"]["material_change"])
+        self.assertEqual(new["root_next_control"]["closure_verified"], 0)
+
     def test_no_input_is_not_a_zero_closure_achievement(self):
         out = root_control.project(None)
         self.assertEqual(out["status"], "NOT_SUPPLIED")
