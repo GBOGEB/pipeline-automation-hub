@@ -71,7 +71,7 @@ FAMILIES = [
 
 OUT_EXT = r"xlsx|xlsm|xls|pptx|docx|pdf|html?|svg|png|csv|zip|mmd|ipynb"
 PATH_RE = re.compile(
-    r"(?<![A-Za-z0-9/:\\])(?:[A-Za-z]:(?:\\{1,4}|/)|/[a-z]/)(?!/)[^\s\"'<>|*?\r\n`]*?\.(?:" + OUT_EXT + r")(?=$|[\s\"'<>|*?\r\n`]|[.,;:)\]}](?=$|\s))", re.I
+    r"(?<![A-Za-z0-9/:\\])(?:[A-Za-z]:(?:\\{1,4}|/)|/[a-z]/)(?!/)[^\s\"<>|*?\r\n`]*?\.(?:" + OUT_EXT + r")(?=$|[\s\"<>|*?\r\n`]|'(?=$|\s|[.,;:)\]}](?=$|\s))|[.,;:)\]}](?=$|\s))", re.I
 )
 def quoted_path_re(quote: str) -> re.Pattern[str]:
     """Accept the other quote style inside a quoted Windows/Unix path."""
