@@ -225,6 +225,40 @@ class Census(unittest.TestCase):
             r"\\server\My Share\deck.pdf",
         )
 
+    def test_unc_dot_segment_cannot_escape_a_git_root(self):
+        root = r"\\server\share\repo"
+        inside = r"\\server\share\repo\project\deck.pdf"
+        escape = r"\\server\share\repo\..\private\deck.pdf"
+        self.assertTrue(self.sc.under(inside, (root,)))
+        self.assertFalse(self.sc.under(escape, (root,)))
+        self.assertTrue(self.sc.under(root + r"\child\..\project\deck.pdf", (root,)))
+
+    def test_read_only_tool_input_is_not_produced_output(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "mixed.jsonl"
+            rows = [
+                {"type": "assistant", "message": {"content": [
+                    {"type": "tool_use", "name": "Read",
+                     "input": {"file_path": r"D:\Documents\source.pdf"}},
+                    {"type": "tool_use", "name": "Grep",
+                     "input": {"path": r"D:\Documents\search.pdf"}},
+                    {"type": "tool_use", "name": "Bash",
+                     "input": {"command": r"python export.py D:\Documents\rendered.pdf"}},
+                    {"type": "tool_use", "name": "Write",
+                     "input": {"file_path": r"D:\Documents\created.pdf",
+                               "content": "ok"}},
+                ]}},
+            ]
+            path.write_text(
+                "\n".join(json.dumps(x) for x in rows) + "\n",
+                encoding="utf-8",
+            )
+            report = self.sc.scan_transcript([str(path)])
+        self.assertNotIn(r"D:\Documents\source.pdf", report["outputs"])
+        self.assertNotIn(r"D:\Documents\search.pdf", report["outputs"])
+        self.assertIn(r"D:\Documents\rendered.pdf", report["outputs"])
+        self.assertIn(r"D:\Documents\created.pdf", report["outputs"])
+
     def test_tool_result_listing_does_not_create_phantom_output(self):
         with tempfile.TemporaryDirectory() as d:
             path = Path(d) / "result.jsonl"
