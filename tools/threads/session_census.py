@@ -71,12 +71,12 @@ FAMILIES = [
 
 OUT_EXT = r"xlsx|xlsm|xls|pptx|docx|pdf|html?|svg|png|csv|zip|mmd|ipynb"
 PATH_RE = re.compile(
-    r"(?<![A-Za-z0-9/:\\])(?:[A-Za-z]:(?:\\{1,4}|/)|/[a-z]/)(?!/)[^\s\"<>|*?\r\n`]*?\.(?:" + OUT_EXT + r")(?=$|[\s\"<>|*?\r\n`]|'(?=$|\s|[.,;:)\]}](?=$|\s))|[.,;:)\]}](?=$|\s))", re.I
+    r"(?<![A-Za-z0-9/:\\])(?:[A-Za-z]:(?:\\{1,4}|/)|/[a-z]/|\\\\)(?!/)[^\s\"<>|*?\r\n`]*?\.(?:" + OUT_EXT + r")(?=$|[\s\"<>|*?\r\n`]|'(?=$|\s|[.,;:)\]}](?=$|\s))|[.,;:)\]}](?=$|\s))", re.I
 )
 def quoted_path_re(quote: str) -> re.Pattern[str]:
     """Accept the other quote style inside a quoted Windows/Unix path."""
     body = (
-        r"(?P<path>(?:[A-Za-z]:(?:\\{1,4}|/)|/[a-z]/)(?!/)[^"
+        r"(?P<path>(?:[A-Za-z]:(?:\\{1,4}|/)|/[a-z]/|\\\\)(?!/)[^"
         + re.escape(quote)
         + r"<>|*?\r\n" + "\x60"
         + r"]*?\.(?:" + OUT_EXT + r"))"
@@ -162,7 +162,11 @@ def norm(p: str) -> str:
     p = p.strip().rstrip(".,;:)]}")
     if re.match(r"^/[a-z]/", p):
         p = p[1].upper() + ":" + p[2:]
-    return re.sub(r"\\{2,}", lambda _m: "\\", p.replace("/", "\\"))
+    p = p.replace("/", "\\")
+    if p.startswith("\\\\"):
+        # Preserve the two leading separators of an absolute UNC share.
+        return "\\\\" + re.sub(r"\\{2,}", lambda _m: "\\", p[2:])
+    return re.sub(r"\\{2,}", lambda _m: "\\", p)
 
 
 _git_cache: dict[str, bool] = {}
@@ -221,8 +225,8 @@ def scan_transcript(paths: list[str]) -> dict:
                         isinstance(p, dict) and p.get("type") == "tool_result" for p in c)
                     txt = text_of(c)
                     if is_tool:
-                        for m in output_paths(txt):
-                            r["outputs"].add(norm(m))
+                        # A tool's listing may contain input/source paths, not produced files.
+                        # Actual writes are observed from assistant tool_use records.
                         continue
                     if "This session is being continued from a previous conversation" in txt:
                         r["compactions"] += 1
