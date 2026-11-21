@@ -174,6 +174,26 @@ class RootNextControlSafetyTests(unittest.TestCase):
         self.assertIn("EVIDENCE CANDIDATE; UNVERIFIED", page)
         self.assertEqual(model["root_next_control"]["closure_verified"], 0)
 
+    def test_pinned_main_repeat_rejects_floating_ref_and_existing_receipt(self):
+        import repeat_main_proof as proof
+        with tempfile.TemporaryDirectory() as tmp:
+            receipt = Path(tmp) / "repeat.json"
+            with self.assertRaisesRegex(ValueError, "exact 40-hex"):
+                proof.execute(portfolio.REPO, "master", receipt)
+            receipt.write_text("must not overwrite", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "must not already exist"):
+                proof.execute(portfolio.REPO, "a" * 40, receipt)
+
+    def test_repeat_suite_contract_does_not_infer_control(self):
+        import repeat_main_proof as proof
+        self.assertEqual(proof.EXPECTED_CASES, 3)
+        self.assertEqual(proof.SUITE, "tests.test_main_pipeline_e2e")
+        self.assertEqual(proof.RECEIPT_SCHEMA, "jade.main-pipeline-repeat.v1")
+        source = (HERE / "repeat_main_proof.py").read_text(encoding="utf-8")
+        self.assertIn('"control_qualified": False', source)
+        self.assertIn('"release_qualified": False', source)
+        self.assertIn('"merge_admission": "WITHHELD"', source)
+
     def test_hub_real_readme_pilot_is_attributable_but_not_closed(self):
         doc = json.loads((HERE / "root_next_pilot_hub.json").read_text(encoding="utf-8"))
         self.assertEqual(doc["source_scope"], "HUB_README_PILOT_ONLY")
