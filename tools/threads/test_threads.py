@@ -212,6 +212,54 @@ class Census(unittest.TestCase):
         self.assertIn(stem, self.sc.output_paths(stem + "' and more"))
         self.assertIn(stem, self.sc.output_paths(stem + "'"))
 
+    def test_unc_share_paths_survive_extraction_and_normalization(self):
+        plain = r"\\server\share\deck.pdf"
+        quoted = r'"\\server\My Share\deck.pdf"'
+        self.assertIn(plain, self.sc.output_paths(plain))
+        self.assertEqual(self.sc.norm(plain), plain)
+        self.assertIn(
+            r"\\server\My Share\deck.pdf", self.sc.output_paths(quoted)
+        )
+        self.assertEqual(
+            self.sc.norm(r"\\server\My Share\deck.pdf"),
+            r"\\server\My Share\deck.pdf",
+        )
+
+    def test_tool_result_listing_does_not_create_phantom_output(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "result.jsonl"
+            rows = [
+                {
+                    "type": "user",
+                    "message": {
+                        "content": [{
+                            "type": "tool_result",
+                            "content": r"dir D:\Documents\*.pdf: D:\Documents\source.pdf",
+                        }],
+                    },
+                },
+                {
+                    "type": "assistant",
+                    "message": {
+                        "content": [{
+                            "type": "tool_use",
+                            "name": "Write",
+                            "input": {
+                                "file_path": r"D:\Documents\created.pdf",
+                                "content": "created",
+                            },
+                        }],
+                    },
+                },
+            ]
+            path.write_text(
+                "\n".join(json.dumps(row) for row in rows) + "\n",
+                encoding="utf-8",
+            )
+            report = self.sc.scan_transcript([str(path)])
+        self.assertNotIn(r"D:\Documents\source.pdf", report["outputs"])
+        self.assertIn(r"D:\Documents\created.pdf", report["outputs"])
+
     def test_quoted_path_preserves_opposite_quote_style(self):
         double_quoted = r'''"D:\O'Brien\OneDrive - Org\deck.pdf"'''
         single_quoted = r"""'D:\Company "East"\OneDrive - Org\slides.pptx'"""
