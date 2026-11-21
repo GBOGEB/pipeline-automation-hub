@@ -13,10 +13,12 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
 import time
+import uuid
 
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 SUITE = "tests.test_main_pipeline_e2e"
@@ -38,12 +40,17 @@ def execute(repo: Path, source_sha: str, out: Path):
     if source.returncode != 0 or source.stdout.strip() != "commit":
         raise ValueError("pinned source commit missing from local Git objects")
     started = dt.datetime.now(dt.timezone.utc).isoformat().replace("+00:00", "Z")
-    with tempfile.TemporaryDirectory(prefix="jade-hub-main-proof-") as tmp:
-        work = Path(tmp) / "source"
+    # Git Bash/Windows cannot reliably traverse owner-only TemporaryDirectory
+    # parents. Build a named scratch folder beneath the system temp directory.
+    scratch = Path(tempfile.gettempdir()) / ("jade-hub-main-proof-" + uuid.uuid4().hex)
+    os.makedirs(scratch, mode=0o755, exist_ok=False)
+    work = scratch / "source"
+    checkout_attempted = False
+    try:
+        checkout_attempted = True
         checkout = command(["git", "worktree", "add", "--detach", str(work), source_sha], repo)
         if checkout.returncode:
             raise RuntimeError("detached source worktree failed: " + checkout.stderr[-600:])
-        try:
             sha = command(["git", "rev-parse", "HEAD"], work)
             if sha.returncode or sha.stdout.strip() != source_sha:
                 raise RuntimeError("source worktree head mismatch")
@@ -82,10 +89,13 @@ def execute(repo: Path, source_sha: str, out: Path):
             out.write_text(json.dumps(receipt, sort_keys=True, indent=2) + "\n",
                            encoding="utf-8")
             return passed, receipt
-        finally:
-            # Detached temporary worktree cleanup may fail after a test exception;
-            # it is not an admission receipt and never mutates canonical main.
-            command(["git", "worktree", "remove", "--force", str(work)], repo)
+    finally:
+        # Remove Git registration before clearing scratch. If a Windows lock
+        # prevents cleanup, do not silently claim the workspace is clean.
+        cleanup = command(["git", "worktree", "remove", "--force", str(work)], repo) if checkout_attempted else None
+        if cleanup is not None and cleanup.returncode:
+            raise RuntimeError("detached source worktree cleanup failed: " + cleanup.stderr[-600:])
+        shutil.rmtree(scratch)
 
 
 def main():
