@@ -203,6 +203,15 @@ class Census(unittest.TestCase):
         self.assertIn("D:/share/DECK.PPTX",
                       self.sc.output_paths("D:/share/DECK.PPTX"))
 
+    def test_unquoted_apostrophe_paths_are_not_truncated(self):
+        valid = r"D:\O'Brien\Documents\deck.pdf"
+        stem = r"D:\work\report.pdf"
+        self.assertIn(valid, self.sc.output_paths(valid))
+        for suffix in ("'s-copy", "'old", "'_backup", "'@old"):
+            self.assertNotIn(stem, self.sc.output_paths(stem + suffix), suffix)
+        self.assertIn(stem, self.sc.output_paths(stem + "' and more"))
+        self.assertIn(stem, self.sc.output_paths(stem + "'"))
+
     def test_quoted_path_preserves_opposite_quote_style(self):
         double_quoted = r'''"D:\O'Brien\OneDrive - Org\deck.pdf"'''
         single_quoted = r"""'D:\Company "East"\OneDrive - Org\slides.pptx'"""
