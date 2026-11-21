@@ -317,6 +317,38 @@ class RootNextControlSafetyTests(unittest.TestCase):
         self.assertIn('"release_qualified": False', source)
         self.assertIn('"merge_admission": "WITHHELD"', source)
 
+    def test_real_main_repeat_candidate_is_source_bound_but_not_verified(self):
+        doc = json.loads((HERE / "root_next_pilot_hub.json").read_text(encoding="utf-8"))
+        out = root_control.project(doc)
+        self.assertEqual((out["total"], out["closure_verified"]), (2, 0))
+        self.assertEqual(sum(r["gate_candidates"] for r in out["items"]), 3)
+        self.assertEqual(sum(len(r["pending_gates"]) for r in out["items"]), 13)
+        main = out["items"][0]
+        self.assertEqual(main["root_id"], "HUB-README-117-MAIN-PIPELINE")
+        native = main["evidence_candidates"]["native"]
+        self.assertEqual(native["head_sha"], doc["source_commit"])
+        self.assertEqual(native["verification"], "OWNER_INDEPENDENT_DOV_PENDING")
+        self.assertEqual(
+            native["receipt_url"],
+            "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/"
+            "44878223386/artifacts/14696623268")
+        self.assertFalse(main["closure_verified"])
+        self.assertNotIn("native", main["pending_gates"])
+        self.assertIn("control", main["pending_gates"])
+        self.assertEqual(len(out["items"][1]["pending_gates"]), 7)
+
+    def test_gate_evidence_projection_never_exposes_untrusted_extra_fields(self):
+        doc = {"schema": root_control.SCHEMA, "items": [root_item(gates={
+            "native": {"decision": "PASS", "head_sha": "b" * 40,
+                       "receipt_url":
+                           "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/42",
+                       "secret_untrusted_extra": "DO_NOT_EXPORT"}})]}
+        out = root_control.project(doc)
+        self.assertNotIn("DO_NOT_EXPORT", json.dumps(out))
+        self.assertEqual(out["items"][0]["evidence_candidates"]["native"]["verification"],
+                         "OWNER_INDEPENDENT_DOV_PENDING")
+        self.assertEqual(out["closure_verified"], 0)
+
     def test_hub_real_readme_pilot_is_attributable_but_not_closed(self):
         doc = json.loads((HERE / "root_next_pilot_hub.json").read_text(encoding="utf-8"))
         self.assertEqual(doc["source_scope"], "HUB_README_PILOT_ONLY")
