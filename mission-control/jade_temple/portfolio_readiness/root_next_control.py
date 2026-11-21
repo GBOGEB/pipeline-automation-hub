@@ -65,7 +65,9 @@ def project(doc, private_repos=()):
          and bool(HEX40.fullmatch(scope_blob))), "cohort source blob")
     need((scope_commit is None) == (scope_blob is None),
          "cohort commit and blob must be supplied together")
-    private = set(private_repos)
+    # GitHub repository identity is case-insensitive; public projection must not
+    # leak a controlled owner through differently cased input spellings.
+    private = {name.casefold() for name in private_repos}
     ids = set()
     out = []
     private_count = 0
@@ -78,7 +80,7 @@ def project(doc, private_repos=()):
         need(isinstance(root_id, str) and bool(root_id.strip()) and root_id not in ids,
              "unique root id")
         ids.add(root_id)
-        if repo in private or row.get("private") is True:
+        if repo.casefold() in private or row.get("private") is True:
             # Do not copy source paths, SHA, issues, owners, notes or receipts.
             private_count += 1
             deficits["PRIVATE_OWNER_VERIFICATION"] += 1
