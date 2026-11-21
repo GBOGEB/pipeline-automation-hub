@@ -1,0 +1,68 @@
+{
+  "schema": "jade.root-next-control.v1",
+  "source_scope": "HUB_README_PILOT_ONLY",
+  "source_commit": "aec47c4c0d0ba026e67b266a2db1ea04f1999359",
+  "source_blob_sha": "4a691127e9dd4d0a2ad4fb766f16273557b5157f",
+  "policy": "SOURCE_READBACK_NOT_RELEASE_AUTHORITY",
+  "items": [
+    {
+      "root_id": "HUB-README-117-MAIN-PIPELINE",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "root_source": {
+        "path": "README.md",
+        "line": 117,
+        "blob_sha": "4a691127e9dd4d0a2ad4fb766f16273557b5157f"
+      },
+      "kind": "library",
+      "owner": "GBOGEB/pipeline-automation-hub MAIN/recursive-build owner",
+      "issue_pr": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/300",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/286"
+      ],
+      "prerequisites": [
+        "ISSUE:300:historically-closed",
+        "FPC:current-head-proof",
+        "OWNER:postrelease-control"
+      ],
+      "next_action": "Reconcile closed historical E2E source proof against current main; qualify repeat regression and CONTROL receipt without reopening #300 by inference",
+      "gates": {
+        "source": {
+          "decision": "PASS",
+          "head_sha": "aec47c4c0d0ba026e67b266a2db1ea04f1999359",
+          "receipt_url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/aec47c4c0d0ba026e67b266a2db1ea04f1999359/README.md"
+        }
+      }
+    },
+    {
+      "root_id": "HUB-README-170-EXCEL-SCHEDULE",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "root_source": {
+        "path": "README.md",
+        "line": 170,
+        "blob_sha": "4a691127e9dd4d0a2ad4fb766f16273557b5157f"
+      },
+      "kind": "library",
+      "owner": "GBOGEB/pipeline-automation-hub Excel schedule engine / real-workbook owner",
+      "issue_pr": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/410",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/408",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/409"
+      ],
+      "prerequisites": [
+        "ISSUE:410:source-workbook-freeze",
+        "SOURCE:governed-workbook-hash",
+        "EVIDENCE:T0-manifest",
+        "EVIDENCE:T1-comparable-delta",
+        "OWNER:baseline-acceptance"
+      ],
+      "next_action": "Obtain governed workbook binary and owner-authorized source SHA; execute T0, then later-source T1 comparison and human disposition under #410",
+      "gates": {
+        "source": {
+          "decision": "PASS",
+          "head_sha": "aec47c4c0d0ba026e67b266a2db1ea04f1999359",
+          "receipt_url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/aec47c4c0d0ba026e67b266a2db1ea04f1999359/README.md"
+        }
+      }
+    }
+  ]
+}
