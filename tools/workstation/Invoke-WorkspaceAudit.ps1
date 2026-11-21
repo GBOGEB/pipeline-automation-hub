@@ -11,6 +11,10 @@
                                   It prints the removal command but NEVER changes environment variables.
       L9  Disk is tight         - sizes every git repo/worktree directly under -Root, classifies it as
                                   REMOVABLE / PUSH-ME / KEEP and totals the reclaimable space.
+      #1167 PUSH-ME triage      - a PUSH-ME candidate is re-checked before it is called unlanded work:
+                                  LANDED (HEAD on a remote branch, in a merged PR, or a tree-identical
+                                  twin), STALE (pre-purge history; never push) or PUBLIC-RISK (public
+                                  remote lacks office/PDF files HEAD tracks; never push).
 
     Read-only by default. -Apply removes REMOVABLE entries only:
       * linked worktrees with `git worktree remove` (never --force), then `git worktree prune`;
@@ -102,7 +106,7 @@ function New-Entry([hashtable]$Fields) {
         Name = ''; Path = ''; Kind = ''; MainRepo = $null; Repo = $null; Branch = ''; Head = $null; Upstream = $null
         Ahead = 0; Behind = 0; Unpushed = 0; Dirty = $false; LastCommitHours = -1; LastCommitAge = ''
         DefaultRef = $null; InDefault = $false; PR = ''; PRState = ''; PRError = $null; Locked = $false
-        HostedWorktrees = 0; Stashes = 0; Excluded = $false; Class = 'KEEP'; Reason = ''; SizeBytes = 0L
+        HostedWorktrees = 0; Stashes = 0; Excluded = $false; Class = 'KEEP'; Triage = ''; NeverPush = $false; Reason = ''; SizeBytes = 0L
     }
     foreach ($k in $Fields.Keys) { $e[$k] = $Fields[$k] }
     [pscustomobject]$e
@@ -156,6 +160,157 @@ function Get-GitState([string]$Dir) {
     $st.LastCommitHours = if ($ct) { [math]::Round(($now - [DateTimeOffset]::FromUnixTimeSeconds([long]$ct)).TotalHours, 1) | ForEach-Object { [math]::Max(0, $_) } } else { -1 }
     [pscustomobject]$st
 }
+
+# ------------------------------------------- PUSH-ME triage (issue #1167) --
+# A PUSH-ME candidate is only real when its commits are on no remote, in no merged PR, have no
+# tree-identical twin, are not pre-purge history, and would not publish private files. The checks
+# below run through injectable runners so the tests can use fake git/gh.
+$script:OfficeFilePattern = '(?i)\.(pdf|docx?|docm|dotx|xlsx?|xlsm|xltx|pptx?|pptm|potx|odt|ods|odp|rtf|msg|vsdx?)$'
+
+function Invoke-GitRun {
+    <# Default git runner: stdout lines, stderr text and exit code. Never throws. #>
+    param([string]$Dir, [string[]]$GitArgs)
+    $all = @(& git.exe -C $Dir @GitArgs 2>&1)
+    $code = $LASTEXITCODE
+    [pscustomobject]@{
+        Code = $code
+        Out  = @($all | Where-Object { $_ -isnot [System.Management.Automation.ErrorRecord] } | ForEach-Object { "$_" })
+        Err  = (@($all | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] } | ForEach-Object { "$_" }) -join "`n").Trim()
+    }
+}
+
+function Get-PushTriage {
+    <# Decides what a PUSH-ME candidate really is. Returns Class (PUSH-ME, LANDED, STALE or PUBLIC-RISK),
+       NeverPush and Reasons. Git: { param($Dir, $GitArgs) -> {Code, Out, Err} }; Gh: { param($Arguments) -> {ExitCode, Out, Err} }. #>
+    param(
+        [string]$Dir, $State, [string]$Slug, [string]$DefaultRef,
+        [scriptblock]$Git = { param($Dir, $GitArgs) Invoke-GitRun -Dir $Dir -GitArgs $GitArgs },
+        [scriptblock]$Gh = { param($Arguments) Invoke-Gh -Arguments $Arguments },
+        [hashtable]$Cache = @{},
+        [int]$GhRetryDelayMs = 2000
+    )
+    $run = { param([string[]]$a) & $Git $Dir $a }
+    $head = $State.Head
+    $res = [ordered]@{ Class = 'PUSH-ME'; NeverPush = $false; Reasons = @() }
+
+    # (1) HEAD already on a remote branch. Detached HEADs are never asked about by Get-GitState, and
+    #     a single-branch clone has no remote-tracking refs, so ask both the refs and the remote itself.
+    $onRemote = @((& $run @('branch', '-r', '--contains', 'HEAD')).Out | ForEach-Object { $_.Trim() } | Where-Object { $_ -and $_ -notmatch ' -> ' })
+    if (-not $onRemote -and $head) {
+        $onRemote = @((& $run @('ls-remote', '--heads', 'origin')).Out | Where-Object { $_ -match "^$head\s+refs/heads/(.+)$" } | ForEach-Object { "origin/$($Matches[1])" })
+    }
+    if ($onRemote) {
+        $res.Class = 'LANDED'; $res.Reasons += "HEAD is on $(($onRemote | Select-Object -First 2) -join ', ')"
+        return [pscustomobject]$res
+    }
+
+    # (2a) HEAD is the head of a merged PR.
+    if ($Slug -and $head) {
+        $r = & $Gh @('api', "repos/$Slug/commits/$head/pulls", '--jq', '[.[] | select(.merged_at != null) | "#\(.number)"] | join(",")')
+        if ($r.ExitCode -eq 0 -and $r.Out) {
+            $res.Class = 'LANDED'; $res.Reasons += "in merged PR $($r.Out)"
+            return [pscustomobject]$res
+        }
+    }
+    # (2b) Tree-identical twin: a rebased copy, a twin merge or an empty commit has nothing new to push.
+    $refs = @($State.Upstream, $(if ($State.Branch -and $State.Branch -ne '(detached)') { "origin/$($State.Branch)" }), $DefaultRef) |
+        Where-Object { $_ } | Select-Object -Unique
+    foreach ($ref in $refs) {
+        if ((& $run @('diff', '--quiet', '--no-renames', '--no-ext-diff', 'HEAD', $ref, '--')).Code -eq 0) {
+            $res.Class = 'LANDED'; $res.Reasons += "tree identical to $ref"
+            return [pscustomobject]$res
+        }
+    }
+
+    # (3) Pre-purge history: the oldest unpushed commit has a twin on the default branch with the same
+    #     author date, author and subject. Pushing would put purged history back. Never push.
+    $range = if ($State.Unpushed -gt 0) { @('HEAD', '--not', '--remotes') } else { @('@{u}..HEAD') }
+    $oldest = (& $run (@('log', '--reverse', '--format=%H%x09%at%x09%ae%x09%s') + $range)).Out | Select-Object -First 1
+    if ($oldest -and $DefaultRef) {
+        $o = $oldest -split "`t", 4
+        $twin = (& $run @('log', '--format=%H%x09%at%x09%ae%x09%s', $DefaultRef)).Out |
+            Where-Object { $p = $_ -split "`t", 4; $p.Count -eq 4 -and $p[0] -ne $o[0] -and $p[1] -eq $o[1] -and $p[2] -eq $o[2] -and $p[3] -eq $o[3] } |
+            Select-Object -First 1
+        if ($twin) {
+            $res.Class = 'STALE'; $res.NeverPush = $true
+            $res.Reasons += "pre-purge history: oldest unpushed $($o[0].Substring(0, 8)) has twin $(($twin -split "`t")[0].Substring(0, 9)) on $DefaultRef (same author date); never push"
+            return [pscustomobject]$res
+        }
+    }
+
+    # (4) Public repo guard: HEAD tracks office/PDF files that the public remote does not have.
+    #     Fails closed: when visibility cannot be read after 3 tries, the repo is treated as public.
+    if ($Slug) {
+        $key = "private|$Slug"
+        if (-not $Cache.ContainsKey($key)) {
+            $vis = 'unknown'
+            for ($i = 1; $i -le 3 -and $vis -eq 'unknown'; $i++) {
+                $r = & $Gh @('api', "repos/$Slug", '--jq', '.private')
+                $o = "$($r.Out)".Trim()
+                if ($r.ExitCode -eq 0 -and $o -in 'true', 'false') { $vis = $o }
+                elseif ($i -lt 3 -and $GhRetryDelayMs -gt 0) { Start-Sleep -Milliseconds ($GhRetryDelayMs * $i) }
+            }
+            $Cache[$key] = $vis
+        }
+        if ($Cache[$key] -ne 'true') {
+            $tracked = @((& $run @('-c', 'core.quotePath=false', 'ls-files')).Out | Where-Object { $_ -match $script:OfficeFilePattern })
+            if ($tracked) {
+                $remoteRef = @($State.Upstream, $DefaultRef) | Where-Object { $_ } | Select-Object -First 1
+                $onRemoteSet = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+                if ($remoteRef) { foreach ($f in (& $run @('-c', 'core.quotePath=false', 'ls-tree', '-r', '--name-only', $remoteRef)).Out) { [void]$onRemoteSet.Add($f) } }
+                $missing = @($tracked | Where-Object { -not $onRemoteSet.Contains($_) })
+                if ($missing) {
+                    $res.Class = 'PUBLIC-RISK'; $res.NeverPush = $true
+                    $who = if ($Cache[$key] -eq 'false') { 'public remote' } else { 'remote (visibility unknown after 3 tries, treated as public)' }
+                    $res.Reasons += "$who $Slug lacks $($missing.Count) office/PDF file(s) HEAD tracks (e.g. $(($missing | Select-Object -First 2) -join ', ')); do not push"
+                    return [pscustomobject]$res
+                }
+            }
+        }
+    }
+    $res.Reasons += 'real unlanded work: push it and open a draft PR'
+    [pscustomobject]$res
+}
+
+function Invoke-WorktreePrune {
+    <# git worktree prune with stderr captured. On 'Permission denied' (OneDrive read-only reparse points
+       under .git/worktrees/<name>) it reports the failure and, only with -Fix, clears ReadOnly on that one
+       admin folder (attrib -R /S /D) and prunes again. Returns one action row per step. #>
+    param(
+        [string]$Repo, [switch]$Fix,
+        [scriptblock]$Git = { param($Dir, $GitArgs) Invoke-GitRun -Dir $Dir -GitArgs $GitArgs },
+        [scriptblock]$Attrib = { param($Path) $o = & attrib.exe -R $Path /S /D 2>&1; [pscustomobject]@{ Code = $LASTEXITCODE; Out = "$o".Trim() } }
+    )
+    $name = Split-Path $Repo -Leaf
+    $r = & $Git $Repo @('worktree', 'prune')
+    if ($r.Code -eq 0 -and -not $r.Err) { return @([pscustomobject]@{ Name = $name; Action = 'worktree prune'; Detail = $Repo }) }
+    $rows = @([pscustomobject]@{ Name = $name; Action = 'prune failed'; Detail = "$($r.Err)".Trim() })
+    if ($r.Err -notmatch 'Permission denied') { return $rows }
+
+    $common = ((& $Git $Repo @('rev-parse', '--path-format=absolute', '--git-common-dir')).Out | Select-Object -First 1)
+    if (-not $common) { $common = Join-Path $Repo '.git' }
+    $wtRoot = [System.IO.Path]::GetFullPath((Join-Path $common 'worktrees'))
+    $names = @([regex]::Matches("$($r.Err)", '(?i)worktrees[/\\]+([^/\\''":\s]+)') | ForEach-Object { $_.Groups[1].Value } | Select-Object -Unique)
+    if (-not $names) { return $rows + [pscustomobject]@{ Name = $name; Action = 'prune not fixed'; Detail = 'no .git/worktrees/<name> folder named in the error' } }
+    foreach ($n in $names) {
+        $dir = [System.IO.Path]::GetFullPath((Join-Path $wtRoot $n))
+        if ((Split-Path $dir -Parent) -ne $wtRoot -or -not (Test-Path -LiteralPath $dir -PathType Container)) {
+            $rows += [pscustomobject]@{ Name = $name; Action = 'prune not fixed'; Detail = "not a worktree admin folder: $dir" }; continue
+        }
+        if (-not $Fix) { $rows += [pscustomobject]@{ Name = $name; Action = 'prune not fixed'; Detail = "read-only folder; fix: attrib -R `"$dir`" /S /D, then git worktree prune" }; continue }
+        $a = & $Attrib $dir
+        $rows += [pscustomobject]@{ Name = $name; Action = if ($a.Code -eq 0) { 'attrib -R' } else { 'attrib failed' }; Detail = $dir }
+    }
+    if ($Fix) {
+        $r2 = & $Git $Repo @('worktree', 'prune')
+        $ok = $r2.Code -eq 0 -and -not $r2.Err
+        $rows += [pscustomobject]@{ Name = $name; Action = if ($ok) { 'worktree prune (retry)' } else { 'prune failed (retry)' }; Detail = if ($ok) { $Repo } else { "$($r2.Err)".Trim() } }
+    }
+    $rows
+}
+
+# Dot-sourcing the script (tests) loads the helpers above and stops here.
+if ($MyInvocation.InvocationName -eq '.') { return }
 
 # ------------------------------------------------------- 1. token check --
 $token = [ordered]@{ Checked = $false; Findings = @(); KeyringLogin = $null; RemoveCommands = @() }
@@ -281,7 +436,14 @@ foreach ($d in $dirs) {
         $class = 'REMOVABLE'
         $reason += if ($prState -in 'MERGED', 'CLOSED') { "PR $prNumbers $($prState.ToLower())" } else { "fully in $defaultRef" }
     }
-    if ($class -eq 'PUSH-ME' -and $st.Dirty) { $reason += 'also dirty' }
+    $triage = ''; $neverPush = $false
+    if ($class -eq 'PUSH-ME') {
+        # Triage first (#1167): only real unlanded work stays PUSH-ME.
+        $t = Get-PushTriage -Dir $path -State $st -Slug $slug -DefaultRef $defaultRef -Cache $prCache
+        $class = $t.Class; $triage = $t.Reasons -join '; '; $neverPush = $t.NeverPush
+        $reason = @($t.Reasons) + $reason
+    }
+    if ($class -in 'PUSH-ME', 'LANDED', 'STALE', 'PUBLIC-RISK' -and $st.Dirty) { $reason += 'also dirty' }
 
     $entries.Add((New-Entry @{
         Name            = $d.Name
@@ -308,6 +470,8 @@ foreach ($d in $dirs) {
         Stashes         = $stashes
         Excluded        = $excluded
         Class           = $class
+        Triage          = $triage
+        NeverPush       = $neverPush
         Reason          = $reason -join '; '
         SizeBytes       = if ($SkipSize) { 0 } else { Get-DirSize $path }
     }))
@@ -384,8 +548,8 @@ if ($Apply) {
     foreach ($m in ($entries | Where-Object { $_.MainRepo } | ForEach-Object MainRepo | Sort-Object -Unique)) { [void]$prune.Add($m) }
     foreach ($m in $prune) {
         if (Test-Path -LiteralPath $m) {
-            & git.exe -C $m worktree prune 2>$null
-            $actions.Add([pscustomobject]@{ Name = (Split-Path $m -Leaf); Action = 'worktree prune'; Detail = $m })
+            # stderr is captured, not discarded (#1167): a 'Permission denied' prune is reported and fixed.
+            foreach ($row in (Invoke-WorktreePrune -Repo $m -Fix:$Apply)) { $actions.Add($row) }
         }
     }
 }
@@ -395,6 +559,9 @@ $summary = [ordered]@{
     Entries   = $entries.Count
     Removable = $removable.Count
     PushMe    = @($entries | Where-Object Class -eq 'PUSH-ME').Count
+    Landed    = @($entries | Where-Object Class -eq 'LANDED').Count
+    Stale     = @($entries | Where-Object Class -eq 'STALE').Count
+    PublicRisk = @($entries | Where-Object Class -eq 'PUBLIC-RISK').Count
     Keep      = @($entries | Where-Object Class -eq 'KEEP').Count
     Leftover  = @($entries | Where-Object Class -eq 'LEFTOVER').Count
 }
@@ -434,7 +601,7 @@ else {
 }
 
 Write-Host "`n== Repos and worktrees under $Root (lessons 5, 9) ==" -ForegroundColor Cyan
-$entries | Sort-Object @{ e = { @{ 'PUSH-ME' = 0; 'REMOVABLE' = 1; 'LEFTOVER' = 2; 'KEEP' = 3 }[$_.Class] } }, Name |
+$entries | Sort-Object @{ e = { @{ 'PUSH-ME' = 0; 'PUBLIC-RISK' = 1; 'STALE' = 2; 'LANDED' = 3; 'REMOVABLE' = 4; 'LEFTOVER' = 5; 'KEEP' = 6 }[$_.Class] } }, Name |
     Format-Table Class, Name, Kind, Branch, @{ n = 'Ahd'; e = 'Ahead' }, @{ n = 'Bhd'; e = 'Behind' },
         @{ n = 'Dirty'; e = { if ($_.Dirty) { 'yes' } else { '' } } }, @{ n = 'Age'; e = 'LastCommitAge' },
         PRState, @{ n = 'SizeMB'; e = { [long][math]::Round($_.SizeBytes / 1MB) }; a = 'right' }, Reason -AutoSize |
@@ -443,8 +610,8 @@ $entries | Sort-Object @{ e = { @{ 'PUSH-ME' = 0; 'REMOVABLE' = 1; 'LEFTOVER' = 
 Write-Host '== Disk ==' -ForegroundColor Cyan
 Write-Host ("{0} free {1} GB; reclaimable {2} GB ({3} GB worktrees, {4} GB clones){5}" -f $disk.Drive, $disk.FreeGB,
     $disk.ReclaimableGB, $disk.ReclaimableWorktreeGB, $disk.ReclaimableCloneGB, $(if ($SkipSize) { ' [sizes skipped]' } else { '' }))
-Write-Host ("{0} entries: {1} REMOVABLE, {2} PUSH-ME, {3} KEEP, {4} LEFTOVER ({5} GB, delete by hand)" -f $summary.Entries, $summary.Removable,
-    $summary.PushMe, $summary.Keep, $summary.Leftover, $disk.LeftoverGB)
+Write-Host ("{0} entries: {1} REMOVABLE, {2} PUSH-ME, {3} LANDED, {4} STALE, {5} PUBLIC-RISK, {6} KEEP, {7} LEFTOVER ({8} GB, delete by hand)" -f $summary.Entries, $summary.Removable,
+    $summary.PushMe, $summary.Landed, $summary.Stale, $summary.PublicRisk, $summary.Keep, $summary.Leftover, $disk.LeftoverGB)
 if ($actions.Count) { $actions | Format-Table -AutoSize | Out-String -Width 200 | Write-Host }
 elseif (-not $Apply) { Write-Host 'Report only. Re-run with -Apply to remove REMOVABLE worktrees (clones also need -AllowCloneDelete).' }
 Write-Host "JSON report: $jsonPath"
