@@ -75,6 +75,7 @@ jobs:
           python mission-control/jade_temple/portfolio_readiness/portfolio_readiness.py \
             --as-of "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             --source-sha "$PORTFOLIO_PLANNING_SHA" \
+            --root-next mission-control/jade_temple/portfolio_readiness/root_next_pilot_hub.json \
             --out "$PORTFOLIO_QA_OUT/site"
       - name: Install the existing pinned browser QA dependency
         run: |
