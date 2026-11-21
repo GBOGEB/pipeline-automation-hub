@@ -41,6 +41,7 @@ import collections
 import datetime as dt
 import glob
 import json
+import ntpath
 import os
 import re
 import sys
@@ -107,10 +108,13 @@ GIT_HOME_RE = re.compile(r"\\\.claude\\worktrees\\", re.I)
 def under(path: str, roots) -> bool:
     """True when the normalised `path` lies inside one of `roots`: a normalised folder (str) or
     a compiled regex searched against the path."""
-    pl = path.lower()
+    # Resolve Windows dot segments before containment; UNC shares are absolute.
+    # A lexical prefix alone would admit \\server\\share\\repo\\..\\secret.
+    canonical = ntpath.normcase(ntpath.normpath(path))
     for r in roots:
         if isinstance(r, str):
-            if pl.startswith(r.lower().rstrip("\\") + "\\"):
+            root = ntpath.normcase(ntpath.normpath(r))
+            if canonical.startswith(root.rstrip("\\") + "\\"):
                 return True
         elif r.search(path):
             return True
@@ -271,8 +275,11 @@ def scan_transcript(paths: list[str]) -> dict:
                             elif name in ("Edit", "NotebookEdit") and fp:
                                 r["edits"].add(norm(fp))
                             blob = json.dumps(inp, ensure_ascii=False)[:20000]
-                            for m in output_paths(blob):
-                                r["outputs"].add(norm(m))
+                            # A Read/Grep/Glob argument references input, not a created output.
+                            # Shell-like tools can write a runtime-selected path in their command.
+                            if name in ("Write", "Edit", "NotebookEdit", "Bash", "Shell", "PowerShell"):
+                                for m in output_paths(blob):
+                                    r["outputs"].add(norm(m))
                             r["artifacts"].update(ARTIFACT_RE.findall(blob))
     return r
 
