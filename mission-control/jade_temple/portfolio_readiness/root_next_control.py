@@ -55,6 +55,16 @@ def project(doc, private_repos=()):
     need(isinstance(doc, dict) and doc.get("schema") == SCHEMA, "root next schema")
     rows = doc.get("items")
     need(isinstance(rows, list), "root next items must be list")
+    # A cohort-level source identity may bind a bounded one-repository pilot.
+    # Source equality is necessary, but still not independently verified DoV.
+    scope_commit = doc.get("source_commit")
+    scope_blob = doc.get("source_blob_sha")
+    need(scope_commit is None or (isinstance(scope_commit, str)
+         and bool(HEX40.fullmatch(scope_commit))), "cohort source commit")
+    need(scope_blob is None or (isinstance(scope_blob, str)
+         and bool(HEX40.fullmatch(scope_blob))), "cohort source blob")
+    need((scope_commit is None) == (scope_blob is None),
+         "cohort commit and blob must be supplied together")
     private = set(private_repos)
     ids = set()
     out = []
@@ -81,6 +91,9 @@ def project(doc, private_repos=()):
              "positive root line number")
         need(isinstance(source.get("blob_sha"), str)
              and HEX40.fullmatch(source["blob_sha"]), "exact blob identity")
+        if scope_blob is not None:
+            need(source["blob_sha"] == scope_blob,
+                 "root README blob conflicts with cohort source identity")
         kind = row.get("kind")
         need(kind in KINDS, "product class")
         owner = row.get("owner")
@@ -125,6 +138,7 @@ def project(doc, private_repos=()):
         need(isinstance(next_action, str) and bool(next_action.strip()), "next action")
         out.append({
             "root_id": root_id, "repo": repo, "root_source": source,
+            "source_commit": scope_commit,
             "kind": kind, "owner": owner, "issue_pr": issues,
             "prerequisites": depends, "next_action": next_action,
             "gate_candidates": declarations, "gate_total": len(KINDS[kind]),
