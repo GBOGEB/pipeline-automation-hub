@@ -190,6 +190,19 @@ class Census(unittest.TestCase):
         self.assertIn("D:/share/deck.pdf", self.sc.output_paths("D:/share/deck.pdf"))
         self.assertIn("D:\\work\\deck.pptx", self.sc.output_paths("D:\\work\\deck.pptx"))
 
+    def test_unquoted_extension_requires_real_path_terminator(self):
+        stem = "D:\\work\\report.pdf"
+        for suffix in ("@old", "!old", "#old", "=old", ",old", ";old",
+                       ".tmp", "-old", "+data", "_backup", "/extra",
+                       "\\extra", "[new]", "]other", "~draft"):
+            self.assertNotIn(stem, self.sc.output_paths(stem + suffix), suffix)
+
+        for source in (stem, stem + " and more", "(" + stem + ")",
+                       stem + ", next", stem + "; next", stem + ". next"):
+            self.assertIn(stem, self.sc.output_paths(source), source)
+        self.assertIn("D:/share/DECK.PPTX",
+                      self.sc.output_paths("D:/share/DECK.PPTX"))
+
     def test_quoted_path_preserves_opposite_quote_style(self):
         double_quoted = r'''"D:\O'Brien\OneDrive - Org\deck.pdf"'''
         single_quoted = r"""'D:\Company "East"\OneDrive - Org\slides.pptx'"""
