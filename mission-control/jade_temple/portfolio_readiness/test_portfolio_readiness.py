@@ -174,6 +174,39 @@ class RootNextControlSafetyTests(unittest.TestCase):
         self.assertIn("EVIDENCE CANDIDATE; UNVERIFIED", page)
         self.assertEqual(model["root_next_control"]["closure_verified"], 0)
 
+    def test_hub_real_readme_pilot_is_attributable_but_not_closed(self):
+        doc = json.loads((HERE / "root_next_pilot_hub.json").read_text(encoding="utf-8"))
+        self.assertEqual(doc["source_scope"], "HUB_README_PILOT_ONLY")
+        self.assertEqual(len(doc["items"]), 2)
+        # On the candidate branch the Hub root README is unchanged from the
+        # pilot source. Native Git blob equality, not a self-declared hash alone.
+        import subprocess
+        blob = subprocess.check_output(
+            ["git", "hash-object", str(portfolio.REPO / "README.md")],
+            text=True).strip()
+        self.assertEqual(blob, doc["source_blob_sha"])
+        readme = (portfolio.REPO / "README.md").read_text(encoding="utf-8").splitlines()
+        self.assertIn("two-phase pipeline", readme[116])
+        self.assertIn("Excel schedule/data table engine", readme[169])
+        for item in doc["items"]:
+            self.assertEqual(item["root_source"]["blob_sha"], doc["source_blob_sha"])
+            self.assertEqual(item["repo"], "GBOGEB/pipeline-automation-hub")
+        out = root_control.project(doc)
+        self.assertEqual((out["total"], out["actionable"], out["closure_verified"]),
+                         (2, 2, 0))
+        self.assertEqual(out["gate_deficits"]["control"], 2)
+        self.assertTrue(all(it["status"] == "PROOF_REQUIRED" for it in out["items"]))
+
+    def test_mismatched_pilot_cohort_blob_fails_closed(self):
+        doc = json.loads((HERE / "root_next_pilot_hub.json").read_text(encoding="utf-8"))
+        doc["items"][0]["root_source"]["blob_sha"] = "f" * 40
+        with self.assertRaisesRegex(ValueError, "conflicts with cohort"):
+            root_control.project(doc)
+        doc["items"][0]["root_source"]["blob_sha"] = doc["source_blob_sha"]
+        doc["source_commit"] = "BAD"
+        with self.assertRaisesRegex(ValueError, "cohort source commit"):
+            root_control.project(doc)
+
     def test_portfolio_integration_emits_bounded_artifact(self):
         input_doc = {"schema": root_control.SCHEMA, "items": [root_item()]}
         model = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA,
