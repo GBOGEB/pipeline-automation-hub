@@ -18,6 +18,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import portfolio_readiness as portfolio
+import root_next_control as root_control
 
 
 BASE_SHA = "897298dc3ed1a45607121b205617d4c103e7b226"
@@ -86,6 +87,368 @@ def issue_snapshot():
             }],
         }},
     }
+
+
+def root_item(repo="GBOGEB/pipeline-automation-hub", **changes):
+    value = {
+        "root_id": "HUB-ROOT-9-001",
+        "repo": repo,
+        "root_source": {"path": "README.md", "line": 90, "blob_sha": "a" * 40},
+        "kind": "library", "owner": "Hub owner",
+        "issue_pr": ["https://github.com/GBOGEB/pipeline-automation-hub/issues/372"],
+        "prerequisites": ["ISSUE:336"], "next_action": "Prove exact-head admission",
+        "gates": {},
+    }
+    value.update(changes)
+    return value
+
+
+class RootNextControlSafetyTests(unittest.TestCase):
+    def test_dynamic_root_consumer_and_repeat_runner_have_source_hashes(self):
+        model = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA,
+                                  plan=plan(task()))
+        for name in ("root_next_control.py", "repeat_main_proof.py"):
+            path = "mission-control/jade_temple/portfolio_readiness/" + name
+            self.assertIn(path, model["source_hashes"])
+            self.assertEqual(model["source_hashes"][path]["sha256"],
+                             hashlib.sha256((HERE / name).read_bytes()).hexdigest())
+
+    def test_legacy_previous_without_root_field_is_comparable(self):
+        original = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA,
+                                     plan=plan(task()))
+        old = copy.deepcopy(original)
+        old.pop("root_next_control")
+        new = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA,
+                                plan=plan(task()), previous=old)
+        self.assertTrue(new["delta"]["basis_comparable"])
+        self.assertFalse(new["delta"]["material_change"])
+
+    def test_changed_root_id_or_readme_blob_is_not_comparable(self):
+        original = portfolio.project(
+            as_of=AS_OF, source_sha=BASE_SHA, plan=plan(task()),
+            root_next={"schema": root_control.SCHEMA, "items": [root_item()]})
+        changed_id = portfolio.project(
+            as_of=AS_OF, source_sha=BASE_SHA, plan=plan(task()),
+            root_next={"schema": root_control.SCHEMA,
+                       "items": [root_item(root_id="HUB-ROOT-9-002")]},
+            previous=original)
+        self.assertFalse(changed_id["delta"]["basis_comparable"])
+        changed_blob = portfolio.project(
+            as_of=AS_OF, source_sha=BASE_SHA, plan=plan(task()),
+            root_next={"schema": root_control.SCHEMA,
+                       "items": [root_item(root_source={
+                           "path": "README.md", "line": 90, "blob_sha": "c" * 40})]},
+            previous=original)
+        self.assertFalse(changed_blob["delta"]["basis_comparable"])
+        self.assertTrue(changed_blob["delta"]["material_change"])
+
+    def test_same_root_identity_still_comparable_if_gate_evidence_changes(self):
+        original = portfolio.project(
+            as_of=AS_OF, source_sha=BASE_SHA, plan=plan(task()),
+            root_next={"schema": root_control.SCHEMA, "items": [root_item()]})
+        with_evidence = root_item(gates={
+            "native": {"decision": "PASS", "head_sha": "b" * 40,
+                       "receipt_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/42"}})
+        new = portfolio.project(
+            as_of=AS_OF, source_sha=BASE_SHA, plan=plan(task()),
+            root_next={"schema": root_control.SCHEMA, "items": [with_evidence]},
+            previous=original)
+        self.assertTrue(new["delta"]["basis_comparable"])
+        self.assertTrue(new["delta"]["material_change"])
+        self.assertEqual(new["root_next_control"]["closure_verified"], 0)
+
+    def test_no_input_is_not_a_zero_closure_achievement(self):
+        out = root_control.project(None)
+        self.assertEqual(out["status"], "NOT_SUPPLIED")
+        self.assertEqual(out["closure_verified"], 0)
+
+    def test_open_gates_are_not_credited_as_closure(self):
+        data = {"schema": root_control.SCHEMA, "items": [root_item()]}
+        result = root_control.project(data)
+        self.assertEqual(result["total"], 1)
+        self.assertEqual(result["closure_verified"], 0)
+        self.assertEqual(result["items"][0]["status"], "PROOF_REQUIRED")
+        self.assertIn("control", result["items"][0]["pending_gates"])
+
+    def test_invalid_github_urls_cannot_launder_gate_pass(self):
+        bad = (
+            "https://github.com/", "https://github.com/GBOGEB/pipeline-automation-hub",
+            "https://github.com/GBOGEB/pipeline-automation-hub/settings",
+            "https://github.com/GBOGEB/pipeline-automation-hub/actions",
+            "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/not-a-run",
+            "https://github.com/GBOGEB/pipeline-automation-hub/issues/not-a-number",
+            "https://github.com/GBOGEB/pipeline-automation-hub/blob/main/README.md",
+            "https://github.com/GBOGEB/pipeline-automation-hub/wiki/Proof",
+            "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/42/redirect",
+            "https://github.com/GBOGEB/pipeline-automation-hub/issues/372?fake=1",
+        )
+        for uri in bad:
+            with self.subTest(uri=uri):
+                self.assertIsNone(root_control.link(uri))
+                with self.assertRaisesRegex(ValueError, "PASS needs exact SHA"):
+                    root_control.project({"schema": root_control.SCHEMA, "items": [
+                        root_item(gates={"native": {"decision": "PASS",
+                                                   "head_sha": "a" * 40,
+                                                   "receipt_url": uri}})]})
+                with self.assertRaisesRegex(ValueError, "canonical GitHub issues"):
+                    root_control.project({"schema": root_control.SCHEMA, "items": [
+                        root_item(issue_pr=[uri])]})
+
+    def test_attributable_github_object_links_remain_candidates_only(self):
+        owner = "https://github.com/GBOGEB/pipeline-automation-hub"
+        good = (
+            owner + "/issues/372",
+            owner + "/pull/1284",
+            owner + "/actions/runs/44878733289",
+            owner + "/actions/runs/44878733289/artifacts/14697455294",
+            owner + "/blob/" + "a" * 40 + "/README.md",
+            owner + "/commit/" + "a" * 40,
+            owner + "/releases/tag/v1.2.3",
+        )
+        for uri in good:
+            with self.subTest(uri=uri):
+                self.assertEqual(root_control.link(uri), uri)
+                projected = root_control.project({"schema": root_control.SCHEMA, "items": [
+                    root_item(gates={"native": {"decision": "PASS", "head_sha": "a" * 40,
+                                               "receipt_url": uri}})]})
+                self.assertEqual(projected["closure_verified"], 0)
+                self.assertEqual(projected["gate_deficits"]["control"], 1)
+        self.assertEqual(root_control.link(owner + "/issues/372", issue_pr=True),
+                         owner + "/issues/372")
+        self.assertIsNone(root_control.link(owner + "/actions/runs/42", issue_pr=True))
+
+    def test_dot_segments_and_encoded_normalizations_are_not_evidence(self):
+        base = "https://github.com/GBOGEB/pipeline-automation-hub"
+        sha = "a" * 40
+        invalid = (
+            base + "/blob/" + sha + "/../settings",
+            base + "/blob/" + sha + "/%2e%2e/settings",
+            base + "/blob/" + sha + "/%2E%2E/settings",
+            base + "/blob/" + sha + "/./README.md",
+            base + "/blob/" + sha + "/%2e/README.md",
+            base + "/releases/tag/../settings",
+            base + "/releases/tag/%2e%2e/settings",
+            base + "/blob/" + sha + "/dir//README.md",
+            base + "/blob/" + sha + "/dir%2fREADME.md",
+            base + "/issues/372#fragment",
+        )
+        for uri in invalid:
+            with self.subTest(uri=uri):
+                self.assertIsNone(root_control.link(uri))
+                with self.assertRaisesRegex(ValueError, "PASS needs exact SHA"):
+                    root_control.project({"schema": root_control.SCHEMA, "items": [
+                        root_item(gates={"native": {"decision": "PASS",
+                                                   "head_sha": sha,
+                                                   "receipt_url": uri}})]})
+        self.assertIsNotNone(root_control.link(base + "/blob/" + sha + "/README.md"))
+        self.assertIsNotNone(root_control.link(base + "/actions/runs/44888310041"))
+
+    def test_redacted_private_cohort_same_count_is_not_comparable(self):
+        private_repo = "GBOGEB/cryoplant-project"
+        def private_item(root_id, blob):
+            return root_item(repo=private_repo, root_id=root_id,
+                             root_source={"path": "README.md", "line": 1, "blob_sha": blob},
+                             owner="PRIVATE_PERSON", next_action="PRIVATE_ACTION")
+        original = portfolio.project(
+            as_of=AS_OF, source_sha=BASE_SHA, plan=plan(task()),
+            root_next={"schema": root_control.SCHEMA,
+                       "items": [private_item("PRIVATE-A", "a" * 40)]})
+        changed = portfolio.project(
+            as_of=AS_OF, source_sha=BASE_SHA, plan=plan(task()),
+            root_next={"schema": root_control.SCHEMA,
+                       "items": [private_item("PRIVATE-B", "b" * 40)]},
+            previous=original)
+        self.assertEqual(original["root_next_control"]["private_aggregate"], 1)
+        self.assertEqual(changed["root_next_control"]["private_aggregate"], 1)
+        self.assertFalse(changed["delta"]["basis_comparable"])
+        self.assertIsNone(changed["delta"]["material_change"])
+        self.assertEqual(changed["delta"]["notification"],
+                         "COMPARABILITY_WITHHELD_PRIVATE_ROOT_COHORT")
+        self.assertNotIn("PRIVATE-A", json.dumps(original))
+        self.assertNotIn("PRIVATE-B", json.dumps(changed))
+        self.assertEqual(changed["root_next_control"]["closure_verified"], 0)
+        unchanged = portfolio.project(
+            as_of=AS_OF, source_sha=BASE_SHA, plan=plan(task()),
+            root_next={"schema": root_control.SCHEMA,
+                       "items": [private_item("PRIVATE-A", "a" * 40)]},
+            previous=original)
+        self.assertFalse(unchanged["delta"]["basis_comparable"])
+        self.assertNotEqual(unchanged["delta"]["notification"], "NO_UPDATE")
+
+    def test_even_all_declared_passes_cannot_self_certify_control(self):
+        gates = {key: {"decision": "PASS", "head_sha": "b" * 40,
+                       "receipt_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/42"}
+                 for key in root_control.KINDS["library"]}
+        out = root_control.project({"schema": root_control.SCHEMA,
+                                    "items": [root_item(gates=gates)]})
+        self.assertEqual(out["items"][0]["status"], "EVIDENCE_CANDIDATE_UNVERIFIED")
+        self.assertFalse(out["items"][0]["closure_verified"])
+        self.assertEqual(out["closure_verified"], 0)
+        self.assertEqual(out["merge_admission"], "WITHHELD")
+
+    def test_na_requires_reason_owner_receipt_and_cannot_erase_control(self):
+        gates = {"release": {"decision": "NOT_APPLICABLE"}}
+        with self.assertRaises(ValueError):
+            root_control.project({"schema": root_control.SCHEMA,
+                                  "items": [root_item(gates=gates)]})
+        gates = {"control": {"decision": "NOT_APPLICABLE", "reason": "no hosting",
+                             "decision_owner": "X",
+                             "receipt_url": "https://github.com/GBOGEB/pipeline-automation-hub/issues/372"}}
+        with self.assertRaises(ValueError):
+            root_control.project({"schema": root_control.SCHEMA,
+                                  "items": [root_item(gates=gates)]})
+
+    def test_private_repository_aliases_cannot_leak_public_root_fields(self):
+        variants = ("GBOGEB/Cryoplant-project", "GBOGEB/CRYOPLANT-PROJECT",
+                    "GBOGEB/cryoplant-project")
+        entries = [root_item(repo=repo, root_id=f"PRIVATE-{i}",
+                             owner=f"PRIVATE_OWNER_{i}",
+                             next_action=f"SECRET_ACTION_{i}",
+                             prerequisites=[f"SECRET_DEP_{i}"],
+                             root_source={"path": "PRIVATE_README.md",
+                                          "line": i + 1, "blob_sha": "f" * 40})
+                   for i, repo in enumerate(variants)]
+        doc = {"schema": root_control.SCHEMA, "items": entries}
+        out = root_control.project(doc, {"GBOGEB/cryoplant-project"})
+        self.assertEqual((out["total"], out["private_aggregate"], out["items"]),
+                         (3, 3, []))
+        encoded = json.dumps(out)
+        for i in range(3):
+            self.assertNotIn(f"PRIVATE_OWNER_{i}", encoded)
+            self.assertNotIn(f"SECRET_ACTION_{i}", encoded)
+            self.assertNotIn(f"SECRET_DEP_{i}", encoded)
+            self.assertNotIn(f"PRIVATE-{i}", encoded)
+        self.assertNotIn("PRIVATE_README.md", encoded)
+        self.assertEqual(out["gate_deficits"], {"PRIVATE_OWNER_VERIFICATION": 3})
+
+    def test_private_owner_sources_not_leaked(self):
+        secret = root_item(repo="GBOGEB/cryoplant-project",
+                           next_action="PRIVATE CONTROL TEXT",
+                           owner="PRIVATE PERSON",
+                           issue_pr=["https://github.com/GBOGEB/cryoplant-project/issues/1"])
+        out = root_control.project({"schema": root_control.SCHEMA, "items": [secret]},
+                                   {"GBOGEB/cryoplant-project"})
+        self.assertEqual(out["private_aggregate"], 1)
+        self.assertEqual(out["items"], [])
+        self.assertNotIn("PRIVATE CONTROL TEXT", json.dumps(out))
+        self.assertNotIn("PRIVATE PERSON", json.dumps(out))
+
+    def test_duplicate_ids_and_untrusted_root_source_fail(self):
+        row = root_item()
+        with self.assertRaises(ValueError):
+            root_control.project({"schema": root_control.SCHEMA, "items": [row, row]})
+        with self.assertRaises(ValueError):
+            root_control.project({"schema": root_control.SCHEMA,
+                                  "items": [root_item(root_source={"path": "docs/README.md",
+                                                                    "line": 1,
+                                                                    "blob_sha": "a" * 40})]})
+
+    def test_root_gate_deficits_are_visible_but_not_credited_in_html(self):
+        model = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA,
+                                  plan=plan(task()),
+                                  root_next={"schema": root_control.SCHEMA,
+                                             "items": [root_item()]})
+        page = portfolio.artifacts(model)["index.html"].decode()
+        self.assertIn('id="root-control-summary"', page)
+        self.assertIn('id="root-control-table"', page)
+        self.assertIn("rootCtl.closure_verified", page)
+        self.assertIn("EVIDENCE CANDIDATE; UNVERIFIED", page)
+        self.assertEqual(model["root_next_control"]["closure_verified"], 0)
+
+    def test_pinned_main_repeat_rejects_floating_ref_and_existing_receipt(self):
+        import repeat_main_proof as proof
+        with tempfile.TemporaryDirectory() as tmp:
+            receipt = Path(tmp) / "repeat.json"
+            with self.assertRaisesRegex(ValueError, "exact 40-hex"):
+                proof.execute(portfolio.REPO, "master", receipt)
+            receipt.write_text("must not overwrite", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "must not already exist"):
+                proof.execute(portfolio.REPO, "a" * 40, receipt)
+
+    def test_repeat_suite_contract_does_not_infer_control(self):
+        import repeat_main_proof as proof
+        self.assertEqual(proof.EXPECTED_CASES, 3)
+        self.assertEqual(proof.SUITE, "tests.test_main_pipeline_e2e")
+        self.assertEqual(proof.RECEIPT_SCHEMA, "jade.main-pipeline-repeat.v1")
+        source = (HERE / "repeat_main_proof.py").read_text(encoding="utf-8")
+        self.assertIn('"control_qualified": False', source)
+        self.assertIn('"release_qualified": False', source)
+        self.assertIn('"merge_admission": "WITHHELD"', source)
+
+    def test_real_main_repeat_candidate_is_source_bound_but_not_verified(self):
+        doc = json.loads((HERE / "root_next_pilot_hub.json").read_text(encoding="utf-8"))
+        out = root_control.project(doc)
+        self.assertEqual((out["total"], out["closure_verified"]), (2, 0))
+        self.assertEqual(sum(r["gate_candidates"] for r in out["items"]), 3)
+        self.assertEqual(sum(len(r["pending_gates"]) for r in out["items"]), 13)
+        main = out["items"][0]
+        self.assertEqual(main["root_id"], "HUB-README-117-MAIN-PIPELINE")
+        native = main["evidence_candidates"]["native"]
+        self.assertEqual(native["head_sha"], doc["source_commit"])
+        self.assertEqual(native["verification"], "OWNER_INDEPENDENT_DOV_PENDING")
+        self.assertEqual(
+            native["receipt_url"],
+            "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/"
+            "44878223386/artifacts/14696623268")
+        self.assertFalse(main["closure_verified"])
+        self.assertNotIn("native", main["pending_gates"])
+        self.assertIn("control", main["pending_gates"])
+        self.assertEqual(len(out["items"][1]["pending_gates"]), 7)
+
+    def test_gate_evidence_projection_never_exposes_untrusted_extra_fields(self):
+        doc = {"schema": root_control.SCHEMA, "items": [root_item(gates={
+            "native": {"decision": "PASS", "head_sha": "b" * 40,
+                       "receipt_url":
+                           "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/42",
+                       "secret_untrusted_extra": "DO_NOT_EXPORT"}})]}
+        out = root_control.project(doc)
+        self.assertNotIn("DO_NOT_EXPORT", json.dumps(out))
+        self.assertEqual(out["items"][0]["evidence_candidates"]["native"]["verification"],
+                         "OWNER_INDEPENDENT_DOV_PENDING")
+        self.assertEqual(out["closure_verified"], 0)
+
+    def test_hub_real_readme_pilot_is_attributable_but_not_closed(self):
+        doc = json.loads((HERE / "root_next_pilot_hub.json").read_text(encoding="utf-8"))
+        self.assertEqual(doc["source_scope"], "HUB_README_PILOT_ONLY")
+        self.assertEqual(len(doc["items"]), 2)
+        # On the candidate branch the Hub root README is unchanged from the
+        # pilot source. Native Git blob equality, not a self-declared hash alone.
+        import subprocess
+        blob = subprocess.check_output(
+            ["git", "hash-object", str(portfolio.REPO / "README.md")],
+            text=True).strip()
+        self.assertEqual(blob, doc["source_blob_sha"])
+        readme = (portfolio.REPO / "README.md").read_text(encoding="utf-8").splitlines()
+        self.assertIn("two-phase pipeline", readme[116])
+        self.assertIn("Excel schedule/data table engine", readme[169])
+        for item in doc["items"]:
+            self.assertEqual(item["root_source"]["blob_sha"], doc["source_blob_sha"])
+            self.assertEqual(item["repo"], "GBOGEB/pipeline-automation-hub")
+        out = root_control.project(doc)
+        self.assertEqual((out["total"], out["actionable"], out["closure_verified"]),
+                         (2, 2, 0))
+        self.assertEqual(out["gate_deficits"]["control"], 2)
+        self.assertTrue(all(it["status"] == "PROOF_REQUIRED" for it in out["items"]))
+
+    def test_mismatched_pilot_cohort_blob_fails_closed(self):
+        doc = json.loads((HERE / "root_next_pilot_hub.json").read_text(encoding="utf-8"))
+        doc["items"][0]["root_source"]["blob_sha"] = "f" * 40
+        with self.assertRaisesRegex(ValueError, "conflicts with cohort"):
+            root_control.project(doc)
+        doc["items"][0]["root_source"]["blob_sha"] = doc["source_blob_sha"]
+        doc["source_commit"] = "BAD"
+        with self.assertRaisesRegex(ValueError, "cohort source commit"):
+            root_control.project(doc)
+
+    def test_portfolio_integration_emits_bounded_artifact(self):
+        input_doc = {"schema": root_control.SCHEMA, "items": [root_item()]}
+        model = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA,
+                                  plan=plan(task()), root_next=input_doc)
+        self.assertEqual(model["root_next_control"]["total"], 1)
+        self.assertEqual(model["root_next_control"]["closure_verified"], 0)
+        files = portfolio.artifacts(model)
+        self.assertIn("root_next_control.json", files)
+        self.assertEqual(json.loads(files["root_next_control.json"])["total"], 1)
 
 
 class ObservationBoundaryTests(unittest.TestCase):

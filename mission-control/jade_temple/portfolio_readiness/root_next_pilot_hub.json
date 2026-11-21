@@ -1,0 +1,79 @@
+{
+  "schema": "jade.root-next-control.v1",
+  "source_scope": "HUB_README_PILOT_ONLY",
+  "source_commit": "aec47c4c0d0ba026e67b266a2db1ea04f1999359",
+  "source_blob_sha": "4a691127e9dd4d0a2ad4fb766f16273557b5157f",
+  "policy": "SOURCE_READBACK_NOT_RELEASE_AUTHORITY",
+  "items": [
+    {
+      "root_id": "HUB-README-117-MAIN-PIPELINE",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "root_source": {
+        "path": "README.md",
+        "line": 117,
+        "blob_sha": "4a691127e9dd4d0a2ad4fb766f16273557b5157f"
+      },
+      "kind": "library",
+      "owner": "GBOGEB/pipeline-automation-hub MAIN/recursive-build owner",
+      "issue_pr": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/300",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/286"
+      ],
+      "prerequisites": [
+        "ISSUE:300:historically-closed",
+        "FPC:current-head-proof",
+        "OWNER:postrelease-control"
+      ],
+      "next_action": "Independently verify current-main E2E repeat source/artifact hash and owner acceptance; then qualify remaining issue/PR, review, merge, release and CONTROL evidence without assuming PR merge",
+      "gates": {
+        "source": {
+          "decision": "PASS",
+          "head_sha": "aec47c4c0d0ba026e67b266a2db1ea04f1999359",
+          "receipt_url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/aec47c4c0d0ba026e67b266a2db1ea04f1999359/README.md"
+        },
+        "native": {
+          "decision": "PASS",
+          "head_sha": "aec47c4c0d0ba026e67b266a2db1ea04f1999359",
+          "receipt_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/44878223386/artifacts/14696623268",
+          "evidence_class": "NATIVE_REPEAT_CANDIDATE",
+          "suite": "tests.test_main_pipeline_e2e",
+          "native_cases_passed": 3,
+          "producer_pr_head": "bae49c0aa74895d0a8af3da2a6bb7851f64e926e",
+          "archive_sha256": "db23e48bd9f83c7a14a43ca99513b575ab1e6662fa5ac11b0c3f462f5c6ae1b7",
+          "owner_verification": "PENDING"
+        }
+      }
+    },
+    {
+      "root_id": "HUB-README-170-EXCEL-SCHEDULE",
+      "repo": "GBOGEB/pipeline-automation-hub",
+      "root_source": {
+        "path": "README.md",
+        "line": 170,
+        "blob_sha": "4a691127e9dd4d0a2ad4fb766f16273557b5157f"
+      },
+      "kind": "library",
+      "owner": "GBOGEB/pipeline-automation-hub Excel schedule engine / real-workbook owner",
+      "issue_pr": [
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/410",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/408",
+        "https://github.com/GBOGEB/pipeline-automation-hub/issues/409"
+      ],
+      "prerequisites": [
+        "ISSUE:410:source-workbook-freeze",
+        "SOURCE:governed-workbook-hash",
+        "EVIDENCE:T0-manifest",
+        "EVIDENCE:T1-comparable-delta",
+        "OWNER:baseline-acceptance"
+      ],
+      "next_action": "Obtain governed workbook binary and owner-authorized source SHA; execute T0, then later-source T1 comparison and human disposition under #410",
+      "gates": {
+        "source": {
+          "decision": "PASS",
+          "head_sha": "aec47c4c0d0ba026e67b266a2db1ea04f1999359",
+          "receipt_url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/aec47c4c0d0ba026e67b266a2db1ea04f1999359/README.md"
+        }
+      }
+    }
+  ]
+}
