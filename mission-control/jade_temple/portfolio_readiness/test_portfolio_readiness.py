@@ -162,6 +162,18 @@ class RootNextControlSafetyTests(unittest.TestCase):
                                                                     "line": 1,
                                                                     "blob_sha": "a" * 40})]})
 
+    def test_root_gate_deficits_are_visible_but_not_credited_in_html(self):
+        model = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA,
+                                  plan=plan(task()),
+                                  root_next={"schema": root_control.SCHEMA,
+                                             "items": [root_item()]})
+        page = portfolio.artifacts(model)["index.html"].decode()
+        self.assertIn('id="root-control-summary"', page)
+        self.assertIn('id="root-control-table"', page)
+        self.assertIn("rootCtl.closure_verified", page)
+        self.assertIn("EVIDENCE CANDIDATE; UNVERIFIED", page)
+        self.assertEqual(model["root_next_control"]["closure_verified"], 0)
+
     def test_portfolio_integration_emits_bounded_artifact(self):
         input_doc = {"schema": root_control.SCHEMA, "items": [root_item()]}
         model = portfolio.project(as_of=AS_OF, source_sha=BASE_SHA,
