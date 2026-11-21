@@ -431,10 +431,20 @@ def project(*, as_of: str, source_sha: str, jade: Path = JADE,
     if previous is not None:
         need(previous.get("schema") == SCHEMA, "previous snapshot schema")
         need(timestamp(previous["as_of"]) <= at, "previous snapshot is newer than current")
-        comparable = view_cohort(previous) == view_cohort(out)
+        old_cohort, new_cohort = view_cohort(previous), view_cohort(out)
+        private_cohort_unverifiable = bool(
+            old_cohort["root_cohort"].get("private_aggregate", 0)
+            or new_cohort["root_cohort"].get("private_aggregate", 0))
+        # A public aggregate count does not bind private root ID or source blob.
+        # Never report comparable/NO_UPDATE from indistinguishable redactions.
+        comparable = False if private_cohort_unverifiable else old_cohort == new_cohort
         old = digest(semantic_state(previous))
-        out["delta"] = {"basis_comparable": comparable, "material_change": old != fingerprint,
-                        "notification": "MATERIAL_CHANGE" if old != fingerprint else "NO_UPDATE",
+        change = old != fingerprint
+        out["delta"] = {"basis_comparable": comparable,
+                        "material_change": None if private_cohort_unverifiable else change,
+                        "notification": ("COMPARABILITY_WITHHELD_PRIVATE_ROOT_COHORT"
+                                         if private_cohort_unverifiable else
+                                         "MATERIAL_CHANGE" if change else "NO_UPDATE"),
                         "previous_as_of": previous["as_of"], "fingerprint": fingerprint,
                         "comparability_scope": "VIEW_SCHEMA_AND_COHORT_ONLY",
                         "native_control_comparable": None}
