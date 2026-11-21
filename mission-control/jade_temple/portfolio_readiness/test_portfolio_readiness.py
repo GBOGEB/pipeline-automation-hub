@@ -193,6 +193,29 @@ class RootNextControlSafetyTests(unittest.TestCase):
             root_control.project({"schema": root_control.SCHEMA,
                                   "items": [root_item(gates=gates)]})
 
+    def test_private_repository_aliases_cannot_leak_public_root_fields(self):
+        variants = ("GBOGEB/Cryoplant-project", "GBOGEB/CRYOPLANT-PROJECT",
+                    "GBOGEB/cryoplant-project")
+        entries = [root_item(repo=repo, root_id=f"PRIVATE-{i}",
+                             owner=f"PRIVATE_OWNER_{i}",
+                             next_action=f"SECRET_ACTION_{i}",
+                             prerequisites=[f"SECRET_DEP_{i}"],
+                             root_source={"path": "PRIVATE_README.md",
+                                          "line": i + 1, "blob_sha": "f" * 40})
+                   for i, repo in enumerate(variants)]
+        doc = {"schema": root_control.SCHEMA, "items": entries}
+        out = root_control.project(doc, {"GBOGEB/cryoplant-project"})
+        self.assertEqual((out["total"], out["private_aggregate"], out["items"]),
+                         (3, 3, []))
+        encoded = json.dumps(out)
+        for i in range(3):
+            self.assertNotIn(f"PRIVATE_OWNER_{i}", encoded)
+            self.assertNotIn(f"SECRET_ACTION_{i}", encoded)
+            self.assertNotIn(f"SECRET_DEP_{i}", encoded)
+            self.assertNotIn(f"PRIVATE-{i}", encoded)
+        self.assertNotIn("PRIVATE_README.md", encoded)
+        self.assertEqual(out["gate_deficits"], {"PRIVATE_OWNER_VERIFICATION": 3})
+
     def test_private_owner_sources_not_leaked(self):
         secret = root_item(repo="GBOGEB/cryoplant-project",
                            next_action="PRIVATE CONTROL TEXT",
