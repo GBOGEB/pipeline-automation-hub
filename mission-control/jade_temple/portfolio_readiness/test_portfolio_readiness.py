@@ -217,6 +217,64 @@ class RootNextControlSafetyTests(unittest.TestCase):
                          owner + "/issues/372")
         self.assertIsNone(root_control.link(owner + "/actions/runs/42", issue_pr=True))
 
+    def test_dot_segments_and_encoded_normalizations_are_not_evidence(self):
+        base = "https://github.com/GBOGEB/pipeline-automation-hub"
+        sha = "a" * 40
+        invalid = (
+            base + "/blob/" + sha + "/../settings",
+            base + "/blob/" + sha + "/%2e%2e/settings",
+            base + "/blob/" + sha + "/%2E%2E/settings",
+            base + "/blob/" + sha + "/./README.md",
+            base + "/blob/" + sha + "/%2e/README.md",
+            base + "/releases/tag/../settings",
+            base + "/releases/tag/%2e%2e/settings",
+            base + "/blob/" + sha + "/dir//README.md",
+            base + "/blob/" + sha + "/dir%2fREADME.md",
+            base + "/issues/372#fragment",
+        )
+        for uri in invalid:
+            with self.subTest(uri=uri):
+                self.assertIsNone(root_control.link(uri))
+                with self.assertRaisesRegex(ValueError, "PASS needs exact SHA"):
+                    root_control.project({"schema": root_control.SCHEMA, "items": [
+                        root_item(gates={"native": {"decision": "PASS",
+                                                   "head_sha": sha,
+                                                   "receipt_url": uri}})]})
+        self.assertIsNotNone(root_control.link(base + "/blob/" + sha + "/README.md"))
+        self.assertIsNotNone(root_control.link(base + "/actions/runs/44888310041"))
+
+    def test_redacted_private_cohort_same_count_is_not_comparable(self):
+        private_repo = "GBOGEB/cryoplant-project"
+        def private_item(root_id, blob):
+            return root_item(repo=private_repo, root_id=root_id,
+                             root_source={"path": "README.md", "line": 1, "blob_sha": blob},
+                             owner="PRIVATE_PERSON", next_action="PRIVATE_ACTION")
+        original = portfolio.project(
+            as_of=AS_OF, source_sha=BASE_SHA, plan=plan(task()),
+            root_next={"schema": root_control.SCHEMA,
+                       "items": [private_item("PRIVATE-A", "a" * 40)]})
+        changed = portfolio.project(
+            as_of=AS_OF, source_sha=BASE_SHA, plan=plan(task()),
+            root_next={"schema": root_control.SCHEMA,
+                       "items": [private_item("PRIVATE-B", "b" * 40)]},
+            previous=original)
+        self.assertEqual(original["root_next_control"]["private_aggregate"], 1)
+        self.assertEqual(changed["root_next_control"]["private_aggregate"], 1)
+        self.assertFalse(changed["delta"]["basis_comparable"])
+        self.assertIsNone(changed["delta"]["material_change"])
+        self.assertEqual(changed["delta"]["notification"],
+                         "COMPARABILITY_WITHHELD_PRIVATE_ROOT_COHORT")
+        self.assertNotIn("PRIVATE-A", json.dumps(original))
+        self.assertNotIn("PRIVATE-B", json.dumps(changed))
+        self.assertEqual(changed["root_next_control"]["closure_verified"], 0)
+        unchanged = portfolio.project(
+            as_of=AS_OF, source_sha=BASE_SHA, plan=plan(task()),
+            root_next={"schema": root_control.SCHEMA,
+                       "items": [private_item("PRIVATE-A", "a" * 40)]},
+            previous=original)
+        self.assertFalse(unchanged["delta"]["basis_comparable"])
+        self.assertNotEqual(unchanged["delta"]["notification"], "NO_UPDATE")
+
     def test_even_all_declared_passes_cannot_self_certify_control(self):
         gates = {key: {"decision": "PASS", "head_sha": "b" * 40,
                        "receipt_url": "https://github.com/GBOGEB/pipeline-automation-hub/actions/runs/42"}
