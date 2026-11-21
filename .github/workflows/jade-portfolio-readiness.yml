@@ -77,6 +77,26 @@ jobs:
             --source-sha "$PORTFOLIO_PLANNING_SHA" \
             --root-next mission-control/jade_temple/portfolio_readiness/root_next_pilot_hub.json \
             --out "$PORTFOLIO_QA_OUT/site"
+      - name: Verify source-bound ROOT NEXT pilot output cannot auto-close
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          output = Path(os.environ["PORTFOLIO_QA_OUT"]) / "site"
+          doc = json.loads((output / "root_next_control.json").read_text(encoding="utf-8"))
+          assert doc["status"] == "READ_ONLY_PROJECTION", doc["status"]
+          assert (doc["total"], doc["actionable"], doc["closure_verified"]) == (2, 2, 0)
+          assert {row["root_id"] for row in doc["items"]} == {
+              "HUB-README-117-MAIN-PIPELINE", "HUB-README-170-EXCEL-SCHEDULE"}
+          assert doc["gate_deficits"]["control"] == 2
+          assert all(row["root_source"]["blob_sha"] ==
+                     "4a691127e9dd4d0a2ad4fb766f16273557b5157f"
+                     for row in doc["items"])
+          html = (output / "index.html").read_text(encoding="utf-8")
+          assert "ROOT NEXT" in html and 'id="root-control-table"' in html
+          print("ROOT_NEXT_PILOT_2_OF_2_SOURCE_BOUND / CONTROL_0 / QA_PASS")
+          PY
       - name: Install the existing pinned browser QA dependency
         run: |
           set -euo pipefail
