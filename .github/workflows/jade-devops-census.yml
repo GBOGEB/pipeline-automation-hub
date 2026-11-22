@@ -6,6 +6,8 @@ on:
   pull_request:
     paths:
       - 'mission-control/jade_temple/devops/**'
+      # The census bridge is exercised by the consumer smoke below, so a bridge-only change must run it.
+      - 'mission-control/jade_temple/portfolio_readiness/**'
       - 'mission-control/jade_temple/data/DEVOPS_CENSUS_N*.json'
       - 'mission-control/jade_temple/data/DEVOPS_OBJECTS_N*.json'
       - '.github/workflows/jade-devops-census.yml'
@@ -17,6 +19,7 @@ on:
     branches: [master]
     paths:
       - 'mission-control/jade_temple/devops/**'
+      - 'mission-control/jade_temple/portfolio_readiness/**'
       - 'mission-control/jade_temple/data/DEVOPS_CENSUS_N*.json'
       - 'mission-control/jade_temple/data/DEVOPS_OBJECTS_N*.json'
       - '.github/workflows/jade-devops-census.yml'
@@ -39,6 +42,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
           persist-credentials: false
       - name: Assert exact checkout
         env:
@@ -111,10 +115,55 @@ jobs:
             --previous $A/DEVOPS_CENSUS_N9.json --out $D/DEVOPS_CENSUS_N10_READING.md
           python $D/census.py check --census $A/DEVOPS_CENSUS_N11.json --objects $A/DEVOPS_OBJECTS_N11.json
           python $D/census.py report --check --census $A/DEVOPS_CENSUS_N11.json             --previous $A/DEVOPS_CENSUS_N10.json --out $D/DEVOPS_CENSUS_N11_READING.md
+          python $D/census.py check --census $A/DEVOPS_CENSUS_N12.json --objects $A/DEVOPS_OBJECTS_N12.json
+          python $D/census.py report --check --census $A/DEVOPS_CENSUS_N12.json             --previous $A/DEVOPS_CENSUS_N11.json --out $D/DEVOPS_CENSUS_N12_READING.md
           python mission-control/jade_temple/devops/workflows.py lint --require-deploy \
             .github/workflows/jade-reusable-deploy.yml \
             mission-control/jade_temple/devops/templates/jade-cicd-caller.yml > "$RUNNER_TEMP/deploy-lint.json"
           python mission-control/jade_temple/devops/workflows.py lint .github/workflows/jade-reusable-ci.yml
+      - name: Native full-population consumer smoke on canonical N11
+        env:
+          JADE_PLANNING_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          P=mission-control/jade_temple/portfolio_readiness
+          python "$P/census_bridge.py" \
+            --census mission-control/jade_temple/data/DEVOPS_CENSUS_N11.json \
+            --private-registry mission-control/gogreen/token_census/REGISTRY.json \
+            --require-count 21 \
+            --out "$RUNNER_TEMP/jade-portfolio-N11-observation.json" \
+            --receipt "$RUNNER_TEMP/jade-portfolio-N11-receipt.json"
+          python "$P/portfolio_readiness.py" \
+            --as-of "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --source-sha "$JADE_PLANNING_SHA" \
+            --observation "$RUNNER_TEMP/jade-portfolio-N11-observation.json" \
+            --out "$RUNNER_TEMP/jade-portfolio-N11-site"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ["RUNNER_TEMP"])
+          r = json.loads((root / "jade-portfolio-N11-receipt.json").read_text())
+          m = json.loads((root / "jade-portfolio-N11-site/portfolio_readiness.json").read_text())
+          assert r["source_repos"] == 21
+          import hashlib
+          path = "mission-control/jade_temple/portfolio_readiness/census_bridge.py"
+          assert m["planning_source_sha"] == os.environ["JADE_PLANNING_SHA"]
+          assert m["source_binding"]["status"] == "BASELINE_INPUTS_MATCH"
+          assert m["source_hashes"][path]["sha256"] == hashlib.sha256(Path(path).read_bytes()).hexdigest()
+          assert m["authority"]["current_point_release_readiness"] is None
+          assert m["authority"]["live_weighted_closure_rate"] is None
+          assert m["watch"]["enabled"] is False
+          print("CANONICAL_21_REPO_BRIDGE=PASS; SOURCE_STRUCTURAL_ONLY; LIVE_NATIVE_QA=UNKNOWN")
+          PY
+      # Mandatory offline census evidence must exist after a successful qualification.
+      # Keep the optional projection separate so its failure cannot hide census receipts.
+      - name: Verify required offline evidence on successful qualification
+        if: success()
+        run: |
+          set -euo pipefail
+          test -s "$RUNNER_TEMP/devops-tests.log"
+          test -s "$RUNNER_TEMP/devops-coverage.json"
+          test -s "$RUNNER_TEMP/deploy-lint.json"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
@@ -123,6 +172,17 @@ jobs:
             ${{ runner.temp }}/devops-tests.log
             ${{ runner.temp }}/devops-coverage.json
             ${{ runner.temp }}/deploy-lint.json
+          retention-days: 21
+          if-no-files-found: error
+      # Projection output is diagnostic and may be absent on a fail-closed projection.
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: jade-portfolio-N11-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/jade-portfolio-N11-observation.json
+            ${{ runner.temp }}/jade-portfolio-N11-receipt.json
+            ${{ runner.temp }}/jade-portfolio-N11-site/
           retention-days: 21
           if-no-files-found: warn
 
@@ -139,18 +199,20 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.sha }}
+          fetch-depth: 1
           persist-credentials: false
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: '3.12'
       - name: Fetch and scan the TOP21 roster
+        id: fetch_census
         env:
           CENSUS_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           python -m pip install --disable-pip-version-check pyyaml==6.0.3
           D=mission-control/jade_temple/devops
-          LATEST=mission-control/jade_temple/data/DEVOPS_CENSUS_N11.json
+          LATEST=mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json
           python $D/census.py fetch --cache "$RUNNER_TEMP/cache" --baseline-census $LATEST | tee "$RUNNER_TEMP/fetch.jsonl"
           python $D/census.py scan --cache "$RUNNER_TEMP/cache" --api-token-env CENSUS_TOKEN \
             --iteration FRESH --baseline-census $LATEST \
@@ -160,7 +222,7 @@ jobs:
           python - <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
           import json, os
           from pathlib import Path
-          old = json.loads(Path("mission-control/jade_temple/data/DEVOPS_CENSUS_N11.json").read_text())
+          old = json.loads(Path("mission-control/jade_temple/data/DEVOPS_CENSUS_N12.json").read_text())
           new = json.loads((Path(os.environ["RUNNER_TEMP"]) / "DEVOPS_CENSUS_FRESH.json").read_text())
           o = {r["repo"]: r for r in old["repos"]}
           print(f"## JADE DevOps census drift\n\ncommitted `{old['observed_at_utc']}` -> fresh `{new['observed_at_utc']}`\n")
@@ -176,7 +238,54 @@ jobs:
               print(f"| {r['repo']} | {moved} | {lv} | {p['tests']['py_untested']} -> {r['tests']['py_untested']} |"
                     f" {p['tests']['zero_case_files']} -> {r['tests']['zero_case_files']} |")
           PY
+      - name: Project the private-safe portfolio from the same weekly census
+        env:
+          JADE_PLANNING_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          P=mission-control/jade_temple/portfolio_readiness
+          python "$P/census_bridge.py" \
+            --census "$RUNNER_TEMP/DEVOPS_CENSUS_FRESH.json" \
+            --private-registry mission-control/gogreen/token_census/REGISTRY.json \
+            --require-count 21 \
+            --out "$RUNNER_TEMP/jade-portfolio-observation.json" \
+            --receipt "$RUNNER_TEMP/jade-portfolio-bridge-receipt.json"
+          python "$P/portfolio_readiness.py" \
+            --as-of "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --source-sha "$JADE_PLANNING_SHA" \
+            --observation "$RUNNER_TEMP/jade-portfolio-observation.json" \
+            --out "$RUNNER_TEMP/jade-portfolio-weekly"
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ["RUNNER_TEMP"])
+          receipt = json.loads((root / "jade-portfolio-bridge-receipt.json").read_text())
+          model = json.loads((root / "jade-portfolio-weekly/portfolio_readiness.json").read_text())
+          assert receipt["source_repos"] == 21 and receipt["merge_admission"] == "HOLD"
+          import hashlib
+          path = "mission-control/jade_temple/portfolio_readiness/census_bridge.py"
+          assert model["planning_source_sha"] == os.environ["JADE_PLANNING_SHA"]
+          assert model["source_binding"]["status"] == "BASELINE_INPUTS_MATCH"
+          assert model["source_hashes"][path]["sha256"] == hashlib.sha256(Path(path).read_bytes()).hexdigest()
+          assert model["authority"]["current_point_release_readiness"] is None
+          assert model["authority"]["live_weighted_closure_rate"] is None
+          assert model["watch"]["enabled"] is False
+          print("## JADE weekly portfolio: read-only structural observation")
+          print(f"Top21 rows: {receipt['source_repos']}; private aggregate rows: {receipt['private_rows_masked']}")
+          print(f"Observed: {receipt['observed_at_utc']}; source census SHA256: {receipt['source_digest_sha256']}")
+          print("**No native checks, weighted closure, owner release or current gate PASS is inferred.**")
+          print("Download the HTML cockpit, JSON, CSV, DAG and watch proposal from this run's artifacts.")
+          PY
+      # Preserve the source census when the optional portfolio projection fails.
+      # A completed source collection must produce its three required evidence files.
+      - name: Verify required census outputs if collection succeeded
+        if: always() && steps.fetch_census.outcome == 'success'
+        run: |
+          test -s "$RUNNER_TEMP/DEVOPS_CENSUS_FRESH.json"
+          test -s "$RUNNER_TEMP/DEVOPS_OBJECTS_FRESH.json"
+          test -s "$RUNNER_TEMP/fetch.jsonl"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
         with:
           name: jade-devops-census-fresh-${{ github.sha }}-${{ github.run_id }}
           path: |
@@ -185,6 +294,17 @@ jobs:
             ${{ runner.temp }}/fetch.jsonl
           retention-days: 35
           if-no-files-found: error
+      # Derived portfolio outputs may be absent after a fail-closed projection.
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: jade-portfolio-projection-${{ github.sha }}-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/jade-portfolio-observation.json
+            ${{ runner.temp }}/jade-portfolio-bridge-receipt.json
+            ${{ runner.temp }}/jade-portfolio-weekly/
+          retention-days: 35
+          if-no-files-found: warn
       - name: Open one issue when the scheduled refresh goes red
         if: failure() && github.event_name == 'schedule'
         env:
