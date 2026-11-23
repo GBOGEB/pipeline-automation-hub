@@ -402,7 +402,7 @@ class RootNextControlSafetyTests(unittest.TestCase):
             attempts = []
             def fake(args, cwd):
                 if args[:3] == ["git", "cat-file", "-t"]:
-                    return SimpleNamespace(returncode=0, stdout="commit\\n", stderr="")
+                    return SimpleNamespace(returncode=0, stdout="commit\n", stderr="")
                 if args[:3] == ["git", "worktree", "add"]:
                     root = Path(args[4])
                     attempts.append(root.parent)
@@ -410,14 +410,14 @@ class RootNextControlSafetyTests(unittest.TestCase):
                     (root / "tests" / "test_main_pipeline_e2e.py").write_text("# suite")
                     return SimpleNamespace(returncode=0, stdout="", stderr="")
                 if args[:3] == ["git", "rev-parse", "HEAD"]:
-                    return SimpleNamespace(returncode=0, stdout=pinned + "\\n", stderr="")
+                    return SimpleNamespace(returncode=0, stdout=pinned + "\n", stderr="")
                 if args[:3] == ["git", "rev-parse", "HEAD:README.md"]:
-                    return SimpleNamespace(returncode=0, stdout=pinned + "\\n", stderr="")
+                    return SimpleNamespace(returncode=0, stdout=pinned + "\n", stderr="")
                 if args[:3] == ["git", "worktree", "remove"]:
                     return SimpleNamespace(returncode=1, stdout="", stderr="LOCKED")
                 self.assertEqual(args[1:4], ["-m", "unittest", "-v"])
                 return SimpleNamespace(returncode=0, stdout="",
-                                       stderr="Ran 3 tests in 0.010s\\n\\nOK\\n")
+                                       stderr="Ran 3 tests in 0.010s\n\nOK\n")
             with mock.patch.object(proof, "command", side_effect=fake):
                 with mock.patch.object(proof.tempfile, "gettempdir", return_value=str(scratch)):
                     with self.assertRaisesRegex(RuntimeError, "git worktree remove failed"):
@@ -433,7 +433,7 @@ class RootNextControlSafetyTests(unittest.TestCase):
             actions = []
             def fake(args, cwd):
                 if args[:3] == ["git", "cat-file", "-t"]:
-                    return SimpleNamespace(returncode=0, stdout="commit\\n", stderr="")
+                    return SimpleNamespace(returncode=0, stdout="commit\n", stderr="")
                 if args[:3] == ["git", "worktree", "add"]:
                     root = Path(args[4])
                     actions.append(root.parent)
