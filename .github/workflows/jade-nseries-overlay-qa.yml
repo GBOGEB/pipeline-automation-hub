@@ -1,0 +1,75 @@
+name: JADE N-Series Overlay QA (read-only)
+
+on:
+  pull_request:
+    paths:
+      - "mission-control/jade_temple/data/N_SERIES_REGISTRY_v1.json"
+      - "mission-control/jade_temple/tools/nseries_overlay.py"
+      - "mission-control/jade_temple/tools/test_nseries_overlay.py"
+      - "mission-control/jade_temple/N_SERIES_ATLAS_README.md"
+      - ".github/workflows/jade-nseries-overlay-qa.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jade-nseries-overlay-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  overlay-qa:
+    name: Validate read-only N-series and offline browser
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.14"
+      - name: Test schema and adversarial predicates
+        run: python -m unittest discover -s mission-control/jade_temple/tools -p test_nseries_overlay.py -v
+      - name: Generate offline artifact and determinism check
+        run: |
+          python mission-control/jade_temple/tools/nseries_overlay.py --write
+          python mission-control/jade_temple/tools/nseries_overlay.py --check
+          test -s mission-control/jade_temple/site/nseries_atlas.html
+          test -s mission-control/jade_temple/diagrams/N_SERIES_DEPENDENCIES.mmd
+      - name: Emit exact-head source receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/jade-nseries
+          python - <<'PY'
+          import hashlib, json, os, pathlib, subprocess
+          root=pathlib.Path("mission-control/jade_temple")
+          expected=os.environ["EXPECTED_SHA"]
+          actual=subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip()
+          if actual != expected: raise SystemExit("EXACT_HEAD_MISMATCH")
+          entries={}
+          for name in ("data/N_SERIES_REGISTRY_v1.json","tools/nseries_overlay.py",
+                       "site/nseries_atlas.html","site/nseries_atlas.json",
+                       "diagrams/GLOBAL_N_SERIES.mmd","diagrams/N_SERIES_DEPENDENCIES.mmd"):
+              data=(root/name).read_bytes()
+              entries[name]=hashlib.sha256(data).hexdigest()
+          receipt={"schema":"jade.nseries.overlay-receipt.v1","source_sha":actual,
+                   "source_test_status":"TEST_JOB_RAN","admission":"HOLD",
+                   "approval":None,"native_W169":None,"files_sha256":entries}
+          pathlib.Path("output/jade-nseries/receipt.json").write_text(json.dumps(receipt,indent=2,sort_keys=True)+"\n",encoding="utf-8")
+          PY
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Upload review-only outputs
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: jade-nseries-overlay-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            mission-control/jade_temple/diagrams/GLOBAL_N_SERIES.mmd
+            mission-control/jade_temple/diagrams/N_SERIES_DEPENDENCIES.mmd
+            mission-control/jade_temple/site/nseries_atlas.html
+            mission-control/jade_temple/site/nseries_atlas.json
+            output/jade-nseries/receipt.json
+          if-no-files-found: error

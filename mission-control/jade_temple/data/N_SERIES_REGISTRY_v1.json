@@ -1,0 +1,371 @@
+{
+  "schema": "jade.nseries.overlay.v1",
+  "authority": "READ_ONLY_PROJECTION",
+  "authority_transfer": false,
+  "merge_admission": "HOLD",
+  "as_of_utc": "2026-11-16T00:00:00Z",
+  "source_pulse": "N2_BOUNDARY_PREVIEW",
+  "notes": [
+    "Namespaced numbers are not interchangeable: WATCH:N6 differs from GLOBAL:N6.",
+    "Only HARD_DAG participates in same-pulse topological validation. Other edges are provenance/reference/temporal.",
+    "This is a declared overlay, not fresh native evidence, runtime telemetry, an owner issue ledger or approval."
+  ],
+  "nodes": [
+    {
+      "id": "GLOBAL:N0",
+      "namespace": "GLOBAL",
+      "label": "N0 source inventory",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "classification": "PROPOSED_METHOD",
+      "status": "NOT_ADMITTED"
+    },
+    {
+      "id": "GLOBAL:N1",
+      "namespace": "GLOBAL",
+      "label": "N1 exact-head evidence",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "classification": "PROPOSED_METHOD",
+      "status": "NOT_ADMITTED"
+    },
+    {
+      "id": "GLOBAL:N2",
+      "namespace": "GLOBAL",
+      "label": "N2 root/OID crosswalk",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "classification": "PROPOSED_METHOD",
+      "status": "NOT_ADMITTED"
+    },
+    {
+      "id": "GLOBAL:N3",
+      "namespace": "GLOBAL",
+      "label": "N3 DAG and BD pressure",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "classification": "PROPOSED_METHOD",
+      "status": "NOT_ADMITTED"
+    },
+    {
+      "id": "GLOBAL:N4",
+      "namespace": "GLOBAL",
+      "label": "N4 disjoint lane planning",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "classification": "PROPOSED_METHOD",
+      "status": "NOT_ADMITTED"
+    },
+    {
+      "id": "GLOBAL:N5",
+      "namespace": "GLOBAL",
+      "label": "N5 native QA and review",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "classification": "PROPOSED_METHOD",
+      "status": "NOT_ADMITTED"
+    },
+    {
+      "id": "GLOBAL:N6",
+      "namespace": "GLOBAL",
+      "label": "N6 owner admission gate",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "classification": "PROPOSED_METHOD",
+      "status": "NOT_ADMITTED"
+    },
+    {
+      "id": "GLOBAL:N7",
+      "namespace": "GLOBAL",
+      "label": "N7 next-pulse recensus",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "classification": "PROPOSED_METHOD",
+      "status": "NOT_ADMITTED"
+    },
+    {
+      "id": "JADE:N+9",
+      "namespace": "JADE",
+      "label": "DevOps census N+9",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "classification": "HISTORICAL_SOURCE",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "id": "JADE:N+10",
+      "namespace": "JADE",
+      "label": "DevOps census N+10",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "classification": "HISTORICAL_SOURCE",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "id": "JADE:N+11",
+      "namespace": "JADE",
+      "label": "DevOps census N+11",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "classification": "HISTORICAL_SOURCE",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "id": "MYCELIUM:N1",
+      "namespace": "MYCELIUM",
+      "label": "Continuity N1",
+      "owner": "GBOGEB/CODEX",
+      "classification": "HISTORICAL_SOURCE",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "id": "MYCELIUM:N7",
+      "namespace": "MYCELIUM",
+      "label": "Continuity N7",
+      "owner": "GBOGEB/CODEX",
+      "classification": "HISTORICAL_SOURCE",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "id": "MYCELIUM:N9",
+      "namespace": "MYCELIUM",
+      "label": "Continuity N9",
+      "owner": "GBOGEB/CODEX",
+      "classification": "HISTORICAL_SOURCE",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "id": "MYCELIUM:N10",
+      "namespace": "MYCELIUM",
+      "label": "Continuity N10",
+      "owner": "GBOGEB/CODEX",
+      "classification": "HISTORICAL_SOURCE",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "id": "GOGREEN:N0",
+      "namespace": "GOGREEN",
+      "label": "GoGREEN N0",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "classification": "HISTORICAL_SOURCE",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "id": "GOGREEN:N+1",
+      "namespace": "GOGREEN",
+      "label": "GoGREEN N+1",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "classification": "HISTORICAL_SOURCE",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "id": "GOGREEN:N+2",
+      "namespace": "GOGREEN",
+      "label": "GoGREEN N+2",
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "classification": "HISTORICAL_SOURCE",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "id": "QPS.TOPO:N3",
+      "namespace": "QPS.TOPO",
+      "label": "Topology N3",
+      "owner": "GBOGEB/cryoplant-project",
+      "classification": "HISTORICAL_SOURCE",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "id": "QPS.TOPO:N4",
+      "namespace": "QPS.TOPO",
+      "label": "Topology N4",
+      "owner": "GBOGEB/cryoplant-project",
+      "classification": "HISTORICAL_SOURCE",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "id": "QPS.DOC:N300",
+      "namespace": "QPS.DOC",
+      "label": "Document work N300",
+      "owner": "GBOGEB/cryoplant-project",
+      "classification": "CANDIDATE_CROSSWALK",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "id": "QPS.DOC:N400",
+      "namespace": "QPS.DOC",
+      "label": "Document work N400",
+      "owner": "GBOGEB/cryoplant-project",
+      "classification": "CANDIDATE_CROSSWALK",
+      "status": "REFERENCE_ONLY"
+    },
+    {
+      "id": "WATCH:N6",
+      "namespace": "WATCH",
+      "label": "N6 Queue Drain Watch",
+      "owner": "ChatGPT user automation",
+      "classification": "OPERATIONAL_REFERENCE",
+      "status": "PAUSED_AT_LAST_CHECK"
+    }
+  ],
+  "edges": [
+    {
+      "from": "GLOBAL:N0",
+      "to": "GLOBAL:N1",
+      "kind": "HARD_DAG",
+      "evidence": "PROPOSED_METHOD_ONLY"
+    },
+    {
+      "from": "GLOBAL:N1",
+      "to": "GLOBAL:N2",
+      "kind": "HARD_DAG",
+      "evidence": "PROPOSED_METHOD_ONLY"
+    },
+    {
+      "from": "GLOBAL:N2",
+      "to": "GLOBAL:N3",
+      "kind": "HARD_DAG",
+      "evidence": "PROPOSED_METHOD_ONLY"
+    },
+    {
+      "from": "GLOBAL:N3",
+      "to": "GLOBAL:N4",
+      "kind": "HARD_DAG",
+      "evidence": "PROPOSED_METHOD_ONLY"
+    },
+    {
+      "from": "GLOBAL:N4",
+      "to": "GLOBAL:N5",
+      "kind": "HARD_DAG",
+      "evidence": "PROPOSED_METHOD_ONLY"
+    },
+    {
+      "from": "GLOBAL:N5",
+      "to": "GLOBAL:N6",
+      "kind": "HARD_DAG",
+      "evidence": "PROPOSED_METHOD_ONLY"
+    },
+    {
+      "from": "GLOBAL:N6",
+      "to": "GLOBAL:N7",
+      "kind": "HARD_DAG",
+      "evidence": "PROPOSED_METHOD_ONLY"
+    },
+    {
+      "from": "JADE:N+9",
+      "to": "JADE:N+10",
+      "kind": "TEMPORAL_SUCCESSOR",
+      "evidence": "HISTORICAL_SOURCE_DECLARED"
+    },
+    {
+      "from": "JADE:N+10",
+      "to": "JADE:N+11",
+      "kind": "TEMPORAL_SUCCESSOR",
+      "evidence": "HISTORICAL_SOURCE_DECLARED"
+    },
+    {
+      "from": "MYCELIUM:N1",
+      "to": "MYCELIUM:N7",
+      "kind": "TEMPORAL_SUCCESSOR",
+      "evidence": "HISTORICAL_SOURCE_DECLARED"
+    },
+    {
+      "from": "MYCELIUM:N9",
+      "to": "MYCELIUM:N10",
+      "kind": "TEMPORAL_SUCCESSOR",
+      "evidence": "HISTORICAL_SOURCE_DECLARED"
+    },
+    {
+      "from": "GOGREEN:N0",
+      "to": "GOGREEN:N+1",
+      "kind": "TEMPORAL_SUCCESSOR",
+      "evidence": "HISTORICAL_SOURCE_DECLARED"
+    },
+    {
+      "from": "GOGREEN:N+1",
+      "to": "GOGREEN:N+2",
+      "kind": "TEMPORAL_SUCCESSOR",
+      "evidence": "HISTORICAL_SOURCE_DECLARED"
+    },
+    {
+      "from": "QPS.TOPO:N3",
+      "to": "QPS.TOPO:N4",
+      "kind": "TEMPORAL_SUCCESSOR",
+      "evidence": "HISTORICAL_SOURCE_DECLARED"
+    },
+    {
+      "from": "QPS.DOC:N300",
+      "to": "QPS.DOC:N400",
+      "kind": "CANDIDATE_LINEAGE",
+      "evidence": "UNVERIFIED_RUNTIME_EDGE"
+    },
+    {
+      "from": "JADE:N+11",
+      "to": "GLOBAL:N1",
+      "kind": "REFERENCE_ONLY",
+      "evidence": "UNVERIFIED_RUNTIME_EDGE"
+    },
+    {
+      "from": "MYCELIUM:N7",
+      "to": "GLOBAL:N2",
+      "kind": "REFERENCE_ONLY",
+      "evidence": "UNVERIFIED_RUNTIME_EDGE"
+    },
+    {
+      "from": "GOGREEN:N+2",
+      "to": "GLOBAL:N3",
+      "kind": "REFERENCE_ONLY",
+      "evidence": "UNVERIFIED_RUNTIME_EDGE"
+    },
+    {
+      "from": "WATCH:N6",
+      "to": "GLOBAL:N3",
+      "kind": "REFERENCE_ONLY",
+      "evidence": "PAUSED_NOT_LIVE_CONTROL"
+    },
+    {
+      "from": "QPS.TOPO:N4",
+      "to": "GLOBAL:N1",
+      "kind": "REFERENCE_ONLY",
+      "evidence": "UNVERIFIED_RUNTIME_EDGE"
+    },
+    {
+      "from": "QPS.DOC:N400",
+      "to": "GLOBAL:N2",
+      "kind": "REFERENCE_ONLY",
+      "evidence": "UNVERIFIED_RUNTIME_EDGE"
+    },
+    {
+      "from": "GLOBAL:N7",
+      "to": "GLOBAL:N0",
+      "kind": "NEXT_PULSE",
+      "evidence": "NOT_SAME_PULSE"
+    }
+  ],
+  "sources": [
+    {
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/jade_temple/data/CICD_DAG_POLICY.json",
+      "role": "EXTERNAL_SOURCE_REFERENCE",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/jade_temple/data/CICD_DAG_POLICY.json"
+    },
+    {
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/jade_temple/tools/cicd_dag.py",
+      "role": "EXTERNAL_SOURCE_REFERENCE",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/jade_temple/tools/cicd_dag.py"
+    },
+    {
+      "owner": "GBOGEB/pipeline-automation-hub",
+      "path": "mission-control/gogreen/scale-dock/README.md",
+      "role": "EXTERNAL_SOURCE_REFERENCE",
+      "url": "https://github.com/GBOGEB/pipeline-automation-hub/blob/master/mission-control/gogreen/scale-dock/README.md"
+    },
+    {
+      "owner": "GBOGEB/CODEX",
+      "path": "mission_control/mycelium/continuity/README.md",
+      "role": "EXTERNAL_SOURCE_REFERENCE",
+      "url": "https://github.com/GBOGEB/CODEX/blob/main/mission_control/mycelium/continuity/README.md"
+    },
+    {
+      "owner": "GBOGEB/cryoplant-project",
+      "path": "tools/repo_topology/n4/README.md",
+      "role": "PRIVATE_AGGREGATE_ONLY",
+      "url": "PRIVATE_AGGREGATE_ONLY"
+    },
+    {
+      "owner": "GBOGEB/cryoplant-project",
+      "path": "publishing/r07/object_bios.schema.json",
+      "role": "PRIVATE_AGGREGATE_ONLY",
+      "url": "PRIVATE_AGGREGATE_ONLY"
+    }
+  ]
+}
