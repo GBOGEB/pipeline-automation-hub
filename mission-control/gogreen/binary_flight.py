@@ -1,4 +1,4 @@
-"""Read-only GoGREEN PPTX/HTML binary truth adapter (stdlib; no document publication).
+"""Read-only GoGREEN PPTX/HTML/SVG truth adapter (stdlib; no publication).
 
 Provides the missing *executed bytes* observation between ABACUS's semantic
 bridge, CODEX visual golden, and hub GoGREEN evidence producers. This does not
@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter, defaultdict
+from contextlib import contextmanager
 import hashlib
 from html.parser import HTMLParser
 import io
@@ -15,6 +16,7 @@ import json
 import posixpath
 import re
 import stat
+import tempfile
 import time
 from pathlib import Path, PurePosixPath
 from xml.etree import ElementTree as ET
@@ -34,18 +36,62 @@ def sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+@contextmanager
+def _archive_snapshot(path: Path):
+    """Hash and parse the same private compressed-byte snapshot.
+
+    Spooling bounds memory without inflating or reading unselected members.
+    Later path replacement cannot change the bytes given to ZipFile.
+    """
+    digest = hashlib.sha256()
+    with tempfile.SpooledTemporaryFile(max_size=8 * 1024 * 1024, mode="w+b") as snapshot:
+        with path.open("rb") as source:
+            for chunk in iter(lambda: source.read(1024 * 1024), b""):
+                digest.update(chunk)
+                snapshot.write(chunk)
+        snapshot.seek(0)
+        yield snapshot, digest.hexdigest()
+
+
+class _NoDeclarations(ET.TreeBuilder):
+    def doctype(self, name, public_id, system_id):
+        raise ValueError("unsafe XML declaration")
+
+
 def _xml(raw: bytes):
     if b"<!DOCTYPE" in raw.upper() or b"<!ENTITY" in raw.upper():
         raise ValueError("unsafe XML declaration")
     try:
-        return ET.fromstring(raw)
+        # The parser-level callback also covers UTF-16 and other XML encodings;
+        # an ASCII byte search alone cannot enforce declaration rejection.
+        return ET.fromstring(raw, parser=ET.XMLParser(target=_NoDeclarations()))
     except ET.ParseError as exc:
         raise ValueError("malformed OOXML/XML") from exc
 
 
-def _safe_members(z: ZipFile, *, max_total: int = Z_LIMIT, max_member: int = Z_LIMIT) -> list:
+def _safe_members(z: ZipFile, *, max_total: int = Z_LIMIT, max_member: int = Z_LIMIT,
+                  selected_names: set[str] | None = None) -> list:
+    """Validate all members, or only an explicit selection without bulk admission.
+
+    The archive entry-count bound always applies. A selection never authorizes
+    reading or extracting the remaining members; callers must report that scope.
+    """
     members = z.infolist()
-    if len(members) > N_LIMIT or len(set(x.filename for x in members)) != len(members):
+    if len(members) > N_LIMIT:
+        raise ValueError("package member count/duplicates invalid")
+    if selected_names is not None:
+        if not selected_names or selected_names - {x.filename for x in members}:
+            raise ValueError("empty or missing selected member")
+        members = [info for info in members if info.filename in selected_names]
+    if len(set(x.filename for x in members)) != len(members):
         raise ValueError("package member count/duplicates invalid")
     total = 0
     for f in members:
@@ -151,16 +197,26 @@ def inspect_presentation(raw: bytes, *, ext: str = ".pptx") -> dict:
                         except (TypeError,ValueError) as exc:
                             raise ValueError("invalid geometry") from exc
             norm = " ".join(" ".join(text_by_shape).casefold().split())
+            table_text = " ".join(_text(table) for table in slide.findall(".//" + A + "tbl"))
+            table_norm = " ".join(table_text.casefold().split())
+            all_norm = " ".join(_text(slide).casefold().split())
             slides.append({
                 "order":order, "member_sha256":sha(z.read(path)),
+                "member_path":path, "relationship_id":rid,
+                "slide_id":slide_ref.get("id"),
                 "text_sha256":sha(norm.encode()), "text_chars":len(norm),
+                "text_scope":"p_sp_drawingml_text",
+                "all_text_sha256":sha(all_norm.encode()), "all_text_chars":len(all_norm),
+                "all_text_scope":"drawingml_a_t_in_slide_part",
+                "table_text_sha256":sha(table_norm.encode()), "table_text_chars":len(table_norm),
                 "text_shape_count":len(text_by_shape), "shape_count":len(shapes),
                 "picture_count":len(pictures), "connector_count":len(connectors),
-                "group_count":max(0,len(groups)-1),
+                "group_count":len(groups),
                 "table_count":sum(bool(g.findall(".//" + A + "tbl")) for g in graphic),
                 "off_canvas_candidates":out_of_bounds,
                 "has_absolute_text_geometry":bool(bounds),
-                "has_groups":len(groups)>1,
+                "has_groups":bool(groups),
+                "group_transform_qualification":"NOT_EVALUATED" if groups else "NOT_APPLICABLE",
             })
         if not slides:
             raise ValueError("no valid presentation slides")
@@ -198,20 +254,50 @@ def inspect_html(raw: bytes) -> dict:
             "semantic_text_completeness":"UNKNOWN","browser_qa":"DEFER"}
 
 
-def survey(archives: list[Path]) -> dict:
-    """Read-only nested archive census, redacted (hash IDs only)."""
+def inspect_svg(raw: bytes) -> dict:
+    """Validate an SVG XML root and count native objects, without rendering."""
+    if len(raw) > S_LIMIT:
+        raise ValueError("SVG input exceeds size budget")
+    root = _xml(raw)
+    if root.tag not in ("svg", "{http://www.w3.org/2000/svg}svg"):
+        raise ValueError("XML root is not SVG")
+    nodes = list(root.iter())
+    return {"family":"svg", "source_sha256":sha(raw), "size_bytes":len(raw),
+            "elements":len(nodes), "native_ids":sum(bool(node.get("id")) for node in nodes),
+            "render":"NOT_TESTED", "semantic_text_completeness":"UNKNOWN"}
+
+
+def survey(archives: list[Path], *, member_allowlist: set[str] | None = None) -> dict:
+    """Read supported direct members; package reads never extract or execute.
+
+    By default the complete outer member listing must satisfy the budget. An
+    explicit allowlist is available for one archive at a time and leaves every
+    unselected member unvalidated and unread. It cannot confer container safety.
+    """
+    if member_allowlist is not None and len(archives) != 1:
+        raise ValueError("member allowlist requires exactly one source archive")
     start=time.monotonic()
     runs=[];errors=[]; counts=Counter(); corpus_hasher=hashlib.sha256()
+    archive_members = unselected_members = unhandled_members = 0
     for path in archives:
-        datahash=sha(path.read_bytes())
-        corpus_hasher.update(bytes.fromhex(datahash))
-        with ZipFile(path) as outer:
-            _safe_members(outer, max_total=2_000_000_000, max_member=600_000_000)
-            for info in outer.infolist():
+        with _archive_snapshot(path) as (snapshot, datahash), ZipFile(snapshot) as outer:
+            corpus_hasher.update(bytes.fromhex(datahash))
+            selected = _safe_members(outer, max_total=2_000_000_000, max_member=600_000_000,
+                                     selected_names=member_allowlist)
+            all_members = outer.infolist()
+            archive_members += len(all_members)
+            unselected_members += len(all_members) - len(selected)
+            source_indices = {id(info): index for index, info in enumerate(all_members)}
+            for info in selected:
                 if info.is_dir(): continue
                 ext=PurePosixPath(info.filename).suffix.lower()
-                if ext not in (".pptx",".pptm",".html",".htm",".svg"): continue
+                if ext not in (".pptx",".pptm",".html",".htm",".svg"):
+                    unhandled_members += 1
+                    continue
                 item_id=sha((datahash+"\x00"+info.filename).encode())[:20]
+                lineage = {"source_archive_sha256":datahash,
+                           "source_member_index":source_indices[id(info)],
+                           "source_member_name_sha256":sha(info.filename.encode("utf-8"))}
                 counts[ext]+=1
                 try:
                     raw=outer.read(info)
@@ -222,23 +308,40 @@ def survey(archives: list[Path]) -> dict:
                         counts["off_canvas_candidates"]+=rec["off_canvas_candidates"]
                         counts["grouped_slides"]+=rec["grouped_slides"]
                         # Public-facing receipt contains counts, not private slide text/digests.
-                        runs.append({"id":item_id,"family":rec["family"],"state":"PARSED", "slides":rec["slides"],
+                        runs.append({"id":item_id,**lineage,"family":rec["family"],"state":"PARSED", "slides":rec["slides"],
                             "sha256":rec["source_sha256"],"render":"NOT_TESTED","content":"NOT_PUBLISHED",
                             "active_content":rec["has_active_content"],"embedded_objects":rec["has_embedded_objects"],"external_rels":rec["external_relationships"]})
                     elif ext in (".html",".htm"):
                         rec=inspect_html(raw);counts["html_parsed"]+=1
-                        runs.append({"id":item_id,"family":"html","state":"PARSED", "sha256":rec["source_sha256"],
+                        runs.append({"id":item_id,**lineage,"family":"html","state":"PARSED", "sha256":rec["source_sha256"],
                             "scripts":rec["scripts"],"render":"NOT_TESTED","content":"NOT_PUBLISHED"})
                     else:
-                        _xml(raw);counts["svg_parsed"]+=1
+                        rec=inspect_svg(raw);counts["svg_parsed"]+=1
+                        runs.append({"id":item_id,**lineage,"family":"svg","state":"PARSED",
+                                     "sha256":rec["source_sha256"],"elements":rec["elements"],
+                                     "native_ids":rec["native_ids"],"render":"NOT_TESTED","content":"NOT_PUBLISHED"})
                 except (ValueError,BadZipFile,ET.ParseError,KeyError,RuntimeError,OSError,OverflowError) as exc:
-                    errors.append({"id":item_id,"family":ext.lstrip("."),"state":"INPUT_REJECTED",
+                    errors.append({"id":item_id,**lineage,"family":ext.lstrip("."),"state":"INPUT_REJECTED",
                                    "error_class":type(exc).__name__})
+        # Hash and parser already share the captured bytes. Retain the stronger
+        # source-stability policy: persistent changes still reject the receipt.
+        if _file_sha256(path) != datahash:
+            raise ValueError("SOURCE_ARCHIVE_CHANGED_DURING_INSPECTION")
     return {"schema":SCHEMA,"source_set_sha256":corpus_hasher.hexdigest(),
             "counts":dict(sorted(counts.items())),"errors":errors,"objects":runs,
             "runtime_seconds":round(time.monotonic()-start,3),
             "coverage":{"parse_success_denominator":counts[".pptx"]+counts[".pptm"],
                         "parse_success_numerator":counts["ppt_parsed"],
+                        "legacy_parse_success_scope":"PPTX_PPTM_ONLY",
+                        "selected_recognized_denominator":len(runs)+len(errors),
+                        "selected_recognized_numerator":len(runs),
+                        "scope":"EXPLICIT_MEMBER_ALLOWLIST" if member_allowlist is not None else "ALL_DIRECT_MEMBERS",
+                        "archive_member_count":archive_members,
+                        "unselected_archive_members":unselected_members,
+                        "selected_unhandled_members":unhandled_members,
+                        "whole_archive_validated":False,
+                        "whole_archive_member_metadata_validated":member_allowlist is None,
+                        "recursive_archive_traversal":False,
                         "visual_qa_completed":None,"binary_generation_verified":None},
             "admission":"HOLD","authority_transfer":False,
             "security_waiver":False,"merge_authorized":False}
@@ -248,10 +351,14 @@ def main():
     a=argparse.ArgumentParser()
     a.add_argument("archives",nargs="+",type=Path)
     a.add_argument("--out",required=True,type=Path)
+    a.add_argument("--member",action="append",help="Exact member name; repeat for an explicit one-archive selection")
     opts=a.parse_args()
-    result=survey(opts.archives)
+    if opts.member is not None and len(opts.member) != len(set(opts.member)):
+        a.error("duplicate --member requests are not allowed")
+    result=survey(opts.archives,member_allowlist=set(opts.member) if opts.member is not None else None)
     opts.out.parent.mkdir(parents=True,exist_ok=True)
     opts.out.write_text(json.dumps(result,indent=2,sort_keys=True)+"\n",encoding="utf-8",newline="\n")
     print(json.dumps({"counts":result["counts"],"errors":len(result["errors"]),"runtime_seconds":result["runtime_seconds"]}))
 
 if __name__=="__main__":main()
+

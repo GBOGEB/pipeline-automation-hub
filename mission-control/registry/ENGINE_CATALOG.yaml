@@ -68,7 +68,7 @@ checks:
     severity: gate
     status: implemented
     engines: []
-    rule: Archive members stay inside size, count and path limits
+    rule: Inspected archive members stay inside size, count and path limits; explicit selection leaves other members unvalidated
     evidence: {path: mission-control/gogreen/binary_flight.py, symbol: _safe_members, test: test_member_path_negatives}
   - {id: K-ANY-04, pillar: provenance, tier: G1, severity: advisory, status: planned, engines: [fontconfig], rule: Receipt records every engine version and the fonts used}
   - {id: K-ANY-05, pillar: safety, tier: G1, severity: gate, status: planned, engines: [exiftool], rule: Author metadata and the classification label are read and match the release target}
@@ -87,7 +87,7 @@ checks:
     severity: gate
     status: implemented
     engines: []
-    rule: Slide order follows the presentation relationships; no slide means no pass
+    rule: Slide order and member locators follow presentation relationships; group and table counts are structural observations without render credit
     evidence: {path: mission-control/gogreen/binary_flight.py, symbol: inspect_presentation, test: test_real_slide_order_and_source_bytes}
   - id: K-PPTX-03
     pillar: safety
@@ -139,6 +139,6 @@ checks:
     severity: gate
     status: implemented
     engines: []
-    rule: XML passes the conservative gate; a DOCTYPE is rejected
-    evidence: {path: mission-control/gogreen/binary_flight.py, symbol: _xml, test: test_svg_doctype_is_not_accepted_as_validated}
+    rule: SVG root and XML pass the conservative gate; a DOCTYPE or unrelated XML root is rejected; every inspected source receives a receipt
+    evidence: {path: mission-control/gogreen/binary_flight.py, symbol: inspect_svg, test: test_svg_doctype_is_not_accepted_as_validated}
   - {id: K-SVG-02, pillar: render, tier: G3, severity: advisory, status: planned, engines: [inkscape, playwright], rule: Image renders with the expected size}
