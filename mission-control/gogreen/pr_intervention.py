@@ -160,8 +160,11 @@ class Writer:
             return ('ACCEPTED', None) if out.returncode == 0 else self._failed(out)
         # `gh pr update-branch --rebase` has no head guard; GraphQL updatePullRequestBranch takes expectedHeadOid.
         node = self._call(['gh', 'pr', 'view', str(number), '-R', repo, '--json', 'id', '--jq', '.id'])
-        if node.returncode != 0 or not node.stdout.strip():
+        if node.returncode != 0:
             return self._failed(node)
+        if not node.stdout.strip():
+            # `gh` sometimes exits 0 but prints nothing; treat as a distinct failure for diagnosis.
+            return 'FAILED', 'MISSING_NODE_ID'
         out = self._call(['gh', 'api', 'graphql',
                           '-f', 'query=mutation($id:ID!,$oid:GitObjectID!){updatePullRequestBranch(input:'
                                 '{pullRequestId:$id,expectedHeadOid:$oid,updateMethod:REBASE}){pullRequest{headRefOid}}}',
