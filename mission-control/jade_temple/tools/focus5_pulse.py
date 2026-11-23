@@ -224,8 +224,18 @@ def observe_repo(repo: str, prev_row: dict | None, lookup=gh, declared: dict[str
          + (", ".join(security) if security else "none"))
 
     protected = lookup(f"repos/{repo}/branches/{branch}")["protected"]
-    rules = sorted({r["type"] for r in lookup(f"repos/{repo}/rules/branches/{branch}")})
-    if not protected and not rules:
+    try:
+        rules = sorted({r["type"] for r in lookup(f"repos/{repo}/rules/branches/{branch}")})
+    except subprocess.CalledProcessError as exc:
+        # Rulesets unreadable (e.g. GitHub answers 403 "Upgrade to GitHub Pro" for a private
+        # repo on a free plan). An unseen ruleset may still protect the branch, so this is
+        # never FAIL, and never PASS: UNKNOWN with the refusal recorded.
+        rules = None
+        refusal = " ".join(str(exc.stderr or exc.stdout or exc).split())[:160]
+    if rules is None:
+        gate("H08", "UNKNOWN", f"{base}/settings/rules",
+             f"Rulesets unreadable ({refusal}); classic protection={protected}")
+    elif not protected and not rules:
         gate("H08", "FAIL", f"{base}/settings/branches", "Default branch unprotected (no protection, no ruleset)")
     elif "pull_request" in rules:
         status, url, why = H8.evaluate(repo, branch, (canaries or []), lookup)

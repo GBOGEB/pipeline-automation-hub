@@ -16,7 +16,7 @@ spec5.loader.exec_module(r5)
 NEW = "c" * 40
 
 
-def fake_github(protected=False, rules=(), runs=(), readme=True, tags=(), started=True):
+def fake_github(protected=False, rules=(), runs=(), readme=True, tags=(), started=True, rules_refused=False):
     calls = []
 
     def lookup(path):
@@ -40,6 +40,9 @@ def fake_github(protected=False, rules=(), runs=(), readme=True, tags=(), starte
         if path == "repos/O/R/branches/main":
             return {"protected": protected}
         if path == "repos/O/R/rules/branches/main":
+            if rules_refused:
+                raise fp.subprocess.CalledProcessError(
+                    1, ["gh", "api", path], stderr="gh: Upgrade to GitHub Pro or make this repository public (HTTP 403)")
             return [{"type": t} for t in rules]
         if path.startswith("repos/O/R/tags"):
             return [{"name": t, "commit": {"sha": NEW}} for t in tags]
@@ -81,6 +84,14 @@ class Focus5PulseTests(unittest.TestCase):
         self.assertEqual(guarded["H08"], "UNKNOWN")
         for gid in ("H03", "H07", "H09", "H10", "H11", "H12"):
             self.assertEqual(guarded[gid], "UNKNOWN", gid)
+
+    def test_unreadable_rulesets_make_h08_unknown_never_fail(self):
+        for protected in (False, True):
+            row = fp.observe_repo("O/R", None, fake_github(protected, rules_refused=True))
+            h08 = next(g for g in row["gates"] if g["id"] == "H08")
+            self.assertEqual(h08["status"], "UNKNOWN", protected)
+            self.assertIn("Upgrade to GitHub Pro", h08["reason"])
+            self.assertIn(f"classic protection={protected}", h08["reason"])
 
     def test_head_sha_is_read_once_per_repo(self):
         gh = fake_github()
