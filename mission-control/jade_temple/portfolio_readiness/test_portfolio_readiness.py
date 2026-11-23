@@ -394,6 +394,66 @@ class RootNextControlSafetyTests(unittest.TestCase):
             self.assertFalse(seen[0].exists())
             self.assertTrue(out.exists())
 
+    def test_worktree_remove_failure_still_deletes_scratch(self):
+        import repeat_main_proof as proof
+        pinned = "a" * 40
+        with tempfile.TemporaryDirectory() as outer:
+            scratch = Path(outer)
+            attempts = []
+            def fake(args, cwd):
+                if args[:3] == ["git", "cat-file", "-t"]:
+                    return SimpleNamespace(returncode=0, stdout="commit\\n", stderr="")
+                if args[:3] == ["git", "worktree", "add"]:
+                    root = Path(args[4])
+                    attempts.append(root.parent)
+                    (root / "tests").mkdir(parents=True)
+                    (root / "tests" / "test_main_pipeline_e2e.py").write_text("# suite")
+                    return SimpleNamespace(returncode=0, stdout="", stderr="")
+                if args[:3] == ["git", "rev-parse", "HEAD"]:
+                    return SimpleNamespace(returncode=0, stdout=pinned + "\\n", stderr="")
+                if args[:3] == ["git", "rev-parse", "HEAD:README.md"]:
+                    return SimpleNamespace(returncode=0, stdout=pinned + "\\n", stderr="")
+                if args[:3] == ["git", "worktree", "remove"]:
+                    return SimpleNamespace(returncode=1, stdout="", stderr="LOCKED")
+                self.assertEqual(args[1:4], ["-m", "unittest", "-v"])
+                return SimpleNamespace(returncode=0, stdout="",
+                                       stderr="Ran 3 tests in 0.010s\\n\\nOK\\n")
+            with mock.patch.object(proof, "command", side_effect=fake):
+                with mock.patch.object(proof.tempfile, "gettempdir", return_value=str(scratch)):
+                    with self.assertRaisesRegex(RuntimeError, "git worktree remove failed"):
+                        proof.execute(portfolio.REPO, pinned, scratch / "receipt.json")
+            self.assertEqual(len(attempts), 1)
+            self.assertFalse(attempts[0].exists())
+
+    def test_primary_failure_not_masked_and_cleanup_attempted(self):
+        import repeat_main_proof as proof
+        pinned = "a" * 40
+        with tempfile.TemporaryDirectory() as outer:
+            scratch = Path(outer)
+            actions = []
+            def fake(args, cwd):
+                if args[:3] == ["git", "cat-file", "-t"]:
+                    return SimpleNamespace(returncode=0, stdout="commit\\n", stderr="")
+                if args[:3] == ["git", "worktree", "add"]:
+                    root = Path(args[4])
+                    actions.append(root.parent)
+                    (root / "tests").mkdir(parents=True)
+                    (root / "tests" / "test_main_pipeline_e2e.py").write_text("# suite")
+                    return SimpleNamespace(returncode=0, stdout="", stderr="")
+                if args[:3] == ["git", "rev-parse", "HEAD"]:
+                    return SimpleNamespace(returncode=1, stdout="", stderr="SOURCE_MISMATCH")
+                if args[:3] == ["git", "worktree", "remove"]:
+                    actions.append("REMOVE_ATTEMPTED")
+                    return SimpleNamespace(returncode=1, stdout="", stderr="LOCKED")
+                self.fail("unexpected command in primary-failure test")
+            with mock.patch.object(proof, "command", side_effect=fake):
+                with mock.patch.object(proof.tempfile, "gettempdir", return_value=str(scratch)):
+                    with self.assertRaisesRegex(RuntimeError, "source worktree head mismatch") as ctx:
+                        proof.execute(portfolio.REPO, pinned, scratch / "receipt.json")
+            self.assertIn("REMOVE_ATTEMPTED", actions)
+            self.assertFalse(actions[0].exists())
+            self.assertIn("LOCKED", " ".join(getattr(ctx.exception, "__notes__", [])))
+
     def test_repeat_main_cleans_git_readable_temp_on_checkout_failure(self):
         import repeat_main_proof as proof
         pinned = "a" * 40
