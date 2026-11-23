@@ -1,0 +1,175 @@
+name: Method Atlas N3.2 measured broker branch coverage (read-only)
+
+on:
+  pull_request:
+    branches: [master, feat/method-atlas-n3-warm-broker-20261113]
+    paths:
+      - 'mission-control/federation-atlas/orchestration/n32_coverage_receipt.py'
+      - 'mission-control/federation-atlas/orchestration/test_n32_coverage_receipt.py'
+      - 'mission-control/federation-atlas/orchestration/N32_RUN_COVERAGE.md'
+      - '.github/workflows/method-atlas-n32-coverage.yml'
+      - 'mission-control/federation-atlas/orchestration/warm_broker_pilot.py'
+      - 'mission-control/federation-atlas/orchestration/broker.py'
+      - 'mission-control/federation-atlas/orchestration/main.py'
+      - 'mission-control/gogreen/outcome_convergence/outcome_flight.py'
+  push:
+    branches: [feat/method-atlas-n32-runtime-branches-20261115]
+    paths:
+      - 'mission-control/federation-atlas/orchestration/n32_coverage_receipt.py'
+      - '.github/workflows/method-atlas-n32-coverage.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: n32-branch-witness-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  source-bound-coverage:
+    name: Separate measured unittest+smoke / 50 real broker DAGs
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify immutable checkout head
+        shell: bash
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+      - name: Setup Python 3.12
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Pin instrumentation and existing YAML parser
+        run: python -m pip install --disable-pip-version-check coverage==7.13.3 pyyaml==6.0.3
+      - name: Preflight source syntax and isolation contract (8 tests)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/federation-atlas/orchestration \
+            -p test_n32_coverage_receipt.py -v 2>&1 | tee "$RUNNER_TEMP/n32-isolation-tests.log"
+          python - <<'PY'
+          import os,re
+          from pathlib import Path
+          t=(Path(os.environ["RUNNER_TEMP"])/"n32-isolation-tests.log").read_text()
+          n=[int(i) for i in re.findall(r'^Ran (\d+) tests? in ',t,re.M)]
+          if not n or n[-1]<8 or "FAILED" in t or "skipped=" in t:
+              raise SystemExit("N32_ISOLATION_TEST_FIRST_RED")
+          print("N32_ISOLATION_TESTS="+str(n[-1]))
+          PY
+      - name: Measure test-suite+real smoke branch arcs, not producer-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          COVERAGE_FILE="$RUNNER_TEMP/.n32_test_cov" \
+            python -m coverage run --branch \
+              --include='*/broker.py,*/main.py,*/outcome_flight.py,*/warm_broker_pilot.py' \
+              -m unittest discover -s mission-control/federation-atlas/orchestration \
+              -p test_warm_broker_pilot.py -v 2>&1 | tee "$RUNNER_TEMP/n32-n3-tests.log"
+          COVERAGE_FILE="$RUNNER_TEMP/.n32_test_cov" \
+            python -m coverage json -q -o "$RUNNER_TEMP/n32-test-suite-coverage.json"
+          python - <<'PY'
+          import os,re
+          from pathlib import Path
+          raw=(Path(os.environ["RUNNER_TEMP"])/"n32-n3-tests.log").read_text()
+          n=[int(x) for x in re.findall(r'^Ran (\d+) tests? in ',raw,re.M)]
+          if not n or n[-1]<14 or "FAILED" in raw or "skipped=" in raw:
+              raise SystemExit("N32_REAL_SMOKE_TEST_FIRST_RED")
+          print("N32_TEST_SUITE_WITH_REAL_SMOKE="+str(n[-1]))
+          PY
+      - name: Measure separate ACTUAL 50-DAG production execution branch arcs
+        shell: bash
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          COVERAGE_FILE="$RUNNER_TEMP/.n32_actual_cov" \
+            python -m coverage run --branch \
+              --include='*/broker.py,*/main.py,*/outcome_flight.py,*/warm_broker_pilot.py' \
+              mission-control/federation-atlas/orchestration/warm_broker_pilot.py \
+              --root . --head "$EXACT_HEAD" --pulses 4 \
+              --out "$RUNNER_TEMP/n32-real-dag"
+          COVERAGE_FILE="$RUNNER_TEMP/.n32_actual_cov" \
+            python -m coverage json -q -o "$RUNNER_TEMP/n32-real-dag-coverage.json"
+      - name: Bind source, two measured populations and real DAG outcomes
+        shell: bash
+        env:
+          EXACT_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python mission-control/federation-atlas/orchestration/n32_coverage_receipt.py \
+            --root . --head "$EXACT_HEAD" \
+            --tests "$RUNNER_TEMP/n32-test-suite-coverage.json" \
+            --runtime "$RUNNER_TEMP/n32-real-dag-coverage.json" \
+            --actual "$RUNNER_TEMP/n32-real-dag/n3_receipt.json" \
+            --out "$RUNNER_TEMP/n32-real-dag/n32_coverage_receipt.json"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          out=Path(os.environ["RUNNER_TEMP"])/"n32-real-dag"
+          r=json.loads((out/"n32_coverage_receipt.json").read_text())
+          if r["head"]!=os.environ["EXACT_HEAD"] or r["whole_repository_coverage"] is not None:
+              raise SystemExit("N32_FALSE_WHOLE_REPO_CREDIT")
+          if r["production_execution_population"]["verified_dags"]!=50 or r["native_job_readback_authenticated"]:
+              raise SystemExit("N32_FALSE_NATIVE_SCALE_CREDIT")
+          for name,detail in r["production_execution_population"]["files"].items():
+              if detail["branches"]["eligible"]<=0 or detail["branches"]["covered"]<=0:
+                  raise SystemExit("N32_RUNTIME_BRANCH_FIRST_RED_"+name)
+          print("N32_PRODUCTION_BRANCH_COUNTS="+json.dumps({
+              k:v["branches"] for k,v in r["production_execution_population"]["files"].items()},sort_keys=True))
+          PY
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'n32-real-dag/native_environment.json'
+          p.write_text(json.dumps({
+             'schema':'method-atlas.n32.native-run-self-report.v1',
+             'run_id_claim':os.environ.get('GITHUB_RUN_ID'),
+             'attempt_claim':os.environ.get('GITHUB_RUN_ATTEMPT'),
+             'source_head':os.environ['EXACT_HEAD'],
+             'event_merge_or_push_sha':os.environ.get('GITHUB_SHA'),
+             'runner_os':os.environ.get('RUNNER_OS'),
+             'queue_wait_p95_seconds':None,
+             'paid_runner_cost':None,
+             'source_owner_authenticated_readback':False,
+             'checkout_source_head_verified':True,
+             'merge_context_is_not_source_head':os.environ.get('GITHUB_SHA')!=os.environ['EXACT_HEAD'],
+             'candidate_fleet_promotion':False,
+             'note':'Self-report cannot replace independent Actions API run/job/step readback.'
+          },indent=2,sort_keys=True)+'\n')
+          PY
+          python - <<'PY'
+          import json,os,subprocess
+          from pathlib import Path
+          p=Path(os.environ['RUNNER_TEMP'])/'n32-real-dag/native_environment.json'
+          r=json.loads(p.read_text())
+          expected=os.environ['EXACT_HEAD']
+          observed=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          if r['source_head']!=expected or observed!=expected:
+              raise SystemExit('N32_ENVIRONMENT_RECEIPT_WRONG_EXECUTED_HEAD')
+          print('N32_CHECKOUT_HEAD_VERIFIED='+expected)
+          PY
+          test -z "$(git status --porcelain)"
+      - name: Upload executable evidence (no release)
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: n32-broker-coverage-${{ github.event.pull_request.head.sha || github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/n32-isolation-tests.log
+            ${{ runner.temp }}/n32-n3-tests.log
+            ${{ runner.temp }}/n32-test-suite-coverage.json
+            ${{ runner.temp }}/n32-real-dag-coverage.json
+            ${{ runner.temp }}/n32-real-dag/
+          retention-days: 21
+          if-no-files-found: warn
