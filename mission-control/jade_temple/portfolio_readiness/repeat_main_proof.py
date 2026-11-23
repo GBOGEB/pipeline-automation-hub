@@ -90,12 +90,27 @@ def execute(repo: Path, source_sha: str, out: Path):
                        encoding="utf-8")
         return passed, receipt
     finally:
-        # Remove Git registration before clearing scratch. If a Windows lock
-        # prevents cleanup, do not silently claim the workspace is clean.
-        cleanup = command(["git", "worktree", "remove", "--force", str(work)], repo) if worktree_registered else None
-        if cleanup is not None and cleanup.returncode:
-            raise RuntimeError("detached source worktree cleanup failed: " + cleanup.stderr[-600:])
-        shutil.rmtree(scratch)
+        # Cleanup must attempt BOTH Git deregistration and scratch deletion;
+        # neither failure may mask a primary checkout / suite failure.
+        primary_error = sys.exc_info()[1]
+        cleanup_errors = []
+        if worktree_registered:
+            try:
+                cleanup = command(["git", "worktree", "remove", "--force", str(work)], repo)
+                if cleanup.returncode:
+                    cleanup_errors.append("git worktree remove failed: " + cleanup.stderr[-600:])
+            except Exception as exc:
+                cleanup_errors.append("git worktree remove exception: " + str(exc))
+        try:
+            shutil.rmtree(scratch)
+        except OSError as exc:
+            cleanup_errors.append("scratch removal failed: " + str(exc))
+        if cleanup_errors:
+            detail = "; ".join(cleanup_errors)
+            if primary_error is not None:
+                primary_error.add_note("Additional cleanup failure: " + detail)
+            else:
+                raise RuntimeError("detached source worktree cleanup failed: " + detail)
 
 
 def main():
