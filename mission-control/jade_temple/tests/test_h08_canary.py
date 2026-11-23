@@ -181,6 +181,8 @@ class PulseIntegration(unittest.TestCase):
                 return [{"name": "README.md", "type": "file"}]
             if path.startswith("repos/O/R/actions/runs?head_sha="):
                 return {"workflow_runs": []}
+            if path.endswith("/pulls") and "/commits/" in path:
+                return []  # H09: head not from a merged PR
             if path.startswith("repos/O/R/tags"):
                 return []
             return w(path)
