@@ -52,6 +52,7 @@ def _issue_rank():
 
 def gate_pilot(pulse_path: Path) -> dict:
     prereqs = json.loads((JADE / "data" / "ROLLING5_POLICY.json").read_text(encoding="utf-8"))["gate_prerequisites"]
+    pulse_path = pulse_path.resolve()
     pulse = json.loads(pulse_path.read_text(encoding="utf-8"))
     nodes = sorted(prereqs)
     edges = [(p, g) for g, ps in prereqs.items() for p in ps]
@@ -271,24 +272,32 @@ def backpressure_pilot() -> dict:
     rank = {"P0": 2.0, "P1": 1.0}
     queue = [{"id": i["id"], "class": i["state"], "priority_score": rank.get(i["priority"], 0.5)}
              for i in bd["items"] if i["state"] != "DONE"]
-    as_is = cpath.backpressure(queue, pca, bt)
-    # What the same mechanism would do once evidence clears the gates (labelled counterfactual,
-    # never written back): thresholds lowered to the evidence that exists today.
-    cw = {"REVIEW_WAIT": "SEMANTIC_BOUNDARY_GUARD_REPAIR", "ACTIONABLE": "STATISTICAL_TOLERANCE_REPAIR",
-          "OWNER_HOLD": "UNREPAIRED_BASELINE", "DEPENDENCY_HOLD": "UNREPAIRED_BASELINE"}
+    cw_doc = json.loads((JADE / "data" / "BD_BT_CROSSWALK.json").read_text(encoding="utf-8"))
+    cw = cw_doc["map"] if cw_doc.get("decision") == "OWNER_APPROVED" else None
+    as_is = cpath.backpressure(queue, pca, bt, crosswalk=cw)
+    # What the same mechanism does once the evidence clears its gates (labelled counterfactual,
+    # never written back): the approved crosswalk with thresholds lowered to today's evidence.
     cf = cpath.backpressure(queue, pca, bt, crosswalk=cw, min_bt_pairs=2, min_pca_rows=3)
     return {"bd_source": "BD_B01_B46_READONLY.json", "open_bd_items": len(queue),
+            "crosswalk": {"source": "data/BD_BT_CROSSWALK.json", "decision": cw_doc.get("decision"),
+                          "approved_on": cw_doc.get("approved_on"), "map": cw_doc.get("map")},
             "as_is": {k: as_is[k] for k in ("status", "channels", "evidence", "reasons", "wip_cap")},
             "counterfactual_low_thresholds": {
-                "label": "COUNTERFACTUAL_NOT_ADMITTED: thresholds lowered to the 2-pair / 5-row evidence and an "
-                         "illustrative crosswalk; shows mechanism only",
+                "label": "COUNTERFACTUAL_NOT_ADMITTED: thresholds lowered to the 2-pair / 5-row evidence; "
+                         "approved crosswalk; shows the mechanism only",
                 **{k: cf[k] for k in ("status", "channels", "class_weights", "queue_friction", "wip_cap")},
                 "top5": [q["id"] for q in cf["queue"][:5]]}}
 
 
+def latest_pulse() -> Path:
+    ledger = json.loads((JADE / "data" / "ROLLING5_PULSES.json").read_text(encoding="utf-8"))
+    return JADE / ledger["pulses"][-1]["snapshot"]
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--pulse", type=Path, default=JADE / "data" / "FOCUS5_POINT_RELEASE_P0005.json")
+    ap.add_argument("--pulse", type=Path, default=None,
+                    help="FOCUS5 snapshot; default: the latest pulse in data/ROLLING5_PULSES.json")
     ap.add_argument("--no-issues", action="store_true", help="skip the live REST issue graph")
     ap.add_argument("--snapshot", type=Path, help="reuse a saved REST snapshot instead of fetching")
     ap.add_argument("--save-snapshot", type=Path)
@@ -299,7 +308,7 @@ def main(argv=None) -> int:
     report = {"schema": SCHEMA, "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
               "method": "Kahn order (lifecycle.topo_layers) + CPM forward/backward passes; SCC deadlocks condensed",
               "duration_model": "unit (unknown-not-zero); criticality uses triangular(0.5, 1, 3)",
-              "gates": gate_pilot(a.pulse), "backpressure": backpressure_pilot()}
+              "gates": gate_pilot(a.pulse or latest_pulse()), "backpressure": backpressure_pilot()}
     if not a.no_issues:
         if a.snapshot:
             snap = json.loads(a.snapshot.read_text(encoding="utf-8"))

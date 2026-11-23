@@ -139,6 +139,38 @@ class BackpressureTests(unittest.TestCase):
         self.assertEqual(r["status"], "NEUTRAL_HOLD")
 
 
+class CrosswalkTests(unittest.TestCase):
+    """The owner-approved BD -> BT crosswalk (decision 1 on #1276) is real data, not prose."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.doc = json.loads((JADE / "data" / "BD_BT_CROSSWALK.json").read_text(encoding="utf-8"))
+        cls.bt = json.loads((QPS / "w3_observed_bt_receipt.json").read_text(encoding="utf-8"))
+        cls.pca = json.loads((QPS / "w3_measured_analytics_receipt.json").read_text(encoding="utf-8"))
+        bd = HERE.parents[1] / "v2/handoff/closeout/w11-gmic-r2-p0008/BD_B01_B46_READONLY.json"
+        cls.bd = json.loads(bd.read_text(encoding="utf-8"))
+
+    def test_approved_and_well_formed(self):
+        self.assertEqual(self.doc["schema"], "jade.cpath.bd-bt-crosswalk.v1")
+        self.assertEqual(self.doc["decision"], "OWNER_APPROVED")
+        self.assertEqual(set(self.doc["map"]), {"REVIEW_WAIT", "ACTIONABLE", "OWNER_HOLD", "DEPENDENCY_HOLD"})
+
+    def test_keys_are_bd_states_and_values_are_bt_interventions(self):
+        states = {i["state"] for i in self.bd["items"]}
+        scores = self.bt["current_frontier"]["result"]["scores"]
+        for state, iv in self.doc["map"].items():
+            self.assertIn(state, states, state)
+            self.assertIn(iv, scores, iv)
+
+    def test_approval_alone_does_not_switch_pressure_on(self):
+        q = [{"id": i["id"], "class": i["state"], "priority_score": 1.0}
+             for i in self.bd["items"] if i["state"] != "DONE"]
+        r = C.backpressure(q, self.pca, self.bt, crosswalk=self.doc["map"])
+        self.assertEqual(r["status"], "NEUTRAL_HOLD")
+        self.assertFalse(any("crosswalk" in x for x in r["reasons"]))  # only evidence gates hold it now
+        self.assertTrue(all(x["bp_weight"] == 1.0 for x in r["queue"]))
+
+
 class PolicyTests(unittest.TestCase):
     def test_every_policy_respects_precedence_and_bounds(self):
         names, edges = C.random_dag(300, seed=3)

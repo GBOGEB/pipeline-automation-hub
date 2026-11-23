@@ -92,3 +92,20 @@ OWNER_HOLD and DEPENDENCY_HOLD ×0.5, WIP cap 6 → 4.
 - **Relief at scale.** Above 5,000 nodes the UNLOCK policy ranks by immediate
   releases only, because the canonical transitive relief costs one breadth-first
   search per node.
+
+## Update: pilot P0002 (2026-11-23), after the owner decisions on #1276
+
+Pulse `data/CPATH_PILOT_P0002.json`. Gates are from FOCUS5 P0006 (#1285, heads read 2026-11-23); the issue graph was read 2026-11-23T06:22Z.
+
+- **Crosswalk approved** (`data/BD_BT_CROSSWALK.json`: REVIEW_WAIT → SEMANTIC_BOUNDARY_GUARD_REPAIR,
+  ACTIONABLE → STATISTICAL_TOLERANCE_REPAIR, OWNER_HOLD and DEPENDENCY_HOLD → UNREPAIRED_BASELINE).
+  Back-pressure is still **NEUTRAL_HOLD**, but now only on evidence: 2 of 5 BT pairs and 5 of 10 PCA rows.
+  When both gates clear, it applies ×1.5 / ×0.5 class weights and cuts the WIP cap from 6 to 4 with no
+  further decision.
+- **Gates.** gg_MATH H08 is now PASS (canary #107), so its remaining path moved to **H04 → H05 → H10 → H12**.
+  Closing H04 releases H05, H06 and H07. H04 is UNKNOWN only because GitHub refuses to start runs while the
+  account is locked for billing, so the billing lock is on gg_MATH's critical path. The other four repos
+  still read H08 → H09 → H12.
+- **Issues.** 274 open items (256 on 16 Nov) and the same 94 edges. The path is now ABACUS#1278 →
+  pipeline-automation-hub#85 → #76; the top unlock is still pipeline-automation-hub#1180 (releases 3). The
+  conclusion is unchanged: this backlog is wide, not deep, with a balance point of about 91 workers.
