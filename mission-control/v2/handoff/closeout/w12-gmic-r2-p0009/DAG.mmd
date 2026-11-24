@@ -1,0 +1,16 @@
+flowchart TD
+  P["PR exact-head and merge events"] --> A["P0009 admission audit"]
+  F["Trusted FPC status histories"] --> A
+  R["Native review histories"] --> A
+  A --> O["Hub #336 owner decision"]
+  O --> E["Effective non-bypassable admission rule"]
+  E --> N["RED negative canary"]
+  E --> G["GREEN positive canary"]
+  N --> W0["W0 postmerge DoV"]
+  G --> W0
+  W2["GEMINI #44 W1/W2 protocol"] --> W4{"W4 AND join"}
+  W0 --> W4
+  IC3["GEMINI #12 hosted IC3"] --> W4
+  GG["GEMINI #50 effective protection"] --> W4
+  W4 --> W5["W5 parity"]
+  W5 --> W6["W6 adversarial CONTROL"]
