@@ -10,6 +10,7 @@ import os
 import re
 import urllib.error
 import urllib.request
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -303,6 +304,157 @@ def codex_unavailable_waiver(
 
 def login_matches(actual: str | None, expected: str) -> bool:
     return actual in {expected, f"{expected}[bot]"}
+
+
+WAIVER_RE = re.compile(
+    r"^FPC_WAIVER_V1 head=([0-9a-f]{40}) waives=CODEX_REVIEW reason=(\S[^\r\n]*)$", re.M
+)
+
+
+def github_time(value: Any) -> datetime | None:
+    if not isinstance(value, str):
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return parsed.astimezone(timezone.utc) if parsed.tzinfo is not None else None
+
+
+def waiver_head_observation(
+    client: Any, repo: str, pr_number: int, head_sha: str, base_sha: str, policy: dict[str, Any],
+    trigger_event: dict[str, Any] | None = None,
+) -> dict[str, Any] | None:
+    """Latest trusted PR-proof creation is a server-side observation of this head.
+
+    Commit dates are author-controlled, and manual/push runs do not prove that
+    a SHA was the head of this PR. Select newest allowlisted runs independently
+    of a hand-written receipt, so replaying an older proof cannot revive a
+    waiver when a SHA is pushed away and later restored. Reruns keep their
+    original creation time and do not create a new head observation.
+    """
+    # A synchronized head can be visible before its new proof run. Never use
+    # the presence of an old run as evidence that the latest push was observed.
+    boundaries = []
+    if trigger_event is not None and trigger_event.get("action") == "synchronize":
+        pulled = trigger_event.get("pull_request") or {}
+        if (pulled.get("number") != pr_number or (pulled.get("head") or {}).get("sha") != head_sha
+                or trigger_event.get("after") != head_sha):
+            return None
+        stamp = github_time(pulled.get("updated_at"))
+        if stamp is None:
+            return None
+        boundaries.append((stamp, {"source": "PULL_REQUEST_TARGET_SYNCHRONIZE",
+                                   "created_at": pulled["updated_at"]}))
+    timeline = client.get_all(f"/repos/{repo}/issues/{pr_number}/timeline")
+    for event in timeline:
+        if event.get("event") not in {"head_ref_force_pushed", "head_ref_deleted", "head_ref_restored"}:
+            continue
+        stamp = github_time(event.get("created_at"))
+        if stamp is None:
+            return None
+        boundaries.append((stamp, {"source": event["event"], "event_id": event.get("id"),
+                                   "created_at": event["created_at"]}))
+    boundary, boundary_receipt = max(boundaries, key=lambda row: row[0]) if boundaries else (None, None)
+    try:
+        specs = derive_required_runs(client, repo, head_sha, policy)
+    except GateError as exc:
+        if str(exc).startswith("NO_ALLOWLISTED_PROOF_RUN_ON_EXACT_HEAD"):
+            return None
+        raise
+    observations = []
+    proven = set()
+    for spec in specs:
+        if spec["repo"] != repo:
+            continue
+        run = client.get(f"/repos/{repo}/actions/runs/{spec['run_id']}")
+        if run.get("event") != "pull_request" or run.get("head_sha") != head_sha:
+            continue
+        links = run.get("pull_requests")
+        if not isinstance(links, list) or not any(
+            isinstance(link, dict) and link.get("number") == pr_number
+            and (link.get("head") or {}).get("sha") == head_sha for link in links
+        ):
+            continue
+        created = github_time(run.get("created_at"))
+        if created is None or (boundary is not None and created <= boundary):
+            continue
+        # All mandatory purposes must have fresh successful PR proofs, even
+        # when a hand-written body still points at an older successful run.
+        proof = validate_run(client, spec, head_sha, repo, base_sha, policy)
+        proven.update(proof["purposes"])
+        observations.append((created, spec["run_id"], run["created_at"]))
+    if not observations or REQUIRED_PURPOSES - proven:
+        return None
+    _, run_id, created_at = max(observations)
+    return {"run_id": run_id, "created_at": created_at, "head_sha": head_sha,
+            "head_occurrence": boundary_receipt,
+            "fresh_proof_run_ids": sorted(row[1] for row in observations)}
+
+
+def codex_quota_waiver(
+    comments: list[dict[str, Any]], head_sha: str, policy: dict[str, Any], expected_login: str,
+    head_observation: dict[str, Any] | None = None,
+) -> dict[str, Any] | None:
+    """The owner's head-bound waiver of a Codex review that quota prevented, or None.
+
+    It applies only when the Codex reviewer itself posted its usage-limit notice on this PR and a
+    declared owner then posted ``FPC_WAIVER_V1 head=<sha> waives=CODEX_REVIEW reason=<text>`` naming
+    the exact head after a trusted PR proof observed it. A new push voids an earlier waiver,
+    even if a previously used SHA is restored. It waives only the
+    completed-review requirement: proof runs, open blocking findings and the control-plane rule
+    are still evaluated.
+    """
+    rule = policy.get("codex_quota_waiver")
+    if rule is None:
+        return None
+    notice = rule.get("quota_notice") if isinstance(rule, dict) else None
+    owners = rule.get("owner_logins") if isinstance(rule, dict) else None
+    waives = rule.get("waives") if isinstance(rule, dict) else None
+    if (not isinstance(notice, str) or not notice.strip()
+            or not isinstance(owners, list) or not owners
+            or not all(isinstance(o, str) and o and not o.endswith("[bot]") for o in owners)
+            or waives != ["CODEX_REVIEW"]):
+        raise GateError("POLICY_CODEX_QUOTA_WAIVER_INVALID")
+    observed_at = github_time((head_observation or {}).get("created_at"))
+    if observed_at is None or (head_observation or {}).get("head_sha") != head_sha:
+        return None
+
+    def author(comment: dict[str, Any]) -> dict[str, Any]:
+        return comment.get("user") or comment.get("author") or {}
+
+    notices = [
+        c for c in comments
+        if login_matches(author(c).get("login"), expected_login)
+        and notice in (c.get("body") or "") and isinstance(c.get("created_at"), str)
+    ]
+    for comment in reversed(comments):
+        who = author(comment)
+        created = comment.get("created_at")
+        if who.get("login") not in owners or who.get("type") == "Bot" or not isinstance(created, str):
+            continue
+        created_at = github_time(created)
+        # Strictly later: equal second-resolution timestamps cannot prove order.
+        if created_at is None or created_at <= observed_at:
+            continue
+        earlier = [n for n in notices if github_time(n["created_at"]) is not None
+                   and github_time(n["created_at"]) < created_at]
+        if not earlier:
+            continue
+        for match in WAIVER_RE.finditer(comment.get("body") or ""):
+            if match.group(1) == head_sha:
+                return {
+                    "waives": ["CODEX_REVIEW"],
+                    "head_sha": head_sha,
+                    "head_observation": head_observation,
+                    "waiver_created_at": created,
+                    "owner_login": who.get("login"),
+                    "waiver_comment_id": comment.get("id"),
+                    "quota_notice_comment_id": earlier[-1].get("id"),
+                    "reason": match.group(2).strip()[:300],
+                    "post_merge_review_owed": True,
+                }
+    return None
 
 
 def codex_login(policy: dict[str, Any]) -> str:
@@ -641,7 +793,8 @@ def validate_run(
 
 
 def evaluate(
-    client: Any, repo: str, pr_number: int, policy: dict[str, Any]
+    client: Any, repo: str, pr_number: int, policy: dict[str, Any],
+    trigger_event: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     pr = client.get(f"/repos/{repo}/pulls/{pr_number}")
     head_sha = ((pr.get("head") or {}).get("sha"))
@@ -693,7 +846,7 @@ def evaluate(
     exemption = dependency_update_exemption(client, repo, pr_number, pr, policy)
     summary_id = None
     finding_counts = None
-    waiver = None
+    quota_waiver = None
     if exemption is None or "CODEX_REVIEW" not in exemption["waives"]:
         expected_login = codex_login(policy)
         comments = client.get_all(f"/repos/{repo}/issues/{pr_number}/comments")
@@ -701,15 +854,15 @@ def evaluate(
             comments, head_sha, expected_login
         )
         if not completed:
-            waiver, refused = codex_unavailable_waiver(client, repo, pr_number, head_sha, comments, policy)
-            if waiver is None:
-                raise GateError("CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD"
-                                + (f"; waiver refused: {refused}" if refused else ""))
+            # Only the completed-review requirement can be waived; findings are still checked below.
+            observation = (waiver_head_observation(client, repo, pr_number, head_sha, base_sha, policy, trigger_event)
+                           if policy.get("codex_quota_waiver") is not None else None)
+            quota_waiver = codex_quota_waiver(comments, head_sha, policy, expected_login, observation)
+            if quota_waiver is None:
+                raise GateError("CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD")
 
         blocking = (policy.get("codex_contract") or {}).get("blocking_priorities")
-        if waiver is not None:
-            pass  # the waiver already refused any open Codex finding on the exact head
-        elif blocking is None:
+        if blocking is None:
             # Strict rule: any commented Codex review bound to the exact head blocks.
             reviews = client.get_all(f"/repos/{repo}/pulls/{pr_number}/reviews")
             findings = codex_finding_reviews_for_head(reviews, head_sha, expected_login)
@@ -741,8 +894,7 @@ def evaluate(
         "receipt_source": receipt_source,
         "codex_finding_counts_on_exact_head": finding_counts,
         "dependency_update_exemption": exemption,
-        "codex_review_waiver": waiver,
-        "clean_first_pass": waiver is None,
+        "codex_quota_waiver": quota_waiver,
         "required_runs": run_receipts,
         "merge_allowed": True,
         "authority_transfer": False,
@@ -827,7 +979,16 @@ def main() -> int:
         if not args.repo or not args.pr or not args.token or not args.policy:
             raise GateError("ADMISSION_ARGUMENTS_MISSING: repo, pr, token and policy are required")
         policy = load_policy(args.policy)
-        receipt = evaluate(ApiClient(args.token), args.repo, args.pr, policy)
+        trigger_event = None
+        # This is the trusted controller's immutable event payload, not a PR
+        # comment or candidate artifact. Pure evaluate() calls use an explicit
+        # context so controller self-tests cannot accidentally consume it.
+        if os.environ.get("GITHUB_EVENT_NAME") == "pull_request_target":
+            event_path = os.environ.get("GITHUB_EVENT_PATH")
+            if not event_path:
+                raise GateError("TRUSTED_TRIGGER_EVENT_MISSING")
+            trigger_event = json.loads(Path(event_path).read_text(encoding="utf-8"))
+        receipt = evaluate(ApiClient(args.token), args.repo, args.pr, policy, trigger_event)
         code = 0
     except GateError as exc:
         receipt = fail_receipt(str(exc))

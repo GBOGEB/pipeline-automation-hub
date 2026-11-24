@@ -1,5 +1,14 @@
 # Soft-gate ruleset proposal: a governed way to merge with an allowed red
 
+> **SUPERSEDED OPERATIONAL GUIDANCE — 2026-11-20.** The label-based tier-2
+> mechanism and label-canary rollout below are historical proposal text, not
+> current operator instructions. Do not execute this rollout on that basis.
+> The sole current candidate is #1172's owner comment-based `codex_quota_waiver`,
+> bound to quota evidence and the authoritative current-head occurrence plus
+> fresh successful PR proofs. Follow [the W305 gate guide](../../docs/W305_FIRST_PASS_CLOSURE_GATE.md#codex-quota-waiver).
+> Protected-controller bootstrap, any ruleset change and the postmerge canary
+> require their own competent owner decision; none is authorized by this notice.
+
 Status: **proposal, not installed.** It needs an owner decision, because it overrides two existing statements in this directory (see "Conflicts with the current policy"). Written 2026-11-10 after ten PRs went red on First-Pass Closure only because Codex reached its usage limit (`CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD`, no findings).
 
 ## Problem

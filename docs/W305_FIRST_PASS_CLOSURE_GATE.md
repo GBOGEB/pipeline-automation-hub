@@ -65,6 +65,42 @@ The gate requires:
 
 All comment and review pages are traversed; old-head findings do not block a repaired and re-reviewed head.
 
+### Codex quota waiver
+
+Codex reviews are metered. When the quota is spent, Codex posts "You have reached your Codex usage limits for code reviews" and never completes the review, so the gate stays red with `CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD` on a PR that has nothing to fix. The owner can waive that one requirement for one head (owner decision 2026-11-10, policy `codex_quota_waiver`).
+
+The gate accepts the waiver only when all of these hold:
+1. the Codex reviewer itself posted the usage-limit notice on the PR (the owner quoting it does not count);
+2. a login in `owner_logins` posted, strictly after that notice, a comment with this line on its own
+   (equal second-resolution timestamps are ambiguous and do not qualify):
+   `FPC_WAIVER_V1 head=<40-char PR head SHA> waives=CODEX_REVIEW reason=<text>`;
+3. the SHA is the exact current head, and the comment was created **strictly after** the latest
+   allowlisted PR-proof run observed that head on this PR. The run must be in this repository,
+   triggered by `pull_request`, linked to this PR/head, and use workflow bytes equal to the base.
+   A commit's committer date or a manual run is not a push-time attestation. A new push voids an
+   earlier waiver, including when a previously used SHA is restored.
+
+For a synchronize evaluation, the trusted controller reads its immutable GitHub event payload
+and requires proof creation strictly after that head occurrence. Later evaluations also read
+the PR's complete head-ref force-push/deletion/restoration timeline. Old runs for a restored SHA
+cannot satisfy this boundary while a new proof is absent, queued or failed; fresh successful
+source-validated PR proofs must cover every required purpose, independently of older body receipts.
+Missing or ambiguous occurrence metadata keeps waiver admission withheld.
+
+Wait for the current-head proof runs before posting the owner comment. Editing a pre-posted
+comment does not qualify; create a new comment. Equal second-resolution timestamps do not prove
+order. Rerunning a proof retains its original creation timestamp and does not create a new push
+observation. Missing source-bound PR-run metadata means no quota waiver is available.
+
+It waives the completed-review requirement and nothing else. The exact-head proof runs, open P0/P1 Codex findings on the head and the control-plane bootstrap rule are still enforced. The pass receipt records the waiver in `codex_quota_waiver` (comment ids, reason, source-head observation run/time, waiver creation time, `post_merge_review_owed: true`), so the review that was skipped stays visible as debt.
+
+A comment does not re-run the gate. Post the waiver, then dispatch the gate on the same head:
+
+```bash
+gh pr comment <N> --repo GBOGEB/pipeline-automation-hub --body "FPC_WAIVER_V1 head=<sha> waives=CODEX_REVIEW reason=Codex quota exhausted"
+gh workflow run first-pass-closure-gate.yml --repo GBOGEB/pipeline-automation-hub -f pr_number=<N> -f expected_head_sha=<sha>
+```
+
 ## Prospective KPI cohort
 
 Next 8 governed primary PRs:
@@ -215,19 +251,9 @@ The helper uses your existing `gh auth` login, reads the live PR head/base SHA, 
 
 `--write` is idempotent (re-running on an unchanged head leaves the body untouched) and editing the body re-triggers the gate. Every new push changes the head SHA and makes the receipt stale (`STALE_HEAD`), so re-run the helper after each push. A receipt is necessary but not sufficient: the exact-head Codex review and the protected-path bootstrap rule still apply, and the helper notes on stderr when a PR touches protected controller paths.
 
-## Codex-unavailable waiver
+## Retired label-based waiver
 
-When Codex cannot review a head because its usage limit is reached, the gate fails with `CODEX_REVIEW_NOT_COMPLETED_ON_EXACT_HEAD` although there is no finding to fix. The policy block `codex_unavailable_waiver` lets the owner waive **only the Codex completion requirement** for such a head. It is the in-gate tier of the review-failover design; the ruleset tier (an admin bypass on a soft ruleset) is described in `governance/branch_protection/SOFT_GATE_PROPOSAL.md`.
-
-All conditions are machine-checked by `codex_unavailable_waiver()` in `scripts/first_pass_closure_gate.py`:
-
-1. Codex's own summary comment reports the **code review as `failed` on the exact head**, and a later Codex comment contains the usage-limit phrase. A running or completed review, or a failure for an older head, never qualifies.
-2. The label `fpc:codex-unavailable` was applied by a login in `labeler_logins`, **after the head commit's committer date**. A push, rebase or amend gives the head a newer date, so the owner must re-apply the label for that head. Removing the label withdraws the waiver.
-3. No changed path matches `forbidden_path_patterns` (workflows, actions, dependabot, CODEOWNERS, SECURITY.md, the quality policy, the gate script). Those always need a real review.
-4. No open Codex inline finding of **any** priority on the exact head. A resolved thread does not block.
-
-Unchanged by the waiver: the three exact-head proof runs, the control-plane bootstrap rule, and zero open P0/P1 findings. The pass receipt carries `codex_review_waiver` (who, when, which comments) and `clean_first_pass: false`, so a waived PR never counts toward the prospective cohort in the policy's `prospective_cohort` block.
-
-Owner steps: create the label once (`gh label create fpc:codex-unavailable --color FBCA04 --description "Owner waiver: Codex usage limit reached on this head"`), then add it to a PR whose gate failed with that reason. The gate re-runs on `labeled`.
-
-Control-plane change: this section and the policy block are protected control paths. They merge only as an explicit bootstrap (see "Controller-maintenance bootstrap"), followed by a distinct non-controller canary PR that passes with the waiver.
+The former label-based path is superseded. Applying a label does not grant a Codex review
+waiver, and no legacy label receipt field is an admission contract. Follow **Codex quota waiver**
+above. Protected-controller bootstrap and a distinct postmerge non-controller canary remain
+separate owner-controlled gates; this documentation does not authorize either action.
