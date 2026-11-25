@@ -302,6 +302,27 @@ class EndToEndTests(unittest.TestCase):
         self.assertEqual(r5.project(self.box.root)["metrics"]["verified_pass"], 0)
         self.assertFalse(r5.project(self.box.root)["release_credit"])
 
+    def test_private_ledger_entry_is_projected_to_marker(self):
+        # A private repo's NIRVANA ledger entry must not leak its source SHA
+        # through project(); pulse ids are hub-ledger ids and stay readable.
+        rows = five({"o/r3": ALL_PASS})
+        rows[2]["source_sha"] = SHA_B
+        self.box.add("P1", snapshot("2026-10-01", rows))
+        self.box.add("P2", snapshot("2026-10-02", rows))
+        saved = r5.PB._DEFAULT
+        r5.PB._DEFAULT = r5.PB.Boundary(("o/r3",))
+        try:
+            model = r5.project(self.box.root)
+        finally:
+            r5.PB._DEFAULT = saved
+        entry = next(e for e in model["nirvana_ledger"] if e["repo"] == "o/r3")
+        self.assertEqual(entry["source_sha"], r5.PB.MARK)
+        self.assertEqual(entry["qualifying_pulses"], ["P1", "P2"])
+        self.assertNotIn(SHA_B, json.dumps(model))
+        self.assertNotIn(SHA_B[:7], json.dumps(model))
+        public = next(r for r in model["repos"] if r["repo"] == "o/r1")
+        self.assertIn(SHA_A, json.dumps(public))
+
     def test_snapshot_tamper_fails_closed(self):
         self.box.add("P1", snapshot("2026-10-01", five()))
         (self.box.root / "data/snap_1.json").write_text("{}", encoding="utf-8", newline="\n")
@@ -359,6 +380,12 @@ class EndToEndTests(unittest.TestCase):
             self.assertEqual(r5.main(["--check"], root=self.box.root), 0)
         csv_text = (self.box.root / "site/rolling5.csv").read_text(encoding="utf-8")
         self.assertEqual(len(csv_text.strip().splitlines()), 6)
+        # Equal readiness: display order 1..5, but one shared competition placement.
+        import csv as _csv
+        rows = list(_csv.DictReader(io.StringIO(csv_text)))
+        self.assertEqual([r["race_position"] for r in rows], ["1", "2", "3", "4", "5"])
+        self.assertEqual({r["readiness_placement"] for r in rows}, {"1"})
+        self.assertEqual({r["readiness_tied"] for r in rows}, {"True"})
         with redirect_stdout(io.StringIO()), self.assertRaises(SystemExit):
             r5.main(["--append-pulse", "data/x.json"], root=self.box.root)
 

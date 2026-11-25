@@ -518,16 +518,22 @@ def _project(root: Path = ROOT) -> dict:
 def render(model: dict) -> dict[str, bytes]:
     buf = io.StringIO()
     w = csv.writer(buf, lineterminator="\n")
-    w.writerow(["race_position", "repo", "rank", "verified_pass",
+    # race_position is display order only (ties broken by cohort rank);
+    # readiness_placement / readiness_tied carry the competition ranking.
+    w.writerow(["race_position", "readiness_placement", "readiness_tied",
+                "repo", "rank", "verified_pass",
                 "gate_denominator", "nirvana", "golden_thread_position",
                 "golden_thread_first_break", "nevergreen_gates",
                 "source_red_gates"])
     position = {r["repo"]: r["position"] for r in model["race"]}
+    placement = {r["repo"]: (r["readiness_placement"], r["readiness_tied"])
+                 for r in model["race"]}
     reds = {}
     for inst in model["source_red"]["instances"]:
         reds.setdefault(inst["repo"], []).append(inst["gate"])
     for r in sorted(model["repos"], key=lambda r: position[r["repo"]]):
-        w.writerow([position[r["repo"]], r["repo"], r["rank"], r["verified_pass"],
+        w.writerow([position[r["repo"]], *placement[r["repo"]],
+                    r["repo"], r["rank"], r["verified_pass"],
                     r["gate_denominator"], r["nirvana"],
                     r["golden_thread"]["position"],
                     r["golden_thread"]["first_break"] or "",
