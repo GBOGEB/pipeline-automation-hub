@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import datetime as dt
 import hashlib
 import importlib.util
 import io
@@ -44,24 +45,69 @@ def load(root: Path, rel: str):
 
 # --- Ledger ---------------------------------------------------------------
 
+def snapshot_path(root: Path, rel: str) -> Path:
+    """Resolve a ledger input only inside its JADE root, including symlinks."""
+    if (not isinstance(rel, str) or not rel or "\\" in rel or ":" in rel
+            or Path(rel).is_absolute() or ".." in Path(rel).parts):
+        raise ValueError("snapshot path must stay inside the JADE root")
+    path = (root / rel).resolve()
+    if not path.is_relative_to(root.resolve()):
+        raise ValueError("snapshot path must stay inside the JADE root")
+    return path
+
+
+def observed_date(value: object) -> str:
+    """The ledger uses ISO calendar dates, not lexicographically sortable guesses."""
+    if not isinstance(value, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+        raise ValueError("pulse observed_date must be an ISO calendar date")
+    try:
+        dt.date.fromisoformat(value)
+    except ValueError as exc:
+        raise ValueError("pulse observed_date must be an ISO calendar date") from exc
+    return value
+
+
 def verified_pulses(root: Path, ledger: dict) -> list[tuple[dict, dict]]:
     """Return (pulse, snapshot) pairs; fail closed on any drift or reorder."""
+    if (not isinstance(ledger, dict)
+            or ledger.get("schema")
+            != "jade.temple.rolling5.pulses/1.0"):
+        raise ValueError("unknown pulse ledger schema")
     pulses = ledger.get("pulses")
     if not isinstance(pulses, list) or not pulses:
         raise ValueError("pulse ledger is empty")
     seen_ids, seen_hashes, out = set(), set(), []
     for pulse in pulses:
+        if not isinstance(pulse, dict):
+            raise ValueError("invalid pulse record")
         pid, digest = pulse.get("id"), pulse.get("snapshot_sha256")
+        if not isinstance(pid, str) or not pid.strip():
+            raise ValueError("pulse id must be a nonempty string")
+        if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
+            raise ValueError(f"invalid snapshot sha256 for pulse {pid}")
+        date = observed_date(pulse.get("observed_date"))
         if pid in seen_ids or digest in seen_hashes:
             raise ValueError(f"duplicate pulse id or snapshot: {pid}")
         if out and pulse["observed_date"] < out[-1][0]["observed_date"]:
             raise ValueError(f"pulse {pid} is older than its predecessor")
-        raw = (root / pulse["snapshot"]).read_bytes()
+        raw = snapshot_path(root, pulse.get("snapshot")).read_bytes()
         if sha256(raw) != digest:
             raise ValueError(f"snapshot drift for pulse {pid}: {pulse['snapshot']}")
+        snapshot = json.loads(raw)
+        if (not isinstance(snapshot, dict)
+                or snapshot.get("schema") != "jade.temple.focus5.readonly/1.0"):
+            raise ValueError(f"invalid snapshot schema for pulse {pid}")
+        source = snapshot.get("source")
+        if not isinstance(source, dict) or source.get("observed_date") != date:
+            raise ValueError(f"snapshot date mismatch for pulse {pid}")
+        rows = rows_of(snapshot)
+        for repo, row in rows.items():
+            sha = row["source_sha"]
+            if sha != PB.MARK and (not isinstance(sha, str) or not SHA40.fullmatch(sha)):
+                raise ValueError(f"invalid source SHA in {repo} for pulse {pid}")
         seen_ids.add(pid)
         seen_hashes.add(digest)
-        out.append((pulse, json.loads(raw)))
+        out.append((pulse, snapshot))
     return out
 
 
@@ -69,7 +115,7 @@ def append_pulse(root: Path, snapshot_rel: str, pulse_id: str) -> dict:
     """Temporal hook: pin a new snapshot as the next pulse (append-only)."""
     ledger = load(root, LEDGER)
     verified_pulses(root, ledger)  # never extend a ledger that already drifted
-    raw = (root / snapshot_rel).read_bytes()
+    raw = snapshot_path(root, snapshot_rel).read_bytes()
     snapshot = json.loads(raw)
     rows_of(snapshot)  # validate shape before pinning
     pulse = {
@@ -87,16 +133,35 @@ def append_pulse(root: Path, snapshot_rel: str, pulse_id: str) -> dict:
 
 
 def rows_of(snapshot: dict) -> dict[str, dict]:
+    if (not isinstance(snapshot, dict) or not isinstance(snapshot.get("rows"), list)
+            or not snapshot["rows"]):
+        raise ValueError("snapshot rows must be a nonempty list")
     rows = {}
+    ranks = set()
     for row in snapshot["rows"]:
+        if not isinstance(row, dict):
+            raise ValueError("invalid repository row in pulse")
+        repo, rank = row.get("repo"), row.get("rank")
+        if not isinstance(repo, str) or not re.fullmatch(r"[^/\s]+/[^/\s]+", repo):
+            raise ValueError("invalid repository identity in pulse")
+        if type(rank) is not int or rank < 1:
+            raise ValueError(f"invalid repository rank in {repo}")
+        if repo in rows:
+            raise ValueError(f"duplicate repository in pulse: {repo}")
+        if rank in ranks:
+            raise ValueError(f"duplicate repository rank in pulse: {rank}")
+        if (not isinstance(row.get("gates"), list)
+                or any(not isinstance(g, dict) or not isinstance(g.get("id"), str)
+                       or not isinstance(g.get("status"), str)
+                       for g in row["gates"])):
+            raise ValueError(f"invalid H01-H12 gate inventory in {repo}")
         gate_ids = [g["id"] for g in row["gates"]]
         if len(gate_ids) != len(REQUIRED_GATES) or set(gate_ids) != REQUIRED_GATES:
             raise ValueError(f"invalid H01-H12 gate inventory in {row['repo']}")
         gates = {g["id"]: g["status"] for g in row["gates"]}
         if any(s not in (PASS, FAIL, UNKNOWN) for s in gates.values()):
             raise ValueError(f"unknown gate status in {row['repo']}")
-        if row["repo"] in rows:
-            raise ValueError(f"duplicate repository in pulse: {row['repo']}")
+        ranks.add(rank)
         rows[row["repo"]] = {
             "rank": row["rank"],
             "source_sha": row.get("source_sha"),
@@ -105,6 +170,17 @@ def rows_of(snapshot: dict) -> dict[str, dict]:
             "candidate_sha": row.get("candidate_sha"),
             "blockers": list(row.get("blockers", [])),
         }
+    metrics = snapshot.get("metrics")
+    if metrics is not None:
+        counts = {s: sum(list(r["gates"].values()).count(s) for r in rows.values())
+                  for s in (PASS, FAIL, UNKNOWN)}
+        totals = {"passed": counts[PASS], "failed": counts[FAIL], "unknown": counts[UNKNOWN],
+                  "required_gate_count_per_repo": len(REQUIRED_GATES),
+                  "required_gate_total": len(rows) * len(REQUIRED_GATES)}
+        if (not isinstance(metrics, dict)
+                or any(type(metrics.get(k)) is not int or metrics[k] != v
+                       for k, v in totals.items())):
+            raise ValueError("snapshot metrics disagree with gate inventory")
     return rows
 
 
@@ -161,6 +237,37 @@ def nirvana(repo: str, timeline: list[dict], sustain: int) -> bool:
     )
 
 
+def nirvana_results(pairs: list[tuple[dict, dict]], timeline: list[dict],
+                    sustain: int) -> list[dict]:
+    """Historical finish badges; one observation cannot order simultaneous finishes.
+
+    `order` is a deterministic display index. `placement` is competition rank,
+    shared by repositories first qualifying in the same pulse. A badge records
+    observed qualification and does not grant release or current-health credit.
+    """
+    results, achieved = [], set()
+    for i, (pulse, _) in enumerate(pairs):
+        finishers = sorted(repo for repo in timeline[i]
+                           if repo not in achieved
+                           and nirvana(repo, timeline[:i + 1], sustain))
+        placement = len(results) + 1
+        for repo in finishers:
+            achieved.add(repo)
+            results.append({
+                "repo": repo,
+                "pulse": pulse["id"],
+                "observed_date": pulse["observed_date"],
+                "source_sha": timeline[i][repo]["source_sha"],
+                "qualifying_pulses": [p["id"] for p, _ in pairs[i + 1 - sustain:i + 1]],
+                "order": len(results) + 1,
+                "placement": placement,
+                "tied": len(finishers) > 1,
+                "badge": f"NIRVANA #{placement}" + (" (shared)" if len(finishers) > 1 else ""),
+                "release_credit": False,
+            })
+    return results
+
+
 def rotate(window: list[str], roster: list[dict], graduated: set[str],
            size: int) -> dict:
     keep = [r for r in window if r not in graduated]
@@ -178,7 +285,11 @@ def rotate(window: list[str], roster: list[dict], graduated: set[str],
 
 
 def race(latest: dict[str, dict]) -> list[dict]:
-    """First-to-NIRVANA ordering of current candidates (evidence only)."""
+    """Current readiness, separate from earned NIRVANA finish placement.
+
+    `position` breaks ties by cohort rank for display only. Equal remaining and
+    failed gate counts share `readiness_placement`; neither awards a badge.
+    """
     out = []
     for repo, row in latest.items():
         values = list(row["gates"].values())
@@ -191,8 +302,23 @@ def race(latest: dict[str, dict]) -> list[dict]:
             "rank": row["rank"],
         })
     out.sort(key=lambda x: (x["remaining"], x["fail"], x["rank"]))
+
+    # Precompute competition ranking metadata in O(n) time:
+    # - first_index: first occurrence of each (remaining, fail) score
+    # - counts: how many repos share the same score
+    scores = [(item["remaining"], item["fail"]) for item in out]
+    first_index: dict[tuple[int, int], int] = {}
+    counts: dict[tuple[int, int], int] = {}
+    for idx, score in enumerate(scores):
+        if score not in first_index:
+            first_index[score] = idx
+        counts[score] = counts.get(score, 0) + 1
+
     for i, item in enumerate(out, 1):
         item["position"] = i
+        score = scores[i - 1]
+        item["readiness_placement"] = first_index[score] + 1
+        item["readiness_tied"] = counts[score] > 1
     return out
 
 
@@ -311,13 +437,8 @@ def _project(root: Path = ROOT) -> dict:
     sustain = policy["nirvana"]["sustain_pulses"]
     unattended_after = policy["streaks"]["unattended_after_pulses"]
 
-    nirvana_ledger, achieved = [], set()
-    for i, (pulse, _) in enumerate(pairs):
-        for repo in sorted(timeline[i]):
-            if repo not in achieved and nirvana(repo, timeline[: i + 1], sustain):
-                achieved.add(repo)
-                nirvana_ledger.append({"repo": repo, "pulse": pulse["id"],
-                                       "order": len(nirvana_ledger) + 1})
+    nirvana_ledger = nirvana_results(pairs, timeline, sustain)
+    achieved = {item["repo"] for item in nirvana_ledger}
 
     repos = []
     for repo, row in sorted(latest.items(), key=lambda kv: kv[1]["rank"]):
@@ -362,6 +483,14 @@ def _project(root: Path = ROOT) -> dict:
         },
         "pulses": [{"id": p["id"], "observed_date": p["observed_date"],
                     "snapshot_sha256": p["snapshot_sha256"]} for p, _ in pairs],
+        "pulse_progress": [
+            {"id": pulse["id"], "observed_date": pulse["observed_date"],
+             "passed": sum(list(r["gates"].values()).count(PASS) for r in rows.values()),
+             "failed": sum(list(r["gates"].values()).count(FAIL) for r in rows.values()),
+             "unknown": sum(list(r["gates"].values()).count(UNKNOWN) for r in rows.values()),
+             "denominator": sum(len(r["gates"]) for r in rows.values())}
+            for (pulse, _), rows in zip(pairs, timeline)
+        ],
         "history_depth": len(pairs),
         "history_note": (
             "Streaks need history: with fewer pulses than "
@@ -389,16 +518,22 @@ def _project(root: Path = ROOT) -> dict:
 def render(model: dict) -> dict[str, bytes]:
     buf = io.StringIO()
     w = csv.writer(buf, lineterminator="\n")
-    w.writerow(["race_position", "repo", "rank", "verified_pass",
+    # race_position is display order only (ties broken by cohort rank);
+    # readiness_placement / readiness_tied carry the competition ranking.
+    w.writerow(["race_position", "readiness_placement", "readiness_tied",
+                "repo", "rank", "verified_pass",
                 "gate_denominator", "nirvana", "golden_thread_position",
                 "golden_thread_first_break", "nevergreen_gates",
                 "source_red_gates"])
     position = {r["repo"]: r["position"] for r in model["race"]}
+    placement = {r["repo"]: (r["readiness_placement"], r["readiness_tied"])
+                 for r in model["race"]}
     reds = {}
     for inst in model["source_red"]["instances"]:
         reds.setdefault(inst["repo"], []).append(inst["gate"])
     for r in sorted(model["repos"], key=lambda r: position[r["repo"]]):
-        w.writerow([position[r["repo"]], r["repo"], r["rank"], r["verified_pass"],
+        w.writerow([position[r["repo"]], *placement[r["repo"]],
+                    r["repo"], r["rank"], r["verified_pass"],
                     r["gate_denominator"], r["nirvana"],
                     r["golden_thread"]["position"],
                     r["golden_thread"]["first_break"] or "",

@@ -1,7 +1,7 @@
 "use strict";
 /* Read-only; data.js is produced exclusively by tools/build_gate12_dov.py. */
 (function () {
-  const d = window.JADE_GATE12;
+  const envelope = window.JADE_GATE12;
   const byId = id => document.getElementById(id);
   const create = (tag, cls, message) => {
     const n = document.createElement(tag);
@@ -25,20 +25,75 @@
   };
   const chip = (status, title) => create("span", "chip " + status, title || status);
   const format = x => String(x).replaceAll("_", " ");
-  if (!d || d.schema !== "jade.temple.gate12.dov_projection.v1" ||
-      !d.metrics || d.authority.merge_admission !== "HOLD" ||
-      d.authority.formal_release_credit !== 0) {
-    byId("source-warning").textContent =
-      "JADE source/projection missing or unsafe. Run the source-bound generator; no gate is qualified.";
+  const safe = d => d && d.schema === "jade.temple.gate12.dov_projection.v1" &&
+    d.authority && d.authority.merge_admission === "HOLD" &&
+    d.authority.formal_release_credit === 0 && d.authority.current_head_recertified === false &&
+    d.metrics && d.source && /^\d{4}-\d{2}-\d{2}$/.test(d.source.observed_date) &&
+    Array.isArray(d.queue) && d.queue.length === d.metrics.portfolio_gate_slots &&
+    Array.isArray(d.pillars) && d.pillars.length === 12 &&
+    d.metrics.observed_pass + d.metrics.observed_fail + d.metrics.observed_unknown ===
+      d.metrics.observed_gate_denominator &&
+    d.metrics.observed_gate_denominator === 12 * d.metrics.observed_repositories;
+  if (!safe(envelope) || !safe(envelope.latest_recorded) ||
+      envelope.latest_recorded.source.observation !== "LATEST_RECORDED_PULSE" ||
+      !envelope.latest_recorded.source.pulse_id ||
+      !Array.isArray(envelope.latest_recorded.progress_history)) {
+    byId("source-warning").textContent = "Initialization stopped: latest source/projection missing or unsafe. No gate is qualified.";
+    byId("initialization-status").textContent = "Source initialization failed; rebuild and verify the ledger.";
+    byId("scoreboard").replaceChildren();
+    byId("source-mode").disabled = true;
     return;
   }
-  byId("readback-date").textContent = "FROZEN NON-ATOMIC · " + d.source.observed_date;
+  const render = mode => {
+  const d = mode === "frozen" ? envelope : envelope.latest_recorded;
+  const latest = mode !== "frozen";
+  for (const id of ["scoreboard", "pillar-grid", "quality-axes", "publication-status",
+    "acceptance-ladder", "asset-grid", "source-oids", "foundation-cards", "pulse-history",
+    "matrix-head", "matrix-body"]) byId(id).replaceChildren();
+  byId("q-gate").replaceChildren(Object.assign(create("option", "", "All 12 pillars"), {value: "ALL"}));
+  for (const id of ["q-status", "q-frontier"]) byId(id).value = "ALL";
+  byId("q-search").value = "";
+  const date = d.source.observed_date;
+  const age = Math.floor((Date.now() - Date.parse(date + "T00:00:00Z")) / 86400000);
+  const ageLabel = Number.isFinite(age) && age >= 0 ? age + " days old" : "age unqualified";
+  byId("readback-date").textContent = (latest ? d.source.pulse_id + " / LATEST RECORDED" : "ORIGINAL BASELINE") + " · " + date;
+  byId("source-warning").textContent = "Recorded " + date + " (" + ageLabel +
+    "). Current-head readiness, hosted parity and runtime health remain unqualified.";
+  byId("initialization-status").textContent = "Recorded sources loaded: " +
+    d.metrics.observed_repositories + " repositories × 12 gates; " +
+    (latest ? "verified pulse " + d.source.pulse_id : "frozen baseline") + ". Owner release remains HOLD.";
+  for (const id of ["queue-export", "queue-export-secondary"])
+    byId(id).href = latest ? "gate12_latest_queue.csv" : "gate12_bd_queue.csv";
+  const observedRepos = new Set(d.repositories.filter(r => r.observed).map(r => r.repository));
+  const nextTask = d.queue.find(t => observedRepos.has(t.repository) && t.readiness === "FIRST_RED") ||
+    d.queue.find(t => observedRepos.has(t.repository) && t.readiness === "READY");
+  const foundation = [
+    ["Source identity", (latest ? d.source.pulse_id + " · " : "Frozen baseline · ") + date,
+      latest ? "Ledger and selected snapshot hashes were verified by the canonical producer." : "Original non-atomic observation retained for comparison."],
+    ["Gate scope", d.metrics.observed_repositories + " assessed / " + d.metrics.top21_repositories + " roster repositories",
+      d.metrics.observed_gate_denominator + " assessed gate cells; " + d.metrics.unassessed_gate_slots + " unassessed cells remain separate."],
+    ["Next evidence hurdle", nextTask ? nextTask.pillar + " / " + nextTask.owner : "No unblocked work recorded",
+      nextTask ? nextTask.action : "Inspect the dependency queue and obtain the required owner evidence."],
+    ["Release and operation", "HOLD / unqualified",
+      "Source generation and local QA do not establish deployment, served-byte parity, owner release or rollback proof."]
+  ];
+  for (const [title, value, note] of foundation) {
+    const card = create("article");
+    attach(card, create("h3", "", title), create("strong", "", value), create("p", "", note));
+    byId("foundation-cards").appendChild(card);
+  }
+  for (const pulse of envelope.latest_recorded.progress_history) {
+    const card = create("article", "history-card");
+    attach(card, create("strong", "", pulse.id), create("b", "", pulse.passed + "/" + pulse.denominator + " PASS"),
+      create("small", "", pulse.observed_date), create("small", "", pulse.failed + " FAIL · " + pulse.unknown + " UNKNOWN"));
+    byId("pulse-history").appendChild(card);
+  }
   const m = d.metrics;
   const scores = [
-    [m.observed_repositories + "/" + m.top21_repositories, "Observed repos", "16 not qualified on this snapshot"],
-    [m.observed_pass + "/" + m.observed_gate_denominator, "Historical gate PASS", "Only five-repo observed denominator"],
+    [m.observed_repositories + "/" + m.top21_repositories, "Observed repos", m.unassessed_repositories + " not qualified on this snapshot"],
+    [m.observed_pass + "/" + m.observed_gate_denominator, "Recorded gate PASS", latest ? d.source.pulse_id + " · " + date : "Original frozen baseline"],
     [m.observed_fail + "/" + m.observed_gate_denominator, "Observed FAIL", "Failures do not disappear in aggregate"],
-    [m.unassessed_gate_slots, "Unassessed gate slots", "16 unassessed repositories × 12"],
+    [m.unassessed_gate_slots, "Unassessed gate slots", m.unassessed_repositories + " unassessed repositories × 12"],
     ["HOLD", "Owner release", "No deployed or hosted status inferred"]
   ];
   for (const [value, label, sub] of scores) {
@@ -111,6 +166,9 @@
       if (t.source_sha) attach(td1, create("div", "minor", t.source_sha.slice(0, 12)));
       else attach(td1, create("div", "minor", "No exact-head gate readback"));
       td3.appendChild(chip(t.status));
+      if (t.reason) td3.appendChild(create("div", "minor gate-reason", t.reason));
+      if (t.streak) td3.appendChild(create("div", "minor", "PASS streak " + t.streak.streak_on_current +
+        " · regressions " + t.streak.regressions));
       attach(td4, chip(t.readiness), create("div", "minor", t.blocked_by || "No prerequisite veto"));
       attach(td5, create("strong", "", t.owner), create("div", "minor", t.action));
       td6.appendChild(safeLink(t.evidence, t.evidence ? "Source proof ↗" : "Unqualified"));
@@ -121,9 +179,43 @@
     byId("q-count").textContent = rows.length + " of " + d.queue.length +
       " gate rows shown · FIRST_RED/READY is a dependency frontier, not merge authorization";
   };
-  [search, status, frontier, gate].forEach(n => n.addEventListener(
-    n.tagName === "INPUT" ? "input" : "change", renderQueue));
+  [search, status, frontier, gate].forEach(n => {
+    n[n.tagName === "INPUT" ? "oninput" : "onchange"] = renderQueue;
+  });
   renderQueue();
+  const matrixHeader = create("tr");
+  attach(matrixHeader, create("th", "", "Repository / recorded PASS"));
+  d.pillars.forEach(p => matrixHeader.appendChild(create("th", "", p.id)));
+  byId("matrix-head").appendChild(matrixHeader);
+  for (const repo of d.repositories.filter(r => r.observed)) {
+    const tr = create("tr");
+    const label = create("td");
+    attach(label, create("strong", "", repo.repository.split("/").pop()),
+      create("div", "minor", repo.gate_counts.PASS + "/12 PASS"));
+    tr.appendChild(label);
+    for (const pillar of d.pillars) {
+      const task = d.queue.find(t => t.repository === repo.repository && t.pillar === pillar.id);
+      const td = create("td"), button = create("button", "matrix-gate " + task.status,
+        task.status === "UNKNOWN" ? "?" : task.status === "PASS" ? "✓" : "×");
+      button.type = "button";
+      button.setAttribute("aria-label", repo.repository + " " + pillar.id + " " + task.status);
+      button.title = task.reason || task.status;
+      button.onclick = () => {
+        search.value = repo.repository;
+        status.value = frontier.value = "ALL";
+        gate.value = pillar.id;
+        renderQueue();
+        byId("bd-queue").scrollIntoView({block: "start"});
+      };
+      td.appendChild(button);
+      tr.appendChild(td);
+    }
+    byId("matrix-body").appendChild(tr);
+  }
+  const results = envelope.latest_recorded.nirvana_ledger || [];
+  byId("race-summary").textContent = results.length ? "Latest recorded race: " +
+    results.map(r => r.repo + ": " + r.badge).join(" · ") :
+    "No earned NIRVANA badge. Readiness ties do not establish a finishing order.";
   const operational = [
     ["Authored source", d.publication.source_authored],
     ["Static QA", d.publication.static_qa],
@@ -162,4 +254,14 @@
     attach(row, create("dt", "", name), create("dd", "", oid));
     byId("source-oids").appendChild(row);
   }
+  if (latest) {
+    for (const key of ["snapshot_path", "snapshot_sha256", "ledger_sha256"]) {
+      const row = create("div");
+      attach(row, create("dt", "", key), create("dd", "", d.source[key]));
+      byId("source-oids").appendChild(row);
+    }
+  }
+  };
+  byId("source-mode").onchange = () => render(byId("source-mode").value);
+  render("latest");
 })();

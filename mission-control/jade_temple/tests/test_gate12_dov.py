@@ -1,5 +1,6 @@
 """JADE H01-H12 owner cockpit: fixed populations, negative sources, no false release."""
 import copy
+import hashlib
 import importlib.util
 import json
 import shutil
@@ -14,13 +15,132 @@ spec.loader.exec_module(gate12)
 
 
 class Gate12Tests(unittest.TestCase):
-    def temporary_source(self):
+    def temporary_source(self, history=False):
         tmp = tempfile.TemporaryDirectory()
         root = Path(tmp.name)
         (root / "data").mkdir()
         for path in gate12.FILES.values():
             shutil.copyfile(ROOT / path, root / path)
+        if history:
+            ledger = json.loads((ROOT / gate12.ROLLING5.LEDGER).read_text(encoding="utf-8"))
+            shutil.copyfile(ROOT / gate12.ROLLING5.LEDGER, root / gate12.ROLLING5.LEDGER)
+            for pulse in ledger["pulses"]:
+                shutil.copyfile(ROOT / pulse["snapshot"], root / pulse["snapshot"])
         return tmp, root
+
+    def mutate_latest(self, root, mutate, repin=True):
+        ledger_path = root / gate12.ROLLING5.LEDGER
+        ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
+        pulse = ledger["pulses"][-1]
+        path = root / pulse["snapshot"]
+        data = json.loads(path.read_text(encoding="utf-8"))
+        mutate(data)
+        path.write_text(json.dumps(data), encoding="utf-8", newline="\n")
+        if repin:
+            pulse["snapshot_sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+            ledger_path.write_text(json.dumps(ledger), encoding="utf-8", newline="\n")
+
+    def test_latest_recorded_is_additive_to_frozen_api(self):
+        frozen = gate12.project()
+        latest = gate12.latest_recorded()
+        self.assertNotIn("latest_recorded", frozen)
+        self.assertEqual(frozen["metrics"]["observed_pass"], 14)
+        self.assertEqual((latest["metrics"]["observed_pass"],
+                          latest["metrics"]["observed_fail"],
+                          latest["metrics"]["observed_unknown"]), (25, 0, 35))
+        self.assertEqual(latest["metrics"]["observed_gate_denominator"], 60)
+        self.assertEqual(latest["source"]["pulse_id"], "P0005")
+        self.assertEqual(latest["source"]["observation"], "LATEST_RECORDED_PULSE")
+        self.assertEqual(latest["source"]["observed_date"], "2026-11-04")
+        self.assertFalse(latest["authority"]["current_head_recertified"])
+        self.assertEqual(latest["authority"]["formal_release_credit"], 0)
+        self.assertTrue(all("reason" in task and "streak" in task for task in latest["queue"]))
+        task = next(t for t in latest["queue"] if t["status"] == "UNKNOWN")
+        self.assertTrue(task["reason"])
+        self.assertIsNotNone(task["streak"])
+        output = gate12.outputs()
+        model = json.loads(output["gate12_data.json"])
+        self.assertEqual(model["metrics"], frozen["metrics"])
+        self.assertEqual(model["latest_recorded"], latest)
+        self.assertIn("gate12_latest_queue.csv", output)
+
+    def test_latest_tampered_or_missing_snapshot_has_no_frozen_fallback(self):
+        for missing in (False, True):
+            tmp, root = self.temporary_source(history=True)
+            try:
+                ledger = json.loads((root / gate12.ROLLING5.LEDGER).read_text(encoding="utf-8"))
+                path = root / ledger["pulses"][-1]["snapshot"]
+                if missing:
+                    path.unlink()
+                else:
+                    path.write_text("{}", encoding="utf-8", newline="\n")
+                with self.subTest(missing=missing), self.assertRaises((ValueError, FileNotFoundError)):
+                    gate12.outputs(root)
+                self.assertEqual(gate12.project(root)["metrics"]["observed_pass"], 14)
+            finally:
+                tmp.cleanup()
+
+    def test_latest_reordered_ledger_and_missing_gate_fail_closed(self):
+        tmp, root = self.temporary_source(history=True)
+        try:
+            path = root / gate12.ROLLING5.LEDGER
+            data = json.loads(path.read_text(encoding="utf-8"))
+            data["pulses"].reverse()
+            path.write_text(json.dumps(data), encoding="utf-8", newline="\n")
+            with self.assertRaisesRegex(ValueError, "older"):
+                gate12.latest_recorded(root)
+        finally:
+            tmp.cleanup()
+        tmp, root = self.temporary_source(history=True)
+        try:
+            self.mutate_latest(root, lambda d: d["rows"][0]["gates"].pop())
+            with self.assertRaisesRegex(ValueError, "gate (population|inventory)"):
+                gate12.latest_recorded(root)
+        finally:
+            tmp.cleanup()
+
+    def test_latest_declared_metrics_cannot_promote_or_change_denominator(self):
+        for field in ("passed", "required_gate_total"):
+            tmp, root = self.temporary_source(history=True)
+            try:
+                def mutate(data):
+                    data["metrics"][field] += 1
+                self.mutate_latest(root, mutate)
+                with self.subTest(field=field), self.assertRaisesRegex(ValueError, "metrics disagree|misstated"):
+                    gate12.latest_recorded(root)
+            finally:
+                tmp.cleanup()
+
+    def test_latest_missing_ledger_fails_without_changing_frozen_api(self):
+        tmp, root = self.temporary_source()
+        try:
+            with self.assertRaises(FileNotFoundError):
+                gate12.outputs(root)
+            self.assertEqual(gate12.project(root)["metrics"]["observed_pass"], 14)
+        finally:
+            tmp.cleanup()
+
+    def test_latest_cohort_denominator_uses_recorded_population(self):
+        tmp, root = self.temporary_source(history=True)
+        try:
+            def mutate(data):
+                data["rows"] = data["rows"][:1]
+                data["source"]["focus_repositories"] = 1
+                states = [g["status"] for g in data["rows"][0]["gates"]]
+                data["metrics"].update({"required_gate_total": 12,
+                                        "top21_unassessed_outside_focus": 20,
+                                        "passed": states.count("PASS"),
+                                        "failed": states.count("FAIL"),
+                                        "unknown": states.count("UNKNOWN")})
+            self.mutate_latest(root, mutate)
+            latest = gate12.latest_recorded(root)
+            self.assertEqual(latest["metrics"]["observed_repositories"], 1)
+            self.assertEqual(latest["metrics"]["observed_gate_denominator"], 12)
+            self.assertEqual(latest["metrics"]["unassessed_gate_slots"], 240)
+            self.assertEqual(len(latest["queue"]), 252)
+            self.assertEqual(sum(r["observed"] for r in latest["repositories"]), 1)
+        finally:
+            tmp.cleanup()
 
     def test_twelve_canonical_gate_identities_and_content_owners(self):
         p = gate12.project()
