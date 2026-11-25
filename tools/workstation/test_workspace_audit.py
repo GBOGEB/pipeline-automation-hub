@@ -62,7 +62,9 @@ if ($cfg.fn -eq 'triage') {
     $out = [ordered]@{ Class = $r.Class; NeverPush = $r.NeverPush; Reasons = @($r.Reasons) }
 }
 else {
-    $rows = Invoke-WorktreePrune -Repo $a.repo -Fix:([bool]$a.fix) -Git $fakeGit -Attrib $fakeAttrib
+    $pp = @{ Repo = $a.repo; Fix = [bool]$a.fix; Git = $fakeGit }
+    if (-not ($a.ContainsKey('realAttrib') -and $a.realAttrib)) { $pp.Attrib = $fakeAttrib }
+    $rows = Invoke-WorktreePrune @pp
     $out = [ordered]@{ Rows = @($rows | ForEach-Object { [ordered]@{ Action = $_.Action; Detail = $_.Detail } }) }
 }
 $out.Calls = @($global:Calls)
@@ -101,10 +103,38 @@ class WorkspaceAuditTriage(unittest.TestCase):
 
     # (1) detached HEAD checked against the remote --------------------------------------------
     def test_detached_head_on_remote_branch_is_landed(self) -> None:
-        r = self.triage({"branch -r --contains HEAD": ok("  origin/fix/jade-topo-layers")},
+        # The cached ref nominates the branch; the live tip (advanced past HEAD) proves containment.
+        r = self.triage({"ls-remote --heads origin": ok(f"{OLD}	refs/heads/fix/jade-topo-layers"),
+                         "branch -r --contains HEAD": ok("  origin/fix/jade-topo-layers"),
+                         f"merge-base --is-ancestor HEAD {OLD}": ok()},
                         state=dict(PUSH_STATE, Branch="(detached)"))
         self.assertEqual(r["Class"], "LANDED")
         self.assertIn("origin/fix/jade-topo-layers", r["Reasons"][0])
+
+    def test_cached_ref_for_branch_deleted_on_server_is_not_landed(self) -> None:
+        r = self.triage({"ls-remote --heads origin": ok(f"{OLD}	refs/heads/master"),
+                         "branch -r --contains HEAD": ok("  origin/fix/gone")})
+        self.assertEqual(r["Class"], "PUSH-ME")
+        self.assertFalse([c for c in r["Calls"] if c.startswith("git merge-base")])
+
+    def test_cached_ref_force_pushed_on_server_is_not_landed(self) -> None:
+        # Branch still exists live but its tip no longer contains HEAD.
+        r = self.triage({"ls-remote --heads origin": ok(f"{TWIN}	refs/heads/fix/x"),
+                         "branch -r --contains HEAD": ok("  origin/fix/x"),
+                         f"merge-base --is-ancestor HEAD {TWIN}": {"Code": 1, "Out": [], "Err": ""},
+                         f"cat-file -e {TWIN}^{{commit}}": ok()})
+        self.assertEqual(r["Class"], "PUSH-ME")
+
+    def test_unfetched_live_tip_is_reported_unproven(self) -> None:
+        r = self.triage({"ls-remote --heads origin": ok(f"{TWIN}	refs/heads/fix/x"),
+                         "branch -r --contains HEAD": ok("  origin/fix/x")})
+        self.assertEqual(r["Class"], "PUSH-ME")
+        self.assertTrue(any("containment unproven" in x for x in r["Reasons"]), r["Reasons"])
+
+    def test_unreachable_origin_never_lands_from_cached_refs(self) -> None:
+        r = self.triage({"branch -r --contains HEAD": ok("  origin/fix/x")})
+        self.assertEqual(r["Class"], "PUSH-ME")
+        self.assertTrue(any("origin unreachable" in x for x in r["Reasons"]), r["Reasons"])
 
     def test_detached_head_equal_to_remote_tip_without_tracking_refs_is_landed(self) -> None:
         r = self.triage({"ls-remote --heads origin": ok(f"{HEAD}\trefs/heads/fix/x", f"{OLD}\trefs/heads/master")},
@@ -201,8 +231,20 @@ class WorkspaceAuditTriage(unittest.TestCase):
         r = self.run_fn("prune", {"repo": str(repo), "fix": True}, self.denied(repo))
         self.assertEqual([x["Action"] for x in r["Rows"]], ["prune failed", "attrib -R", "worktree prune (retry)"])
         self.assertIn("Permission denied", r["Rows"][0]["Detail"])
-        self.assertEqual([c for c in r["Calls"] if c.startswith("attrib")], [f"attrib {admin}"])
+        self.assertEqual([c for c in r["Calls"] if c.startswith("attrib")], [f"attrib {admin}", f"attrib {admin / '*'}"])
         self.assertEqual(r["Calls"].count("git worktree prune"), 2)
+
+    @unittest.skipUnless(os.name == "nt", "attrib.exe is Windows-only")
+    def test_default_attrib_clears_nested_readonly_entries(self) -> None:
+        repo, admin = self.prune_repo()
+        nested = admin / "fsmonitor--daemon" / "cookie"
+        nested.write_text("x", encoding="utf-8")
+        subprocess.run(["attrib", "+R", str(nested)], check=True, capture_output=True)
+        subprocess.run(["attrib", "+R", str(admin / "fsmonitor--daemon")], check=True, capture_output=True)
+        self.addCleanup(subprocess.run, ["attrib", "-R", str(admin / "*"), "/S", "/D"], capture_output=True)
+        r = self.run_fn("prune", {"repo": str(repo), "fix": True, "realAttrib": True}, self.denied(repo))
+        self.assertEqual([x["Action"] for x in r["Rows"]], ["prune failed", "attrib -R", "worktree prune (retry)"])
+        self.assertTrue(os.access(nested, os.W_OK), "nested read-only file was not cleared")
 
     def test_prune_permission_denied_without_fix_only_reports(self) -> None:
         repo, admin = self.prune_repo()

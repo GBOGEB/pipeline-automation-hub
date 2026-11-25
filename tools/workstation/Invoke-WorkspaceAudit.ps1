@@ -193,11 +193,33 @@ function Get-PushTriage {
     $head = $State.Head
     $res = [ordered]@{ Class = 'PUSH-ME'; NeverPush = $false; Reasons = @() }
 
-    # (1) HEAD already on a remote branch. Detached HEADs are never asked about by Get-GitState, and
-    #     a single-branch clone has no remote-tracking refs, so ask both the refs and the remote itself.
-    $onRemote = @((& $run @('branch', '-r', '--contains', 'HEAD')).Out | ForEach-Object { $_.Trim() } | Where-Object { $_ -and $_ -notmatch ' -> ' })
-    if (-not $onRemote -and $head) {
-        $onRemote = @((& $run @('ls-remote', '--heads', 'origin')).Out | Where-Object { $_ -match "^$head\s+refs/heads/(.+)$" } | ForEach-Object { "origin/$($Matches[1])" })
+    # (1) HEAD already on a remote branch, proven against the LIVE remote. Cached origin/* refs can name a
+    #     branch the server has deleted or force-pushed, so they only nominate candidates: a branch counts
+    #     when its live tip (ls-remote) equals HEAD, or HEAD is an ancestor of that live tip. A live tip whose
+    #     object is not fetched cannot be proven and is not counted. If origin cannot be reached, nothing is
+    #     LANDED here (fail closed: a false LANDED hides unpushed work). Detached HEADs and single-branch
+    #     clones have no tracking refs, so exact tip equality is checked against every live branch.
+    $onRemote = @(); $notes = @()   # notes only qualify a final PUSH-ME verdict
+    if ($head) {
+        $ls = & $run @('ls-remote', '--heads', 'origin')
+        if ($ls.Code -eq 0) {
+            $live = [ordered]@{}
+            foreach ($l in $ls.Out) { if ("$l" -match '^([0-9a-f]{40})\s+refs/heads/(.+)$') { $live[$Matches[2]] = $Matches[1] } }
+            $onRemote = @($live.Keys | Where-Object { $live[$_] -eq $head } | ForEach-Object { "origin/$_" })
+            if (-not $onRemote) {
+                $cached = @((& $run @('branch', '-r', '--contains', 'HEAD')).Out | ForEach-Object { "$_".Trim() } |
+                    Where-Object { $_ -and $_ -notmatch ' -> ' -and $_ -match '^origin/(.+)$' } | ForEach-Object { $_ -replace '^origin/', '' })
+                $unproven = 0
+                foreach ($b in $cached) {
+                    if (-not $live.Contains($b)) { continue }   # deleted on the server: stale cached ref
+                    $tip = $live[$b]
+                    if ((& $run @('merge-base', '--is-ancestor', 'HEAD', $tip)).Code -eq 0) { $onRemote += "origin/$b" }
+                    elseif ((& $run @('cat-file', '-e', "$tip^{commit}")).Code -ne 0) { $unproven++ }
+                }
+                if ($unproven) { $notes += "$unproven live branch tip(s) not fetched, containment unproven (git fetch to recheck)" }
+            }
+        }
+        else { $notes += 'origin unreachable (ls-remote failed): remote containment not verified' }
     }
     if ($onRemote) {
         $res.Class = 'LANDED'; $res.Reasons += "HEAD is on $(($onRemote | Select-Object -First 2) -join ', ')"
@@ -268,14 +290,14 @@ function Get-PushTriage {
             }
         }
     }
-    $res.Reasons += 'real unlanded work: push it and open a draft PR'
+    $res.Reasons += @($notes) + 'real unlanded work: push it and open a draft PR'
     [pscustomobject]$res
 }
 
 function Invoke-WorktreePrune {
     <# git worktree prune with stderr captured. On 'Permission denied' (OneDrive read-only reparse points
        under .git/worktrees/<name>) it reports the failure and, only with -Fix, clears ReadOnly on that one
-       admin folder (attrib -R /S /D) and prunes again. Returns one action row per step. #>
+       admin folder (attrib -R on it and, /S /D, on its contents) and prunes again. Returns one action row per step. #>
     param(
         [string]$Repo, [switch]$Fix,
         [scriptblock]$Git = { param($Dir, $GitArgs) Invoke-GitRun -Dir $Dir -GitArgs $GitArgs },
@@ -297,9 +319,13 @@ function Invoke-WorktreePrune {
         if ((Split-Path $dir -Parent) -ne $wtRoot -or -not (Test-Path -LiteralPath $dir -PathType Container)) {
             $rows += [pscustomobject]@{ Name = $name; Action = 'prune not fixed'; Detail = "not a worktree admin folder: $dir" }; continue
         }
-        if (-not $Fix) { $rows += [pscustomobject]@{ Name = $name; Action = 'prune not fixed'; Detail = "read-only folder; fix: attrib -R `"$dir`" /S /D, then git worktree prune" }; continue }
+        if (-not $Fix) { $rows += [pscustomobject]@{ Name = $name; Action = 'prune not fixed'; Detail = "read-only folder; fix: attrib -R `"$dir`" /D; attrib -R `"$dir\*`" /S /D, then git worktree prune" }; continue }
+        # attrib /S applies to MATCHING files, so the folder path alone leaves nested read-only entries
+        # (e.g. fsmonitor--daemon) untouched. Clear the folder itself, then its contents recursively.
         $a = & $Attrib $dir
-        $rows += [pscustomobject]@{ Name = $name; Action = if ($a.Code -eq 0) { 'attrib -R' } else { 'attrib failed' }; Detail = $dir }
+        $a2 = & $Attrib (Join-Path $dir '*')
+        $okA = $a.Code -eq 0 -and $a2.Code -eq 0
+        $rows += [pscustomobject]@{ Name = $name; Action = if ($okA) { 'attrib -R' } else { 'attrib failed' }; Detail = $dir }
     }
     if ($Fix) {
         $r2 = & $Git $Repo @('worktree', 'prune')
