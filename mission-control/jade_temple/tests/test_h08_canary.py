@@ -2,6 +2,7 @@
 refuses unless every precondition holds, and private repositories never enter the public file."""
 import copy
 import importlib.util
+import re
 import unittest
 from pathlib import Path
 
@@ -188,6 +189,83 @@ class PulseIntegration(unittest.TestCase):
         g = {x["id"]: x for x in FP.observe_repo("O/R", None, lookup, None, [])["gates"]}
         self.assertEqual(g["H08"]["status"], "UNKNOWN")
         self.assertIn("no rejected RED canary receipt", g["H08"]["reason"])
+
+
+APP_ACTIONS, APP_OTHER = 15368, 999
+
+
+def pinned_world(runs):
+    """The ruleset pins CHECK to the Actions app; `runs` are the canary head's check runs."""
+    rules = [dict(r, parameters={"required_status_checks": [{"context": CHECK, "integration_id": APP_ACTIONS}]})
+             if r["type"] == "required_status_checks" else r for r in world()("repos/O/R/rules/branches/master")]
+    return world(rules=rules, runs=runs)
+
+
+def run(app, conclusion, rid, at):
+    return {"name": CHECK, "status": "completed", "conclusion": conclusion, "id": rid, "completed_at": at,
+            "app": {"id": app}, "html_url": f"https://github.com/O/R/runs/{rid}"}
+
+
+ACTIONS_GREEN = run(APP_ACTIONS, "success", 4, "2026-11-07T09:00:00Z")
+ACTIONS_RED = run(APP_ACTIONS, "failure", 4, "2026-11-07T09:00:00Z")
+IMPOSTOR_RED = run(APP_OTHER, "failure", 5, "2026-11-07T10:00:00Z")
+IMPOSTOR_GREEN = run(APP_OTHER, "success", 5, "2026-11-07T10:00:00Z")
+
+
+class PinnedIntegration(unittest.TestCase):
+    """Review 4503231135 (P1): a ruleset pins a required context to an integration_id; a same-named
+    check run from another GitHub App is not the required check (verify_rulesets.gaps compares
+    (context, integration_id) for the same reason)."""
+
+    def test_same_named_failure_from_another_app_is_not_pass(self):
+        status, _url, why = H8.verify_receipt("O/R", "master", RECEIPT, pinned_world([ACTIONS_GREEN, IMPOSTOR_RED]))
+        self.assertEqual(status, "UNKNOWN", why)
+
+    def test_failure_from_the_pinned_app_still_passes(self):
+        status, _url, why = H8.verify_receipt("O/R", "master", RECEIPT, pinned_world([ACTIONS_RED, IMPOSTOR_GREEN]))
+        self.assertEqual(status, "PASS", why)
+
+    def test_a_pin_in_any_rule_binds_the_context(self):
+        """GitHub enforces every rule: an unpinned duplicate of the context does not lift another rule's pin."""
+        base = pinned_world([ACTIONS_GREEN, IMPOSTOR_RED])
+        rules = base("repos/O/R/rules/branches/master")
+        pinned = next(r for r in rules if r["type"] == "required_status_checks")
+        rules = rules + [dict(pinned, parameters={"required_status_checks": [{"context": CHECK}]})]
+        status, _url, why = H8.verify_receipt("O/R", "master", RECEIPT, world(rules=rules, runs=[ACTIONS_GREEN, IMPOSTOR_RED]))
+        self.assertEqual(status, "UNKNOWN", why)
+
+    def test_receipt_pinned_to_another_app_is_unknown(self):
+        moved = dict(copy.deepcopy(RECEIPT), integration_id=APP_OTHER)
+        self.assertEqual(H8.verify_receipt("O/R", "master", moved, pinned_world([ACTIONS_RED]))[0], "UNKNOWN")
+
+    def test_attempt_refuses_on_an_impostor_failure_and_records_the_pinned_app(self):
+        merged = []
+
+        def merge(*a):
+            merged.append(a)
+            return 405, '{"message":"Repository rule violations found. Required status check is failing."}'
+        with self.assertRaises(SystemExit):
+            H8.attempt("O/R", 9, CHECK, pinned_world([ACTIONS_GREEN, IMPOSTOR_RED]), merge)
+        self.assertEqual(merged, [])
+        rec = H8.attempt("O/R", 9, CHECK, pinned_world([ACTIONS_RED, IMPOSTOR_GREEN]), merge)
+        self.assertEqual((rec["integration_id"], rec["failing_check_run"]), (APP_ACTIONS, ACTIONS_RED["html_url"]))
+        H8.validate_receipts({"schema": H8.SCHEMA, "receipts": [rec]}, private=())
+
+
+class DocumentedCommands(unittest.TestCase):
+    """Review 4505874632 (P2): the README says every command runs from the repo root, so each
+    documented `python .../h08_canary.py` command must name a path that exists from there."""
+
+    def test_h08_commands_resolve_from_the_repo_root(self):
+        repo_root = ROOT.parents[1]
+        texts = {"DROPIN_NEXT_CHAT.md": (ROOT / "DROPIN_NEXT_CHAT.md").read_text(encoding="utf-8"),
+                 "h08_canary.py docstring": H8.__doc__}
+        found = 0
+        for where, text in texts.items():
+            for path in re.findall(r"python\s+(\S*h08_canary\.py)", text):
+                found += 1
+                self.assertTrue((repo_root / path).is_file(), f"{where}: {path} does not exist from the repo root")
+        self.assertGreater(found, 0)
 
 
 if __name__ == "__main__":

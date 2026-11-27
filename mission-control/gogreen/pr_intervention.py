@@ -178,8 +178,11 @@ class Writer:
             return ('ACCEPTED', None) if out.returncode == 0 else self._failed(out)
         # `gh pr update-branch --rebase` has no head guard; GraphQL updatePullRequestBranch takes expectedHeadOid.
         node = self._call(['gh', 'pr', 'view', str(number), '-R', repo, '--json', 'id', '--jq', '.id'])
-        if node.returncode != 0 or not node.stdout.strip():
+        if node.returncode != 0:
             return self._failed(node)
+        if not node.stdout.strip():
+            # `gh` sometimes exits 0 but prints nothing; treat as a distinct failure for diagnosis.
+            return 'FAILED', 'MISSING_NODE_ID'
         out = self._call(['gh', 'api', 'graphql',
                           '-f', 'query=mutation($id:ID!,$oid:GitObjectID!){updatePullRequestBranch(input:'
                                 '{pullRequestId:$id,expectedHeadOid:$oid,updateMethod:REBASE}){pullRequest{headRefOid}}}',
@@ -275,7 +278,10 @@ def reasons(row, default_branch, policy, now):
         r.append('FORK')
     if row['base_ref'] != default_branch:
         r.append('STACKED')
-    if row['age_days'] < policy['min_age_days']:
+    # Compare on the exact age; row['age_days'] is rounded for the report and can cross the threshold.
+    created = when(row['created_at']) if row.get('created_at') else None
+    age = (now - created).total_seconds() / 86400 if created else row['age_days']
+    if age < policy['min_age_days']:
         r.append('YOUNG')
     if policy['intervention'] == 'UPDATE':
         if row['behind_by'] is None:
@@ -682,8 +688,11 @@ def evaluate(client, b, act_rec, after_rows, foreign=None):
                'gate_regressed': bool(ar) and br['gate_state'] == 'GREEN' and ar['gate_state'] == 'RED',
                'recovered_checks': sorted(set(br['ci_failing']) - set(ar['ci_failing'])) if ar else []}
         signals = []
-        if row['transition'] in ('UNBLOCKED', 'SETTLED_GREEN') or (o == 'MERGED' and br['ci_state'] != 'GREEN'):
-            signals.append('CI_GREENED' if o != 'MERGED' else 'MERGED')
+        # A merge is always a positive transition, also for a PR that was already green.
+        if o == 'MERGED':
+            signals.append('MERGED')
+        elif row['transition'] in ('UNBLOCKED', 'SETTLED_GREEN'):
+            signals.append('CI_GREENED')
         if ar and (br['mergeable'] == 'CONFLICTING' or br['merge_state'] == 'DIRTY') \
                 and ar['mergeable'] == 'MERGEABLE' and ar['merge_state'] != 'DIRTY':
             signals.append('CONFLICT_CLEARED')
