@@ -119,7 +119,8 @@ def source_hashes(jade: Path) -> dict:
     files.update(OWNERS.values())
     files.update(TRANSITIVE_INPUTS)
     files.update("mission-control/jade_temple/portfolio_readiness/" + p
-                 for p in ("portfolio_readiness.py", "dashboard.py", "census_bridge.py"))
+                 for p in ("portfolio_readiness.py", "dashboard.py", "census_bridge.py",
+                           "root_next_control.py", "repeat_main_proof.py"))
     result = {}
     for rel in sorted(files):
         path = jade / rel.removeprefix("mission-control/jade_temple/") if rel.startswith(
@@ -332,6 +333,10 @@ def semantic_state(model: dict) -> dict:
                   for i in sorted(issues["items"], key=lambda x: x["key"])],
         "closed_in_window": issues.get("closed_in_window")}
     return {"planning_source_sha": model["planning_source_sha"], "source_hashes": model["source_hashes"],
+            "root_next_control": model.get("root_next_control", {
+                 "schema": "jade.root-next-control.v1", "status": "NOT_SUPPLIED",
+                 "items": [], "private_aggregate": 0, "total": 0,
+                 "closure_verified": 0, "actionable": 0, "gate_deficits": {}}),
             "history": [(p["id"], p["snapshot_sha256"]) for p in model["history"]],
             "repos": [{k: sorted(v) if k == "source_urls" else v for k, v in r.items() if k != "observed_at"}
                       for r in sorted(model["observation"]["repos"], key=lambda x: x["repo"])],
@@ -345,7 +350,16 @@ def semantic_state(model: dict) -> dict:
 def view_cohort(model: dict) -> dict:
     """Display comparability is separate from native CONTROL qualification."""
     issue_model = model["issues"].get("model")
+    root = model.get("root_next_control") or {"status": "NOT_SUPPLIED", "items": [],
+                                              "private_aggregate": 0}
+    root_identity = sorted((item["repo"], item["root_id"],
+                            item["root_source"]["path"], item["root_source"]["line"],
+                            item["root_source"]["blob_sha"], item.get("source_commit"),
+                            item["kind"]) for item in root.get("items", []))
     return {"schema": model["schema"], "planning_source_sha": model["planning_source_sha"],
+            "root_cohort": {"status": root.get("status", "NOT_SUPPLIED"),
+                            "public_source_identities": root_identity,
+                            "private_aggregate": root.get("private_aggregate", 0)},
             "history_cohort": model["history"][-1]["cohort"],
             "history_denominator": model["rolling5_historical"]["metrics"]["gate_denominator"],
             "repos": sorted((r["repo"], r.get("check_population"),
@@ -357,11 +371,16 @@ def view_cohort(model: dict) -> dict:
 
 def project(*, as_of: str, source_sha: str, jade: Path = JADE,
             observation: dict | None = None, issue_snapshot: dict | None = None,
-            plan: dict | None = None, previous: dict | None = None) -> dict:
+            plan: dict | None = None, previous: dict | None = None,
+            root_next: dict | None = None) -> dict:
     at = timestamp(as_of)
     need(bool(HEX40.fullmatch(source_sha)), "exact planning baseline SHA required")
     pb = owner("private_boundary")
     private = set(pb.private_repos())
+    root_spec = importlib.util.spec_from_file_location("jade_root_next_control", HERE / "root_next_control.py")
+    root_mod = importlib.util.module_from_spec(root_spec)
+    root_spec.loader.exec_module(root_mod)
+    root_projection = root_mod.project(root_next, private)
     observed = observations(observation, at, private)
     if issue_snapshot is not None:
         for row in observed["repos"]:
@@ -393,6 +412,7 @@ def project(*, as_of: str, source_sha: str, jade: Path = JADE,
         "gate12_frozen": gate, "rolling5_historical": rolling, "history": history,
         "observation": observed, "source_comparisons": comparisons,
         "issues": issue_view(issue_snapshot, at, private), "plan": proposal(plan, source_sha, private),
+        "root_next_control": root_projection,
         "statistics": {"provider": "GBOGEB/gg_MATH", "pca": "WITHHELD_NO_QUALIFIED_TEMPORAL_MATRIX",
                        "bradley_terry": "WITHHELD_NO_OBSERVED_PAIRWISE_OUTCOMES",
                        "reverse_pressure": "NON_BT_REVERSE_PRESSURE_PAGERANK",
@@ -411,10 +431,20 @@ def project(*, as_of: str, source_sha: str, jade: Path = JADE,
     if previous is not None:
         need(previous.get("schema") == SCHEMA, "previous snapshot schema")
         need(timestamp(previous["as_of"]) <= at, "previous snapshot is newer than current")
-        comparable = view_cohort(previous) == view_cohort(out)
+        old_cohort, new_cohort = view_cohort(previous), view_cohort(out)
+        private_cohort_unverifiable = bool(
+            old_cohort["root_cohort"].get("private_aggregate", 0)
+            or new_cohort["root_cohort"].get("private_aggregate", 0))
+        # A public aggregate count does not bind private root ID or source blob.
+        # Never report comparable/NO_UPDATE from indistinguishable redactions.
+        comparable = False if private_cohort_unverifiable else old_cohort == new_cohort
         old = digest(semantic_state(previous))
-        out["delta"] = {"basis_comparable": comparable, "material_change": old != fingerprint,
-                        "notification": "MATERIAL_CHANGE" if old != fingerprint else "NO_UPDATE",
+        change = old != fingerprint
+        out["delta"] = {"basis_comparable": comparable,
+                        "material_change": None if private_cohort_unverifiable else change,
+                        "notification": ("COMPARABILITY_WITHHELD_PRIVATE_ROOT_COHORT"
+                                         if private_cohort_unverifiable else
+                                         "MATERIAL_CHANGE" if change else "NO_UPDATE"),
                         "previous_as_of": previous["as_of"], "fingerprint": fingerprint,
                         "comparability_scope": "VIEW_SCHEMA_AND_COHORT_ONLY",
                         "native_control_comparable": None}
@@ -445,7 +475,8 @@ def artifacts(model: dict) -> dict[str, bytes]:
         dag.append(f'  {ids[task["id"]]}["{label}"]')
     for a, b, _ in model["plan"].get("edges", []):
         dag.append(f"  {ids[a]} --> {ids[b]}")
-    return {"portfolio_readiness.json": canonical(model), "index.html": dashboard.render(model).encode("utf-8"),
+    return {"portfolio_readiness.json": canonical(model), "root_next_control.json": canonical(model["root_next_control"]),
+             "index.html": dashboard.render(model).encode("utf-8"),
             "action_queue.csv": queue.getvalue().encode("utf-8"),
             "execution_dag.mmd": ("\n".join(dag) + "\n").encode("utf-8"),
             "watch_request.json": canonical(model["watch"] | {"delta": model["delta"]})}
@@ -457,6 +488,7 @@ def main(argv=None) -> int:
     p.add_argument("--source-sha", required=True, help="Exact planning baseline, never a floating ref")
     p.add_argument("--observation", type=Path)
     p.add_argument("--issue-snapshot", type=Path)
+    p.add_argument("--root-next", type=Path, help="Source-bound ROOT NEXT declarations; never grants closure authority")
     p.add_argument("--plan", type=Path, default=HERE / "plan.json")
     p.add_argument("--previous", type=Path)
     p.add_argument("--out", type=Path, required=True)
@@ -464,7 +496,8 @@ def main(argv=None) -> int:
     def read(path):
         return json.loads(path.read_text(encoding="utf-8")) if path else None
     model = project(as_of=args.as_of, source_sha=args.source_sha, observation=read(args.observation),
-                    issue_snapshot=read(args.issue_snapshot), plan=read(args.plan), previous=read(args.previous))
+                    issue_snapshot=read(args.issue_snapshot), plan=read(args.plan), previous=read(args.previous),
+                    root_next=read(args.root_next))
     outputs = artifacts(model)
     args.out.mkdir(parents=True, exist_ok=True)
     for name, raw in outputs.items():

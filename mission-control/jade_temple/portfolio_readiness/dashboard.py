@@ -31,6 +31,7 @@ def render(model: dict) -> str:
 <main><section class="panel" role="tabpanel" aria-labelledby="portfolio-tab" id="portfolio">
 <div class="kpis" id="kpis"></div><div class="callout"><strong>Admission remains HOLD.</strong> A merged change, a green check or a historical gate count does not establish a qualified point release. The current qualified release denominator and live weighted closure rate remain unknown.</div>
 <div class="box"><h2>Core repository observations</h2><p class="note">Bounded source readback. Native check counts retain their own unit; main checks do not substitute for required PR contexts.</p><div class="tablewrap" id="repos"></div></div>
+<div class="box"><h2>ROOT NEXT → CONTROL · evidence deficits</h2><p class="note">Source-bound obligation candidates, not completion credits. A merge or a declared PASS cannot certify CONTROL. Private owners remain aggregate-only.</p><div id="root-control-summary" class="counter"></div><div class="tablewrap" id="root-control-table"></div></div>
 <div class="split"><div class="box"><h2>Frozen Gate12 cockpit</h2><p class="note" id="frozen-date"></p><div id="frozen"></div><p class="note">21 repositories × 12 gate slots. The original snapshot remains an immutable historical view.</p></div>
 <div class="box"><h2>Latest rolling observation</h2><p class="note" id="rolling-date"></p><div id="rolling"></div><p class="note">Historical gate progress at the recorded sources. Current-source recertification remains separate.</p></div></div>
 <div class="box"><h2>Historical source → observed source</h2><div class="tablewrap" id="alignment"></div></div></section>
@@ -55,6 +56,17 @@ $('stamp').textContent=new Date(m.as_of).toLocaleString('en-GB',{timeZone:'Europ
 $('cap-label').textContent+=' · proposed worker cap '+(cap??'UNKNOWN');$('topic-title').textContent=m.plan.topic||'No owner topic supplied';
 [['Current release','UNKNOWN','Native, review and owner gates remain open'],['Canonical cohort',gm.top21_repositories+' repos',gm.portfolio_gate_slots+' historical gate slots'],['Latest historical PASS',rm.verified_pass+'/'+rm.gate_denominator,latest.id+' · '+latest.observed_date],['Worker preview cap',cap??'UNKNOWN','Canonical RF planner · no dispatch']].forEach(([a,b,c])=>{const n=el('div',undefined,'card');n.append(el('div',a,'eyebrow'),el('div',b,'value'),el('div',c,'note'));$('kpis').append(n)});
 const repos=m.observation.repos;if(!repos.length)empty('repos','No current repository observation supplied. Unknown is not zero.');else table('repos',['Repository','Observed source','Native checks','Release evidence'],repos.map(r=>[link(r.repo,'https://github.com/'+r.repo),el('span',r.private?'PRIVATE OWNER':(r.head_sha||'UNKNOWN').slice(0,12),'mono'),r.check_counts?Object.entries(r.check_counts).map(([k,v])=>v+' '+k).join(' · '):'UNKNOWN',r.private?'Owner-held':(typeof r.latest_release==='string'?r.latest_release:r.latest_release?.tag_name)||'No release qualified']));
+const rootCtl=m.root_next_control||{status:'NOT_SUPPLIED',items:[],private_aggregate:0,total:0,closure_verified:0};
+if(rootCtl.status==='NOT_SUPPLIED'){
+ $('root-control-summary').textContent='SOURCE INPUT NOT SUPPLIED · no closure denominator qualified';
+ empty('root-control-table','No source-bound ROOT README obligations supplied. Unknown is not zero.');
+}else{
+ $('root-control-summary').textContent='SOURCE INTAKE '+rootCtl.total+' · PUBLIC '+rootCtl.items.length+' · PRIVATE OWNER '+rootCtl.private_aggregate+' · VERIFIED CONTROL '+rootCtl.closure_verified+' (not admitted)';
+ if(!rootCtl.items.length)empty('root-control-table','No public obligations supplied; private source identities remain owner-held.');
+ else table('root-control-table',['Root obligation','Product class','Pending gates','Next executable action','Owner route'],rootCtl.items.map(r=>[
+  el('span',r.root_id,'mono'),r.kind,badge(r.pending_gates.length?r.pending_gates.join(' · '):'EVIDENCE CANDIDATE; UNVERIFIED'),r.next_action,link('Owner issue / PR',r.issue_pr[0])
+ ]));
+}
 $('frozen-date').textContent=m.gate12_frozen.source.observed_date+' · '+m.gate12_frozen.source.observation;
 $('frozen').append(el('div',gm.observed_pass+' PASS · '+gm.observed_fail+' FAIL · '+gm.observed_unknown+' UNKNOWN','value'),el('p',gm.unassessed_gate_slots+' additional gate slots unassessed','note'));
 $('rolling-date').textContent=latest.id+' · '+latest.observed_date+' · '+latest.age_days+' days before this view';

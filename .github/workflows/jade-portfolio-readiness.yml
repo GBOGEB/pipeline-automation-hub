@@ -38,6 +38,7 @@ jobs:
       # Historical 09 Nov plan tasks remain pinned to 897298dc... and are HOLD
       # in the current projection until separately source-requalified.
       PORTFOLIO_PLANNING_SHA: 6bd23f96821d44c9ab81ec759340d8aa660f3de8
+      HUB_MAIN_REPEAT_SHA: aec47c4c0d0ba026e67b266a2db1ea04f1999359
     steps:
       - name: Checkout the exact candidate source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -75,7 +76,57 @@ jobs:
           python mission-control/jade_temple/portfolio_readiness/portfolio_readiness.py \
             --as-of "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
             --source-sha "$PORTFOLIO_PLANNING_SHA" \
+            --root-next mission-control/jade_temple/portfolio_readiness/root_next_pilot_hub.json \
             --out "$PORTFOLIO_QA_OUT/site"
+      - name: Verify source-bound ROOT NEXT pilot output cannot auto-close
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          output = Path(os.environ["PORTFOLIO_QA_OUT"]) / "site"
+          doc = json.loads((output / "root_next_control.json").read_text(encoding="utf-8"))
+          assert doc["status"] == "READ_ONLY_PROJECTION", doc["status"]
+          assert (doc["total"], doc["actionable"], doc["closure_verified"]) == (2, 2, 0)
+          assert {row["root_id"] for row in doc["items"]} == {
+              "HUB-README-117-MAIN-PIPELINE", "HUB-README-170-EXCEL-SCHEDULE"}
+          assert doc["gate_deficits"]["control"] == 2
+          assert sum(item["gate_candidates"] for item in doc["items"]) == 3
+          assert sum(len(item["pending_gates"]) for item in doc["items"]) == 13
+          native = doc["items"][0]["evidence_candidates"]["native"]
+          assert native["head_sha"] == os.environ["HUB_MAIN_REPEAT_SHA"]
+          assert native["verification"] == "OWNER_INDEPENDENT_DOV_PENDING"
+          assert native["receipt_url"].endswith("/runs/44878223386/artifacts/14696623268")
+          assert all(row["root_source"]["blob_sha"] ==
+                     "4a691127e9dd4d0a2ad4fb766f16273557b5157f"
+                     for row in doc["items"])
+          html = (output / "index.html").read_text(encoding="utf-8")
+          assert "ROOT NEXT" in html and 'id="root-control-table"' in html
+          print("ROOT_NEXT_PILOT_2_OF_2_SOURCE_BOUND / CONTROL_0 / QA_PASS")
+          PY
+      - name: Reprove historical MAIN pipeline on pinned current-main Git objects
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check -r excel_schedule_engine/requirements.txt
+          python mission-control/jade_temple/portfolio_readiness/repeat_main_proof.py \
+            --repo "$GITHUB_WORKSPACE" \
+            --source-sha "$HUB_MAIN_REPEAT_SHA" \
+            --out "$PORTFOLIO_QA_OUT/site/main_pipeline_repeat_proof.json"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          p = Path(os.environ["PORTFOLIO_QA_OUT"]) / "site"
+          main = json.loads((p / "main_pipeline_repeat_proof.json").read_text())
+          root = json.loads((p / "root_next_control.json").read_text())
+          assert main["status"] == "PASS_NATIVE_REPEAT"
+          assert main["source_sha"] == os.environ["HUB_MAIN_REPEAT_SHA"]
+          assert main["root_readme_blob_sha"] == root["items"][0]["root_source"]["blob_sha"]
+          assert main["test_count"] == main["required_test_count"] == 3
+          assert not main["release_qualified"] and not main["control_qualified"]
+          assert root["closure_verified"] == 0
+          print("MAIN_ROOT_NATIVE_3_OF_3_PASS / SOURCE_PINNED / CONTROL_0")
+          PY
       - name: Install the existing pinned browser QA dependency
         run: |
           set -euo pipefail
