@@ -8,15 +8,23 @@ each UNKNOWN names the one thing that is missing, so the owner can act on it.
 
   H03  owner scope: an annotated tag ``jade-scope/<name>`` on the head SHA whose
        signature GitHub reports as verified and whose message contains
-       ``JADE-H03``. Only the owner's signing key can produce it; an agent with
-       push access cannot.
+       ``JADE-H03``, tagged by an owner identity (see OWNER_TAGGER_RX). Only the
+       owner's signing key can produce it; an agent or collaborator with push
+       access cannot.
   H09  independent human review: the head SHA is the merge commit of a merged
        pull request, and that PR has an APPROVED review on its final head by a
        ``User`` who is not the PR author and not a bot, with no later
        CHANGES_REQUESTED from an eligible reviewer.
   H12  owner release: an annotated, verified tag on the head SHA, a published
        (non-draft, non-prerelease) release for that tag with at least one asset,
-       and a release body line ``Rollback: <tag>`` naming another existing tag.
+       and a release body line ``Rollback: <tag>`` naming another existing tag
+       that resolves to a different (older) commit than the release head.
+
+Owner binding: GitHub's ``verification.verified`` only says the signature is
+valid for the GitHub account owning the tagger email. It is bound to the owner
+by requiring that email to be the GitHub noreply address of an owner login
+(``<login>@users.noreply.github.com`` or ``<id>+<login>@...``); the owner logins
+default to the repository owner. No personal email is stored in the repo.
 
 H10 and H11 use the declared-workflow mechanism of focus5_pulse.py (see
 DECLARED_ONLY_GATES there); H07 stays UNKNOWN (independent security acceptance).
@@ -31,6 +39,17 @@ Lookup = Callable[[str], object]
 SCOPE_PREFIX = "jade-scope/"
 SCOPE_TOKEN = "JADE-H03"
 ROLLBACK_RX = re.compile(r"^\s*rollback:\s*(\S+)\s*$", re.I | re.M)
+OWNER_TAGGER_RX = re.compile(r"^(?:\d+\+)?([A-Za-z0-9-]+)@users\.noreply\.github\.com$", re.I)
+
+
+def owner_logins(repo: str, owners: tuple[str, ...] | None = None) -> frozenset[str]:
+    return frozenset(o.casefold() for o in (owners or (repo.split("/", 1)[0],)))
+
+
+def _owner_tagger(obj: dict, owners: frozenset[str]) -> str | None:
+    """The owner login the verified tagger email binds to, or None."""
+    m = OWNER_TAGGER_RX.match(((obj.get("tagger") or {}).get("email") or "").strip())
+    return m.group(1) if m and m.group(1).casefold() in owners else None
 
 
 def _pages(lookup: Lookup, path: str, limit: int = 10) -> list[dict]:
@@ -55,9 +74,11 @@ def _annotated(repo: str, tag: str, lookup: Lookup) -> dict | None:
     return lookup(f"repos/{repo}/git/tags/{obj['sha']}")
 
 
-def _verified_tags_on(repo: str, sha: str, tags: list[dict], lookup: Lookup) -> tuple[list[dict], list[str]]:
-    """Annotated tags on ``sha`` with a verified signature, plus why the others failed."""
+def _verified_tags_on(repo: str, sha: str, tags: list[dict], lookup: Lookup,
+                      owners: tuple[str, ...] | None = None) -> tuple[list[dict], list[str]]:
+    """Annotated tags on ``sha`` with a verified owner signature, plus why the others failed."""
     good, why = [], []
+    trusted = owner_logins(repo, owners)
     for t in tags:
         if t["commit"]["sha"] != sha:
             continue
@@ -68,14 +89,17 @@ def _verified_tags_on(repo: str, sha: str, tags: list[dict], lookup: Lookup) -> 
             why.append(f"{t['name']} does not point at the head commit")
         elif not (obj.get("verification") or {}).get("verified"):
             why.append(f"{t['name']} signature not verified ({(obj.get('verification') or {}).get('reason', 'unsigned')})")
+        elif not (login := _owner_tagger(obj, trusted)):
+            why.append(f"{t['name']} tagger is not an owner identity ({', '.join(sorted(trusted))})")
         else:
-            good.append({"name": t["name"], "message": obj.get("message") or "", "tagger": (obj.get("tagger") or {}).get("name")})
+            good.append({"name": t["name"], "message": obj.get("message") or "", "tagger": login})
     return good, why
 
 
-def evaluate_h03(repo: str, sha: str, tags: list[dict], lookup: Lookup) -> tuple[str, str | None, str]:
+def evaluate_h03(repo: str, sha: str, tags: list[dict], lookup: Lookup,
+                 owners: tuple[str, ...] | None = None) -> tuple[str, str | None, str]:
     scoped = [t for t in tags if t["name"].startswith(SCOPE_PREFIX)]
-    good, why = _verified_tags_on(repo, sha, scoped, lookup)
+    good, why = _verified_tags_on(repo, sha, scoped, lookup, owners)
     good = [t for t in good if SCOPE_TOKEN in t["message"]]
     if good:
         name = good[0]["name"]
@@ -118,12 +142,14 @@ def evaluate_h09(repo: str, sha: str, lookup: Lookup) -> tuple[str, str | None, 
     return "UNKNOWN", base, reason
 
 
-def evaluate_h12(repo: str, sha: str, tags: list[dict], lookup: Lookup) -> tuple[str, str | None, str]:
-    good, why = _verified_tags_on(repo, sha, [t for t in tags if not t["name"].startswith(SCOPE_PREFIX)], lookup)
+def evaluate_h12(repo: str, sha: str, tags: list[dict], lookup: Lookup,
+                 owners: tuple[str, ...] | None = None) -> tuple[str, str | None, str]:
+    good, why = _verified_tags_on(repo, sha, [t for t in tags if not t["name"].startswith(SCOPE_PREFIX)],
+                                  lookup, owners)
     if not good:
         detail = "; ".join(why) if why else "no tag on this SHA"
         return "UNKNOWN", None, f"Owner release not evidenced: needs a signed annotated tag on this SHA ({detail})"
-    names = {t["name"] for t in tags}
+    commit_of = {t["name"]: t["commit"]["sha"] for t in tags}
     problems = []
     for t in good:
         try:
@@ -140,8 +166,11 @@ def evaluate_h12(repo: str, sha: str, tags: list[dict], lookup: Lookup) -> tuple
             m = ROLLBACK_RX.search(rel.get("body") or "")
             if not m:
                 problems.append(f"{t['name']}: release body has no 'Rollback: <tag>' line")
-            elif m.group(1) == t["name"] or m.group(1) not in names:
+            elif m.group(1) == t["name"] or m.group(1) not in commit_of:
                 problems.append(f"{t['name']}: rollback target {m.group(1)} is not another existing tag")
+            elif commit_of[m.group(1)] == sha:
+                problems.append(f"{t['name']}: rollback target {m.group(1)} points at the release head, "
+                                "not an older commit")
             else:
                 return "PASS", url, (f"Signed tag {t['name']}, published release with {len(rel['assets'])} asset(s), "
                                      f"rollback to {m.group(1)}")

@@ -53,9 +53,13 @@ def tag(name, sha=HEAD):
     return {"name": name, "commit": {"sha": sha}}
 
 
-def tobj(sha=HEAD, verified=True, message=""):
+OWNER_EMAIL = "1+O@users.noreply.github.com"  # repo owner "O" (R = "O/R")
+MALLORY = "7+mallory@users.noreply.github.com"
+
+
+def tobj(sha=HEAD, verified=True, message="", email=OWNER_EMAIL):
     return {"object": {"sha": sha}, "verification": {"verified": verified, "reason": "valid" if verified else "unsigned"},
-            "message": message, "tagger": {"name": "owner"}}
+            "message": message, "tagger": {"name": "owner", "email": email}}
 
 
 MERGED = {"number": 7, "user": user("owner"), "head": {"sha": PRHEAD}, "merged_at": "2026-11-20T00:00:00Z",
@@ -107,6 +111,10 @@ class H03(unittest.TestCase):
             ({"jade-scope/r1": tobj(verified=False, message="JADE-H03")}, "not verified"),
             ({"jade-scope/r1": tobj(message="no token")}, "no jade-scope"),
             ({"jade-scope/r1": tobj(sha=OTHER, message="JADE-H03")}, "does not point"),
+            # a collaborator's own verified key is not owner authorization
+            ({"jade-scope/r1": tobj(message="JADE-H03", email=MALLORY)}, "not an owner"),
+            ({"jade-scope/r1": tobj(message="JADE-H03", email="o@example.com")}, "not an owner"),
+            ({"jade-scope/r1": tobj(message="JADE-H03", email="")}, "not an owner"),
         ]
         for objs, expect in cases:
             st, _, why = ge.evaluate_h03(R, HEAD, [tag("jade-scope/r1")], fake(tag_objs=objs))
@@ -140,11 +148,22 @@ class H12(unittest.TestCase):
             (dict(rel=dict(REL, body="no line")), "Rollback"),
             (dict(rel=dict(REL, body="Rollback: v1.0")), "not another existing tag"),
             (dict(rel=dict(REL, body="Rollback: v0.1")), "not another existing tag"),
+            (dict(objs={"v1.0": tobj(), "latest": None}, rel=dict(REL, body="Rollback: latest"),
+                  tags=(tag("v1.0"), tag("latest"))),
+             "points at the release head"),
+            (dict(objs={"v1.0": tobj(email=MALLORY)}), "not an owner identity"),
         ]
         for kw, expect in cases:
             st, _, why = self.run_h12(**kw)
             self.assertEqual(st, "UNKNOWN", expect)
             self.assertIn(expect, why)
+
+    def test_owner_logins_can_be_declared_and_match_case_insensitively(self):
+        objs = {"v1.0": tobj(email="alice@users.noreply.github.com")}
+        self.assertEqual(self.run_h12(objs=objs)[0], "UNKNOWN")
+        st = ge.evaluate_h12(R, HEAD, [tag("v1.0"), tag("v0.9", OTHER)],
+                             fake(tag_objs=objs, releases={"v1.0": self.REL}), owners=("Alice",))[0]
+        self.assertEqual(st, "PASS")
 
     def test_scope_tags_are_not_release_tags(self):
         st, _, why = ge.evaluate_h12(R, HEAD, [tag("jade-scope/r1")], fake(tag_objs={"jade-scope/r1": tobj()}))
