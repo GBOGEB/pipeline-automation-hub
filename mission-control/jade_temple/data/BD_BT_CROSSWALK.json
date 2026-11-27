@@ -1,0 +1,16 @@
+{
+ "schema": "jade.cpath.bd-bt-crosswalk.v1",
+ "decision": "OWNER_APPROVED",
+ "approved_by": "GBOGEB",
+ "approved_on": "2026-11-23",
+ "decision_ref": "GBOGEB/pipeline-automation-hub#1276 owner decision 1 (approved as proposed)",
+ "scope": "Maps open BD-queue states (BD_B01_B46 'state') to the BT intervention type whose observed strength sets their back-pressure weight.",
+ "admits": "The mapping only. cpath.backpressure() still applies BT weights only when the BT frontier is PASS_OBSERVED_BT with at least min_bt_pairs (5) measured pairs, and the PCA WIP cap only with at least min_pca_rows (10) rows.",
+ "map": {
+  "REVIEW_WAIT": "SEMANTIC_BOUNDARY_GUARD_REPAIR",
+  "ACTIONABLE": "STATISTICAL_TOLERANCE_REPAIR",
+  "OWNER_HOLD": "UNREPAIRED_BASELINE",
+  "DEPENDENCY_HOLD": "UNREPAIRED_BASELINE"
+ },
+ "unmapped_states": "Weight 1.0 (neutral)."
+}

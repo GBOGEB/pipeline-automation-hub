@@ -1,0 +1,1465 @@
+{
+ "schema": "jade.cpath.pilot.v1",
+ "generated_at": "2026-11-23T06:22:16Z",
+ "method": "Kahn order (lifecycle.topo_layers) + CPM forward/backward passes; SCC deadlocks condensed",
+ "duration_model": "unit (unknown-not-zero); criticality uses triangular(0.5, 1, 3)",
+ "gates": {
+  "source": "mission-control/jade_temple/data/FOCUS5_POINT_RELEASE_P0006.json",
+  "nodes": 12,
+  "edges": 17,
+  "full_critical_path": [
+   "H01",
+   "H02",
+   "H04",
+   "H05",
+   "H10",
+   "H12"
+  ],
+  "full_critical_set": [
+   "H01",
+   "H02",
+   "H04",
+   "H05",
+   "H10",
+   "H11",
+   "H12"
+  ],
+  "full_makespan": 6.0,
+  "repos": [
+   {
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "source_sha": "aec47c4c0d0ba026e67b266a2db1ea04f1999359",
+    "done": [
+     "H01",
+     "H02",
+     "H04",
+     "H05"
+    ],
+    "open_by_status": {
+     "FAIL": [],
+     "UNKNOWN": [
+      "H03",
+      "H06",
+      "H07",
+      "H08",
+      "H09",
+      "H10",
+      "H11",
+      "H12"
+     ]
+    },
+    "remaining_makespan": 3.0,
+    "critical_path": [
+     "H08",
+     "H09",
+     "H12"
+    ],
+    "critical_set": [
+     "H08",
+     "H09",
+     "H12"
+    ],
+    "ready_now": [
+     "H03",
+     "H06",
+     "H07",
+     "H08",
+     "H10",
+     "H11"
+    ],
+    "next_unlock": [
+     {
+      "gate": "H08",
+      "releases": [
+       "H09"
+      ],
+      "relief": 2
+     },
+     {
+      "gate": "H11",
+      "releases": [],
+      "relief": 1
+     },
+     {
+      "gate": "H10",
+      "releases": [],
+      "relief": 1
+     },
+     {
+      "gate": "H07",
+      "releases": [],
+      "relief": 1
+     },
+     {
+      "gate": "H06",
+      "releases": [],
+      "relief": 1
+     },
+     {
+      "gate": "H03",
+      "releases": [],
+      "relief": 1
+     }
+    ],
+    "float": {
+     "H08": 0.0,
+     "H03": 1.0,
+     "H09": 0.0,
+     "H06": 1.0,
+     "H07": 1.0,
+     "H10": 1.0,
+     "H11": 1.0,
+     "H12": 0.0
+    },
+    "criticality_index": {
+     "H03": 0.0167,
+     "H06": 0.0767,
+     "H07": 0.0467,
+     "H08": 0.7767,
+     "H09": 0.7767,
+     "H10": 0.05,
+     "H11": 0.0333,
+     "H12": 1.0
+    },
+    "makespan_p50_p90": [
+     4.44,
+     5.66
+    ]
+   },
+   {
+    "repo": "GBOGEB/cryoplant-project",
+    "source_sha": "PRIVATE_AGGREGATE_ONLY",
+    "done": [
+     "H01",
+     "H02",
+     "H04",
+     "H05",
+     "H06"
+    ],
+    "open_by_status": {
+     "FAIL": [],
+     "UNKNOWN": [
+      "H03",
+      "H07",
+      "H08",
+      "H09",
+      "H10",
+      "H11",
+      "H12"
+     ]
+    },
+    "remaining_makespan": 3.0,
+    "critical_path": [
+     "H08",
+     "H09",
+     "H12"
+    ],
+    "critical_set": [
+     "H08",
+     "H09",
+     "H12"
+    ],
+    "ready_now": [
+     "H03",
+     "H07",
+     "H08",
+     "H10",
+     "H11"
+    ],
+    "next_unlock": [
+     {
+      "gate": "H08",
+      "releases": [
+       "H09"
+      ],
+      "relief": 2
+     },
+     {
+      "gate": "H11",
+      "releases": [],
+      "relief": 1
+     },
+     {
+      "gate": "H10",
+      "releases": [],
+      "relief": 1
+     },
+     {
+      "gate": "H07",
+      "releases": [],
+      "relief": 1
+     },
+     {
+      "gate": "H03",
+      "releases": [],
+      "relief": 1
+     }
+    ],
+    "float": {
+     "H08": 0.0,
+     "H03": 1.0,
+     "H09": 0.0,
+     "H07": 1.0,
+     "H10": 1.0,
+     "H11": 1.0,
+     "H12": 0.0
+    },
+    "criticality_index": {
+     "H03": 0.04,
+     "H07": 0.0433,
+     "H08": 0.8433,
+     "H09": 0.8433,
+     "H10": 0.0333,
+     "H11": 0.04,
+     "H12": 1.0
+    },
+    "makespan_p50_p90": [
+     4.5,
+     5.88
+    ]
+   },
+   {
+    "repo": "GBOGEB/gg_MATH",
+    "source_sha": "c2395918b580435e7d2e227867a6b91586cb19bf",
+    "done": [
+     "H01",
+     "H02",
+     "H08"
+    ],
+    "open_by_status": {
+     "FAIL": [],
+     "UNKNOWN": [
+      "H03",
+      "H04",
+      "H05",
+      "H06",
+      "H07",
+      "H09",
+      "H10",
+      "H11",
+      "H12"
+     ]
+    },
+    "remaining_makespan": 4.0,
+    "critical_path": [
+     "H04",
+     "H05",
+     "H10",
+     "H12"
+    ],
+    "critical_set": [
+     "H04",
+     "H05",
+     "H10",
+     "H11",
+     "H12"
+    ],
+    "ready_now": [
+     "H03",
+     "H04",
+     "H09"
+    ],
+    "next_unlock": [
+     {
+      "gate": "H04",
+      "releases": [
+       "H05",
+       "H06",
+       "H07"
+      ],
+      "relief": 6
+     },
+     {
+      "gate": "H09",
+      "releases": [],
+      "relief": 1
+     },
+     {
+      "gate": "H03",
+      "releases": [],
+      "relief": 1
+     }
+    ],
+    "float": {
+     "H03": 2.0,
+     "H04": 0.0,
+     "H09": 2.0,
+     "H05": 0.0,
+     "H06": 1.0,
+     "H07": 1.0,
+     "H10": 0.0,
+     "H11": 0.0,
+     "H12": 0.0
+    },
+    "criticality_index": {
+     "H04": 1.0,
+     "H05": 0.94,
+     "H06": 0.0333,
+     "H07": 0.0267,
+     "H10": 0.51,
+     "H11": 0.43,
+     "H12": 1.0
+    },
+    "makespan_p50_p90": [
+     6.15,
+     7.49
+    ]
+   },
+   {
+    "repo": "GBOGEB/DOCX_RTM_Automation",
+    "source_sha": "2da1fd0467e990d06899c2e13a7c61b01f4be759",
+    "done": [
+     "H01",
+     "H02",
+     "H04",
+     "H05",
+     "H06"
+    ],
+    "open_by_status": {
+     "FAIL": [],
+     "UNKNOWN": [
+      "H03",
+      "H07",
+      "H08",
+      "H09",
+      "H10",
+      "H11",
+      "H12"
+     ]
+    },
+    "remaining_makespan": 3.0,
+    "critical_path": [
+     "H08",
+     "H09",
+     "H12"
+    ],
+    "critical_set": [
+     "H08",
+     "H09",
+     "H12"
+    ],
+    "ready_now": [
+     "H03",
+     "H07",
+     "H08",
+     "H10",
+     "H11"
+    ],
+    "next_unlock": [
+     {
+      "gate": "H08",
+      "releases": [
+       "H09"
+      ],
+      "relief": 2
+     },
+     {
+      "gate": "H11",
+      "releases": [],
+      "relief": 1
+     },
+     {
+      "gate": "H10",
+      "releases": [],
+      "relief": 1
+     },
+     {
+      "gate": "H07",
+      "releases": [],
+      "relief": 1
+     },
+     {
+      "gate": "H03",
+      "releases": [],
+      "relief": 1
+     }
+    ],
+    "float": {
+     "H08": 0.0,
+     "H03": 1.0,
+     "H09": 0.0,
+     "H07": 1.0,
+     "H10": 1.0,
+     "H11": 1.0,
+     "H12": 0.0
+    },
+    "criticality_index": {
+     "H03": 0.04,
+     "H07": 0.0433,
+     "H08": 0.8433,
+     "H09": 0.8433,
+     "H10": 0.0333,
+     "H11": 0.04,
+     "H12": 1.0
+    },
+    "makespan_p50_p90": [
+     4.5,
+     5.88
+    ]
+   },
+   {
+    "repo": "GBOGEB/yaml-grammar",
+    "source_sha": "d6988d00f0b25ac3df75eea9e2535b7b15d838a7",
+    "done": [
+     "H01",
+     "H02",
+     "H04",
+     "H05",
+     "H06"
+    ],
+    "open_by_status": {
+     "FAIL": [],
+     "UNKNOWN": [
+      "H03",
+      "H07",
+      "H08",
+      "H09",
+      "H10",
+      "H11",
+      "H12"
+     ]
+    },
+    "remaining_makespan": 3.0,
+    "critical_path": [
+     "H08",
+     "H09",
+     "H12"
+    ],
+    "critical_set": [
+     "H08",
+     "H09",
+     "H12"
+    ],
+    "ready_now": [
+     "H03",
+     "H07",
+     "H08",
+     "H10",
+     "H11"
+    ],
+    "next_unlock": [
+     {
+      "gate": "H08",
+      "releases": [
+       "H09"
+      ],
+      "relief": 2
+     },
+     {
+      "gate": "H11",
+      "releases": [],
+      "relief": 1
+     },
+     {
+      "gate": "H10",
+      "releases": [],
+      "relief": 1
+     },
+     {
+      "gate": "H07",
+      "releases": [],
+      "relief": 1
+     },
+     {
+      "gate": "H03",
+      "releases": [],
+      "relief": 1
+     }
+    ],
+    "float": {
+     "H08": 0.0,
+     "H03": 1.0,
+     "H09": 0.0,
+     "H07": 1.0,
+     "H10": 1.0,
+     "H11": 1.0,
+     "H12": 0.0
+    },
+    "criticality_index": {
+     "H03": 0.04,
+     "H07": 0.0433,
+     "H08": 0.8433,
+     "H09": 0.8433,
+     "H10": 0.0333,
+     "H11": 0.04,
+     "H12": 1.0
+    },
+    "makespan_p50_p90": [
+     4.5,
+     5.88
+    ]
+   }
+  ]
+ },
+ "backpressure": {
+  "bd_source": "BD_B01_B46_READONLY.json",
+  "open_bd_items": 24,
+  "crosswalk": {
+   "source": "data/BD_BT_CROSSWALK.json",
+   "decision": "OWNER_APPROVED",
+   "approved_on": "2026-11-23",
+   "map": {
+    "REVIEW_WAIT": "SEMANTIC_BOUNDARY_GUARD_REPAIR",
+    "ACTIONABLE": "STATISTICAL_TOLERANCE_REPAIR",
+    "OWNER_HOLD": "UNREPAIRED_BASELINE",
+    "DEPENDENCY_HOLD": "UNREPAIRED_BASELINE"
+   }
+  },
+  "as_is": {
+   "status": "NEUTRAL_HOLD",
+   "channels": {
+    "bt": "HOLD",
+    "pca": "HOLD"
+   },
+   "evidence": {
+    "bt_pairs": 2,
+    "bt_status": "PASS_OBSERVED_BT",
+    "pca_rows": 5,
+    "min_bt_pairs": 5,
+    "min_pca_rows": 10
+   },
+   "reasons": [
+    "BT_HOLD: 2 measured pairs < 5",
+    "PCA_HOLD: 5 rows < 10"
+   ],
+   "wip_cap": 6
+  },
+  "counterfactual_low_thresholds": {
+   "label": "COUNTERFACTUAL_NOT_ADMITTED: thresholds lowered to the 2-pair / 5-row evidence; approved crosswalk; shows the mechanism only",
+   "status": "APPLIED",
+   "channels": {
+    "bt": "APPLIED",
+    "pca": "APPLIED"
+   },
+   "class_weights": {
+    "ACTIONABLE": 1.5,
+    "DEPENDENCY_HOLD": 0.5,
+    "OWNER_HOLD": 0.5,
+    "REVIEW_WAIT": 1.5
+   },
+   "queue_friction": 0.3139,
+   "wip_cap": 4,
+   "top5": [
+    "B08",
+    "B09",
+    "B21",
+    "B24",
+    "B15"
+   ]
+  }
+ },
+ "stub_resolution": {
+  "stubs_seen": 78,
+  "resolved": 66,
+  "missing": 9
+ },
+ "issues": {
+  "items_open": 274,
+  "dependency_edges": 94,
+  "items_in_graph": 121,
+  "isolated_open": 222,
+  "deadlocks": [
+   [
+    "PRIVATE",
+    "PRIVATE"
+   ]
+  ],
+  "waves": 4,
+  "remaining_makespan_unit": 3.0,
+  "critical_path": [
+   "GBOGEB/ABACUS#1278",
+   "GBOGEB/pipeline-automation-hub#85",
+   "GBOGEB/pipeline-automation-hub#76"
+  ],
+  "critical_path_len": 3,
+  "critical_set_size": 6,
+  "balance_workers": 91.3,
+  "top_unlock": [
+   {
+    "item": "GBOGEB/pipeline-automation-hub#1180",
+    "releases": 3,
+    "relief": 4
+   },
+   {
+    "item": "GBOGEB/pipeline-automation-hub#336",
+    "releases": 2,
+    "relief": 3
+   },
+   {
+    "item": "GBOGEB/ABACUS#1278",
+    "releases": 1,
+    "relief": 2
+   },
+   {
+    "item": "GBOGEB/pipeline-automation-hub#870",
+    "releases": 1,
+    "relief": 1
+   },
+   {
+    "item": "GBOGEB/pipeline-automation-hub#428",
+    "releases": 1,
+    "relief": 1
+   },
+   {
+    "item": "GBOGEB/pipeline-automation-hub#308",
+    "releases": 1,
+    "relief": 1
+   },
+   {
+    "item": "PRIVATE",
+    "releases": 1,
+    "relief": 1
+   },
+   {
+    "item": "PRIVATE",
+    "releases": 1,
+    "relief": 1
+   },
+   {
+    "item": "PRIVATE",
+    "releases": 1,
+    "relief": 1
+   },
+   {
+    "item": "PRIVATE",
+    "releases": 1,
+    "relief": 1
+   },
+   {
+    "item": "GBOGEB/ABACUS#1863",
+    "releases": 1,
+    "relief": 1
+   },
+   {
+    "item": "GBOGEB/pipeline-automation-hub#85",
+    "releases": 0,
+    "relief": 1
+   },
+   {
+    "item": "GBOGEB/pipeline-automation-hub#64",
+    "releases": 0,
+    "relief": 1
+   },
+   {
+    "item": "GBOGEB/pipeline-automation-hub#63",
+    "releases": 0,
+    "relief": 1
+   },
+   {
+    "item": "GBOGEB/pipeline-automation-hub#61",
+    "releases": 0,
+    "relief": 1
+   }
+  ],
+  "per_repo": [
+   {
+    "repo": "GBOGEB/ABACUS",
+    "private": false,
+    "open_items": 36,
+    "in_dependency_graph": 24,
+    "head_sha": "4390fb9e633d8fcd9dc0186d6013d002ebeae17a"
+   },
+   {
+    "repo": "GBOGEB/CODEX",
+    "private": false,
+    "open_items": 17,
+    "in_dependency_graph": 8,
+    "head_sha": "d77bb7a0bd1d644403c20c3c330153f30fe430b8"
+   },
+   {
+    "repo": "GBOGEB/pipeline-automation-hub",
+    "private": false,
+    "open_items": 89,
+    "in_dependency_graph": 40,
+    "head_sha": "aec47c4c0d0ba026e67b266a2db1ea04f1999359"
+   },
+   {
+    "repo": "GBOGEB/cryoplant-project",
+    "private": true,
+    "open_items": 122,
+    "in_dependency_graph": 35,
+    "head_sha": "PRIVATE_AGGREGATE_ONLY"
+   },
+   {
+    "repo": "GBOGEB/gg_MATH",
+    "private": false,
+    "open_items": 10,
+    "in_dependency_graph": 11,
+    "head_sha": "c2395918b580435e7d2e227867a6b91586cb19bf"
+   }
+  ],
+  "fetched_at": "2026-11-23T06:22:16Z",
+  "limits": [
+   "no_comments",
+   "no_timeline_refs",
+   "rest_only"
+  ]
+ },
+ "attack_vectors_issues": {
+  "1": {
+   "results": {
+    "FIFO": {
+     "makespan": 277.0,
+     "mean_flow_time": 138.564748,
+     "first_unlock": 15.0
+    },
+    "PRIORITY": {
+     "makespan": 277.0,
+     "mean_flow_time": 138.651079,
+     "first_unlock": 7.0
+    },
+    "CPATH": {
+     "makespan": 277.0,
+     "mean_flow_time": 138.633094,
+     "first_unlock": 1.0
+    },
+    "UNLOCK": {
+     "makespan": 277.0,
+     "mean_flow_time": 138.539568,
+     "first_unlock": 1.0
+    },
+    "COMBO": {
+     "makespan": 277.0,
+     "mean_flow_time": 138.55036,
+     "first_unlock": 1.0
+    }
+   },
+   "lower_bound": 277.0,
+   "synergy_flow": {
+    "metric": "mean_flow_time",
+    "gain": {
+     "FIFO": 0.0,
+     "PRIORITY": -0.0006,
+     "CPATH": -0.0005,
+     "UNLOCK": 0.0002,
+     "COMBO": 0.0001
+    },
+    "additive_prediction": -0.0003,
+    "multiplicative_prediction": -0.0003,
+    "observed_combo": 0.0001,
+    "interaction": 0.0004,
+    "verdict": "MULTIPLICATIVE"
+   },
+   "synergy_makespan": {
+    "metric": "makespan",
+    "gain": {
+     "FIFO": 0.0,
+     "PRIORITY": 0.0,
+     "CPATH": 0.0,
+     "UNLOCK": 0.0,
+     "COMBO": 0.0
+    },
+    "additive_prediction": 0.0,
+    "multiplicative_prediction": 0.0,
+    "observed_combo": 0.0,
+    "interaction": 0.0,
+    "verdict": "MULTIPLICATIVE"
+   }
+  },
+  "2": {
+   "results": {
+    "FIFO": {
+     "makespan": 139.0,
+     "mean_flow_time": 69.532374,
+     "first_unlock": 8.0
+    },
+    "PRIORITY": {
+     "makespan": 139.0,
+     "mean_flow_time": 69.57554,
+     "first_unlock": 4.0
+    },
+    "CPATH": {
+     "makespan": 139.0,
+     "mean_flow_time": 69.564748,
+     "first_unlock": 1.0
+    },
+    "UNLOCK": {
+     "makespan": 139.0,
+     "mean_flow_time": 69.521583,
+     "first_unlock": 1.0
+    },
+    "COMBO": {
+     "makespan": 139.0,
+     "mean_flow_time": 69.52518,
+     "first_unlock": 1.0
+    }
+   },
+   "lower_bound": 138.5,
+   "synergy_flow": {
+    "metric": "mean_flow_time",
+    "gain": {
+     "FIFO": 0.0,
+     "PRIORITY": -0.0006,
+     "CPATH": -0.0005,
+     "UNLOCK": 0.0002,
+     "COMBO": 0.0001
+    },
+    "additive_prediction": -0.0003,
+    "multiplicative_prediction": -0.0003,
+    "observed_combo": 0.0001,
+    "interaction": 0.0004,
+    "verdict": "MULTIPLICATIVE"
+   },
+   "synergy_makespan": {
+    "metric": "makespan",
+    "gain": {
+     "FIFO": 0.0,
+     "PRIORITY": 0.0,
+     "CPATH": 0.0,
+     "UNLOCK": 0.0,
+     "COMBO": 0.0
+    },
+    "additive_prediction": 0.0,
+    "multiplicative_prediction": 0.0,
+    "observed_combo": 0.0,
+    "interaction": 0.0,
+    "verdict": "MULTIPLICATIVE"
+   }
+  },
+  "4": {
+   "results": {
+    "FIFO": {
+     "makespan": 70.0,
+     "mean_flow_time": 35.017986,
+     "first_unlock": 4.0
+    },
+    "PRIORITY": {
+     "makespan": 70.0,
+     "mean_flow_time": 35.039568,
+     "first_unlock": 2.0
+    },
+    "CPATH": {
+     "makespan": 70.0,
+     "mean_flow_time": 35.032374,
+     "first_unlock": 1.0
+    },
+    "UNLOCK": {
+     "makespan": 70.0,
+     "mean_flow_time": 35.010791,
+     "first_unlock": 1.0
+    },
+    "COMBO": {
+     "makespan": 70.0,
+     "mean_flow_time": 35.014388,
+     "first_unlock": 1.0
+    }
+   },
+   "lower_bound": 69.25,
+   "synergy_flow": {
+    "metric": "mean_flow_time",
+    "gain": {
+     "FIFO": 0.0,
+     "PRIORITY": -0.0006,
+     "CPATH": -0.0004,
+     "UNLOCK": 0.0002,
+     "COMBO": 0.0001
+    },
+    "additive_prediction": -0.0002,
+    "multiplicative_prediction": -0.0002,
+    "observed_combo": 0.0001,
+    "interaction": 0.0003,
+    "verdict": "MULTIPLICATIVE"
+   },
+   "synergy_makespan": {
+    "metric": "makespan",
+    "gain": {
+     "FIFO": 0.0,
+     "PRIORITY": 0.0,
+     "CPATH": 0.0,
+     "UNLOCK": 0.0,
+     "COMBO": 0.0
+    },
+    "additive_prediction": 0.0,
+    "multiplicative_prediction": 0.0,
+    "observed_combo": 0.0,
+    "interaction": 0.0,
+    "verdict": "MULTIPLICATIVE"
+   }
+  },
+  "8": {
+   "results": {
+    "FIFO": {
+     "makespan": 36.0,
+     "mean_flow_time": 17.766187,
+     "first_unlock": 2.0
+    },
+    "PRIORITY": {
+     "makespan": 36.0,
+     "mean_flow_time": 17.776978,
+     "first_unlock": 1.0
+    },
+    "CPATH": {
+     "makespan": 35.0,
+     "mean_flow_time": 17.769784,
+     "first_unlock": 1.0
+    },
+    "UNLOCK": {
+     "makespan": 35.0,
+     "mean_flow_time": 17.758993,
+     "first_unlock": 1.0
+    },
+    "COMBO": {
+     "makespan": 35.0,
+     "mean_flow_time": 17.758993,
+     "first_unlock": 1.0
+    }
+   },
+   "lower_bound": 34.625,
+   "synergy_flow": {
+    "metric": "mean_flow_time",
+    "gain": {
+     "FIFO": 0.0,
+     "PRIORITY": -0.0006,
+     "CPATH": -0.0002,
+     "UNLOCK": 0.0004,
+     "COMBO": 0.0004
+    },
+    "additive_prediction": 0.0002,
+    "multiplicative_prediction": 0.0002,
+    "observed_combo": 0.0004,
+    "interaction": 0.0002,
+    "verdict": "MULTIPLICATIVE"
+   },
+   "synergy_makespan": {
+    "metric": "makespan",
+    "gain": {
+     "FIFO": 0.0,
+     "PRIORITY": 0.0,
+     "CPATH": 0.0278,
+     "UNLOCK": 0.0278,
+     "COMBO": 0.0278
+    },
+    "additive_prediction": 0.0556,
+    "multiplicative_prediction": 0.0548,
+    "observed_combo": 0.0278,
+    "interaction": -0.027,
+    "verdict": "OVERLAP"
+   }
+  },
+  "16": {
+   "results": {
+    "FIFO": {
+     "makespan": 19.0,
+     "mean_flow_time": 9.140288,
+     "first_unlock": 1.0
+    },
+    "PRIORITY": {
+     "makespan": 19.0,
+     "mean_flow_time": 9.143885,
+     "first_unlock": 1.0
+    },
+    "CPATH": {
+     "makespan": 18.0,
+     "mean_flow_time": 9.136691,
+     "first_unlock": 1.0
+    },
+    "UNLOCK": {
+     "makespan": 18.0,
+     "mean_flow_time": 9.133094,
+     "first_unlock": 1.0
+    },
+    "COMBO": {
+     "makespan": 18.0,
+     "mean_flow_time": 9.133094,
+     "first_unlock": 1.0
+    }
+   },
+   "lower_bound": 17.3125,
+   "synergy_flow": {
+    "metric": "mean_flow_time",
+    "gain": {
+     "FIFO": 0.0,
+     "PRIORITY": -0.0004,
+     "CPATH": 0.0004,
+     "UNLOCK": 0.0008,
+     "COMBO": 0.0008
+    },
+    "additive_prediction": 0.0012,
+    "multiplicative_prediction": 0.0012,
+    "observed_combo": 0.0008,
+    "interaction": -0.0004,
+    "verdict": "MULTIPLICATIVE"
+   },
+   "synergy_makespan": {
+    "metric": "makespan",
+    "gain": {
+     "FIFO": 0.0,
+     "PRIORITY": 0.0,
+     "CPATH": 0.0526,
+     "UNLOCK": 0.0526,
+     "COMBO": 0.0526
+    },
+    "additive_prediction": 0.1053,
+    "multiplicative_prediction": 0.1025,
+    "observed_combo": 0.0526,
+    "interaction": -0.0499,
+    "verdict": "OVERLAP"
+   }
+  }
+ },
+ "scale": {
+  "1000": {
+   "edges": 1804,
+   "cpm_seconds": 0.006,
+   "makespan": 213.97,
+   "critical_set": 104,
+   "waves": 123,
+   "balance_workers": 6.5,
+   "policies": {
+    "4": {
+     "seconds": 0.34,
+     "makespan": {
+      "FIFO": 372.65,
+      "PRIORITY": 368.52,
+      "CPATH": 346.17,
+      "UNLOCK": 348.3,
+      "COMBO": 346.17
+     },
+     "mean_flow_time": {
+      "FIFO": 180.21,
+      "PRIORITY": 178.91,
+      "CPATH": 177.68,
+      "UNLOCK": 175.53,
+      "COMBO": 177.68
+     },
+     "lower_bound": 346.04,
+     "synergy_flow": {
+      "metric": "mean_flow_time",
+      "gain": {
+       "FIFO": 0.0,
+       "PRIORITY": 0.0073,
+       "CPATH": 0.0141,
+       "UNLOCK": 0.026,
+       "COMBO": 0.0141
+      },
+      "additive_prediction": 0.04,
+      "multiplicative_prediction": 0.0397,
+      "observed_combo": 0.0141,
+      "interaction": -0.0256,
+      "verdict": "OVERLAP"
+     },
+     "synergy_makespan": {
+      "metric": "makespan",
+      "gain": {
+       "FIFO": 0.0,
+       "PRIORITY": 0.0111,
+       "CPATH": 0.0711,
+       "UNLOCK": 0.0653,
+       "COMBO": 0.0711
+      },
+      "additive_prediction": 0.1364,
+      "multiplicative_prediction": 0.1318,
+      "observed_combo": 0.0711,
+      "interaction": -0.0607,
+      "verdict": "OVERLAP"
+     }
+    },
+    "16": {
+     "seconds": 0.35,
+     "makespan": {
+      "FIFO": 236.38,
+      "PRIORITY": 232.48,
+      "CPATH": 213.97,
+      "UNLOCK": 214.94,
+      "COMBO": 213.97
+     },
+     "mean_flow_time": {
+      "FIFO": 92.9,
+      "PRIORITY": 90.53,
+      "CPATH": 79.11,
+      "UNLOCK": 79.41,
+      "COMBO": 79.11
+     },
+     "lower_bound": 213.97,
+     "synergy_flow": {
+      "metric": "mean_flow_time",
+      "gain": {
+       "FIFO": 0.0,
+       "PRIORITY": 0.0255,
+       "CPATH": 0.1484,
+       "UNLOCK": 0.1451,
+       "COMBO": 0.1484
+      },
+      "additive_prediction": 0.2936,
+      "multiplicative_prediction": 0.272,
+      "observed_combo": 0.1484,
+      "interaction": -0.1236,
+      "verdict": "OVERLAP"
+     },
+     "synergy_makespan": {
+      "metric": "makespan",
+      "gain": {
+       "FIFO": 0.0,
+       "PRIORITY": 0.0165,
+       "CPATH": 0.0948,
+       "UNLOCK": 0.0907,
+       "COMBO": 0.0948
+      },
+      "additive_prediction": 0.1855,
+      "multiplicative_prediction": 0.1769,
+      "observed_combo": 0.0948,
+      "interaction": -0.0821,
+      "verdict": "OVERLAP"
+     }
+    },
+    "64": {
+     "seconds": 0.35,
+     "makespan": {
+      "FIFO": 217.96,
+      "PRIORITY": 217.42,
+      "CPATH": 213.97,
+      "UNLOCK": 213.97,
+      "COMBO": 213.97
+     },
+     "mean_flow_time": {
+      "FIFO": 77.38,
+      "PRIORITY": 77.04,
+      "CPATH": 74.66,
+      "UNLOCK": 74.63,
+      "COMBO": 74.66
+     },
+     "lower_bound": 213.97,
+     "synergy_flow": {
+      "metric": "mean_flow_time",
+      "gain": {
+       "FIFO": 0.0,
+       "PRIORITY": 0.0044,
+       "CPATH": 0.0352,
+       "UNLOCK": 0.0356,
+       "COMBO": 0.0352
+      },
+      "additive_prediction": 0.0708,
+      "multiplicative_prediction": 0.0696,
+      "observed_combo": 0.0352,
+      "interaction": -0.0344,
+      "verdict": "OVERLAP"
+     },
+     "synergy_makespan": {
+      "metric": "makespan",
+      "gain": {
+       "FIFO": 0.0,
+       "PRIORITY": 0.0025,
+       "CPATH": 0.0183,
+       "UNLOCK": 0.0183,
+       "COMBO": 0.0183
+      },
+      "additive_prediction": 0.0366,
+      "multiplicative_prediction": 0.0363,
+      "observed_combo": 0.0183,
+      "interaction": -0.018,
+      "verdict": "OVERLAP"
+     }
+    }
+   }
+  },
+  "10000": {
+   "edges": 19716,
+   "cpm_seconds": 0.081,
+   "makespan": 783.06,
+   "critical_set": 341,
+   "waves": 414,
+   "balance_workers": 17.6,
+   "policies": {
+    "4": {
+     "seconds": 0.93,
+     "makespan": {
+      "FIFO": 3465.07,
+      "PRIORITY": 3463.62,
+      "CPATH": 3448.4,
+      "UNLOCK": 3463.81,
+      "COMBO": 3448.4
+     },
+     "mean_flow_time": {
+      "FIFO": 1742.73,
+      "PRIORITY": 1742.65,
+      "CPATH": 1737.81,
+      "UNLOCK": 1742.06,
+      "COMBO": 1737.81
+     },
+     "lower_bound": 3448.36,
+     "synergy_flow": {
+      "metric": "mean_flow_time",
+      "gain": {
+       "FIFO": 0.0,
+       "PRIORITY": 0.0,
+       "CPATH": 0.0028,
+       "UNLOCK": 0.0004,
+       "COMBO": 0.0028
+      },
+      "additive_prediction": 0.0032,
+      "multiplicative_prediction": 0.0032,
+      "observed_combo": 0.0028,
+      "interaction": -0.0004,
+      "verdict": "MULTIPLICATIVE"
+     },
+     "synergy_makespan": {
+      "metric": "makespan",
+      "gain": {
+       "FIFO": 0.0,
+       "PRIORITY": 0.0004,
+       "CPATH": 0.0048,
+       "UNLOCK": 0.0004,
+       "COMBO": 0.0048
+      },
+      "additive_prediction": 0.0052,
+      "multiplicative_prediction": 0.0052,
+      "observed_combo": 0.0048,
+      "interaction": -0.0004,
+      "verdict": "MULTIPLICATIVE"
+     }
+    },
+    "16": {
+     "seconds": 0.88,
+     "makespan": {
+      "FIFO": 1045.59,
+      "PRIORITY": 1041.19,
+      "CPATH": 862.22,
+      "UNLOCK": 1037.9,
+      "COMBO": 862.22
+     },
+     "mean_flow_time": {
+      "FIFO": 494.47,
+      "PRIORITY": 489.37,
+      "CPATH": 434.42,
+      "UNLOCK": 487.44,
+      "COMBO": 434.42
+     },
+     "lower_bound": 862.09,
+     "synergy_flow": {
+      "metric": "mean_flow_time",
+      "gain": {
+       "FIFO": 0.0,
+       "PRIORITY": 0.0103,
+       "CPATH": 0.1214,
+       "UNLOCK": 0.0142,
+       "COMBO": 0.1214
+      },
+      "additive_prediction": 0.1357,
+      "multiplicative_prediction": 0.1339,
+      "observed_combo": 0.1214,
+      "interaction": -0.0125,
+      "verdict": "OVERLAP"
+     },
+     "synergy_makespan": {
+      "metric": "makespan",
+      "gain": {
+       "FIFO": 0.0,
+       "PRIORITY": 0.0042,
+       "CPATH": 0.1754,
+       "UNLOCK": 0.0074,
+       "COMBO": 0.1754
+      },
+      "additive_prediction": 0.1827,
+      "multiplicative_prediction": 0.1814,
+      "observed_combo": 0.1754,
+      "interaction": -0.0061,
+      "verdict": "MULTIPLICATIVE"
+     }
+    },
+    "64": {
+     "seconds": 0.86,
+     "makespan": {
+      "FIFO": 828.9,
+      "PRIORITY": 827.17,
+      "CPATH": 783.06,
+      "UNLOCK": 830.65,
+      "COMBO": 783.06
+     },
+     "mean_flow_time": {
+      "FIFO": 322.46,
+      "PRIORITY": 321.27,
+      "CPATH": 291.13,
+      "UNLOCK": 323.65,
+      "COMBO": 291.13
+     },
+     "lower_bound": 783.06,
+     "synergy_flow": {
+      "metric": "mean_flow_time",
+      "gain": {
+       "FIFO": 0.0,
+       "PRIORITY": 0.0037,
+       "CPATH": 0.0972,
+       "UNLOCK": -0.0037,
+       "COMBO": 0.0972
+      },
+      "additive_prediction": 0.0935,
+      "multiplicative_prediction": 0.0938,
+      "observed_combo": 0.0972,
+      "interaction": 0.0033,
+      "verdict": "MULTIPLICATIVE"
+     },
+     "synergy_makespan": {
+      "metric": "makespan",
+      "gain": {
+       "FIFO": 0.0,
+       "PRIORITY": 0.0021,
+       "CPATH": 0.0553,
+       "UNLOCK": -0.0021,
+       "COMBO": 0.0553
+      },
+      "additive_prediction": 0.0532,
+      "multiplicative_prediction": 0.0533,
+      "observed_combo": 0.0553,
+      "interaction": 0.002,
+      "verdict": "MULTIPLICATIVE"
+     }
+    }
+   }
+  },
+  "100000": {
+   "edges": 199428,
+   "cpm_seconds": 1.661,
+   "makespan": 2705.56,
+   "critical_set": 1120,
+   "waves": 1414,
+   "balance_workers": 51.0,
+   "policies": {
+    "4": {
+     "seconds": 17.88,
+     "makespan": {
+      "FIFO": 34508.23,
+      "PRIORITY": 34509.39,
+      "CPATH": 34472.78,
+      "UNLOCK": 34503.35,
+      "COMBO": 34472.78
+     },
+     "mean_flow_time": {
+      "FIFO": 17229.67,
+      "PRIORITY": 17224.82,
+      "CPATH": 17268.87,
+      "UNLOCK": 17224.08,
+      "COMBO": 17268.87
+     },
+     "lower_bound": 34472.73,
+     "synergy_flow": {
+      "metric": "mean_flow_time",
+      "gain": {
+       "FIFO": 0.0,
+       "PRIORITY": 0.0003,
+       "CPATH": -0.0023,
+       "UNLOCK": 0.0003,
+       "COMBO": -0.0023
+      },
+      "additive_prediction": -0.0019,
+      "multiplicative_prediction": -0.0019,
+      "observed_combo": -0.0023,
+      "interaction": -0.0003,
+      "verdict": "MULTIPLICATIVE"
+     },
+     "synergy_makespan": {
+      "metric": "makespan",
+      "gain": {
+       "FIFO": 0.0,
+       "PRIORITY": -0.0,
+       "CPATH": 0.001,
+       "UNLOCK": 0.0001,
+       "COMBO": 0.001
+      },
+      "additive_prediction": 0.0012,
+      "multiplicative_prediction": 0.0012,
+      "observed_combo": 0.001,
+      "interaction": -0.0001,
+      "verdict": "MULTIPLICATIVE"
+     }
+    },
+    "16": {
+     "seconds": 17.93,
+     "makespan": {
+      "FIFO": 8685.56,
+      "PRIORITY": 8683.06,
+      "CPATH": 8618.23,
+      "UNLOCK": 8680.87,
+      "COMBO": 8618.23
+     },
+     "mean_flow_time": {
+      "FIFO": 4327.39,
+      "PRIORITY": 4324.59,
+      "CPATH": 4317.32,
+      "UNLOCK": 4323.69,
+      "COMBO": 4317.32
+     },
+     "lower_bound": 8618.18,
+     "synergy_flow": {
+      "metric": "mean_flow_time",
+      "gain": {
+       "FIFO": 0.0,
+       "PRIORITY": 0.0006,
+       "CPATH": 0.0023,
+       "UNLOCK": 0.0009,
+       "COMBO": 0.0023
+      },
+      "additive_prediction": 0.0032,
+      "multiplicative_prediction": 0.0032,
+      "observed_combo": 0.0023,
+      "interaction": -0.0009,
+      "verdict": "MULTIPLICATIVE"
+     },
+     "synergy_makespan": {
+      "metric": "makespan",
+      "gain": {
+       "FIFO": 0.0,
+       "PRIORITY": 0.0003,
+       "CPATH": 0.0078,
+       "UNLOCK": 0.0005,
+       "COMBO": 0.0078
+      },
+      "additive_prediction": 0.0083,
+      "multiplicative_prediction": 0.0083,
+      "observed_combo": 0.0078,
+      "interaction": -0.0005,
+      "verdict": "MULTIPLICATIVE"
+     }
+    },
+    "64": {
+     "seconds": 18.37,
+     "makespan": {
+      "FIFO": 3281.03,
+      "PRIORITY": 3284.38,
+      "CPATH": 2705.56,
+      "UNLOCK": 3282.78,
+      "COMBO": 2705.56
+     },
+     "mean_flow_time": {
+      "FIFO": 1473.21,
+      "PRIORITY": 1475.21,
+      "CPATH": 1170.16,
+      "UNLOCK": 1474.18,
+      "COMBO": 1170.16
+     },
+     "lower_bound": 2705.56,
+     "synergy_flow": {
+      "metric": "mean_flow_time",
+      "gain": {
+       "FIFO": 0.0,
+       "PRIORITY": -0.0014,
+       "CPATH": 0.2057,
+       "UNLOCK": -0.0007,
+       "COMBO": 0.2057
+      },
+      "additive_prediction": 0.205,
+      "multiplicative_prediction": 0.2052,
+      "observed_combo": 0.2057,
+      "interaction": 0.0005,
+      "verdict": "MULTIPLICATIVE"
+     },
+     "synergy_makespan": {
+      "metric": "makespan",
+      "gain": {
+       "FIFO": 0.0,
+       "PRIORITY": -0.001,
+       "CPATH": 0.1754,
+       "UNLOCK": -0.0005,
+       "COMBO": 0.1754
+      },
+      "additive_prediction": 0.1749,
+      "multiplicative_prediction": 0.175,
+      "observed_combo": 0.1754,
+      "interaction": 0.0004,
+      "verdict": "MULTIPLICATIVE"
+     }
+    }
+   }
+  }
+ },
+ "wall_seconds": 74.5
+}

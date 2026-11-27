@@ -103,6 +103,16 @@ jobs:
           ran=$(grep -oP '^Ran \K[0-9]+' "$RUNNER_TEMP/wddd-tests.log" | tail -1 || true)
           test "${ran:-0}" -ge 17 || { echo "WDDD_TEST_POPULATION_FIRST_RED: ran ${ran:-0} < 17"; exit 1; }
           ! grep -qE 'skipped=[0-9]+' "$RUNNER_TEMP/wddd-tests.log"
+      - name: C-PATH critical path, float, unlock and back-pressure (offline)
+        run: |
+          set -euo pipefail
+          python -m unittest discover -s mission-control/jade_temple/devops/tests -p 'test_cpath.py' -v \
+            2>&1 | tee "$RUNNER_TEMP/cpath-tests.log"
+          ran=$(grep -oP '^Ran \K[0-9]+' "$RUNNER_TEMP/cpath-tests.log" | tail -1 || true)
+          test "${ran:-0}" -ge 23 || { echo "CPATH_TEST_POPULATION_FIRST_RED: ran ${ran:-0} < 23"; exit 1; }
+          ! grep -qE 'skipped=[0-9]+' "$RUNNER_TEMP/cpath-tests.log"
+          # Committed pilot pulse must be a fixed point of the private boundary.
+          python mission-control/jade_temple/tools/private_boundary.py --check
       - name: Committed census invariants and deploy contract lint
         run: |
           set -euo pipefail
