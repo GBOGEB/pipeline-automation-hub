@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import shutil
 import subprocess
+import tempfile
+import uuid
 from pathlib import Path
 
 import pytest
@@ -56,3 +58,35 @@ def test_junction_skipped(tmp_path):
     assert (target / "keep.txt").exists(), "deleted through a junction"
     assert link.exists(), "junction itself must be left alone"
     assert not (work / "old").exists()
+
+
+def _merge(_tmp_path, disk: str, body: str) -> str:
+    # Not tmp_path: Python 3.12+ makes owner-only temp folders that Windows PowerShell cannot read.
+    tmp_path = Path(tempfile.gettempdir()) / f"rw-test-{uuid.uuid4().hex[:12]}"
+    tmp_path.mkdir()
+    sp = tmp_path / "state.json"
+    sp.write_text(disk, encoding="utf-8")
+    try:
+        return _run_merge(sp, tmp_path, body)
+    finally:
+        shutil.rmtree(tmp_path, ignore_errors=True)
+
+
+def _run_merge(sp, tmp_path, body: str) -> str:
+    return run(f"$DryRun = $false; $StatePath = '{sp}'; $LogPath = '{tmp_path / 'log.txt'}'\n{body}\n"
+               f"(Get-Content '{sp}' -Raw | ConvertFrom-Json | ConvertTo-Json -Depth 6 -Compress)")
+
+
+def test_check_save_keeps_newer_unpin_figures(tmp_path):
+    # Unpin finished (newer lastUnpin on disk) while this Check held a stale copy.
+    disk = '{"oneDrive":{"lastUnpin":"2026-11-27T10:00:00Z","waitingBytes":5,"cloudBytes":7}}'
+    got = _merge(tmp_path, disk, "$s = Read-State; $s.oneDrive = @{ lastUnpin = '2026-11-27T09:00:00Z'; waitingBytes = 1; cloudBytes = 1 }; "
+                                 "$s.freeHistory = @(42); Save-StateMerged $s")
+    assert '"waitingBytes":5' in got and '"cloudBytes":7' in got and "42" in got
+
+
+def test_unpin_save_writes_only_its_keys(tmp_path):
+    disk = '{"oneDrive":{"restartedAt":"x"},"freeHistory":[99]}'
+    got = _merge(tmp_path, disk, "$s = @{ oneDrive = @{ lastUnpin = '2026-11-27T10:00:00Z'; waitingBytes = 3 }; freeHistory = @() }; "
+                                 "Save-StateMerged $s -UnpinOwner")
+    assert '"waitingBytes":3' in got and "99" in got and '"restartedAt":"x"' in got

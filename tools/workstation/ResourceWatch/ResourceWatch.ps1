@@ -103,8 +103,41 @@ function Read-State {
 }
 
 function Save-State($State) {
+    # Atomic: write a temp file, then replace, so a reader never sees a half-written state.json.
     if ($DryRun) { return }
-    $State | ConvertTo-Json -Depth 6 | Set-Content -Path $StatePath -Encoding UTF8
+    $tmp = "$StatePath.$PID.tmp"
+    $State | ConvertTo-Json -Depth 6 | Set-Content -Path $tmp -Encoding UTF8
+    Move-Item -LiteralPath $tmp -Destination $StatePath -Force
+}
+
+# Keys owned by the Unpin worker; a Check that started earlier must not overwrite newer values.
+$UnpinKeys = 'lastUnpin', 'waitingBytes', 'cloudBytes', 'pinnedBytes'
+
+function Save-StateMerged([hashtable]$State, [switch]$UnpinOwner) {
+    <# Read-modify-write of state.json under one named lock shared by Check and Unpin.
+       Unpin writes only its own keys onto the fresh state; Check keeps its state but takes the
+       unpin keys from disk when the disk copy has a newer lastUnpin. #>
+    if ($DryRun) { return }
+    $lock = New-Object System.Threading.Mutex($false, 'Local\ResourceWatchState')
+    $got = $false
+    try { $got = $lock.WaitOne(30000) } catch [System.Threading.AbandonedMutexException] { $got = $true }
+    if (-not $got) { Write-Log 'state lock busy for 30 s: state not saved'; return }
+    try {
+        $fresh = Read-State
+        if ($UnpinOwner) {
+            foreach ($k in $UnpinKeys) { if ($State.oneDrive.ContainsKey($k)) { $fresh.oneDrive[$k] = $State.oneDrive[$k] } }
+            Save-State $fresh
+        }
+        else {
+            $mine = if ($State.oneDrive['lastUnpin']) { To-Date $State.oneDrive['lastUnpin'] }
+            $disk = if ($fresh.oneDrive['lastUnpin']) { To-Date $fresh.oneDrive['lastUnpin'] }
+            if ($disk -and (-not $mine -or $disk -gt $mine)) {
+                foreach ($k in $UnpinKeys) { if ($fresh.oneDrive.ContainsKey($k)) { $State.oneDrive[$k] = $fresh.oneDrive[$k] } }
+            }
+            Save-State $State
+        }
+    }
+    finally { $lock.ReleaseMutex(); $lock.Dispose() }
 }
 
 function To-Date($Value) {
@@ -718,10 +751,8 @@ switch ($Mode) {
     'Unpin' {
         $state = Read-State
         Invoke-Unpin $UnpinDays $state
-        # Merge only the OneDrive figures, in case a check saved state meanwhile.
-        $fresh = Read-State
-        $fresh.oneDrive = $state.oneDrive
-        Save-State $fresh
+        # Merge only the unpin figures onto the latest state, under the lock a Check also takes.
+        Save-StateMerged $state -UnpinOwner
     }
     'Check' {
         # The launcher returns at once, so the scheduler can start overlapping checks; let only one through.
@@ -743,6 +774,6 @@ switch ($Mode) {
         $state = Read-State
         try { Invoke-DiskCheck $state } catch { Write-Log "disk check failed: $($_.Exception.Message)" }
         try { Invoke-MemoryCheck $state } catch { Write-Log "memory check failed: $($_.Exception.Message)" }
-        Save-State $state
+        Save-StateMerged $state
     }
 }
