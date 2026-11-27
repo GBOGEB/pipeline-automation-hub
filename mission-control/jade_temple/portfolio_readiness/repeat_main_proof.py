@@ -30,6 +30,23 @@ def command(args, cwd: Path):
     return subprocess.run(args, cwd=cwd, capture_output=True, text=True, check=False)
 
 
+def _same_path(a, b) -> bool:
+    return os.path.normcase(os.path.abspath(a)) == os.path.normcase(os.path.abspath(b))
+
+
+def worktree_listed(repo: Path, work: Path) -> bool:
+    """True when Git still has an administrative entry for ``work``.
+
+    A failing checkout phase (e.g. a post-checkout hook) can make
+    ``git worktree add`` exit nonzero after the entry was registered.
+    """
+    listing = command(["git", "worktree", "list", "--porcelain"], repo)
+    if listing.returncode:
+        return True  # unknown: attempt deregistration rather than leave a stale entry
+    return any(line.startswith("worktree ") and _same_path(line[len("worktree "):], work)
+               for line in listing.stdout.splitlines())
+
+
 def execute(repo: Path, source_sha: str, out: Path):
     if not HEX40.fullmatch(source_sha):
         raise ValueError("exact 40-hex source commit required")
@@ -49,6 +66,7 @@ def execute(repo: Path, source_sha: str, out: Path):
     try:
         checkout = command(["git", "worktree", "add", "--detach", str(work), source_sha], repo)
         if checkout.returncode:
+            worktree_registered = worktree_listed(repo, work)
             raise RuntimeError("detached source worktree failed: " + checkout.stderr[-600:])
         worktree_registered = True
         sha = command(["git", "rev-parse", "HEAD"], work)
@@ -87,7 +105,7 @@ def execute(repo: Path, source_sha: str, out: Path):
         }
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(json.dumps(receipt, sort_keys=True, indent=2) + "\n",
-                       encoding="utf-8")
+                       encoding="utf-8", newline="\n")
         return passed, receipt
     finally:
         # Cleanup must attempt BOTH Git deregistration and scratch deletion;

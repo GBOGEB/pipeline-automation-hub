@@ -374,7 +374,7 @@ class RootNextControlSafetyTests(unittest.TestCase):
                     self.assertEqual(work.parent.name[:20], "jade-hub-main-proof-")
                     seen.append(work.parent)
                     (work / "tests").mkdir(parents=True)
-                    (work / "tests" / "test_main_pipeline_e2e.py").write_text("# suite")
+                    (work / "tests" / "test_main_pipeline_e2e.py").write_text("# suite", encoding="utf-8", newline="\n")
                     return SimpleNamespace(returncode=0, stdout="", stderr="")
                 if args[:3] == ["git", "rev-parse", "HEAD"]:
                     return SimpleNamespace(returncode=0, stdout=pinned + "\n", stderr="")
@@ -407,7 +407,7 @@ class RootNextControlSafetyTests(unittest.TestCase):
                     root = Path(args[4])
                     attempts.append(root.parent)
                     (root / "tests").mkdir(parents=True)
-                    (root / "tests" / "test_main_pipeline_e2e.py").write_text("# suite")
+                    (root / "tests" / "test_main_pipeline_e2e.py").write_text("# suite", encoding="utf-8", newline="\n")
                     return SimpleNamespace(returncode=0, stdout="", stderr="")
                 if args[:3] == ["git", "rev-parse", "HEAD"]:
                     return SimpleNamespace(returncode=0, stdout=pinned + "\n", stderr="")
@@ -438,7 +438,7 @@ class RootNextControlSafetyTests(unittest.TestCase):
                     root = Path(args[4])
                     actions.append(root.parent)
                     (root / "tests").mkdir(parents=True)
-                    (root / "tests" / "test_main_pipeline_e2e.py").write_text("# suite")
+                    (root / "tests" / "test_main_pipeline_e2e.py").write_text("# suite", encoding="utf-8", newline="\n")
                     return SimpleNamespace(returncode=0, stdout="", stderr="")
                 if args[:3] == ["git", "rev-parse", "HEAD"]:
                     return SimpleNamespace(returncode=1, stdout="", stderr="SOURCE_MISMATCH")
@@ -466,6 +466,8 @@ class RootNextControlSafetyTests(unittest.TestCase):
                 if args[:3] == ["git", "worktree", "add"]:
                     worktree_path.append(Path(args[4]).parent)
                     return SimpleNamespace(returncode=1, stdout="", stderr="denied")
+                if args[:3] == ["git", "worktree", "list"]:
+                    return SimpleNamespace(returncode=0, stdout="worktree " + str(portfolio.REPO) + "\n", stderr="")
                 self.fail("unexpected subprocess after failed checkout")
             with mock.patch.object(proof, "command", side_effect=fake):
                 with mock.patch.object(proof.tempfile, "gettempdir", return_value=str(scratch)):
@@ -474,13 +476,42 @@ class RootNextControlSafetyTests(unittest.TestCase):
             self.assertEqual(len(worktree_path), 1)
             self.assertFalse(worktree_path[0].exists())
 
+    def test_partially_registered_worktree_is_deregistered_after_checkout_failure(self):
+        # git worktree add can exit 1 (failing post-checkout hook) after registering the entry.
+        import repeat_main_proof as proof
+        pinned = "a" * 40
+        with tempfile.TemporaryDirectory() as outer:
+            scratch = Path(outer)
+            calls, added = [], []
+            def fake(args, cwd):
+                calls.append(args[:3])
+                if args[:3] == ["git", "cat-file", "-t"]:
+                    return SimpleNamespace(returncode=0, stdout="commit\n", stderr="")
+                if args[:3] == ["git", "worktree", "add"]:
+                    added.append(Path(args[4]))
+                    added[0].mkdir(parents=True)
+                    return SimpleNamespace(returncode=1, stdout="", stderr="post-checkout hook failed")
+                if args[:3] == ["git", "worktree", "list"]:
+                    listing = "worktree " + str(portfolio.REPO) + "\n\nworktree " + added[0].as_posix() + "\n"
+                    return SimpleNamespace(returncode=0, stdout=listing, stderr="")
+                if args[:3] == ["git", "worktree", "remove"]:
+                    self.assertEqual(Path(args[-1]), added[0])
+                    return SimpleNamespace(returncode=0, stdout="", stderr="")
+                self.fail(f"unexpected subprocess {args}")
+            with mock.patch.object(proof, "command", side_effect=fake):
+                with mock.patch.object(proof.tempfile, "gettempdir", return_value=str(scratch)):
+                    with self.assertRaisesRegex(RuntimeError, "detached source worktree failed"):
+                        proof.execute(portfolio.REPO, pinned, scratch / "receipt.json")
+            self.assertIn(["git", "worktree", "remove"], calls)
+            self.assertFalse(added[0].parent.exists())
+
     def test_pinned_main_repeat_rejects_floating_ref_and_existing_receipt(self):
         import repeat_main_proof as proof
         with tempfile.TemporaryDirectory() as tmp:
             receipt = Path(tmp) / "repeat.json"
             with self.assertRaisesRegex(ValueError, "exact 40-hex"):
                 proof.execute(portfolio.REPO, "master", receipt)
-            receipt.write_text("must not overwrite", encoding="utf-8")
+            receipt.write_text("must not overwrite", encoding="utf-8", newline="\n")
             with self.assertRaisesRegex(ValueError, "must not already exist"):
                 proof.execute(portfolio.REPO, "a" * 40, receipt)
 
