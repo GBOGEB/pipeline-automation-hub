@@ -269,27 +269,20 @@ A handover pasted into a Claude Code chat lives only in that session's transcrip
 python tools\workstation\extract_pasted_content.py "$env:USERPROFILE\.claude\projects\<project>\<cliSessionId>.jsonl" "<out folder>"
 ```
 
-## Fixing one PR in place (`Invoke-PrFixInSitu.ps1`)
+<!-- BEGIN ResourceWatch (#1166) -->
+## ResourceWatch: disk and memory watchdog (`ResourceWatch/`)
 
-The write side of `Invoke-DraftPrPass.ps1`, for one PR: diagnose (push rules, conflicts, red checks,
-threads, live session), `-Prepare` a worktree on the PR head, `-Sync` the base in, `-Test` at HEAD,
-`-Publish` to the same branch without force, `-ResolveThread` with proof. Commands and stage rules are in
-[PR_CONFLICT_RUNBOOK.md](PR_CONFLICT_RUNBOOK.md) sections 6 and 7. Offline self-test:
-`pwsh -NoProfile -File tools/workstation/Invoke-PrFixInSitu.ps1 -SelfTest`.
+Windows PowerShell 5.1 watchdog that a scheduled task runs every few minutes. It measures C: free
+space and RAM and picks a band from `config.example.json` (copy it to `config.json` for local
+overrides). Each band clears regenerable caches (temp, crash dumps, WER, npm and pip caches, old
+VS Code servers) and shows a notification. It never deletes user documents, never empties the
+Recycle Bin and never force-kills a program.
 
-## Tool catalog (`build_tool_catalog.py`)
-
-`TOOLS_CATALOG.json` lists every operational tool: goal, when to use it and when not, what it writes, how
-to run it, artefacts, docs, CI and the PRs/issues that change it. `build_tool_catalog.py` renders one page
-and adds the code facts from git at one commit (blob OID, last commit, GitHub link at that commit, the
-source) and, with `--online`, every open PR touching each tool with its checkout and in-situ fix command.
-
-```powershell
-Set-Location "<pipeline-automation-hub checkout>"
-python tools/workstation/build_tool_catalog.py --online      # writes ~/DASHBOARDS/tools_catalog.html
-python -m unittest tools/workstation/test_build_tool_catalog.py -v
-```
-
-The PC dashboard launcher links it as "Workstation tool catalog". Add a tool by adding an entry to the
-JSON; a tool that is not on the default branch yet must name its PR in `prs`.
-
+- Dry run first: `ResourceWatch.ps1 -Mode Status`, or `-Mode Check -DryRun -SimulateFreeGB 12`.
+- Register: `Install-ResourceWatch.ps1` prints the plan; `Install-ResourceWatch.ps1 -Apply` registers the task.
+- Every disk log line records pagefile.sys, the Recycle Bin and OneDrive waiting and cloud bytes,
+  because the page file explains most free-space swings (#1166).
+- Deletes skip junctions and symlinks. Each child is removed on its own with `-Confirm:$false`, so
+  one locked `.pytest_cache` does not stop its siblings. npm caches are deleted directly; it never calls npm.
+- Test: `python -m pytest tools/workstation/test_resourcewatch.py` (skipped where `powershell.exe` is missing).
+<!-- END ResourceWatch (#1166) -->
