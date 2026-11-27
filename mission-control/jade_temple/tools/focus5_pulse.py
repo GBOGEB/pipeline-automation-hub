@@ -16,8 +16,13 @@ exact SHA only, writing a snapshot in the FOCUS5 shape that rolling5.py pins:
        PASS only when a receipt in data/FOCUS5_H08_CANARY_RECEIPTS.json re-verifies live
        (tools/h08_canary.py: active ruleset without bypass, the canary's red check still
        required, PR never merged, merge refused 405); otherwise UNKNOWN.
-  H03 H07 H09 H10 H11 H12  owner or independent evidence -> UNKNOWN here; the
-       observation (security runs, tags) is recorded, never promoted.
+  H10/H11  only the workflows declared for the gate in the registry (no previous-pulse
+       fallback); without a declaration the gate is UNKNOWN.
+  H03 H09 H12  tools/gate_evidence.py: owner-signed scope tag, approval by an eligible
+       human other than the PR author on the final head, signed release tag with a
+       published release, assets and a rollback target. Each UNKNOWN names what is missing.
+  H07  independent security acceptance -> UNKNOWN here; security runs are recorded,
+       never promoted.
 
 UNKNOWN is never PASS, and the snapshot grants no release credit.
 
@@ -43,7 +48,11 @@ REGISTRY = "data/FOCUS5_GATE_EVIDENCE_REGISTRY.json"
 _h8 = importlib.util.spec_from_file_location("h08_canary", Path(__file__).resolve().parent / "h08_canary.py")
 H8 = importlib.util.module_from_spec(_h8)
 _h8.loader.exec_module(H8)
+_ge = importlib.util.spec_from_file_location("gate_evidence", Path(__file__).resolve().parent / "gate_evidence.py")
+GE = importlib.util.module_from_spec(_ge)
+_ge.loader.exec_module(GE)
 RUN_GATES = ("H04", "H05", "H06")
+DECLARED_ONLY_GATES = ("H10", "H11")  # registry declaration required; never inferred from a previous pulse
 SECURITY_RX = re.compile(r"codeql|osv|bandit|security|scorecard|dependency.review|secret", re.I)
 RUN_URL = re.compile(r"/actions/runs/(\d+)")
 
@@ -77,8 +86,8 @@ def validate_registry(reg: dict) -> dict[str, dict[str, list[str]]]:
         if repo.count("/") != 1:
             raise ValueError(f"{repo}: expected owner/name")
         for gid, entries in gates.items():
-            if gid not in RUN_GATES:
-                raise ValueError(f"{repo} {gid}: only {', '.join(RUN_GATES)} may be declared")
+            if gid not in RUN_GATES + DECLARED_ONLY_GATES:
+                raise ValueError(f"{repo} {gid}: only {', '.join(RUN_GATES + DECLARED_ONLY_GATES)} may be declared")
             paths = [e["workflow"] for e in entries]
             if not paths or len(set(paths)) != len(paths):
                 raise ValueError(f"{repo} {gid}: empty or duplicate workflows")
@@ -193,7 +202,8 @@ def observe_repo(repo: str, prev_row: dict | None, lookup=gh, declared: dict[str
     readme = sorted(n for n in root_files if n.startswith("readme"))
     gate("H02", "PASS" if readme else "UNKNOWN", f"{base}/tree/{sha}" if readme else None,
          "Root README present at this SHA" if readme else "No root README at this SHA")
-    gate("H03", "UNKNOWN", None, "Owner acceptance of release applicability not evidenced in this pulse")
+    tags = GE.list_tags(repo, lookup)
+    gate("H03", *GE.evaluate_h03(repo, sha, tags, lookup))
 
     runs = head_runs(repo, sha, lookup)
     latest: dict[str, dict] = {}
@@ -237,14 +247,14 @@ def observe_repo(repo: str, prev_row: dict | None, lookup=gh, declared: dict[str
     else:
         gate("H08", "UNKNOWN", f"{base}/settings/branches",
              "Protected without a pull request rule (" + (", ".join(rules) or "classic protection") + ")")
-    for gid, text in (("H09", "Eligible independent human approval not evidenced in this pulse"),
-                      ("H10", "Matched coverage and negative tests not evidenced in this pulse"),
-                      ("H11", "Source-bound artifact QA and hashes not evidenced in this pulse")):
-        gate(gid, "UNKNOWN", None, text)
-    tags = lookup(f"repos/{repo}/tags?per_page=100")
-    on_head = sorted(t["name"] for t in tags if t["commit"]["sha"] == sha)
-    gate("H12", "UNKNOWN", None, "Owner release tag, assets and rollback not signed in this pulse; tags on this SHA: "
-         + (", ".join(on_head) if on_head else "none"))
+    gate("H09", *GE.evaluate_h09(repo, sha, lookup))
+    for gid, what in (("H10", "matched coverage and negative tests"), ("H11", "source-bound artifact QA and hashes")):
+        if gid in declared:
+            status, url, why = classify_gate(declared[gid], latest)
+            gate(gid, status, url, why + " (declared in gate evidence registry)")
+        else:
+            gate(gid, "UNKNOWN", None, f"No workflow declared for {gid} ({what}) in the gate evidence registry")
+    gate("H12", *GE.evaluate_h12(repo, sha, tags, lookup))
 
     ordered = [gates[f"H{i:02d}"] for i in range(1, 13)]
     counts = {s: sum(1 for g in ordered if g["status"] == s) for s in ("PASS", "FAIL", "UNKNOWN")}

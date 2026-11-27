@@ -41,6 +41,10 @@ def fake_github(protected=False, rules=(), runs=(), readme=True, tags=(), starte
             return {"protected": protected}
         if path == "repos/O/R/rules/branches/main":
             return [{"type": t} for t in rules]
+        if path == f"repos/O/R/commits/{NEW}/pulls":
+            return []  # head not produced by a merged PR: H09 stays UNKNOWN
+        if path.startswith("repos/O/R/git/ref/tags/"):
+            return {"object": {"type": "commit", "sha": NEW}}  # lightweight tag
         if path.startswith("repos/O/R/tags"):
             return [{"name": t, "commit": {"sha": NEW}} for t in tags]
         raise AssertionError(path)
@@ -81,6 +85,18 @@ class Focus5PulseTests(unittest.TestCase):
         self.assertEqual(guarded["H08"], "UNKNOWN")
         for gid in ("H03", "H07", "H09", "H10", "H11", "H12"):
             self.assertEqual(guarded[gid], "UNKNOWN", gid)
+
+    def test_h10_h11_need_a_declaration_and_never_use_previous_pulse(self):
+        prev = {"repo": "O/R", "gates": [{"id": "H10", "status": "PASS",
+                                          "evidence": "https://github.com/O/R/actions/runs/123", "reason": "old"}]}
+        runs = [run(".github/workflows/ci.yml", "success")]
+        g = fp.observe_repo("O/R", prev, fake_github(True, ["pull_request"], runs=runs))["gates"]
+        h10 = next(x for x in g if x["id"] == "H10")
+        self.assertEqual(h10["status"], "UNKNOWN")
+        self.assertIn("No workflow declared for H10", h10["reason"])
+        declared = {"H10": [".github/workflows/ci.yml"], "H11": [".github/workflows/missing.yml"]}
+        got = self.gates(fp.observe_repo("O/R", None, fake_github(True, ["pull_request"], runs=runs), declared))
+        self.assertEqual((got["H10"], got["H11"]), ("PASS", "UNKNOWN"))
 
     def test_head_sha_is_read_once_per_repo(self):
         gh = fake_github()
