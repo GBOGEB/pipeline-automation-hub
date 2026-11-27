@@ -48,6 +48,10 @@ SECURITY_RX = re.compile(r"codeql|osv|bandit|security|scorecard|dependency.revie
 RUN_URL = re.compile(r"/actions/runs/(\d+)")
 
 
+# The one ruleset refusal that is a stable answer, not an observation failure.
+RULESET_PLAN_REFUSAL = re.compile(r"(?=.*HTTP 403)(?=.*(?:Upgrade to GitHub Pro|make this repository public))", re.I)
+
+
 def gh(path: str) -> object:
     out = subprocess.run(["gh", "api", path], check=True, capture_output=True, text=True).stdout
     return json.loads(out)
@@ -227,11 +231,16 @@ def observe_repo(repo: str, prev_row: dict | None, lookup=gh, declared: dict[str
     try:
         rules = sorted({r["type"] for r in lookup(f"repos/{repo}/rules/branches/{branch}")})
     except subprocess.CalledProcessError as exc:
-        # Rulesets unreadable (e.g. GitHub answers 403 "Upgrade to GitHub Pro" for a private
-        # repo on a free plan). An unseen ruleset may still protect the branch, so this is
-        # never FAIL, and never PASS: UNKNOWN with the refusal recorded.
+        # Rulesets unreadable because the plan withholds the feature (GitHub answers 403
+        # "Upgrade to GitHub Pro" for a private repo on a free plan). An unseen ruleset may
+        # still protect the branch, so this is never FAIL, and never PASS: UNKNOWN with the
+        # refusal recorded. Any other failure (expired auth, rate limit, 5xx) is an
+        # observation failure, not data: re-raise so the pulse stops instead of publishing.
+        refusal = " ".join(str(exc.stderr or exc.stdout or exc).split())
+        if not RULESET_PLAN_REFUSAL.search(refusal):
+            raise
         rules = None
-        refusal = " ".join(str(exc.stderr or exc.stdout or exc).split())[:160]
+        refusal = refusal[:160]
     if rules is None:
         gate("H08", "UNKNOWN", f"{base}/settings/rules",
              f"Rulesets unreadable ({refusal}); classic protection={protected}")

@@ -42,7 +42,8 @@ def fake_github(protected=False, rules=(), runs=(), readme=True, tags=(), starte
         if path == "repos/O/R/rules/branches/main":
             if rules_refused:
                 raise fp.subprocess.CalledProcessError(
-                    1, ["gh", "api", path], stderr="gh: Upgrade to GitHub Pro or make this repository public (HTTP 403)")
+                    1, ["gh", "api", path], stderr=rules_refused if isinstance(rules_refused, str)
+                    else "gh: Upgrade to GitHub Pro or make this repository public (HTTP 403)")
             return [{"type": t} for t in rules]
         if path.startswith("repos/O/R/tags"):
             return [{"name": t, "commit": {"sha": NEW}} for t in tags]
@@ -92,6 +93,12 @@ class Focus5PulseTests(unittest.TestCase):
             self.assertEqual(h08["status"], "UNKNOWN", protected)
             self.assertIn("Upgrade to GitHub Pro", h08["reason"])
             self.assertIn(f"classic protection={protected}", h08["reason"])
+
+    def test_other_ruleset_api_failures_stop_the_pulse(self):
+        for err in ("gh: Bad credentials (HTTP 401)", "gh: API rate limit exceeded (HTTP 403)",
+                    "gh: Server Error (HTTP 502)"):
+            with self.assertRaises(fp.subprocess.CalledProcessError, msg=err):
+                fp.observe_repo("O/R", None, fake_github(True, rules_refused=err))
 
     def test_head_sha_is_read_once_per_repo(self):
         gh = fake_github()
