@@ -294,6 +294,37 @@ class Census(unittest.TestCase):
         self.assertNotIn(r"D:\Documents\source.pdf", report["outputs"])
         self.assertIn(r"D:\Documents\created.pdf", report["outputs"])
 
+    def scan_rows(self, rows):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "t.jsonl"
+            path.write_text("\n".join(json.dumps(x) for x in rows) + "\n", encoding="utf-8")
+            return self.sc.scan_transcript([str(path)])
+
+    def test_command_result_reporting_a_saved_file_is_an_output(self):
+        report = self.scan_rows([
+            {"type": "assistant", "message": {"content": [
+                {"type": "tool_use", "name": "Bash", "input": {"command": "python export.py"}}]}},
+            {"type": "user", "message": {"content": [{"type": "tool_result", "content":
+                "listing D:\\Documents\\source.pdf\nSaved D:\\Documents\\generated.pdf"}]}},
+        ])
+        self.assertIn(r"D:\Documents\generated.pdf", report["outputs"])
+        self.assertNotIn(r"D:\Documents\source.pdf", report["outputs"])
+
+    def test_user_named_source_is_not_an_output(self):
+        report = self.scan_rows([
+            {"type": "user", "message": {"content": "Please read D:\\Documents\\source.pdf and summarise it"}}])
+        self.assertNotIn(r"D:\Documents\source.pdf", report["outputs"])
+        self.assertEqual(report["user_turns"], 1)
+
+    def test_read_only_shell_command_is_not_an_output(self):
+        report = self.scan_rows([
+            {"type": "assistant", "message": {"content": [
+                {"type": "tool_use", "name": "Bash", "input": {"command": "ls -la D:\\Documents\\source.pdf"}},
+                {"type": "tool_use", "name": "PowerShell",
+                 "input": {"command": "Get-ChildItem D:\\Documents\\other.pdf"}}]}}])
+        self.assertNotIn(r"D:\Documents\source.pdf", report["outputs"])
+        self.assertNotIn(r"D:\Documents\other.pdf", report["outputs"])
+
     def test_quoted_path_preserves_opposite_quote_style(self):
         double_quoted = r'''"D:\O'Brien\OneDrive - Org\deck.pdf"'''
         single_quoted = r"""'D:\Company "East"\OneDrive - Org\slides.pptx'"""

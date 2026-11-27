@@ -96,6 +96,16 @@ def output_paths(text: str) -> set[str]:
     return paths
 
 
+# A tool-result line that reports creating a file; other result lines are listings of inputs.
+CREATED_RE = re.compile(r"\b(?:saved|wrote|written|created|exported|generated|rendered)\b", re.I)
+# User sentences that ask for a file to be produced, versus ones that point at a source to read.
+MAKE_INTENT_RE = re.compile(r"\b(?:build|create|make|write|save|export|generate|render|produce|draft|deliver)\b", re.I)
+READ_INTENT_RE = re.compile(r"\b(?:read|review|summari[sz]e|open|analy[sz]e|from|based on|look at)\b", re.I)
+# Shell commands that only read or list files; their path arguments are inputs.
+READONLY_CMD_RE = re.compile(
+    r"^\s*(?:ls|dir|cat|type|head|tail|less|more|stat|wc|file|find|grep|rg|test|Test-Path|Get-ChildItem|gci"
+    r"|Get-Content|gc|Get-Item|gi|Select-String|sls|Resolve-Path)(?:\s|$)", re.I)
+
 # Placeholders, temp caches and pasted-image caches are never deliverables.
 SKIP_RE = re.compile(
     r"\\path\\to\\|\\\.\.\.\\|[<{]|\\Temp\\tmp|\\Temp\\claude\\[^\\]+\\[^\\]+\\images\\", re.I
@@ -229,8 +239,13 @@ def scan_transcript(paths: list[str]) -> dict:
                         isinstance(p, dict) and p.get("type") == "tool_result" for p in c)
                     txt = text_of(c)
                     if is_tool:
-                        # A tool's listing may contain input/source paths, not produced files.
-                        # Actual writes are observed from assistant tool_use records.
+                        # A tool's listing names input/source paths, not produced files. Only a line
+                        # that reports creating a file (e.g. "Saved D:\x.pdf") counts as an output,
+                        # which keeps runtime-chosen output names a command reports.
+                        for ln in txt.splitlines():
+                            if CREATED_RE.search(ln):
+                                for m in output_paths(ln):
+                                    r["outputs"].add(norm(m))
                         continue
                     if "This session is being continued from a previous conversation" in txt:
                         r["compactions"] += 1
@@ -247,8 +262,12 @@ def scan_transcript(paths: list[str]) -> dict:
                     for pc in PASTE_RE.findall(clean):
                         r["pasted"] += 1
                         r["pasted_bytes"] += len(pc.encode("utf-8"))
-                    for m in output_paths(clean):
-                        r["outputs"].add(norm(m))
+                    # A path the user names is an input (a source to read) unless that sentence asks
+                    # for it to be produced ("build the deck at D:/x.pptx").
+                    for sent in re.split(r"(?<=[.!?\n])\s+", clean):
+                        if MAKE_INTENT_RE.search(sent) and not READ_INTENT_RE.search(sent):
+                            for m in output_paths(sent):
+                                r["outputs"].add(norm(m))
                 elif t == "assistant":
                     parts = ([{"type": "text", "text": c}] if isinstance(c, str)
                              else c if isinstance(c, list) else [])
@@ -277,7 +296,11 @@ def scan_transcript(paths: list[str]) -> dict:
                             blob = json.dumps(inp, ensure_ascii=False)[:20000]
                             # A Read/Grep/Glob argument references input, not a created output.
                             # Shell-like tools can write a runtime-selected path in their command.
-                            if name in ("Write", "Edit", "NotebookEdit", "Bash", "Shell", "PowerShell"):
+                            # A read-only shell command (ls, dir, cat, Get-ChildItem, ...) only lists inputs.
+                            if name in ("Bash", "Shell", "PowerShell") and READONLY_CMD_RE.match(
+                                    str(inp.get("command") or "")):
+                                pass
+                            elif name in ("Write", "Edit", "NotebookEdit", "Bash", "Shell", "PowerShell"):
                                 for m in output_paths(blob):
                                     r["outputs"].add(norm(m))
                             r["artifacts"].update(ARTIFACT_RE.findall(blob))
