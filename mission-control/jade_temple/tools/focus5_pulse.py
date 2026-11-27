@@ -48,6 +48,10 @@ SECURITY_RX = re.compile(r"codeql|osv|bandit|security|scorecard|dependency.revie
 RUN_URL = re.compile(r"/actions/runs/(\d+)")
 
 
+# The one ruleset refusal that is a stable answer, not an observation failure.
+RULESET_PLAN_REFUSAL = re.compile(r"(?=.*HTTP 403)(?=.*(?:Upgrade to GitHub Pro|make this repository public))", re.I)
+
+
 def gh(path: str) -> object:
     out = subprocess.run(["gh", "api", path], check=True, capture_output=True, text=True).stdout
     return json.loads(out)
@@ -224,8 +228,23 @@ def observe_repo(repo: str, prev_row: dict | None, lookup=gh, declared: dict[str
          + (", ".join(security) if security else "none"))
 
     protected = lookup(f"repos/{repo}/branches/{branch}")["protected"]
-    rules = sorted({r["type"] for r in lookup(f"repos/{repo}/rules/branches/{branch}")})
-    if not protected and not rules:
+    try:
+        rules = sorted({r["type"] for r in lookup(f"repos/{repo}/rules/branches/{branch}")})
+    except subprocess.CalledProcessError as exc:
+        # Rulesets unreadable because the plan withholds the feature (GitHub answers 403
+        # "Upgrade to GitHub Pro" for a private repo on a free plan). An unseen ruleset may
+        # still protect the branch, so this is never FAIL, and never PASS: UNKNOWN with the
+        # refusal recorded. Any other failure (expired auth, rate limit, 5xx) is an
+        # observation failure, not data: re-raise so the pulse stops instead of publishing.
+        refusal = " ".join(str(exc.stderr or exc.stdout or exc).split())
+        if not RULESET_PLAN_REFUSAL.search(refusal):
+            raise
+        rules = None
+        refusal = refusal[:160]
+    if rules is None:
+        gate("H08", "UNKNOWN", f"{base}/settings/rules",
+             f"Rulesets unreadable ({refusal}); classic protection={protected}")
+    elif not protected and not rules:
         gate("H08", "FAIL", f"{base}/settings/branches", "Default branch unprotected (no protection, no ruleset)")
     elif "pull_request" in rules:
         status, url, why = H8.evaluate(repo, branch, (canaries or []), lookup)
