@@ -255,7 +255,10 @@ def reasons(row, default_branch, policy, now):
         r.append('FORK')
     if row['base_ref'] != default_branch:
         r.append('STACKED')
-    if row['age_days'] < policy['min_age_days']:
+    # Compare on the exact age; row['age_days'] is rounded for the report and can cross the threshold.
+    created = when(row['created_at']) if row.get('created_at') else None
+    age = (now - created).total_seconds() / 86400 if created else row['age_days']
+    if age < policy['min_age_days']:
         r.append('YOUNG')
     if row['behind_by'] is None:
         r.append('BEHIND_UNKNOWN')
@@ -557,8 +560,11 @@ def evaluate(client, b, act_rec, after_rows):
                'gate_regressed': bool(ar) and br['gate_state'] == 'GREEN' and ar['gate_state'] == 'RED',
                'recovered_checks': sorted(set(br['ci_failing']) - set(ar['ci_failing'])) if ar else []}
         signals = []
-        if row['transition'] in ('UNBLOCKED', 'SETTLED_GREEN') or (o == 'MERGED' and br['ci_state'] != 'GREEN'):
-            signals.append('CI_GREENED' if o != 'MERGED' else 'MERGED')
+        # A merge is always a positive transition, also for a PR that was already green.
+        if o == 'MERGED':
+            signals.append('MERGED')
+        elif row['transition'] in ('UNBLOCKED', 'SETTLED_GREEN'):
+            signals.append('CI_GREENED')
         if ar and (br['mergeable'] == 'CONFLICTING' or br['merge_state'] == 'DIRTY') \
                 and ar['mergeable'] == 'MERGEABLE' and ar['merge_state'] != 'DIRTY':
             signals.append('CONFLICT_CLEARED')

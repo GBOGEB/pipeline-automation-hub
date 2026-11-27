@@ -151,12 +151,19 @@ class Snapshot(unittest.TestCase):
         row = mod.pr_row(FakeClient([]), REPO, pr(1, sha('h1')), BASE0, policy(), T0)
         self.assertEqual(mod.reasons(row, 'master', policy(), T0), [])
         cases = {'DRAFT': {'draft': True}, 'FORK': {'cross_repo': True}, 'STACKED': {'base_ref': 'feat'},
-                 'YOUNG': {'age_days': 1.0}, 'CURRENT': {'behind_by': 0}, 'BEHIND_UNKNOWN': {'behind_by': None},
+                 'YOUNG': {'created_at': '2026-11-10T08:00:00Z'}, 'CURRENT': {'behind_by': 0}, 'BEHIND_UNKNOWN': {'behind_by': None},
                  'CONFLICT': {'mergeable': 'CONFLICTING'}, 'RECENT_PUSH': {'head_committed_at': '2026-11-11T07:00:00Z'},
                  'PUSH_TIME_UNKNOWN': {'head_committed_at': None}, 'OPT_OUT_LABEL': {'labels': ['do-not-rebase']}}
         for reason, change in cases.items():
             with self.subTest(reason=reason):
                 self.assertEqual(mod.reasons({**row, **change}, 'master', policy(), T0), [reason])
+
+    def test_young_uses_the_exact_age_not_the_rounded_one(self):
+        # 6.9996 days old: the report rounds to 7.0, eligibility must still say YOUNG.
+        created = (T0 - timedelta(days=6.9996)).strftime('%Y-%m-%dT%H:%M:%SZ')
+        row = mod.pr_row(FakeClient([]), REPO, pr(1, sha('h1'), created=created), BASE0, policy(), T0)
+        self.assertEqual(row['age_days'], 7.0)
+        self.assertEqual(mod.reasons(row, 'master', policy(), T0), ['YOUNG'])
 
     def test_unreadable_compare_is_unknown_not_zero(self):
         class Broken(FakeClient):
@@ -276,7 +283,7 @@ class Act(unittest.TestCase):
 class Evaluate(unittest.TestCase):
     """Treated PRs turn green after a merge update; holdout PRs stay red, except one external recovery."""
 
-    def build(self, min_arm=2):
+    def build(self, min_arm=2, merge20=False):
         prs = [pr(n, sha(f'h{n}'), ci='FAILURE') for n in range(1, 13)]
         prs.append(pr(20, sha('h20'), mergeable='CONFLICTING', merge='DIRTY'))  # ineligible: conflict
         fc = FakeClient(prs)
@@ -294,6 +301,8 @@ class Evaluate(unittest.TestCase):
         lucky = holdout[0]
         fc.views[(REPO, lucky)] = pr(lucky, sha(f'h{lucky}'), ci='SUCCESS')  # head unchanged, green: external
         fc.views[(REPO, 20)] = pr(20, sha('h20'))  # conflict cleared without a push
+        if merge20:  # already green before, then merged
+            fc.views[(REPO, 20)] = {**pr(20, sha('h20'), state='MERGED'), 'mergedAt': '2026-11-11T12:00:00Z'}
         fc.windows[(MB, BASE1)] = {'commits': [
             {'sha': FIX_SHARED, 'commit': {'message': 'fix(ci): pin runner (#42)\n\nbody'}},
             {'sha': FIX_OTHER, 'commit': {'message': 'docs: tidy'}}]}
@@ -332,6 +341,12 @@ class Evaluate(unittest.TestCase):
         self.assertEqual(pos[lucky]['attribution'], 'EXTERNAL')
         self.assertEqual(pos[lucky]['base_window']['from'], BASE0)
         self.assertEqual((pos[20]['arm'], pos[20]['signals'], pos[20]['attribution']), (None, ['CONFLICT_CLEARED'], 'EXTERNAL'))
+
+    def test_merge_of_an_already_green_pr_is_a_positive(self):
+        b, a, ev, *_ = self.build(merge20=True)
+        self.assertEqual(next(r for r in b['prs'] if r['number'] == 20)['ci_state'], 'GREEN')
+        pos = {p['number']: p for p in ev['positives']}
+        self.assertIn('MERGED', pos[20]['signals'])
 
     def test_small_arm_is_unknown(self):
         ev = self.build(min_arm=50)[2]
