@@ -22,6 +22,7 @@ import argparse
 import datetime as dt
 import json
 import sys
+from collections.abc import Iterable
 from pathlib import Path
 
 try:
@@ -46,9 +47,10 @@ def parked() -> list[dict]:
 split_ref = c.split_ref
 
 
-def parse_refs(refs, home: str) -> tuple[set[tuple[str, int]], list]:
+def parse_refs(refs: Iterable[object] | None, home: str) -> tuple[set[tuple[str, int]], list[object]]:
     """Parsed refs and the ones that could not be parsed; a bad ref never stops the whole check."""
-    good, bad = set(), []
+    good: set[tuple[str, int]] = set()
+    bad: list[object] = []
     for r in refs or []:
         try:
             good.add(split_ref(r, home))

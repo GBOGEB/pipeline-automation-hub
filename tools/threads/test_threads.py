@@ -88,7 +88,7 @@ class WakeMatch(unittest.TestCase):
         self.assertEqual(wake_check.split_ref("CODEX#7", "hub"), ("CODEX", 7))
         self.assertEqual(wake_check.split_ref("1171", "hub"), ("hub", 1171))
         self.assertEqual(wake_check.split_ref(1135, "hub"), ("hub", 1135))
-        for bad in ("CODEX 7", "", "#", True, None):
+        for bad in ("CODEX 7", "", "#", True, None, 0, -1, "0", "#0", "-1", "hub#-1"):
             with self.assertRaises(ValueError):
                 wake_check.split_ref(bad, "hub")
 
