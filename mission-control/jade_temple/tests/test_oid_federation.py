@@ -44,6 +44,28 @@ class Kernel(unittest.TestCase):
         with self.assertRaises(ValueError):
             of.wishbone({"a": ["b"], "b": ["a"]})
 
+    def test_dangling_dependency_is_valueerror_not_keyerror(self):
+        with self.assertRaises(ValueError):
+            of.wishbone({"a": ["ghost"]})
+
+    def test_cli_dangling_dependency_exits_2(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            dag = Path(tmp) / "dag.json"
+            doc = copy.deepcopy(of.AD.load())
+            first = next(iter(doc["nodes"]))
+            doc["nodes"][first]["depends_on"] = list(doc["nodes"][first].get("depends_on") or []) + ["ghost-node"]
+            dag.write_text(json.dumps(doc), encoding="utf-8")
+            with redirect_stdout(io.StringIO()), mock.patch("sys.stderr", new=io.StringIO()):
+                self.assertEqual(of.main(["--dag", str(dag)]), 2)
+
+    def test_blob_oid_fails_closed_for_a_file_not_at_head(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            hub = Path(tmp)
+            (hub / "only_in_worktree.txt").write_text("x", encoding="utf-8")
+            self.assertIsNone(of.blob_oid("only_in_worktree.txt", hub))  # not a repo: no worktree hashing
+        self.assertIsNone(of.blob_oid("no/such/owner_file.py"))
+        self.assertRegex(of.blob_oid("mission-control/jade_temple/tools/oid_federation.py") or "", r"^[0-9a-f]{40}$")
+
     def test_wishbone_converges_on_committed_dag(self):
         w = of.wishbone(PREREQS)
         self.assertTrue(w["track_c"]["converged"])

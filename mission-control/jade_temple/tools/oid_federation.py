@@ -78,6 +78,7 @@ def transitive_reduction(prereqs: dict[str, list[str]]) -> tuple[dict[str, list[
 
     Reachability is unchanged, so every schedule built on the result is the same;
     the dropped edges are redundant gates (muda). Returns (reduced, dropped)."""
+    AD.waves(prereqs)  # validate first: ValueError on a cycle or a dangling dependency, never KeyError
     anc = AD.ancestors(prereqs)
     reduced, dropped = {}, []
     for k in sorted(prereqs):
@@ -203,16 +204,17 @@ def gg_math_kernel(prereqs: dict[str, list[str]], root: str | Path | None = None
 # ---------------------------------------------------------------- crosswalk
 
 def blob_oid(rel: str, hub: Path = HUB) -> str | None:
-    """Git blob OID of a hub path at HEAD; falls back to hashing the working file."""
+    """Git blob OID of a hub path at HEAD, or None when HEAD has no such blob or git fails.
+
+    Fail closed: never hash the working file instead, which could certify content that does
+    not exist at HEAD (uncommitted or edited) and defeat the exact-head binding."""
     try:
-        out = subprocess.run(["git", "-C", str(hub), "rev-parse", f"HEAD:{rel}"],
+        out = subprocess.run(["git", "-C", str(hub), "rev-parse", "--verify", "--quiet", f"HEAD:{rel}"],
                              capture_output=True, text=True, timeout=30)
-        if out.returncode == 0 and out.stdout.strip():
-            return out.stdout.strip()
     except (OSError, subprocess.SubprocessError):
-        pass
-    path = hub / rel
-    return CD.git_blob_oid(path.read_bytes()) if path.is_file() else None
+        return None
+    oid = out.stdout.strip() if out.returncode == 0 else ""
+    return oid or None
 
 
 def load(path: Path = DATA) -> dict:
